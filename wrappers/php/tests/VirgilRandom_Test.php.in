@@ -1,0 +1,23 @@
+<?php
+
+include_once "@PHP_MODULE_FILE_NAME@";
+include_once "StringSource.php";
+
+/**
+ * @covers VirgilRandom algorithms
+ */
+class VirgilRandom_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilCipher::generateKeyPair
+     * @covers VirgilRandom::sign
+     * @covers VirgilRandom::verify
+     */
+    public function test_() {
+        $random = new VirgilRandom("com.virgilsecurity.random");
+        $randomData = $random->randomize(1024);
+        $this->assertEquals(strlen($randomData), 1024);
+    }
+}
+
+?>

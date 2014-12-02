@@ -1,0 +1,316 @@
+<?php
+
+include_once "@PHP_MODULE_FILE_NAME@";
+
+/**
+ * @covers VirgilAsn1DataMarshaller algorithms
+ */
+class VirgilAsn1DataMarshaller_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilAsn1DataMarshaller::marshal
+     */
+    public function test_account_marshalling() {
+        $accountId = "USER-1234";
+        $accountAsn1Expected = file_get_contents("data/asn1_account.der");
+
+        $account = new VirgilAccount();
+        $account->id()->setAccountId($accountId);
+
+        $marshaler = new VirgilAsn1DataMarshaller();
+        $accountAsn1 = $marshaler->marshal($account);
+
+        $this->assertEquals($accountAsn1Expected, $accountAsn1);
+    }
+
+    /**
+     * @covers VirgilAsn1DataMarshaller::demarshalAccount
+     */
+    public function test_account_demarshalling() {
+        $accountIdExpected = "USER-1234";
+        $accountAsn1 = file_get_contents("data/asn1_account.der");
+
+        $marshaler = new VirgilAsn1DataMarshaller();
+        $account = $marshaler->demarshalAccount($accountAsn1);
+
+        $this->assertEquals($accountIdExpected, $account->id()->accountId());
+    }
+
+    /**
+     * @covers VirgilAsn1DataMarshaller::marshal
+     */
+    public function test_certificate_marshalling() {
+        $accountId = "USER-1234";
+        $certificateId = "CERT-1234";
+        $publicKey = file_get_contents("data/certificate_public_key.pem");
+        $certfifcateAsn1Expected = file_get_contents("data/asn1_certificate.der");
+
+        $certificate = new VirgilCertificate($publicKey);
+        $certificate->id()->setAccountId($accountId);
+        $certificate->id()->setCertificateId($certificateId);
+
+        $marshaler = new VirgilAsn1DataMarshaller();
+        $certificateAsn1 = $marshaler->marshal($certificate);
+
+        $this->assertEquals($certfifcateAsn1Expected, $certificateAsn1);
+    }
+
+    /**
+     * @covers VirgilAsn1DataMarshaller::demarshalCertificate
+     */
+    public function test_certificate_demarshalling() {
+        $expectedAccountId = "USER-1234";
+        $expectedCertificateId = "CERT-1234";
+        $expectedPublicKey = file_get_contents("data/certificate_public_key.pem");
+        $certificateAsn1 = file_get_contents("data/asn1_certificate.der");
+
+        $marshaler = new VirgilAsn1DataMarshaller();
+        $certificate = $marshaler->demarshalCertificate($certificateAsn1);
+
+        $this->assertEquals($expectedAccountId, $certificate->id()->accountId());
+        $this->assertEquals($expectedCertificateId, $certificate->id()->certificateId());
+        $this->assertEquals($expectedPublicKey, $certificate->publicKey());
+    }
+
+    /**
+     * @covers VirgilAsn1DataMarshaller::marshal
+     */
+    public function test_user_id_email_ticket_marshalling() {
+        $accountId = "USER-1234";
+        $certificateId = "CERT-1234";
+        $ticketId = "TICKET-1234";
+        $ticketUserId = "user@domain.com";
+        $ticketUserIdType = VirgilUserIdType::email();
+        $ticketAsn1Expected = file_get_contents("data/asn1_user_id_email_ticket.der");
+
+        $ticket = new VirgilUserIdTicket($ticketUserId, $ticketUserIdType);
+        $ticket->id()->setAccountId($accountId);
+        $ticket->id()->setCertificateId($certificateId);
+        $ticket->id()->setTicketId($ticketId);
+
+        $marshaler = new VirgilAsn1DataMarshaller();
+        $ticketAsn1 = $marshaler->marshal($ticket);
+
+        $this->assertEquals($ticketAsn1Expected, $ticketAsn1);
+    }
+
+    /**
+     * @covers VirgilAsn1DataMarshaller::demarshalTicket
+     */
+    public function test_user_id_email_ticket_demarshalling() {
+        $expectedAccountId = "USER-1234";
+        $expectedCertificateId = "CERT-1234";
+        $expectedTicketId = "TICKET-1234";
+        $expectedTicketUserId = "user@domain.com";
+        $ticketAsn1 = file_get_contents("data/asn1_user_id_email_ticket.der");
+
+        $marshaler = new VirgilAsn1DataMarshaller();
+        $ticket = $marshaler->demarshalTicket($ticketAsn1);
+
+        $this->assertEquals($expectedAccountId, $ticket->id()->accountId());
+        $this->assertEquals($expectedCertificateId, $ticket->id()->certificateId());
+        $this->assertEquals($expectedTicketId, $ticket->id()->ticketId());
+
+        $this->assertTrue($ticket->isUserIdTicket());
+        $userIdTicket = $ticket->asUserIdTicket();
+        $this->assertTrue($userIdTicket->userIdType()->isEmail());
+        $this->assertEquals($expectedTicketUserId, $userIdTicket->userId());
+    }
+
+
+    /**
+     * @covers VirgilAsn1DataMarshaller::marshal
+     */
+    public function test_user_id_phone_ticket_marshalling() {
+        $accountId = "USER-1234";
+        $certificateId = "CERT-1234";
+        $ticketId = "TICKET-1234";
+        $ticketUserId = "+1 777 666 3333";
+        $ticketUserIdType = VirgilUserIdType::phone();
+        $ticketAsn1Expected = file_get_contents("data/asn1_user_id_phone_ticket.der");
+
+        $ticket = new VirgilUserIdTicket($ticketUserId, $ticketUserIdType);
+        $ticket->id()->setAccountId($accountId);
+        $ticket->id()->setCertificateId($certificateId);
+        $ticket->id()->setTicketId($ticketId);
+
+        $marshaler = new VirgilAsn1DataMarshaller();
+        $ticketAsn1 = $marshaler->marshal($ticket);
+
+        $this->assertEquals($ticketAsn1Expected, $ticketAsn1);
+    }
+
+    /**
+     * @covers VirgilAsn1DataMarshaller::demarshalTicket
+     */
+    public function test_user_id_phone_ticket_demarshalling() {
+        $expectedAccountId = "USER-1234";
+        $expectedCertificateId = "CERT-1234";
+        $expectedTicketId = "TICKET-1234";
+        $expectedTicketUserId = "+1 777 666 3333";
+        $ticketAsn1 = file_get_contents("data/asn1_user_id_phone_ticket.der");
+
+        $marshaler = new VirgilAsn1DataMarshaller();
+        $ticket = $marshaler->demarshalTicket($ticketAsn1);
+
+        $this->assertEquals($expectedAccountId, $ticket->id()->accountId());
+        $this->assertEquals($expectedCertificateId, $ticket->id()->certificateId());
+        $this->assertEquals($expectedTicketId, $ticket->id()->ticketId());
+
+        $this->assertTrue($ticket->isUserIdTicket());
+        $userIdTicket = $ticket->asUserIdTicket();
+        $this->assertTrue($userIdTicket->userIdType()->isPhone());
+        $this->assertEquals($expectedTicketUserId, $userIdTicket->userId());
+    }
+
+    /**
+     * @covers VirgilAsn1DataMarshaller::marshal
+     */
+    public function test_user_id_fax_ticket_marshalling() {
+        $accountId = "USER-1234";
+        $certificateId = "CERT-1234";
+        $ticketId = "TICKET-1234";
+        $ticketUserId = "+1 777 777 7777";
+        $ticketUserIdType = VirgilUserIdType::fax();
+        $ticketAsn1Expected = file_get_contents("data/asn1_user_id_fax_ticket.der");
+
+        $ticket = new VirgilUserIdTicket($ticketUserId, $ticketUserIdType);
+        $ticket->id()->setAccountId($accountId);
+        $ticket->id()->setCertificateId($certificateId);
+        $ticket->id()->setTicketId($ticketId);
+
+        $marshaler = new VirgilAsn1DataMarshaller();
+        $ticketAsn1 = $marshaler->marshal($ticket);
+
+        $this->assertEquals($ticketAsn1Expected, $ticketAsn1);
+    }
+
+    /**
+     * @covers VirgilAsn1DataMarshaller::demarshalTicket
+     */
+    public function test_user_id_fax_ticket_demarshalling() {
+        $expectedAccountId = "USER-1234";
+        $expectedCertificateId = "CERT-1234";
+        $expectedTicketId = "TICKET-1234";
+        $expectedTicketUserId = "+1 777 777 7777";
+        $ticketAsn1 = file_get_contents("data/asn1_user_id_fax_ticket.der");
+
+        $marshaler = new VirgilAsn1DataMarshaller();
+        $ticket = $marshaler->demarshalTicket($ticketAsn1);
+
+        $this->assertEquals($expectedAccountId, $ticket->id()->accountId());
+        $this->assertEquals($expectedCertificateId, $ticket->id()->certificateId());
+        $this->assertEquals($expectedTicketId, $ticket->id()->ticketId());
+
+        $this->assertTrue($ticket->isUserIdTicket());
+        $userIdTicket = $ticket->asUserIdTicket();
+        $this->assertTrue($userIdTicket->userIdType()->isFax());
+        $this->assertEquals($expectedTicketUserId, $userIdTicket->userId());
+    }
+
+    /**
+     * @covers VirgilAsn1DataMarshaller::marshal
+     */
+    public function test_user_info_ticket_marshalling() {
+        $accountId = "USER-1234";
+        $certificateId = "CERT-1234";
+        $ticketId = "TICKET-1234";
+        $ticketUserFirstName = "Jon";
+        $ticketUserLastName = "Doe";
+        $ticketUserAge = 31;
+        $ticketAsn1Expected = file_get_contents("data/asn1_user_info_ticket.der");
+
+        $ticket = new VirgilUserInfoTicket($ticketUserFirstName, $ticketUserLastName, $ticketUserAge);
+        $ticket->id()->setAccountId($accountId);
+        $ticket->id()->setCertificateId($certificateId);
+        $ticket->id()->setTicketId($ticketId);
+
+        $marshaler = new VirgilAsn1DataMarshaller();
+        $ticketAsn1 = $marshaler->marshal($ticket);
+
+        $this->assertEquals($ticketAsn1Expected, $ticketAsn1);
+    }
+
+    /**
+     * @covers VirgilAsn1DataMarshaller::demarshalTicket
+     */
+    public function test_user_info_ticket_demarshalling() {
+        $expectedAccountId = "USER-1234";
+        $expectedCertificateId = "CERT-1234";
+        $expectedTicketId = "TICKET-1234";
+        $expectedTicketUserFirstName = "Jon";
+        $expectedTicketUserLastName = "Doe";
+        $expectedTicketUserAge = 31;
+        $ticketAsn1 = file_get_contents("data/asn1_user_info_ticket.der");
+
+        $marshaler = new VirgilAsn1DataMarshaller();
+        $ticket = $marshaler->demarshalTicket($ticketAsn1);
+
+        $this->assertEquals($expectedAccountId, $ticket->id()->accountId());
+        $this->assertEquals($expectedCertificateId, $ticket->id()->certificateId());
+        $this->assertEquals($expectedTicketId, $ticket->id()->ticketId());
+
+        $this->assertTrue($ticket->isUserInfoTicket());
+        $userInfoTicket = $ticket->asUserInfoTicket();
+        $this->assertEquals($expectedTicketUserFirstName, $userInfoTicket->userFirstName());
+        $this->assertEquals($expectedTicketUserLastName, $userInfoTicket->userLastName());
+        $this->assertEquals($expectedTicketUserAge, $userInfoTicket->userAge());
+    }
+
+    /**
+     * @covers VirgilAsn1DataMarshaller::marshal
+     */
+    public function test_sign_marshalling() {
+        $accountId = "USER-4321";
+        $certificateId = "CERT-4321";
+        $ticketId = "TICKET-4321";
+        $signId = "SIGN-4321";
+        $signHashName = "SHA512";
+        $signSignedHash = pack("H*",
+                "439416745474353736B41774D434341454244514F426767414541384756707A43635469495356734");
+        $signerCertificateId = "CERT-1234";
+
+        $signAsn1Expected = file_get_contents("data/asn1_sign.der");
+
+        $sign = new VirgilSign($signHashName, $signSignedHash, $signerCertificateId);
+        $sign->id()->setAccountId($accountId);
+        $sign->id()->setCertificateId($certificateId);
+        $sign->id()->setTicketId($ticketId);
+        $sign->id()->setSignId($signId);
+
+        $marshaler = new VirgilAsn1DataMarshaller();
+        $signAsn1 = $marshaler->marshal($sign);
+
+        $this->assertEquals($signAsn1Expected, $signAsn1);
+    }
+
+    /**
+     * @covers VirgilAsn1DataMarshaller::demarshalCertificate
+     */
+    public function test_sign_demarshalling() {
+        $expectedAccountId = "USER-4321";
+        $expectedCertificateId = "CERT-4321";
+        $expectedTicketId = "TICKET-4321";
+        $expectedSignId = "SIGN-4321";
+        $expectedSignHashName = "SHA512";
+        $expectedSignSignedHash = pack("H*",
+                "439416745474353736B41774D434341454244514F426767414541384756707A43635469495356734");
+        $expectedSignerCertificateId = "CERT-1234";
+
+        $signAsn1 = file_get_contents("data/asn1_sign.der");
+
+        $marshaler = new VirgilAsn1DataMarshaller();
+        $sign = $marshaler->demarshalSign($signAsn1);
+
+        $this->assertEquals($expectedAccountId, $sign->id()->accountId());
+        $this->assertEquals($expectedCertificateId, $sign->id()->certificateId());
+        $this->assertEquals($expectedTicketId, $sign->id()->ticketId());
+        $this->assertEquals($expectedSignId, $sign->id()->signId());
+        $this->assertEquals($expectedSignHashName, $sign->hashName());
+        $this->assertEquals($expectedSignSignedHash, $sign->signedDigest());
+        $this->assertEquals($expectedSignerCertificateId, $sign->signerCertificateId());
+    }
+
+}
+
+?>

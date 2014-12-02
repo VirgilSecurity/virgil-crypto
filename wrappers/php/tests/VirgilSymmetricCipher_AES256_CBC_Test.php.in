@@ -1,0 +1,101 @@
+<?php
+
+include_once "@PHP_MODULE_FILE_NAME@";
+
+/**
+ * @covers VirgilSymmetricCipher AES256 CBC algorithm
+ */
+class VirgilSymmetricCipher_AES256_CBC_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilSymmetricCipher::aes256
+     */
+    public function test_aes256_object_creation() {
+        $cipher = VirgilSymmetricCipher::aes256();
+
+        $this->assertInstanceOf("VirgilSymmetricCipher", $cipher);
+        $this->assertEquals("AES-256-CBC", $cipher->name());
+
+        return $cipher;
+    }
+
+    /**
+     * @covers VirgilSymmetricCipher (encoding)
+     * @depends test_aes256_object_creation
+     */
+    public function test_aes256_encoding(VirgilSymmetricCipher $cipher) {
+        // Define test values
+        $key = "passphrase";
+        $phrase = "This string will be encoded.";
+        $baseEncodedPhrase = "8b99cff2a79e40aeed8c730f1e7904ce19401a1b7c68285d1fdc35daf5a5d2d8";
+        // Set padding.
+        $cipher->setPadding(VirgilSymmetricCipher::VirgilSymmetricCipherPadding_Zeros);
+        // Check IV size for aes-256.
+        $this->assertEquals(16, $cipher->ivSize());
+        // Set IV.
+        $cipher->setIV($this->generateIV($cipher->ivSize()));
+        // Check key size.
+        $this->assertEquals(256, $cipher->keySize());
+        // Set key for encoding.
+        $keyHash = VirgilHash::sha256()->hash($key);
+        $cipher->setEncryptionKey($keyHash);
+        // Finish cipher configuration for encoding.
+        $cipher->reset();
+        // Encode test string
+        $chunks = str_split($phrase, $cipher->blockSize());
+        $encodedPhrase = "";
+        foreach ($chunks as $chunk) {
+            $encodedPhrase .= $cipher->update($chunk);
+        }
+        // Finish encoding.
+        $encodedPhrase .= $cipher->finish();
+        // Check result.
+        $expectedOutputLength = ceil(strlen($phrase) / $cipher->blockSize()) * $cipher->blockSize();
+        $this->assertEquals(strlen($encodedPhrase), $expectedOutputLength);
+        $this->assertEquals(bin2hex($encodedPhrase), $baseEncodedPhrase);
+    }
+
+    /**
+     * @covers VirgilSymmetricCipher (decoding)
+     * @depends test_aes256_object_creation
+     */
+    public function test_aes256_decoding(VirgilSymmetricCipher $cipher) {
+        // Define test values
+        $key = "passphrase";
+        $encodedPhrase = pack("H*", "8b99cff2a79e40aeed8c730f1e7904ce19401a1b7c68285d1fdc35daf5a5d2d8");
+        $baseDecodedPhrase = "This string will be encoded.";
+        // Set padding.
+        $cipher->setPadding(VirgilSymmetricCipher::VirgilSymmetricCipherPadding_Zeros);
+        // Check IV size for aes-256.
+        $this->assertEquals(16, $cipher->ivSize());
+        // Set IV.
+        $cipher->setIV($this->generateIV($cipher->ivSize()));
+        // Check key size.
+        $this->assertEquals(256, $cipher->keySize());
+        // Set key for encoding.
+        $keyHash = VirgilHash::sha256()->hash($key);
+        $cipher->setDecryptionKey($keyHash);
+        // Finish cipher configuration for decoding.
+        $cipher->reset();
+        // Encode test string
+        $chunks = str_split($encodedPhrase, $cipher->blockSize());
+        $decodedPhrase = "";
+        foreach ($chunks as $chunk) {
+            $decodedPhrase .= $cipher->update($chunk);
+        }
+        // Finish encoding.
+        $decodedPhrase .= $cipher->finish();
+        // Check result.
+        $this->assertEquals($decodedPhrase, $baseDecodedPhrase);
+    }
+
+    private function generateIV($size) {
+        $iv = "";
+        for ($i = 0; $i < $size; ++$i) {
+            $iv .= pack("C", 0x55);
+        }
+        return $iv;
+    }
+}
+
+?>

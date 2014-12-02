@@ -1,0 +1,12 @@
+{
+   "data" : {
+      "user_id" : "com.virgilsecurity.email.plugin",
+      "user_id_type" : "application"
+   },
+   "id" : {
+      "account_id" : "USER-1234",
+      "certificate_id" : "CERT-1234",
+      "ticket_id" : "TICKET-1234"
+   },
+   "type" : "user_id_ticket"
+}

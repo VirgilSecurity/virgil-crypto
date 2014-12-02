@@ -1,0 +1,32 @@
+<?php
+
+include_once "@PHP_MODULE_FILE_NAME@";
+
+class StringSource extends VirgilDataSource
+{
+    private $source;
+    private $sourcePos;
+    function __construct($string)
+    {
+        parent::__construct();
+        $this->source = str_split($string, 2);
+        $this->sourcePos = 0;
+    }
+
+    public function hasData()
+    {
+        return count($this->source) > $this->sourcePos;
+    }
+
+    public function read()
+    {
+        return $this->source[$this->sourcePos++];
+    }
+
+    public function reset()
+    {
+        $this->sourcePos = 0;
+    }
+}
+
+?>

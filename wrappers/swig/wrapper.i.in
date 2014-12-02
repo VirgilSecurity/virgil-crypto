@@ -1,0 +1,250 @@
+/**
+ * Copyright (C) 2014 Virgil Security Inc.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     (1) Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *     (2) Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in
+ *     the documentation and/or other materials provided with the
+ *     distribution.
+ *
+ *     (3) Neither the name of the copyright holder nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+
+/**
+ * @name Module name
+ */
+///@{
+%module(directors="1") @SWIG_MODULE_NAME@
+///@}
+
+/**
+ * @name Wrapper configuration section
+ */
+///@{
+#cmakedefine SWIG_WRAP_NAMESPACE
+#cmakedefine SWIG_WRAP_LOW_LEVEL_API
+#cmakedefine SWIG_WRAP_COPY_CONSTRUCTOR
+///@}
+
+
+%insert ("begin") %{
+
+#include <cstddef>
+
+%}
+
+/**
+ * @name Helper macros
+ */
+///@{
+%define DEFINE_NAMESPACE(className, package)
+#if defined(SWIG_WRAP_NAMESPACE)
+    %nspace package::className;
+#endif
+%enddef
+
+%define INCLUDE_CLASS(className, package, includePath)
+DEFINE_NAMESPACE(className, package)
+%insert("header") %{
+#include <includePath/className.h>
+using package::className;
+%}
+%include <includePath/className.h>
+%enddef
+
+%define INCLUDE_CLASS_WITH_DIRECTOR(className, package, includePath)
+DEFINE_NAMESPACE(className, package)
+%insert("header") %{
+#include <includePath/className.h>
+using package::className;
+%}
+%feature("director") className;
+%include <includePath/className.h>
+%enddef
+
+%define INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(className, package, includePath)
+DEFINE_NAMESPACE(className, package)
+%insert("header") %{
+#include <includePath/className.h>
+using package::className;
+%}
+#if defined(SWIG_WRAP_COPY_CONSTRUCTOR)
+    %copyctor className;
+#else
+    %ignore package::className::className(const package::className &);
+#endif
+%include <includePath/className.h>
+%enddef
+///@}
+
+
+/**
+ * @name Common includes
+ */
+///@{
+%include <exception.i>
+%include <std_except.i>
+%include <std_common.i>
+%include <std_string.i>
+%include <std_vector.i>
+///@}
+
+/**
+ * @name Common renames
+ */
+///@{
+%rename (assign) operator=;
+%rename (equals) operator==;
+///@}
+
+/**
+ * @name Exception handling
+ */
+///@{
+#ifdef SWIGPHP
+%{
+// Redefine SWIG_exception macro for PHP
+#undef SWIG_exception
+#define SWIG_exception(code, msg) { zend_throw_exception(NULL, (char*)msg, code TSRMLS_CC); return; }
+%}
+#endif
+
+#ifdef SWIGPHP
+%feature("director:except") {
+    if ($error == FAILURE) {
+        throw Swig::DirectorMethodException();
+    }
+}
+#endif
+%exception {
+    try {
+        $action
+    }
+#ifdef SWIGPHP
+    catch (Swig::DirectorException &exception) {
+        SWIG_fail;
+    }
+#endif
+    SWIG_CATCH_STDEXCEPT
+    catch (...) {
+        SWIG_exception(SWIG_UnknownError, "Unknown exception");
+    }
+}
+///@}
+
+/**
+ * @name Package: virgil
+ */
+///@{
+#ifdef SWIGPHP
+    %include "php/VirgilByteArray.i"
+#endif
+
+INCLUDE_CLASS(VirgilByteArray, virgil, virgil)
+
+#ifndef SWIGPHP
+namespace std {
+   %template(VirgilByteArray) vector<unsigned char>;
+};
+#endif
+
+INCLUDE_CLASS(VirgilException, virgil, virgil)
+///@}
+
+/**
+ * @name Package: virgil::crypto
+ */
+///@{
+#if defined(SWIG_WRAP_LOW_LEVEL_API)
+DEFINE_NAMESPACE(VirgilSymmetricCipherPadding, virgil::crypto)
+DEFINE_NAMESPACE(ECKeyGroup, virgil::crypto)
+DEFINE_NAMESPACE(VirgilKeyPairType, virgil::crypto)
+
+INCLUDE_CLASS(VirgilKDF, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilCryptoException, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilHash, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilBase64, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilKeyPairGenerator, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilSymmetricCipher, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilAsymmetricCipher, virgil::crypto, virgil/crypto)
+#endif /* defined(SWIG_WRAP_LOW_LEVEL_API) */
+INCLUDE_CLASS(VirgilRandom, virgil::crypto, virgil/crypto)
+///@}
+
+/**
+ * @name Package: virgil::service::data
+ */
+///@{
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilKeyPair, virgil::service::data, virgil/service/data)
+
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilAccountId, virgil::service::data, virgil/service/data)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCertificateId, virgil::service::data, virgil/service/data)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilTicketId, virgil::service::data, virgil/service/data)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilSignId, virgil::service::data, virgil/service/data)
+
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilIdProvider, virgil::service::data, virgil/service/data)
+%template(VirgilAccountIdProvider) virgil::service::data::VirgilIdProvider<VirgilAccountId>;
+%template(VirgilCertificateIdProvider) virgil::service::data::VirgilIdProvider<VirgilCertificateId>;
+%template(VirgilTicketIdProvider) virgil::service::data::VirgilIdProvider<VirgilTicketId>;
+%template(VirgilSignIdProvider) virgil::service::data::VirgilIdProvider<VirgilSignId>;
+
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilUserIdType, virgil::service::data, virgil/service/data)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilAccount, virgil::service::data, virgil/service/data)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCertificate, virgil::service::data, virgil/service/data)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilTicket, virgil::service::data, virgil/service/data)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilUserIdTicket, virgil::service::data, virgil/service/data)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilUserInfoTicket, virgil::service::data, virgil/service/data)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilSign, virgil::service::data, virgil/service/data)
+
+INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::service::stream, virgil/service/stream)
+INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::service::stream, virgil/service/stream)
+///@}
+
+
+/**
+ * @name Package: virgil::service::data::marshalling
+ */
+///@{
+%newobject *::demarshalAccount;
+%newobject *::demarshalCertificate;
+%newobject *::demarshalTicket;
+%newobject *::demarshalSign;
+INCLUDE_CLASS(VirgilDataMarshaller, virgil::service::data::marshalling, virgil/service/data/marshalling)
+INCLUDE_CLASS(VirgilJsonDataMarshaller, virgil::service::data::marshalling, virgil/service/data/marshalling)
+INCLUDE_CLASS(VirgilAsn1DataMarshaller, virgil::service::data::marshalling, virgil/service/data/marshalling)
+///@}
+
+/**
+ * @name Package: virgil::service
+ */
+///@{
+INCLUDE_CLASS(VirgilCipher, virgil::service, virgil/service)
+INCLUDE_CLASS(VirgilSigner, virgil::service, virgil/service)
+///@}

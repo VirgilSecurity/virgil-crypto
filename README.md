@@ -1,4 +1,0 @@
-virgil
-======
-
-VirgilLib

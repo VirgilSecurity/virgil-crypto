@@ -1,0 +1,100 @@
+<?php
+
+include_once "@PHP_MODULE_FILE_NAME@";
+
+/**
+ * @covers VirgilHash SHA256 algorithms
+ */
+class VirgilHash_SHA256_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilHash::sha256
+     */
+    public function test_sha256_object_creation() {
+        $hash = VirgilHash::sha256();
+
+        $this->assertInstanceOf("VirgilHash", $hash);
+        $this->assertEquals("SHA256", $hash->name());
+
+        return $hash;
+    }
+
+    /**
+     * @covers VirgilHash::start
+     * @covers VirgilHash::update
+     * @covers VirgilHash::finish
+     * @depends test_sha256_object_creation
+     */
+    public function test_sha256_update(VirgilHash $hash) {
+        // Define hasing values
+        $input1 = "Test ";
+        $input2 = "sha256 ";
+        $input3 = "hashing";
+        $baseHash = "9ebb710ab6ac8af3697bf040f1758c0174cdd550fb1706f903cf39079070359b";
+        // Hash
+        $hash->start();
+        $hash->update($input1);
+        $hash->update($input2);
+        $hash->update($input3);
+        $inputHash = bin2hex($hash->finish());
+        // Check
+        $this->assertEquals($inputHash, $baseHash);
+        // Finish
+    }
+
+    /**
+     * @covers VirgilHash::hash
+     * @depends test_sha256_object_creation
+     */
+    public function test_sha256_hash(VirgilHash $hash) {
+        // Define hasing values
+        $input = "Test sha256 hashing";
+        $baseHash = "9ebb710ab6ac8af3697bf040f1758c0174cdd550fb1706f903cf39079070359b";
+        // Hash
+        $inputHash = bin2hex($hash->hash($input));
+        // Check
+        $this->assertEquals($inputHash, $baseHash);
+    }
+
+    /**
+     * @covers VirgilHash::hmacStart
+     * @covers VirgilHash::hmacUpdate
+     * @covers VirgilHash::hmacFinish
+     * @depends test_sha256_object_creation
+     */
+    public function test_sha256_hmac_update(VirgilHash $hash) {
+        // Define hasing values
+        $key = "HMAC key";
+        $input1 = "Test ";
+        $input2 = "sha256 ";
+        $input3 = "HMAC";
+        $baseHash = "1682058147a6116213aa7468958747b144add8c829d23f14df6913785c1b5e9b";
+        // Hash
+        $hash->hmacStart($key);
+        $hash->hmacUpdate($input1);
+        $hash->hmacUpdate($input2);
+        $hash->hmacUpdate($input3);
+        $inputHash = bin2hex($hash->hmacFinish());
+        // Check
+        $this->assertEquals($inputHash, $baseHash);
+        // Finish
+    }
+
+    /**
+     * @covers VirgilHash::hmacHash
+     * @depends test_sha256_object_creation
+     */
+    public function test_sha256_hmac(VirgilHash $hash) {
+        // Define hasing values
+        $key = "HMAC key";
+        $input = "Test sha256 HMAC";
+        $baseHash = "1682058147a6116213aa7468958747b144add8c829d23f14df6913785c1b5e9b";
+        // Hash
+        $inputHash = bin2hex($hash->hmac($key, $input));
+        // Check
+        $this->assertEquals($inputHash, $baseHash);
+    }
+
+}
+
+?>

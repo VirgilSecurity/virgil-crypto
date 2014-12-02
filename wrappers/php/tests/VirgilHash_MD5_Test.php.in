@@ -1,0 +1,100 @@
+<?php
+
+include_once "@PHP_MODULE_FILE_NAME@";
+
+/**
+ * @covers VirgilHash MD5 algorithms
+ */
+class VirgilHash_MD5_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilHash::md5
+     */
+    public function test_md5_object_creation() {
+        $hash = VirgilHash::md5();
+
+        $this->assertInstanceOf("VirgilHash", $hash);
+        $this->assertEquals("MD5", $hash->name());
+
+        return $hash;
+    }
+
+    /**
+     * @covers VirgilHash::start
+     * @covers VirgilHash::update
+     * @covers VirgilHash::finish
+     * @depends test_md5_object_creation
+     */
+    public function test_md5_update(VirgilHash $hash) {
+        // Define hasing values
+        $input1 = "Test ";
+        $input2 = "md5 ";
+        $input3 = "hashing";
+        $baseHash = "d48f10a8bf87ae9bdf83213f79aaa4a4";
+        // Hash
+        $hash->start();
+        $hash->update($input1);
+        $hash->update($input2);
+        $hash->update($input3);
+        $inputHash = bin2hex($hash->finish());
+        // Check
+        $this->assertEquals($inputHash, $baseHash);
+        // Finish
+    }
+
+    /**
+     * @covers VirgilHash::hash
+     * @depends test_md5_object_creation
+     */
+    public function test_md5_hash(VirgilHash $hash) {
+        // Define hasing values
+        $input = "Test md5 hashing";
+        $baseHash = "d48f10a8bf87ae9bdf83213f79aaa4a4";
+        // Hash
+        $inputHash = bin2hex($hash->hash($input));
+        // Check
+        $this->assertEquals($inputHash, $baseHash);
+    }
+
+    /**
+     * @covers VirgilHash::hmacStart
+     * @covers VirgilHash::hmacUpdate
+     * @covers VirgilHash::hmacFinish
+     * @depends test_md5_object_creation
+     */
+    public function test_md5_hmac_update(VirgilHash $hash) {
+        // Define hasing values
+        $key = "HMAC key";
+        $input1 = "Test ";
+        $input2 = "md5 ";
+        $input3 = "HMAC";
+        $baseHash = "64d731faa111451ccacd76f0405670bb";
+        // Hash
+        $hash->hmacStart($key);
+        $hash->hmacUpdate($input1);
+        $hash->hmacUpdate($input2);
+        $hash->hmacUpdate($input3);
+        $inputHash = bin2hex($hash->hmacFinish());
+        // Check
+        $this->assertEquals($inputHash, $baseHash);
+        // Finish
+    }
+
+    /**
+     * @covers VirgilHash::hmacHash
+     * @depends test_md5_object_creation
+     */
+    public function test_md5_hmac(VirgilHash $hash) {
+        // Define hasing values
+        $key = "HMAC key";
+        $input = "Test md5 HMAC";
+        $baseHash = "64d731faa111451ccacd76f0405670bb";
+        // Hash
+        $inputHash = bin2hex($hash->hmac($key, $input));
+        // Check
+        $this->assertEquals($inputHash, $baseHash);
+    }
+
+}
+
+?>

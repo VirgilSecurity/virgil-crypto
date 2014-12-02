@@ -1,0 +1,54 @@
+--- library/pk_wrap.c	2014-07-11 12:28:56.000000000 +0300
++++ library/pk_wrap.c	2014-10-02 10:46:09.000000000 +0300
+@@ -40,6 +40,10 @@
+ #include "polarssl/ecdsa.h"
+ #endif
+
++#if defined(POLARSSL_ECIES_C)
++#include "polarssl/ecies.h"
++#endif
++
+ #if defined(POLARSSL_PLATFORM_C)
+ #include "polarssl/platform.h"
+ #else
+@@ -239,6 +243,26 @@
+     items->value = &( ((ecp_keypair *) ctx)->Q );
+ }
+
++#if defined(POLARSSL_ECIES_C)
++
++static int ecies_encrypt_wrap(void *ctx,
++                    const unsigned char *input, size_t ilen,
++                    unsigned char *output, size_t *olen, size_t osize,
++                    int (*f_rng)(void *, unsigned char *, size_t), void *p_rng)
++{
++    return ecies_encrypt((ecp_keypair *)ctx, input, ilen, output, olen, osize, f_rng, p_rng);
++}
++
++static int ecies_decrypt_wrap(void *ctx,
++                    const unsigned char *input, size_t ilen,
++                    unsigned char *output, size_t *olen, size_t osize,
++                    int (*f_rng)(void *, unsigned char *, size_t), void *p_rng)
++{
++    return ecies_decrypt((ecp_keypair *)ctx, input, ilen, output, olen, osize, f_rng, p_rng);
++}
++
++#endif /* POLARSSL_ECIES_C */
++
+ const pk_info_t eckey_info = {
+     POLARSSL_PK_ECKEY,
+     "EC",
+@@ -251,8 +275,13 @@
+     NULL,
+     NULL,
+ #endif
++#if defined(POLARSSL_ECIES_C)
++    ecies_decrypt_wrap,
++    ecies_encrypt_wrap,
++#else
+     NULL,
+     NULL,
++#endif
+     eckey_alloc_wrap,
+     eckey_free_wrap,
+     eckey_debug,

@@ -1,0 +1,283 @@
+<?php
+
+include_once "@PHP_MODULE_FILE_NAME@";
+
+/**
+ * @covers VirgilAsymmetricCipher EC algorithms
+ */
+class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilAsymmetricCipher::genKeyPair
+     */
+    public function test_ec_object_creation_with_generated_keys() {
+        $keySize = 512;
+
+        $cipher = VirgilAsymmetricCipher::ec();
+        $this->assertInstanceOf("VirgilAsymmetricCipher", $cipher);
+
+        $cipher->genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_BP512R1));
+        $this->assertEquals(512, $cipher->keySize());
+        // $this->assertEquals($cipher->exportPublicKeyToPEM(), $cipher->exportPrivateKeyToPEM());
+        return $cipher;
+    }
+
+    /**
+     * @covers VirgilAsymmetricCipher::encrypt
+     * @covers VirgilAsymmetricCipher::decrypt
+     * @depends test_ec_object_creation_with_generated_keys
+     */
+    public function test_ec_encoding_decoding_with_generated_keys(VirgilAsymmetricCipher $cipher) {
+        $input = "This string will be encoded.";
+        $encodedString = $cipher->encrypt($input);
+        $decodedString = $cipher->decrypt($encodedString);
+        $this->assertEquals($decodedString, $input);
+    }
+
+    /**
+     * @covers VirgilAsymmetricCipher::setPrivateKey
+     * @covers VirgilAsymmetricCipher::setPublicKey
+     * @covers VirgilAsymmetricCipher::encrypt
+     * @covers VirgilAsymmetricCipher::decrypt
+     */
+    public function test_ec_encoding_decoding_with_parsed_keys_from_der() {
+        $publicKeyDer512 = pack("H*",
+                "30819b301406072a8648ce3d02010609".
+                "2b240303020801010d038182000475ee".
+                "2e4d35d51892c9e50f3a3c2e04ba4734".
+                "03a74269edbaa6a095554540fdcc504d".
+                "8eb03bb178ceb8de966b1825f7135674".
+                "0598b31c69a935fca945e35b5f770a3f".
+                "0fcfc2c0f187a16d55c290b08a5cb7de".
+                "f2143f3c6b27aec27c4efcb32f0308cf".
+                "c106c8787d3d32d983aa9fefaff2d250".
+                "d85bf654900bcf2bf1935980a52c");
+        $privateKeyDer512 = pack("H*",
+                "3081da020101044052a26958c8c45e82".
+                "3f0c41c08c0e810770c9e1f5632b6c2d".
+                "ef726739a666147024aaf6d65ed90cd4".
+                "ac6586f1e0fa9b62fdd66806b9df937a".
+                "19091be64dad2edea00b06092b240303".
+                "020801010da18185038182000475ee2e".
+                "4d35d51892c9e50f3a3c2e04ba473403".
+                "a74269edbaa6a095554540fdcc504d8e".
+                "b03bb178ceb8de966b1825f713567405".
+                "98b31c69a935fca945e35b5f770a3f0f".
+                "cfc2c0f187a16d55c290b08a5cb7def2".
+                "143f3c6b27aec27c4efcb32f0308cfc1".
+                "06c8787d3d32d983aa9fefaff2d250d8".
+                "5bf654900bcf2bf1935980a52c");
+
+        $cipherCoder = VirgilAsymmetricCipher::none();
+        $this->assertInstanceOf("VirgilAsymmetricCipher", $cipherCoder);
+        $cipherCoder->setPublicKey($publicKeyDer512);
+        $this->assertEquals(512, $cipherCoder->keySize());
+
+        $cipherDecoder = VirgilAsymmetricCipher::none();
+        $this->assertInstanceOf("VirgilAsymmetricCipher", $cipherDecoder);
+        $cipherDecoder->setPrivateKey($privateKeyDer512);
+        $this->assertEquals(512, $cipherDecoder->keySize());
+
+        $input = "This string will be encoded.";
+        $encodedString = $cipherCoder->encrypt($input);
+        $decodedString = $cipherDecoder->decrypt($encodedString);
+        $this->assertEquals($decodedString, $input);
+    }
+
+    /**
+     * @covers VirgilAsymmetricCipher::setPrivateKey
+     * @covers VirgilAsymmetricCipher::setPublicKey
+     * @covers VirgilAsymmetricCipher::encrypt
+     * @covers VirgilAsymmetricCipher::decrypt
+     */
+    public function test_ec_encoding_decoding_with_parsed_keys_from_pem() {
+        $publicKeyPem512 =
+                "-----BEGIN PUBLIC KEY-----\n".
+                "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
+                "nIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdvcSsAMbLCnvEnTlXFMDn5\n".
+                "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
+                "o+yIBPaohqMzfjvj4Yw=\n".
+                "-----END PUBLIC KEY-----\n";
+        $privateKeyPem512 =
+                "-----BEGIN EC PRIVATE KEY-----\n".
+                "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
+                "b+IcSjzaw8xEZuIkT/wG/yVlx4Zimk0XoAsGCSskAwMCCAEBDaGBhQOBggAEA8GV\n".
+                "pzCcTiISVsHjuMZg4gvSnIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdv\n".
+                "cSsAMbLCnvEnTlXFMDn53a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8W\n".
+                "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
+                "-----END EC PRIVATE KEY-----\n";
+
+        $cipherCoder = VirgilAsymmetricCipher::none();
+        $this->assertInstanceOf("VirgilAsymmetricCipher", $cipherCoder);
+        $cipherCoder->setPublicKey($publicKeyPem512);
+        $this->assertEquals(512, $cipherCoder->keySize());
+
+        $cipherDecoder = VirgilAsymmetricCipher::none();
+        $this->assertInstanceOf("VirgilAsymmetricCipher", $cipherDecoder);
+        $cipherDecoder->setPrivateKey($privateKeyPem512);
+        $this->assertEquals(512, $cipherDecoder->keySize());
+
+        $input = "This string will be encoded.";
+        $encodedString = $cipherCoder->encrypt($input);
+        $decodedString = $cipherDecoder->decrypt($encodedString);
+        $this->assertEquals($decodedString, $input);
+    }
+
+    /**
+     * @covers VirgilAsymmetricCipher::setPrivateKey
+     * @covers VirgilAsymmetricCipher::setPublicKey
+     * @covers VirgilAsymmetricCipher::exportPrivateKeyToDER
+     * @covers VirgilAsymmetricCipher::exportPublicKeyToDER
+     */
+    public function test_ec_public_and_private_key_to_der() {
+        $publicKeyDer512 = pack("H*",
+                "30819b301406072a8648ce3d02010609".
+                "2b240303020801010d038182000475ee".
+                "2e4d35d51892c9e50f3a3c2e04ba4734".
+                "03a74269edbaa6a095554540fdcc504d".
+                "8eb03bb178ceb8de966b1825f7135674".
+                "0598b31c69a935fca945e35b5f770a3f".
+                "0fcfc2c0f187a16d55c290b08a5cb7de".
+                "f2143f3c6b27aec27c4efcb32f0308cf".
+                "c106c8787d3d32d983aa9fefaff2d250".
+                "d85bf654900bcf2bf1935980a52c");
+        $privateKeyDer512 = pack("H*",
+                "3081da020101044052a26958c8c45e82".
+                "3f0c41c08c0e810770c9e1f5632b6c2d".
+                "ef726739a666147024aaf6d65ed90cd4".
+                "ac6586f1e0fa9b62fdd66806b9df937a".
+                "19091be64dad2edea00b06092b240303".
+                "020801010da18185038182000475ee2e".
+                "4d35d51892c9e50f3a3c2e04ba473403".
+                "a74269edbaa6a095554540fdcc504d8e".
+                "b03bb178ceb8de966b1825f713567405".
+                "98b31c69a935fca945e35b5f770a3f0f".
+                "cfc2c0f187a16d55c290b08a5cb7def2".
+                "143f3c6b27aec27c4efcb32f0308cfc1".
+                "06c8787d3d32d983aa9fefaff2d250d8".
+                "5bf654900bcf2bf1935980a52c");
+
+        $cipherCoder = VirgilAsymmetricCipher::none();
+        $cipherCoder->setPublicKey($publicKeyDer512);
+        $this->assertEquals($publicKeyDer512, $cipherCoder->exportPublicKeyToDER());
+
+        $cipherDecoder = VirgilAsymmetricCipher::none();
+        $cipherDecoder->setPrivateKey($privateKeyDer512);
+        $this->assertEquals($privateKeyDer512, $cipherDecoder->exportPrivateKeyToDER());
+    }
+
+    /**
+     * @covers VirgilAsymmetricCipher::setPrivateKey
+     * @covers VirgilAsymmetricCipher::setPublicKey
+     * @covers VirgilAsymmetricCipher::exportPrivateKeyToPEM
+     * @covers VirgilAsymmetricCipher::exportPublicKeyToPEM
+     */
+    public function test_ec_public_and_private_key_to_pem() {
+        $publicKeyPem512 =
+                "-----BEGIN PUBLIC KEY-----\n".
+                "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
+                "nIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdvcSsAMbLCnvEnTlXFMDn5\n".
+                "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
+                "o+yIBPaohqMzfjvj4Yw=\n".
+                "-----END PUBLIC KEY-----\n";
+        $privateKeyPem512 =
+                "-----BEGIN EC PRIVATE KEY-----\n".
+                "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
+                "b+IcSjzaw8xEZuIkT/wG/yVlx4Zimk0XoAsGCSskAwMCCAEBDaGBhQOBggAEA8GV\n".
+                "pzCcTiISVsHjuMZg4gvSnIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdv\n".
+                "cSsAMbLCnvEnTlXFMDn53a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8W\n".
+                "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
+                "-----END EC PRIVATE KEY-----\n";
+
+        $cipherCoder = VirgilAsymmetricCipher::none();
+        $cipherCoder->setPublicKey($publicKeyPem512);
+        $this->assertEquals($publicKeyPem512, $cipherCoder->exportPublicKeyToPEM());
+
+        $cipherDecoder = VirgilAsymmetricCipher::none();
+        $cipherDecoder->setPrivateKey($privateKeyPem512);
+        $this->assertEquals($privateKeyPem512, $cipherDecoder->exportPrivateKeyToPEM());
+    }
+
+    /**
+     * @covers VirgilAsymmetricCipher::exportPrivateKeyToDER
+     * @covers VirgilAsymmetricCipher::setPrivateKey
+     * @covers VirgilAsymmetricCipher::encrypt
+     * @covers VirgilAsymmetricCipher::decrypt
+     * @depends test_ec_object_creation_with_generated_keys
+     */
+    public function test_ec_private_key_to_encrypted_der(VirgilAsymmetricCipher $cipher) {
+        $input = "This string will be encoded.";
+        $keyPassword = "password";
+
+        $encPrivateKey = $cipher->exportPrivateKeyToDER($keyPassword);
+        $restoredCipher = VirgilAsymmetricCipher::none();
+        $restoredCipher->setPrivateKey($encPrivateKey, $keyPassword);
+
+        $encodedString = $cipher->encrypt($input);
+        $decodedString = $restoredCipher->decrypt($encodedString);
+        $this->assertEquals($decodedString, $input);
+    }
+
+    /**
+     * @covers VirgilAsymmetricCipher::exportPrivateKeyToPEM
+     * @covers VirgilAsymmetricCipher::setPrivateKey
+     * @covers VirgilAsymmetricCipher::encrypt
+     * @covers VirgilAsymmetricCipher::decrypt
+     * @depends test_ec_object_creation_with_generated_keys
+     */
+    public function test_ec_private_key_to_encrypted_pem(VirgilAsymmetricCipher $cipher) {
+        $input = "This string will be encoded.";
+        $keyPassword = "password";
+
+        $encPrivateKey = $cipher->exportPrivateKeyToPEM($keyPassword);
+        $restoredCipher = VirgilAsymmetricCipher::none();
+        $restoredCipher->setPrivateKey($encPrivateKey, $keyPassword);
+
+        $encodedString = $cipher->encrypt($input);
+        $decodedString = $restoredCipher->decrypt($encodedString);
+        $this->assertEquals($decodedString, $input);
+    }
+
+    /**
+     * @covers VirgilAsymmetricCipher::setPrivateKey
+     * @covers VirgilAsymmetricCipher::setPublicKey
+     * @covers VirgilAsymmetricCipher::sign
+     * @covers VirgilAsymmetricCipher::verify
+     */
+    public function test_ec_sign_verify() {
+        $dataToSign = "This private data should be signed".
+
+        $publicKeyPem512 =
+                "-----BEGIN PUBLIC KEY-----\n".
+                "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
+                "nIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdvcSsAMbLCnvEnTlXFMDn5\n".
+                "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
+                "o+yIBPaohqMzfjvj4Yw=\n".
+                "-----END PUBLIC KEY-----\n";
+        $privateKeyPem512 =
+                "-----BEGIN EC PRIVATE KEY-----\n".
+                "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
+                "b+IcSjzaw8xEZuIkT/wG/yVlx4Zimk0XoAsGCSskAwMCCAEBDaGBhQOBggAEA8GV\n".
+                "pzCcTiISVsHjuMZg4gvSnIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdv\n".
+                "cSsAMbLCnvEnTlXFMDn53a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8W\n".
+                "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
+                "-----END EC PRIVATE KEY-----\n";
+
+        $signer = VirgilAsymmetricCipher::none();
+        $signer->setPrivateKey($privateKeyPem512);
+
+        $verifier = VirgilAsymmetricCipher::none();
+        $verifier->setPublicKey($publicKeyPem512);
+
+        $hash = VirgilHash::sha512();
+        $dataToSignValidHash = $hash->hash($dataToSign);
+        $dataToSignInvalidHash = $hash->hash($dataToSign."Alien Data");
+
+        $dataSign = $signer->sign($dataToSignValidHash);
+
+        $this->assertTrue($verifier->verify($dataToSignValidHash, $dataSign));
+        $this->assertFalse($verifier->verify($dataToSignInvalidHash, $dataSign));
+    }
+}
+
+?>

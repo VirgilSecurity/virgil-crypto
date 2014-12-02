@@ -1,0 +1,25 @@
+<?php
+
+include_once "@PHP_MODULE_FILE_NAME@";
+
+class StringSink extends VirgilDataSink
+{
+    private $result = "";
+
+    public function isGood()
+    {
+        return true;
+    }
+
+    public function write($data)
+    {
+        $this->result .= $data;
+    }
+
+    public function getResult()
+    {
+        return $this->result;
+    }
+}
+
+?>

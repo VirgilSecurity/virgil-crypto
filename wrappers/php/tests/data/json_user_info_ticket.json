@@ -1,0 +1,13 @@
+{
+   "data" : {
+      "user_age" : 21,
+      "user_first_name" : "Bob",
+      "user_last_name" : "Body"
+   },
+   "id" : {
+      "account_id" : "USER-1234",
+      "certificate_id" : "CERT-1234",
+      "ticket_id" : "TICKET-1234"
+   },
+   "type" : "user_info_ticket"
+}

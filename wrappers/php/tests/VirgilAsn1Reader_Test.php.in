@@ -1,0 +1,126 @@
+<?php
+
+include_once "@PHP_MODULE_FILE_NAME@";
+
+/**
+ * @covers VirgilAsn1Reader algorithms
+ */
+class VirgilAsn1Reader_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilAsn1Reader::new
+     */
+    public function test_asn1_reader_creation() {
+        $asn1Reader = new VirgilAsn1Reader();
+        $this->assertInstanceOf("VirgilAsn1Reader", $asn1Reader);
+        return $asn1Reader;
+    }
+
+
+    /**
+     * @covers VirgilAsn1Reader::readInteger
+     * @depends test_asn1_reader_creation
+     */
+    public function test_asn1_read_integer(VirgilAsn1Reader $asn1Reader) {
+        $expectedIntegerValue = 7;
+        $asn1 = file_get_contents("data/asn1_integer.der");
+        $asn1Reader->reset($asn1);
+        $integerValue = $asn1Reader->readInteger();
+        $this->assertEquals($expectedIntegerValue, $integerValue);
+    }
+
+    /**
+     * @covers VirgilAsn1Reader::readOctetString
+     * @depends test_asn1_reader_creation
+     */
+    public function test_asn1_read_octet_string(VirgilAsn1Reader $asn1Reader) {
+        $expectedOctedStringValue = pack("H*", "00112233445566778899AABBCCDDEEFF");
+        $asn1 = file_get_contents("data/asn1_octet_string.der");
+        $asn1Reader->reset($asn1);
+        $octedStringValue = $asn1Reader->readOctetString();
+        $this->assertEquals($expectedOctedStringValue, $octedStringValue);
+    }
+
+    /**
+     * @covers VirgilAsn1Reader::readUTF8String
+     * @depends test_asn1_reader_creation
+     */
+    public function test_asn1_read_utf8_string(VirgilAsn1Reader $asn1Reader) {
+        $str = "Строка в UTF8";
+        $expectedUTF8StringValue = iconv(mb_detect_encoding($str, mb_detect_order(), true), "UTF-8", $str);
+        $asn1 = file_get_contents("data/asn1_utf8_string.der");
+        $asn1Reader->reset($asn1);
+        $utf8StringValue = $asn1Reader->readUTF8String();
+        $this->assertEquals($expectedUTF8StringValue, $utf8StringValue);
+    }
+
+    /**
+     * @covers VirgilAsn1Reader::readInteger
+     * @covers VirgilAsn1Reader::readOctetString
+     * @covers VirgilAsn1Reader::readSequence
+     * @depends test_asn1_reader_creation
+     */
+    public function test_asn1_read_sequence(VirgilAsn1Reader $asn1Reader) {
+        $expectedIntegerValue = 7;
+        $expectedOctedStringValue = pack("H*", "00112233445566778899AABBCCDDEEFF");
+
+        $asn1 = file_get_contents("data/asn1_sequence.der");
+        $asn1Reader->reset($asn1);
+
+        $asn1Reader->readSequence();
+
+        $integerValue = $asn1Reader->readInteger();
+        $this->assertEquals($expectedIntegerValue, $integerValue);
+
+        $octedStringValue = $asn1Reader->readOctetString();
+        $this->assertEquals($expectedOctedStringValue, $octedStringValue);
+    }
+
+    /**
+     * @covers VirgilAsn1Reader::readInteger
+     * @covers VirgilAsn1Reader::readOctetString
+     * @covers VirgilAsn1Reader::readSequence
+     * @depends test_asn1_reader_creation
+     */
+    public function test_asn1_read_complex(VirgilAsn1Reader $asn1Reader) {
+        $expectedIntegerValue = 7;
+        $expectedOctedStringValue = pack("H*", "00112233445566778899AABBCCDDEEFF");
+
+        $asn1 = file_get_contents("data/asn1_complex.der");
+        $asn1Reader->reset($asn1);
+
+        $asn1Reader->readSequence();
+
+        $asn1Reader->readSequence();
+        $this->assertEquals($expectedOctedStringValue, $asn1Reader->readOctetString());
+        $this->assertEquals($expectedIntegerValue, $asn1Reader->readInteger());
+
+        $asn1Reader->readSequence();
+        $this->assertEquals($expectedIntegerValue, $asn1Reader->readInteger());
+        $this->assertEquals($expectedOctedStringValue, $asn1Reader->readOctetString());
+    }
+
+    /**
+     * @covers VirgilAsn1Reader::readInteger
+     * @covers VirgilAsn1Reader::readOctetString
+     * @covers VirgilAsn1Reader::readSequence
+     * @covers VirgilAsn1Reader::readContextTag
+     * @depends test_asn1_reader_creation
+     */
+    public function test_asn1_read_context_tag(VirgilAsn1Reader $asn1Reader) {
+        $expectedIntegerValue = 7;
+        $expectedOctedStringValue = pack("H*", "00112233445566778899AABBCCDDEEFF");
+
+        $asn1 = file_get_contents("data/asn1_custom_tag.der");
+        $asn1Reader->reset($asn1);
+
+        $asn1Reader->readSequence();
+        $this->assertEquals(0, $asn1Reader->readContextTag(1));
+        $this->assertEquals(3, $asn1Reader->readContextTag(0));
+        $this->assertEquals($expectedIntegerValue, $asn1Reader->readInteger());
+        $this->assertEquals($expectedOctedStringValue, $asn1Reader->readOctetString());
+    }
+
+}
+
+?>

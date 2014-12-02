@@ -1,0 +1,108 @@
+<?php
+
+include_once "@PHP_MODULE_FILE_NAME@";
+
+/**
+ * @covers VirgilHash SHA512 algorithms
+ */
+class VirgilHash_SHA512_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilHash::sha512
+     */
+    public function test_sha512_object_creation() {
+        $hash = VirgilHash::sha512();
+
+        $this->assertInstanceOf("VirgilHash", $hash);
+        $this->assertEquals("SHA512", $hash->name());
+
+        return $hash;
+    }
+
+    /**
+     * @covers VirgilHash::start
+     * @covers VirgilHash::update
+     * @covers VirgilHash::finish
+     * @depends test_sha512_object_creation
+     */
+    public function test_sha512_update(VirgilHash $hash) {
+        // Define hasing values
+        $input1 = "Test ";
+        $input2 = "sha512 ";
+        $input3 = "hashing";
+        $baseHash =
+                "887276b113d4aed0ebc7cd77d85d592aad20694bb40d319184864ee9b49c08cd".
+                "bb7a16238faf13ddb7804f4ae184f09ed7bc33fbac7d802f9ef44be139929fda";
+        // Hash
+        $hash->start();
+        $hash->update($input1);
+        $hash->update($input2);
+        $hash->update($input3);
+        $inputHash = bin2hex($hash->finish());
+        // Check
+        $this->assertEquals($inputHash, $baseHash);
+        // Finish
+    }
+
+    /**
+     * @covers VirgilHash::hash
+     * @depends test_sha512_object_creation
+     */
+    public function test_sha512_hash(VirgilHash $hash) {
+        // Define hasing values
+        $input = "Test sha512 hashing";
+        $baseHash =
+                "887276b113d4aed0ebc7cd77d85d592aad20694bb40d319184864ee9b49c08cd".
+                "bb7a16238faf13ddb7804f4ae184f09ed7bc33fbac7d802f9ef44be139929fda";
+        // Hash
+        $inputHash = bin2hex($hash->hash($input));
+        // Check
+        $this->assertEquals($inputHash, $baseHash);
+    }
+
+    /**
+     * @covers VirgilHash::hmacStart
+     * @covers VirgilHash::hmacUpdate
+     * @covers VirgilHash::hmacFinish
+     * @depends test_sha512_object_creation
+     */
+    public function test_sha512_hmac_update(VirgilHash $hash) {
+        // Define hasing values
+        $key = "HMAC key";
+        $input1 = "Test ";
+        $input2 = "sha512 ";
+        $input3 = "HMAC";
+        $baseHash =
+                "0bd373e91f66012d609c8297b29eea1978282c7778c357d66df961fb86f41f07".
+                "e1414f666712ac528bf2cccca8fedb0a2471585ba90d0a8e24ba965edb18ccec";
+        // Hash
+        $hash->hmacStart($key);
+        $hash->hmacUpdate($input1);
+        $hash->hmacUpdate($input2);
+        $hash->hmacUpdate($input3);
+        $inputHash = bin2hex($hash->hmacFinish());
+        // Check
+        $this->assertEquals($inputHash, $baseHash);
+        // Finish
+    }
+
+    /**
+     * @covers VirgilHash::hmacHash
+     * @depends test_sha512_object_creation
+     */
+    public function test_sha512_hmac(VirgilHash $hash) {
+        // Define hasing values
+        $key = "HMAC key";
+        $input = "Test sha512 HMAC";
+        $baseHash =
+                "0bd373e91f66012d609c8297b29eea1978282c7778c357d66df961fb86f41f07".
+                "e1414f666712ac528bf2cccca8fedb0a2471585ba90d0a8e24ba965edb18ccec";
+        // Hash
+        $inputHash = bin2hex($hash->hmac($key, $input));
+        // Check
+        $this->assertEquals($inputHash, $baseHash);
+    }
+
+}
+
+?>

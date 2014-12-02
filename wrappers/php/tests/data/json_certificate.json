@@ -1,0 +1,7 @@
+{
+   "id" : {
+      "account_id" : "USER-1234",
+      "certificate_id" : "CERT-1234"
+   },
+   "public_key" : "-----BEGIN PUBLIC KEY-----\nMIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\nnIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdvcSsAMbLCnvEnTlXFMDn5\n3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\no+yIBPaohqMzfjvj4Yw=\n-----END PUBLIC KEY-----\n"
+}

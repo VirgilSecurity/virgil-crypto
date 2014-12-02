@@ -1,0 +1,57 @@
+--- include/polarssl/pk.h	2014-07-11 12:28:56.000000000 +0300
++++ include/polarssl/pk.h	2014-10-02 10:46:09.000000000 +0300
+@@ -551,6 +551,28 @@
+  */
+ int pk_write_key_der( pk_context *ctx, unsigned char *buf, size_t size );
+
++#if defined(POLARSSL_PK_WRITE_ENCRYPTED_KEY)
++/**
++ * \brief           Write a private key to a PKCS#1 or SEC1 DER structure
++ *                  Note: data is written at the end of the buffer! Use the
++ *                        return value to determine where you should start
++ *                        using the buffer
++ *
++ * \param ctx       private to write away
++ * \param buf       buffer to write to
++ * \param size      size of the buffer
++ * \param pwd       password for encryption (optional)
++ *                  Note: if password specified, private key is written in
++ *                  PKCS#8 format
++ * \param pwdlen    size of the password
++ *
++ * \return          length of data written if successful, or a specific
++ *                  error code
++ */
++int pk_write_key_enc_der( pk_context *ctx, unsigned char *buf, size_t size,
++                          const unsigned char *pwd, size_t pwdlen );
++#endif /* POLARSSL_PK_WRITE_ENCRYPTED_KEY */
++
+ /**
+  * \brief           Write a public key to a SubjectPublicKeyInfo DER structure
+  *                  Note: data is written at the end of the buffer! Use the
+@@ -588,6 +610,25 @@
+  * \return          0 successful, or a specific error code
+  */
+ int pk_write_key_pem( pk_context *ctx, unsigned char *buf, size_t size );
++
++#if defined(POLARSSL_PK_WRITE_ENCRYPTED_KEY)
++/**
++ * \brief           Write a private key to a PKCS#1 or SEC1 PEM string
++ *
++ * \param ctx       private to write away
++ * \param buf       buffer to write to
++ * \param size      size of the buffer
++ * \param pwd       password for encryption (optional)
++ *                  Note: if password specified, private key is written in
++ *                  PKCS#8 format
++ * \param pwdlen    size of the password
++ *
++ * \return          0 successful, or a specific error code
++ */
++int pk_write_key_enc_pem( pk_context *ctx, unsigned char *buf, size_t size,
++                          const unsigned char *pwd, size_t pwdlen );
++#endif /* POLARSSL_PK_WRITE_ENCRYPTED_KEY */
++
+ #endif /* POLARSSL_PEM_WRITE_C */
+ #endif /* POLARSSL_PK_WRITE_C */
+

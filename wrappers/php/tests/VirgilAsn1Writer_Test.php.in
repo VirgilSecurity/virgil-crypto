@@ -1,0 +1,126 @@
+<?php
+
+include_once "@PHP_MODULE_FILE_NAME@";
+
+/**
+ * @covers VirgilAsn1Writer algorithms
+ */
+class VirgilAsn1Writer_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilAsn1Writer::new
+     */
+    public function test_asn1_writer_creation() {
+        $asn1Writer = new VirgilAsn1Writer();
+        $this->assertInstanceOf("VirgilAsn1Writer", $asn1Writer);
+        return $asn1Writer;
+    }
+
+
+    /**
+     * @covers VirgilAsn1Writer::writeInteger
+     * @depends test_asn1_writer_creation
+     */
+    public function test_asn1_write_integer(VirgilAsn1Writer $asn1Writer) {
+        $expectedAsn1 = file_get_contents("data/asn1_integer.der");
+        $asn1Writer->reset();
+        $asn1Writer->writeInteger(7);
+        $asn1 = $asn1Writer->finish();
+        $this->assertEquals($expectedAsn1, $asn1);
+    }
+
+    /**
+     * @covers VirgilAsn1Writer::writeOctetString
+     * @depends test_asn1_writer_creation
+     */
+    public function test_asn1_write_octet_string(VirgilAsn1Writer $asn1Writer) {
+        $expectedAsn1 = file_get_contents("data/asn1_octet_string.der");
+        $asn1Writer->reset();
+        $asn1Writer->writeOctetString(pack("H*", "00112233445566778899AABBCCDDEEFF"));
+        $asn1 = $asn1Writer->finish();
+        $this->assertEquals($expectedAsn1, $asn1);
+    }
+
+    /**
+     * @covers VirgilAsn1Writer::writeUTF8tString
+     * @depends test_asn1_writer_creation
+     */
+    public function test_asn1_write_utf8_string(VirgilAsn1Writer $asn1Writer) {
+        $expectedAsn1 = file_get_contents("data/asn1_utf8_string.der");
+        $str = "Строка в UTF8";
+        $utf8StringValue = iconv(mb_detect_encoding($str, mb_detect_order(), true), "UTF-8", $str);
+        $asn1Writer->reset();
+        $asn1Writer->writeUTF8String($utf8StringValue);
+        $asn1 = $asn1Writer->finish();
+        $this->assertEquals($expectedAsn1, $asn1);
+    }
+
+    /**
+     * @covers VirgilAsn1Writer::writeInteger
+     * @covers VirgilAsn1Writer::writeOctetString
+     * @covers VirgilAsn1Writer::writeSequence
+     * @depends test_asn1_writer_creation
+     */
+    public function test_asn1_write_sequence(VirgilAsn1Writer $asn1Writer) {
+        $expectedAsn1 = file_get_contents("data/asn1_sequence.der");
+        $asn1Writer->reset($asn1);
+        $writtenBytes = 0;
+        $writtenBytes += $asn1Writer->writeOctetString(pack("H*", "00112233445566778899AABBCCDDEEFF"));
+        $writtenBytes += $asn1Writer->writeInteger(7);
+        $writtenBytes += $asn1Writer->writeSequence($writtenBytes);
+
+        $asn1 = $asn1Writer->finish();
+        $this->assertEquals($expectedAsn1, $asn1);
+    }
+
+    /**
+     * @covers VirgilAsn1Writer::writeInteger
+     * @covers VirgilAsn1Writer::writeOctetString
+     * @covers VirgilAsn1Writer::writeSequence
+     * @depends test_asn1_writer_creation
+     */
+    public function test_asn1_write_complex(VirgilAsn1Writer $asn1Writer) {
+        $expectedAsn1 = file_get_contents("data/asn1_complex.der");
+        $asn1Writer->reset($asn1);
+
+        $seqBytesCount = 0;
+        $seqBytesCount += $asn1Writer->writeOctetString(pack("H*", "00112233445566778899AABBCCDDEEFF"));
+        $seqBytesCount += $asn1Writer->writeInteger(7);
+        $seqBytesCount += $asn1Writer->writeSequence($seqBytesCount);
+
+        $seq2BytesCount = 0;
+        $seq2BytesCount += $asn1Writer->writeInteger(7);
+        $seq2BytesCount += $asn1Writer->writeOctetString(pack("H*", "00112233445566778899AABBCCDDEEFF"));
+        $seq2BytesCount += $asn1Writer->writeSequence($seq2BytesCount);
+
+        $asn1Writer->writeSequence($seqBytesCount + $seq2BytesCount);
+
+        $asn1 = $asn1Writer->finish();
+        $this->assertEquals($expectedAsn1, $asn1);
+    }
+
+    /**
+     * @covers VirgilAsn1Writer::writeInteger
+     * @covers VirgilAsn1Writer::writeOctetString
+     * @covers VirgilAsn1Writer::writeSequence
+     * @covers VirgilAsn1Writer::writeContextTag
+     * @depends test_asn1_writer_creation
+     */
+    public function test_asn1_write_context_tag(VirgilAsn1Writer $asn1Writer) {
+        $expectedAsn1 = file_get_contents("data/asn1_custom_tag.der");
+        $asn1Writer->reset($asn1);
+
+        $seqBytesCount = 0;
+        $seqBytesCount += $asn1Writer->writeOctetString(pack("H*", "00112233445566778899AABBCCDDEEFF"));
+        $seqBytesCount += $integerLen = $asn1Writer->writeInteger(7);
+        $seqBytesCount += $asn1Writer->writeContextTag(0, $integerLen);
+
+        $seqBytesCount += $asn1Writer->writeSequence($seqBytesCount);
+
+        $asn1 = $asn1Writer->finish();
+        $this->assertEquals($expectedAsn1, $asn1);
+    }
+
+}
+
+?>

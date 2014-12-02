@@ -1,0 +1,237 @@
+<?php
+
+include_once "@PHP_MODULE_FILE_NAME@";
+include_once "StringSource.php";
+
+/**
+ * @covers VirgilSigner algorithms
+ */
+class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilCipher::generateKeyPair
+     * @covers VirgilSigner::sign
+     * @covers VirgilSigner::verify
+     */
+    public function test_data_sign_verify_with_generated_keys() {
+        $initialString = "very long string to be signed";
+        $dataSource = new StringSource($initialString);
+        $signerCertificateId = "CERT-1234";
+
+        $key = VirgilCipher::generateKeyPair();
+
+        $signer = new VirgilSigner();
+
+        $dataSource->reset();
+        $sign = $signer->sign($dataSource, $signerCertificateId, $key->privateKey());
+
+        $dataSource->reset();
+        $verifyResult = $signer->verify($dataSource, $sign, $key->publicKey());
+
+        $this->assertEquals($verifyResult, True);
+    }
+
+    /**
+     * @covers VirgilCipher::generateKeyPair
+     * @covers VirgilSigner::sign
+     * @covers VirgilSigner::verify
+     */
+    public function test_data_sign_verify_with_generated_keys_with_password() {
+        $initialString = "very long string to be signed";
+        $privateKeyPassword = "password";
+        $signerCertificateId = "CERT-1234";
+
+        $key = VirgilCipher::generateKeyPair($privateKeyPassword);
+        $signer = new VirgilSigner();
+
+        $dataSource = new StringSource($initialString);
+        $dataSource->reset();
+        $sign = $signer->sign($dataSource, $signerCertificateId, $key->privateKey(), $privateKeyPassword);
+
+        $dataSource->reset();
+        $verifyResult = $signer->verify($dataSource, $sign, $key->publicKey());
+
+        $this->assertEquals($verifyResult, True);
+    }
+
+    /**
+     * @covers VirgilCipher::generateKeyPair
+     * @covers VirgilSigner::sign
+     * @covers VirgilSigner::verify
+     * @expectedException Exception
+     * @expectedExceptionMessage PK - Given private key password does not allow for correct decryption
+     */
+    public function test_data_sign_verify_with_generated_keys_and_wrong_password() {
+        $initialString = "very long string to be signed";
+        $privateKeyPassword = "password";
+        $signerCertificateId = "CERT-1234";
+
+        $key = VirgilCipher::generateKeyPair($privateKeyPassword);
+
+        $signer = new VirgilSigner();
+
+        $dataSource = new StringSource($initialString);
+        $dataSource->reset();
+        $sign = $signer->sign($dataSource, $signerCertificateId, $key->privateKey(),
+                $privateKeyPassword . "Wrong password");
+
+        $dataSource->reset();
+        $verifyResult = $signer->verify($dataSource, $sign, $key->publicKey());
+
+        $this->assertEquals($verifyResult, True);
+    }
+
+    /**
+     * @covers VirgilSigner::sign
+     * @covers VirgilSigner::verify
+     */
+    public function test_data_sign_verify_with_ec_keys() {
+        $publicKeyPem512 =
+                "-----BEGIN PUBLIC KEY-----\n".
+                "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
+                "nIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdvcSsAMbLCnvEnTlXFMDn5\n".
+                "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
+                "o+yIBPaohqMzfjvj4Yw=\n".
+                "-----END PUBLIC KEY-----\n";
+        $privateKeyPem512 =
+                "-----BEGIN EC PRIVATE KEY-----\n".
+                "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
+                "b+IcSjzaw8xEZuIkT/wG/yVlx4Zimk0XoAsGCSskAwMCCAEBDaGBhQOBggAEA8GV\n".
+                "pzCcTiISVsHjuMZg4gvSnIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdv\n".
+                "cSsAMbLCnvEnTlXFMDn53a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8W\n".
+                "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
+                "-----END EC PRIVATE KEY-----\n";
+        $initialString = "very long string to be signed";
+        $dataSource = new StringSource($initialString);
+        $signerCertificateId = "CERT-1234";
+
+        $signer = new VirgilSigner();
+
+        $dataSource->reset();
+        $sign = $signer->sign($dataSource, $signerCertificateId, $privateKeyPem512);
+
+        $dataSource->reset();
+        $verifyResult = $signer->verify($dataSource, $sign, $publicKeyPem512);
+
+        $this->assertEquals($verifyResult, True);
+    }
+
+    /**
+     * @covers VirgilSigner::sign
+     * @covers VirgilSigner::verify
+     * @expectedException Exception
+     * @expectedExceptionMessage RSA - Bad input parameters to function
+     */
+    public function test_data_sign_verify_with_rsa_keys_small_size() {
+        $publicKeyPem128 =
+                "-----BEGIN PUBLIC KEY-----\n".
+                "MCwwDQYJKoZIhvcNAQEBBQADGwAwGAIRAIVxgrPd2i9gvuWr/oT/FKECAwEAAQ==\n".
+                "-----END PUBLIC KEY-----\n";
+        $privateKeyPem128 =
+                "-----BEGIN RSA PRIVATE KEY-----\n".
+                "MGICAQACEQCFcYKz3dovYL7lq/6E/xShAgMBAAECECdVnEdUn9nS56+aVx2iwDkC\n".
+                "CQC+XFKzIAH+MwIJALN08MfUfeXbAgkAjTtUBB/YOq8CCFpg9LrPS7CtAghJSJ6m\n".
+                "C0nIMQ==\n".
+                "-----END RSA PRIVATE KEY-----\n";
+
+        $initialString = "string to be signed";
+        $dataSource = new StringSource($initialString);
+        $signerCertificateId = "CERT-1234";
+
+        $signer = new VirgilSigner();
+
+        $dataSource->reset();
+        $sign = $signer->sign($dataSource, $signerCertificateId, $privateKeyPem128);
+
+        $dataSource->reset();
+        $verifyResult = $signer->verify($dataSource, $sign, $publicKeyPem128);
+
+        $this->assertEquals($verifyResult, True);
+    }
+
+    /**
+     * @covers VirgilCipher::generateKeyPair
+     * @covers VirgilSigner::sign
+     * @covers VirgilSigner::verify
+     */
+    public function test_data_sign_verify_with_rsa_keys() {
+        $publicKeyPem1024 =
+                "-----BEGIN PUBLIC KEY-----\n".
+                "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC9t5Pw7X+9Y9tk9KXY/mKxj3Jm\n".
+                "quAV3djyHx0OViLfb6Qn/O6XQhWTXmE+2C6bdS5am9VYFjGrdU0G1P25OkefCqOy\n".
+                "hQP7k2DP43RqfRF/dpkqNFrdAZp3nmUdk8xpfDQYMXfSqPAQUmYs1JXk6ZPePcCD\n".
+                "Vnq3/XdQTumxQn5e1wIDAQAB\n".
+                "-----END PUBLIC KEY-----\n";
+        $privateKeyPem1024 =
+                "-----BEGIN RSA PRIVATE KEY-----\n".
+                "MIICXQIBAAKBgQC9t5Pw7X+9Y9tk9KXY/mKxj3JmquAV3djyHx0OViLfb6Qn/O6X\n".
+                "QhWTXmE+2C6bdS5am9VYFjGrdU0G1P25OkefCqOyhQP7k2DP43RqfRF/dpkqNFrd\n".
+                "AZp3nmUdk8xpfDQYMXfSqPAQUmYs1JXk6ZPePcCDVnq3/XdQTumxQn5e1wIDAQAB\n".
+                "AoGADFZx8osfcYua6vfWCUSR2oY/pFmcdQ+WWjiXxSTo46r4+/jA82lCyfCrVlDs\n".
+                "xwNZ3l6gAzh+Rm48ciNL1M3rdlmmvP6DvueGffxx8zGpRSwp5yrPG18TDxn26hAi\n".
+                "NRDUuaE2TAJwwRyy/ocLmwjLDwCqXVUsovgL5o+reujl/UECQQDj1U+Zz25vqNW4\n".
+                "ELwcSkTPGn7yp64kqsftW5dEsvKaMIjzHYPuBPtF43SKDgLn8bzf5Q6jHmtwgoQl\n".
+                "98gpIrbRAkEA1SvuE2ekXmEIDGY5wPnBHYT0u/orfQuqlaV0Gy+8nel2ntKbFuSf\n".
+                "O5iClwvnBydeSjGXFf2BulBNFjO1Lfd1JwJBAMBUJipVrYidIi2MEwBewc+DMn9t\n".
+                "hdh2QufgVcYsuhfnuPRiiii4E9ZfuNWCFnnu29614rFY0KHdy+ixT0tKfsECQQCP\n".
+                "utr/QnZVHF9s3NA8CSnoWWkaBYek/GS8GZ67ZehrIKrWU3I2cVfbuuzyIxhWfnjY\n".
+                "1a7lKNR7ZwFS4vJaV+spAkAXHzK0j2mcWVVGwfbjtTNZMcJXFFMwwChXqrJSmJuf\n".
+                "9n6CqsAWIqytPE/eccgCSqU1XGR5gvrsx7NnPvvqilFs\n".
+                "-----END RSA PRIVATE KEY-----\n".
+
+        $initialString = "very long string to be signed";
+        $dataSource = new StringSource($initialString);
+        $signerCertificateId = "CERT-1234";
+
+        $signer = new VirgilSigner();
+
+        $dataSource->reset();
+        $sign = $signer->sign($dataSource, $signerCertificateId, $privateKeyPem1024);
+
+        $dataSource->reset();
+        $verifyResult = $signer->verify($dataSource, $sign, $publicKeyPem1024);
+
+        $this->assertEquals($verifyResult, True);
+    }
+
+    /**
+     * @covers VirgilCipher::generateKeyPair
+     * @covers VirgilSigner::sign
+     * @covers VirgilSigner::verify
+     */
+    public function test_user_id_ticket_sign_verify_with_generated_keys() {
+        $ticket = new VirgilUserIdTicket("user@domain.com", VirgilUserIdType::email());
+        $signerCertificateId = "CERT-1234";
+
+        $key = VirgilCipher::generateKeyPair();
+
+        $signer = new VirgilSigner();
+        $sign = $signer->sign($ticket, $signerCertificateId, $key->privateKey());
+
+        $verifyResult = $signer->verify($ticket, $sign, $key->publicKey());
+
+        $this->assertEquals($verifyResult, True);
+    }
+
+    /**
+     * @covers VirgilCipher::generateKeyPair
+     * @covers VirgilSigner::sign
+     * @covers VirgilSigner::verify
+     */
+    public function test_user_info_ticket_sign_verify_with_generated_keys() {
+        $ticket = new VirgilUserInfoTicket("Jon", "Doe", 31);
+        $signerCertificateId = "CERT-1234";
+
+        $key = VirgilCipher::generateKeyPair();
+
+        $signer = new VirgilSigner();
+        $sign = $signer->sign($ticket, $signerCertificateId, $key->privateKey());
+
+        $verifyResult = $signer->verify($ticket, $sign, $key->publicKey());
+
+        $this->assertEquals($verifyResult, True);
+    }
+
+}
+
+?>

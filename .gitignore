@@ -1,0 +1,13 @@
+#####
+build/
+install/
+docs/html/
+docs/latex/
+
+#####
+# OS X temporary files that should never be committed
+ 
+.DS_Store
+*.swp
+*.lock
+profile

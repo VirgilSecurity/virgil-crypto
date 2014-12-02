@@ -1,0 +1,150 @@
+<?php
+
+include_once "@PHP_MODULE_FILE_NAME@";
+include_once "StringSource.php";
+include_once "StringSink.php";
+
+/**
+ * @covers VirgilCipher algorithms
+ */
+class VirgilCipher_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilCipher::generateKeyPair
+     * @covers VirgilCipher::encrypt
+     * @covers VirgilCipher::decrypt
+     */
+    public function test_encryption_descryption_with_generated_keys() {
+        $initialString = "vert long string to be encrypted";
+
+        $key = VirgilCipher::generateKeyPair();
+
+        $encryptSource = new StringSource($initialString);
+        $encryptSink = new StringSink();
+
+        $cipher = new VirgilCipher();
+        $encryptionKey = $cipher->encrypt($encryptSource, $encryptSink, $key->publicKey());
+
+        $decryptSource = new StringSource($encryptSink->getResult());
+        $decryptSink = new StringSink();
+
+        $cipher->decrypt($decryptSource, $decryptSink, $encryptionKey, $key->privateKey());
+
+        $this->assertEquals($initialString, $decryptSink->getResult());
+    }
+
+    /**
+     * @covers VirgilCipher::generateKeyPair
+     * @covers VirgilCipher::encrypt
+     * @covers VirgilCipher::decrypt
+     */
+    public function test_encryption_descryption_with_generated_keys_with_password() {
+        $initialString = "vert long string to be encrypted";
+        $privateKeyPassword = "password";
+
+        $key = VirgilCipher::generateKeyPair($privateKeyPassword);
+
+        $encryptSource = new StringSource($initialString);
+        $encryptSink = new StringSink();
+
+        $cipher = new VirgilCipher();
+        $encryptionKey = $cipher->encrypt($encryptSource, $encryptSink, $key->publicKey());
+
+        $decryptSource = new StringSource($encryptSink->getResult());
+        $decryptSink = new StringSink();
+
+        $cipher->decrypt($decryptSource, $decryptSink, $encryptionKey, $key->privateKey(), $privateKeyPassword);
+
+        $this->assertEquals($initialString, $decryptSink->getResult());
+    }
+
+    /**
+     * @covers VirgilCipher::encrypt
+     * @covers VirgilCipher::decrypt
+     */
+    public function test_encryption_descryption_with_ec_keys() {
+        $initialString = "vert long string to be encrypted";
+        $publicKeyPem512 =
+                "-----BEGIN PUBLIC KEY-----\n".
+                "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
+                "nIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdvcSsAMbLCnvEnTlXFMDn5\n".
+                "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
+                "o+yIBPaohqMzfjvj4Yw=\n".
+                "-----END PUBLIC KEY-----\n";
+        $privateKeyPem512 =
+                "-----BEGIN EC PRIVATE KEY-----\n".
+                "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
+                "b+IcSjzaw8xEZuIkT/wG/yVlx4Zimk0XoAsGCSskAwMCCAEBDaGBhQOBggAEA8GV\n".
+                "pzCcTiISVsHjuMZg4gvSnIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdv\n".
+                "cSsAMbLCnvEnTlXFMDn53a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8W\n".
+                "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
+                "-----END EC PRIVATE KEY-----\n";
+
+        $encryptSource = new StringSource($initialString);
+        $encryptSink = new StringSink();
+        $cipher = new VirgilCipher();
+
+        $encryptionKey = $cipher->encrypt($encryptSource, $encryptSink, $publicKeyPem512);
+
+        $decryptSource = new StringSource($encryptSink->getResult());
+        $decryptSink = new StringSink();
+
+        $cipher->decrypt($decryptSource, $decryptSink, $encryptionKey, $privateKeyPem512);
+
+        $this->assertEquals($initialString, $decryptSink->getResult());
+    }
+
+    /**
+     * @covers VirgilCipher::encrypt
+     * @covers VirgilCipher::decrypt
+     */
+    public function test_encryption_descryption_with_rsa_keys() {
+        $initialString = "vert long string to be encrypted";
+        $publicKeyPem512 =
+                "-----BEGIN PUBLIC KEY-----\n".
+                "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaro\n".
+                "K+GG5ZcLA9AnA2Fwkx8hFozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQ==\n".
+                "-----END PUBLIC KEY-----\n";
+        $privateKeyPem512 =
+                "-----BEGIN RSA PRIVATE KEY-----\n".
+                "MIIBOQIBAAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaroK+GG5ZcLA9AnA2Fwkx8h\n".
+                "FozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQJAYML8olAwoVcfU8+FT3pj\n".
+                "8sU+faK9cL53MtXgmFJEgBUWlg0aGq67an8vgReCdIK6F3500f6Yf9LhjkoZ4ZBl\n".
+                "QQIhAPvyiVFhizURqzZHn4cQtKR2bgGJsARdvlg6KKHP/XXRAiEAzHu3uJ1mIFHH\n".
+                "MGMrpKC4mcnyvM4UEETIINUA+pabMz0CIGeJQA0FfOOOI0HnJROoNdPwJzzSjFb+\n".
+                "/x3aqJ/2jT5BAiBTLEtpY1Rj9v9/VgctelY776G1XFla2K9Sc3FnfBT6vQIgJlqb\n".
+                "tFCwQZczpa/OtOqYKHHpFevnLEVWrlHvCRgJeJU=\n".
+                "-----END RSA PRIVATE KEY-----\n";
+
+        $encryptSource = new StringSource($initialString);
+        $encryptSink = new StringSink();
+        $cipher = new VirgilCipher();
+
+        $encryptionKey = $cipher->encrypt($encryptSource, $encryptSink, $publicKeyPem512);
+
+        $decryptSource = new StringSource($encryptSink->getResult());
+        $decryptSink = new StringSink();
+
+        $cipher->decrypt($decryptSource, $decryptSink, $encryptionKey, $privateKeyPem512);
+
+        $this->assertEquals($initialString, $decryptSink->getResult());
+    }
+
+    /**
+     * @covers VirgilCipher::encryptWithPassword
+     * @covers VirgilCipher::decryptWithPassword
+     */
+    public function test_password_encryption_descryption() {
+        $initialString = "string to be encrypted";
+        $password = "password";
+
+        $cipher = new VirgilCipher();
+
+        $encryptedString = $cipher->encryptWithPassword($initialString, $password);
+        $decryptedString = $cipher->decryptWithPassword($encryptedString, $password);
+
+        $this->assertEquals($initialString, $decryptedString);
+    }
+}
+
+?>

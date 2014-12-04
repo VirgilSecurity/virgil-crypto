@@ -246,5 +246,6 @@ INCLUDE_CLASS(VirgilAsn1DataMarshaller, virgil::service::data::marshalling, virg
  */
 ///@{
 INCLUDE_CLASS(VirgilCipher, virgil::service, virgil/service)
+INCLUDE_CLASS(VirgilMultipartCipher, virgil::service, virgil/service)
 INCLUDE_CLASS(VirgilSigner, virgil::service, virgil/service)
 ///@}

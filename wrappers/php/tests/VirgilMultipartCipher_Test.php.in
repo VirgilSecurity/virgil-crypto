@@ -1,0 +1,84 @@
+<?php
+
+include_once "@PHP_MODULE_FILE_NAME@";
+include_once "StringSource.php";
+include_once "StringSink.php";
+
+/**
+ * @covers VirgilMultipartCipher algorithms
+ */
+class VirgilMultipartCipher_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilMultipartCipher::startEncryption
+     * @covers VirgilMultipartCipher::process
+     * @covers VirgilMultipartCipher::finish
+     */
+    public function test_encryption() {
+        $publicKeyPem512 =
+                "-----BEGIN PUBLIC KEY-----\n".
+                "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
+                "nIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdvcSsAMbLCnvEnTlXFMDn5\n".
+                "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
+                "o+yIBPaohqMzfjvj4Yw=\n".
+                "-----END PUBLIC KEY-----\n";
+        $cipher = new VirgilMultipartCipher();
+
+        $initialText = "This is very long string will be encoded";
+
+        $chunkSize = 5;
+
+        // Init encryption.
+        $encryptionKey = $cipher->startEncryption($publicKeyPem512);
+        // Split string to chunks.
+        $chunks = str_split($initialText, $chunkSize);
+        // Encode.
+        $encodedText = "";
+        foreach ($chunks as $chunk) {
+            $encodedText .= $cipher->process($chunk);
+        }
+        // Finish encoding.
+        $encodedText .= $cipher->finish();
+
+        return array($encryptionKey, $encodedText, $initialText);
+    }
+
+    /**
+     * @covers VirgilMultipartCipher::startDecryption
+     * @covers VirgilMultipartCipher::process
+     * @covers VirgilMultipartCipher::finish
+     * @depends test_encryption
+     */
+    public function test_decryption(array $encryptionDatagram) {
+        $privateKeyPem512 =
+                "-----BEGIN EC PRIVATE KEY-----\n".
+                "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
+                "b+IcSjzaw8xEZuIkT/wG/yVlx4Zimk0XoAsGCSskAwMCCAEBDaGBhQOBggAEA8GV\n".
+                "pzCcTiISVsHjuMZg4gvSnIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdv\n".
+                "cSsAMbLCnvEnTlXFMDn53a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8W\n".
+                "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
+                "-----END EC PRIVATE KEY-----\n";
+        $cipher = new VirgilMultipartCipher();
+
+        $encryptionKey = $encryptionDatagram[0];
+        $encodedText = $encryptionDatagram[1];
+        $initialText = $encryptionDatagram[2];
+        $chunkSize = 5;
+
+        // Init decryption.
+        $cipher->startDecryption($encryptionKey, $privateKeyPem512);
+        // Split string to chunks.
+        $chunks = str_split($encodedText, $chunkSize);
+        // Decode.
+        $decodedText = "";
+        foreach ($chunks as $chunk) {
+            $decodedText .= $cipher->process($chunk);
+        }
+        // Finish encoding.
+        $decodedText .= $cipher->finish();
+
+        $this->assertEquals($initialText, $decodedText);
+    }
+}
+
+?>

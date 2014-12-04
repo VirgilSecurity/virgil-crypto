@@ -1,4 +1,3 @@
-
 /**
  * Copyright (C) 2014 Virgil Security Inc.
  *

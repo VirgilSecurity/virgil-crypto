@@ -181,6 +181,14 @@ void VirgilSymmetricCipher::reset() {
     POLARSSL_ERROR_HANDLER(::cipher_reset(impl_->ctx));
 }
 
+void VirgilSymmetricCipher::clear() {
+    if (impl_) {
+        VirgilSymmetricCipherImpl *newImpl = new VirgilSymmetricCipherImpl(impl_->type);
+        delete impl_;
+        impl_ = newImpl;
+    }
+}
+
 VirgilByteArray VirgilSymmetricCipher::update(const VirgilByteArray& input) {
     size_t writtenBytes = 0;
     size_t bufLen = input.size() + this->blockSize();
@@ -208,5 +216,6 @@ VirgilByteArray VirgilSymmetricCipher::finish() {
     );
     VirgilByteArray result = VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(buf, writtenBytes);
     delete [] buf;
+
     return result;
 }

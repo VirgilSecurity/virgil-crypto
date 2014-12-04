@@ -137,6 +137,12 @@ public:
      * @brief Finish preparation before encryption / decryption.
      */
     void reset();
+    /**
+     * @brief Clear all configuration settings.
+     * @note This method SHOULD be used if, i.e. the class instance was used for encryption
+     *           and then is used for decryption, and vice versa.
+     */
+    void clear();
     ///@}
 
     /**

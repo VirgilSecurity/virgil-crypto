@@ -238,7 +238,9 @@ int ecies_encrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
     *olen = 0;
     mpi_init(&shared_key);
     ecp_keypair_init(&ephemeral_key);
-    cipher_init_ctx(&cipher_ctx, cipher_info_from_type(ECIES_CIPHER_MODE));
+    cipher_init(&cipher_ctx);
+    result = cipher_init_ctx(&cipher_ctx, cipher_info_from_type(ECIES_CIPHER_MODE));
+    ECIES_CHECK_RESULT(result);
     memset(&hmac_value, 0, sizeof(hmac_value));
     memset(&kdf_value, 0, sizeof(kdf_value));
     memset(encrypt_header, 0, sizeof(*encrypt_header));
@@ -316,7 +318,7 @@ exit:
     if (cipher_buffer != NULL) {
         polarssl_free(cipher_buffer);
     }
-    cipher_free_ctx(&cipher_ctx);
+    cipher_free(&cipher_ctx);
     ecp_keypair_free(&ephemeral_key);
     mpi_free(&shared_key);
     if (shared_key_binary) {
@@ -398,7 +400,9 @@ int ecies_decrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
     }
     ECIES_CHECK_RESULT(result);
     // 6. Decrypt given message.
-    cipher_init_ctx(&cipher_ctx, cipher_info_from_type(ECIES_CIPHER_MODE));
+    cipher_init(&cipher_ctx);
+    result = cipher_init_ctx(&cipher_ctx, cipher_info_from_type(ECIES_CIPHER_MODE));
+    ECIES_CHECK_RESULT(result);
     result = cipher_setkey(&cipher_ctx, kdf_value.key.enc, ECIES_ENC_SIZE, POLARSSL_DECRYPT);
     ECIES_CHECK_RESULT(result);
     result = cipher_set_padding_mode(&cipher_ctx, ECIES_CIPHER_PADDING);
@@ -437,7 +441,7 @@ exit:
     if (cipher_buffer != NULL) {
         polarssl_free(cipher_buffer);
     }
-    cipher_free_ctx(&cipher_ctx);
+    cipher_free(&cipher_ctx);
     if (ephemeral_key != NULL) {
         ecp_keypair_free(ephemeral_key);
     }

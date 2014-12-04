@@ -71,6 +71,7 @@ private:
         type = cipherType;
         const cipher_info_t * info = cipher_info_from_type(cipherType);
         ctx = new cipher_context_t();
+        ::cipher_init(ctx);
         POLARSSL_ERROR_HANDLER_DISPOSE(
             ::cipher_init_ctx(ctx, info),
             free_()
@@ -80,7 +81,7 @@ private:
     void free_() throw() {
         type = POLARSSL_CIPHER_NONE;
         if (ctx) {
-            ::cipher_free_ctx(ctx);
+            ::cipher_free(ctx);
             delete ctx;
             ctx = 0;
         }

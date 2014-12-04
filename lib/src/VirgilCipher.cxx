@@ -141,5 +141,3 @@ VirgilByteArray VirgilCipher::decryptWithPassword(const VirgilByteArray& data, c
     result.insert(result.end(), secondChunk.begin(), secondChunk.end());
     return result;
 }
-
-

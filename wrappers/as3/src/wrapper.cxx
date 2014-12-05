@@ -72,6 +72,7 @@ using virgil::VirgilByteArray;
 #include "VirgilAsn1DataMarshaller.wrapper.cxx"
 
 #include "VirgilCipher.wrapper.cxx"
+#include "VirgilChunkCipher.wrapper.cxx"
 #include "VirgilSigner.wrapper.cxx"
 
 int main() {

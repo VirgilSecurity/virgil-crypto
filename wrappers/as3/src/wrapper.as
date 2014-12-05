@@ -592,6 +592,41 @@ public class VirgilCipher {
     }
 }
 
+public class VirgilChunkCipher {
+    public var cPtr:int;
+
+    public static function create():VirgilChunkCipher {
+        var obj = new VirgilChunkCipher();
+        obj.cPtr = _wrap_new_VirgilChunkCipher();
+        return obj;
+    }
+
+    public function destroy():void {
+        _wrap_delete_VirgilChunkCipher(cPtr);
+    }
+
+    public function adjustEncryptionChunkSize(preferredChunkSize:uint):uint {
+        return _wrap_VirgilChunkCipher_adjustEncryptionChunkSize(cPtr, preferredChunkSize);
+    }
+
+    public function adjustDecryptionChunkSize(encryptionChunkSize:uint):uint {
+        return _wrap_VirgilChunkCipher_adjustDecryptionChunkSize(cPtr, encryptionChunkSize);
+    }
+
+    public function startEncryption(publicKey:ByteArray):ByteArray {
+        return _wrap_VirgilChunkCipher_startEncryption(cPtr, publicKey);
+    }
+
+    public function startDecryption(encryptionKey:ByteArray, privateKey:ByteArray,
+                privateKeyPassword:ByteArray = null):void {
+        return _wrap_VirgilChunkCipher_startDecryption(cPtr, encryptionKey, privateKey, privateKeyPassword);
+    }
+
+    public function process(data:ByteArray):ByteArray {
+        return _wrap_VirgilChunkCipher_process(cPtr, data);
+    }
+}
+
 public class VirgilSigner {
     public var cPtr:int;
 

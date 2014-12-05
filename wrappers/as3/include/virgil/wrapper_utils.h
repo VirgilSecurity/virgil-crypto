@@ -103,6 +103,8 @@ do { \
     inline_as3("throw new Error(asErrorMessage);"); \
 } while (0)
 
+#define AS3_VAR_IS_DEFINED(asVar, cResult) inline_as3("%0 = "#asVar" != null;\n" : "=r"(cResult))
+
 #define WRAPPER_THROWABLE_SECTION_START \
     try {
 #define WRAPPER_THROWABLE_SECTION_END \

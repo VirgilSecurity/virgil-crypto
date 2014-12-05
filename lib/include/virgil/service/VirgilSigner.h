@@ -78,7 +78,7 @@ public:
     VirgilSign sign(VirgilDataSource& source, const VirgilByteArray& signerCertificateId,
             const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
-     * @brief Verify sign and data provided by the source to be conformed to the given certificate.
+     * @brief Verify sign and data provided by the source to be conformed to the given public key.
      * @return true if sign is valid and data was not malformed.
      */
     bool verify(VirgilDataSource& source, const VirgilSign& sign, const VirgilByteArray& publicKey);
@@ -89,7 +89,7 @@ public:
     VirgilSign sign(VirgilTicket& ticket, const VirgilByteArray& signerCertificateId,
             const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
-     * @brief Verify sign and ticket to be conformed to the given certificate.
+     * @brief Verify sign and ticket to be conformed to the given public key.
      * @return true if sign is valid and data was not malformed.
      */
     bool verify(VirgilTicket& ticket, const VirgilSign& sign, const VirgilByteArray& publicKey);

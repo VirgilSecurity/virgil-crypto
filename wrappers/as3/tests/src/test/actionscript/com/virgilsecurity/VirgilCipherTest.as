@@ -68,6 +68,8 @@ package com.virgilsecurity {
                 "3FCCmHqzsxpEQCEwnd47BOP7sd6Nwy37YlX95RM=\n" +
                 "-----END EC PRIVATE KEY-----\n";
 
+        private static const TEST_PASSWORD : String = "password";
+
         private static const TEST_PLAIN_TEXT : String = "This string will be encrypted.";
 
         [BeforeClass(description = "Init library")]
@@ -141,5 +143,16 @@ package com.virgilsecurity {
             assertThat(ConvertionUtils.arrayToAsciiString(plainText), equalTo(TEST_PLAIN_TEXT));
         }
 
+        [Test(description="Test VirgilCipher.encryptWithPassword(), VirgilCipher.decryptWithPassword.")]
+        public function test_cipher_encrypt_decrypt_with_password():void {
+            var encodedData:ByteArray = cipher_.encryptWithPassword(
+                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT),
+                    ConvertionUtils.asciiStringToArray(TEST_PASSWORD));
+
+            var decodedData:ByteArray = cipher_.decryptWithPassword(encodedData,
+                    ConvertionUtils.asciiStringToArray(TEST_PASSWORD));
+
+            assertThat(ConvertionUtils.arrayToAsciiString(decodedData), TEST_PLAIN_TEXT);
+        }
     }
 }

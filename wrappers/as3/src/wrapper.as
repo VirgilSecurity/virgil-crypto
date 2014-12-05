@@ -582,6 +582,14 @@ public class VirgilCipher {
         }
         return _wrap_VirgilCipher_decrypt(cPtr, dataSource, dataSink, encryptionKey, privateKey, privateKeyPassword);
     }
+
+    public function encryptWithPassword(data:ByteArray, password:ByteArray):ByteArray {
+        return _wrap_VirgilCipher_encryptWithPassword(cPtr, data, password);
+    }
+
+    public function decryptWithPassword(data:ByteArray, password:ByteArray):ByteArray {
+        return _wrap_VirgilCipher_decryptWithPassword(cPtr, data, password);
+    }
 }
 
 public class VirgilSigner {

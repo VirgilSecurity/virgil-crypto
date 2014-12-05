@@ -34,8 +34,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SERVICE_VIRGIL_MULTIPART_CIPHER_H
-#define VIRGIL_SERVICE_VIRGIL_MULTIPART_CIPHER_H
+#ifndef VIRGIL_SERVICE_VIRGIL_CHUNK_CIPHER_H
+#define VIRGIL_SERVICE_VIRGIL_CHUNK_CIPHER_H
+
+#include <cstddef>
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -46,26 +48,38 @@ namespace virgil { namespace service {
  * @name Forward declarations
  */
 ///@{
-class VirgilMultipartCipherImpl;
+class VirgilChunkCipherImpl;
 ///@}
 
 /**
- * @brief This class provides high-level interface to encrypt / decrypt data in multipart form
- *            using Virgil Security keys.
+ * @brief This class provides high-level interface to encrypt / decrypt data splitted to chunks.
+ * @note Virgil Security keys is used for encryption and decryption.
  */
-class VirgilMultipartCipher {
+class VirgilChunkCipher {
 public:
     /**
      * @brief Initialize randomization module used by encryption.
      */
-    VirgilMultipartCipher();
+    VirgilChunkCipher();
     /**
      * @brief Dispose used resources.
      */
-    virtual ~VirgilMultipartCipher() throw();
+    virtual ~VirgilChunkCipher() throw();
 public:
     /**
-     * @brief Initialize multipart encryption with given public key.
+     * @brief Adjust given chunk size to use it during encryption.
+     * @param preferredChunkSize - preferred chunk size be used during encryption to split big data.
+     * @return Adjusted chunk size that SHOULD be used during encryption to split plain data.
+     */
+    size_t adjustEncryptionChunkSize(size_t preferredChunkSize) const;
+    /**
+     * @brief Adjust given chunk size to use it during decryption.
+     * @param encryptionChunkSize - chunk size that was used during encryption to split big data.
+     * @return Adjusted chunk size that SHOULD be used during decryption to split encrypted data.
+     */
+    size_t adjustDecryptionChunkSize(size_t encryptionChunkSize) const;
+    /**
+     * @brief Initialize data chunk encryption with given public key.
      * @return encryption key - key that is used for symmetric encryption,
      *             and is encrypted by public key for security transfer via public networks.
      */
@@ -76,28 +90,24 @@ public:
     void startDecryption(const VirgilByteArray& encryptionKey, const VirgilByteArray& privateKey,
                 const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
-     * @brief Encrypt given data.
-     * @return Encrypted data.
+     * @brief Encrypt / Decrypt given data chunk.
+     * @return Encrypted / Decrypted data chunk.
+     * @warninng
      */
     VirgilByteArray process(const VirgilByteArray& data);
-    /**
-     * @brief Finalize encryption or decryption process.
-     * @return Last part of the encrypted data.
-     */
-    VirgilByteArray finish();
 private:
     /**
      * @brief Deny copy constructor.
      */
-    VirgilMultipartCipher(const VirgilMultipartCipher& other);
+    VirgilChunkCipher(const VirgilChunkCipher& other);
     /**
      * @brief Deny asignment operator.
      */
-    VirgilMultipartCipher& operator=(const VirgilMultipartCipher& right);
+    VirgilChunkCipher& operator=(const VirgilChunkCipher& right);
 private:
-    VirgilMultipartCipherImpl *impl_;
+    VirgilChunkCipherImpl *impl_;
 };
 
 }}
 
-#endif /* VIRGIL_SERVICE_VIRGIL_MULTIPART_CIPHER_H */
+#endif /* VIRGIL_SERVICE_VIRGIL_CHUNK_CIPHER_H */

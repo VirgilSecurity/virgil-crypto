@@ -45,7 +45,7 @@ set (TEST_FILE_LIST
     VirgilAsymmetricCipher_EC_Test.php
     VirgilAsymmetricCipher_RSA_Test.php
     VirgilCipher_Test.php
-    VirgilMultipartCipher_Test.php
+    VirgilChunkCipher_Test.php
     VirgilSigner_Test.php
     VirgilAsn1Reader_Test.php
     VirgilAsn1Writer_Test.php

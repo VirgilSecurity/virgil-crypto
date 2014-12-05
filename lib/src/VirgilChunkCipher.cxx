@@ -34,16 +34,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/VirgilMultipartCipher.h>
-using virgil::service::VirgilMultipartCipher;
+#include <virgil/service/VirgilChunkCipher.h>
+using virgil::service::VirgilChunkCipher;
 
 #include <cstring>
+#include <cmath>
 
 #include <string>
 using std::string;
 
+#include <sstream>
+using std::ostringstream;
+
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
+
+#include <virgil/VirgilException.h>
+using virgil::VirgilException;
 
 #include <virgil/service/data/VirgilKeyPair.h>
 using virgil::service::data::VirgilKeyPair;
@@ -75,33 +82,49 @@ static const VirgilSymmetricCipher::VirgilSymmetricCipherPadding kSymmetricCiphe
 
 namespace virgil { namespace service {
 
-class VirgilMultipartCipherImpl {
+class VirgilChunkCipherImpl {
 public:
-    VirgilMultipartCipherImpl(const VirgilByteArray& moduleName)
-            : random(moduleName), symmetricCipher(VirgilSymmetricCipher::aes256()), encryptionKey(), publicKey() {
+    VirgilChunkCipherImpl(const VirgilByteArray& moduleName)
+            : random(moduleName), symmetricCipher(VirgilSymmetricCipher::aes256()), encryptionKey(), publicKey(),
+              iv(symmetricCipher.ivSize(), 0x00) {
     }
 public:
     VirgilRandom random;
     VirgilSymmetricCipher symmetricCipher;
     VirgilByteArray encryptionKey;
     VirgilByteArray publicKey;
+    VirgilByteArray iv;
 };
 
 }}
 
-VirgilMultipartCipher::VirgilMultipartCipher() : impl_(0) {
-    const char * moduleName = "virgil::service::VirgilMultipartCipher";
-    impl_ = new VirgilMultipartCipherImpl(
+VirgilChunkCipher::VirgilChunkCipher() : impl_(0) {
+    const char * moduleName = "virgil::service::VirgilChunkCipher";
+    impl_ = new VirgilChunkCipherImpl(
             VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN((const unsigned char *)moduleName, strlen(moduleName)));
 }
 
-VirgilMultipartCipher::~VirgilMultipartCipher() throw() {
+VirgilChunkCipher::~VirgilChunkCipher() throw() {
     if (impl_) {
         delete impl_;
     }
 }
 
-VirgilByteArray VirgilMultipartCipher::startEncryption(const VirgilByteArray& publicKey) {
+size_t VirgilChunkCipher::adjustEncryptionChunkSize(size_t preferredChunkSize) const {
+    size_t blockSize = impl_->symmetricCipher.blockSize();
+    if (preferredChunkSize < blockSize) {
+        return blockSize - 1;
+    } else {
+        return (size_t)(preferredChunkSize / blockSize) * blockSize - 1;
+    }
+}
+
+size_t VirgilChunkCipher::adjustDecryptionChunkSize(size_t encryptionChunkSize) const {
+    size_t blockSize = impl_->symmetricCipher.blockSize();
+    return (size_t)ceil((double)encryptionChunkSize / blockSize) * blockSize;
+}
+
+VirgilByteArray VirgilChunkCipher::startEncryption(const VirgilByteArray& publicKey) {
     impl_->publicKey = publicKey;
     impl_->encryptionKey = impl_->random.randomize(impl_->symmetricCipher.keyLength());
     impl_->symmetricCipher.clear();
@@ -114,7 +137,7 @@ VirgilByteArray VirgilMultipartCipher::startEncryption(const VirgilByteArray& pu
     return asymmetricCipher.encrypt(impl_->encryptionKey);
 }
 
-void VirgilMultipartCipher::startDecryption(const VirgilByteArray& encryptionKey, const VirgilByteArray& privateKey,
+void VirgilChunkCipher::startDecryption(const VirgilByteArray& encryptionKey, const VirgilByteArray& privateKey,
                 const VirgilByteArray& privateKeyPassword) {
     VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::none();
     asymmetricCipher.setPrivateKey(privateKey, privateKeyPassword);
@@ -126,12 +149,13 @@ void VirgilMultipartCipher::startDecryption(const VirgilByteArray& encryptionKey
     impl_->symmetricCipher.reset();
 }
 
-VirgilByteArray VirgilMultipartCipher::process(const VirgilByteArray& data) {
-    return impl_->symmetricCipher.update(data);
-}
-
-VirgilByteArray VirgilMultipartCipher::finish() {
-    VirgilByteArray lastData = impl_->symmetricCipher.finish();
-    impl_->symmetricCipher.clear();
-    return lastData;
+VirgilByteArray VirgilChunkCipher::process(const VirgilByteArray& data) {
+    bool dataIsAlignedToBlockSize = (data.size() % impl_->symmetricCipher.blockSize()) == 0;
+    if (impl_->symmetricCipher.isDecryptionMode() && !dataIsAlignedToBlockSize) {
+        ostringstream message;
+        message << "In the decryption mode data size MUST be multiple of ";
+        message << impl_->symmetricCipher.blockSize() << " bytes.";
+        throw VirgilException(message.str());
+    }
+    return impl_->symmetricCipher.crypt(data, impl_->iv);
 }

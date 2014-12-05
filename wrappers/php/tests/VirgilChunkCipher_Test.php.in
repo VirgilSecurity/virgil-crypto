@@ -40,14 +40,13 @@ include_once "StringSource.php";
 include_once "StringSink.php";
 
 /**
- * @covers VirgilMultipartCipher algorithms
+ * @covers VirgilChunkCipher algorithms
  */
-class VirgilMultipartCipher_Test extends PHPUnit_Framework_TestCase {
+class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
 
     /**
-     * @covers VirgilMultipartCipher::startEncryption
-     * @covers VirgilMultipartCipher::process
-     * @covers VirgilMultipartCipher::finish
+     * @covers VirgilChunkCipher::startEncryption
+     * @covers VirgilChunkCipher::process
      */
     public function test_encryption() {
         $publicKeyPem512 =
@@ -57,11 +56,11 @@ class VirgilMultipartCipher_Test extends PHPUnit_Framework_TestCase {
                 "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
                 "o+yIBPaohqMzfjvj4Yw=\n".
                 "-----END PUBLIC KEY-----\n";
-        $cipher = new VirgilMultipartCipher();
+        $cipher = new VirgilChunkCipher();
 
         $initialText = "This is very long string will be encoded";
 
-        $chunkSize = 5;
+        $chunkSize = $cipher->adjustEncryptionChunkSize(5);
 
         // Init encryption.
         $encryptionKey = $cipher->startEncryption($publicKeyPem512);
@@ -72,16 +71,13 @@ class VirgilMultipartCipher_Test extends PHPUnit_Framework_TestCase {
         foreach ($chunks as $chunk) {
             $encodedText .= $cipher->process($chunk);
         }
-        // Finish encoding.
-        $encodedText .= $cipher->finish();
 
-        return array($encryptionKey, $encodedText, $initialText);
+        return array($encryptionKey, $encodedText, $chunkSize, $initialText);
     }
 
     /**
-     * @covers VirgilMultipartCipher::startDecryption
-     * @covers VirgilMultipartCipher::process
-     * @covers VirgilMultipartCipher::finish
+     * @covers VirgilChunkCipher::startDecryption
+     * @covers VirgilChunkCipher::process
      * @depends test_encryption
      */
     public function test_decryption(array $encryptionDatagram) {
@@ -93,12 +89,16 @@ class VirgilMultipartCipher_Test extends PHPUnit_Framework_TestCase {
                 "cSsAMbLCnvEnTlXFMDn53a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8W\n".
                 "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
                 "-----END EC PRIVATE KEY-----\n";
-        $cipher = new VirgilMultipartCipher();
+        $cipher = new VirgilChunkCipher();
 
         $encryptionKey = $encryptionDatagram[0];
         $encodedText = $encryptionDatagram[1];
-        $initialText = $encryptionDatagram[2];
-        $chunkSize = 5;
+        $encryptionChunkSize = $encryptionDatagram[2];
+        $initialText = $encryptionDatagram[3];
+
+        $this->assertEquals(15, $encryptionChunkSize);
+        $chunkSize = $cipher->adjustDecryptionChunkSize($encryptionChunkSize);
+        $this->assertEquals(16, $chunkSize);
 
         // Init decryption.
         $cipher->startDecryption($encryptionKey, $privateKeyPem512);
@@ -109,8 +109,6 @@ class VirgilMultipartCipher_Test extends PHPUnit_Framework_TestCase {
         foreach ($chunks as $chunk) {
             $decodedText .= $cipher->process($chunk);
         }
-        // Finish encoding.
-        $decodedText .= $cipher->finish();
 
         $this->assertEquals($initialText, $decodedText);
     }

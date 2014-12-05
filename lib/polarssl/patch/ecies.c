@@ -35,10 +35,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- * Implementation is based on the solution described in the article:
- *     Gayoso Martinez, Victor. "A Survey of the Elliptic Curve Integrated Encryption Scheme"
- *     JOURNAL OF COMPUTER SCIENCE AND ENGINEERING 2, 2 (2010), 7-13
- *     http://hdl.handle.net/10261/32671.
+ * Implementation is based on the standard ISO 18033-2.
  */
 
 #include "polarssl/config.h"

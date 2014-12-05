@@ -141,6 +141,14 @@ size_t VirgilSymmetricCipher::keyLength() const {
     return size_t((keySize() + 7) / 8);
 }
 
+bool VirgilSymmetricCipher::isEncryptionMode() const {
+    return ::cipher_get_operation(impl_->ctx) == POLARSSL_ENCRYPT;
+}
+
+bool VirgilSymmetricCipher::isDecryptionMode() const {
+    return ::cipher_get_operation(impl_->ctx) == POLARSSL_DECRYPT;
+}
+
 void VirgilSymmetricCipher::setEncryptionKey(const VirgilByteArray& key) {
     POLARSSL_ERROR_HANDLER(
         ::cipher_setkey(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key) * 8, POLARSSL_ENCRYPT)
@@ -188,6 +196,22 @@ void VirgilSymmetricCipher::clear() {
         delete impl_;
         impl_ = newImpl;
     }
+}
+
+VirgilByteArray VirgilSymmetricCipher::crypt(const VirgilByteArray& input, const VirgilByteArray& iv) {
+    size_t writtenBytes = 0;
+    size_t bufLen = input.size() + this->blockSize();
+    unsigned char * buf = new unsigned char[bufLen];
+    POLARSSL_ERROR_HANDLER_DISPOSE(
+        ::cipher_crypt(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(iv), VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(input),
+                buf, &writtenBytes),
+        { // If error, dispose allocated memory.
+            delete [] buf;
+        }
+    );
+    VirgilByteArray result = VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(buf, writtenBytes);
+    delete [] buf;
+    return result;
 }
 
 VirgilByteArray VirgilSymmetricCipher::update(const VirgilByteArray& input) {

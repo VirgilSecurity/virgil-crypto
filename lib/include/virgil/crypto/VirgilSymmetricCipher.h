@@ -86,6 +86,7 @@ public:
     std::string name() const;
     /**
      * @brief Returns the block size of the current cipher.
+     * @return block size, in octets.
      */
     size_t blockSize() const;
     /**
@@ -102,6 +103,14 @@ public:
      * @return key length, in octets.
      */
     size_t keyLength() const;
+    /**
+     * @brief Returns true if cipher is in the encryption mode.
+     */
+    bool isEncryptionMode() const;
+    /**
+     * @brief Returns true if cipher is in the decryption mode.
+     */
+    bool isDecryptionMode() const;
     ///@}
 
     /**
@@ -144,9 +153,22 @@ public:
      */
     void clear();
     ///@}
-
     /**
-     * @name Encryption / Decryption
+     * @name Generic Encryption / Decryption
+     */
+    ///@{
+    /**
+     * @brief Generic all-in-one encryption / decryption.
+     *
+     * Encrypts or decrypts given data.
+     * @param input - data to be encrypted / decrypted.
+     * @param iv - initialization vector.
+     * @return Encrypted or decrypted bytes (rely on the current mode).
+     */
+    VirgilByteArray crypt(const VirgilByteArray& input, const VirgilByteArray& iv);
+    ///@}
+    /**
+     * @name Sequence Encryption / Decryption
      */
     ///@{
     /**

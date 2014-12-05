@@ -65,6 +65,8 @@ class VirgilSymmetricCipher_AES256_CBC_Test extends PHPUnit_Framework_TestCase {
         $baseEncodedPhrase = "8b99cff2a79e40aeed8c730f1e7904ce19401a1b7c68285d1fdc35daf5a5d2d8";
         // Set padding.
         $cipher->setPadding(VirgilSymmetricCipher::VirgilSymmetricCipherPadding_Zeros);
+        // Check block size size for aes-256.
+        $this->assertEquals(16, $cipher->blockSize());
         // Check IV size for aes-256.
         $this->assertEquals(16, $cipher->ivSize());
         // Set IV.

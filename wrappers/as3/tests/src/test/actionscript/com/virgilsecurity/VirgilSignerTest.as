@@ -51,6 +51,7 @@ package com.virgilsecurity {
     public class VirgilSignerTest {
         private var signer_:VirgilSigner;
 
+        private static const TEST_SIGNER_CERTIFICATE_ID : String = "CERT-1234";
         private static const TEST_PUBLIC_KEY_PEM : String =
                 "-----BEGIN PUBLIC KEY-----\n" +
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEa+CTMPBSOFoeZQIPiUOc84r2\n" +
@@ -93,18 +94,16 @@ package com.virgilsecurity {
 
             var plainTextDataSource:VirgilDataSourceWrapper = new VirgilDataSourceWrapper(plainTextData);
 
-            var signerCertificate:VirgilCertificate =
-                    VirgilCertificate.create(ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM));
-
-            var sign:VirgilSign = signer_.sign(plainTextDataSource, signerCertificate,
+            var sign:VirgilSign = signer_.sign(plainTextDataSource,
+                    ConvertionUtils.asciiStringToArray(TEST_SIGNER_CERTIFICATE_ID),
                     ConvertionUtils.asciiStringToArray(TEST_PRIVATE_KEY_PEM));
 
             plainTextData.position = 0;
-            var verified:Boolean = signer_.verify(plainTextDataSource, sign);
+            var verified:Boolean = signer_.verify(plainTextDataSource, sign,
+                    ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM));
             assertThat(verified, equalTo(true));
 
             sign.destroy();
-            signerCertificate.destroy();
         }
 
         [Test(description="Test VirgilSigner.signTicket() and VirgilSigner.verifyTicket().")]
@@ -114,17 +113,15 @@ package com.virgilsecurity {
                     ConvertionUtils.asciiStringToArray("Doe"),
                     21);
 
-            var signerCertificate:VirgilCertificate =
-                    VirgilCertificate.create(ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM));
-
-            var sign:VirgilSign = signer_.signTicket(ticket, signerCertificate,
+            var sign:VirgilSign = signer_.signTicket(ticket,
+                    ConvertionUtils.asciiStringToArray(TEST_SIGNER_CERTIFICATE_ID),
                     ConvertionUtils.asciiStringToArray(TEST_PRIVATE_KEY_PEM));
 
-            var verified:Boolean = signer_.verifyTicket(ticket, sign);
+            var verified:Boolean = signer_.verifyTicket(ticket, sign,
+                    ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM));
             assertThat(verified, equalTo(true));
 
             sign.destroy();
-            signerCertificate.destroy();
         }
 
     }

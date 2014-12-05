@@ -42,20 +42,20 @@ GEN_DESTRUCTOR(VirgilSign, com.virgilsecurity.wrapper)
 __attribute__((
     annotate("as3import:flash.utils.ByteArray"),
     annotate("as3sig:public function _wrap_new_VirgilSign"
-            "(asSignerCertificate:int, asHashName:ByteArray, asSignedDigest:ByteArray):int"),
+            "(asHashName:ByteArray, asSignedDigest:ByteArray, asSignerCertificateId:ByteArray):int"),
     annotate("as3package:com.virgilsecurity.wrapper")
 ))
 void _wrap_new_VirgilSign() {
-    const VirgilCertificate *cSignerCertificate = (VirgilCertificate *)0;
-    AS3_GetScalarFromVar(cSignerCertificate, asSignerCertificate)
-
     VirgilByteArray cHashName;
     AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asHashName, cHashName);
 
     VirgilByteArray cSignedDigest;
     AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asSignedDigest, cSignedDigest);
 
-    VirgilSign *cSelf = new VirgilSign(*cSignerCertificate, cHashName, cSignedDigest);
+    VirgilByteArray cSignerCertificateId;
+    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asSignerCertificateId, cSignerCertificateId);
+
+    VirgilSign *cSelf = new VirgilSign(cHashName, cSignedDigest, cSignerCertificateId);
     AS3_DeclareVar(asSelf, int);
     AS3_CopyScalarToVar(asSelf, cSelf);
     AS3_ReturnAS3Var(asSelf);
@@ -94,21 +94,6 @@ void _wrap_VirgilSign_setId() {
 
     AS3_ReturnAS3Var(undefined);
 }
-__attribute__((
-    annotate("as3import:flash.utils.ByteArray"),
-    annotate("as3sig:public function _wrap_VirgilSign_signerCertificate(asSelf):int"),
-    annotate("as3package:com.virgilsecurity.wrapper")
-))
-void _wrap_VirgilSign_signerCertificate() {
-    VirgilSign *cSelf = (VirgilSign *)0;
-    AS3_GetScalarFromVar(cSelf, asSelf);
-
-    const VirgilCertificate& cSignerCertificate = cSelf->signerCertificate();
-
-    AS3_DeclareVar(asSignerCertificate, int);
-    AS3_CopyScalarToVar(asSignerCertificate, &cSignerCertificate);
-    AS3_ReturnAS3Var(asSignerCertificate);
-}
 
 __attribute__((
     annotate("as3import:flash.utils.ByteArray"),
@@ -138,4 +123,19 @@ void _wrap_VirgilSign_signedDigest() {
     VIRGIL_BYTE_ARRAY_TO_AS3_BYTE_ARRAY(cSignedDigest, asSignedDigest);
 
     AS3_ReturnAS3Var(asSignedDigest);
+}
+
+__attribute__((
+    annotate("as3import:flash.utils.ByteArray"),
+    annotate("as3sig:public function _wrap_VirgilSign_signerCertificateId(asSelf):ByteArray"),
+    annotate("as3package:com.virgilsecurity.wrapper")
+))
+void _wrap_VirgilSign_signerCertificateId() {
+    VirgilSign *cSelf = (VirgilSign *)0;
+    AS3_GetScalarFromVar(cSelf, asSelf);
+
+    VirgilByteArray cSignerCertificateId = cSelf->signerCertificateId();
+    VIRGIL_BYTE_ARRAY_TO_AS3_BYTE_ARRAY(cSignerCertificateId, asSignerCertificateId);
+
+    AS3_ReturnAS3Var(asSignerCertificateId);
 }

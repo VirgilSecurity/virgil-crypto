@@ -53,13 +53,7 @@ package com.virgilsecurity {
 
         private static const TEST_HASH_NAME:String = "SHA512";
         private static const TEST_SIGNED_DIGEST:String = "SIGN DIGEST";
-        private static const TEST_PUBLIC_KEY_PEM : String =
-                "-----BEGIN PUBLIC KEY-----\n" +
-                "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEa+CTMPBSOFoeZQIPiUOc84r2\n" +
-                "BsdPwOzDshzW/JDeY85E8HC+cVF/9K+vdsoeyYP3yGpTwA53hZIKueUh+QAF53C9\n" +
-                "X6uaP98Jiu8RMZNplo9p4BZpCwP90A2rxRSatEFHOOtw3FCCmHqzsxpEQCEwnd47\n" +
-                "BOP7sd6Nwy37YlX95RM=\n" +
-                "-----END PUBLIC KEY-----\n";
+        private static const TEST_SIGNER_CERTIFICATE_ID : String = "CERT-1234";
 
         [BeforeClass(description = "Init library")]
         public static function setup():void {
@@ -68,11 +62,10 @@ package com.virgilsecurity {
 
         [Before(description="Creates VirgilSign object and stores it in the 'sign_' variable.")]
         public function create_sign() : void {
-            var signerCertificate:VirgilCertificate =
-                    VirgilCertificate.create(ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM));
-            sign_ = VirgilSign.create(signerCertificate,
+            sign_ = VirgilSign.create(
                     ConvertionUtils.asciiStringToArray(TEST_HASH_NAME),
-                    ConvertionUtils.asciiStringToArray(TEST_SIGNED_DIGEST)
+                    ConvertionUtils.asciiStringToArray(TEST_SIGNED_DIGEST),
+                    ConvertionUtils.asciiStringToArray(TEST_SIGNER_CERTIFICATE_ID)
                 );
             assertThat(sign_.cPtr, not(equalTo(0)));
         }
@@ -129,15 +122,20 @@ package com.virgilsecurity {
             assertThat(ConvertionUtils.arrayToAsciiString(sign_.id().signId()), equalTo("000"));
         }
 
-        [Test(description="Test VirgilSign::signerCertificate() returns the same object.")]
-        public function test_sign_signerCertificate_is_same():void {
-            assertThat(sign_.signerCertificate().cPtr, equalTo(sign_.signerCertificate().cPtr));
+        [Test(description="Test VirgilSign::hashName().")]
+        public function test_sign_hashName():void {
+            assertThat(ConvertionUtils.arrayToAsciiString(sign_.hashName()), equalTo(TEST_HASH_NAME));
         }
 
-        [Test(description="Test VirgilSign::signerCertificate().")]
-        public function test_sign_signerCertificate():void {
-            assertThat(ConvertionUtils.arrayToAsciiString(sign_.signerCertificate().publicKey()),
-                    equalTo(TEST_PUBLIC_KEY_PEM));
+        [Test(description="Test VirgilSign::signedDigest().")]
+        public function test_sign_signedDigest():void {
+            assertThat(ConvertionUtils.arrayToAsciiString(sign_.signedDigest()), equalTo(TEST_SIGNED_DIGEST));
+        }
+
+        [Test(description="Test VirgilSign::signerCertificateId().")]
+        public function test_sign_signerCertificateId():void {
+            assertThat(ConvertionUtils.arrayToAsciiString(sign_.signerCertificateId()),
+                    equalTo(TEST_SIGNER_CERTIFICATE_ID));
         }
     }
 

@@ -369,10 +369,10 @@ public class VirgilUserInfoTicket extends VirgilTicket {
 public class VirgilSign {
     public var cPtr:int;
 
-    public static function create(
-                signerCertificate:VirgilCertificate, hashName:ByteArray, signedDigest:ByteArray):VirgilSign {
+    public static function create(hashName:ByteArray, signedDigest:ByteArray,
+            signerCertificateId:ByteArray):VirgilSign {
         var obj = new VirgilSign();
-        obj.cPtr = _wrap_new_VirgilSign(signerCertificate.cPtr, hashName, signedDigest);
+        obj.cPtr = _wrap_new_VirgilSign(hashName, signedDigest, signerCertificateId);
         return obj;
     }
 
@@ -390,18 +390,16 @@ public class VirgilSign {
         _wrap_VirgilSign_setId(cPtr, signId.cPtr);
     }
 
-    public function signerCertificate():VirgilCertificate {
-        var signerCertificate:VirgilCertificate = new VirgilCertificate();
-        signerCertificate.cPtr = _wrap_VirgilSign_signerCertificate(cPtr);
-        return signerCertificate;
-    }
-
     public function hashName():ByteArray {
         return _wrap_VirgilSign_hashName(cPtr);
     }
 
     public function signedDigest():ByteArray {
         return _wrap_VirgilSign_signedDigest(cPtr);
+    }
+
+    public function signerCertificateId():ByteArray {
+        return _wrap_VirgilSign_signerCertificateId(cPtr);
     }
 }
 
@@ -599,32 +597,32 @@ public class VirgilSigner {
         _wrap_delete_VirgilSigner(cPtr);
     }
 
-    public function sign(dataSource:VirgilDataSource, signerCertificate:VirgilCertificate,
+    public function sign(dataSource:VirgilDataSource, signerCertificateId:ByteArray,
             privateKey:ByteArray, privateKeyPassword:ByteArray = null):VirgilSign {
         if (privateKeyPassword == null) {
             privateKeyPassword = new ByteArray();
         }
         var sign:VirgilSign = new VirgilSign();
-        sign.cPtr = _wrap_VirgilSigner_sign(cPtr, dataSource, signerCertificate.cPtr, privateKey, privateKeyPassword);
+        sign.cPtr = _wrap_VirgilSigner_sign(cPtr, dataSource, signerCertificateId, privateKey, privateKeyPassword);
         return sign;
     }
 
-    public function verify(dataSource:VirgilDataSource, sign:VirgilSign):Boolean {
-        return _wrap_VirgilSigner_verify(cPtr, dataSource, sign.cPtr);
+    public function verify(dataSource:VirgilDataSource, sign:VirgilSign, publicKey:ByteArray):Boolean {
+        return _wrap_VirgilSigner_verify(cPtr, dataSource, sign.cPtr, publicKey);
     }
 
-    public function signTicket(ticket:VirgilTicket, signerCertificate:VirgilCertificate,
+    public function signTicket(ticket:VirgilTicket, signerCertificateId:ByteArray,
             privateKey:ByteArray, privateKeyPassword:ByteArray = null):VirgilSign {
         if (privateKeyPassword == null) {
             privateKeyPassword = new ByteArray();
         }
         var sign:VirgilSign = new VirgilSign();
-        sign.cPtr = _wrap_VirgilSigner_signTicket(cPtr, ticket.cPtr, signerCertificate.cPtr, privateKey, privateKeyPassword);
+        sign.cPtr = _wrap_VirgilSigner_signTicket(cPtr, ticket.cPtr, signerCertificateId, privateKey, privateKeyPassword);
         return sign;
     }
 
-    public function verifyTicket(ticket:VirgilTicket, sign:VirgilSign):Boolean {
-        return _wrap_VirgilSigner_verifyTicket(cPtr, ticket.cPtr, sign.cPtr);
+    public function verifyTicket(ticket:VirgilTicket, sign:VirgilSign, publicKey:ByteArray):Boolean {
+        return _wrap_VirgilSigner_verifyTicket(cPtr, ticket.cPtr, sign.cPtr, publicKey);
     }
 }
 

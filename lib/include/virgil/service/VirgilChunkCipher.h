@@ -95,6 +95,11 @@ public:
      * @warninng
      */
     VirgilByteArray process(const VirgilByteArray& data);
+    /**
+     * @brief Finalize encryption or decryption process.
+     * @note Call this method after encryption or decryption are done to prevent security issues.
+     */
+     void finalize();
 private:
     /**
      * @brief Deny copy constructor.

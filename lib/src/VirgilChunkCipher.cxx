@@ -85,15 +85,14 @@ namespace virgil { namespace service {
 class VirgilChunkCipherImpl {
 public:
     VirgilChunkCipherImpl(const VirgilByteArray& moduleName)
-            : random(moduleName), symmetricCipher(VirgilSymmetricCipher::aes256()), encryptionKey(), publicKey(),
+            : random(moduleName), symmetricCipher(VirgilSymmetricCipher::aes256()),
               iv(symmetricCipher.ivSize(), 0x00) {
     }
 public:
     VirgilRandom random;
     VirgilSymmetricCipher symmetricCipher;
-    VirgilByteArray encryptionKey;
-    VirgilByteArray publicKey;
     VirgilByteArray iv;
+    VirgilByteArray encryptionKey;
 };
 
 }}
@@ -125,7 +124,6 @@ size_t VirgilChunkCipher::adjustDecryptionChunkSize(size_t encryptionChunkSize) 
 }
 
 VirgilByteArray VirgilChunkCipher::startEncryption(const VirgilByteArray& publicKey) {
-    impl_->publicKey = publicKey;
     impl_->encryptionKey = impl_->random.randomize(impl_->symmetricCipher.keyLength());
     impl_->symmetricCipher.clear();
     impl_->symmetricCipher.setEncryptionKey(impl_->encryptionKey);
@@ -133,7 +131,7 @@ VirgilByteArray VirgilChunkCipher::startEncryption(const VirgilByteArray& public
     impl_->symmetricCipher.reset();
 
     VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::none();
-    asymmetricCipher.setPublicKey(impl_->publicKey);
+    asymmetricCipher.setPublicKey(publicKey);
     return asymmetricCipher.encrypt(impl_->encryptionKey);
 }
 
@@ -158,4 +156,9 @@ VirgilByteArray VirgilChunkCipher::process(const VirgilByteArray& data) {
         throw VirgilException(message.str());
     }
     return impl_->symmetricCipher.crypt(data, impl_->iv);
+}
+
+void VirgilChunkCipher::finalize() {
+    impl_->symmetricCipher.clear();
+    VIRGIL_BYTE_ARRAY_ZEROIZE(impl_->encryptionKey);
 }

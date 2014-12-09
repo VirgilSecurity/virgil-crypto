@@ -104,6 +104,18 @@ VirgilKeyPair VirgilCipher::generateKeyPair(const VirgilByteArray& pwd) {
     return VirgilKeyPair(publicKey, privateKey);
 }
 
+VirgilByteArray VirgilCipher::reencryptKey(const VirgilByteArray& encryptionKey, const VirgilByteArray& publicKey,
+            const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
+
+    VirgilAsymmetricCipher encryptionCipher = VirgilAsymmetricCipher::none();
+    encryptionCipher.setPublicKey(publicKey);
+
+    VirgilAsymmetricCipher decriptioncCipher = VirgilAsymmetricCipher::none();
+    decriptioncCipher.setPrivateKey(privateKey, privateKeyPassword);
+
+    return encryptionCipher.encrypt(decriptioncCipher.decrypt(encryptionKey));
+}
+
 VirgilByteArray VirgilCipher::encrypt(VirgilDataSource& source, VirgilDataSink& sink,
         const VirgilByteArray& publicKey) {
 

@@ -79,6 +79,18 @@ public:
      */
     static VirgilKeyPair generateKeyPair(const VirgilByteArray& pwd = VirgilByteArray());
     /**
+     * @brief Re-encrypt given encryption key with new public key.
+     *
+     * This method CAN be used to share encryption key to another user - the owner of the new public key.
+     * @param encryptionKey - encryption key to be re-encrypted.
+     * @param publicKey - new public key.
+     * @param privateKey - current private key that can be used to decrypt encryption key.
+     * @param privateKeyPassword - password to the current private key.
+     * @return re-encrypted encryption key.
+     */
+    static VirgilByteArray reencryptKey(const VirgilByteArray& encryptionKey, const VirgilByteArray& publicKey,
+            const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    /**
      * @brief Encrypt data read from given source with public key and write it the sink.
      * @return encryption key - key that was used for symmetric encryption,
      *             and was encrypted by public key for security transfer via public networks.

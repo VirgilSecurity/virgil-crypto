@@ -148,8 +148,8 @@ public:
     void reset();
     /**
      * @brief Clear all configuration settings.
-     * @note This method SHOULD be used if, i.e. the class instance was used for encryption
-     *           and then is used for decryption, and vice versa.
+     * @note This method SHOULD be used if class instance was used for encryption
+     *           and then will be used for decryption, and vice versa.
      */
     void clear();
     ///@}

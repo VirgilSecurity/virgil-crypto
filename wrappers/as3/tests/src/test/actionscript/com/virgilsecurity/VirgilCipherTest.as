@@ -51,15 +51,14 @@ package com.virgilsecurity {
     public class VirgilCipherTest {
         private var cipher_:VirgilCipher;
 
-        private static const TEST_PUBLIC_KEY_PEM : String =
+        private static const TEST_EC_PUBLIC_KEY : String =
                 "-----BEGIN PUBLIC KEY-----\n" +
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEa+CTMPBSOFoeZQIPiUOc84r2\n" +
                 "BsdPwOzDshzW/JDeY85E8HC+cVF/9K+vdsoeyYP3yGpTwA53hZIKueUh+QAF53C9\n" +
                 "X6uaP98Jiu8RMZNplo9p4BZpCwP90A2rxRSatEFHOOtw3FCCmHqzsxpEQCEwnd47\n" +
                 "BOP7sd6Nwy37YlX95RM=\n" +
                 "-----END PUBLIC KEY-----\n";
-
-        private static const TEST_PRIVATE_KEY_PEM : String =
+        private static const TEST_EC_PRIVATE_KEY : String =
                 "-----BEGIN EC PRIVATE KEY-----\n" +
                 "MIHaAgEBBEBKFx+SNvhRVb0HpyEBceoVoU4AKZLrx9jdxRdQAS9tC/CQdAmB2t0h\n" +
                 "XsMEbtg5DVmwh29GzuLkyTh9VQYxAP/roAsGCSskAwMCCAEBDaGBhQOBggAEa+CT\n" +
@@ -67,6 +66,21 @@ package com.virgilsecurity {
                 "wA53hZIKueUh+QAF53C9X6uaP98Jiu8RMZNplo9p4BZpCwP90A2rxRSatEFHOOtw\n" +
                 "3FCCmHqzsxpEQCEwnd47BOP7sd6Nwy37YlX95RM=\n" +
                 "-----END EC PRIVATE KEY-----\n";
+        private static const TEST_RSA_PUBLIC_KEY : String =
+                "-----BEGIN PUBLIC KEY-----\n" +
+                "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaro\n" +
+                "K+GG5ZcLA9AnA2Fwkx8hFozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQ==\n" +
+                "-----END PUBLIC KEY-----\n";
+        private static const TEST_RSA_PRIVATE_KEY : String =
+                "-----BEGIN RSA PRIVATE KEY-----\n" +
+                "MIIBOQIBAAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaroK+GG5ZcLA9AnA2Fwkx8h\n" +
+                "FozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQJAYML8olAwoVcfU8+FT3pj\n" +
+                "8sU+faK9cL53MtXgmFJEgBUWlg0aGq67an8vgReCdIK6F3500f6Yf9LhjkoZ4ZBl\n" +
+                "QQIhAPvyiVFhizURqzZHn4cQtKR2bgGJsARdvlg6KKHP/XXRAiEAzHu3uJ1mIFHH\n" +
+                "MGMrpKC4mcnyvM4UEETIINUA+pabMz0CIGeJQA0FfOOOI0HnJROoNdPwJzzSjFb+\n" +
+                "/x3aqJ/2jT5BAiBTLEtpY1Rj9v9/VgctelY776G1XFla2K9Sc3FnfBT6vQIgJlqb\n" +
+                "tFCwQZczpa/OtOqYKHHpFevnLEVWrlHvCRgJeJU=\n" +
+                "-----END RSA PRIVATE KEY-----\n";
 
         private static const TEST_PASSWORD : String = "password";
 
@@ -89,6 +103,14 @@ package com.virgilsecurity {
             cipher_ = null;
         }
 
+
+        [Test(description="Test VirgilCipher.generateKeyPair().")]
+        public function test_cipher_generateKeyPair():void {
+            var keyPair:VirgilKeyPair = VirgilCipher.generateKeyPair();
+            assertThat(keyPair.publicKey().length, not(equalTo(0)));
+            assertThat(keyPair.privateKey().length, not(equalTo(0)));
+        }
+
         [Test(description="Test VirgilCipher.encrypt() and VirgilCipher.decrypt().")]
         public function test_cipher_encrypt_decrypt():void {
             var plainTextDataSource:VirgilDataSourceWrapper =
@@ -98,7 +120,7 @@ package com.virgilsecurity {
             var encryptedTextDataSink:VirgilDataSinkWrapper = new VirgilDataSinkWrapper(encryptedText);
 
             var encryptionKey:ByteArray = cipher_.encrypt(plainTextDataSource, encryptedTextDataSink,
-                    ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM));
+                    ConvertionUtils.asciiStringToArray(TEST_EC_PUBLIC_KEY));
 
             encryptedText.position = 0;
             var encryptedTextDataSource:VirgilDataSourceWrapper = new VirgilDataSourceWrapper(encryptedText);
@@ -107,16 +129,9 @@ package com.virgilsecurity {
             var plainTextDataSink:VirgilDataSinkWrapper = new VirgilDataSinkWrapper(plainText);
 
             cipher_.decrypt(encryptedTextDataSource, plainTextDataSink, encryptionKey,
-                    ConvertionUtils.asciiStringToArray(TEST_PRIVATE_KEY_PEM));
+                    ConvertionUtils.asciiStringToArray(TEST_EC_PRIVATE_KEY));
 
             assertThat(ConvertionUtils.arrayToAsciiString(plainText), equalTo(TEST_PLAIN_TEXT));
-        }
-
-        [Test(description="Test VirgilCipher.generateKeyPair().")]
-        public function test_cipher_generateKeyPair():void {
-            var keyPair:VirgilKeyPair = VirgilCipher.generateKeyPair();
-            assertThat(keyPair.publicKey().length, not(equalTo(0)));
-            assertThat(keyPair.privateKey().length, not(equalTo(0)));
         }
 
         [Test(description="Test VirgilCipher.generateKeyPair(), VirgilCipher.encrypt(), VirgilCipher.decrypt().")]
@@ -139,6 +154,32 @@ package com.virgilsecurity {
             var plainTextDataSink:VirgilDataSinkWrapper = new VirgilDataSinkWrapper(plainText);
 
             cipher_.decrypt(encryptedTextDataSource, plainTextDataSink, encryptionKey, keyPair.privateKey());
+
+            assertThat(ConvertionUtils.arrayToAsciiString(plainText), equalTo(TEST_PLAIN_TEXT));
+        }
+
+        [Test(description="Test VirgilCipher.encrypt(), VirgilCipher.decrypt() and VirgilCipher.reencryptKey().")]
+        public function test_cipher_reencryptKey():void {
+            var plainTextDataSource:VirgilDataSourceWrapper =
+                    new VirgilDataSourceWrapper(ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT));
+
+            var encryptedText:ByteArray = new ByteArray();
+            var encryptedTextDataSink:VirgilDataSinkWrapper = new VirgilDataSinkWrapper(encryptedText);
+
+            var encryptionKey:ByteArray = cipher_.encrypt(plainTextDataSource, encryptedTextDataSink,
+                    ConvertionUtils.asciiStringToArray(TEST_EC_PUBLIC_KEY));
+            var sharedEncryptionKey:ByteArray = VirgilCipher.reencryptKey(encryptionKey,
+                    ConvertionUtils.asciiStringToArray(TEST_RSA_PUBLIC_KEY),
+                    ConvertionUtils.asciiStringToArray(TEST_EC_PRIVATE_KEY));
+
+            encryptedText.position = 0;
+            var encryptedTextDataSource:VirgilDataSourceWrapper = new VirgilDataSourceWrapper(encryptedText);
+
+            var plainText:ByteArray = new ByteArray();
+            var plainTextDataSink:VirgilDataSinkWrapper = new VirgilDataSinkWrapper(plainText);
+
+            cipher_.decrypt(encryptedTextDataSource, plainTextDataSink, sharedEncryptionKey,
+                    ConvertionUtils.asciiStringToArray(TEST_RSA_PRIVATE_KEY));
 
             assertThat(ConvertionUtils.arrayToAsciiString(plainText), equalTo(TEST_PLAIN_TEXT));
         }

@@ -571,6 +571,11 @@ public class VirgilCipher {
         return keyPair;
     }
 
+    public static function reencryptKey(encryptionKey:ByteArray, publicKey:ByteArray,
+            privateKey:ByteArray, privateKeyPassword:ByteArray = null):ByteArray {
+        return _wrap_VirgilCipher_reencryptKey(encryptionKey, publicKey, privateKey, privateKeyPassword);
+    }
+
     public function encrypt(dataSource:VirgilDataSource, dataSink:VirgilDataSink, asPublicKey:ByteArray):ByteArray {
         return _wrap_VirgilCipher_encrypt(cPtr, dataSource, dataSink, asPublicKey);
     }
@@ -624,6 +629,10 @@ public class VirgilChunkCipher {
 
     public function process(data:ByteArray):ByteArray {
         return _wrap_VirgilChunkCipher_process(cPtr, data);
+    }
+
+    public function finalize():void {
+        return _wrap_VirgilChunkCipher_finalize(cPtr);
     }
 }
 

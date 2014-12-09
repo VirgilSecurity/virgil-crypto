@@ -55,6 +55,40 @@ void _wrap_VirgilCipher_generateKeyPair() {
 
 __attribute__((
     annotate("as3import:flash.utils.ByteArray"),
+    annotate("as3sig:public function _wrap_VirgilCipher_reencryptKey"
+            "(asEncryptionKey:ByteArray, asPublicKey:ByteArray, "
+            "asPrivateKey:ByteArray, asPrivateKeyPassword:ByteArray = null):ByteArray"),
+    annotate("as3package:com.virgilsecurity.wrapper")
+))
+void _wrap_VirgilCipher_reencryptKey() {
+
+    VirgilByteArray cEncryptionKey;
+    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asEncryptionKey, cEncryptionKey);
+
+    VirgilByteArray cPublicKey;
+    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPublicKey, cPublicKey);
+
+    VirgilByteArray cPrivateKey;
+    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPrivateKey, cPrivateKey);
+
+    bool cPasswordDefined = false;
+    AS3_VAR_IS_DEFINED(asPrivateKeyPassword, cPasswordDefined);
+
+    VirgilByteArray cPrivateKeyPassword;
+    if (cPasswordDefined) {
+        AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPrivateKeyPassword, cPrivateKeyPassword);
+    }
+
+    VirgilByteArray cReencryptedKey =
+            VirgilCipher::reencryptKey(cEncryptionKey, cPublicKey, cPrivateKey, cPrivateKeyPassword);
+
+    VIRGIL_BYTE_ARRAY_TO_AS3_BYTE_ARRAY(cReencryptedKey, asReencryptedKey);
+
+    AS3_ReturnAS3Var(asReencryptedKey);
+}
+
+__attribute__((
+    annotate("as3import:flash.utils.ByteArray"),
     annotate("as3sig:public function _wrap_VirgilCipher_encrypt"
             "(asSelf, asDataSource:*, asDataSink:*, asPublicKey:ByteArray):ByteArray"),
     annotate("as3package:com.virgilsecurity.wrapper")

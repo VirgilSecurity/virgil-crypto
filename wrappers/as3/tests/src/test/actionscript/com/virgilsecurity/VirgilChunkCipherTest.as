@@ -91,7 +91,7 @@ package com.virgilsecurity {
 
         [Test(description="Test VirgilChunkCipher main functionality.")]
         public function test_cipher():void {
-            var dataPart:ByteArray = new ByteArray();
+            var dataChunk:ByteArray = new ByteArray();
             const encryptionChunkSize:uint = cipher_.adjustEncryptionChunkSize(5);
 
             // Encrypt
@@ -101,10 +101,11 @@ package com.virgilsecurity {
             var encryptedData:ByteArray = new ByteArray();
             var plainData:ByteArray = ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT);
             while (plainData.bytesAvailable > 0) {
-                dataPart.clear();
-                plainData.readBytes(dataPart, 0, Math.min(encryptionChunkSize, plainData.bytesAvailable));
-                encryptedData.writeBytes(cipher_.process(dataPart));
+                dataChunk.clear();
+                plainData.readBytes(dataChunk, 0, Math.min(encryptionChunkSize, plainData.bytesAvailable));
+                encryptedData.writeBytes(cipher_.process(dataChunk));
             }
+            cipher_.finalize();
 
             // Decrypt
             const decryptionChunkSize:uint = cipher_.adjustDecryptionChunkSize(encryptionChunkSize);
@@ -112,10 +113,11 @@ package com.virgilsecurity {
             var decryptedData:ByteArray = new ByteArray();
             encryptedData.position = 0;
             while (encryptedData.bytesAvailable > 0) {
-                dataPart.clear();
-                encryptedData.readBytes(dataPart, 0, Math.min(decryptionChunkSize, encryptedData.bytesAvailable));
-                decryptedData.writeBytes(cipher_.process(dataPart));
+                dataChunk.clear();
+                encryptedData.readBytes(dataChunk, 0, Math.min(decryptionChunkSize, encryptedData.bytesAvailable));
+                decryptedData.writeBytes(cipher_.process(dataChunk));
             }
+            cipher_.finalize();
 
             // Check results
             assertThat(ConvertionUtils.arrayToAsciiString(decryptedData), equalTo(TEST_PLAIN_TEXT));

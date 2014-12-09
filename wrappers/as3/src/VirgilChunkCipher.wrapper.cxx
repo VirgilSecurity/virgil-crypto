@@ -154,3 +154,16 @@ WRAPPER_THROWABLE_SECTION_START
     AS3_ReturnAS3Var(asEncryptedData);
 WRAPPER_THROWABLE_SECTION_END
 }
+
+__attribute__((
+    annotate("as3sig:public function _wrap_VirgilChunkCipher_finalize(asSelf):void"),
+    annotate("as3package:com.virgilsecurity.wrapper")
+))
+void _wrap_VirgilChunkCipher_finalize() {
+    VirgilChunkCipher *cSelf = (VirgilChunkCipher *)0;
+    AS3_GetScalarFromVar(cSelf, asSelf);
+
+    cSelf->finalize();
+
+    AS3_ReturnAS3Var(undefined);
+}

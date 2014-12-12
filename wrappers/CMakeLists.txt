@@ -36,12 +36,10 @@
 
 #
 # Dependent on variables:
-#     - ENABLE_WRAPPER_CSHARP - enable / disable build wrapper for CSharp
-#     - ENABLE_WRAPPER_JS     - enable / disable build wrapper for Java Script
-#     - ENABLE_WRAPPER_PHP    - enable / disable build wrapper for PHP
+#     - PLATFORM_NAME - name of target platform and/or target language.
 #
 # Define variables:
-#     - WRAPPED_LIB_NAME - name of the wrapped library
+#     - WRAPPED_LIB_NAME - name of the wrapped library.
 #
 
 cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
@@ -56,19 +54,9 @@ include_directories (${${WRAPPED_LIB_NAME}_SOURCE_DIR}/include)
 include_directories (swig)
 
 # Add wrappers
-if (ENABLE_WRAPPER_CSHARP)
-    add_subdirectory (csharp)
-endif (ENABLE_WRAPPER_CSHARP)
-
-if (ENABLE_WRAPPER_JS)
-    # add_subdirectory (javascript)
-    add_subdirectory (js)
-endif (ENABLE_WRAPPER_JS)
-
-if (ENABLE_WRAPPER_PHP)
-    add_subdirectory (php)
-endif (ENABLE_WRAPPER_PHP)
-
-if (ENABLE_WRAPPER_AS3)
-    add_subdirectory (as3)
-endif (ENABLE_WRAPPER_AS3)
+set (PLATFORM_DIR ${PLATFORM_NAME_LOWER})
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${PLATFORM_DIR}")
+    add_subdirectory (${PLATFORM_DIR})
+else ()
+    message (STATUS "No special wrappers for the platform: " ${PLATFORM_NAME})
+endif ()

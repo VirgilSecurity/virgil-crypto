@@ -39,6 +39,7 @@
 import os
 import fileinput
 import re
+import collections
 
 import sys
 import yaml
@@ -70,39 +71,71 @@ def makeTempDir(prefix='.tmp'):
     finally:
         shutil.rmtree(tmpdir)
 
+def recursiveMerge(dest, src):
+    """Provide recursive merge of two containers"""
+    if isinstance(dest, dict) and isinstance(src, dict):
+        recursiveMergeDict(dest, src)
+    elif isinstance(dest, set) and isinstance(src, set):
+        dest |= src
+    elif isinstance(dest, list) and isinstance(src, list):
+        dest += src
+    else:
+        raise Exception("dest and src has unsupported or different types:" +
+                " dest(" + dest.__class__.__name__ + "), src(" + src.__class__.__name__ + ").\n" +
+                "Supported types: dict, set, list.");
+    return dest
+
+def recursiveMergeDict(dest, src):
+    """Provide recursive merge of two dictionaries."""
+    if not isinstance(dest, dict) or not isinstance(src, dict):
+        raise Exception("'dest' or 'src' is not of 'dict' type")
+    for key in src:
+        if key in dest and all(isinstance(x, collections.Container) for x in (dest[key], src[key])):
+            recursiveMerge(dest[key], src[key])
+        elif src[key] != None:
+            dest[key] = src[key]
+    return dest
+
 def parseArguments():
     """Parse given arguments
     """
     parser = argparse.ArgumentParser(description=
         "Use this utility to patch PolarSSL library add extended it functionality.");
-    parser.add_argument("-i", "--input", dest="input", help="input directoty", required=True)
-    parser.add_argument("-c", "--config-name", dest="configFileName", help="configuration file name", required=True)
+    parser.add_argument("-i", "--input-dir", dest="inputDir", help="library directoty", required=True)
+    parser.add_argument("-d", "--config-defines", dest="configDefines",
+            help="configuration file full name for defines", required=True)
+    parser.add_argument("-p", "--config-platform-defines", dest="configPlatformDefines",
+            help="configuration file full name for platfrom dependent defines", required=False)
+    parser.add_argument("-s", "--config-sources", dest="configSources",
+            help="configuration file full name for sources", required=True)
     return parser.parse_args()
 
 def patchConfigFile(settings, configFilePath):
     """Patch PolarSSL config.h file
     """
     # Comment macros from the settings list
-    commentMacrosSet = settings["config_file"]["comment_macros"]
-    for line in fileinput.input(configFilePath, inplace=True):
-        for commentMacros in commentMacrosSet:
-            pattern = r'^[\s]*(#define[\s]+' + commentMacros + ')'
-            if re.match(pattern, line):
-                line = re.sub(pattern, r'//\1', line)
-                break;
-        sys.stdout.write(line)
+    commentMacrosSet = settings["comment_macros"]
+    if commentMacrosSet:
+        for line in fileinput.input(configFilePath, inplace=True):
+            for commentMacros in commentMacrosSet:
+                pattern = r'^[\s]*(#define[\s]+' + commentMacros + ')'
+                if re.match(pattern, line):
+                    line = re.sub(pattern, r'//\1', line)
+                    break;
+            sys.stdout.write(line)
     # Uncomment macros from the settings list
-    uncommentMacrosSet = settings["config_file"]["uncomment_macros"]
-    for line in fileinput.input(configFilePath, inplace=True):
-        for uncommentMacros in uncommentMacrosSet:
-            pattern = r'^[\s]*//[\s]*(#define[\s]+' + uncommentMacros + ')'
-            if re.match(pattern, line):
-                line = re.sub(pattern, r'\1', line)
-                break;
-        sys.stdout.write(line)
+    uncommentMacrosSet = settings["uncomment_macros"]
+    if uncommentMacrosSet:
+        for line in fileinput.input(configFilePath, inplace=True):
+            for uncommentMacros in uncommentMacrosSet:
+                pattern = r'^[\s]*//[\s]*(#define[\s]+' + uncommentMacros + ')'
+                if re.match(pattern, line):
+                    line = re.sub(pattern, r'\1', line)
+                    break;
+            sys.stdout.write(line)
 
-    customMacroses = settings["config_file"]["new_macros"];
-    addMacrosAfterRe = settings["config_file"]["add_new_macros_after_regex"]
+    customMacroses = settings["new_macros"];
+    addMacrosAfterRe = settings["add_new_macros_after_regex"]
     macrosesWadAdded = False
     for line in fileinput.input(configFilePath, inplace=True):
         sys.stdout.write(line)
@@ -120,8 +153,8 @@ def patchConfigFile(settings, configFilePath):
 def patchCheckConfigFile(settings, configFilePath):
     """Patch PolarSSL check_config.h file
     """
-    customMacroses = settings["config_file"]["check_macros"];
-    addMacrosAfterRe = settings["config_file"]["add_check_macros_after_regex"]
+    customMacroses = settings["check_macros"];
+    addMacrosAfterRe = settings["add_check_macros_after_regex"]
     macrosesWadAdded = False
     for line in fileinput.input(configFilePath, inplace=True):
         sys.stdout.write(line)
@@ -139,13 +172,13 @@ def patchCheckConfigFile(settings, configFilePath):
 def addNewHeaders(settings, srcDir, dstDir):
     """Add new header files to destination folder
     """
-    for header in settings["library_new_headers"]:
+    for header in settings["new_headers"]:
         shutil.copy(os.path.join(srcDir, header), dstDir)
 
 def addNewSources(settings, srcDir, dstDir):
     """Add new source files to destination folder
     """
-    for header in settings["library_new_sources"]:
+    for header in settings["new_sources"]:
         shutil.copy(os.path.join(srcDir, header), dstDir)
 
 def insertObjectsToFile(filePath, insertedObjects, insertedPositionRegEx, additionalEndlineDelimeter):
@@ -172,17 +205,17 @@ def insertObjectsToFile(filePath, insertedObjects, insertedPositionRegEx, additi
 def addNewObjectsToMakeBuildPhase(settings, makeFilePath):
     """Patch library\Makefile file
     """
-    insertedObjects = settings["library_makefile_objects"]["objects"]
-    insertedPositionRegEx = settings["library_makefile_objects"]["add_after_regex"]
-    additionalEndlineDelimeter = settings["library_makefile_objects"]["additional_endline_delimeter"]
+    insertedObjects = settings["makefile_objects"]["objects"]
+    insertedPositionRegEx = settings["makefile_objects"]["add_after_regex"]
+    additionalEndlineDelimeter = settings["makefile_objects"]["additional_endline_delimeter"]
     insertObjectsToFile(makeFilePath, insertedObjects, insertedPositionRegEx, additionalEndlineDelimeter)
 
 def addNewObjectsToCMakeBuildPhase(settings, makeFilePath):
     """Patch library\CMakeLists.txt file
     """
-    insertedObjects = settings["library_cmakelists_objects"]["objects"]
-    insertedPositionRegEx = settings["library_cmakelists_objects"]["add_after_regex"]
-    additionalEndlineDelimeter = settings["library_cmakelists_objects"]["additional_endline_delimeter"]
+    insertedObjects = settings["cmakelists_objects"]["objects"]
+    insertedPositionRegEx = settings["cmakelists_objects"]["add_after_regex"]
+    additionalEndlineDelimeter = settings["cmakelists_objects"]["additional_endline_delimeter"]
     insertObjectsToFile(makeFilePath, insertedObjects, insertedPositionRegEx, additionalEndlineDelimeter)
 
 def applySvnPatches(settings, patchFilesDir, polarsslRootDir):
@@ -191,7 +224,7 @@ def applySvnPatches(settings, patchFilesDir, polarsslRootDir):
 
     with makeTempDir() as tmpDir:
 
-        patchFileNameList = settings["library_svn_patch_files"]
+        patchFileNameList = settings["svn_patch_files"]
 
         for patchFileName in patchFileNameList:
             patchFilePath = os.path.join(patchFilesDir, patchFileName)
@@ -213,14 +246,19 @@ def main(argv=None):
         argv = sys.argv
 
     args = parseArguments()
-    libraryDir = os.path.abspath(os.path.normpath(args.input))
-    configFileName = args.configFileName
 
     currentDir = os.path.dirname(os.path.abspath(__file__))
-    patchFilesDir = currentDir
+    srcDir = os.path.join(currentDir, "src")
+    diffDir = os.path.join(currentDir, "diff")
 
-    settings = yaml.load(open(os.path.join(patchFilesDir, configFileName)));
+    configDefines = yaml.load(open(args.configDefines));
+    if args.configPlatformDefines:
+        configPlatformDefines = yaml.load(open(args.configPlatformDefines));
+        recursiveMerge(configDefines, configPlatformDefines)
 
+    configSources = yaml.load(open(args.configSources));
+
+    libraryDir = os.path.abspath(os.path.normpath(args.inputDir))
     configFilePath = os.path.join(libraryDir, "include/polarssl/config.h")
     checkConfigFilePath = os.path.join(libraryDir, "include/polarssl/check_config.h")
     libraryMakeFilePath = os.path.join(libraryDir, "library/Makefile")
@@ -228,13 +266,16 @@ def main(argv=None):
     libraryIncludeDir = os.path.join(libraryDir, "include/polarssl")
     librarySourceDir = os.path.join(libraryDir, "library")
 
-    patchConfigFile(settings, configFilePath)
-    patchCheckConfigFile(settings, checkConfigFilePath)
-    addNewHeaders(settings, patchFilesDir, libraryIncludeDir)
-    addNewSources(settings, patchFilesDir, librarySourceDir)
-    addNewObjectsToMakeBuildPhase(settings, libraryMakeFilePath)
-    addNewObjectsToCMakeBuildPhase(settings, libraryCMakeFilePath)
-    applySvnPatches(settings, patchFilesDir, libraryDir)
+
+    patchConfigFile(configDefines, configFilePath)
+    patchCheckConfigFile(configDefines, checkConfigFilePath)
+
+    addNewHeaders(configSources, srcDir, libraryIncludeDir)
+    addNewSources(configSources, srcDir, librarySourceDir)
+    addNewObjectsToMakeBuildPhase(configSources, libraryMakeFilePath)
+    addNewObjectsToCMakeBuildPhase(configSources, libraryCMakeFilePath)
+
+    applySvnPatches(configSources, diffDir, libraryDir)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))

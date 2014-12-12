@@ -1,0 +1,28 @@
+---
+new_headers:
+    - kdf1.h
+    - ecies.h
+new_sources:
+    - kdf1.c
+    - ecies.c
+patch_sources:
+makefile_objects:
+    add_after_regex : '^OBJS=.*$'
+    additional_endline_delimeter : '\'
+    objects :
+        - kdf1.o
+        - ecies.o
+cmakelists_objects:
+    add_after_regex : '^set\(src.*$'
+    additional_endline_delimeter : ''
+    objects :
+        - kdf1.c
+        - ecies.c
+svn_patch_files:
+    - oid.h.patch
+    - oid.c.patch
+    - pk.h.patch
+    - pkwrite.c.patch
+    - pk_wrap.c.patch
+    - asn1write.c.patch
+    - error.c.patch

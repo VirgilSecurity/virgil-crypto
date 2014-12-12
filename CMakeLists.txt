@@ -36,18 +36,17 @@
 
 #
 # Configurable variables:
+#     - PLATFORM_NAME - name of target platform and/or language.
+#
 #     - INSTALL_LIB_DIR_NAME - name of the directory where libraries will be installed.
 #     - INSTALL_BIN_DIR_NAME - name of the directory where binaries will be installed.
 #     - INSTALL_API_DIR_NAME - name of the directory where API source files will be installed.
 #     - INSTALL_X86_DIR_NAME - name of the directory where 32-bit libraries and binaries will be installed.
 #     - INSTALL_X64_DIR_NAME - name of the directory where 64-bit libraries and binaries will be installed.
 #
-#     - ENABLE_WRAPPER_CSHARP - enable / disable build wrapper for CSharp.
-#     - ENABLE_WRAPPER_JS     - enable / disable build wrapper for Java Script.
-#     - ENABLE_WRAPPER_PHP    - enable / disable build wrapper for PHP.
-#     - ENABLE_WRAPPER_AS3    - enable / disable build wrapper for AS3.
-#                               Note, if this option is enabled, all other wrappers builds will be disabled.
 # Define variables:
+#     - PLATFORM_NAME_LOWER - lowercase(PLATFORM_NAME).
+#
 #     - COMPILER_ARCH_32 - boolean value that defines whether compiler build in 32-bit mode or not.
 #     - COMPILER_ARCH_64 - boolean value that defines whether compiler build in 64-bit mode or not.
 #
@@ -55,8 +54,6 @@
 #     - VIRGILCRYPTO_VERSION_MAJOR - library major version number.
 #     - VIRGILCRYPTO_VERSION_MINOR - library minor version number.
 #     - VIRGILCRYPTO_VERSION_PATCH - library patch number.
-#
-#     - WRAPPERS_ENABLED - defines that at least one wrapper is enabled.
 #
 
 cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
@@ -95,6 +92,12 @@ set (VIRGILCRYPTO_VERSION_MINOR 1)
 set (VIRGILCRYPTO_VERSION_PATCH 0)
 set (VIRGILCRYPTO_VERSION ${VIRGILCRYPTO_VERSION_MAJOR}.${VIRGILCRYPTO_VERSION_MINOR}.${VIRGILCRYPTO_VERSION_PATCH})
 
+# Set configurable platform
+set (PLATFORM_NAME "CPP" CACHE STRING "Select target platform / language")
+set_property (CACHE PLATFORM_NAME PROPERTY STRINGS "CPP" "CSHARP" "AS3" "JS" "PHP")
+string (TOLOWER "${PLATFORM_NAME}" PLATFORM_NAME_LOWER)
+message (STATUS "Selected platform and/or language is: " ${PLATFORM_NAME})
+
 # Set configurable path variables
 set (INSTALL_LIB_DIR_NAME lib CACHE STRING "Installation directory name for libraries")
 set (INSTALL_BIN_DIR_NAME bin CACHE STRING "Installation directory name for executables")
@@ -105,26 +108,6 @@ set (INSTALL_X64_DIR_NAME x64 CACHE STRING "Installation directory name for 64-b
 # Set interbnal path variables
 set (EXTERNAL_LIBS_DIR "${CMAKE_CURRENT_BINARY_DIR}/libs" CACHE INTERNAL
         "Path to the folder where all libs MUST be located after build")
-
-# Set build options
-option (ENABLE_WRAPPER_CSHARP "Enable / disable build of 'csharp' module" OFF)
-option (ENABLE_WRAPPER_PHP "Enable / disable build of 'php' module" OFF)
-option (ENABLE_WRAPPER_JS "Enable / disable build of 'javascript' module" OFF)
-option (ENABLE_WRAPPER_AS3 "Enable / disable build of 'actionscript' module" OFF)
-
-# If ActionScript wrapper build enabled, disable other wrappers.
-if (ENABLE_WRAPPER_AS3)
-    option (ENABLE_WRAPPER_CSHARP OFF FORCE)
-    option (ENABLE_WRAPPER_PHP OFF FORCE)
-    option (ENABLE_WRAPPER_JS OFF FORCE)
-endif (ENABLE_WRAPPER_AS3)
-
-# Define WRAPPERS_DISABLED
-if (ENABLE_WRAPPER_CSHARP OR ENABLE_WRAPPER_PHP OR ENABLE_WRAPPER_JS OR ENABLE_WRAPPER_AS3)
-    set (WRAPPERS_ENABLED TRUE)
-else ()
-    set (WRAPPERS_ENABLED FALSE)
-endif ()
 
 
 # Build submodules

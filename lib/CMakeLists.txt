@@ -54,7 +54,7 @@ endif (CMAKE_MAJOR_VERSION LESS 3)
 
 # Define sources list
 file (GLOB src "src/*")
-if (NOT WRAPPERS_ENABLED)
+if (PLATFORM_NAME_LOWER STREQUAL "cpp")
     file (GLOB platform_src "src/platform/*")
     list (APPEND src ${platform_src})
 endif()
@@ -72,7 +72,7 @@ add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
             ${EXTERNAL_LIBS_DIR}/$<TARGET_FILE_NAME:${PROJECT_NAME}>
 )
 
-if (NOT WRAPPERS_ENABLED)
+if (PLATFORM_NAME_LOWER STREQUAL "cpp")
     install (TARGETS ${PROJECT_NAME}
             ARCHIVE DESTINATION "${VIRGIL_LIB_INSTALL_DIR}/${INSTALL_LIB_DIR_NAME}")
     install (FILES ${POLARSSL_LIBRARY}

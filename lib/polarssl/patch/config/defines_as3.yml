@@ -1,0 +1,9 @@
+---
+uncomment_macros :
+    - POLARSSL_NO_PLATFORM_ENTROPY
+    - POLARSSL_HAVEGE_C
+comment_macros :
+    - POLARSSL_HAVE_ASM
+    - POLARSSL_AESNI_C
+    - POLARSSL_PADLOCK_C
+

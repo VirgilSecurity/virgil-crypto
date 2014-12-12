@@ -57,13 +57,6 @@ if (CMAKE_OSX_ARCHITECTURES AND COMPILER_SUPPORT_ARCH)
     endforeach (arch)
 endif (CMAKE_OSX_ARCHITECTURES AND COMPILER_SUPPORT_ARCH)
 
-# Select patch config
-if (ENABLE_WRAPPER_AS3)
-    set (PATCH_CONFIG_FILE_NAME "patch_config_as3.yml")
-else ()
-    set (PATCH_CONFIG_FILE_NAME "patch_config_all.yml")
-endif ()
-
 # Add external project build steps
 set (CMAKE_ARGS
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
@@ -83,12 +76,28 @@ else ()
     )
 endif ()
 
+set (POLARSSL_PATCH_DIR "${CMAKE_CURRENT_SOURCE_DIR}/polarssl/patch")
+set (POLARSSL_CONFIG_DEFINES "${POLARSSL_PATCH_DIR}/config/defines.yml")
+set (POLARSSL_CONFIG_PLATFORM_DEFINES "${POLARSSL_PATCH_DIR}/config/defines_${PLATFORM_NAME_LOWER}.yml")
+set (POLARSSL_CONFIG_SOURCES "${POLARSSL_PATCH_DIR}/config/sources.yml")
+
+set (PATCH_COMMAND_ARGS
+    --input-dir=<SOURCE_DIR>
+    --config-defines=${POLARSSL_CONFIG_DEFINES}
+    --config-sources=${POLARSSL_CONFIG_SOURCES}
+)
+
+if (EXISTS ${POLARSSL_CONFIG_PLATFORM_DEFINES})
+    list (APPEND PATCH_COMMAND_ARGS
+        --config-platform-defines=${POLARSSL_CONFIG_PLATFORM_DEFINES}
+    )
+endif ()
+
 ExternalProject_Add (polarssl_project
     URL "${CMAKE_CURRENT_SOURCE_DIR}/polarssl/bundle/polarssl-1.3.8-gpl.tgz"
     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/polarssl"
     CMAKE_ARGS ${CMAKE_ARGS}
-    PATCH_COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/polarssl/patch/patch.py"
-            --input=<SOURCE_DIR> --config-name=${PATCH_CONFIG_FILE_NAME}
+    PATCH_COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/polarssl/patch/patch.py" ${PATCH_COMMAND_ARGS}
 )
 
 # Payload targets and output variables

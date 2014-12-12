@@ -70,7 +70,11 @@ set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 # Define enviroment parameters
 include (check_pointer_size)
 check_pointer_size (POINTER_SIZE)
-message (STATUS "Compiler pointer size: " ${POINTER_SIZE} " bytes")
+if (POINTER_SIZE)
+    message (STATUS "Compiler pointer size: " ${POINTER_SIZE} " bytes")
+else ()
+    message (STATUS "Compiler pointer size: UNDEFINED")
+endif ()
 
 if (POINTER_SIZE)
     if (POINTER_SIZE EQUAL 4)

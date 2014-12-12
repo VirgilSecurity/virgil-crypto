@@ -39,24 +39,26 @@
 # @return pointer size in bytes thru @param 'pointer_size'
 #
 function (check_pointer_size pointer_size)
+    if (CMAKE_CROSSCOMPILING)
+        unset (${pointer_size} PARENT_SCOPE)
+    else ()
+        file (WRITE
+            ${CMAKE_BINARY_DIR}/CMakeTmp/check_pointer_size.cxx
+            "int main() { void *ptr = 0; return sizeof(ptr); }"
+        )
 
-file (WRITE
-    ${CMAKE_BINARY_DIR}/CMakeTmp/check_pointer_size.cxx
-    "int main() { void *ptr = 0; return sizeof(ptr); }"
-)
+        try_run (
+            RUN_RESULT
+            COMPILE_RESULT
+            ${CMAKE_BINARY_DIR}
+            ${CMAKE_BINARY_DIR}/CMakeTmp/check_pointer_size.cxx
+            OUTPUT_VARIABLE OUTPUT
+        )
 
-try_run (
-    RUN_RESULT
-    COMPILE_RESULT
-    ${CMAKE_BINARY_DIR}
-    ${CMAKE_BINARY_DIR}/CMakeTmp/check_pointer_size.cxx
-    OUTPUT_VARIABLE OUTPUT
-)
-
-if (COMPILE_RESULT AND RUN_RESULT GREATER 0)
-    set (${pointer_size} ${RUN_RESULT} PARENT_SCOPE)
-else ()
-    unset (${pointer_size} PARENT_SCOPE)
-endif ()
-
+        if (COMPILE_RESULT AND RUN_RESULT GREATER 0)
+            set (${pointer_size} ${RUN_RESULT} PARENT_SCOPE)
+        else ()
+            unset (${pointer_size} PARENT_SCOPE)
+        endif ()
+    endif ()
 endfunction (check_pointer_size)

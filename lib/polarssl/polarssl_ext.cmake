@@ -65,17 +65,28 @@ else ()
 endif ()
 
 # Add external project build steps
+set (CMAKE_ARGS
+    -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+    -DENABLE_PROGRAMS:BOOL=OFF
+    -DENABLE_TESTING:BOOL=OFF
+)
+
+if (CMAKE_TOOLCHAIN_FILE)
+    list (APPEND CMAKE_ARGS
+        -DCMAKE_TOOLCHAIN_FILE:PATH=${CMAKE_TOOLCHAIN_FILE}
+    )
+else ()
+    list (APPEND CMAKE_ARGS
+        -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+    )
+endif ()
+
 ExternalProject_Add (polarssl_project
     URL "${CMAKE_CURRENT_SOURCE_DIR}/polarssl/bundle/polarssl-1.3.8-gpl.tgz"
     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/polarssl"
-    CMAKE_ARGS
-            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-            -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-            -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-            -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-            -DENABLE_PROGRAMS:BOOL=OFF
-            -DENABLE_TESTING:BOOL=OFF
+    CMAKE_ARGS ${CMAKE_ARGS}
     PATCH_COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/polarssl/patch/patch.py"
             --input=<SOURCE_DIR> --config-name=${PATCH_CONFIG_FILE_NAME}
 )

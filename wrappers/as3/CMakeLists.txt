@@ -47,12 +47,15 @@ set (SWIG_MODULE_NAMESPACE com.virgilsecurity.wrapper)
 # Find required programs and libraries
 find_package (Java REQUIRED)
 
-if (NOT FLASCC)
-    message (FATAL_ERROR "Path to Flash C++ (CrossBridge) SDK is not defined. Please specify FLASCC variable.")
+find_program (AS3_COMPILER NAMES asc2.jar PATHS ${CMAKE_FIND_ROOT_PATH})
+if (NOT AS3_COMPILER)
+    message (FATAL_ERROR "Binary asc2.jar not found.")
 endif ()
 
-find_program (AS3_COMPILER name asc2.jar PATHS "${FLASCC}/usr/lib")
-find_file (BUILTIN_ABC_LIB name builtin.abc PATHS "${FLASCC}/usr/lib")
+find_file (BUILTIN_ABC_LIB NAMES builtin.abc PATHS ${CMAKE_FIND_ROOT_PATH})
+if (NOT BUILTIN_ABC_LIB)
+    message (FATAL_ERROR "Library builtin.abc not found.")
+endif ()
 
 # Configure inlcudes
 set (INCLUDES "-I${${WRAPPED_LIB_NAME}_SOURCE_DIR}/include" "-I${CMAKE_CURRENT_SOURCE_DIR}/include")

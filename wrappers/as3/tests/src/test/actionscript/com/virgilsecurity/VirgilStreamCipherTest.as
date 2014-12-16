@@ -48,8 +48,8 @@ package com.virgilsecurity {
     import com.virgilsecurity.*;
     import com.virgilsecurity.wrapper.CModule;
 
-    public class VirgilCipherTest {
-        private var cipher_:VirgilCipher;
+    public class VirgilStreamCipherTest {
+        private var cipher_:VirgilStreamCipher;
 
         private static const TEST_EC_PUBLIC_KEY : String =
                 "-----BEGIN PUBLIC KEY-----\n" +
@@ -91,82 +91,113 @@ package com.virgilsecurity {
             CModule.startAsync();
         }
 
-        [Before(description="Creates VirgilCipher object and stores it in the 'cipher_' variable.")]
+        [Before(description="Creates VirgilStreamCipher object and stores it in the 'cipher_' variable.")]
         public function create_cipher() : void {
-            cipher_ = VirgilCipher.create();
+            cipher_ = VirgilStreamCipher.create();
             assertThat(cipher_.cPtr, not(equalTo(0)));
         }
 
-        [After(description="Destroy VirgilCipher object stored it in the 'cipher_' variable.")]
+        [After(description="Destroy VirgilStreamCipher object stored it in the 'cipher_' variable.")]
         public function destroy_cipher() : void {
             cipher_.destroy();
             cipher_ = null;
         }
 
-
-        [Test(description="Test VirgilCipher.generateKeyPair().")]
-        public function test_cipher_generateKeyPair():void {
-            var keyPair:VirgilKeyPair = cipher_.generateKeyPair();
-            assertThat(keyPair.publicKey().length, not(equalTo(0)));
-            assertThat(keyPair.privateKey().length, not(equalTo(0)));
-        }
-
-        [Test(description="Test VirgilCipher.encrypt() and VirgilCipher.decrypt().")]
+        [Test(description="Test VirgilStreamCipher.encrypt() and VirgilStreamCipher.decrypt().")]
         public function test_cipher_encrypt_decrypt():void {
-            var keyPair:VirgilKeyPair = cipher_.generateKeyPair();
+            var plainTextDataSource:VirgilDataSourceWrapper =
+                    new VirgilDataSourceWrapper(ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT));
 
-            var cipherDatagram:VirgilCipherDatagram = cipher_.encrypt(
-                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT),
+            var encryptedText:ByteArray = new ByteArray();
+            var encryptedTextDataSink:VirgilDataSinkWrapper = new VirgilDataSinkWrapper(encryptedText);
+
+            var encryptionKey:ByteArray = cipher_.encrypt(plainTextDataSource, encryptedTextDataSink,
                     ConvertionUtils.asciiStringToArray(TEST_EC_PUBLIC_KEY));
 
-            var plainText:ByteArray = cipher_.decrypt(cipherDatagram.encryptedData(), cipherDatagram.encryptionKey(),
+            encryptedText.position = 0;
+            var encryptedTextDataSource:VirgilDataSourceWrapper = new VirgilDataSourceWrapper(encryptedText);
+
+            var plainText:ByteArray = new ByteArray();
+            var plainTextDataSink:VirgilDataSinkWrapper = new VirgilDataSinkWrapper(plainText);
+
+            cipher_.decrypt(encryptedTextDataSource, plainTextDataSink, encryptionKey,
                     ConvertionUtils.asciiStringToArray(TEST_EC_PRIVATE_KEY));
 
             assertThat(ConvertionUtils.arrayToAsciiString(plainText), equalTo(TEST_PLAIN_TEXT));
         }
 
-        [Test(description="Test VirgilCipher.generateKeyPair(), VirgilCipher.encrypt(), VirgilCipher.decrypt().")]
+        [Test(description="Test VirgilStreamCipher.generateKeyPair(), VirgilStreamCipher.encrypt(), VirgilStreamCipher.decrypt().")]
         public function test_cipher_encrypt_decrypt_with_generated_keys():void {
             var keyPair:VirgilKeyPair = cipher_.generateKeyPair();
 
-            var cipherDatagram:VirgilCipherDatagram = cipher_.encrypt(
-                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT), keyPair.publicKey());
+            var plainTextDataSource:VirgilDataSourceWrapper =
+                    new VirgilDataSourceWrapper(ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT));
 
-            var plainText:ByteArray = cipher_.decrypt(
-                    cipherDatagram.encryptedData(), cipherDatagram.encryptionKey(), keyPair.privateKey());
+            var encryptedText:ByteArray = new ByteArray();
+            var encryptedTextDataSink:VirgilDataSinkWrapper = new VirgilDataSinkWrapper(encryptedText);
+
+            var encryptionKey:ByteArray =
+                    cipher_.encrypt(plainTextDataSource, encryptedTextDataSink, keyPair.publicKey());
+
+            encryptedText.position = 0;
+            var encryptedTextDataSource:VirgilDataSourceWrapper = new VirgilDataSourceWrapper(encryptedText);
+
+            var plainText:ByteArray = new ByteArray();
+            var plainTextDataSink:VirgilDataSinkWrapper = new VirgilDataSinkWrapper(plainText);
+
+            cipher_.decrypt(encryptedTextDataSource, plainTextDataSink, encryptionKey, keyPair.privateKey());
 
             assertThat(ConvertionUtils.arrayToAsciiString(plainText), equalTo(TEST_PLAIN_TEXT));
         }
 
-        [Test(description="Test VirgilCipher.encrypt(), VirgilCipher.decrypt() and VirgilCipher.reencryptKey().")]
+        [Test(description="Test VirgilStreamCipher.encrypt(), VirgilStreamCipher.decrypt() and VirgilStreamCipher.reencryptKey().")]
         public function test_cipher_reencryptKey():void {
-            var keyPair:VirgilKeyPair = cipher_.generateKeyPair();
+            var plainTextDataSource:VirgilDataSourceWrapper =
+                    new VirgilDataSourceWrapper(ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT));
 
-            var cipherDatagram:VirgilCipherDatagram = cipher_.encrypt(
-                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT),
+            var encryptedText:ByteArray = new ByteArray();
+            var encryptedTextDataSink:VirgilDataSinkWrapper = new VirgilDataSinkWrapper(encryptedText);
+
+            var encryptionKey:ByteArray = cipher_.encrypt(plainTextDataSource, encryptedTextDataSink,
                     ConvertionUtils.asciiStringToArray(TEST_EC_PUBLIC_KEY));
-
-            var sharedEncryptionKey:ByteArray = cipher_.reencryptKey(cipherDatagram.encryptionKey(),
+            var sharedEncryptionKey:ByteArray = cipher_.reencryptKey(encryptionKey,
                     ConvertionUtils.asciiStringToArray(TEST_RSA_PUBLIC_KEY),
                     ConvertionUtils.asciiStringToArray(TEST_EC_PRIVATE_KEY));
 
+            encryptedText.position = 0;
+            var encryptedTextDataSource:VirgilDataSourceWrapper = new VirgilDataSourceWrapper(encryptedText);
 
-            var plainText:ByteArray = cipher_.decrypt(cipherDatagram.encryptedData(), sharedEncryptionKey,
+            var plainText:ByteArray = new ByteArray();
+            var plainTextDataSink:VirgilDataSinkWrapper = new VirgilDataSinkWrapper(plainText);
+
+            cipher_.decrypt(encryptedTextDataSource, plainTextDataSink, sharedEncryptionKey,
                     ConvertionUtils.asciiStringToArray(TEST_RSA_PRIVATE_KEY));
 
             assertThat(ConvertionUtils.arrayToAsciiString(plainText), equalTo(TEST_PLAIN_TEXT));
         }
 
-        [Test(description="Test VirgilCipher.encryptWithPassword(), VirgilCipher.decryptWithPassword.")]
+        [Test(description="Test VirgilStreamCipher.encryptWithPassword(), VirgilStreamCipher.decryptWithPassword.")]
         public function test_cipher_encrypt_decrypt_with_password():void {
-            var encodedData:ByteArray = cipher_.encryptWithPassword(
-                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT),
+            var plainTextDataSource:VirgilDataSourceWrapper =
+                    new VirgilDataSourceWrapper(ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT));
+
+            var encryptedText:ByteArray = new ByteArray();
+            var encryptedTextDataSink:VirgilDataSinkWrapper = new VirgilDataSinkWrapper(encryptedText);
+
+            cipher_.encryptWithPassword(
+                    plainTextDataSource, encryptedTextDataSink,
                     ConvertionUtils.asciiStringToArray(TEST_PASSWORD));
 
-            var decodedData:ByteArray = cipher_.decryptWithPassword(encodedData,
+            encryptedText.position = 0;
+            var encryptedTextDataSource:VirgilDataSourceWrapper = new VirgilDataSourceWrapper(encryptedText);
+
+            var plainText:ByteArray = new ByteArray();
+            var plainTextDataSink:VirgilDataSinkWrapper = new VirgilDataSinkWrapper(plainText);
+
+            cipher_.decryptWithPassword(encryptedTextDataSource, plainTextDataSink,
                     ConvertionUtils.asciiStringToArray(TEST_PASSWORD));
 
-            assertThat(ConvertionUtils.arrayToAsciiString(decodedData), TEST_PLAIN_TEXT);
+            assertThat(ConvertionUtils.arrayToAsciiString(plainText), equalTo(TEST_PLAIN_TEXT));
         }
     }
 }

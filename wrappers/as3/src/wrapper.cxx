@@ -71,7 +71,10 @@ using virgil::VirgilByteArray;
 #include "VirgilJsonDataMarshaller.wrapper.cxx"
 #include "VirgilAsn1DataMarshaller.wrapper.cxx"
 
+#include "VirgilCipherDatagram.wrapper.cxx"
+#include "VirgilCipherBase.wrapper.cxx"
 #include "VirgilCipher.wrapper.cxx"
+#include "VirgilStreamCipher.wrapper.cxx"
 #include "VirgilChunkCipher.wrapper.cxx"
 #include "VirgilSigner.wrapper.cxx"
 

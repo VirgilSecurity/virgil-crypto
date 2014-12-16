@@ -37,36 +37,54 @@
 #include <virgil/service/VirgilCipher.h>
 using virgil::service::VirgilCipher;
 
+#include <virgil/service/VirgilCipherDatagram.h>
+using virgil::service::VirgilCipherDatagram;
+
 GEN_THROWABLE_CONSTRUCTOR(VirgilCipher, com.virgilsecurity.wrapper)
 GEN_DESTRUCTOR(VirgilCipher, com.virgilsecurity.wrapper)
 
 __attribute__((
-    annotate("as3sig:public function _wrap_VirgilCipher_generateKeyPair():int"),
+    annotate("as3import:flash.utils.ByteArray"),
+    annotate("as3sig:public function _wrap_VirgilCipher_encrypt"
+            "(asSelf, asData:ByteArray, asPublicKey:ByteArray):int"),
     annotate("as3package:com.virgilsecurity.wrapper")
 ))
-void _wrap_VirgilCipher_generateKeyPair() {
+void _wrap_VirgilCipher_encrypt() {
+WRAPPER_THROWABLE_SECTION_START
+    VirgilCipher *cSelf = (VirgilCipher *)0;
+    AS3_GetScalarFromVar(cSelf, asSelf);
 
-    VirgilKeyPair *cKeyPair = new VirgilKeyPair(VirgilCipher::generateKeyPair());
+    VirgilByteArray cData;
+    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asData, cData);
 
-    AS3_DeclareVar(asKeyPair, int);
-    AS3_CopyScalarToVar(asKeyPair, cKeyPair);
-    AS3_ReturnAS3Var(asKeyPair);
+    VirgilByteArray cPublicKey;
+    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPublicKey, cPublicKey);
+
+    VirgilCipherDatagram *cDatagram = new VirgilCipherDatagram(cSelf->encrypt(cData, cPublicKey));
+
+    AS3_DeclareVar(asDatagram, int);
+    AS3_CopyScalarToVar(asDatagram, cDatagram);
+    AS3_ReturnAS3Var(asDatagram);
+WRAPPER_THROWABLE_SECTION_END
 }
 
 __attribute__((
     annotate("as3import:flash.utils.ByteArray"),
-    annotate("as3sig:public function _wrap_VirgilCipher_reencryptKey"
-            "(asEncryptionKey:ByteArray, asPublicKey:ByteArray, "
+    annotate("as3sig:public function _wrap_VirgilCipher_decrypt"
+            "(asSelf, asData:ByteArray, asEncryptionKey:ByteArray,"
             "asPrivateKey:ByteArray, asPrivateKeyPassword:ByteArray = null):ByteArray"),
     annotate("as3package:com.virgilsecurity.wrapper")
 ))
-void _wrap_VirgilCipher_reencryptKey() {
+void _wrap_VirgilCipher_decrypt() {
+WRAPPER_THROWABLE_SECTION_START
+    VirgilCipher *cSelf = (VirgilCipher *)0;
+    AS3_GetScalarFromVar(cSelf, asSelf);
+
+    VirgilByteArray cData;
+    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asData, cData);
 
     VirgilByteArray cEncryptionKey;
     AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asEncryptionKey, cEncryptionKey);
-
-    VirgilByteArray cPublicKey;
-    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPublicKey, cPublicKey);
 
     VirgilByteArray cPrivateKey;
     AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPrivateKey, cPrivateKey);
@@ -79,76 +97,10 @@ void _wrap_VirgilCipher_reencryptKey() {
         AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPrivateKeyPassword, cPrivateKeyPassword);
     }
 
-    VirgilByteArray cReencryptedKey =
-            VirgilCipher::reencryptKey(cEncryptionKey, cPublicKey, cPrivateKey, cPrivateKeyPassword);
+    VirgilByteArray cResult = cSelf->decrypt(cData, cEncryptionKey, cPrivateKey, cPrivateKeyPassword);
+    VIRGIL_BYTE_ARRAY_TO_AS3_BYTE_ARRAY(cResult, asResult);
 
-    VIRGIL_BYTE_ARRAY_TO_AS3_BYTE_ARRAY(cReencryptedKey, asReencryptedKey);
-
-    AS3_ReturnAS3Var(asReencryptedKey);
-}
-
-__attribute__((
-    annotate("as3import:flash.utils.ByteArray"),
-    annotate("as3sig:public function _wrap_VirgilCipher_encrypt"
-            "(asSelf, asDataSource:*, asDataSink:*, asPublicKey:ByteArray):ByteArray"),
-    annotate("as3package:com.virgilsecurity.wrapper")
-))
-void _wrap_VirgilCipher_encrypt() {
-WRAPPER_THROWABLE_SECTION_START
-    VirgilCipher *cSelf = (VirgilCipher *)0;
-    AS3_GetScalarFromVar(cSelf, asSelf);
-
-    AS3::local::var cDataSource;
-    AS3_GetVarxxFromVar(cDataSource, asDataSource);
-    VirgilDataSourceWrapper cDataSourceWrapper(cDataSource);
-
-    AS3::local::var cDataSink;
-    AS3_GetVarxxFromVar(cDataSink, asDataSink);
-    VirgilDataSinkWrapper cDataSinkWrapper(cDataSink);
-
-    VirgilByteArray cPublicKey;
-    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPublicKey, cPublicKey);
-
-    VirgilByteArray cEncryptionKey = cSelf->encrypt(cDataSourceWrapper, cDataSinkWrapper, cPublicKey);
-
-    VIRGIL_BYTE_ARRAY_TO_AS3_BYTE_ARRAY(cEncryptionKey, asEncryptionKey);
-
-    AS3_ReturnAS3Var(asEncryptionKey);
-WRAPPER_THROWABLE_SECTION_END
-}
-
-__attribute__((
-    annotate("as3import:flash.utils.ByteArray"),
-    annotate("as3sig:public function _wrap_VirgilCipher_decrypt"
-            "(asSelf, asDataSource:*, asDataSink:*, asEncryptionKey:ByteArray,"
-            "asPrivateKey:ByteArray, asPrivateKeyPassword:ByteArray):void"),
-    annotate("as3package:com.virgilsecurity.wrapper")
-))
-void _wrap_VirgilCipher_decrypt() {
-WRAPPER_THROWABLE_SECTION_START
-    VirgilCipher *cSelf = (VirgilCipher *)0;
-    AS3_GetScalarFromVar(cSelf, asSelf);
-
-    AS3::local::var cDataSource;
-    AS3_GetVarxxFromVar(cDataSource, asDataSource);
-    VirgilDataSourceWrapper cDataSourceWrapper(cDataSource);
-
-    AS3::local::var cDataSink;
-    AS3_GetVarxxFromVar(cDataSink, asDataSink);
-    VirgilDataSinkWrapper cDataSinkWrapper(cDataSink);
-
-    VirgilByteArray cEncryptionKey;
-    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asEncryptionKey, cEncryptionKey);
-
-    VirgilByteArray cPrivateKey;
-    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPrivateKey, cPrivateKey);
-
-    VirgilByteArray cPrivateKeyPassword;
-    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPrivateKeyPassword, cPrivateKeyPassword);
-
-    cSelf->decrypt(cDataSourceWrapper, cDataSinkWrapper, cEncryptionKey, cPrivateKey, cPrivateKeyPassword);
-
-    AS3_ReturnAS3Var(undefined);
+    AS3_ReturnAS3Var(asResult);
 WRAPPER_THROWABLE_SECTION_END
 }
 

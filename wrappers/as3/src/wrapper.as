@@ -552,40 +552,67 @@ public class VirgilAsn1DataMarshaller extends VirgilDataMarshaller {
     }
 }
 
-public class VirgilCipher {
+public class VirgilCipherDatagram {
     public var cPtr:int;
 
+    public function destroy():void {
+        _wrap_delete_VirgilCipher(cPtr);
+    }
+
+    public function encryptionKey():ByteArray {
+        return _wrap_VirgilCipherDatagram_encryptionKey(cPtr);
+    }
+
+    public function encryptedData():ByteArray {
+        return _wrap_VirgilCipherDatagram_encryptedData(cPtr);
+    }
+}
+
+public class VirgilCipherBase {
+    public var cPtr:int;
+
+    public static function create():VirgilCipherBase {
+        var obj = new VirgilCipherBase();
+        obj.cPtr = _wrap_new_VirgilCipherBase();
+        return obj;
+    }
+
+    public function destroy():void {
+        _wrap_delete_VirgilCipherBase(cPtr);
+    }
+
+    public function generateKeyPair(password:ByteArray = null):VirgilKeyPair {
+        var keyPair:VirgilKeyPair = new VirgilKeyPair();
+        keyPair.cPtr = _wrap_VirgilCipherBase_generateKeyPair(cPtr, password);
+        return keyPair;
+    }
+
+    public function reencryptKey(encryptionKey:ByteArray, publicKey:ByteArray,
+            privateKey:ByteArray, privateKeyPassword:ByteArray = null):ByteArray {
+        return _wrap_VirgilCipherBase_reencryptKey(cPtr, encryptionKey, publicKey, privateKey, privateKeyPassword);
+    }
+}
+
+public class VirgilCipher extends VirgilCipherBase {
     public static function create():VirgilCipher {
         var obj = new VirgilCipher();
         obj.cPtr = _wrap_new_VirgilCipher();
         return obj;
     }
 
-    public function destroy():void {
+    override public function destroy():void {
         _wrap_delete_VirgilCipher(cPtr);
     }
 
-    public static function generateKeyPair():VirgilKeyPair {
-        var keyPair:VirgilKeyPair = new VirgilKeyPair();
-        keyPair.cPtr = _wrap_VirgilCipher_generateKeyPair();
-        return keyPair;
+    public function encrypt(data:ByteArray, asPublicKey:ByteArray):VirgilCipherDatagram {
+        var datagram:VirgilCipherDatagram = new VirgilCipherDatagram();
+        datagram.cPtr = _wrap_VirgilCipher_encrypt(cPtr, data, asPublicKey);
+        return datagram;
     }
 
-    public static function reencryptKey(encryptionKey:ByteArray, publicKey:ByteArray,
+    public function decrypt(data:ByteArray, encryptionKey:ByteArray,
             privateKey:ByteArray, privateKeyPassword:ByteArray = null):ByteArray {
-        return _wrap_VirgilCipher_reencryptKey(encryptionKey, publicKey, privateKey, privateKeyPassword);
-    }
-
-    public function encrypt(dataSource:VirgilDataSource, dataSink:VirgilDataSink, asPublicKey:ByteArray):ByteArray {
-        return _wrap_VirgilCipher_encrypt(cPtr, dataSource, dataSink, asPublicKey);
-    }
-
-    public function decrypt(dataSource:VirgilDataSource, dataSink:VirgilDataSink, encryptionKey:ByteArray,
-            privateKey:ByteArray, privateKeyPassword:ByteArray = null):void {
-        if (privateKeyPassword == null) {
-            privateKeyPassword = new ByteArray();
-        }
-        return _wrap_VirgilCipher_decrypt(cPtr, dataSource, dataSink, encryptionKey, privateKey, privateKeyPassword);
+        return _wrap_VirgilCipher_decrypt(cPtr, data, encryptionKey, privateKey, privateKeyPassword);
     }
 
     public function encryptWithPassword(data:ByteArray, password:ByteArray):ByteArray {
@@ -597,16 +624,44 @@ public class VirgilCipher {
     }
 }
 
-public class VirgilChunkCipher {
-    public var cPtr:int;
+public class VirgilStreamCipher extends VirgilCipherBase {
+    public static function create():VirgilStreamCipher {
+        var obj = new VirgilStreamCipher();
+        obj.cPtr = _wrap_new_VirgilStreamCipher();
+        return obj;
+    }
 
+    override public function destroy():void {
+        _wrap_delete_VirgilStreamCipher(cPtr);
+    }
+
+    public function encrypt(dataSource:VirgilDataSource, dataSink:VirgilDataSink, asPublicKey:ByteArray):ByteArray {
+        return _wrap_VirgilStreamCipher_encrypt(cPtr, dataSource, dataSink, asPublicKey);
+    }
+
+    public function decrypt(dataSource:VirgilDataSource, dataSink:VirgilDataSink, encryptionKey:ByteArray,
+            privateKey:ByteArray, privateKeyPassword:ByteArray = null):void {
+        return _wrap_VirgilStreamCipher_decrypt(
+                cPtr, dataSource, dataSink, encryptionKey, privateKey, privateKeyPassword);
+    }
+
+    public function encryptWithPassword(dataSource:VirgilDataSource, dataSink:VirgilDataSink, password:ByteArray):void {
+        return _wrap_VirgilStreamCipher_encryptWithPassword(cPtr, dataSource, dataSink, password);
+    }
+
+    public function decryptWithPassword(dataSource:VirgilDataSource, dataSink:VirgilDataSink, password:ByteArray):void {
+        return _wrap_VirgilStreamCipher_decryptWithPassword(cPtr, dataSource, dataSink, password);
+    }
+}
+
+public class VirgilChunkCipher extends VirgilCipherBase {
     public static function create():VirgilChunkCipher {
         var obj = new VirgilChunkCipher();
         obj.cPtr = _wrap_new_VirgilChunkCipher();
         return obj;
     }
 
-    public function destroy():void {
+    override public function destroy():void {
         _wrap_delete_VirgilChunkCipher(cPtr);
     }
 
@@ -665,11 +720,9 @@ public class VirgilSigner {
 
     public function signTicket(ticket:VirgilTicket, signerCertificateId:ByteArray,
             privateKey:ByteArray, privateKeyPassword:ByteArray = null):VirgilSign {
-        if (privateKeyPassword == null) {
-            privateKeyPassword = new ByteArray();
-        }
         var sign:VirgilSign = new VirgilSign();
-        sign.cPtr = _wrap_VirgilSigner_signTicket(cPtr, ticket.cPtr, signerCertificateId, privateKey, privateKeyPassword);
+        sign.cPtr = _wrap_VirgilSigner_signTicket(
+                cPtr, ticket.cPtr, signerCertificateId, privateKey, privateKeyPassword);
         return sign;
     }
 

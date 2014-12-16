@@ -107,7 +107,7 @@ __attribute__((
     annotate("as3import:flash.utils.ByteArray"),
     annotate("as3sig:public function _wrap_VirgilSigner_signTicket"
             "(asSelf, asTicket:int, asSignerCertificateId:ByteArray,"
-            "asPrivateKey:ByteArray, asPrivateKeyPassword:ByteArray):int"),
+            "asPrivateKey:ByteArray, asPrivateKeyPassword:ByteArray = null):int"),
     annotate("as3package:com.virgilsecurity.wrapper")
 ))
 void _wrap_VirgilSigner_signTicket() {
@@ -124,8 +124,13 @@ WRAPPER_THROWABLE_SECTION_START
     VirgilByteArray cPrivateKey;
     AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPrivateKey, cPrivateKey);
 
+    bool cPasswordDefined = false;
+    AS3_VAR_IS_DEFINED(asPrivateKeyPassword, cPasswordDefined);
+
     VirgilByteArray cPrivateKeyPassword;
-    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPrivateKeyPassword, cPrivateKeyPassword);
+    if (cPasswordDefined) {
+        AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPrivateKeyPassword, cPrivateKeyPassword);
+    }
 
     VirgilSign *cSign = new VirgilSign(
             cSelf->sign(*cTicket, cSignerCertificateId, cPrivateKey, cPrivateKeyPassword));

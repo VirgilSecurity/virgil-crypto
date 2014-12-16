@@ -42,7 +42,6 @@
 namespace virgil { namespace crypto {
 
 /**
- * @class KeyPairGenerator
  * @brief Encapsulates specific keypair information and way to create it.
  *
  * This class performs a simple way to generate keypair with a given information,

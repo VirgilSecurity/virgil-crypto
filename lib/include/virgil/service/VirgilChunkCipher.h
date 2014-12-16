@@ -42,20 +42,20 @@
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-namespace virgil { namespace service {
+#include <virgil/service/VirgilCipherBase.h>
+using virgil::service::VirgilCipherBase;
 
-/**
- * @name Forward declarations
- */
-///@{
-class VirgilChunkCipherImpl;
-///@}
+#include <virgil/crypto/VirgilSymmetricCipher.h>
+using virgil::crypto::VirgilSymmetricCipher;
+
+namespace virgil { namespace service {
 
 /**
  * @brief This class provides high-level interface to encrypt / decrypt data splitted to chunks.
  * @note Virgil Security keys is used for encryption and decryption.
+ * @note This class algorithms are not compatible with VirgilCipher and VirgilStreamCipher class algorithms.
  */
-class VirgilChunkCipher {
+class VirgilChunkCipher : public VirgilCipherBase {
 public:
     /**
      * @brief Initialize randomization module used by encryption.
@@ -92,7 +92,6 @@ public:
     /**
      * @brief Encrypt / Decrypt given data chunk.
      * @return Encrypted / Decrypted data chunk.
-     * @warninng
      */
     VirgilByteArray process(const VirgilByteArray& data);
     /**
@@ -101,16 +100,7 @@ public:
      */
      void finalize();
 private:
-    /**
-     * @brief Deny copy constructor.
-     */
-    VirgilChunkCipher(const VirgilChunkCipher& other);
-    /**
-     * @brief Deny asignment operator.
-     */
-    VirgilChunkCipher& operator=(const VirgilChunkCipher& right);
-private:
-    VirgilChunkCipherImpl *impl_;
+    VirgilSymmetricCipher symmetricCipher_;
 };
 
 }}

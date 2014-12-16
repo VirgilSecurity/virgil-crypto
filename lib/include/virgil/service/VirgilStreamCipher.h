@@ -34,14 +34,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SERVICE_VIRGIL_CIPHER_H
-#define VIRGIL_SERVICE_VIRGIL_CIPHER_H
+#ifndef VIRGIL_SERVICE_VIRGIL_STREAM_CIPHER_H
+#define VIRGIL_SERVICE_VIRGIL_STREAM_CIPHER_H
 
 #include <virgil/service/VirgilCipherBase.h>
 using virgil::service::VirgilCipherBase;
-
-#include <virgil/service/VirgilCipherDatagram.h>
-using virgil::service::VirgilCipherDatagram;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -55,37 +52,40 @@ using virgil::service::stream::VirgilDataSink;
 namespace virgil { namespace service {
 
 /**
- * @brief This class provides high-level interface to encrypt / decrypt data using Virgil Security keys.
+ * @brief This class provides high-level interface to encrypt / decrypt streaming data using Virgil Security keys.
  */
-class VirgilCipher : public VirgilCipherBase {
+class VirgilStreamCipher : public VirgilCipherBase {
 public:
     /**
-     * @brief Dispose used resources.
+     * @brief Polymorphic destructor.
      */
-    virtual ~VirgilCipher() throw();
+    virtual ~VirgilStreamCipher() throw();
 public:
     /**
-     * @brief Encrypt given data with public key.
+     * @brief Encrypt data read from given source with public key and write it the sink.
+     * @return encryption key - key that was used for symmetric encryption,
+     *             and was encrypted by public key for security transfer via public networks.
+     * @note Encryption key is used for data decryption in conjuction with private key.
      */
-    VirgilCipherDatagram encrypt(const VirgilByteArray& data, const VirgilByteArray& publicKey);
+    VirgilByteArray encrypt(VirgilDataSource& source, VirgilDataSink& sink,
+            const VirgilByteArray& publicKey);
     /**
-     * @brief Decrypt given data with private key and encryption key.
-     * @return Decrypted data.
+     * @brief Decrypt data read from given source with given private key and write it to the sink.
      */
-    VirgilByteArray decrypt(const VirgilByteArray encryptedData, const VirgilByteArray& encryptionKey,
+    void decrypt(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& encryptionKey,
             const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
      * @brief Encrypt plain text with given password.
      * @return Encrypted data.
      */
-    VirgilByteArray encryptWithPassword(const VirgilByteArray& data, const VirgilByteArray& pwd);
+    void encryptWithPassword(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& pwd);
     /**
      * @brief Decrypt data with given password.
      * @return Plain text.
      */
-    VirgilByteArray decryptWithPassword(const VirgilByteArray& data, const VirgilByteArray& pwd);
+    void decryptWithPassword(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& pwd);
 };
 
 }}
 
-#endif /* VIRGIL_SERVICE_VIRGIL_CIPHER_H */
+#endif /* VIRGIL_SERVICE_VIRGIL_STREAM_CIPHER_H */

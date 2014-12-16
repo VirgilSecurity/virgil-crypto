@@ -34,31 +34,34 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_BASE64_H
-#define VIRGIL_CRYPTO_BASE64_H
+#ifndef VIRGIL_SERVICE_VIRGIL_CIPHER_DATAGRAM_H
+#define VIRGIL_SERVICE_VIRGIL_CIPHER_DATAGRAM_H
 
-#include <string>
-
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
-
-namespace virgil { namespace crypto {
+namespace virgil { namespace service {
 
 /**
- * @brief Provides base64 encoding / decoding.
+ * @brief Handles encryption key and encrypted data.
  */
-class VirgilBase64 {
+class VirgilCipherDatagram {
 public:
+    VirgilCipherDatagram() {}
     /**
-     * @brief Transform given bytes to the base64 string.
+     * @brief Populate encryption key and encrypted data.
      */
-    static std::string encode(const VirgilByteArray& data);
+    VirgilCipherDatagram(const VirgilByteArray& key, const VirgilByteArray& data)
+            : encryptionKey(key), encryptedData(data) {}
     /**
-     * @brief Transform given base64 string to the bytes.
+     * Key that was used for symmetric encryption and was encrypted by public key
+     *     for security transfer via public networks, and encrypted data
+     * @note Encryption key is used for data decryption in conjuction with private key.
      */
-    static VirgilByteArray decode(const std::string& base64str);
+    VirgilByteArray encryptionKey;
+    /**
+     * Encrypted data.
+     */
+    VirgilByteArray encryptedData;
 };
 
 }}
 
-#endif /* VIRGIL_CRYPTO_BASE64_H */
+#endif /* VIRGIL_SERVICE_VIRGIL_CIPHER_DATAGRAM_H */

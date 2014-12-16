@@ -34,44 +34,46 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/VirgilCipher.h>
-using virgil::service::VirgilCipher;
-using virgil::service::VirgilCipherDatagram;
+#include <virgil/service/VirgilStreamCipher.h>
+using virgil::service::VirgilStreamCipher;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/crypto/VirgilSymmetricCipher.h>
-using virgil::crypto::VirgilSymmetricCipher;
-
 #include <virgil/crypto/VirgilKDF.h>
 using virgil::crypto::VirgilKDF;
+
+#include <virgil/crypto/VirgilSymmetricCipher.h>
+using virgil::crypto::VirgilSymmetricCipher;
 
 #include <virgil/crypto/VirgilAsymmetricCipher.h>
 using virgil::crypto::VirgilAsymmetricCipher;
 
-VirgilCipher::~VirgilCipher() throw() {
+
+VirgilStreamCipher::~VirgilStreamCipher() throw() {
 }
 
-VirgilCipherDatagram VirgilCipher::encrypt(const VirgilByteArray& data, const VirgilByteArray& publicKey) {
-    VirgilSymmetricCipher symmetricCipher = VirgilSymmetricCipher::aes256();
 
+VirgilByteArray VirgilStreamCipher::encrypt(VirgilDataSource& source, VirgilDataSink& sink,
+        const VirgilByteArray& publicKey) {
+
+    VirgilSymmetricCipher symmetricCipher = VirgilSymmetricCipher::aes256();
     VirgilByteArray encryptionKey = configureEncryption(symmetricCipher);
 
-    VirgilByteArray firstChunk = symmetricCipher.update(data);
-    VirgilByteArray secondChunk = symmetricCipher.finish();
-
-    VirgilByteArray encryptedData;
-    encryptedData.insert(encryptedData.end(), firstChunk.begin(), firstChunk.end());
-    encryptedData.insert(encryptedData.end(), secondChunk.begin(), secondChunk.end());
+    while (source.hasData() && sink.isGood()) {
+        sink.write(symmetricCipher.update(source.read()));
+    }
+    if (sink.isGood()) {
+        sink.write(symmetricCipher.finish());
+    }
 
     VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::none();
     asymmetricCipher.setPublicKey(publicKey);
-
-    return  VirgilCipherDatagram(asymmetricCipher.encrypt(encryptionKey), encryptedData);
+    return asymmetricCipher.encrypt(encryptionKey);
 }
 
-VirgilByteArray VirgilCipher::decrypt(const VirgilByteArray encryptedData, const VirgilByteArray& encryptionKey,
+void VirgilStreamCipher::decrypt(VirgilDataSource& source, VirgilDataSink& sink,
+        const VirgilByteArray& encryptionKey,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
 
     VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::none();
@@ -82,43 +84,36 @@ VirgilByteArray VirgilCipher::decrypt(const VirgilByteArray encryptedData, const
     VirgilSymmetricCipher symmetricCipher = VirgilSymmetricCipher::aes256();
     configureDecryption(symmetricCipher, decryptionKey);
 
-    VirgilByteArray firstChunk = symmetricCipher.update(encryptedData);
-    VirgilByteArray secondChunk = symmetricCipher.finish();
-
-    VirgilByteArray decryptedData;
-    decryptedData.insert(decryptedData.end(), firstChunk.begin(), firstChunk.end());
-    decryptedData.insert(decryptedData.end(), secondChunk.begin(), secondChunk.end());
-
-    return decryptedData;
+    while (source.hasData() && sink.isGood()) {
+        sink.write(symmetricCipher.update(source.read()));
+    }
+    if (sink.isGood()) {
+        sink.write(symmetricCipher.finish());
+    }
 }
 
-VirgilByteArray VirgilCipher::encryptWithPassword(const VirgilByteArray& data, const VirgilByteArray& pwd) {
+void VirgilStreamCipher::encryptWithPassword(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& pwd) {
     VirgilSymmetricCipher symmetricCipher = VirgilSymmetricCipher::aes256();
-
     VirgilByteArray encryptionKey = VirgilKDF::kdf1(pwd, symmetricCipher.keyLength());
     configureEncryption(symmetricCipher, encryptionKey);
 
-    VirgilByteArray firstChunk = symmetricCipher.update(data);
-    VirgilByteArray secondChunk = symmetricCipher.finish();
-
-    VirgilByteArray encryptedData;
-    encryptedData.insert(encryptedData.end(), firstChunk.begin(), firstChunk.end());
-    encryptedData.insert(encryptedData.end(), secondChunk.begin(), secondChunk.end());
-
-    return encryptedData;
+    while (source.hasData() && sink.isGood()) {
+        sink.write(symmetricCipher.update(source.read()));
+    }
+    if (sink.isGood()) {
+        sink.write(symmetricCipher.finish());
+    }
 }
 
-VirgilByteArray VirgilCipher::decryptWithPassword(const VirgilByteArray& data, const VirgilByteArray& pwd) {
+void VirgilStreamCipher::decryptWithPassword(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& pwd) {
     VirgilSymmetricCipher symmetricCipher = VirgilSymmetricCipher::aes256();
     VirgilByteArray decryptionKey = VirgilKDF::kdf1(pwd, symmetricCipher.keyLength());
     configureDecryption(symmetricCipher, decryptionKey);
 
-    VirgilByteArray firstChunk = symmetricCipher.update(data);
-    VirgilByteArray secondChunk = symmetricCipher.finish();
-
-    VirgilByteArray decryptedData;
-    decryptedData.insert(decryptedData.end(), firstChunk.begin(), firstChunk.end());
-    decryptedData.insert(decryptedData.end(), secondChunk.begin(), secondChunk.end());
-
-    return decryptedData;
+    while (source.hasData() && sink.isGood()) {
+        sink.write(symmetricCipher.update(source.read()));
+    }
+    if (sink.isGood()) {
+        sink.write(symmetricCipher.finish());
+    }
 }

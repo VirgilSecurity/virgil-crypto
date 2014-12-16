@@ -43,6 +43,16 @@ include_once "StringSource.php";
  */
 class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
 
+    protected static $cipher;
+
+    public static function setUpBeforeClass() {
+        self::$cipher = new VirgilCipher();
+    }
+
+    public static function tearDownAfterClass() {
+        self::$cipher = NULL;
+    }
+
     /**
      * @covers VirgilCipher::generateKeyPair
      * @covers VirgilSigner::sign
@@ -53,9 +63,9 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
         $dataSource = new StringSource($initialString);
         $signerCertificateId = "CERT-1234";
 
-        $key = VirgilCipher::generateKeyPair();
-
         $signer = new VirgilSigner();
+
+        $key = self::$cipher->generateKeyPair();
 
         $dataSource->reset();
         $sign = $signer->sign($dataSource, $signerCertificateId, $key->privateKey());
@@ -76,7 +86,7 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
         $privateKeyPassword = "password";
         $signerCertificateId = "CERT-1234";
 
-        $key = VirgilCipher::generateKeyPair($privateKeyPassword);
+        $key = self::$cipher->generateKeyPair($privateKeyPassword);
         $signer = new VirgilSigner();
 
         $dataSource = new StringSource($initialString);
@@ -101,7 +111,7 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
         $privateKeyPassword = "password";
         $signerCertificateId = "CERT-1234";
 
-        $key = VirgilCipher::generateKeyPair($privateKeyPassword);
+        $key = self::$cipher->generateKeyPair($privateKeyPassword);
 
         $signer = new VirgilSigner();
 
@@ -238,7 +248,7 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
         $ticket = new VirgilUserIdTicket("user@domain.com", VirgilUserIdType::email());
         $signerCertificateId = "CERT-1234";
 
-        $key = VirgilCipher::generateKeyPair();
+        $key = self::$cipher->generateKeyPair();
 
         $signer = new VirgilSigner();
         $sign = $signer->sign($ticket, $signerCertificateId, $key->privateKey());
@@ -257,7 +267,7 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
         $ticket = new VirgilUserInfoTicket("Jon", "Doe", 31);
         $signerCertificateId = "CERT-1234";
 
-        $key = VirgilCipher::generateKeyPair();
+        $key = self::$cipher->generateKeyPair();
 
         $signer = new VirgilSigner();
         $sign = $signer->sign($ticket, $signerCertificateId, $key->privateKey());

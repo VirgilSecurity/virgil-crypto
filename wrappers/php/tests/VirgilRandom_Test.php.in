@@ -44,9 +44,7 @@ include_once "StringSource.php";
 class VirgilRandom_Test extends PHPUnit_Framework_TestCase {
 
     /**
-     * @covers VirgilCipher::generateKeyPair
-     * @covers VirgilRandom::sign
-     * @covers VirgilRandom::verify
+     * @covers VirgilRandom::randomize
      */
     public function test_() {
         $random = new VirgilRandom("com.virgilsecurity.random");

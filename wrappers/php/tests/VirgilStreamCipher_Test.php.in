@@ -36,75 +36,80 @@
  */
 
 include_once "@PHP_MODULE_FILE_NAME@";
+include_once "StringSource.php";
+include_once "StringSink.php";
 
 /**
- * @covers VirgilCipher algorithms
+ * @covers VirgilStreamCipher algorithms
  */
-class VirgilCipher_Test extends PHPUnit_Framework_TestCase {
+class VirgilStreamCipher_Test extends PHPUnit_Framework_TestCase {
 
     /**
-     * @covers VirgilCipher::generateKeyPair
-     * @covers VirgilCipher::encrypt
-     * @covers VirgilCipher::decrypt
+     * @covers VirgilStreamCipher::generateKeyPair
+     * @covers VirgilStreamCipher::encrypt
+     * @covers VirgilStreamCipher::decrypt
      */
     public function test_encryption_descryption_with_generated_keys() {
         $initialString = "very long string to be encrypted";
 
-        $cipher = new VirgilCipher();
-        $this->assertNotNull($cipher, "Cipher was not created.");
-        $this->assertNotNull($cipher->_cPtr, "Underlying cipher was not created.");
+        $cipher = new VirgilStreamCipher();
 
         $key = $cipher->generateKeyPair();
         $this->assertGreaterThan(0, strlen($key->publicKey()));
         $this->assertGreaterThan(0, strlen($key->privateKey()));
 
-        $datagram = $cipher->encrypt($initialString, $key->publicKey());
-        $this->assertGreaterThan(0, strlen($datagram->encryptionKey));
-        $this->assertGreaterThan(0, strlen($datagram->encryptedData));
+        $encryptSource = new StringSource($initialString);
+        $encryptSink = new StringSink();
 
-        $decryptedString = $cipher->decrypt($datagram->encryptedData, $datagram->encryptionKey, $key->privateKey());
+        $encryptionKey = $cipher->encrypt($encryptSource, $encryptSink, $key->publicKey());
 
-        $this->assertEquals($initialString, $decryptedString);
+        $decryptSource = new StringSource($encryptSink->getResult());
+        $decryptSink = new StringSink();
+
+        $cipher->decrypt($decryptSource, $decryptSink, $encryptionKey, $key->privateKey());
+
+        $this->assertEquals($initialString, $decryptSink->getResult());
     }
 
     /**
-     * @covers VirgilCipher::generateKeyPair
-     * @covers VirgilCipher::encrypt
-     * @covers VirgilCipher::decrypt
+     * @covers VirgilStreamCipher::generateKeyPair
+     * @covers VirgilStreamCipher::encrypt
+     * @covers VirgilStreamCipher::decrypt
      */
     public function test_encryption_descryption_with_generated_keys_with_password() {
         $initialString = "very long string to be encrypted";
-        $password = "password";
+        $privateKeyPassword = "password";
 
-        $cipher = new VirgilCipher();
-        $key = $cipher->generateKeyPair($password);
-        $this->assertGreaterThan(0, strlen($key->publicKey()));
-        $this->assertGreaterThan(0, strlen($key->privateKey()));
+        $cipher = new VirgilStreamCipher();
+        $key = $cipher->generateKeyPair($privateKeyPassword);
 
-        $datagram = $cipher->encrypt($initialString, $key->publicKey());
-        $this->assertGreaterThan(0, strlen($datagram->encryptionKey));
-        $this->assertGreaterThan(0, strlen($datagram->encryptedData));
+        $encryptSource = new StringSource($initialString);
+        $encryptSink = new StringSink();
 
-        $decryptedString = $cipher->decrypt($datagram->encryptedData, $datagram->encryptionKey,
-                $key->privateKey(), $password);
+        $encryptionKey = $cipher->encrypt($encryptSource, $encryptSink, $key->publicKey());
 
-        $this->assertEquals($initialString, $decryptedString);
+        $decryptSource = new StringSource($encryptSink->getResult());
+        $decryptSink = new StringSink();
+
+        $cipher->decrypt($decryptSource, $decryptSink, $encryptionKey, $key->privateKey(), $privateKeyPassword);
+
+        $this->assertEquals($initialString, $decryptSink->getResult());
     }
 
     /**
-     * @covers VirgilCipher::encrypt
-     * @covers VirgilCipher::decrypt
+     * @covers VirgilStreamCipher::encrypt
+     * @covers VirgilStreamCipher::decrypt
      */
     public function test_encryption_descryption_with_ec_keys() {
         $initialString = "very long string to be encrypted";
-        $publicKey =
+        $publicKeyPem512 =
                 "-----BEGIN PUBLIC KEY-----\n".
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
                 "nIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdvcSsAMbLCnvEnTlXFMDn5\n".
                 "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
                 "o+yIBPaohqMzfjvj4Yw=\n".
                 "-----END PUBLIC KEY-----\n";
-        $privateKey =
+        $privateKeyPem512 =
                 "-----BEGIN EC PRIVATE KEY-----\n".
                 "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
                 "b+IcSjzaw8xEZuIkT/wG/yVlx4Zimk0XoAsGCSskAwMCCAEBDaGBhQOBggAEA8GV\n".
@@ -113,25 +118,32 @@ class VirgilCipher_Test extends PHPUnit_Framework_TestCase {
                 "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
                 "-----END EC PRIVATE KEY-----\n";
 
-        $cipher = new VirgilCipher();
+        $encryptSource = new StringSource($initialString);
+        $encryptSink = new StringSink();
+        $cipher = new VirgilStreamCipher();
 
-        $datagram = $cipher->encrypt($initialString, $publicKey);
-        $decryptedString = $cipher->decrypt($datagram->encryptedData, $datagram->encryptionKey, $privateKey);
-        $this->assertEquals($initialString, $decryptedString);
+        $encryptionKey = $cipher->encrypt($encryptSource, $encryptSink, $publicKeyPem512);
+
+        $decryptSource = new StringSource($encryptSink->getResult());
+        $decryptSink = new StringSink();
+
+        $cipher->decrypt($decryptSource, $decryptSink, $encryptionKey, $privateKeyPem512);
+
+        $this->assertEquals($initialString, $decryptSink->getResult());
     }
 
     /**
-     * @covers VirgilCipher::encrypt
-     * @covers VirgilCipher::decrypt
+     * @covers VirgilStreamCipher::encrypt
+     * @covers VirgilStreamCipher::decrypt
      */
     public function test_encryption_descryption_with_rsa_keys() {
         $initialString = "very long string to be encrypted";
-        $publicKey =
+        $publicKeyPem512 =
                 "-----BEGIN PUBLIC KEY-----\n".
                 "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaro\n".
                 "K+GG5ZcLA9AnA2Fwkx8hFozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQ==\n".
                 "-----END PUBLIC KEY-----\n";
-        $privateKey =
+        $privateKeyPem512 =
                 "-----BEGIN RSA PRIVATE KEY-----\n".
                 "MIIBOQIBAAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaroK+GG5ZcLA9AnA2Fwkx8h\n".
                 "FozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQJAYML8olAwoVcfU8+FT3pj\n".
@@ -142,17 +154,24 @@ class VirgilCipher_Test extends PHPUnit_Framework_TestCase {
                 "tFCwQZczpa/OtOqYKHHpFevnLEVWrlHvCRgJeJU=\n".
                 "-----END RSA PRIVATE KEY-----\n";
 
-        $cipher = new VirgilCipher();
+        $encryptSource = new StringSource($initialString);
+        $encryptSink = new StringSink();
+        $cipher = new VirgilStreamCipher();
 
-        $datagram = $cipher->encrypt($initialString, $publicKey);
-        $decryptedString = $cipher->decrypt($datagram->encryptedData, $datagram->encryptionKey, $privateKey);
-        $this->assertEquals($initialString, $decryptedString);
+        $encryptionKey = $cipher->encrypt($encryptSource, $encryptSink, $publicKeyPem512);
+
+        $decryptSource = new StringSource($encryptSink->getResult());
+        $decryptSink = new StringSink();
+
+        $cipher->decrypt($decryptSource, $decryptSink, $encryptionKey, $privateKeyPem512);
+
+        $this->assertEquals($initialString, $decryptSink->getResult());
     }
 
     /**
-     * @covers VirgilCipher::encrypt
-     * @covers VirgilCipher::decrypt
-     * @covers VirgilCipher::reencryptKey
+     * @covers VirgilStreamCipher::encrypt
+     * @covers VirgilStreamCipher::decrypt
+     * @covers VirgilStreamCipher::reencryptKey
      */
     public function test_reencrypt_key() {
         $initialString = "very long string to be encrypted";
@@ -187,30 +206,42 @@ class VirgilCipher_Test extends PHPUnit_Framework_TestCase {
                 "tFCwQZczpa/OtOqYKHHpFevnLEVWrlHvCRgJeJU=\n".
                 "-----END RSA PRIVATE KEY-----\n";
 
-        $cipher = new VirgilCipher();
+        $encryptSource = new StringSource($initialString);
+        $encryptSink = new StringSink();
+        $cipher = new VirgilStreamCipher();
 
-        $datagram = $cipher->encrypt($initialString, $ecPublicKey);
-        $sharedEncryptionKey = $cipher->reencryptKey($datagram->encryptionKey, $rsaPublicKey ,$ecPrivateKey);
+        $encryptionKey = $cipher->encrypt($encryptSource, $encryptSink, $ecPublicKey);
+        $sharedEncryptionKey = $cipher->reencryptKey($encryptionKey, $rsaPublicKey ,$ecPrivateKey);
 
+        $decryptSource = new StringSource($encryptSink->getResult());
+        $decryptSink = new StringSink();
 
-        $decryptedString = $cipher->decrypt($datagram->encryptedData, $sharedEncryptionKey, $rsaPrivateKey);
-        $this->assertEquals($initialString, $decryptedString);
+        $cipher->decrypt($decryptSource, $decryptSink, $sharedEncryptionKey, $rsaPrivateKey);
+
+        $this->assertEquals($initialString, $decryptSink->getResult());
     }
 
     /**
-     * @covers VirgilCipher::encryptWithPassword
-     * @covers VirgilCipher::decryptWithPassword
+     * @covers VirgilStreamCipher::encryptWithPassword
+     * @covers VirgilStreamCipher::decryptWithPassword
      */
     public function test_password_encryption_descryption() {
         $initialString = "string to be encrypted";
         $password = "password";
 
-        $cipher = new VirgilCipher();
+        $cipher = new VirgilStreamCipher();
 
-        $encryptedString = $cipher->encryptWithPassword($initialString, $password);
-        $decryptedString = $cipher->decryptWithPassword($encryptedString, $password);
+        $encryptSource = new StringSource($initialString);
+        $encryptSink = new StringSink();
 
-        $this->assertEquals($initialString, $decryptedString);
+        $cipher->encryptWithPassword($encryptSource, $encryptSink, $password);
+
+        $decryptSource = new StringSource($encryptSink->getResult());
+        $decryptSink = new StringSink();
+
+        $decryptedString = $cipher->decryptWithPassword($decryptSource, $decryptSink, $password);
+
+        $this->assertEquals($initialString, $decryptSink->getResult());
     }
 }
 

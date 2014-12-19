@@ -112,4 +112,7 @@ set (EXTERNAL_LIBS_DIR "${CMAKE_CURRENT_BINARY_DIR}/libs" CACHE INTERNAL
 
 # Build submodules
 add_subdirectory (lib)
+if (PLATFORM_NAME_LOWER STREQUAL "cpp")
+    add_subdirectory (programs)
+endif ()
 add_subdirectory (wrappers)

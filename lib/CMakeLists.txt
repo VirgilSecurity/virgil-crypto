@@ -43,8 +43,6 @@ include (ExternalProject)
 include (${CMAKE_CURRENT_SOURCE_DIR}/polarssl/polarssl_ext.cmake)
 include (${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp/jsoncpp_ext.cmake)
 
-set (VIRGIL_LIB_INSTALL_DIR c++)
-
 # Configure includes
 include_directories (include)
 if (CMAKE_MAJOR_VERSION LESS 3)
@@ -71,6 +69,8 @@ add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
             $<TARGET_FILE:${PROJECT_NAME}>
             ${EXTERNAL_LIBS_DIR}/$<TARGET_FILE_NAME:${PROJECT_NAME}>
 )
+
+set (VIRGIL_LIB_INSTALL_DIR ${PLATFORM_NAME_LOWER})
 
 if (PLATFORM_NAME_LOWER STREQUAL "cpp" OR PLATFORM_EMBEDDED)
     install (TARGETS ${PROJECT_NAME}

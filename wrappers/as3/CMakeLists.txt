@@ -36,6 +36,8 @@
 
 cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 
+include (CMakeFindBinUtils)
+
 project (${WRAPPED_LIB_NAME}_as3)
 
 # Define module name
@@ -49,12 +51,22 @@ find_package (Java REQUIRED)
 
 find_program (AS3_COMPILER NAMES asc2.jar PATHS ${CMAKE_FIND_ROOT_PATH})
 if (NOT AS3_COMPILER)
-    message (FATAL_ERROR "Binary asc2.jar not found.")
+    message (FATAL_ERROR "Not found asc2.jar")
+else ()
+    message (STATUS "Found asc2.jar: " ${AS3_COMPILER})
 endif ()
 
 find_file (BUILTIN_ABC_LIB NAMES builtin.abc PATHS ${CMAKE_FIND_ROOT_PATH})
 if (NOT BUILTIN_ABC_LIB)
-    message (FATAL_ERROR "Library builtin.abc not found.")
+    message (FATAL_ERROR "Not found builtin.abc")
+else ()
+    message (STATUS "Found builtin.abc: " ${BUILTIN_ABC_LIB})
+endif ()
+
+if (NOT CMAKE_NM)
+    message (FATAL_ERROR "Not found nm")
+else ()
+    message (STATUS "Found nm: " ${CMAKE_NM})
 endif ()
 
 # Configure inlcudes
@@ -63,6 +75,12 @@ set (INCLUDES "-I${${WRAPPED_LIB_NAME}_SOURCE_DIR}/include" "-I${CMAKE_CURRENT_S
 # Build wrapper
 set (WRAPPER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/wrapper.cxx)
 set (WRAPPER_OBJ ${CMAKE_CURRENT_BINARY_DIR}/wrapper.o)
+
+if (CMAKE_BUILD_TYPE)
+    string (TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+endif ()
+
 add_custom_command (OUTPUT ${WRAPPER_OBJ}
     COMMAND ${CMAKE_CXX_COMPILER}
     ARGS -c ${CMAKE_CXX_FLAGS} ${INCLUDES}
@@ -90,13 +108,7 @@ set (COMMON_EXPORT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/src/public-api.txt)
 set (WRAPPER_EXPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/wrapper_export.txt)
 add_custom_command (OUTPUT ${WRAPPER_EXPORT_FILE}
     COMMAND cat ${COMMON_EXPORT_FILE} > ${WRAPPER_EXPORT_FILE}
-    COMMAND nm  ${WRAPPER_OBJ} |
-            grep ' T ' | awk '{print $$3}' | sed 's/__/_/' >> ${WRAPPER_EXPORT_FILE}
-    COMMAND nm  $<TARGET_LINKER_FILE:${WRAPPED_LIB_NAME}> |
-            grep ' T ' | awk '{print $$3}' | sed 's/__/_/' >> ${WRAPPER_EXPORT_FILE}
-    COMMAND nm  ${CMAKE_BINARY_DIR}/libs/libpolarssl.a |
-            grep ' T ' | awk '{print $$3}' | sed 's/__/_/' >> ${WRAPPER_EXPORT_FILE}
-    COMMAND nm  ${CMAKE_BINARY_DIR}/libs/libjsoncpp.a |
+    COMMAND ${CMAKE_NM} ${WRAPPER_OBJ} |
             grep ' T ' | awk '{print $$3}' | sed 's/__/_/' >> ${WRAPPER_EXPORT_FILE}
     DEPENDS ${COMMON_EXPORT_FILE}
     DEPENDS ${WRAPPER_OBJ}

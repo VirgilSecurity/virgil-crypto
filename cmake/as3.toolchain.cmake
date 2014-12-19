@@ -53,8 +53,8 @@ set (CMAKE_CXX_FLAGS             "-U__STRICT_ANSI__" CACHE STRING "")
 set (CMAKE_C_FLAGS_RELEASE       "-O3" CACHE STRING "")
 set (CMAKE_CXX_FLAGS_RELEASE     "-O3" CACHE STRING "")
 
-cmake_force_c_compiler (${CMAKE_C_COMPILER} GNU)
-cmake_force_cxx_compiler (${CMAKE_CXX_COMPILER} GNU)
+cmake_force_c_compiler (${CMAKE_C_COMPILER} FLASCC)
+cmake_force_cxx_compiler (${CMAKE_CXX_COMPILER} FLASXX)
 
 set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)

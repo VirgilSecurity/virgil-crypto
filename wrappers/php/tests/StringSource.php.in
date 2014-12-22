@@ -43,7 +43,7 @@ class StringSource extends VirgilDataSource
     private $sourcePos;
     function __construct($string)
     {
-        parent::__construct();
+        parent::__construct($this);
         $this->source = str_split($string, 2);
         $this->sourcePos = 0;
     }

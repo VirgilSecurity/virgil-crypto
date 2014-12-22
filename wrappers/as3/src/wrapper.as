@@ -704,18 +704,15 @@ public class VirgilSigner {
         _wrap_delete_VirgilSigner(cPtr);
     }
 
-    public function sign(dataSource:VirgilDataSource, signerCertificateId:ByteArray,
+    public function sign(data:ByteArray, signerCertificateId:ByteArray,
             privateKey:ByteArray, privateKeyPassword:ByteArray = null):VirgilSign {
-        if (privateKeyPassword == null) {
-            privateKeyPassword = new ByteArray();
-        }
         var sign:VirgilSign = new VirgilSign();
-        sign.cPtr = _wrap_VirgilSigner_sign(cPtr, dataSource, signerCertificateId, privateKey, privateKeyPassword);
+        sign.cPtr = _wrap_VirgilSigner_sign(cPtr, data, signerCertificateId, privateKey, privateKeyPassword);
         return sign;
     }
 
-    public function verify(dataSource:VirgilDataSource, sign:VirgilSign, publicKey:ByteArray):Boolean {
-        return _wrap_VirgilSigner_verify(cPtr, dataSource, sign.cPtr, publicKey);
+    public function verify(data:ByteArray, sign:VirgilSign, publicKey:ByteArray):Boolean {
+        return _wrap_VirgilSigner_verify(cPtr, data, sign.cPtr, publicKey);
     }
 
     public function signTicket(ticket:VirgilTicket, signerCertificateId:ByteArray,
@@ -728,6 +725,32 @@ public class VirgilSigner {
 
     public function verifyTicket(ticket:VirgilTicket, sign:VirgilSign, publicKey:ByteArray):Boolean {
         return _wrap_VirgilSigner_verifyTicket(cPtr, ticket.cPtr, sign.cPtr, publicKey);
+    }
+}
+
+public class VirgilStreamSigner {
+    public var cPtr:int;
+
+    public static function create():VirgilStreamSigner {
+        var obj = new VirgilStreamSigner();
+        obj.cPtr = _wrap_new_VirgilStreamSigner();
+        return obj;
+    }
+
+    public function destroy():void {
+        _wrap_delete_VirgilStreamSigner(cPtr);
+    }
+
+    public function sign(dataSource:VirgilDataSource, signerCertificateId:ByteArray,
+            privateKey:ByteArray, privateKeyPassword:ByteArray = null):VirgilSign {
+        var sign:VirgilSign = new VirgilSign();
+        sign.cPtr = _wrap_VirgilStreamSigner_sign(cPtr, dataSource, signerCertificateId, privateKey,
+                privateKeyPassword);
+        return sign;
+    }
+
+    public function verify(dataSource:VirgilDataSource, sign:VirgilSign, publicKey:ByteArray):Boolean {
+        return _wrap_VirgilStreamSigner_verify(cPtr, dataSource, sign.cPtr, publicKey);
     }
 }
 

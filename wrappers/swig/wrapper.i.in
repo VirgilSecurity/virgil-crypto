@@ -222,9 +222,6 @@ INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilTicket, virgil::service::data, virgil/
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilUserIdTicket, virgil::service::data, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilUserInfoTicket, virgil::service::data, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilSign, virgil::service::data, virgil/service/data)
-
-INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::service::stream, virgil/service/stream)
-INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::service::stream, virgil/service/stream)
 ///@}
 
 
@@ -239,6 +236,15 @@ INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::service::stream, virgil/serv
 INCLUDE_CLASS(VirgilDataMarshaller, virgil::service::data::marshalling, virgil/service/data/marshalling)
 INCLUDE_CLASS(VirgilJsonDataMarshaller, virgil::service::data::marshalling, virgil/service/data/marshalling)
 INCLUDE_CLASS(VirgilAsn1DataMarshaller, virgil::service::data::marshalling, virgil/service/data/marshalling)
+///@}
+
+/**
+ * @name Package: virgil::service::stream
+ */
+///@{
+INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::service::stream, virgil/service/stream)
+INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::service::stream, virgil/service/stream)
+INCLUDE_CLASS(VirgilStreamSigner, virgil::service::stream, virgil/service/stream)
 ///@}
 
 /**

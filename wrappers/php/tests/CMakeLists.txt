@@ -47,6 +47,7 @@ set (TEST_FILE_LIST
     VirgilCipher_Test.php
     VirgilStreamCipher_Test.php
     VirgilChunkCipher_Test.php
+    VirgilStreamSigner_Test.php
     VirgilSigner_Test.php
     VirgilAsn1Reader_Test.php
     VirgilAsn1Writer_Test.php

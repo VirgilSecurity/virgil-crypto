@@ -48,8 +48,8 @@ package com.virgilsecurity {
     import com.virgilsecurity.*;
     import com.virgilsecurity.wrapper.CModule;
 
-    public class VirgilSignerTest {
-        private var signer_:VirgilSigner;
+    public class VirgilStreamSignerTest {
+        private var signer_:VirgilStreamSigner;
 
         private static const TEST_SIGNER_CERTIFICATE_ID : String = "CERT-1234";
         private static const TEST_PUBLIC_KEY_PEM : String =
@@ -76,50 +76,34 @@ package com.virgilsecurity {
             CModule.startAsync();
         }
 
-        [Before(description="Creates VirgilSigner object and stores it in the 'signer_' variable.")]
+        [Before(description="Creates VirgilStreamSigner object and stores it in the 'signer_' variable.")]
         public function create_signer() : void {
-            signer_ = VirgilSigner.create();
+            signer_ = VirgilStreamSigner.create();
             assertThat(signer_.cPtr, not(equalTo(0)));
         }
 
-        [After(description="Destroy VirgilSigner object stored it in the 'signer_' variable.")]
+        [After(description="Destroy VirgilStreamSigner object stored it in the 'signer_' variable.")]
         public function destroy_signer() : void {
             signer_.destroy();
             signer_ = null;
         }
 
-        [Test(description="Test VirgilSigner.sign() and VirgilSigner.verify().")]
+        [Test(description="Test VirgilStreamSigner.sign() and VirgilStreamSigner.verify().")]
         public function test_signer_sign_verify():void {
             var plainTextData:ByteArray = ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT);
 
-            var sign:VirgilSign = signer_.sign(plainTextData,
+            var plainTextDataSource:VirgilDataSourceWrapper = new VirgilDataSourceWrapper(plainTextData);
+
+            var sign:VirgilSign = signer_.sign(plainTextDataSource,
                     ConvertionUtils.asciiStringToArray(TEST_SIGNER_CERTIFICATE_ID),
                     ConvertionUtils.asciiStringToArray(TEST_PRIVATE_KEY_PEM));
 
-            var verified:Boolean = signer_.verify(plainTextData, sign,
+            plainTextData.position = 0;
+            var verified:Boolean = signer_.verify(plainTextDataSource, sign,
                     ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM));
             assertThat(verified, equalTo(true));
 
             sign.destroy();
         }
-
-        [Test(description="Test VirgilSigner.signTicket() and VirgilSigner.verifyTicket().")]
-        public function test_signer_signTicket_verifyTicket():void {
-            var ticket:VirgilUserInfoTicket = VirgilUserInfoTicket.create(
-                    ConvertionUtils.asciiStringToArray("Dan"),
-                    ConvertionUtils.asciiStringToArray("Doe"),
-                    21);
-
-            var sign:VirgilSign = signer_.signTicket(ticket,
-                    ConvertionUtils.asciiStringToArray(TEST_SIGNER_CERTIFICATE_ID),
-                    ConvertionUtils.asciiStringToArray(TEST_PRIVATE_KEY_PEM));
-
-            var verified:Boolean = signer_.verifyTicket(ticket, sign,
-                    ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM));
-            assertThat(verified, equalTo(true));
-
-            sign.destroy();
-        }
-
     }
 }

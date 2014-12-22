@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SERVICE_VIRGIL_SIGNER_H
-#define VIRGIL_SERVICE_VIRGIL_SIGNER_H
+#ifndef VIRGIL_SERVICE_VIRGIL_STREAM_SIGNER_H
+#define VIRGIL_SERVICE_VIRGIL_STREAM_SIGNER_H
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -43,48 +43,31 @@ using virgil::VirgilByteArray;
 #include <virgil/service/data/VirgilSign.h>
 using virgil::service::data::VirgilSign;
 
-#include <virgil/service/data/VirgilCertificate.h>
-using virgil::service::data::VirgilCertificate;
-
-#include <virgil/service/data/VirgilTicket.h>
-using virgil::service::data::VirgilTicket;
-
 #include <virgil/service/stream/VirgilDataSource.h>
 using virgil::service::stream::VirgilDataSource;
 
-namespace virgil { namespace service {
+namespace virgil { namespace service { namespace stream {
 
 /**
  * @brief This class provides high-level interface to sign and verify data using Virgil Security keys.
  *
- * This module can sign / verify as raw data and Virgil Security tickets.
+ * This module can sign / verify data provided by stream.
  */
-class VirgilSigner {
+class VirgilStreamSigner {
 public:
     /**
-     * @brief Sign given data with given private key.
+     * @brief Sign data provided by the source with given private key.
      * @return Virgil Security sign.
      */
-    VirgilSign sign(const VirgilByteArray& data, const VirgilByteArray& signerCertificateId,
+    VirgilSign sign(VirgilDataSource& source, const VirgilByteArray& signerCertificateId,
             const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
-     * @brief Verify sign and given data to be conformed to the given public key.
+     * @brief Verify sign and data provided by the source to be conformed to the given public key.
      * @return true if sign is valid and data was not malformed.
      */
-    bool verify(const VirgilByteArray& data, const VirgilSign& sign, const VirgilByteArray& publicKey);
-    /**
-     * @brief Sign given ticket with the private key.
-     * @return Virgil Security sign.
-     */
-    VirgilSign sign(VirgilTicket& ticket, const VirgilByteArray& signerCertificateId,
-            const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
-    /**
-     * @brief Verify sign and ticket to be conformed to the given public key.
-     * @return true if sign is valid and data was not malformed.
-     */
-    bool verify(VirgilTicket& ticket, const VirgilSign& sign, const VirgilByteArray& publicKey);
+    bool verify(VirgilDataSource& source, const VirgilSign& sign, const VirgilByteArray& publicKey);
 };
 
-}}
+}}}
 
-#endif /* VIRGIL_SERVICE_VIRGIL_SIGNER_H */
+#endif /* VIRGIL_SERVICE_VIRGIL_STREAM_SIGNER_H */

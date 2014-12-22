@@ -77,6 +77,7 @@ using virgil::VirgilByteArray;
 #include "VirgilStreamCipher.wrapper.cxx"
 #include "VirgilChunkCipher.wrapper.cxx"
 #include "VirgilSigner.wrapper.cxx"
+#include "VirgilStreamSigner.wrapper.cxx"
 
 int main() {
     AS3_GoAsync();

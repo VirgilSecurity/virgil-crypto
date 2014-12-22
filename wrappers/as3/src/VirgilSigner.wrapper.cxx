@@ -43,8 +43,8 @@ GEN_DESTRUCTOR(VirgilSigner, com.virgilsecurity.wrapper)
 __attribute__((
     annotate("as3import:flash.utils.ByteArray"),
     annotate("as3sig:public function _wrap_VirgilSigner_sign"
-            "(asSelf, asDataSource:*, asSignerCertificateId:ByteArray,"
-            "asPrivateKey:ByteArray, asPrivateKeyPassword:ByteArray):int"),
+            "(asSelf, asData:ByteArray, asSignerCertificateId:ByteArray,"
+            "asPrivateKey:ByteArray, asPrivateKeyPassword:ByteArray = null):int"),
     annotate("as3package:com.virgilsecurity.wrapper")
 ))
 void _wrap_VirgilSigner_sign() {
@@ -52,9 +52,8 @@ WRAPPER_THROWABLE_SECTION_START
     VirgilSigner *cSelf = (VirgilSigner *)0;
     AS3_GetScalarFromVar(cSelf, asSelf);
 
-    AS3::local::var cDataSource;
-    AS3_GetVarxxFromVar(cDataSource, asDataSource);
-    VirgilDataSourceWrapper cDataSourceWrapper(cDataSource);
+    VirgilByteArray cData;
+    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asData, cData);
 
     VirgilByteArray cSignerCertificateId;
     AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asSignerCertificateId, cSignerCertificateId);
@@ -62,11 +61,16 @@ WRAPPER_THROWABLE_SECTION_START
     VirgilByteArray cPrivateKey;
     AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPrivateKey, cPrivateKey);
 
+    bool cPasswordDefined = false;
+    AS3_VAR_IS_DEFINED(asPrivateKeyPassword, cPasswordDefined);
+
     VirgilByteArray cPrivateKeyPassword;
-    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPrivateKeyPassword, cPrivateKeyPassword);
+    if (cPasswordDefined) {
+        AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPrivateKeyPassword, cPrivateKeyPassword);
+    }
 
     VirgilSign *cSign = new VirgilSign(
-            cSelf->sign(cDataSourceWrapper, cSignerCertificateId, cPrivateKey, cPrivateKeyPassword));
+            cSelf->sign(cData, cSignerCertificateId, cPrivateKey, cPrivateKeyPassword));
 
     AS3_DeclareVar(asSign, int);
     AS3_CopyScalarToVar(asSign, cSign);
@@ -77,7 +81,7 @@ WRAPPER_THROWABLE_SECTION_END
 __attribute__((
     annotate("as3import:flash.utils.ByteArray"),
     annotate("as3sig:public function _wrap_VirgilSigner_verify"
-            "(asSelf, asDataSource:*, asSign:int, asPublicKey:ByteArray):Boolean"),
+            "(asSelf, asData:ByteArray, asSign:int, asPublicKey:ByteArray):Boolean"),
     annotate("as3package:com.virgilsecurity.wrapper")
 ))
 void _wrap_VirgilSigner_verify() {
@@ -85,9 +89,8 @@ WRAPPER_THROWABLE_SECTION_START
     VirgilSigner *cSelf = (VirgilSigner *)0;
     AS3_GetScalarFromVar(cSelf, asSelf);
 
-    AS3::local::var cDataSource;
-    AS3_GetVarxxFromVar(cDataSource, asDataSource);
-    VirgilDataSourceWrapper cDataSourceWrapper(cDataSource);
+    VirgilByteArray cData;
+    AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asData, cData);
 
     VirgilSign *cSign = (VirgilSign *)0;
     AS3_GetScalarFromVar(cSign, asSign);
@@ -95,7 +98,7 @@ WRAPPER_THROWABLE_SECTION_START
     VirgilByteArray cPublicKey;
     AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(asPublicKey, cPublicKey);
 
-    bool cVerified = cSelf->verify(cDataSourceWrapper, *cSign, cPublicKey);
+    bool cVerified = cSelf->verify(cData, *cSign, cPublicKey);
 
     AS3_DeclareVar(asVerified, Boolean);
     AS3_CopyScalarToVar(asVerified, cVerified);

@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SERVICE_VIRGIL_STREAM_CIPHER_H
-#define VIRGIL_SERVICE_VIRGIL_STREAM_CIPHER_H
+#ifndef VIRGIL_SERVICE_STREAM_VIRGIL_STREAM_CIPHER_H
+#define VIRGIL_SERVICE_STREAM_VIRGIL_STREAM_CIPHER_H
 
 #include <virgil/service/VirgilCipherBase.h>
 using virgil::service::VirgilCipherBase;
@@ -49,7 +49,7 @@ using virgil::service::stream::VirgilDataSource;
 #include <virgil/service/stream/VirgilDataSink.h>
 using virgil::service::stream::VirgilDataSink;
 
-namespace virgil { namespace service {
+namespace virgil { namespace service { namespace stream {
 
 /**
  * @brief This class provides high-level interface to encrypt / decrypt streaming data using Virgil Security keys.
@@ -86,6 +86,6 @@ public:
     void decryptWithPassword(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& pwd);
 };
 
-}}
+}}}
 
-#endif /* VIRGIL_SERVICE_VIRGIL_STREAM_CIPHER_H */
+#endif /* VIRGIL_SERVICE_STREAM_VIRGIL_STREAM_CIPHER_H */

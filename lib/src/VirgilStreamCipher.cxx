@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/VirgilStreamCipher.h>
-using virgil::service::VirgilStreamCipher;
+#include <virgil/service/stream/VirgilStreamCipher.h>
+using virgil::service::stream::VirgilStreamCipher;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;

@@ -245,6 +245,7 @@ INCLUDE_CLASS(VirgilAsn1DataMarshaller, virgil::service::data::marshalling, virg
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::service::stream, virgil/service/stream)
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::service::stream, virgil/service/stream)
 INCLUDE_CLASS(VirgilStreamSigner, virgil::service::stream, virgil/service/stream)
+INCLUDE_CLASS(VirgilStreamCipher, virgil::service::stream, virgil/service/stream)
 ///@}
 
 /**
@@ -255,6 +256,5 @@ INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCipherDatagram, virgil::service, virgi
 INCLUDE_CLASS(VirgilCipherBase, virgil::service, virgil/service)
 INCLUDE_CLASS(VirgilCipher, virgil::service, virgil/service)
 INCLUDE_CLASS(VirgilChunkCipher, virgil::service, virgil/service)
-INCLUDE_CLASS(VirgilStreamCipher, virgil::service, virgil/service)
 INCLUDE_CLASS(VirgilSigner, virgil::service, virgil/service)
 ///@}

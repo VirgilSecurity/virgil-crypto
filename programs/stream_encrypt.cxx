@@ -42,8 +42,8 @@
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/service/VirgilStreamCipher.h>
-using virgil::service::VirgilStreamCipher;
+#include <virgil/service/stream/VirgilStreamCipher.h>
+using virgil::service::stream::VirgilStreamCipher;
 
 #include <virgil/service/stream/VirgilStreamDataSource.h>
 using virgil::service::stream::VirgilStreamDataSource;

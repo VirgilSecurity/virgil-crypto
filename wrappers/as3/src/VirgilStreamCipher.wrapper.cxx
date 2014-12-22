@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/VirgilStreamCipher.h>
-using virgil::service::VirgilStreamCipher;
+#include <virgil/service/stream/VirgilStreamCipher.h>
+using virgil::service::stream::VirgilStreamCipher;
 
 GEN_THROWABLE_CONSTRUCTOR(VirgilStreamCipher, com.virgilsecurity.wrapper)
 GEN_DESTRUCTOR(VirgilStreamCipher, com.virgilsecurity.wrapper)

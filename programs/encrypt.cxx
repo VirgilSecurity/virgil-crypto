@@ -36,29 +36,25 @@
 
 #include <iostream>
 #include <fstream>
-#include <string>
 #include <algorithm>
 #include <iterator>
+#include <string>
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/service/stream/VirgilStreamCipher.h>
-using virgil::service::stream::VirgilStreamCipher;
+#include <virgil/service/VirgilCipher.h>
+using virgil::service::VirgilCipher;
 
-#include <virgil/service/stream/VirgilStreamDataSource.h>
-using virgil::service::stream::VirgilStreamDataSource;
-
-#include <virgil/service/stream/VirgilStreamDataSink.h>
-using virgil::service::stream::VirgilStreamDataSink;
+#include <virgil/service/VirgilCipherDatagram.h>
+using virgil::service::VirgilCipherDatagram;
 
 int print_usage(std::ostream& out, const char *programName) {
-    out << "Usage: " << programName << " <enc_data> <enc_key> <private_key> <private_key_pwd> <dec_data>" << std::endl;
-    out << "    <enc_data>        - [in]  encrypted data file to be decrypted" << std::endl;
-    out << "    <enc_key>         - [in]  encryption key file" << std::endl;
-    out << "    <private_key>     - [in]  private key file" << std::endl;
-    out << "    <private_key_pwd> - [in]  private key password" << std::endl;
-    out << "    <dec_data>        - [out] decrypted data file" << std::endl;
+    out << "Usage: " << programName << " <data> <public_key> <enc_data> <enc_key>" << std::endl;
+    out << "    <data>       - [in]  string to be encrypted" << std::endl;
+    out << "    <public_key> - [in]  public key file" << std::endl;
+    out << "    <enc_data>   - [out] encrypted data file" << std::endl;
+    out << "    <enc_key>    - [out] encryption key file" << std::endl;
     return -1;
 }
 
@@ -68,13 +64,29 @@ int main(int argc, char **argv) {
     unsigned currArgPos = 0;
 
     // Check arguments num.
-    if (argc < 6) {
+    if (argc < 5) {
         return print_usage(std::cerr, programName);
     }
 
+    // Parse argument: data
+    ++currArgPos;
+    VirgilByteArray data = VIRGIL_BYTE_ARRAY_FROM_STD_STRING(std::string(argv[currArgPos]));
+
+    // Parse argument: public_key
+    ++currArgPos;
+    std::ifstream publicKeyFile(argv[currArgPos], std::ios::in);
+    if (!publicKeyFile.is_open()) {
+        std::cerr << "Unable to open file: " <<  argv[currArgPos] << std::endl;
+        return print_usage(std::cerr, programName);
+    }
+    VirgilByteArray publicKey;
+    std::copy(std::istreambuf_iterator<char>(publicKeyFile), std::istreambuf_iterator<char>(),
+            std::back_inserter(publicKey));
+    publicKeyFile.close();
+
     // Parse argument: enc_data
     ++currArgPos;
-    std::ifstream encryptedDataFile(argv[currArgPos], std::ios::in | std::ios::binary);
+    std::ofstream encryptedDataFile(argv[currArgPos], std::ios::out | std::ios::binary);
     if (!encryptedDataFile.is_open()) {
         std::cerr << "Unable to open file: " <<  argv[currArgPos] << std::endl;
         return print_usage(std::cerr, programName);
@@ -82,51 +94,25 @@ int main(int argc, char **argv) {
 
     // Parse argument: enc_key
     ++currArgPos;
-    std::ifstream encryptionKeyFile(argv[currArgPos], std::ios::in | std::ios::binary);
+    std::ofstream encryptionKeyFile(argv[currArgPos], std::ios::out | std::ios::binary);
     if (!encryptionKeyFile.is_open()) {
-        std::cerr << "Unable to open file: " <<  argv[currArgPos] << std::endl;
-        return print_usage(std::cerr, programName);
-    }
-    VirgilByteArray encryptionKey;
-    std::copy(std::istreambuf_iterator<char>(encryptionKeyFile), std::istreambuf_iterator<char>(),
-            std::back_inserter(encryptionKey));
-    encryptionKeyFile.close();
-
-    // Parse argument: private_key
-    ++currArgPos;
-    std::ifstream privateKeyFile(argv[currArgPos], std::ios::in);
-    if (!privateKeyFile.is_open()) {
-        std::cerr << "Unable to open file: " <<  argv[currArgPos] << std::endl;
-        return print_usage(std::cerr, programName);
-    }
-    VirgilByteArray privateKey;
-    std::copy(std::istreambuf_iterator<char>(privateKeyFile), std::istreambuf_iterator<char>(),
-            std::back_inserter(privateKey));
-    privateKeyFile.close();
-
-    // Parse argument: private_key_pwd
-    ++currArgPos;
-    VirgilByteArray privateKeyPassword = VIRGIL_BYTE_ARRAY_FROM_STD_STRING(std::string(argv[currArgPos]));
-
-    // Parse argument: dec_data
-    ++currArgPos;
-    std::ofstream outFile(argv[currArgPos], std::ios::out | std::ios::binary);
-    if (!outFile.is_open()) {
         std::cerr << "Unable to open file: " <<  argv[currArgPos] << std::endl;
         return print_usage(std::cerr, programName);
     }
 
     // Create cipher.
-    VirgilStreamCipher cipher;
+    VirgilCipher cipher;
 
-    // Prepare input source.
-    VirgilStreamDataSource dataSource(encryptedDataFile);
+    // Encrypt data.
+    VirgilCipherDatagram datagram = cipher.encrypt(data, publicKey);
 
-    // Prepare output sink.
-    VirgilStreamDataSink dataSink(outFile);
+    // Write encrypted data to file.
+    std::copy(datagram.encryptedData.begin(), datagram.encryptedData.end(),
+            std::ostreambuf_iterator<char>(encryptedDataFile));
 
-    // Decrypt stream.
-    cipher.decrypt(dataSource, dataSink, encryptionKey, privateKey, privateKeyPassword);
+    // Write encryption key to file.
+    std::copy(datagram.encryptionKey.begin(), datagram.encryptionKey.end(),
+            std::ostreambuf_iterator<char>(encryptionKeyFile));
 
     return 0;
 }

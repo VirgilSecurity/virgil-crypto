@@ -1,5 +1,6 @@
 ---
 uncomment_macros :
+    - POLARSSL_ENTROPY_FORCE_SHA256
 comment_macros :
     - POLARSSL_HAVE_IPV6
     - POLARSSL_CIPHER_MODE_CFB

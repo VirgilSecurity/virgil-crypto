@@ -457,8 +457,10 @@ public class VirgilDataSinkWrapper implements VirgilDataSink {
 
 public class VirgilDataSourceWrapper implements VirgilDataSource {
     private var dataInput_:IDataInput;
+    private var chunkSize_:uint;
 
-    function VirgilDataSourceWrapper(dataInput:IDataInput) {
+    function VirgilDataSourceWrapper(dataInput:IDataInput, chunkSize:uint = 1024 * 1024) {
+        chunkSize_ = chunkSize;
         reset(dataInput);
     }
 
@@ -472,7 +474,7 @@ public class VirgilDataSourceWrapper implements VirgilDataSource {
 
     public function read():ByteArray {
         var data:ByteArray = new ByteArray();
-        dataInput_.readBytes(data);
+        dataInput_.readBytes(data, 0, Math.min(chunkSize_, dataInput_.bytesAvailable));
         return data;
     }
 }

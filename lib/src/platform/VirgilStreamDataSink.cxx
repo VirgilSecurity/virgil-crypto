@@ -48,7 +48,7 @@ bool VirgilStreamDataSink::isGood() {
 }
 
 void VirgilStreamDataSink::write(const VirgilByteArray& data) {
-    out_ << VIRGIL_BYTE_ARRAY_TO_STD_STRING(data);
+    out_.write(reinterpret_cast<const std::ostream::char_type *>(data.data()), data.size());
 }
 
 VirgilStreamDataSink::~VirgilStreamDataSink() throw() {

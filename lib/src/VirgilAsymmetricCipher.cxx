@@ -189,49 +189,41 @@ private:
 };
 
 static VirgilByteArray exportKey_(PolarsslKeyExport& polarsslKeyExport) {
-    size_t bufLen = 2048;
-    unsigned char *buf = 0;
+    VirgilByteArray exportedKey(2048);
     int result = 0;
+    bool isNotEnoughSpace = false;
     do {
-        buf = new unsigned char[bufLen];
-        result = polarsslKeyExport(buf, bufLen);
-        if (result < 0) {
-            delete [] buf;
-            buf = 0;
+        result = polarsslKeyExport(exportedKey.data(), exportedKey.size());
+        isNotEnoughSpace = (result == POLARSSL_ERR_ASN1_BUF_TOO_SMALL) ||
+                           (result == POLARSSL_ERR_BASE64_BUFFER_TOO_SMALL);
+        if (isNotEnoughSpace) {
+            exportedKey.resize(2 * exportedKey.size());
         }
-    } while (result == POLARSSL_ERR_ASN1_BUF_TOO_SMALL || result == POLARSSL_ERR_BASE64_BUFFER_TOO_SMALL);
+    } while (isNotEnoughSpace);
 
-    POLARSSL_ERROR_HANDLER(result); // No memory leak, if it is an error 'buf' variable will be deallocated earlier.
+    POLARSSL_ERROR_HANDLER(result);
 
-    unsigned char * writtenBytesBegin = buf;
     size_t writtenBytes = 0;
     if (polarsslKeyExport.format() == PolarsslKeyExport::DER && result > 0) {
         // Define written bytes for DER format
         writtenBytes = result;
         // Change result's begin for DER format.
-        writtenBytesBegin = buf + bufLen - writtenBytes;
+        memmove(exportedKey.data(), exportedKey.data() + exportedKey.size() - writtenBytes, writtenBytes);
     } else if (polarsslKeyExport.format() == PolarsslKeyExport::PEM && result == 0) {
         // Define written bytes for PEM format
-        writtenBytes = ::strlen(reinterpret_cast<const char *>(buf));
+        writtenBytes = ::strlen(reinterpret_cast<const char *>(exportedKey.data()));
     }
 
-    VirgilByteArray out = VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(writtenBytesBegin, writtenBytes);
-
-    if (buf) {
-        delete [] buf;
-        buf = 0;
-    }
-
-    return out;
+    exportedKey.resize(writtenBytes);
+    return exportedKey;
 }
 
 template <class EncDecFunc>
 VirgilByteArray processEncryptionDecryption_(EncDecFunc processFunc, pk_context *ctx, const VirgilByteArray& in) {
     const char *pers = "encrypt_decrypt";
 
-    const size_t bufLenMax = 1024;
-    unsigned char buf[bufLenMax];
-    size_t bufLen = 0;
+    VirgilByteArray result(1024);
+    size_t resultLen = 0;
 
     entropy_context entropy;
     entropy_init(&entropy);
@@ -243,8 +235,8 @@ VirgilByteArray processEncryptionDecryption_(EncDecFunc processFunc, pk_context 
     );
 
     POLARSSL_ERROR_HANDLER_DISPOSE(
-        processFunc(ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(in), (unsigned char *)buf, &bufLen, bufLenMax,
-                ctr_drbg_random, &ctr_drbg),
+        processFunc(ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(in),
+                (unsigned char *)result.data(), &resultLen, result.size(), ctr_drbg_random, &ctr_drbg),
         {
             ::ctr_drbg_free(&ctr_drbg);
             ::entropy_free(&entropy);
@@ -252,7 +244,8 @@ VirgilByteArray processEncryptionDecryption_(EncDecFunc processFunc, pk_context 
     );
     ::ctr_drbg_free(&ctr_drbg);
     ::entropy_free(&entropy);
-    return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(buf, bufLen);
+    result.resize(resultLen);
+    return result;
 }
 
 /// @name Public section

@@ -71,10 +71,9 @@ VirgilByteArray VirgilBase64::decode(const string& base64str) {
     size_t bufLen = 0;
     ::base64_decode(NULL, &bufLen, reinterpret_cast<const unsigned char *>(base64str.data()), base64str.size());
     // Decode
-    unsigned char *buf = new unsigned char[bufLen];
-    ::base64_decode(buf, &bufLen, reinterpret_cast<const unsigned char *>(base64str.data()), base64str.size());
+    VirgilByteArray result(bufLen);
+    ::base64_decode(result.data(), &bufLen,
+            reinterpret_cast<const unsigned char *>(base64str.data()), base64str.size());
     // Return result
-    VirgilByteArray result = VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(buf, bufLen);
-    delete[] buf;
     return result;
 }

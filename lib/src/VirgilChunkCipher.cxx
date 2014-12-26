@@ -94,8 +94,8 @@ void VirgilChunkCipher::startDecryption(const VirgilByteArray& encryptionKey, co
 }
 
 VirgilByteArray VirgilChunkCipher::process(const VirgilByteArray& data) {
-    bool dataIsAlignedToBlockSize = (data.size() % symmetricCipher_.blockSize()) == 0;
-    if (symmetricCipher_.isDecryptionMode() && !dataIsAlignedToBlockSize) {
+    bool isDataAlignedToBlockSize = (data.size() % symmetricCipher_.blockSize()) == 0;
+    if (symmetricCipher_.isDecryptionMode() && !isDataAlignedToBlockSize) {
         ostringstream message;
         message << "In the decryption mode data size MUST be multiple of ";
         message << symmetricCipher_.blockSize() << " bytes.";

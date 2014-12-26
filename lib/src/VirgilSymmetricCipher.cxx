@@ -57,6 +57,10 @@ public:
         init_(other.type);
     }
 
+    ~VirgilSymmetricCipherImpl() {
+        free_();
+    }
+
     VirgilSymmetricCipherImpl& operator=(const VirgilSymmetricCipherImpl& rhs) {
         if (this == &rhs) {
             return *this;
@@ -201,46 +205,33 @@ void VirgilSymmetricCipher::clear() {
 VirgilByteArray VirgilSymmetricCipher::crypt(const VirgilByteArray& input, const VirgilByteArray& iv) {
     size_t writtenBytes = 0;
     size_t bufLen = input.size() + this->blockSize();
-    unsigned char * buf = new unsigned char[bufLen];
-    POLARSSL_ERROR_HANDLER_DISPOSE(
+    VirgilByteArray result(bufLen);
+    POLARSSL_ERROR_HANDLER(
         ::cipher_crypt(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(iv), VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(input),
-                buf, &writtenBytes),
-        { // If error, dispose allocated memory.
-            delete [] buf;
-        }
+                result.data(), &writtenBytes)
     );
-    VirgilByteArray result = VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(buf, writtenBytes);
-    delete [] buf;
+    result.resize(writtenBytes);
     return result;
 }
 
 VirgilByteArray VirgilSymmetricCipher::update(const VirgilByteArray& input) {
     size_t writtenBytes = 0;
     size_t bufLen = input.size() + this->blockSize();
-    unsigned char * buf = new unsigned char[bufLen];
-    POLARSSL_ERROR_HANDLER_DISPOSE(
-        ::cipher_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(input), buf, &writtenBytes),
-        { // If error, dispose allocated memory.
-            delete [] buf;
-        }
+    VirgilByteArray result(bufLen);
+    POLARSSL_ERROR_HANDLER(
+        ::cipher_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(input), result.data(), &writtenBytes)
     );
-    VirgilByteArray result = VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(buf, writtenBytes);
-    delete [] buf;
+    result.resize(writtenBytes);
     return result;
 }
 
 VirgilByteArray VirgilSymmetricCipher::finish() {
     size_t writtenBytes = 0;
     size_t bufLen = this->blockSize();
-    unsigned char * buf = new unsigned char[bufLen];
-    POLARSSL_ERROR_HANDLER_DISPOSE(
-        ::cipher_finish(impl_->ctx, buf, &writtenBytes),
-        { // If error, dispose allocated memory.
-            delete [] buf;
-        }
+    VirgilByteArray result(bufLen);
+    POLARSSL_ERROR_HANDLER(
+        ::cipher_finish(impl_->ctx, result.data(), &writtenBytes)
     );
-    VirgilByteArray result = VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(buf, writtenBytes);
-    delete [] buf;
-
+    result.resize(writtenBytes);
     return result;
 }

@@ -46,15 +46,9 @@ using virgil::VirgilByteArray;
 
 
 VirgilByteArray VirgilKDF::kdf1(const VirgilByteArray in, size_t outSize) {
-
-    unsigned char *output = new unsigned char[outSize];
-    POLARSSL_ERROR_HANDLER_DISPOSE(
-        ::kdf1(VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(in), output, outSize),
-        {
-            delete[] output;
-        }
+    VirgilByteArray result(outSize);
+    POLARSSL_ERROR_HANDLER(
+        ::kdf1(VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(in), result.data(), outSize)
     );
-    VirgilByteArray result = VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(output, outSize);
-    delete[] output;
     return result;
 }

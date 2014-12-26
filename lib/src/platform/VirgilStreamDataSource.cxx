@@ -56,11 +56,11 @@ bool VirgilStreamDataSource::hasData() {
 }
 
 VirgilByteArray VirgilStreamDataSource::read() {
-    size_t readBytesCount = 0;
-    VirgilByteArray data;
-    char byte;
-    while (readBytesCount < chunkSize_ && in_.get(byte)) {
-        data.push_back(byte);
+    VirgilByteArray result(chunkSize_);
+    in_.read(reinterpret_cast<std::istream::char_type *>(result.data()), chunkSize_);
+    if (!in_) {
+        // Only part of chunk was read, so result MUST be trimmed.
+        result.resize(in_.gcount());
     }
-    return data;
+    return result;
 }

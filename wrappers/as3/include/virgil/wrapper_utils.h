@@ -47,40 +47,34 @@ do { \
     inline_as3( \
         "var "#actionScriptByteArray":ByteArray = new ByteArray();\n" \
     ); \
-    for (size_t pos = 0; pos < virgilByteArray.size(); ++pos) { \
-        unsigned char value = virgilByteArray.at(pos); \
+    if (!virgilByteArray.empty()) { \
         inline_as3( \
-            ""#actionScriptByteArray".writeByte(%0);\n" \
-            ::"r"(value) \
+            "com.adobe.flascc.CModule.readBytes(%0, %1, "#actionScriptByteArray");\n" \
+            ""#actionScriptByteArray".position = 0;\n" \
+            : : "r"(virgilByteArray.data()), "r"(virgilByteArray.size()) \
         ); \
     } \
-    inline_as3( \
-        ""#actionScriptByteArray".position = 0;\n" \
-    ); \
 } while (0)
 
 #define AS3_BYTE_ARRAY_TO_VIRGIL_BYTE_ARRAY(actionScriptByteArray, virgilByteArray) \
 do { \
     size_t actionScriptByteArray##Size = 0; \
-    size_t actionScriptByteArray##Position = 0; \
     inline_as3( \
         "%0 = "#actionScriptByteArray".length;\n" \
-        "%1 = "#actionScriptByteArray".position;\n" \
-        ""#actionScriptByteArray".position = 0;\n" \
-        :"=r"(actionScriptByteArray##Size), "=r"(actionScriptByteArray##Position) \
+        :"=r"(actionScriptByteArray##Size) \
     ); \
-    for (size_t pos = 0; pos < actionScriptByteArray##Size; ++pos) { \
-        int value = 0; \
+    if (actionScriptByteArray##Size > 0) { \
+        virgilByteArray.resize(actionScriptByteArray##Size); \
         inline_as3( \
-            "%0 = "#actionScriptByteArray".readByte();\n" \
-            :"=r"(value) \
+            "var currPos:uint = "#actionScriptByteArray".position;\n" \
+            ""#actionScriptByteArray".position = 0;\n" \
+            "com.adobe.flascc.CModule.writeBytes(%0, %1, "#actionScriptByteArray");\n" \
+            ""#actionScriptByteArray".position = currPos;\n" \
+            : : "r"(virgilByteArray.data()), "r"(virgilByteArray.size()) \
         ); \
-        virgilByteArray.push_back((unsigned char)value); \
+    } else { \
+        virgilByteArray.clear(); \
     } \
-    inline_as3( \
-        ""#actionScriptByteArray".position = %0;\n" \
-        ::"r"(actionScriptByteArray##Position) \
-    ); \
 } while (0)
 
 #define AS3_STRING_TO_STD_STRING(actionScriptString, stdString) \

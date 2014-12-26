@@ -72,7 +72,7 @@ int kdf1(const unsigned char *input, size_t ilen, unsigned char * output, size_t
 
     // Get KDF parameters
     counter = 0;
-    counter_len = ceil(olen / hash_len);
+    counter_len = (size_t)ceil(olen / hash_len);
 
     // Start hashing
     for(; counter < counter_len; ++counter) {

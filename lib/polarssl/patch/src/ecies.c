@@ -110,9 +110,9 @@ typedef struct {
     uint32_t reserved; // Not used at this implementation.
 } ecies_encrypt_message_header_t;
 
-static void reverse_bytes(void *start, int size) {
-    unsigned char *lo = start;
-    unsigned char *hi = start + size - 1;
+static void reverse_bytes(void *start, size_t size) {
+    unsigned char *lo = (unsigned char *)start;
+    unsigned char *hi = (unsigned char *)start + size - 1;
     unsigned char swap;
     while (lo < hi) {
         swap = *lo;

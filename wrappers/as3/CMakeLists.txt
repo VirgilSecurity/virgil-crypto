@@ -47,21 +47,19 @@ set (SWIG_MODULE_NAME ${AS3_MODULE_NAME})
 set (SWIG_MODULE_NAMESPACE com.virgilsecurity.wrapper)
 
 # Find required programs and libraries
+macro (find_as3_resource resource resource_name)
+    find_file (${resource} NAMES ${resource_name} PATHS ${CMAKE_FIND_ROOT_PATH})
+    if (NOT ${resource})
+        message (FATAL_ERROR "Not found ${resource_name} ${resource}")
+    else ()
+        message (STATUS "Found ${resource_name}: " ${${resource}})
+    endif ()
+endmacro (find_as3_resource)
+
 find_package (Java REQUIRED)
 
-find_program (AS3_COMPILER NAMES asc2.jar PATHS ${CMAKE_FIND_ROOT_PATH})
-if (NOT AS3_COMPILER)
-    message (FATAL_ERROR "Not found asc2.jar")
-else ()
-    message (STATUS "Found asc2.jar: " ${AS3_COMPILER})
-endif ()
-
-find_file (BUILTIN_ABC_LIB NAMES builtin.abc PATHS ${CMAKE_FIND_ROOT_PATH})
-if (NOT BUILTIN_ABC_LIB)
-    message (FATAL_ERROR "Not found builtin.abc")
-else ()
-    message (STATUS "Found builtin.abc: " ${BUILTIN_ABC_LIB})
-endif ()
+find_as3_resource (AS3_COMPILER asc2.jar)
+find_as3_resource (BUILTIN_ABC builtin.abc)
 
 if (NOT CMAKE_NM)
     message (FATAL_ERROR "Not found nm")
@@ -95,11 +93,11 @@ configure_file(
     COPYONLY
 )
 set (WRAPPER_AS3 ${CMAKE_CURRENT_BINARY_DIR}/wrapper.as)
-set (WRAPPER_ABC_LIB ${CMAKE_CURRENT_BINARY_DIR}/wrapper.abc)
-add_custom_command (OUTPUT ${WRAPPER_ABC_LIB}
+set (WRAPPER_ABC ${CMAKE_CURRENT_BINARY_DIR}/wrapper.abc)
+add_custom_command (OUTPUT ${WRAPPER_ABC}
     COMMAND ${Java_JAVA_EXECUTABLE}
-    ARGS -jar ${AS3_COMPILER} -merge -md -import ${BUILTIN_ABC_LIB} ${WRAPPER_AS3}
-    DEPENDS ${BUILTIN_ABC_LIB}
+    ARGS -jar ${AS3_COMPILER} -merge -md -import ${BUILTIN_ABC} ${WRAPPER_AS3}
+    DEPENDS ${BUILTIN_ABC}
     DEPENDS ${WRAPPER_AS3}
 )
 
@@ -118,22 +116,22 @@ add_custom_command (OUTPUT ${WRAPPER_EXPORT_FILE}
 set (WRAPPER_SWC ${CMAKE_CURRENT_BINARY_DIR}/${SWIG_MODULE_NAME}.swc)
 add_custom_target (${SWIG_MODULE_NAME} ALL
     COMMAND ${CMAKE_CXX_COMPILER}
-            -emit-swc=${SWIG_MODULE_NAMESPACE} -O3 -flto-api=${WRAPPER_EXPORT_FILE} -o ${WRAPPER_SWC}
-            ${WRAPPER_OBJ} ${WRAPPER_ABC_LIB}
+            -emit-swc=${SWIG_MODULE_NAMESPACE} ${CMAKE_CXX_FLAGS} -o ${WRAPPER_SWC}
+            ${WRAPPER_OBJ} ${WRAPPER_ABC}
             $<TARGET_LINKER_FILE:${WRAPPED_LIB_NAME}> ${CMAKE_BINARY_DIR}/libs/libpolarssl.a
             ${CMAKE_BINARY_DIR}/libs/libjsoncpp.a -lAS3++
     DEPENDS ${WRAPPER_OBJ}
-    DEPENDS ${WRAPPER_ABC_LIB}
-    DEPENDS ${WRAPPER_EXPORT_FILE}
+    DEPENDS ${WRAPPER_ABC}
 )
 add_dependencies (${SWIG_MODULE_NAME} ${WRAPPED_LIB_NAME})
 get_directory_property (SWIG_EXTRA_CLEAN_FILES ADDITIONAL_MAKE_CLEAN_FILES)
 set_directory_properties (PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${WRAPPER_SWC}")
 
+# Install wrapped library
 install (FILES ${WRAPPER_SWC}
         DESTINATION ${AS3_INSTALL_DIR}/${INSTALL_LIB_DIR_NAME})
 
 # Unit tests
 set (AS3_MODULE_FILE_NAME ${WRAPPER_SWC})
 add_subdirectory (tests)
-
+add_subdirectory (demo)

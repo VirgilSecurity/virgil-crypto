@@ -37,8 +37,34 @@
 #include <virgil/service/data/VirgilKeyPair.h>
 using virgil::service::data::VirgilKeyPair;
 
+#include <virgil/crypto/VirgilRandom.h>
+using virgil::crypto::VirgilRandom;
+
+#include <virgil/crypto/VirgilKeyPairGenerator.h>
+using virgil::crypto::VirgilKeyPairGenerator;
+
+#include <virgil/crypto/VirgilAsymmetricCipher.h>
+using virgil::crypto::VirgilAsymmetricCipher;
+
+#include <string>
+
+/**
+ * @name Configuration constants.
+ */
+///@{
+static const VirgilKeyPairGenerator::ECKeyGroup kKeyPair_ECKeyGroup = VirgilKeyPairGenerator::ECKeyGroup_DP_BP512R1;
+///@}
+
+VirgilKeyPair::VirgilKeyPair(const VirgilByteArray& pwd) {
+    VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::ec();
+    asymmetricCipher.genKeyPair(VirgilKeyPairGenerator::ec(kKeyPair_ECKeyGroup));
+    publicKey_ = asymmetricCipher.exportPublicKeyToPEM();
+    privateKey_ = asymmetricCipher.exportPrivateKeyToPEM(pwd);
+}
+
 VirgilKeyPair::VirgilKeyPair(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey)
-    : publicKey_(publicKey), privateKey_(privateKey) {};
+        : publicKey_(publicKey), privateKey_(privateKey) {
+};
 
 VirgilByteArray VirgilKeyPair::publicKey() const {
     return publicKey_;

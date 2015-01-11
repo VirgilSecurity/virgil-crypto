@@ -48,6 +48,10 @@ namespace virgil { namespace service { namespace data {
 class VirgilKeyPair {
 public:
     /**
+     * @brief Generate new key pair.
+     */
+    explicit VirgilKeyPair(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
      * @brief Initialize key pair with given public and private key.
      */
     VirgilKeyPair(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey);

@@ -1,6 +1,16 @@
---- include/polarssl/oid.h	2014-07-11 12:28:56.000000000 +0300
-+++ include/polarssl/oid.h	2014-10-01 07:29:13.000000000 +0300
-@@ -546,6 +546,18 @@
+--- polarssl-1.3.8/include/polarssl/oid.h	2014-07-11 12:28:56.000000000 +0300
++++ include/polarssl/oid.h	2015-01-12 19:51:22.000000000 +0200
+@@ -232,6 +232,9 @@
+  */
+ #define OID_DES_CBC                     OID_ISO_IDENTIFIED_ORG OID_OIW_SECSIG_ALG "\x07" /**< desCBC OBJECT IDENTIFIER ::= { iso(1) identified-organization(3) oiw(14) secsig(3) algorithms(2) 7 } */
+ #define OID_DES_EDE3_CBC                OID_RSA_COMPANY "\x03\x07" /**< des-ede3-cbc OBJECT IDENTIFIER ::= { iso(1) member-body(2) -- us(840) rsadsi(113549) encryptionAlgorithm(3) 7 } */
++#define OID_AES_128_CBC                 OID_GOV "\x03\x04\x01\x02" /**< aes128-CBC OBJECT IDENTIFIER ::= { joint-iso-itu-t(2) country(16) us(840) organization(1) gov(101) csor(3) nistAlgorithm(4) aes(1) aes128-CBC(2) } */
++#define OID_AES_192_CBC                 OID_GOV "\x03\x04\x01\x16" /**< aes192-CBC OBJECT IDENTIFIER ::= { joint-iso-itu-t(2) country(16) us(840) organization(1) gov(101) csor(3) nistAlgorithm(4) aes(1) aes128-CBC(22) } */
++#define OID_AES_256_CBC                 OID_GOV "\x03\x04\x01\x2A" /**< aes256-CBC OBJECT IDENTIFIER ::= { joint-iso-itu-t(2) country(16) us(840) organization(1) gov(101) csor(3) nistAlgorithm(4) aes(1) aes128-CBC(42) } */
+
+ /*
+  * PKCS#5 OIDs
+@@ -546,6 +549,18 @@
   * \return         0 if successful, or POLARSSL_ERR_OID_NOT_FOUND
   */
  int oid_get_cipher_alg( const asn1_buf *oid, cipher_type_t *cipher_alg );
@@ -19,7 +29,7 @@
  #endif /* POLARSSL_CIPHER_C */
 
  #if defined(POLARSSL_PKCS12_C)
-@@ -561,6 +573,20 @@
+@@ -561,6 +576,20 @@
   */
  int oid_get_pkcs12_pbe_alg( const asn1_buf *oid, md_type_t *md_alg,
                              cipher_type_t *cipher_alg );

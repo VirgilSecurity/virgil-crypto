@@ -92,6 +92,16 @@ size_t VirgilAsn1Writer::writeInteger(int value) {
     );
 }
 
+size_t VirgilAsn1Writer::writeNull() {
+    checkState();
+    ensureBufferEnough(kAsn1TagValueSize);
+    RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
+        POLARSSL_ERROR_HANDLER(
+            ::asn1_write_null(&p_, start_)
+        )
+    );
+}
+
 size_t VirgilAsn1Writer::writeOctetString(const VirgilByteArray& data) {
     checkState();
     ensureBufferEnough(kAsn1TagValueSize + kAsn1LengthValueSize + data.size());
@@ -148,6 +158,18 @@ size_t VirgilAsn1Writer::writeSequence(size_t len) {
             );
             POLARSSL_ERROR_HANDLER(
                 ::asn1_write_tag(&p_, start_, ASN1_CONSTRUCTED | ASN1_SEQUENCE)
+            );
+        }
+    );
+}
+
+size_t VirgilAsn1Writer::writeOID(const std::string& oid) {
+    checkState();
+    ensureBufferEnough(kAsn1TagValueSize + oid.size());
+    RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
+        {
+            POLARSSL_ERROR_HANDLER(
+                ::asn1_write_oid(&p_, start_, oid.c_str(), oid.size())
             );
         }
     );

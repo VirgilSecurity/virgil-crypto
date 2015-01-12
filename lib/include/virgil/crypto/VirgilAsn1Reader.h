@@ -38,6 +38,7 @@
 #define VIRGIL_CRYPTO_VIRGIL_ASN1_READER_H
 
 #include <cstddef>
+#include <string>
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -84,6 +85,10 @@ public:
      */
     int readInteger();
     /**
+     * @brief Read ASN.1 type: NULL.
+     */
+    void readNull();
+    /**
      * @brief Read ASN.1 type: OCTET STRING.
      */
     VirgilByteArray readOctetString();
@@ -106,6 +111,11 @@ public:
      * @return Sequence size in bytes.
      */
     size_t readSequence();
+    /**
+     * @brief Read ASN.1 type: OID.
+     * @return OID.
+     */
+    std::string readOID();
     ///@}
 private:
     /**

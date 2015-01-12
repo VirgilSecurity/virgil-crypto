@@ -38,6 +38,7 @@
 #define VIRGIL_CRYPTO_VIRGIL_ASN1_WRITER_H
 
 #include <cstddef>
+#include <string>
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -87,6 +88,11 @@ public:
      */
     size_t writeInteger(int value);
     /**
+     * @brief Write ASN.1 type: NULL.
+     * @return Written bytes.
+     */
+    size_t writeNull();
+    /**
      * @brief Write ASN.1 type: OCTET STRING.
      * @param data - octet string to be written.
      * @return Written bytes.
@@ -116,6 +122,12 @@ public:
      * @return Written bytes.
      */
     size_t writeSequence(size_t len);
+    /**
+     * @brief Write an OID tag (ASN1_OID) and data in ASN.1 format.
+     * @param oid - the OID to write.
+     * @return Written bytes.
+     */
+    size_t writeOID(const std::string& oid);
      ///@}
 private:
     /**

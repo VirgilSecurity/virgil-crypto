@@ -45,6 +45,7 @@ using virgil::VirgilByteArray;
 using virgil::VirgilException;
 
 #include <cstddef>
+#include <string>
 #include <polarssl/asn1.h>
 
 VirgilAsn1Reader::VirgilAsn1Reader() : p_(0), end_(0), data_() {
@@ -65,15 +66,6 @@ void VirgilAsn1Reader::reset(const VirgilByteArray& data) {
     end_ = p_ + data_.size();
 }
 
-size_t VirgilAsn1Reader::readSequence() {
-    checkState();
-    size_t len;
-    POLARSSL_ERROR_HANDLER(
-        ::asn1_get_tag(&p_, end_, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE)
-    );
-    return len;
-}
-
 int VirgilAsn1Reader::readInteger() {
     checkState();
     int result;
@@ -81,6 +73,14 @@ int VirgilAsn1Reader::readInteger() {
         ::asn1_get_int(&p_, end_, &result);
     );
     return result;
+}
+
+void VirgilAsn1Reader::readNull() {
+    checkState();
+    size_t len;
+    POLARSSL_ERROR_HANDLER(
+        ::asn1_get_tag(&p_, end_, &len, ASN1_NULL)
+    );
 }
 
 size_t VirgilAsn1Reader::readContextTag(unsigned char tag) {
@@ -118,6 +118,27 @@ VirgilByteArray VirgilAsn1Reader::readUTF8String() {
     p_ += len;
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(p_ - len, len);
 }
+
+size_t VirgilAsn1Reader::readSequence() {
+    checkState();
+    size_t len;
+    POLARSSL_ERROR_HANDLER(
+        ::asn1_get_tag(&p_, end_, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE)
+    );
+    return len;
+}
+
+
+std::string VirgilAsn1Reader::readOID() {
+    checkState();
+    size_t len;
+    POLARSSL_ERROR_HANDLER(
+        ::asn1_get_tag(&p_, end_, &len, ASN1_OID)
+    );
+    p_ += len;
+    return std::string(reinterpret_cast<std::string::const_pointer>(p_ - len), len);
+}
+
 
 void VirgilAsn1Reader::checkState() {
     if (p_ == 0 || end_ == 0) {

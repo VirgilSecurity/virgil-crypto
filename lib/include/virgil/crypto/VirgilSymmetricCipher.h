@@ -39,6 +39,7 @@
 
 #include <string>
 #include <virgil/VirgilByteArray.h>
+#include <virgil/crypto/VirgilAsn1Compatible.h>
 
 namespace virgil { namespace crypto {
 
@@ -52,7 +53,7 @@ class VirgilSymmetricCipherImpl;
 /**
  * @brief Provides symmetric ciphers algorithms.
  */
-class VirgilSymmetricCipher {
+class VirgilSymmetricCipher : public VirgilAsn1Compatible {
 public:
     /**
      * @name Additional types
@@ -75,6 +76,17 @@ public:
      * @brief Creates object that handles AES-256 encryption / decription algorithms.
      */
     static VirgilSymmetricCipher aes256();
+    ///@}
+    /**
+     * @brief Create object with undefined algorithm.
+     * @warning SHOULD be used in conjunction with VirgilAsn1Compatible interface,
+     *     i.e. VirgilSymmetricCipher cipher = VirgilSymmetricCipher().fromAsn1(asn1);
+     */
+    VirgilSymmetricCipher();
+    /**
+     * @brief Polymorphic destructor.
+     */
+    virtual ~VirgilSymmetricCipher() throw();
     ///@}
     /**
      * @name Info
@@ -201,14 +213,23 @@ public:
     VirgilSymmetricCipher(const VirgilSymmetricCipher& other);
     VirgilSymmetricCipher& operator=(const VirgilSymmetricCipher& rhs);
     ///@}
+    /**
+     * @name VirgilAsn1Compatible implementation
+     */
+    ///@{
+    virtual VirgilByteArray toAsn1() const;
+    virtual void fromAsn1(const VirgilByteArray& asn1);
+    ///@}
 private:
     /**
      * @brief Creates and initialize cipher with specified type.
      * @warning Constructor CAN NOT be used directly, use one of factory methods to create apropriate cipher.
      */
     explicit VirgilSymmetricCipher(int type);
-public:
-    virtual ~VirgilSymmetricCipher() throw();
+    /**
+     * @brief If internal state is not initialized with specific algorithm exception will be thrown.
+     */
+    void checkState() const;
 private:
     VirgilSymmetricCipherImpl *impl_;
 };

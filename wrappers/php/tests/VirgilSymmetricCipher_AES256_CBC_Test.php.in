@@ -126,6 +126,49 @@ class VirgilSymmetricCipher_AES256_CBC_Test extends PHPUnit_Framework_TestCase {
         $this->assertEquals($decodedPhrase, $baseDecodedPhrase);
     }
 
+    /**
+     * @covers VirgilSymmetricCipher::aes256
+     * @covers VirgilSymmetricCipher::toAsn1
+     * @covers VirgilSymmetricCipher::fromAsn1
+     */
+    public function test_aes256_object_save_restore() {
+        $key = "passphrase";
+        $keyHash = VirgilHash::sha256()->hash($key);
+        $phrase = "This string will be encoded.";
+        // Encrypt with initial cipher.
+        // Create and configure cipher.
+        $cipher = VirgilSymmetricCipher::aes256();
+        $cipher->setIV($this->generateIV($cipher->ivSize()));
+        // Set key for encoding.
+        $cipher->setEncryptionKey($keyHash);
+        // Finish cipher configuration for encoding.
+        $cipher->reset();
+        // Encode test string.
+        $encodedPhrase = $cipher->update($phrase);
+        // Finish encoding.
+        $encodedPhrase .= $cipher->finish();
+        // Save cipher to the ASN.1 structure
+        $cipherAsn1 = $cipher->toAsn1();
+
+        // Decrypt with restored cipher.
+        // Restore cipher to the new instance.
+        $restoredCipher = new VirgilSymmetricCipher();
+        $restoredCipher->fromAsn1($cipherAsn1);
+        // Check ciphers names to be equal.
+        $this->assertEquals($cipher->name(), $restoredCipher->name());
+        // Set key for decoding.
+        $restoredCipher->setDecryptionKey($keyHash);
+        // Finish restored cipher configuration for decoding.
+        $restoredCipher->reset();
+        // Decode test string
+        $decodedPhrase = $restoredCipher->update($encodedPhrase);
+        // Finish encoding.
+        $decodedPhrase .= $restoredCipher->finish();
+
+        // Compare initial phrase with decoded phrase.
+        $this->assertEquals($phrase, $decodedPhrase);
+    }
+
     private function generateIV($size) {
         $iv = "";
         for ($i = 0; $i < $size; ++$i) {

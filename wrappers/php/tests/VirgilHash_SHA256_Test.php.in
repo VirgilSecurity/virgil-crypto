@@ -130,6 +130,30 @@ class VirgilHash_SHA256_Test extends PHPUnit_Framework_TestCase {
         $this->assertEquals($inputHash, $baseHash);
     }
 
+    /**
+     * @covers VirgilHash::toAsn1
+     * @covers VirgilHash::fromAsn1
+     */
+    public function test_sha256_object_save_restore() {
+        $testString = "This string will be hashed.";
+        $hash = VirgilHash::sha256();
+
+        $hashAsn1 = $hash->toAsn1();
+
+        $restoredHash = new VirgilHash();
+        $restoredHash->fromAsn1($hashAsn1);
+
+        $this->assertInstanceOf("VirgilHash", $hash);
+        $this->assertEquals("SHA256", $hash->name());
+
+        $this->assertInstanceOf("VirgilHash", $restoredHash);
+        $this->assertEquals("SHA256", $restoredHash->name());
+
+        $this->assertEquals($hash->hash($testString), $restoredHash->hash($testString));
+
+        return $hash;
+    }
+
 }
 
 ?>

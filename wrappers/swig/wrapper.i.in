@@ -186,6 +186,7 @@ DEFINE_NAMESPACE(ECKeyGroup, virgil::crypto)
 DEFINE_NAMESPACE(VirgilKeyPairType, virgil::crypto)
 
 INCLUDE_CLASS(VirgilKDF, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilCryptoException, virgil::crypto, virgil/crypto)

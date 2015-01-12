@@ -39,6 +39,7 @@
 
 #include <string>
 #include <virgil/VirgilByteArray.h>
+#include <virgil/crypto/VirgilAsn1Compatible.h>
 
 namespace virgil { namespace crypto {
 
@@ -52,7 +53,7 @@ class VirgilHashImpl;
 /**
  * @brief Provides hashing (message digest) algorithms.
  */
-class VirgilHash {
+class VirgilHash : public VirgilAsn1Compatible {
 public:
     /**
      * @name Creation methods
@@ -64,7 +65,24 @@ public:
     static VirgilHash sha512();
     static VirgilHash withName(const VirgilByteArray& name);
     ///@}
-
+    /**
+     * @name Constructor / Destructor
+     */
+    ///@{
+    /**
+     * @brief Create object with undefined algorithm.
+     * @warning SHOULD be used in conjunction with VirgilAsn1Compatible interface,
+     *     i.e. VirgilHash hash = VirgilHash().fromAsn1(asn1);
+     */
+    VirgilHash();
+    /**
+     * @brief Polymorphic destructor.
+     */
+    virtual ~VirgilHash() throw();
+    ///@}
+    /**
+     * @brief
+     */
     /**
      * @name Info
      * @brief Provide detail information about object.
@@ -186,11 +204,17 @@ public:
     VirgilHash(const VirgilHash& other);
     VirgilHash& operator=(const VirgilHash& rhs);
     ///@}
+    /**
+     * @name VirgilAsn1Compatible implementation
+     */
+    ///@{
+    virtual VirgilByteArray toAsn1() const;
+    virtual void fromAsn1(const VirgilByteArray& asn1);
+    ///@}
 private:
     explicit VirgilHash(int type);
     explicit VirgilHash(const char * name);
-public:
-    virtual ~VirgilHash() throw();
+    void checkState() const;
 private:
     VirgilHashImpl *impl_;
 };

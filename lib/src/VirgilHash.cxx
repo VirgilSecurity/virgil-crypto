@@ -39,11 +39,28 @@ using virgil::crypto::VirgilHash;
 using virgil::crypto::VirgilHashImpl;
 
 #include <polarssl/md.h>
+#include <polarssl/oid.h>
+#include <polarssl/asn1.h>
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
 #include <virgil/crypto/PolarsslException.h>
+using virgil::crypto::PolarsslException;
+
+#include <virgil/crypto/VirgilCryptoException.h>
+using virgil::crypto::VirgilCryptoException;
+
+#include <virgil/crypto/VirgilAsn1Compatible.h>
+using virgil::crypto::VirgilAsn1Compatible;
+
+#include <virgil/crypto/VirgilAsn1Reader.h>
+using virgil::crypto::VirgilAsn1Reader;
+
+#include <virgil/crypto/VirgilAsn1Writer.h>
+using virgil::crypto::VirgilAsn1Writer;
+
+#include <string>
 
 namespace virgil { namespace crypto {
 
@@ -82,6 +99,9 @@ public:
 private:
     void init_(md_type_t mdType) {
         type = mdType;
+        if (mdType == POLARSSL_MD_NONE) {
+            return;
+        }
         info = md_info_from_type(mdType);
         digestSize = md_get_size(info);
         digest = new unsigned char[digestSize];
@@ -143,11 +163,13 @@ VirgilHash VirgilHash::withName(const VirgilByteArray& name) {
     return VirgilHash(VIRGIL_BYTE_ARRAY_TO_STD_STRING(name).c_str());
 }
 
-
-VirgilHash::VirgilHash(int type): impl_(new VirgilHashImpl(static_cast<md_type_t>(type))) {
+VirgilHash::VirgilHash() : impl_(new VirgilHashImpl(POLARSSL_MD_NONE)) {
 }
 
-VirgilHash::VirgilHash(const char * name): impl_(new VirgilHashImpl(name)) {
+VirgilHash::VirgilHash(int type) : impl_(new VirgilHashImpl(static_cast<md_type_t>(type))) {
+}
+
+VirgilHash::VirgilHash(const char * name) : impl_(new VirgilHashImpl(name)) {
 }
 
 VirgilHash::~VirgilHash() throw() {
@@ -173,25 +195,30 @@ VirgilHash& VirgilHash::operator=(const VirgilHash& rhs) {
 }
 
 std::string VirgilHash::name() const {
+    checkState();
     return std::string(::md_get_name(impl_->info));
 }
 
 void VirgilHash::start() {
+    checkState();
     POLARSSL_ERROR_HANDLER(::md_starts(impl_->ctx));
 }
 
 void VirgilHash::update(const VirgilByteArray& bytes) {
+    checkState();
     POLARSSL_ERROR_HANDLER(
         ::md_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes));
     );
 }
 
 VirgilByteArray VirgilHash::finish() {
+    checkState();
     POLARSSL_ERROR_HANDLER(::md_finish(impl_->ctx, impl_->digest));
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
 }
 
 VirgilByteArray VirgilHash::hash(const VirgilByteArray& bytes) const {
+    checkState();
     POLARSSL_ERROR_HANDLER(
         ::md(impl_->info, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes), impl_->digest)
     );
@@ -199,32 +226,77 @@ VirgilByteArray VirgilHash::hash(const VirgilByteArray& bytes) const {
 }
 
 void VirgilHash::hmacStart(const VirgilByteArray& key) {
+    checkState();
     POLARSSL_ERROR_HANDLER(
         ::md_hmac_starts(impl_->hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key));
     );
 }
 
 void VirgilHash::hmacReset() {
+    checkState();
     POLARSSL_ERROR_HANDLER(::md_hmac_reset(impl_->hmacCtx));
 }
 
 void VirgilHash::hmacUpdate(const VirgilByteArray& bytes) {
+    checkState();
     POLARSSL_ERROR_HANDLER(
         ::md_hmac_update(impl_->hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes));
     );
 }
 
 VirgilByteArray VirgilHash::hmacFinish() {
+    checkState();
     POLARSSL_ERROR_HANDLER(::md_hmac_finish(impl_->hmacCtx, impl_->digest));
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
 }
 
 VirgilByteArray VirgilHash::hmac(const VirgilByteArray& key, const VirgilByteArray& bytes) const {
+    checkState();
     POLARSSL_ERROR_HANDLER(
         ::md_hmac(impl_->info, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key),
                 VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes), impl_->digest);
     );
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
+}
+
+void VirgilHash::checkState() const {
+    if (impl_->type == POLARSSL_MD_NONE || impl_->info == 0 || impl_->ctx == 0) {
+        throw VirgilCryptoException(std::string("VirgilHash: object has undefined algorithm.") +
+                std::string(" Use one of the factory methods or method 'fromAsn1' to define hash algorithm."));
+    }
+}
+
+VirgilByteArray VirgilHash::toAsn1() const {
+    checkState();
+    const char *oid = 0;
+    size_t oidLen;
+    POLARSSL_ERROR_HANDLER(
+        ::oid_get_oid_by_md(impl_->type, &oid, &oidLen)
+    );
+    VirgilAsn1Writer asn1Writer;
+    size_t len = 0;
+    len += asn1Writer.writeNull();
+    len += asn1Writer.writeOID(std::string(oid, oidLen));
+    len += asn1Writer.writeSequence(len);
+    return asn1Writer.finish();
+}
+
+void VirgilHash::fromAsn1(const VirgilByteArray& asn1) {
+    VirgilAsn1Reader asn1Reader(asn1);
+    asn1Reader.readSequence();
+    std::string oid = asn1Reader.readOID();
+
+    asn1_buf oidAsn1Buf;
+    oidAsn1Buf.len = oid.size();
+    oidAsn1Buf.p = reinterpret_cast<unsigned char *>(const_cast<std::string::pointer>(oid.c_str()));
+
+    md_type_t type = POLARSSL_MD_NONE;
+    POLARSSL_ERROR_HANDLER(
+        ::oid_get_md_alg(&oidAsn1Buf, &type)
+    );
+
+    asn1Reader.readNull();
+    *this = VirgilHash(type);
 }
 
 

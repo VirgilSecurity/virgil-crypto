@@ -130,6 +130,30 @@ class VirgilHash_MD5_Test extends PHPUnit_Framework_TestCase {
         $this->assertEquals($inputHash, $baseHash);
     }
 
+    /**
+     * @covers VirgilHash::toAsn1
+     * @covers VirgilHash::fromAsn1
+     */
+    public function test_md5_object_save_restore() {
+        $testString = "This string will be hashed.";
+        $hash = VirgilHash::md5();
+
+        $hashAsn1 = $hash->toAsn1();
+
+        $restoredHash = new VirgilHash();
+        $restoredHash->fromAsn1($hashAsn1);
+
+        $this->assertInstanceOf("VirgilHash", $hash);
+        $this->assertEquals("MD5", $hash->name());
+
+        $this->assertInstanceOf("VirgilHash", $restoredHash);
+        $this->assertEquals("MD5", $restoredHash->name());
+
+        $this->assertEquals($hash->hash($testString), $restoredHash->hash($testString));
+
+        return $hash;
+    }
+
 }
 
 ?>

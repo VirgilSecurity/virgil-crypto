@@ -50,10 +50,10 @@
 #     - COMPILER_ARCH_32 - boolean value that defines whether compiler build in 32-bit mode or not.
 #     - COMPILER_ARCH_64 - boolean value that defines whether compiler build in 64-bit mode or not.
 #
-#     - VIRGILCRYPTO_VERSION - library full version.
-#     - VIRGILCRYPTO_VERSION_MAJOR - library major version number.
-#     - VIRGILCRYPTO_VERSION_MINOR - library minor version number.
-#     - VIRGILCRYPTO_VERSION_PATCH - library patch number.
+#     - VIRGIL_VERSION - library full version.
+#     - VIRGIL_VERSION_MAJOR - library major version number.
+#     - VIRGIL_VERSION_MINOR - library minor version number.
+#     - VIRGIL_VERSION_PATCH - library patch number.
 #
 
 cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
@@ -87,10 +87,10 @@ endif (POINTER_SIZE)
 enable_testing ()
 
 # Set version
-set (VIRGILCRYPTO_VERSION_MAJOR 0)
-set (VIRGILCRYPTO_VERSION_MINOR 1)
-set (VIRGILCRYPTO_VERSION_PATCH 0)
-set (VIRGILCRYPTO_VERSION ${VIRGILCRYPTO_VERSION_MAJOR}.${VIRGILCRYPTO_VERSION_MINOR}.${VIRGILCRYPTO_VERSION_PATCH})
+set (VIRGIL_VERSION_MAJOR 0)
+set (VIRGIL_VERSION_MINOR 1)
+set (VIRGIL_VERSION_PATCH 0)
+set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 
 # Set configurable platform
 set (PLATFORM_NAME "CPP" CACHE STRING "Select target platform / language")

@@ -44,11 +44,18 @@ include (${CMAKE_CURRENT_SOURCE_DIR}/polarssl/polarssl_ext.cmake)
 include (${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp/jsoncpp_ext.cmake)
 
 # Configure includes
-include_directories (include)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/VirgilVersion.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/include/virgil/VirgilVersion.h
+)
+
+include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories (${CMAKE_CURRENT_BINARY_DIR}/include)
 if (CMAKE_MAJOR_VERSION LESS 3)
     include_directories (${POLARSSL_INCLUDE_DIR})
     include_directories (${JSONCPP_INCLUDE_DIR})
 endif (CMAKE_MAJOR_VERSION LESS 3)
+
 
 # Define sources list
 file (GLOB src "src/*")

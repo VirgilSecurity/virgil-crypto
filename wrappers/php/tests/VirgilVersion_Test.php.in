@@ -1,4 +1,4 @@
-#region Copyright Insight Software Consortium
+<?php
 /**
  * Copyright (C) 2014 Virgil Security Inc.
  *
@@ -34,23 +34,28 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#endregion
 
-using System.Reflection;
-using System.Runtime.CompilerServices;
+include_once "@PHP_MODULE_FILE_NAME@";
 
-[assembly: AssemblyVersion("@CSHARP_VIRGILCRYPTO_ASSEMBLY_VERSION@")]
-[assembly: AssemblyTitle("C# wrapper over '@WRAPPED_LIB_NAME@' library version @VIRGIL_VERSION@")]
-[assembly: AssemblyCopyright("Copyright Virgil Security Inc., GPL, Version 2")]
-[assembly: AssemblyDescription("This assembly provides API to the dynamic loaded module " +
-        "@CMAKE_SHARED_MODULE_PREFIX@@VIRGILCRYPTO_SWIG_TARGET_NAME@@CMAKE_SHARED_MODULE_SUFFIX@")]
-[assembly: AssemblyCompany("Virgil Security Inc.")]
-[assembly: AssemblyFileVersion("@VIRGIL_VERSION@")]
-[assembly: AssemblyCulture("")]
-[assembly: AssemblyTrademark("Virgil Security Inc.")]
-[assembly: AssemblyProduct("@WRAPPED_LIB_NAME@")]
-[assembly: AssemblyInformationalVersion("@VIRGIL_VERSION@")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyName("")]
-[assembly: AssemblyKeyFile("")]
+/**
+ * @covers VirgilVersion algorithms
+ */
+class VirgilVersion_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilVersion::minor
+     * @covers VirgilVersion::major
+     * @covers VirgilVersion::patch
+     * @covers VirgilVersion::string
+     * @covers VirgilVersion::number
+     */
+    public function test_version() {
+        $this->assertEquals(0, VirgilVersion::major());
+        $this->assertEquals(1, VirgilVersion::minor());
+        $this->assertEquals(0, VirgilVersion::patch());
+        $this->assertEquals(0x000100, VirgilVersion::number());
+        $this->assertEquals("0.1.0", VirgilVersion::string());
+    }
+}
+
+?>

@@ -197,6 +197,7 @@ INCLUDE_CLASS(VirgilSymmetricCipher, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilAsymmetricCipher, virgil::crypto, virgil/crypto)
 #endif /* defined(SWIG_WRAP_LOW_LEVEL_API) */
 INCLUDE_CLASS(VirgilRandom, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilPBE, virgil::crypto, virgil/crypto)
 ///@}
 
 /**

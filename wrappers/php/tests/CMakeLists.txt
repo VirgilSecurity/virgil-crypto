@@ -54,6 +54,7 @@ set (TEST_FILE_LIST
     VirgilJsonDataMarshaller_Test.php
     VirgilAsn1DataMarshaller_Test.php
     VirgilRandom_Test.php
+    VirgilPBE_Test.php
 
     StringSource.php
     StringSink.php

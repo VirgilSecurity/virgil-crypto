@@ -47,13 +47,13 @@ include(CheckCCompilerFlag)
 # Configure compiler settings
 check_c_compiler_flag (-fPIC COMPILER_SUPPORT_PIC)
 if (COMPILER_SUPPORT_PIC)
-    set (CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif()
 
 check_c_compiler_flag (-fPIC COMPILER_SUPPORT_ARCH)
 if (CMAKE_OSX_ARCHITECTURES AND COMPILER_SUPPORT_ARCH)
     foreach (arch ${CMAKE_OSX_ARCHITECTURES})
-        set (CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -arch ${arch}")
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch ${arch}")
     endforeach (arch)
 endif (CMAKE_OSX_ARCHITECTURES AND COMPILER_SUPPORT_ARCH)
 
@@ -76,6 +76,12 @@ else ()
         -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
         -DCMAKE_CXX_FLAGS_RELEASE:STRING=${CMAKE_CXX_FLAGS_RELEASE}
         -DCMAKE_CXX_FLAGS_DEBUG:STRING=${CMAKE_CXX_FLAGS_DEBUG}
+    )
+endif ()
+
+if (IOS AND DEFINED IOS_PLATFORM)
+    list (APPEND CMAKE_ARGS
+        -DIOS_PLATFORM:PATH=${IOS_PLATFORM}
     )
 endif ()
 

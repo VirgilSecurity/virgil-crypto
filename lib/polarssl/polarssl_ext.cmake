@@ -78,6 +78,12 @@ else ()
     )
 endif ()
 
+if (IOS AND DEFINED IOS_PLATFORM)
+    list (APPEND CMAKE_ARGS
+        -DIOS_PLATFORM:PATH=${IOS_PLATFORM}
+    )
+endif ()
+
 set (POLARSSL_PATCH_DIR "${CMAKE_CURRENT_SOURCE_DIR}/polarssl/patch")
 set (POLARSSL_CONFIG_DEFINES "${POLARSSL_PATCH_DIR}/config/defines.yml")
 set (POLARSSL_CONFIG_PLATFORM_DEFINES "${POLARSSL_PATCH_DIR}/config/defines_${PLATFORM_NAME_LOWER}.yml")

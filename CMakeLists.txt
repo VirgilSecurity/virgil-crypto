@@ -91,6 +91,7 @@ set (VIRGIL_VERSION_MAJOR 0)
 set (VIRGIL_VERSION_MINOR 1)
 set (VIRGIL_VERSION_PATCH 0)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
+message (STATUS "Virgil version: " ${VIRGIL_VERSION})
 
 # Set configurable platform
 set (PLATFORM_NAME "CPP" CACHE STRING "Select target platform / language")

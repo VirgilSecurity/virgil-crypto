@@ -110,6 +110,10 @@ set (INSTALL_X64_DIR_NAME x64 CACHE STRING "Installation directory name for 64-b
 set (EXTERNAL_LIBS_DIR "${CMAKE_CURRENT_BINARY_DIR}/libs" CACHE INTERNAL
         "Path to the folder where all libs MUST be located after build")
 
+# Platform dependent configuration
+if (NOT PLATFORM_EMBEDDED AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set (CMAKE_OSX_ARCHITECTURES x86_64 i386 CACHE STRING "Target OS X architectures")
+endif ()
 
 # Build submodules
 add_subdirectory (lib)

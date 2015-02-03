@@ -34,39 +34,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_VIRGIL_ASN1_COMPATIBLE_H
-#define VIRGIL_CRYPTO_VIRGIL_ASN1_COMPATIBLE_H
+#include <virgil/crypto/VirgilAsn1Compatible.h>
+using virgil::crypto::VirgilAsn1Compatible;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilCryptoException.h>
+using virgil::crypto::VirgilCryptoException;
 
-namespace virgil { namespace crypto {
+#include <sstream>
 
-/**
- * @brief This class provides interface that allow to save and restore object state in the ASN.1 structure.
- */
-class VirgilAsn1Compatible {
-public:
-    /**
-     * @brief Save object state to the ASN.1 structure.
-     */
-    virtual VirgilByteArray toAsn1() const = 0;
-    /**
-     * @brief Restore object state from the ASN.1 structure.
-     */
-    virtual void fromAsn1(const VirgilByteArray& asn1) = 0;
-    /**
-     * @brief Polymorphic destructor.
-     */
-     virtual ~VirgilAsn1Compatible() throw() {}
-protected:
-    /**
-     * @brief If given parameter is empty exception will be thrown.
-     * @throw virgil::crypto::VirgilCryptoException.
-     */
-    virtual void checkAsn1ParamNotEmpty(const VirgilByteArray& param, const char *paramName = 0) const;
-};
-
-}}
-
-#endif /* VIRGIL_CRYPTO_VIRGIL_ASN1_COMPATIBLE_H */
+void VirgilAsn1Compatible::checkAsn1ParamNotEmpty(const VirgilByteArray& param,  const char *paramName) const {
+    if (param.empty()) {
+        std::ostringstream ostr;
+        ostr << "VirgilAsn1Compatible: ";
+        ostr << "Required ASN.1 parameter is not specified.";
+        if (paramName != 0) {
+            ostr << "Parameter name: " << paramName << ".";
+        }
+        throw VirgilCryptoException(ostr.str());
+    }
+}

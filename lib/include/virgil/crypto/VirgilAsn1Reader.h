@@ -97,10 +97,19 @@ public:
      */
     VirgilByteArray readUTF8String();
     /**
+     * @brief Read preformatted ASN.1 structure.
+     */
+    VirgilByteArray readData();
+    /**
      * @brief Read ASN.1 type: TAG.
      * @return Tag length if given tag exist, 0 - otherwise.
      */
     size_t readContextTag(unsigned char tag);
+    /**
+     * @brief Read ASN.1 type: OID.
+     * @return OID.
+     */
+    std::string readOID();
     ///@}
     /**
      * @name Read Structured ASN.1 Types
@@ -112,10 +121,10 @@ public:
      */
     size_t readSequence();
     /**
-     * @brief Read ASN.1 type: OID.
-     * @return OID.
+     * @brief Read ASN.1 type: SET.
+     * @return Set size in bytes.
      */
-    std::string readOID();
+    size_t readSet();
     ///@}
 private:
     /**

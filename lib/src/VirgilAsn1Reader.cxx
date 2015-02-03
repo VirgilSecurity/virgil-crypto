@@ -87,6 +87,10 @@ size_t VirgilAsn1Reader::readContextTag(unsigned char tag) {
     if (tag > 0x1F) {
         throw VirgilCryptoException("Tag value is too big, MAX value is 31.");
     }
+    if (p_ != 0 && end_ != 0 && p_ >= end_) {
+        // Expected optional tag located at the end of the ASN.1 structure is absent.
+        return 0;
+    }
     checkState();
     size_t len;
     int result = ::asn1_get_tag(&p_, end_, &len, ASN1_CONTEXT_SPECIFIC | ASN1_CONSTRUCTED | tag);
@@ -119,13 +123,16 @@ VirgilByteArray VirgilAsn1Reader::readUTF8String() {
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(p_ - len, len);
 }
 
-size_t VirgilAsn1Reader::readSequence() {
+VirgilByteArray VirgilAsn1Reader::readData() {
     checkState();
     size_t len;
+    unsigned char *dataStart = p_;
+    p_ += 1; // Ignore tag value
     POLARSSL_ERROR_HANDLER(
-        ::asn1_get_tag(&p_, end_, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE)
+        ::asn1_get_len(&p_, end_, &len)
     );
-    return len;
+    p_ += len;
+    return VirgilByteArray(dataStart, p_);
 }
 
 
@@ -139,6 +146,23 @@ std::string VirgilAsn1Reader::readOID() {
     return std::string(reinterpret_cast<std::string::const_pointer>(p_ - len), len);
 }
 
+size_t VirgilAsn1Reader::readSequence() {
+    checkState();
+    size_t len;
+    POLARSSL_ERROR_HANDLER(
+        ::asn1_get_tag(&p_, end_, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE)
+    );
+    return len;
+}
+
+size_t VirgilAsn1Reader::readSet() {
+    checkState();
+    size_t len;
+    POLARSSL_ERROR_HANDLER(
+        ::asn1_get_tag(&p_, end_, &len, ASN1_CONSTRUCTED | ASN1_SET)
+    );
+    return len;
+}
 
 void VirgilAsn1Reader::checkState() {
     if (p_ == 0 || end_ == 0) {

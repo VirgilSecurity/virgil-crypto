@@ -39,6 +39,7 @@
 
 #include <cstddef>
 #include <string>
+#include <vector>
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -111,6 +112,18 @@ public:
      * @return Written bytes.
      */
     size_t writeContextTag(unsigned char tag, size_t len);
+    /**
+     * @brief Write preformatted ASN.1 structure.
+     * @param data - ASN.1 structure.
+     * @return Written bytes.
+     */
+    size_t writeData(const VirgilByteArray& data);
+    /**
+     * @brief Write ASN.1 type: OID.
+     * @param oid - the OID to write.
+     * @return Written bytes.
+     */
+    size_t writeOID(const std::string& oid);
     ///@}
     /**
      * @name Write Structured ASN.1 Types
@@ -123,12 +136,28 @@ public:
      */
     size_t writeSequence(size_t len);
     /**
-     * @brief Write an OID tag (ASN1_OID) and data in ASN.1 format.
-     * @param oid - the OID to write.
+     * @brief Write ASN.1 type: SET OF ANY.
+     * @param len - sequence length in bytes.
      * @return Written bytes.
      */
-    size_t writeOID(const std::string& oid);
+    size_t writeSet(const std::vector<VirgilByteArray>& set);
      ///@}
+private:
+    /**
+     * @brief Logically pad the shorter DER encoding after the last octet with dummy octets,
+     *     that are smaller in value than any normal octet.
+     * @param asn1 - ASN.1 structure that will be padded.
+     * @param finalSize - ASN.1 structure size after padding.
+     */
+    static VirgilByteArray makeComparePadding(const VirgilByteArray& asn1, size_t finalSize);
+    /**
+     * @brief Perform lexicographic ASN.1 comparison.
+     */
+    static bool compare(const VirgilByteArray& first, const VirgilByteArray& second);
+    /**
+     * @brief Perform ascending lexicographic order on the given set.
+     */
+    static void makeOrderedSet(std::vector<VirgilByteArray>& set);
 private:
     /**
      * @brief Check internal state before methods call.

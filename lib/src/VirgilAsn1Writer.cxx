@@ -46,6 +46,7 @@ using virgil::crypto::VirgilCryptoException;
 
 #include <cstddef>
 #include <cstring>
+#include <algorithm>
 #include <polarssl/asn1write.h>
 
 static const size_t kBufLenDefault = 2048;
@@ -148,6 +149,31 @@ size_t VirgilAsn1Writer::writeContextTag(unsigned char tag, size_t len) {
     );
 }
 
+size_t VirgilAsn1Writer::writeData(const VirgilByteArray& data) {
+    checkState();
+    ensureBufferEnough(data.size());
+    RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
+        {
+            POLARSSL_ERROR_HANDLER(
+                ::asn1_write_raw_buffer(&p_, start_, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data))
+            );
+        }
+    );
+}
+
+
+size_t VirgilAsn1Writer::writeOID(const std::string& oid) {
+    checkState();
+    ensureBufferEnough(kAsn1TagValueSize + oid.size());
+    RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
+        {
+            POLARSSL_ERROR_HANDLER(
+                ::asn1_write_oid(&p_, start_, oid.c_str(), oid.size())
+            );
+        }
+    );
+}
+
 size_t VirgilAsn1Writer::writeSequence(size_t len) {
     checkState();
     ensureBufferEnough(kAsn1TagValueSize + kAsn1LengthValueSize);
@@ -163,16 +189,59 @@ size_t VirgilAsn1Writer::writeSequence(size_t len) {
     );
 }
 
-size_t VirgilAsn1Writer::writeOID(const std::string& oid) {
-    checkState();
-    ensureBufferEnough(kAsn1TagValueSize + oid.size());
+
+size_t VirgilAsn1Writer::writeSet(const std::vector<VirgilByteArray>& set) {
+    std::vector<VirgilByteArray> orderedSet = set;
+    makeOrderedSet(orderedSet);
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
         {
+            size_t len = 0;
+            for (std::vector<VirgilByteArray>::const_iterator it = orderedSet.begin(); it != orderedSet.end(); ++it) {
+                len += it->size();
+                POLARSSL_ERROR_HANDLER(
+                    ::asn1_write_raw_buffer(&p_, start_, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN((*it)))
+                );
+            }
             POLARSSL_ERROR_HANDLER(
-                ::asn1_write_oid(&p_, start_, oid.c_str(), oid.size())
+                ::asn1_write_len(&p_, start_, len)
+            );
+            POLARSSL_ERROR_HANDLER(
+                ::asn1_write_tag(&p_, start_, ASN1_CONSTRUCTED | ASN1_SET)
             );
         }
     );
+}
+
+VirgilByteArray VirgilAsn1Writer::makeComparePadding(const VirgilByteArray& asn1, size_t finalSize) {
+    VirgilByteArray result = asn1;
+    if (result.size() >= finalSize) {
+        return result;
+    }
+    VirgilByteArray::value_type smallestByte = 0x00;
+    if (result.size() > 0) {
+        smallestByte = *std::min_element(result.begin(), result.end());
+        if (smallestByte != 0x00) {
+            --smallestByte;
+        }
+    }
+    result.resize(finalSize, smallestByte);
+    return result;
+}
+
+bool VirgilAsn1Writer::compare(const VirgilByteArray& first, const VirgilByteArray& second) {
+    if (first.size() > second.size()) {
+        VirgilByteArray paddedSecond = makeComparePadding(second, first.size());
+        return std::lexicographical_compare(first.begin(), first.end(), paddedSecond.begin(), paddedSecond.end());
+    } else if (second.size() > first.size()) {
+        VirgilByteArray paddedFirst = makeComparePadding(first, second.size());
+        return std::lexicographical_compare(paddedFirst.begin(), paddedFirst.end(), second.begin(), second.end());
+    } else {
+        return std::lexicographical_compare(first.begin(), first.end(), second.begin(), second.end());
+    }
+}
+
+void VirgilAsn1Writer::makeOrderedSet(std::vector<VirgilByteArray>& set) {
+    std::sort(set.begin(), set.end(), VirgilAsn1Writer::compare);
 }
 
 void VirgilAsn1Writer::checkState() {

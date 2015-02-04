@@ -53,7 +53,6 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
 
         $cipher->genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_BP512R1));
         $this->assertEquals(512, $cipher->keySize());
-        // $this->assertEquals($cipher->exportPublicKeyToPEM(), $cipher->exportPrivateKeyToPEM());
         return $cipher;
     }
 
@@ -312,6 +311,27 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
 
         $this->assertTrue($verifier->verify($dataToSignValidHash, $dataSign));
         $this->assertFalse($verifier->verify($dataToSignInvalidHash, $dataSign));
+    }
+
+    /**
+     * @covers VirgilAsymmetricCipher::toAsn1
+     */
+    public function test_cipher_state_save() {
+        $expectedAsn1 = pack("H*", "300B06072A8648CE3D02010500");
+        $cipher = VirgilAsymmetricCipher::ec();
+        $asn1 = $cipher->toAsn1();
+        $this->assertEquals($expectedAsn1, $asn1);
+    }
+
+    /**
+     * @covers VirgilAsymmetricCipher::fromAsn1
+     */
+    public function test_cipher_state_restore() {
+        $asn1 = pack("H*", "300B06072A8648CE3D02010500");
+        $cipher = VirgilAsymmetricCipher::none();
+        $cipher->fromAsn1($asn1);
+        $cipher->genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_BP512R1));
+        $this->assertEquals(512, $cipher->keySize());
     }
 }
 

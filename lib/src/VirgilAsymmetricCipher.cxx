@@ -42,6 +42,7 @@ using virgil::crypto::VirgilAsymmetricCipherImpl;
 
 #include <polarssl/pk.h>
 #include <polarssl/md.h>
+#include <polarssl/oid.h>
 #include <polarssl/asn1.h>
 #include <polarssl/base64.h>
 #include <polarssl/rsa.h>
@@ -57,6 +58,12 @@ using virgil::crypto::VirgilKeyPairGenerator;
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
+#include <virgil/crypto/VirgilAsn1Writer.h>
+using virgil::crypto::VirgilAsn1Writer;
+
+#include <virgil/crypto/VirgilAsn1Reader.h>
+using virgil::crypto::VirgilAsn1Reader;
+
 #include <virgil/crypto/PolarsslException.h>
 
 /// @name Private section
@@ -64,12 +71,12 @@ namespace virgil { namespace crypto {
 
 class VirgilAsymmetricCipherImpl {
 public:
-    VirgilAsymmetricCipherImpl(pk_type_t pkType) : type(POLARSSL_PK_NONE), ctx(0) {
+    VirgilAsymmetricCipherImpl(pk_type_t pkType) : ctx(0) {
         init_(pkType);
     }
 
-    VirgilAsymmetricCipherImpl(const VirgilAsymmetricCipherImpl& other): type(POLARSSL_PK_NONE), ctx(0) {
-        init_(other.type);
+    VirgilAsymmetricCipherImpl(const VirgilAsymmetricCipherImpl& other): ctx(0) {
+        init_(other.pkType());
     }
 
     VirgilAsymmetricCipherImpl& operator=(const VirgilAsymmetricCipherImpl& rhs) {
@@ -77,17 +84,23 @@ public:
             return *this;
         }
         free_();
-        init_(rhs.type);
+        init_(rhs.pkType());
         return *this;
     }
 
+    pk_type_t pkType() const {
+        if (ctx != 0) {
+            return ::pk_get_type(ctx);
+        } else {
+            return POLARSSL_PK_NONE;
+        }
+    }
 private:
     void init_(pk_type_t pkType) {
-        type = pkType;
         ctx = new pk_context();
         ::pk_init(ctx);
-        if (type != POLARSSL_PK_NONE) {
-            const pk_info_t * info = pk_info_from_type(type);
+        if (pkType != POLARSSL_PK_NONE) {
+            const pk_info_t * info = pk_info_from_type(pkType);
             POLARSSL_ERROR_HANDLER_DISPOSE(
                 ::pk_init_ctx(ctx, info),
                 free_()
@@ -96,7 +109,6 @@ private:
     }
 
     void free_() {
-        type = POLARSSL_PK_NONE;
         if (ctx) {
             ::pk_free(ctx);
             delete ctx;
@@ -105,7 +117,6 @@ private:
     }
 
 public:
-    pk_type_t type;
     pk_context * ctx;
 };
 
@@ -116,14 +127,14 @@ VirgilAsymmetricCipher::VirgilAsymmetricCipher(int type)
 }
 
 VirgilAsymmetricCipher::VirgilAsymmetricCipher(const VirgilAsymmetricCipher& other)
-        : impl_(new VirgilAsymmetricCipherImpl(other.impl_->type)) {
+        : impl_(new VirgilAsymmetricCipherImpl(other.impl_->pkType())) {
 }
 
 VirgilAsymmetricCipher& VirgilAsymmetricCipher::operator=(const VirgilAsymmetricCipher& rhs) {
     if (this == &rhs) {
         return *this;
     }
-    VirgilAsymmetricCipherImpl *newImpl = new VirgilAsymmetricCipherImpl(rhs.impl_->type);
+    VirgilAsymmetricCipherImpl *newImpl = new VirgilAsymmetricCipherImpl(rhs.impl_->pkType());
     if (impl_) {
         delete impl_;
     }
@@ -263,10 +274,12 @@ VirgilAsymmetricCipher VirgilAsymmetricCipher::ec() {
 }
 
 size_t VirgilAsymmetricCipher::keySize() const {
+    checkState();
     return ::pk_get_size(impl_->ctx);
 }
 
 size_t VirgilAsymmetricCipher::keyLength() const {
+    checkState();
     return ::pk_get_len(impl_->ctx);
 }
 
@@ -283,38 +296,46 @@ void VirgilAsymmetricCipher::setPublicKey(const VirgilByteArray& key) {
 }
 
 void VirgilAsymmetricCipher::genKeyPair(const VirgilKeyPairGenerator& keyPairGenerator) {
+    checkState();
     keyPairGenerator.generate(impl_->ctx);
 }
 
 VirgilByteArray VirgilAsymmetricCipher::exportPrivateKeyToDER(const VirgilByteArray& pwd) const {
+    checkState();
     PolarsslKeyExport polarsslKeyExport(impl_->ctx, PolarsslKeyExport::DER, PolarsslKeyExport::Private, pwd);
     return exportKey_(polarsslKeyExport);
 }
 
 VirgilByteArray VirgilAsymmetricCipher::exportPublicKeyToDER() const {
+    checkState();
     PolarsslKeyExport polarsslKeyExport(impl_->ctx, PolarsslKeyExport::DER, PolarsslKeyExport::Public);
     return exportKey_(polarsslKeyExport);
 }
 
 VirgilByteArray VirgilAsymmetricCipher::exportPrivateKeyToPEM(const VirgilByteArray& pwd) const {
+    checkState();
     PolarsslKeyExport polarsslKeyExport(impl_->ctx, PolarsslKeyExport::PEM, PolarsslKeyExport::Private, pwd);
     return exportKey_(polarsslKeyExport);
 }
 
 VirgilByteArray VirgilAsymmetricCipher::exportPublicKeyToPEM() const {
+    checkState();
     PolarsslKeyExport polarsslKeyExport(impl_->ctx, PolarsslKeyExport::PEM, PolarsslKeyExport::Public);
     return exportKey_(polarsslKeyExport);
 }
 
 VirgilByteArray VirgilAsymmetricCipher::encrypt(const VirgilByteArray& in) const {
+    checkState();
     return processEncryptionDecryption_(::pk_encrypt, impl_->ctx, in);
 }
 
 VirgilByteArray VirgilAsymmetricCipher::decrypt(const VirgilByteArray& in) const {
+    checkState();
     return processEncryptionDecryption_(::pk_decrypt, impl_->ctx, in);
 }
 
 VirgilByteArray VirgilAsymmetricCipher::sign(const VirgilByteArray& hash) const {
+    checkState();
     const char *pers = "sign";
 
     unsigned char sign[POLARSSL_MPI_MAX_SIZE];
@@ -345,7 +366,47 @@ VirgilByteArray VirgilAsymmetricCipher::sign(const VirgilByteArray& hash) const 
 }
 
 bool VirgilAsymmetricCipher::verify(const VirgilByteArray& hash, const VirgilByteArray& sign) const {
+    checkState();
     return ::pk_verify(impl_->ctx, POLARSSL_MD_NONE,
             VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(hash), VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(sign)) == 0;
+}
+
+VirgilByteArray VirgilAsymmetricCipher::toAsn1() const {
+    checkState();
+    const char *oid = 0;
+    size_t oidLen;
+    POLARSSL_ERROR_HANDLER(
+        ::oid_get_oid_by_pk_alg(impl_->pkType(), &oid, &oidLen)
+    );
+    VirgilAsn1Writer asn1Writer;
+    size_t len = 0;
+    len += asn1Writer.writeNull();
+    len += asn1Writer.writeOID(std::string(oid, oidLen));
+    len += asn1Writer.writeSequence(len);
+    return asn1Writer.finish();
+}
+
+void VirgilAsymmetricCipher::fromAsn1(const VirgilByteArray& asn1) {
+    VirgilAsn1Reader asn1Reader(asn1);
+    asn1Reader.readSequence();
+    std::string oid = asn1Reader.readOID();
+
+    asn1_buf oidAsn1Buf;
+    oidAsn1Buf.len = oid.size();
+    oidAsn1Buf.p = reinterpret_cast<unsigned char *>(const_cast<std::string::pointer>(oid.c_str()));
+
+    pk_type_t type = POLARSSL_PK_NONE;
+    POLARSSL_ERROR_HANDLER(
+        ::oid_get_pk_alg(&oidAsn1Buf, &type)
+    );
+
+    *this = VirgilAsymmetricCipher(type);
+}
+
+void VirgilAsymmetricCipher::checkState() const {
+    if (impl_->pkType() == POLARSSL_PK_NONE) {
+        throw VirgilCryptoException(std::string("VirgilAsymmetricCipher: object has undefined algorithm.") +
+                std::string(" Use one of the factory methods or method 'fromAsn1' to define PK algorithm."));
+    }
 }
 

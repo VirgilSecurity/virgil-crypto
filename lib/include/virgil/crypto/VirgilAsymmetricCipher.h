@@ -39,6 +39,8 @@
 
 #include <cstddef>
 
+#include <virgil/crypto/VirgilAsn1Compatible.h>
+
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
@@ -55,7 +57,7 @@ class VirgilAsymmetricCipherImpl;
 /**
  * @brief Provides asymmetric ciphers algorithms (PK).
  */
-class VirgilAsymmetricCipher {
+class VirgilAsymmetricCipher : public VirgilAsn1Compatible {
 public:
     /**
      * @name Creation methods
@@ -208,13 +210,23 @@ public:
     VirgilAsymmetricCipher(const VirgilAsymmetricCipher& other);
     VirgilAsymmetricCipher& operator=(const VirgilAsymmetricCipher& rhs);
     ///@}
-
+    /**
+     * @name VirgilAsn1Compatible implementation
+     */
+    ///@{
+    virtual VirgilByteArray toAsn1() const;
+    virtual void fromAsn1(const VirgilByteArray& asn1);
+    ///@}
 private:
     /**
      * @brief Creates and initialize cipher with given type.
      * @warning CAN NOT be used directly, use one of the factory methods to create apropriate cipher.
      */
     explicit VirgilAsymmetricCipher(int type);
+    /**
+     * @brief If internal state is not initialized with specific algorithm exception will be thrown.
+     */
+    void checkState() const;
 public:
     virtual ~VirgilAsymmetricCipher() throw();
 private:

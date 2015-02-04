@@ -317,6 +317,27 @@ class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
         $this->assertTrue($verifier->verify($dataToSignValidHash, $dataSign));
         $this->assertFalse($verifier->verify($dataToSignInvalidHash, $dataSign));
     }
+
+    /**
+     * @covers VirgilAsymmetricCipher::toAsn1
+     */
+    public function test_cipher_state_save() {
+        $expectedAsn1 = pack("H*", "300d06092a864886f70d0101010500");
+        $cipher = VirgilAsymmetricCipher::rsa();
+        $asn1 = $cipher->toAsn1();
+        $this->assertEquals($expectedAsn1, $asn1);
+    }
+
+    /**
+     * @covers VirgilAsymmetricCipher::fromAsn1
+     */
+    public function test_cipher_state_restore() {
+        $asn1 = pack("H*", "300d06092a864886f70d0101010500");
+        $cipher = VirgilAsymmetricCipher::none();
+        $cipher->fromAsn1($asn1);
+        $cipher->genKeyPair(VirgilKeyPairGenerator::rsa(512));
+        $this->assertEquals(512, $cipher->keySize());
+    }
 }
 
 ?>

@@ -189,14 +189,14 @@ size_t VirgilAsn1Writer::writeSequence(size_t len) {
     );
 }
 
-
 size_t VirgilAsn1Writer::writeSet(const std::vector<VirgilByteArray>& set) {
     std::vector<VirgilByteArray> orderedSet = set;
     makeOrderedSet(orderedSet);
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
         {
             size_t len = 0;
-            for (std::vector<VirgilByteArray>::const_iterator it = orderedSet.begin(); it != orderedSet.end(); ++it) {
+            for (std::vector<VirgilByteArray>::const_reverse_iterator it = orderedSet.rbegin();
+                    it != orderedSet.rend(); ++it) {
                 len += it->size();
                 POLARSSL_ERROR_HANDLER(
                     ::asn1_write_raw_buffer(&p_, start_, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN((*it)))

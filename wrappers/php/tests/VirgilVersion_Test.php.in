@@ -50,11 +50,11 @@ class VirgilVersion_Test extends PHPUnit_Framework_TestCase {
      * @covers VirgilVersion::number
      */
     public function test_version() {
-        $this->assertEquals(0, VirgilVersion::major());
-        $this->assertEquals(1, VirgilVersion::minor());
-        $this->assertEquals(0, VirgilVersion::patch());
-        $this->assertEquals(0x000100, VirgilVersion::number());
-        $this->assertEquals("0.1.0", VirgilVersion::string());
+        $this->assertEquals(@VIRGIL_VERSION_MAJOR@, VirgilVersion::major());
+        $this->assertEquals(@VIRGIL_VERSION_MINOR@, VirgilVersion::minor());
+        $this->assertEquals(@VIRGIL_VERSION_PATCH@, VirgilVersion::patch());
+        $this->assertEquals((@VIRGIL_VERSION_MAJOR@ << 16 | @VIRGIL_VERSION_MINOR@ << 8 | @VIRGIL_VERSION_PATCH@), VirgilVersion::number());
+        $this->assertEquals("@VIRGIL_VERSION@", VirgilVersion::string());
     }
 }
 

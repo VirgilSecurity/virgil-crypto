@@ -34,60 +34,39 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_CMS_VIRGIL_CMS_PASSWORD_RECIPIENT_H
-#define VIRGIL_CRYPTO_CMS_VIRGIL_CMS_PASSWORD_RECIPIENT_H
-
-#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::asn1::VirgilAsn1Compatible;
+#ifndef VIRGIL_CRYPTO_ASN1_VIRGIL_ASN1_COMPATIBLE_H
+#define VIRGIL_CRYPTO_ASN1_VIRGIL_ASN1_COMPATIBLE_H
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-namespace virgil { namespace crypto { namespace cms {
+namespace virgil { namespace crypto { namespace asn1 {
 
 /**
- * @brief Data object that represent CMS structure: PasswordRecipientInfo.
- * @see RFC 5652 section 6.2.4.
+ * @brief This class provides interface that allow to save and restore object state in the ASN.1 structure.
  */
-class VirgilCMSPasswordRecipient : public VirgilAsn1Compatible {
-public:
-    /**<! Identifies the key-derivation algorithm, and any associated parameters. */
-    VirgilByteArray keyDerivationAlgorithm;
-    /**<! Identifies the encryption algorithm, and any associated parameters. */
-    VirgilByteArray keyEncryptionAlgorithm;
-    /**<! The result of encrypting the content-encryption key with the key-encryption key. */
-    VirgilByteArray encryptedKey;
+class VirgilAsn1Compatible {
 public:
     /**
-     * @name VirgilAsn1Compatible implementation
-     *
-     * Marshalling format:
-     *     PasswordRecipientInfo ::= SEQUENCE {
-     *         version CMSVersion,   -- Always set to 0
-     *         keyDerivationAlgorithm [0] KeyDerivationAlgorithmIdentifier OPTIONAL,
-     *         keyEncryptionAlgorithm KeyEncryptionAlgorithmIdentifier,
-     *         encryptedKey EncryptedKey
-     *     }
-     *
-     *     CMSVersion ::= INTEGER { v0(0), v1(1), v2(2), v3(3), v4(4), v5(5) }
-     *
-     *     KeyDerivationAlgorithmIdentifier ::= AlgorithmIdentifier
-     *
-     *     KeyEncryptionAlgorithmIdentifier ::= AlgorithmIdentifier
-     *
-     *     EncryptedKey ::= OCTET STRING
+     * @brief Save object state to the ASN.1 structure.
      */
-    ///@{
-    virtual VirgilByteArray toAsn1() const;
-    virtual void fromAsn1(const VirgilByteArray& asn1);
-    ///@}
-public:
+    virtual VirgilByteArray toAsn1() const = 0;
+    /**
+     * @brief Restore object state from the ASN.1 structure.
+     */
+    virtual void fromAsn1(const VirgilByteArray& asn1) = 0;
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilCMSPasswordRecipient() throw();
+     virtual ~VirgilAsn1Compatible() throw() {}
+protected:
+    /**
+     * @brief If given parameter is empty exception will be thrown.
+     * @throw virgil::crypto::VirgilCryptoException.
+     */
+    virtual void checkAsn1ParamNotEmpty(const VirgilByteArray& param, const char *paramName = 0) const;
 };
 
 }}}
 
-#endif /* VIRGIL_CRYPTO_CMS_VIRGIL_CMS_PASSWORD_RECIPIENT_H */
+#endif /* VIRGIL_CRYPTO_ASN1_VIRGIL_ASN1_COMPATIBLE_H */

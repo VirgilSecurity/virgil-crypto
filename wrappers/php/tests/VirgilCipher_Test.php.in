@@ -43,175 +43,117 @@ include_once "@PHP_MODULE_FILE_NAME@";
 class VirgilCipher_Test extends PHPUnit_Framework_TestCase {
 
     /**
-     * @covers VirgilCipher::generateKeyPair
+     * @covers VirgilCipher::addKeyRecipient
+     * @covers VirgilCipher::addPasswordRecipient
      * @covers VirgilCipher::encrypt
-     * @covers VirgilCipher::decrypt
+     * @covers VirgilCipher::decryptWithKey
+     * @covers VirgilCipher::decryptWithPassword
      */
-    public function test_encryption_descryption_with_generated_keys() {
+    public function test_encryption_decryption_with_generated_keys() {
         $initialString = "very long string to be encrypted";
-
+        // Key recipient - Bob
+        $bobCertificateId = "BOB-CERT-1234";
+        $bobKey = new VirgilKeyPair();
+        // Key recipient - Ted
+        $tedCertificateId = "TED-CERT-1234";
+        $tedKeyPassword = "ted-private-key-password";
+        $tedKey = new VirgilKeyPair($tedKeyPassword);
+        // Password recipient - Alice
+        $alicePassword = "alice-password";
+        // Create cipher
         $cipher = new VirgilCipher();
         $this->assertNotNull($cipher, "Cipher was not created.");
         $this->assertNotNull($cipher->_cPtr, "Underlying cipher was not created.");
-
-        $key = $cipher->generateKeyPair();
-        $this->assertGreaterThan(0, strlen($key->publicKey()));
-        $this->assertGreaterThan(0, strlen($key->privateKey()));
-
-        $datagram = $cipher->encrypt($initialString, $key->publicKey());
-        $this->assertGreaterThan(0, strlen($datagram->encryptionKey));
-        $this->assertGreaterThan(0, strlen($datagram->encryptedData));
-
-        $decryptedString = $cipher->decrypt($datagram->encryptedData, $datagram->encryptionKey, $key->privateKey());
-
-        $this->assertEquals($initialString, $decryptedString);
-    }
-
-    /**
-     * @covers VirgilCipher::generateKeyPair
-     * @covers VirgilCipher::encrypt
-     * @covers VirgilCipher::decrypt
-     */
-    public function test_encryption_descryption_with_generated_keys_with_password() {
-        $initialString = "very long string to be encrypted";
-        $password = "password";
-
+        // Add recipients to the cipher
+        $cipher->addKeyRecipient($bobCertificateId, $bobKey->publicKey());
+        $cipher->addKeyRecipient($tedCertificateId, $tedKey->publicKey());
+        $cipher->addPasswordRecipient($alicePassword);
+        // Encrypt data
+        $encryptedData = $cipher->encrypt($initialString);
+        $encryptedContentInfo = $cipher->getContentInfo();
+        // Create new cipher
         $cipher = new VirgilCipher();
-        $key = $cipher->generateKeyPair($password);
-        $this->assertGreaterThan(0, strlen($key->publicKey()));
-        $this->assertGreaterThan(0, strlen($key->privateKey()));
-
-        $datagram = $cipher->encrypt($initialString, $key->publicKey());
-        $this->assertGreaterThan(0, strlen($datagram->encryptionKey));
-        $this->assertGreaterThan(0, strlen($datagram->encryptedData));
-
-        $decryptedString = $cipher->decrypt($datagram->encryptedData, $datagram->encryptionKey,
-                $key->privateKey(), $password);
-
-        $this->assertEquals($initialString, $decryptedString);
+        // Set content info
+        $cipher->setContentInfo($encryptedContentInfo);
+        // Decrypt encrypted data
+        $bobPlainText = $cipher->decryptWithKey($encryptedData, $bobCertificateId, $bobKey->privateKey());
+        $tedPlainText = $cipher->decryptWithKey($encryptedData, $tedCertificateId, $tedKey->privateKey(),
+                $tedKeyPassword);
+        $alicePlainText = $cipher->decryptWithPassword($encryptedData, $alicePassword);
+        // Check decrypted data
+        $this->assertEquals($initialString, $bobPlainText);
+        $this->assertEquals($initialString, $tedPlainText);
+        $this->assertEquals($initialString, $alicePlainText);
     }
 
     /**
+     * @covers VirgilCipher::addKeyRecipient
+     * @covers VirgilCipher::addPasswordRecipient
      * @covers VirgilCipher::encrypt
-     * @covers VirgilCipher::decrypt
-     */
-    public function test_encryption_descryption_with_ec_keys() {
-        $initialString = "very long string to be encrypted";
-        $publicKey =
-                "-----BEGIN PUBLIC KEY-----\n".
-                "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
-                "nIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdvcSsAMbLCnvEnTlXFMDn5\n".
-                "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
-                "o+yIBPaohqMzfjvj4Yw=\n".
-                "-----END PUBLIC KEY-----\n";
-        $privateKey =
-                "-----BEGIN EC PRIVATE KEY-----\n".
-                "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
-                "b+IcSjzaw8xEZuIkT/wG/yVlx4Zimk0XoAsGCSskAwMCCAEBDaGBhQOBggAEA8GV\n".
-                "pzCcTiISVsHjuMZg4gvSnIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdv\n".
-                "cSsAMbLCnvEnTlXFMDn53a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8W\n".
-                "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
-                "-----END EC PRIVATE KEY-----\n";
-
-        $cipher = new VirgilCipher();
-
-        $datagram = $cipher->encrypt($initialString, $publicKey);
-        $decryptedString = $cipher->decrypt($datagram->encryptedData, $datagram->encryptionKey, $privateKey);
-        $this->assertEquals($initialString, $decryptedString);
-    }
-
-    /**
-     * @covers VirgilCipher::encrypt
-     * @covers VirgilCipher::decrypt
-     */
-    public function test_encryption_descryption_with_rsa_keys() {
-        $initialString = "very long string to be encrypted";
-        $publicKey =
-                "-----BEGIN PUBLIC KEY-----\n".
-                "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaro\n".
-                "K+GG5ZcLA9AnA2Fwkx8hFozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQ==\n".
-                "-----END PUBLIC KEY-----\n";
-        $privateKey =
-                "-----BEGIN RSA PRIVATE KEY-----\n".
-                "MIIBOQIBAAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaroK+GG5ZcLA9AnA2Fwkx8h\n".
-                "FozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQJAYML8olAwoVcfU8+FT3pj\n".
-                "8sU+faK9cL53MtXgmFJEgBUWlg0aGq67an8vgReCdIK6F3500f6Yf9LhjkoZ4ZBl\n".
-                "QQIhAPvyiVFhizURqzZHn4cQtKR2bgGJsARdvlg6KKHP/XXRAiEAzHu3uJ1mIFHH\n".
-                "MGMrpKC4mcnyvM4UEETIINUA+pabMz0CIGeJQA0FfOOOI0HnJROoNdPwJzzSjFb+\n".
-                "/x3aqJ/2jT5BAiBTLEtpY1Rj9v9/VgctelY776G1XFla2K9Sc3FnfBT6vQIgJlqb\n".
-                "tFCwQZczpa/OtOqYKHHpFevnLEVWrlHvCRgJeJU=\n".
-                "-----END RSA PRIVATE KEY-----\n";
-
-        $cipher = new VirgilCipher();
-
-        $datagram = $cipher->encrypt($initialString, $publicKey);
-        $decryptedString = $cipher->decrypt($datagram->encryptedData, $datagram->encryptionKey, $privateKey);
-        $this->assertEquals($initialString, $decryptedString);
-    }
-
-    /**
-     * @covers VirgilCipher::encrypt
-     * @covers VirgilCipher::decrypt
-     * @covers VirgilCipher::reencryptKey
-     */
-    public function test_reencrypt_key() {
-        $initialString = "very long string to be encrypted";
-        $ecPublicKey =
-                "-----BEGIN PUBLIC KEY-----\n".
-                "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
-                "nIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdvcSsAMbLCnvEnTlXFMDn5\n".
-                "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
-                "o+yIBPaohqMzfjvj4Yw=\n".
-                "-----END PUBLIC KEY-----\n";
-        $ecPrivateKey =
-                "-----BEGIN EC PRIVATE KEY-----\n".
-                "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
-                "b+IcSjzaw8xEZuIkT/wG/yVlx4Zimk0XoAsGCSskAwMCCAEBDaGBhQOBggAEA8GV\n".
-                "pzCcTiISVsHjuMZg4gvSnIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdv\n".
-                "cSsAMbLCnvEnTlXFMDn53a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8W\n".
-                "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
-                "-----END EC PRIVATE KEY-----\n";
-        $rsaPublicKey =
-                "-----BEGIN PUBLIC KEY-----\n".
-                "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaro\n".
-                "K+GG5ZcLA9AnA2Fwkx8hFozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQ==\n".
-                "-----END PUBLIC KEY-----\n";
-        $rsaPrivateKey =
-                "-----BEGIN RSA PRIVATE KEY-----\n".
-                "MIIBOQIBAAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaroK+GG5ZcLA9AnA2Fwkx8h\n".
-                "FozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQJAYML8olAwoVcfU8+FT3pj\n".
-                "8sU+faK9cL53MtXgmFJEgBUWlg0aGq67an8vgReCdIK6F3500f6Yf9LhjkoZ4ZBl\n".
-                "QQIhAPvyiVFhizURqzZHn4cQtKR2bgGJsARdvlg6KKHP/XXRAiEAzHu3uJ1mIFHH\n".
-                "MGMrpKC4mcnyvM4UEETIINUA+pabMz0CIGeJQA0FfOOOI0HnJROoNdPwJzzSjFb+\n".
-                "/x3aqJ/2jT5BAiBTLEtpY1Rj9v9/VgctelY776G1XFla2K9Sc3FnfBT6vQIgJlqb\n".
-                "tFCwQZczpa/OtOqYKHHpFevnLEVWrlHvCRgJeJU=\n".
-                "-----END RSA PRIVATE KEY-----\n";
-
-        $cipher = new VirgilCipher();
-
-        $datagram = $cipher->encrypt($initialString, $ecPublicKey);
-        $sharedEncryptionKey = $cipher->reencryptKey($datagram->encryptionKey, $rsaPublicKey ,$ecPrivateKey);
-
-
-        $decryptedString = $cipher->decrypt($datagram->encryptedData, $sharedEncryptionKey, $rsaPrivateKey);
-        $this->assertEquals($initialString, $decryptedString);
-    }
-
-    /**
-     * @covers VirgilCipher::encryptWithPassword
+     * @covers VirgilCipher::decryptWithKey
      * @covers VirgilCipher::decryptWithPassword
      */
-    public function test_password_encryption_descryption() {
-        $initialString = "string to be encrypted";
-        $password = "password";
-
+    public function test_encryption_decryption_with_known_keys() {
+        $initialString = "very long string to be encrypted";
+        // Key recipient - Bob (EC)
+        $bobCertificateId = "BOB-CERT-1234";
+        $bobPublicKey =
+                "-----BEGIN PUBLIC KEY-----\n".
+                "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
+                "nIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdvcSsAMbLCnvEnTlXFMDn5\n".
+                "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
+                "o+yIBPaohqMzfjvj4Yw=\n".
+                "-----END PUBLIC KEY-----\n";
+        $bobPrivateKey =
+                "-----BEGIN EC PRIVATE KEY-----\n".
+                "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
+                "b+IcSjzaw8xEZuIkT/wG/yVlx4Zimk0XoAsGCSskAwMCCAEBDaGBhQOBggAEA8GV\n".
+                "pzCcTiISVsHjuMZg4gvSnIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdv\n".
+                "cSsAMbLCnvEnTlXFMDn53a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8W\n".
+                "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
+                "-----END EC PRIVATE KEY-----\n";
+        // Key recipient - Ted (RSA)
+        $tedCertificateId = "TED-CERT-1234";
+        $tedPublicKey =
+                "-----BEGIN PUBLIC KEY-----\n".
+                "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaro\n".
+                "K+GG5ZcLA9AnA2Fwkx8hFozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQ==\n".
+                "-----END PUBLIC KEY-----\n";
+        $tedPrivateKey =
+                "-----BEGIN RSA PRIVATE KEY-----\n".
+                "MIIBOQIBAAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaroK+GG5ZcLA9AnA2Fwkx8h\n".
+                "FozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQJAYML8olAwoVcfU8+FT3pj\n".
+                "8sU+faK9cL53MtXgmFJEgBUWlg0aGq67an8vgReCdIK6F3500f6Yf9LhjkoZ4ZBl\n".
+                "QQIhAPvyiVFhizURqzZHn4cQtKR2bgGJsARdvlg6KKHP/XXRAiEAzHu3uJ1mIFHH\n".
+                "MGMrpKC4mcnyvM4UEETIINUA+pabMz0CIGeJQA0FfOOOI0HnJROoNdPwJzzSjFb+\n".
+                "/x3aqJ/2jT5BAiBTLEtpY1Rj9v9/VgctelY776G1XFla2K9Sc3FnfBT6vQIgJlqb\n".
+                "tFCwQZczpa/OtOqYKHHpFevnLEVWrlHvCRgJeJU=\n".
+                "-----END RSA PRIVATE KEY-----\n";
+        // Password recipient - Alice
+        $alicePassword = "alice-password";
+        // Create cipher
         $cipher = new VirgilCipher();
-
-        $encryptedString = $cipher->encryptWithPassword($initialString, $password);
-        $decryptedString = $cipher->decryptWithPassword($encryptedString, $password);
-
-        $this->assertEquals($initialString, $decryptedString);
-    }
+        $this->assertNotNull($cipher, "Cipher was not created.");
+        $this->assertNotNull($cipher->_cPtr, "Underlying cipher was not created.");
+        // Add recipients to the cipher
+        $cipher->addKeyRecipient($bobCertificateId, $bobPublicKey);
+        $cipher->addKeyRecipient($tedCertificateId, $tedPublicKey);
+        $cipher->addPasswordRecipient($alicePassword);
+        // Encrypt data
+        $encryptedData = $cipher->encrypt($initialString);
+        $encryptedContentInfo = $cipher->getContentInfo();
+        // Create new cipher
+        $cipher = new VirgilCipher();
+        // Set content info
+        $cipher->setContentInfo($encryptedContentInfo);
+        // Decrypt encrypted data
+        $bobPlainText = $cipher->decryptWithKey($encryptedData, $bobCertificateId, $bobPrivateKey);
+        $tedPlainText = $cipher->decryptWithKey($encryptedData, $tedCertificateId, $tedPrivateKey);
+        $alicePlainText = $cipher->decryptWithPassword($encryptedData, $alicePassword);
+        // Check decrypted data
+        $this->assertEquals($initialString, $bobPlainText);
+        $this->assertEquals($initialString, $tedPlainText);
+        $this->assertEquals($initialString, $alicePlainText);    }
 }
 
 ?>

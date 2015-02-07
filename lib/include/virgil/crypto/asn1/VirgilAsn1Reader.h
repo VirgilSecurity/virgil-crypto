@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_VIRGIL_ASN1_READER_H
-#define VIRGIL_CRYPTO_VIRGIL_ASN1_READER_H
+#ifndef VIRGIL_CRYPTO_ASN1_VIRGIL_ASN1_READER_H
+#define VIRGIL_CRYPTO_ASN1_VIRGIL_ASN1_READER_H
 
 #include <cstddef>
 #include <string>
@@ -43,7 +43,7 @@
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace asn1 {
 
 /**
  * @brief This class provides methods for reading ASN.1 data structure.
@@ -146,6 +146,6 @@ private:
     VirgilByteArray data_;
 };
 
-}}
+}}}
 
-#endif /* VIRGIL_CRYPTO_VIRGIL_ASN1_READER_H */
+#endif /* VIRGIL_CRYPTO_ASN1_VIRGIL_ASN1_READER_H */

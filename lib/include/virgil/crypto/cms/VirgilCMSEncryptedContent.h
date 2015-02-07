@@ -37,8 +37,8 @@
 #ifndef VIRGIL_CRYPTO_CMS_VIRGIL_CMS_ENCRYPTED_CONTENT_H
 #define VIRGIL_CRYPTO_CMS_VIRGIL_CMS_ENCRYPTED_CONTENT_H
 
-#include <virgil/crypto/VirgilAsn1Compatible.h>
-using virgil::crypto::VirgilAsn1Compatible;
+#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::asn1::VirgilAsn1Compatible;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;

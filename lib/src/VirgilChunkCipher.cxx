@@ -58,53 +58,59 @@ using virgil::crypto::VirgilSymmetricCipher;
 #include <virgil/crypto/VirgilAsymmetricCipher.h>
 using virgil::crypto::VirgilAsymmetricCipher;
 
-VirgilChunkCipher::VirgilChunkCipher() : symmetricCipher_(VirgilSymmetricCipher::aes256()) {
-}
+/**
+ * @name Contsants
+ */
+///@{
+static const char * const kCustomParameterKey_ChunkSize = "chunkSize";
+///@}
 
 VirgilChunkCipher::~VirgilChunkCipher() throw() {
 }
 
-size_t VirgilChunkCipher::adjustEncryptionChunkSize(size_t preferredChunkSize) const {
-    size_t blockSize = symmetricCipher_.blockSize();
-    if (preferredChunkSize < blockSize) {
-        return blockSize - 1;
+static size_t adjustEncryptionChunkSize(size_t preferredChunkSize, size_t cipherBlockSize) {
+    if (preferredChunkSize < cipherBlockSize) {
+        return cipherBlockSize - 1;
     } else {
-        return (size_t)(preferredChunkSize / blockSize) * blockSize - 1;
+        return (size_t)(preferredChunkSize / cipherBlockSize) * cipherBlockSize - 1;
     }
 }
 
-size_t VirgilChunkCipher::adjustDecryptionChunkSize(size_t encryptionChunkSize) const {
-    size_t blockSize = symmetricCipher_.blockSize();
-    return (size_t)ceil((double)encryptionChunkSize / blockSize) * blockSize;
+static size_t adjustDecryptionChunkSize(size_t encryptionChunkSize, size_t cipherBlockSize) {
+    return (size_t)ceil((double)encryptionChunkSize / cipherBlockSize) * cipherBlockSize;
 }
 
-VirgilByteArray VirgilChunkCipher::startEncryption(const VirgilByteArray& publicKey) {
-    VirgilByteArray encryptionKey = configureEncryption(symmetricCipher_);
-    VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::none();
-    asymmetricCipher.setPublicKey(publicKey);
-    return asymmetricCipher.encrypt(encryptionKey);
+size_t VirgilChunkCipher::startEncryption(size_t preferredChunkSize) {
+    VirgilSymmetricCipher& symmetricCipher = initEncryption();
+    size_t actualChunkSize = adjustEncryptionChunkSize(preferredChunkSize, symmetricCipher.blockSize());
+    storeChunkSize(actualChunkSize);
+    return actualChunkSize;
 }
 
-void VirgilChunkCipher::startDecryption(const VirgilByteArray& encryptionKey, const VirgilByteArray& privateKey,
-                const VirgilByteArray& privateKeyPassword) {
-    VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::none();
-    asymmetricCipher.setPrivateKey(privateKey, privateKeyPassword);
+size_t VirgilChunkCipher::startDecryptionWithKey(const VirgilByteArray& certificateId,
+        const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
+    VirgilSymmetricCipher& symmetricCipher = initDecryptionWithKey(certificateId, privateKey, privateKeyPassword);
+    return adjustDecryptionChunkSize(retrieveChunkSize(), symmetricCipher.blockSize());
+}
 
-    configureDecryption(symmetricCipher_, asymmetricCipher.decrypt(encryptionKey));
+size_t VirgilChunkCipher::startDecryptionWithPassword(const VirgilByteArray& pwd) {
+    VirgilSymmetricCipher& symmetricCipher = initDecryptionWithPassword(pwd);
+    return adjustDecryptionChunkSize(retrieveChunkSize(), symmetricCipher.blockSize());
 }
 
 VirgilByteArray VirgilChunkCipher::process(const VirgilByteArray& data) {
-    bool isDataAlignedToBlockSize = (data.size() % symmetricCipher_.blockSize()) == 0;
-    if (symmetricCipher_.isDecryptionMode() && !isDataAlignedToBlockSize) {
+    VirgilSymmetricCipher& symmetricCipher = getSymmetricCipher();
+    bool isDataAlignedToBlockSize = (data.size() % symmetricCipher.blockSize()) == 0;
+    if (symmetricCipher.isDecryptionMode() && !isDataAlignedToBlockSize) {
         ostringstream message;
         message << "In the decryption mode data size MUST be multiple of ";
-        message << symmetricCipher_.blockSize() << " bytes.";
+        message << symmetricCipher.blockSize() << " bytes.";
         throw VirgilException(message.str());
     }
 
-    symmetricCipher_.reset();
-    VirgilByteArray firstChunk = symmetricCipher_.update(data);
-    VirgilByteArray secondChunk = symmetricCipher_.finish();
+    symmetricCipher.reset();
+    VirgilByteArray firstChunk = symmetricCipher.update(data);
+    VirgilByteArray secondChunk = symmetricCipher.finish();
 
     VirgilByteArray result;
     result.insert(result.end(), firstChunk.begin(), firstChunk.end());
@@ -114,5 +120,20 @@ VirgilByteArray VirgilChunkCipher::process(const VirgilByteArray& data) {
 }
 
 void VirgilChunkCipher::finalize() {
-    symmetricCipher_.clear();
+    if (getSymmetricCipher().isEncryptionMode()) {
+        buildContentInfo();
+    }
+    clearCipherInfo();
 }
+
+void VirgilChunkCipher::storeChunkSize(size_t chunkSize) {
+    customParameters().setInteger(
+            VIRGIL_BYTE_ARRAY_FROM_C_STRING(kCustomParameterKey_ChunkSize), chunkSize);
+}
+
+size_t VirgilChunkCipher::retrieveChunkSize() const {
+    return customParameters().getInteger(
+            VIRGIL_BYTE_ARRAY_FROM_C_STRING(kCustomParameterKey_ChunkSize));
+}
+
+

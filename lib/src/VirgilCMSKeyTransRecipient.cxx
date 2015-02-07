@@ -37,11 +37,11 @@
 #include <virgil/crypto/cms/VirgilCMSKeyTransRecipient.h>
 using virgil::crypto::cms::VirgilCMSKeyTransRecipient;
 
-#include <virgil/crypto/VirgilAsn1Reader.h>
-using virgil::crypto::VirgilAsn1Reader;
+#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/VirgilAsn1Writer.h>
-using virgil::crypto::VirgilAsn1Writer;
+#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::asn1::VirgilAsn1Writer;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
@@ -68,13 +68,13 @@ VirgilByteArray VirgilCMSKeyTransRecipient::toAsn1() const {
 
     size_t len = 0;
 
-    checkAsn1ParamNotEmpty(encryptedKey);
+    checkAsn1ParamNotEmpty(encryptedKey, "encryptedKey");
     len += asn1Writer.writeOctetString(encryptedKey);
 
-    checkAsn1ParamNotEmpty(keyEncryptionAlgorithm);
+    checkAsn1ParamNotEmpty(keyEncryptionAlgorithm, "keyEncryptionAlgorithm");
     len += asn1Writer.writeData(keyEncryptionAlgorithm);
 
-    checkAsn1ParamNotEmpty(recipientIdentifier);
+    checkAsn1ParamNotEmpty(recipientIdentifier, "recipientIdentifier");
     size_t recipientIdentifierLen = asn1Writer.writeOctetString(recipientIdentifier);
     len += recipientIdentifierLen;
     len += asn1Writer.writeContextTag(kCMS_SubjectKeyTag, recipientIdentifierLen);

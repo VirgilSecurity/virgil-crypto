@@ -37,11 +37,11 @@
 #include <virgil/crypto/cms/VirgilCMSEncryptedContent.h>
 using virgil::crypto::cms::VirgilCMSEncryptedContent;
 
-#include <virgil/crypto/VirgilAsn1Reader.h>
-using virgil::crypto::VirgilAsn1Reader;
+#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/VirgilAsn1Writer.h>
-using virgil::crypto::VirgilAsn1Writer;
+#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::asn1::VirgilAsn1Writer;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
@@ -72,7 +72,7 @@ VirgilByteArray VirgilCMSEncryptedContent::toAsn1() const {
         len += asn1Writer.writeContextTag(kCMS_EncryptedContentTag, encryptedContentLen);
     }
 
-    checkAsn1ParamNotEmpty(contentEncryptionAlgorithm);
+    checkAsn1ParamNotEmpty(contentEncryptionAlgorithm, "contentEncryptionAlgorithm");
     len += asn1Writer.writeData(contentEncryptionAlgorithm);
 
     len += asn1Writer.writeOID(OID_TO_STD_STRING(OID_PKCS7_DATA));

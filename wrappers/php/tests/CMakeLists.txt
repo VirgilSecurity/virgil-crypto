@@ -56,6 +56,7 @@ set (TEST_FILE_LIST
     VirgilRandom_Test.php
     VirgilPBE_Test.php
     VirgilVersion_Test.php
+    VirgilCustomParams_Test.php
 
     StringSource.php
     StringSink.php

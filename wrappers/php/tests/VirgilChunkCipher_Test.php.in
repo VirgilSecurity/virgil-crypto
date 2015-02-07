@@ -45,10 +45,13 @@ include_once "StringSink.php";
 class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
 
     /**
+     * @covers VirgilChunkCipher::addKeyRecipient
      * @covers VirgilChunkCipher::startEncryption
      * @covers VirgilChunkCipher::process
      */
     public function test_encryption() {
+        $initialText = "This is very long string will be encoded. And some more.";
+        $certificateId = "CERT-1234";
         $publicKeyPem512 =
                 "-----BEGIN PUBLIC KEY-----\n".
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
@@ -56,31 +59,38 @@ class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
                 "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
                 "o+yIBPaohqMzfjvj4Yw=\n".
                 "-----END PUBLIC KEY-----\n";
+        $password = "password-recipient";
+        // Create cipher
         $cipher = new VirgilChunkCipher();
-
-        $initialText = "This is very long string will be encoded";
-
-        $chunkSize = $cipher->adjustEncryptionChunkSize(5);
-
+        // Add recipients
+        $cipher->addKeyRecipient($certificateId, $publicKeyPem512);
+        $cipher->addPasswordRecipient($password);
         // Init encryption.
-        $encryptionKey = $cipher->startEncryption($publicKeyPem512);
+        $preferredChunkSize = 7;
+        $actualChunkSize = $cipher->startEncryption($preferredChunkSize);
         // Split string to chunks.
-        $chunks = str_split($initialText, $chunkSize);
+        $chunks = str_split($initialText, $actualChunkSize);
         // Encode.
-        $encodedText = "";
+        $encryptedData = "";
         foreach ($chunks as $chunk) {
-            $encodedText .= $cipher->process($chunk);
+            $encryptedData .= $cipher->process($chunk);
         }
+        // Finalize encryption to avoid security issues.
+        $cipher->finalize();
+        // Store content info.
+        $contentInfo = $cipher->getContentInfo();
 
-        return array($encryptionKey, $encodedText, $chunkSize, $initialText);
+        return array($contentInfo, $encryptedData, $initialText);
     }
 
     /**
-     * @covers VirgilChunkCipher::startDecryption
+     * @covers VirgilChunkCipher::addKeyRecipient
+     * @covers VirgilChunkCipher::startDecryptionWithKey
      * @covers VirgilChunkCipher::process
      * @depends test_encryption
      */
-    public function test_decryption(array $encryptionDatagram) {
+    public function test_decryption_with_key(array $encryptionDatagram) {
+        $certificateId = "CERT-1234";
         $privateKeyPem512 =
                 "-----BEGIN EC PRIVATE KEY-----\n".
                 "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
@@ -89,28 +99,59 @@ class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
                 "cSsAMbLCnvEnTlXFMDn53a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8W\n".
                 "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
                 "-----END EC PRIVATE KEY-----\n";
+
+        // Get public parameters
+        $contentInfo = $encryptionDatagram[0];
+        $encryptedData = $encryptionDatagram[1];
+        $initialText = $encryptionDatagram[2];
+        // Create cipher
         $cipher = new VirgilChunkCipher();
-
-        $encryptionKey = $encryptionDatagram[0];
-        $encodedText = $encryptionDatagram[1];
-        $encryptionChunkSize = $encryptionDatagram[2];
-        $initialText = $encryptionDatagram[3];
-
-        $this->assertEquals(15, $encryptionChunkSize);
-        $chunkSize = $cipher->adjustDecryptionChunkSize($encryptionChunkSize);
-        $this->assertEquals(16, $chunkSize);
-
+        // Set content info
+        $cipher->setContentInfo($contentInfo);
         // Init decryption.
-        $cipher->startDecryption($encryptionKey, $privateKeyPem512);
+        $actualChunkSize = $cipher->startDecryptionWithKey($certificateId, $privateKeyPem512);
         // Split string to chunks.
-        $chunks = str_split($encodedText, $chunkSize);
+        $chunks = str_split($encryptedData, $actualChunkSize);
         // Decode.
-        $decodedText = "";
+        $plainText = "";
         foreach ($chunks as $chunk) {
-            $decodedText .= $cipher->process($chunk);
+            $plainText .= $cipher->process($chunk);
         }
+        // Finalize decryption to avoid security issues.
+        $cipher->finalize();
+        // Validate results
+        $this->assertEquals($initialText, $plainText);
+    }
 
-        $this->assertEquals($initialText, $decodedText);
+    /**
+     * @covers VirgilChunkCipher::addKeyRecipient
+     * @covers VirgilChunkCipher::startDecryptionWithPassword
+     * @covers VirgilChunkCipher::process
+     * @depends test_encryption
+     */
+    public function test_decryption_with_password(array $encryptionDatagram) {
+        $password = "password-recipient";
+        // Get public parameters
+        $contentInfo = $encryptionDatagram[0];
+        $encryptedData = $encryptionDatagram[1];
+        $initialText = $encryptionDatagram[2];
+        // Create cipher
+        $cipher = new VirgilChunkCipher();
+        // Set content info
+        $cipher->setContentInfo($contentInfo);
+        // Init decryption.
+        $actualChunkSize = $cipher->startDecryptionWithPassword($password);
+        // Split string to chunks.
+        $chunks = str_split($encryptedData, $actualChunkSize);
+        // Decode.
+        $plainText = "";
+        foreach ($chunks as $chunk) {
+            $plainText .= $cipher->process($chunk);
+        }
+        // Finalize decryption to avoid security issues.
+        $cipher->finalize();
+        // Validate results
+        $this->assertEquals($initialText, $plainText);
     }
 }
 

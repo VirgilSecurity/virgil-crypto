@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilAsn1Writer.h>
-using virgil::crypto::VirgilAsn1Writer;
+#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::asn1::VirgilAsn1Writer;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;

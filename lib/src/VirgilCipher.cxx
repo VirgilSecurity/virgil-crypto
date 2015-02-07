@@ -36,7 +36,6 @@
 
 #include <virgil/service/VirgilCipher.h>
 using virgil::service::VirgilCipher;
-using virgil::service::VirgilCipherDatagram;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -44,19 +43,11 @@ using virgil::VirgilByteArray;
 #include <virgil/crypto/VirgilSymmetricCipher.h>
 using virgil::crypto::VirgilSymmetricCipher;
 
-#include <virgil/crypto/VirgilKDF.h>
-using virgil::crypto::VirgilKDF;
-
-#include <virgil/crypto/VirgilAsymmetricCipher.h>
-using virgil::crypto::VirgilAsymmetricCipher;
-
 VirgilCipher::~VirgilCipher() throw() {
 }
 
-VirgilCipherDatagram VirgilCipher::encrypt(const VirgilByteArray& data, const VirgilByteArray& publicKey) {
-    VirgilSymmetricCipher symmetricCipher = VirgilSymmetricCipher::aes256();
-
-    VirgilByteArray encryptionKey = configureEncryption(symmetricCipher);
+VirgilByteArray VirgilCipher::encrypt(const VirgilByteArray& data) {
+    VirgilSymmetricCipher& symmetricCipher = initEncryption();
 
     VirgilByteArray firstChunk = symmetricCipher.update(data);
     VirgilByteArray secondChunk = symmetricCipher.finish();
@@ -65,22 +56,17 @@ VirgilCipherDatagram VirgilCipher::encrypt(const VirgilByteArray& data, const Vi
     encryptedData.insert(encryptedData.end(), firstChunk.begin(), firstChunk.end());
     encryptedData.insert(encryptedData.end(), secondChunk.begin(), secondChunk.end());
 
-    VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::none();
-    asymmetricCipher.setPublicKey(publicKey);
-
-    return  VirgilCipherDatagram(asymmetricCipher.encrypt(encryptionKey), encryptedData);
+    buildContentInfo();
+    clearCipherInfo();
+    return encryptedData;
 }
 
-VirgilByteArray VirgilCipher::decrypt(const VirgilByteArray encryptedData, const VirgilByteArray& encryptionKey,
-        const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
+VirgilByteArray VirgilCipher::decryptWithKey(const VirgilByteArray& encryptedData,
+        const VirgilByteArray& certificateId, const VirgilByteArray& privateKey,
+        const VirgilByteArray& privateKeyPassword) {
 
-    VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::none();
-    asymmetricCipher.setPrivateKey(privateKey, privateKeyPassword);
-
-    VirgilByteArray decryptionKey = asymmetricCipher.decrypt(encryptionKey);
-
-    VirgilSymmetricCipher symmetricCipher = VirgilSymmetricCipher::aes256();
-    configureDecryption(symmetricCipher, decryptionKey);
+    VirgilSymmetricCipher& symmetricCipher =
+            initDecryptionWithKey(certificateId, privateKey, privateKeyPassword);
 
     VirgilByteArray firstChunk = symmetricCipher.update(encryptedData);
     VirgilByteArray secondChunk = symmetricCipher.finish();
@@ -89,36 +75,20 @@ VirgilByteArray VirgilCipher::decrypt(const VirgilByteArray encryptedData, const
     decryptedData.insert(decryptedData.end(), firstChunk.begin(), firstChunk.end());
     decryptedData.insert(decryptedData.end(), secondChunk.begin(), secondChunk.end());
 
+    clearCipherInfo();
     return decryptedData;
 }
 
-VirgilByteArray VirgilCipher::encryptWithPassword(const VirgilByteArray& data, const VirgilByteArray& pwd) {
-    VirgilSymmetricCipher symmetricCipher = VirgilSymmetricCipher::aes256();
+VirgilByteArray VirgilCipher::decryptWithPassword(const VirgilByteArray& encryptedData, const VirgilByteArray& pwd) {
+    VirgilSymmetricCipher& symmetricCipher = initDecryptionWithPassword(pwd);
 
-    VirgilByteArray encryptionKey = VirgilKDF::kdf1(pwd, symmetricCipher.keyLength());
-    configureEncryption(symmetricCipher, encryptionKey);
-
-    VirgilByteArray firstChunk = symmetricCipher.update(data);
-    VirgilByteArray secondChunk = symmetricCipher.finish();
-
-    VirgilByteArray encryptedData;
-    encryptedData.insert(encryptedData.end(), firstChunk.begin(), firstChunk.end());
-    encryptedData.insert(encryptedData.end(), secondChunk.begin(), secondChunk.end());
-
-    return encryptedData;
-}
-
-VirgilByteArray VirgilCipher::decryptWithPassword(const VirgilByteArray& data, const VirgilByteArray& pwd) {
-    VirgilSymmetricCipher symmetricCipher = VirgilSymmetricCipher::aes256();
-    VirgilByteArray decryptionKey = VirgilKDF::kdf1(pwd, symmetricCipher.keyLength());
-    configureDecryption(symmetricCipher, decryptionKey);
-
-    VirgilByteArray firstChunk = symmetricCipher.update(data);
+    VirgilByteArray firstChunk = symmetricCipher.update(encryptedData);
     VirgilByteArray secondChunk = symmetricCipher.finish();
 
     VirgilByteArray decryptedData;
     decryptedData.insert(decryptedData.end(), firstChunk.begin(), firstChunk.end());
     decryptedData.insert(decryptedData.end(), secondChunk.begin(), secondChunk.end());
 
+    clearCipherInfo();
     return decryptedData;
 }

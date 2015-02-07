@@ -54,7 +54,6 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @covers VirgilCipher::generateKeyPair
      * @covers VirgilStreamSigner::sign
      * @covers VirgilStreamSigner::verify
      */
@@ -65,7 +64,7 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
 
         $signer = new VirgilStreamSigner();
 
-        $key = self::$cipher->generateKeyPair();
+        $key = new VirgilKeyPair();
 
         $dataSource->reset();
         $sign = $signer->sign($dataSource, $signerCertificateId, $key->privateKey());
@@ -77,7 +76,6 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @covers VirgilCipher::generateKeyPair
      * @covers VirgilStreamSigner::sign
      * @covers VirgilStreamSigner::verify
      */
@@ -86,7 +84,7 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
         $privateKeyPassword = "password";
         $signerCertificateId = "CERT-1234";
 
-        $key = self::$cipher->generateKeyPair($privateKeyPassword);
+        $key = new VirgilKeyPair($privateKeyPassword);
         $signer = new VirgilStreamSigner();
 
         $dataSource = new StringSource($initialString);
@@ -100,7 +98,6 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @covers VirgilCipher::generateKeyPair
      * @covers VirgilStreamSigner::sign
      * @covers VirgilStreamSigner::verify
      * @expectedException Exception
@@ -111,7 +108,7 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
         $privateKeyPassword = "password";
         $signerCertificateId = "CERT-1234";
 
-        $key = self::$cipher->generateKeyPair($privateKeyPassword);
+        $key = new VirgilKeyPair($privateKeyPassword);
 
         $signer = new VirgilStreamSigner();
 
@@ -195,7 +192,6 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @covers VirgilCipher::generateKeyPair
      * @covers VirgilStreamSigner::sign
      * @covers VirgilStreamSigner::verify
      */

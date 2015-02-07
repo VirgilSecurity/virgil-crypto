@@ -62,26 +62,20 @@ public:
     virtual ~VirgilStreamCipher() throw();
 public:
     /**
-     * @brief Encrypt data read from given source with public key and write it the sink.
-     * @return encryption key - key that was used for symmetric encryption,
-     *             and was encrypted by public key for security transfer via public networks.
-     * @note Encryption key is used for data decryption in conjuction with private key.
+     * @brief Encrypt data read from given source and write it the sink.
+     * @note Store content info to use it for decription process.
+     * @see getContentInfo()
      */
-    VirgilByteArray encrypt(VirgilDataSource& source, VirgilDataSink& sink,
-            const VirgilByteArray& publicKey);
+    void encrypt(VirgilDataSource& source, VirgilDataSink& sink);
     /**
-     * @brief Decrypt data read from given source with given private key and write it to the sink.
+     * @brief Decrypt data read from given source for recipient defined by certificate id and private key,
+     *     and write it to the sink.
      */
-    void decrypt(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& encryptionKey,
+    void decryptWithKey(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& certificateId,
             const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
-     * @brief Encrypt plain text with given password.
-     * @return Encrypted data.
-     */
-    void encryptWithPassword(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& pwd);
-    /**
-     * @brief Decrypt data with given password.
-     * @return Plain text.
+     * @brief Decrypt data read from given source for recipient defined by password,
+     *     and write it to the sink.
      */
     void decryptWithPassword(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& pwd);
 };

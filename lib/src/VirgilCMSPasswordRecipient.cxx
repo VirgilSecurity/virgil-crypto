@@ -37,11 +37,11 @@
 #include <virgil/crypto/cms/VirgilCMSPasswordRecipient.h>
 using virgil::crypto::cms::VirgilCMSPasswordRecipient;
 
-#include <virgil/crypto/VirgilAsn1Reader.h>
-using virgil::crypto::VirgilAsn1Reader;
+#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/VirgilAsn1Writer.h>
-using virgil::crypto::VirgilAsn1Writer;
+#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::asn1::VirgilAsn1Writer;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;

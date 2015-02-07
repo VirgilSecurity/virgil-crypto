@@ -40,17 +40,11 @@
 #include <virgil/service/VirgilCipherBase.h>
 using virgil::service::VirgilCipherBase;
 
-#include <virgil/service/VirgilCipherDatagram.h>
-using virgil::service::VirgilCipherDatagram;
-
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/service/stream/VirgilDataSource.h>
-using virgil::service::stream::VirgilDataSource;
-
-#include <virgil/service/stream/VirgilDataSink.h>
-using virgil::service::stream::VirgilDataSink;
+#include <vector>
+#include <vector>
 
 namespace virgil { namespace service {
 
@@ -65,25 +59,25 @@ public:
     virtual ~VirgilCipher() throw();
 public:
     /**
-     * @brief Encrypt given data with public key.
+     * @brief Encrypt given data.
      */
-    VirgilCipherDatagram encrypt(const VirgilByteArray& data, const VirgilByteArray& publicKey);
+    VirgilByteArray encrypt(const VirgilByteArray& data);
     /**
-     * @brief Decrypt given data with private key and encryption key.
+     * @brief Decrypt given data for recipient defined by certificate id and private key.
+     * @note Content info MUST be defined.
+     * @see method setContentInfo().
      * @return Decrypted data.
      */
-    VirgilByteArray decrypt(const VirgilByteArray encryptedData, const VirgilByteArray& encryptionKey,
-            const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    VirgilByteArray decryptWithKey(const VirgilByteArray& encryptedData,
+            const VirgilByteArray& certificateId, const VirgilByteArray& privateKey,
+            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
-     * @brief Encrypt plain text with given password.
-     * @return Encrypted data.
+     * @brief Decrypt given data for recipient defined by password.
+     * @note Content info MUST be defined.
+     * @see method setContentInfo().
+     * @return Decrypted data.
      */
-    VirgilByteArray encryptWithPassword(const VirgilByteArray& data, const VirgilByteArray& pwd);
-    /**
-     * @brief Decrypt data with given password.
-     * @return Plain text.
-     */
-    VirgilByteArray decryptWithPassword(const VirgilByteArray& data, const VirgilByteArray& pwd);
+    VirgilByteArray decryptWithPassword(const VirgilByteArray& encryptedData, const VirgilByteArray& pwd);
 };
 
 }}

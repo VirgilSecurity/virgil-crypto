@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilAsn1Compatible.h>
-using virgil::crypto::VirgilAsn1Compatible;
+#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::asn1::VirgilAsn1Compatible;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
@@ -48,7 +48,7 @@ void VirgilAsn1Compatible::checkAsn1ParamNotEmpty(const VirgilByteArray& param, 
         ostr << "VirgilAsn1Compatible: ";
         ostr << "Required ASN.1 parameter is not specified.";
         if (paramName != 0) {
-            ostr << "Parameter name: " << paramName << ".";
+            ostr << " Parameter name: " << paramName << ".";
         }
         throw VirgilCryptoException(ostr.str());
     }

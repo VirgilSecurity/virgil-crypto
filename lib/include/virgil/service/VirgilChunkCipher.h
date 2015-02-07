@@ -58,37 +58,30 @@ namespace virgil { namespace service {
 class VirgilChunkCipher : public VirgilCipherBase {
 public:
     /**
-     * @brief Initialize randomization module used by encryption.
+     * @name Constants
      */
-    VirgilChunkCipher();
-    /**
-     * @brief Dispose used resources.
-     */
-    virtual ~VirgilChunkCipher() throw();
+    ///@{
+    enum {
+        kPreferredChunkSize = 1024 * 1024 - 1 /**< 1MiB - 1b for padding */
+    };
+    ///@}
 public:
     /**
-     * @brief Adjust given chunk size to use it during encryption.
-     * @param preferredChunkSize - preferred chunk size be used during encryption to split big data.
-     * @return Adjusted chunk size that SHOULD be used during encryption to split plain data.
+     * @brief Initialize data chunk encryption with given chunk size.
+     * @return Actual chunk size.
      */
-    size_t adjustEncryptionChunkSize(size_t preferredChunkSize) const;
-    /**
-     * @brief Adjust given chunk size to use it during decryption.
-     * @param encryptionChunkSize - chunk size that was used during encryption to split big data.
-     * @return Adjusted chunk size that SHOULD be used during decryption to split encrypted data.
-     */
-    size_t adjustDecryptionChunkSize(size_t encryptionChunkSize) const;
-    /**
-     * @brief Initialize data chunk encryption with given public key.
-     * @return encryption key - key that is used for symmetric encryption,
-     *             and is encrypted by public key for security transfer via public networks.
-     */
-    VirgilByteArray startEncryption(const VirgilByteArray& publicKey);
+    size_t startEncryption(size_t preferredChunkSize = kPreferredChunkSize);
     /**
      * @brief Initialize multipart decryption with given private key.
+     * @return Actual chunk size.
      */
-    void startDecryption(const VirgilByteArray& encryptionKey, const VirgilByteArray& privateKey,
+    size_t startDecryptionWithKey(const VirgilByteArray& certificateId, const VirgilByteArray& privateKey,
                 const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    /**
+     * @brief Initialize multipart decryption with given private key.
+     * @return Actual chunk size.
+     */
+    size_t startDecryptionWithPassword(const VirgilByteArray& pwd);
     /**
      * @brief Encrypt / Decrypt given data chunk.
      * @return Encrypted / Decrypted data chunk.
@@ -98,9 +91,20 @@ public:
      * @brief Finalize encryption or decryption process.
      * @note Call this method after encryption or decryption are done to prevent security issues.
      */
-     void finalize();
+    void finalize();
+    /**
+     * @brief Polymorphic destructor.
+     */
+    virtual ~VirgilChunkCipher() throw();
 private:
-    VirgilSymmetricCipher symmetricCipher_;
+    /**
+     * @brief Store actual chunk size in the custom parameters.
+     */
+    void storeChunkSize(size_t chunkSize);
+    /**
+     * @brief Retrieve actual chunk size from the custom parameters.
+     */
+    size_t retrieveChunkSize() const;
 };
 
 }}

@@ -34,34 +34,54 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SERVICE_VIRGIL_CIPHER_DATAGRAM_H
-#define VIRGIL_SERVICE_VIRGIL_CIPHER_DATAGRAM_H
+#ifndef VIRGIL_CRYPTO_VIRGIL_CONTENT_INFO_H
+#define VIRGIL_CRYPTO_VIRGIL_CONTENT_INFO_H
 
-namespace virgil { namespace service {
+#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::asn1::VirgilAsn1Compatible;
+
+#include <virgil/VirgilByteArray.h>
+using virgil::VirgilByteArray;
+
+#include <virgil/crypto/VirgilCustomParams.h>
+using virgil::crypto::VirgilCustomParams;
+
+#include <virgil/crypto/cms/VirgilCMSContent.h>
+using virgil::crypto::cms::VirgilCMSContent;
+
+#include <map>
+#include <string>
+
+namespace virgil { namespace crypto {
 
 /**
- * @brief Handles encryption key and encrypted data.
+ * @brief Data object that represent ASN.1 structure: VirgilContentInfo.
  */
-class VirgilCipherDatagram {
+class VirgilContentInfo : public VirgilAsn1Compatible {
 public:
-    VirgilCipherDatagram() {}
+    VirgilCMSContent cmsContent;
+    VirgilCustomParams customParams;
+public:
     /**
-     * @brief Populate encryption key and encrypted data.
+     * @name VirgilAsn1Compatible implementation
+     *
+     * Marshalling format:
+     *     VirgilContentInfo ::= SEQUENCE {
+     *         cmsContent ContentInfo, -- Imports from RFC 5652
+     *         customParams [0] IMPLICIT VirgilCustomParams OPTIONAL
+     *     }
      */
-    VirgilCipherDatagram(const VirgilByteArray& key, const VirgilByteArray& data)
-            : encryptionKey(key), encryptedData(data) {}
+    ///@{
+    virtual VirgilByteArray toAsn1() const;
+    virtual void fromAsn1(const VirgilByteArray& asn1);
+    ///@}
+public:
     /**
-     * Key that was used for symmetric encryption and was encrypted by public key
-     *     for security transfer via public networks, and encrypted data
-     * @note Encryption key is used for data decryption in conjuction with private key.
+     * @brief Polymorphic destructor.
      */
-    VirgilByteArray encryptionKey;
-    /**
-     * Encrypted data.
-     */
-    VirgilByteArray encryptedData;
+    virtual ~VirgilContentInfo() throw();
 };
 
 }}
 
-#endif /* VIRGIL_SERVICE_VIRGIL_CIPHER_DATAGRAM_H */
+#endif /* VIRGIL_CRYPTO_VIRGIL_CONTENT_INFO_H */

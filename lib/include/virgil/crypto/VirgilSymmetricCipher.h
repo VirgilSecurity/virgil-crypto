@@ -38,8 +38,12 @@
 #define VIRGIL_CRYPTO_SYMMETRIC_SIPHER_H
 
 #include <string>
+
 #include <virgil/VirgilByteArray.h>
-#include <virgil/crypto/VirgilAsn1Compatible.h>
+using virgil::VirgilByteArray;
+
+#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::asn1::VirgilAsn1Compatible;
 
 namespace virgil { namespace crypto {
 

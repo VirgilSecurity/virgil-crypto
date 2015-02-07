@@ -45,71 +45,79 @@ include_once "StringSink.php";
 class VirgilStreamCipher_Test extends PHPUnit_Framework_TestCase {
 
     /**
-     * @covers VirgilStreamCipher::generateKeyPair
-     * @covers VirgilStreamCipher::encrypt
-     * @covers VirgilStreamCipher::decrypt
+     * @covers VirgilCipher::addKeyRecipient
+     * @covers VirgilCipher::addPasswordRecipient
+     * @covers VirgilCipher::encrypt
+     * @covers VirgilCipher::decryptWithKey
+     * @covers VirgilCipher::decryptWithPassword
      */
-    public function test_encryption_descryption_with_generated_keys() {
+    public function test_encryption_decryption_with_generated_keys() {
         $initialString = "very long string to be encrypted";
-
+        // Key recipient - Bob
+        $bobCertificateId = "BOB-CERT-1234";
+        $bobKey = new VirgilKeyPair();
+        // Key recipient - Ted
+        $tedCertificateId = "TED-CERT-1234";
+        $tedKeyPassword = "ted-private-key-password";
+        $tedKey = new VirgilKeyPair($tedKeyPassword);
+        // Password recipient - Alice
+        $alicePassword = "alice-password";
+        // Create cipher
         $cipher = new VirgilStreamCipher();
-
-        $key = $cipher->generateKeyPair();
-        $this->assertGreaterThan(0, strlen($key->publicKey()));
-        $this->assertGreaterThan(0, strlen($key->privateKey()));
-
+        $this->assertNotNull($cipher, "Cipher was not created.");
+        $this->assertNotNull($cipher->_cPtr, "Underlying cipher was not created.");
+        // Add recipients to the cipher
+        $cipher->addKeyRecipient($bobCertificateId, $bobKey->publicKey());
+        $cipher->addKeyRecipient($tedCertificateId, $tedKey->publicKey());
+        $cipher->addPasswordRecipient($alicePassword);
+        // Encrypt data
         $encryptSource = new StringSource($initialString);
         $encryptSink = new StringSink();
+        $cipher->encrypt($encryptSource, $encryptSink);
+        $encryptedContentInfo = $cipher->getContentInfo();
+        // Create new cipher
+        $cipher = new VirgilStreamCipher();
+        // Set content info
+        $cipher->setContentInfo($encryptedContentInfo);
+        // Decrypt encrypted data
+        $bobDecryptSource = new StringSource($encryptSink->getResult());
+        $bobDecryptSink = new StringSink();
 
-        $encryptionKey = $cipher->encrypt($encryptSource, $encryptSink, $key->publicKey());
+        $tedDecryptSource = new StringSource($encryptSink->getResult());
+        $tedDecryptSink = new StringSink();
 
-        $decryptSource = new StringSource($encryptSink->getResult());
-        $decryptSink = new StringSink();
+        $aliceDecryptSource = new StringSource($encryptSink->getResult());
+        $aliceDecryptSink = new StringSink();
 
-        $cipher->decrypt($decryptSource, $decryptSink, $encryptionKey, $key->privateKey());
-
-        $this->assertEquals($initialString, $decryptSink->getResult());
+        $cipher->decryptWithKey($bobDecryptSource, $bobDecryptSink, $bobCertificateId, $bobKey->privateKey());
+        $cipher->decryptWithKey($tedDecryptSource, $tedDecryptSink, $tedCertificateId, $tedKey->privateKey(),
+                $tedKeyPassword);
+        $cipher->decryptWithPassword($aliceDecryptSource, $aliceDecryptSink, $alicePassword);
+        // Check decrypted data
+        $this->assertEquals($initialString, $bobDecryptSink->getResult());
+        $this->assertEquals($initialString, $tedDecryptSink->getResult());
+        $this->assertEquals($initialString, $aliceDecryptSink->getResult());
     }
 
     /**
-     * @covers VirgilStreamCipher::generateKeyPair
-     * @covers VirgilStreamCipher::encrypt
-     * @covers VirgilStreamCipher::decrypt
+     * @covers VirgilCipher::addKeyRecipient
+     * @covers VirgilCipher::addPasswordRecipient
+     * @covers VirgilCipher::encrypt
+     * @covers VirgilCipher::decryptWithKey
+     * @covers VirgilCipher::decryptWithPassword
      */
-    public function test_encryption_descryption_with_generated_keys_with_password() {
+    public function test_encryption_decryption_with_known_keys() {
         $initialString = "very long string to be encrypted";
-        $privateKeyPassword = "password";
-
-        $cipher = new VirgilStreamCipher();
-        $key = $cipher->generateKeyPair($privateKeyPassword);
-
-        $encryptSource = new StringSource($initialString);
-        $encryptSink = new StringSink();
-
-        $encryptionKey = $cipher->encrypt($encryptSource, $encryptSink, $key->publicKey());
-
-        $decryptSource = new StringSource($encryptSink->getResult());
-        $decryptSink = new StringSink();
-
-        $cipher->decrypt($decryptSource, $decryptSink, $encryptionKey, $key->privateKey(), $privateKeyPassword);
-
-        $this->assertEquals($initialString, $decryptSink->getResult());
-    }
-
-    /**
-     * @covers VirgilStreamCipher::encrypt
-     * @covers VirgilStreamCipher::decrypt
-     */
-    public function test_encryption_descryption_with_ec_keys() {
-        $initialString = "very long string to be encrypted";
-        $publicKeyPem512 =
+        // Key recipient - Bob (EC)
+        $bobCertificateId = "BOB-CERT-1234";
+        $bobPublicKey =
                 "-----BEGIN PUBLIC KEY-----\n".
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
                 "nIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdvcSsAMbLCnvEnTlXFMDn5\n".
                 "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
                 "o+yIBPaohqMzfjvj4Yw=\n".
                 "-----END PUBLIC KEY-----\n";
-        $privateKeyPem512 =
+        $bobPrivateKey =
                 "-----BEGIN EC PRIVATE KEY-----\n".
                 "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
                 "b+IcSjzaw8xEZuIkT/wG/yVlx4Zimk0XoAsGCSskAwMCCAEBDaGBhQOBggAEA8GV\n".
@@ -117,33 +125,14 @@ class VirgilStreamCipher_Test extends PHPUnit_Framework_TestCase {
                 "cSsAMbLCnvEnTlXFMDn53a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8W\n".
                 "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
                 "-----END EC PRIVATE KEY-----\n";
-
-        $encryptSource = new StringSource($initialString);
-        $encryptSink = new StringSink();
-        $cipher = new VirgilStreamCipher();
-
-        $encryptionKey = $cipher->encrypt($encryptSource, $encryptSink, $publicKeyPem512);
-
-        $decryptSource = new StringSource($encryptSink->getResult());
-        $decryptSink = new StringSink();
-
-        $cipher->decrypt($decryptSource, $decryptSink, $encryptionKey, $privateKeyPem512);
-
-        $this->assertEquals($initialString, $decryptSink->getResult());
-    }
-
-    /**
-     * @covers VirgilStreamCipher::encrypt
-     * @covers VirgilStreamCipher::decrypt
-     */
-    public function test_encryption_descryption_with_rsa_keys() {
-        $initialString = "very long string to be encrypted";
-        $publicKeyPem512 =
+        // Key recipient - Ted (RSA)
+        $tedCertificateId = "TED-CERT-1234";
+        $tedPublicKey =
                 "-----BEGIN PUBLIC KEY-----\n".
                 "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaro\n".
                 "K+GG5ZcLA9AnA2Fwkx8hFozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQ==\n".
                 "-----END PUBLIC KEY-----\n";
-        $privateKeyPem512 =
+        $tedPrivateKey =
                 "-----BEGIN RSA PRIVATE KEY-----\n".
                 "MIIBOQIBAAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaroK+GG5ZcLA9AnA2Fwkx8h\n".
                 "FozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQJAYML8olAwoVcfU8+FT3pj\n".
@@ -153,95 +142,42 @@ class VirgilStreamCipher_Test extends PHPUnit_Framework_TestCase {
                 "/x3aqJ/2jT5BAiBTLEtpY1Rj9v9/VgctelY776G1XFla2K9Sc3FnfBT6vQIgJlqb\n".
                 "tFCwQZczpa/OtOqYKHHpFevnLEVWrlHvCRgJeJU=\n".
                 "-----END RSA PRIVATE KEY-----\n";
-
+        // Password recipient - Alice
+        $alicePassword = "alice-password";
+        // Create cipher
+        $cipher = new VirgilStreamCipher();
+        $this->assertNotNull($cipher, "Cipher was not created.");
+        $this->assertNotNull($cipher->_cPtr, "Underlying cipher was not created.");
+        // Add recipients to the cipher
+        $cipher->addKeyRecipient($bobCertificateId, $bobPublicKey);
+        $cipher->addKeyRecipient($tedCertificateId, $tedPublicKey);
+        $cipher->addPasswordRecipient($alicePassword);
+        // Encrypt data
         $encryptSource = new StringSource($initialString);
         $encryptSink = new StringSink();
+        $cipher->encrypt($encryptSource, $encryptSink);
+        $encryptedContentInfo = $cipher->getContentInfo();
+        // Create new cipher
         $cipher = new VirgilStreamCipher();
+        // Set content info
+        $cipher->setContentInfo($encryptedContentInfo);
+        // Decrypt encrypted data
+        $bobDecryptSource = new StringSource($encryptSink->getResult());
+        $bobDecryptSink = new StringSink();
 
-        $encryptionKey = $cipher->encrypt($encryptSource, $encryptSink, $publicKeyPem512);
+        $tedDecryptSource = new StringSource($encryptSink->getResult());
+        $tedDecryptSink = new StringSink();
 
-        $decryptSource = new StringSource($encryptSink->getResult());
-        $decryptSink = new StringSink();
+        $aliceDecryptSource = new StringSource($encryptSink->getResult());
+        $aliceDecryptSink = new StringSink();
 
-        $cipher->decrypt($decryptSource, $decryptSink, $encryptionKey, $privateKeyPem512);
-
-        $this->assertEquals($initialString, $decryptSink->getResult());
-    }
-
-    /**
-     * @covers VirgilStreamCipher::encrypt
-     * @covers VirgilStreamCipher::decrypt
-     * @covers VirgilStreamCipher::reencryptKey
-     */
-    public function test_reencrypt_key() {
-        $initialString = "very long string to be encrypted";
-        $ecPublicKey =
-                "-----BEGIN PUBLIC KEY-----\n".
-                "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
-                "nIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdvcSsAMbLCnvEnTlXFMDn5\n".
-                "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
-                "o+yIBPaohqMzfjvj4Yw=\n".
-                "-----END PUBLIC KEY-----\n";
-        $ecPrivateKey =
-                "-----BEGIN EC PRIVATE KEY-----\n".
-                "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
-                "b+IcSjzaw8xEZuIkT/wG/yVlx4Zimk0XoAsGCSskAwMCCAEBDaGBhQOBggAEA8GV\n".
-                "pzCcTiISVsHjuMZg4gvSnIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdv\n".
-                "cSsAMbLCnvEnTlXFMDn53a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8W\n".
-                "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
-                "-----END EC PRIVATE KEY-----\n";
-        $rsaPublicKey =
-                "-----BEGIN PUBLIC KEY-----\n".
-                "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaro\n".
-                "K+GG5ZcLA9AnA2Fwkx8hFozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQ==\n".
-                "-----END PUBLIC KEY-----\n";
-        $rsaPrivateKey =
-                "-----BEGIN RSA PRIVATE KEY-----\n".
-                "MIIBOQIBAAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaroK+GG5ZcLA9AnA2Fwkx8h\n".
-                "FozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQJAYML8olAwoVcfU8+FT3pj\n".
-                "8sU+faK9cL53MtXgmFJEgBUWlg0aGq67an8vgReCdIK6F3500f6Yf9LhjkoZ4ZBl\n".
-                "QQIhAPvyiVFhizURqzZHn4cQtKR2bgGJsARdvlg6KKHP/XXRAiEAzHu3uJ1mIFHH\n".
-                "MGMrpKC4mcnyvM4UEETIINUA+pabMz0CIGeJQA0FfOOOI0HnJROoNdPwJzzSjFb+\n".
-                "/x3aqJ/2jT5BAiBTLEtpY1Rj9v9/VgctelY776G1XFla2K9Sc3FnfBT6vQIgJlqb\n".
-                "tFCwQZczpa/OtOqYKHHpFevnLEVWrlHvCRgJeJU=\n".
-                "-----END RSA PRIVATE KEY-----\n";
-
-        $encryptSource = new StringSource($initialString);
-        $encryptSink = new StringSink();
-        $cipher = new VirgilStreamCipher();
-
-        $encryptionKey = $cipher->encrypt($encryptSource, $encryptSink, $ecPublicKey);
-        $sharedEncryptionKey = $cipher->reencryptKey($encryptionKey, $rsaPublicKey ,$ecPrivateKey);
-
-        $decryptSource = new StringSource($encryptSink->getResult());
-        $decryptSink = new StringSink();
-
-        $cipher->decrypt($decryptSource, $decryptSink, $sharedEncryptionKey, $rsaPrivateKey);
-
-        $this->assertEquals($initialString, $decryptSink->getResult());
-    }
-
-    /**
-     * @covers VirgilStreamCipher::encryptWithPassword
-     * @covers VirgilStreamCipher::decryptWithPassword
-     */
-    public function test_password_encryption_descryption() {
-        $initialString = "string to be encrypted";
-        $password = "password";
-
-        $cipher = new VirgilStreamCipher();
-
-        $encryptSource = new StringSource($initialString);
-        $encryptSink = new StringSink();
-
-        $cipher->encryptWithPassword($encryptSource, $encryptSink, $password);
-
-        $decryptSource = new StringSource($encryptSink->getResult());
-        $decryptSink = new StringSink();
-
-        $decryptedString = $cipher->decryptWithPassword($decryptSource, $decryptSink, $password);
-
-        $this->assertEquals($initialString, $decryptSink->getResult());
+        $cipher->decryptWithKey($bobDecryptSource, $bobDecryptSink, $bobCertificateId, $bobPrivateKey);
+        $cipher->decryptWithKey($tedDecryptSource, $tedDecryptSink, $tedCertificateId, $tedPrivateKey);
+        $cipher->decryptWithPassword($aliceDecryptSource, $aliceDecryptSink, $alicePassword);
+        // Check decrypted data
+        $this->assertEquals($initialString, $bobDecryptSink->getResult());
+        $this->assertEquals($initialString, $tedDecryptSink->getResult());
+        $this->assertEquals($initialString, $aliceDecryptSink->getResult());
     }
 }
 

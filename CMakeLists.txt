@@ -37,6 +37,7 @@
 #
 # Configurable variables:
 #     - PLATFORM_NAME - name of target platform and/or language.
+#     - BUILD_CPP_PROGRAMS - boolean value that defines whether build C++ programs or not.
 #
 #     - INSTALL_LIB_DIR_NAME - name of the directory where libraries will be installed.
 #     - INSTALL_BIN_DIR_NAME - name of the directory where binaries will be installed.
@@ -88,7 +89,7 @@ enable_testing ()
 
 # Set version
 set (VIRGIL_VERSION_MAJOR 0)
-set (VIRGIL_VERSION_MINOR 1)
+set (VIRGIL_VERSION_MINOR 2)
 set (VIRGIL_VERSION_PATCH 0)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 message (STATUS "Virgil version: " ${VIRGIL_VERSION})
@@ -96,6 +97,7 @@ message (STATUS "Virgil version: " ${VIRGIL_VERSION})
 # Set configurable platform
 set (PLATFORM_NAME "CPP" CACHE STRING "Select target platform / language")
 set_property (CACHE PLATFORM_NAME PROPERTY STRINGS "CPP" "CSHARP" "AS3" "JS" "PHP")
+set (BUILD_CPP_PROGRAMS OFF CACHE BOOL "Defines whether build C++ programs or not")
 string (TOLOWER "${PLATFORM_NAME}" PLATFORM_NAME_LOWER)
 message (STATUS "Selected platform and/or language is: " ${PLATFORM_NAME})
 
@@ -117,7 +119,7 @@ endif ()
 
 # Build submodules
 add_subdirectory (lib)
-if (PLATFORM_NAME_LOWER STREQUAL "cpp")
+if (PLATFORM_NAME_LOWER STREQUAL "cpp" AND BUILD_CPP_PROGRAMS)
     add_subdirectory (programs)
 endif ()
 add_subdirectory (wrappers)

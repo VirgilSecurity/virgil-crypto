@@ -38,9 +38,12 @@
 #define VIRGIL_CRYPTO_HASH_H
 
 #include <string>
-#include <virgil/VirgilByteArray.h>
-#include <virgil/crypto/VirgilAsn1Compatible.h>
 
+#include <virgil/VirgilByteArray.h>
+using virgil::VirgilByteArray;
+
+#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::asn1::VirgilAsn1Compatible;
 namespace virgil { namespace crypto {
 
 /**

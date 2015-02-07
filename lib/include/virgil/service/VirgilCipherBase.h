@@ -49,6 +49,18 @@ using virgil::crypto::VirgilSymmetricCipher;
 #include <virgil/service/data/VirgilKeyPair.h>
 using virgil::service::data::VirgilKeyPair;
 
+#include <virgil/crypto/VirgilContentInfo.h>
+using virgil::crypto::VirgilContentInfo;
+
+#include <virgil/crypto/VirgilCustomParams.h>
+using virgil::crypto::VirgilCustomParams;
+
+#include <virgil/crypto/cms/VirgilCMSEnvelopedData.h>
+using virgil::crypto::cms::VirgilCMSEnvelopedData;
+
+#include <map>
+#include <set>
+
 namespace virgil { namespace service {
 
 /**
@@ -66,37 +78,130 @@ public:
     virtual ~VirgilCipherBase() throw();
 public:
     /**
-     * @brief Generate Virgil Security key pair.
-     * Generate Virgil Security key pair object which contains public and private keys.
-     * @return Virgil Security key pair.
+     * @name Recipent management
      */
-    virtual VirgilKeyPair generateKeyPair(const VirgilByteArray& pwd = VirgilByteArray());
+    ///@{
     /**
-     * @brief Re-encrypt given encryption key with new public key.
-     *
-     * This method CAN be used to share encryption key to another user - the owner of the new public key.
-     * @param encryptionKey - encryption key to be re-encrypted.
-     * @param publicKey - new public key.
-     * @param privateKey - current private key that can be used to decrypt encryption key.
-     * @param privateKeyPassword - password to the current private key.
-     * @return re-encrypted encryption key.
+     * @brief Add recipient defined with certficate id and public key.
      */
-    virtual VirgilByteArray reencryptKey(const VirgilByteArray& encryptionKey, const VirgilByteArray& publicKey,
-            const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    void addKeyRecipient(const VirgilByteArray& certificateId, const VirgilByteArray& publicKey);
+    /**
+     * @brief Remove recipient with given certificate id.
+     * @note If recipient with given certificate id is absent - do nothing.
+     */
+    void removeKeyRecipient(const VirgilByteArray& certificateId);
+    /**
+     * @brief Add recipient defined with password.
+     */
+    void addPasswordRecipient(const VirgilByteArray& pwd);
+    /**
+     * @brief Remove recipient with given password.
+     * @note If recipient with given password is absent - do nothing.
+     */
+    void removePasswordRecipient(const VirgilByteArray& pwd);
+    /**
+     * @brief Remove all recipients.
+     */
+    void removeAllRecipients();
+    ///@}
+    /**
+     * @name Content Info Access / Management
+     */
+    ///@{
+    /**
+     * @brief Returns encrypted data info.
+     */
+    /**
+     * @brief Get VirgilContentInfo object as ASN.1 structure.
+     * @note Call this method after encryption process.
+     */
+    VirgilByteArray getContentInfo() const;
+    /**
+     * @brief Create VirgilContentInfo object from ASN.1 structure.
+     * @note Call this method before decryption process.
+     */
+    void setContentInfo(const VirgilByteArray& contentInfo);
+    /**
+     * @brief Provide access to the object that handles custom parameters.
+     * @note Use this method to add custom parameters to the content info object.
+     * @note Use this method before encryption process.
+     */
+    VirgilCustomParams& customParameters();
+    /**
+     * @brief Provide readonly access to the object that handles custom parameters.
+     * @note Use this method to read custom parameters from the content info object.
+     */
+    const VirgilCustomParams& customParameters() const;
+    ///@}
 protected:
     /**
      * @brief Configures symmetric cipher for encryption.
-     * @note If key is omitted, it randomly generated.
-     * @return Encryption key.
+     * @return Configured cipher.
+     * @note cipher's key randomly generated.
+     * @note cipher's input vector is randomly generated.
      */
-    virtual VirgilByteArray configureEncryption(VirgilSymmetricCipher& symmetricCipher,
-                const VirgilByteArray& key = VirgilByteArray());
+    VirgilSymmetricCipher& initEncryption();
+    /**
+     * @brief Configures symmetric cipher for encryption.
+     */
     /**
      * @brief Configures symmetric cipher for decryption.
+     * @param encryptedDataInfo - serialized encrypted data info.
+     * @param certificateId - certificate id that corresponds to the user's private key.
+     * @param privateKey - user's private key.
+     * @param privateKeyPassword - user's private key password.
+     * @return Configured cipher.
      */
-    virtual void configureDecryption(VirgilSymmetricCipher& symmetricCipher, const VirgilByteArray& key);
+    VirgilSymmetricCipher& initDecryption(const VirgilByteArray& encryptedDataInfo,
+            const VirgilByteArray& certificateId, const VirgilByteArray& privateKey,
+            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    /**
+     * @brief Configures symmetric cipher for decryption based on the recipient's password.
+     * @param pwd - recipient's password.
+     * @return Configured cipher.
+     */
+    VirgilSymmetricCipher& initDecryptionWithPassword(const VirgilByteArray& pwd);
+    /**
+     * @brief Configures symmetric cipher for decryption based on the recipient's certificate id and private key.
+     * @param certificateId - recipient's certificate id.
+     * @param privateKey - recipient's private key.
+     * @param privateKeyPassword - recipient's private key password.
+     * @return Configured cipher.
+     */
+    VirgilSymmetricCipher& initDecryptionWithKey(const VirgilByteArray& certificateId,
+            const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword);
+    /**
+     * @brief Return symmetric cipher configure by one of the methods:
+     *     initEncryption(), initDecryptionWithPassword(), initDecryptionWithKey.
+     */
+    VirgilSymmetricCipher& getSymmetricCipher();
+    /**
+     * @brief Build VirgilContentInfo object.
+     *
+     * This method SHOULD be called after encryption process is finished.
+     * @note This method SHOULD be called after encryption process is finished.
+     */
+    void buildContentInfo();
+     /**
+      * @brief Clear all information related to the cipher.
+      *
+      * Clear symmetric cipher and correspond internal states.
+      * @note This method SHOULD be called after encryption or decryption process is finished.
+      * @note You CAN not use symmetric cipher returned by the method @link getSymmetricCipher () @endlink,
+      *     after this method call.
+      */
+    void clearCipherInfo();
 private:
-    VirgilRandom *random_;
+    typedef std::map<VirgilByteArray, VirgilByteArray> KeyRecipientsType; /**< certificate id -> public key */
+    typedef std::set<VirgilByteArray> PasswordRecipientsType; /**< passwords */
+private:
+    VirgilRandom random_;
+    VirgilSymmetricCipher symmetricCipher_;
+    VirgilByteArray symmetricCipherKey_;
+    VirgilContentInfo contentInfo_;
+    VirgilCMSEnvelopedData envelopedData_;
+    KeyRecipientsType keyRecipients_;
+    PasswordRecipientsType passwordRecipients_;
 };
 
 }}

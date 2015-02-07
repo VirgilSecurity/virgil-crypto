@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilAsn1Reader.h>
-using virgil::crypto::VirgilAsn1Reader;
+#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::asn1::VirgilAsn1Reader;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -166,10 +166,12 @@ size_t VirgilAsn1Reader::readSet() {
 
 void VirgilAsn1Reader::checkState() {
     if (p_ == 0 || end_ == 0) {
-        throw VirgilException("Reader was not initialized - 'reset' method was not called.");
+        throw VirgilException(std::string("VirgilAsn1Reader: ") +
+                "Reader was not initialized - 'reset' method was not called.");
     }
     if (p_ >= end_) {
-        throw VirgilException("ASN.1 structure was totally read, so no data left to be processed.");
+        throw VirgilException(std::string("VirgilAsn1Reader: ") +
+            "ASN.1 structure was totally read, so no data left to be processed.");
     }
 }
 

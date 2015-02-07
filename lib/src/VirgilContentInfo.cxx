@@ -34,39 +34,53 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_VIRGIL_ASN1_COMPATIBLE_H
-#define VIRGIL_CRYPTO_VIRGIL_ASN1_COMPATIBLE_H
+#include <virgil/crypto/VirgilContentInfo.h>
+using virgil::crypto::VirgilContentInfo;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::asn1::VirgilAsn1Reader;
 
-namespace virgil { namespace crypto {
+#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::asn1::VirgilAsn1Writer;
+
+#include <virgil/crypto/VirgilCryptoException.h>
+using virgil::crypto::VirgilCryptoException;
+
+#include <cstddef>
+#include <string>
 
 /**
- * @brief This class provides interface that allow to save and restore object state in the ASN.1 structure.
+ * @name ASN.1 Constants for CMS
  */
-class VirgilAsn1Compatible {
-public:
-    /**
-     * @brief Save object state to the ASN.1 structure.
-     */
-    virtual VirgilByteArray toAsn1() const = 0;
-    /**
-     * @brief Restore object state from the ASN.1 structure.
-     */
-    virtual void fromAsn1(const VirgilByteArray& asn1) = 0;
-    /**
-     * @brief Polymorphic destructor.
-     */
-     virtual ~VirgilAsn1Compatible() throw() {}
-protected:
-    /**
-     * @brief If given parameter is empty exception will be thrown.
-     * @throw virgil::crypto::VirgilCryptoException.
-     */
-    virtual void checkAsn1ParamNotEmpty(const VirgilByteArray& param, const char *paramName = 0) const;
-};
+///@{
+static const unsigned char kCMS_CustomParamsTag = 0;
+///@}
 
-}}
+VirgilContentInfo::~VirgilContentInfo() throw() {
+}
 
-#endif /* VIRGIL_CRYPTO_VIRGIL_ASN1_COMPATIBLE_H */
+VirgilByteArray VirgilContentInfo::toAsn1() const {
+
+    VirgilAsn1Writer asn1Writer;
+
+    size_t len = 0;
+    if (!customParams.empty()) {
+        size_t customParamsLen = asn1Writer.writeData(customParams.toAsn1());
+        len += customParamsLen;
+        len += asn1Writer.writeContextTag(kCMS_CustomParamsTag, customParamsLen);
+    }
+
+    len += asn1Writer.writeData(cmsContent.toAsn1());
+    len += asn1Writer.writeSequence(len);
+
+    return asn1Writer.finish();
+}
+
+void VirgilContentInfo::fromAsn1(const VirgilByteArray& asn1) {
+    VirgilAsn1Reader asn1Reader(asn1);
+    (void)asn1Reader.readSequence();
+    cmsContent.fromAsn1(asn1Reader.readData());
+    if (asn1Reader.readContextTag(kCMS_CustomParamsTag) > 0) {
+        customParams.fromAsn1(asn1Reader.readData());
+    }
+}

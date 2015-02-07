@@ -37,6 +37,7 @@
 #ifndef VIRGIL_BYTE_ARRAY_H
 #define VIRGIL_BYTE_ARRAY_H
 
+#include <cstring>
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -60,6 +61,10 @@ typedef std::vector<unsigned char> VirgilByteArray;
         virgil::VirgilByteArray(reinterpret_cast<virgil::VirgilByteArray::const_pointer>(ptr), \
         reinterpret_cast<virgil::VirgilByteArray::const_pointer>((ptr) + (len)))
 
+inline virgil::VirgilByteArray virgil_byte_array_from_c_string(const char *str) {
+    return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(str, strlen(str));
+}
+
 inline virgil::VirgilByteArray virgil_byte_array_from_std_string(const std::string& str) {
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(str.data(), str.size());
 }
@@ -68,6 +73,7 @@ inline std::string virgil_byte_array_to_std_string(const virgil::VirgilByteArray
     return std::string(reinterpret_cast<const char *>(array.data()), array.size());
 }
 
+#define VIRGIL_BYTE_ARRAY_FROM_C_STRING(str) virgil_byte_array_from_c_string(str)
 #define VIRGIL_BYTE_ARRAY_FROM_STD_STRING(str) virgil_byte_array_from_std_string(str)
 #define VIRGIL_BYTE_ARRAY_TO_STD_STRING(array) virgil_byte_array_to_std_string(array)
 /**

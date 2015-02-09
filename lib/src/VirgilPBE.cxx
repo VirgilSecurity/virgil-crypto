@@ -334,10 +334,20 @@ void VirgilPBE::trimPadding(VirgilByteArray& data) const {
     trimPKCS7Padding(data);
 }
 
+
+template <class InputIterator, class T>
+static typename std::iterator_traits<InputIterator>::difference_type
+count_sequence (InputIterator first, InputIterator last, const T& val) {
+    typename std::iterator_traits<InputIterator>::difference_type ret = 0;
+    for (; first != last && *first == val; ++first, ++ret);
+    return ret;
+}
+
 bool VirgilPBE::trimPKCS7Padding(VirgilByteArray& data) const {
-    int paddingCnt = std::count(data.rbegin(), data.rend(), data.back());
-    if (paddingCnt == (int)data.back()) {
-        data.resize(data.size() - paddingCnt);
+    size_t expectedPaddingCount = data.back();
+    size_t actualPaddingCount = count_sequence(data.rbegin(), data.rend(), data.back());
+    if (actualPaddingCount >= expectedPaddingCount) {
+        data.resize(data.size() - expectedPaddingCount);
         return true;
     }
     return false;

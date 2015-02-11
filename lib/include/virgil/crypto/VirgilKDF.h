@@ -37,23 +37,127 @@
 #ifndef VIRGIL_CRYPTO_KDF_H
 #define VIRGIL_CRYPTO_KDF_H
 
-#include <cstddef>
+#include <string>
+
 #include <virgil/VirgilByteArray.h>
+using virgil::VirgilByteArray;
+
+#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::asn1::VirgilAsn1Compatible;
 
 namespace virgil { namespace crypto {
 
 /**
- * @brief Provides KDF algorithms.
+ * @name Forward declarations
  */
-class VirgilKDF {
+///@{
+class VirgilKDFImpl;
+///@}
+
+/**
+ * @brief Provides key derivation function algorithms.
+ */
+class VirgilKDF : public VirgilAsn1Compatible {
 public:
     /**
-     * @brief Implenets KDF1 (ISO-18033-2) algorithm.
-     * @param in - input sequence.
+     * @name Creation methods
+     * @brief Object creation with specific key derivation function.
+     */
+    ///@{
+    /**
+     * @brief Configures with KDF1 (ISO-18033-2) algorithm.
+     */
+    static VirgilKDF kdf1();
+    /**
+     * @brief Configures with KDF1 (ISO-18033-2) algorithm.
+     */
+    static VirgilKDF kdf2();
+    ///@}
+    /**
+     * @name Constructor / Destructor
+     */
+    ///@{
+    /**
+     * @brief Create object with undefined algorithm.
+     * @warning SHOULD be used in conjunction with VirgilAsn1Compatible interface,
+     *     i.e. VirgilKDF kdf = VirgilKDF().fromAsn1(asn1);
+     */
+    VirgilKDF();
+    /**
+     * @brief Polymorphic destructor.
+     */
+    virtual ~VirgilKDF() throw();
+    ///@}
+    /**
+     * @brief
+     */
+    /**
+     * @name Info
+     * @brief Provide detail information about object.
+     */
+    ///@{
+    /**
+     * @brief Returns name of the key derivation function.
+     * @return Name of the key derivation function.
+     */
+    std::string name() const;
+    ///@}
+    /**
+     * @name Process key derivation
+     */
+    ///@{
+    /**
+     * @brief Derive key from the given key material.
+     *
+     * @param in - input sequence (key material).
      * @param outSize - size of the output sequence.
      * @return Output sequence.
      */
-    static VirgilByteArray kdf1(const VirgilByteArray in, size_t outSize);
+    VirgilByteArray derive(const VirgilByteArray& in, size_t outSize);
+    ///@}
+    /**
+     * @name Copy constructor / assignment operator
+     * @warning Copy constructor and assignment operator create copy of the object as it was created
+     *          by on of the creation methods. All changes in the internal state,
+     *          that was made after creation, are not copied!
+     */
+    ///@{
+    VirgilKDF(const VirgilKDF& other);
+    VirgilKDF& operator=(const VirgilKDF& rhs);
+    ///@}
+    /**
+     * @name VirgilAsn1Compatible implementation
+     *
+     * Marshalling format:
+     *     KeyDerivationFunction ::= AlgorithmIdentifier {{ KDFAlgorithms }}
+     *     KDFAlgorithms AlgorithmIdentifier ::= {
+     *         { OID id-kdf-kdf1 PARMS HashFunction }  |
+     *         { OID id-kdf-kdf2 PARMS HashFunction } ,
+     *         ... -- additional algorithms ---
+     *     }
+     *
+     *     HashFunction ::= AlgorithmIdentifier {{ HashAlgorithms }}
+     *     HashAlgorithms AlgorithmIdentifier ::= {
+     *         -- nist identifiers
+     *         { OID id-sha1   PARMS NULL } |
+     *         { OID id-sha256 PARMS NULL } |
+     *         { OID id-sha384 PARMS NULL } |
+     *         { OID id-sha512 PARMS NULL } ,
+     *         ... -- additional algorithms ---
+     *     }
+     */
+    ///@{
+    virtual VirgilByteArray toAsn1() const;
+    virtual void fromAsn1(const VirgilByteArray& asn1);
+    ///@}
+private:
+    explicit VirgilKDF(int kdfType, int mdType);
+    /**
+     * @brief If internal state is not initialized with specific algorithm exception will be thrown.
+     */
+    void checkState() const;
+private:
+    VirgilKDFImpl *impl_;
 };
 
 }}

@@ -41,14 +41,14 @@
 #include POLARSSL_CONFIG_FILE
 #endif
 
-#if defined(POLARSSL_KDF1_C)
+#if defined(POLARSSL_KDF2_C)
 
-#include "polarssl/kdf1.h"
+#include "polarssl/kdf2.h"
 #include "polarssl/md.h"
 
 #include <math.h>
 
-#define KDF1_TRY(invocation) \
+#define KDF2_TRY(invocation) \
 do { \
     result = invocation; \
     if((result) < 0) { \
@@ -56,11 +56,11 @@ do { \
     } \
 } while (0)
 
-int kdf1(const md_info_t *md_info, const unsigned char *input, size_t ilen,
+int kdf2(const md_info_t *md_info, const unsigned char *input, size_t ilen,
         unsigned char * output, size_t olen)
 {
     if (md_info == NULL)
-        return( POLARSSL_ERR_KDF1_BAD_INPUT_DATA );
+        return( POLARSSL_ERR_KDF2_BAD_INPUT_DATA );
 
     int result = 0;
     size_t counter = 0;
@@ -75,29 +75,29 @@ int kdf1(const md_info_t *md_info, const unsigned char *input, size_t ilen,
     md_context_t md_ctx;
 
     // Initialize digest context
-    KDF1_TRY(md_init_ctx(&md_ctx, md_info));
+    KDF2_TRY(md_init_ctx(&md_ctx, md_info));
 
     // Get hash parameters
     hash_len = md_get_size(md_info);
 
     // Get KDF parameters
-    counter = 0;
+    counter = 1;
     counter_len = (size_t)ceil(olen / hash_len);
 
     // Start hashing
-    for(; counter < counter_len; ++counter) {
+    for(; counter <= counter_len; ++counter) {
         counter_string[0] = (unsigned char)((counter >> 24) & 255);
         counter_string[1] = (unsigned char)((counter >> 16) & 255);
         counter_string[2] = (unsigned char)((counter >> 8)) & 255;
         counter_string[3] = (unsigned char)(counter & 255);
-        KDF1_TRY(md_starts(&md_ctx));
-        KDF1_TRY(md_update(&md_ctx, input, ilen));
-        KDF1_TRY(md_update(&md_ctx, counter_string, 4));
+        KDF2_TRY(md_starts(&md_ctx));
+        KDF2_TRY(md_update(&md_ctx, input, ilen));
+        KDF2_TRY(md_update(&md_ctx, counter_string, 4));
         if (olen_actual + hash_len <= olen) {
-            KDF1_TRY(md_finish(&md_ctx, output + olen_actual));
+            KDF2_TRY(md_finish(&md_ctx, output + olen_actual));
             olen_actual += hash_len;
         } else {
-            KDF1_TRY(md_finish(&md_ctx, hash));
+            KDF2_TRY(md_finish(&md_ctx, hash));
             memcpy(output + olen_actual, hash, olen - olen_actual);
             olen_actual = olen;
         }
@@ -107,4 +107,4 @@ exit:
     return result;
 }
 
-#endif /* POLARSSL_KDF1_C */
+#endif /* POLARSSL_KDF2_C */

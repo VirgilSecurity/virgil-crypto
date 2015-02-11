@@ -1,0 +1,23 @@
+--- include/polarssl/error.h	2014-07-11 12:28:56.000000000 +0300
++++ include/polarssl/error.h	2015-02-09 19:52:24.000000000 +0200
+@@ -78,6 +78,8 @@
+  * RIPEMD160 1  0x007E-0x007E
+  * HMAC_DRBG 4  0x0003-0x0009
+  * CCM       2                  0x000D-0x000F
++ * KDF1      1                  0x007F-0x007F
++ * KDF2      1                  0x007D-0x007D
+  *
+  * High-level module nr (3 bits - 0x0...-0x7...)
+  * Name      ID  Nr of Errors
+@@ -90,9 +92,11 @@
+  * RSA       4   9
+  * ECP       4   8 (Started from top)
+  * MD        5   4
++ * KDF       5   1 (Started from top)
+  * CIPHER    6   6
+  * SSL       6   9 (Started from top)
+  * SSL       7   31
++ * ECIES     7   3 (Started from top)
+  *
+  * Module dependent error code (5 bits 0x.00.-0x.F8.)
+  */

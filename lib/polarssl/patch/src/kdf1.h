@@ -40,6 +40,10 @@
 
 #include <stddef.h>
 
+#include "md.h"
+
+#define POLARSSL_ERR_KDF1_BAD_INPUT_DATA             -0x007F /**< Bad input parameters to function. */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -48,7 +52,8 @@ extern "C" {
  * \brief          KDF1 (ISO-18033-2) implementation.
  * \return         0 if successful
  */
-int kdf1(const unsigned char *input, size_t ilen, unsigned char *output, size_t olen);
+int kdf1(const md_info_t *md_info, const unsigned char *input, size_t ilen,
+        unsigned char *output, size_t olen);
 
 #ifdef __cplusplus
 }

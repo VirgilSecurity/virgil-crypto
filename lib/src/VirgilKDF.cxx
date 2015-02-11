@@ -36,19 +36,171 @@
 
 #include <virgil/crypto/VirgilKDF.h>
 using virgil::crypto::VirgilKDF;
+using virgil::crypto::VirgilKDFImpl;
+
+#include <polarssl/kdf.h>
+#include <polarssl/oid.h>
+#include <polarssl/kdf.h>
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
 #include <virgil/crypto/PolarsslException.h>
+using virgil::crypto::PolarsslException;
 
-#include <polarssl/kdf1.h>
+#include <virgil/crypto/VirgilCryptoException.h>
+using virgil::crypto::VirgilCryptoException;
+
+#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::asn1::VirgilAsn1Compatible;
+
+#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::asn1::VirgilAsn1Reader;
+
+#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::asn1::VirgilAsn1Writer;
+
+#include <string>
+
+/**
+ * @name Configuration constants
+ */
+///@{
+static const md_type_t kHashType_Default = POLARSSL_MD_SHA256;
+///@}
+
+namespace virgil { namespace crypto {
+
+class VirgilKDFImpl {
+public:
+    VirgilKDFImpl() : kdfInfo(0), mdInfo(0)  {
+    }
+
+    VirgilKDFImpl(kdf_type_t kdfType, md_type_t md_type_t) : kdfInfo(0), mdInfo(0)  {
+        kdfInfo = kdf_info_from_type(kdfType);
+        mdInfo = md_info_from_type(md_type_t);
+    }
+public:
+    kdf_info_t const * kdfInfo; // KDF algorithm type info
+    md_info_t const *  mdInfo; // hash algorithm type info
+};
+
+}}
+
+VirgilKDF VirgilKDF::kdf1() {
+    return VirgilKDF(POLARSSL_KDF_KDF1, kHashType_Default);
+}
+
+VirgilKDF VirgilKDF::kdf2() {
+    return VirgilKDF(POLARSSL_KDF_KDF2, kHashType_Default);
+}
+
+VirgilKDF::VirgilKDF() : impl_(new VirgilKDFImpl()) {
+}
+
+VirgilKDF::VirgilKDF(int kdfType, int mdType)
+        : impl_(new VirgilKDFImpl(static_cast<kdf_type_t>(kdfType), static_cast<md_type_t>(mdType))) {
+}
+
+VirgilKDF::~VirgilKDF() throw() {
+    if (impl_) {
+        delete impl_;
+        impl_ = 0;
+    }
+}
+
+VirgilKDF::VirgilKDF(const VirgilKDF& other) : impl_(new VirgilKDFImpl(*other.impl_)) {
+}
+
+VirgilKDF& VirgilKDF::operator=(const VirgilKDF& rhs) {
+    if (this == &rhs) {
+        return *this;
+    }
+    VirgilKDFImpl *newImpl = new VirgilKDFImpl(*rhs.impl_);
+    if (impl_) {
+        delete impl_;
+    }
+    impl_ = newImpl;
+    return *this;
+}
+
+std::string VirgilKDF::name() const {
+    checkState();
+    return std::string(::kdf_get_name(impl_->kdfInfo));
+}
 
 
-VirgilByteArray VirgilKDF::kdf1(const VirgilByteArray in, size_t outSize) {
+VirgilByteArray VirgilKDF::derive(const VirgilByteArray& in, size_t outSize) {
+    checkState();
     VirgilByteArray result(outSize);
     POLARSSL_ERROR_HANDLER(
-        ::kdf1(VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(in), result.data(), outSize)
+        ::kdf(impl_->kdfInfo, impl_->mdInfo, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(in), result.data(), result.size())
     );
     return result;
+}
+
+void VirgilKDF::checkState() const {
+    if (impl_->kdfInfo == 0 || impl_->mdInfo == 0) {
+        throw VirgilCryptoException(std::string("VirgilKDF: object has undefined algorithm.") +
+                " Use one of the factory methods or method 'fromAsn1' to define key derivation function algorithm.");
+    }
+}
+
+VirgilByteArray VirgilKDF::toAsn1() const {
+    checkState();
+
+    VirgilAsn1Writer asn1Writer;
+    size_t len = 0;
+    const char *oid = 0;
+    size_t oidLen;
+
+    // Write hash algorithm identifier
+    md_type_t mdType = ::md_get_type(impl_->mdInfo);
+    POLARSSL_ERROR_HANDLER(
+        ::oid_get_oid_by_md(mdType, &oid, &oidLen)
+    );
+    len += asn1Writer.writeNull();
+    len += asn1Writer.writeOID(std::string(oid, oidLen));
+    len += asn1Writer.writeSequence(len);
+
+    // Write key derivation function algorithm identifier
+    kdf_type_t kdfType = ::kdf_get_type(impl_->kdfInfo);
+    POLARSSL_ERROR_HANDLER(
+        ::oid_get_oid_by_kdf_alg(kdfType, &oid, &oidLen)
+    );
+    len += asn1Writer.writeOID(std::string(oid, oidLen));
+    len += asn1Writer.writeSequence(len);
+
+    return asn1Writer.finish();
+}
+
+void VirgilKDF::fromAsn1(const VirgilByteArray& asn1) {
+    VirgilAsn1Reader asn1Reader(asn1);
+    asn1_buf oidAsn1Buf;
+    std::string oid;
+
+    // Read key derivation function algorithm identifier
+    asn1Reader.readSequence();
+    oid = asn1Reader.readOID();
+    oidAsn1Buf.len = oid.size();
+    oidAsn1Buf.p = reinterpret_cast<unsigned char *>(const_cast<std::string::pointer>(oid.c_str()));
+
+    kdf_type_t kdfType = POLARSSL_KDF_NONE;
+    POLARSSL_ERROR_HANDLER(
+        ::oid_get_kdf_alg(&oidAsn1Buf, &kdfType)
+    );
+
+    // Read hash algorithm identifier
+    asn1Reader.readSequence();
+    oid = asn1Reader.readOID();
+    oidAsn1Buf.len = oid.size();
+    oidAsn1Buf.p = reinterpret_cast<unsigned char *>(const_cast<std::string::pointer>(oid.c_str()));
+
+    md_type_t mdType = POLARSSL_MD_NONE;
+    POLARSSL_ERROR_HANDLER(
+        ::oid_get_md_alg(&oidAsn1Buf, &mdType)
+    );
+
+    asn1Reader.readNull();
+    *this = VirgilKDF(kdfType, mdType);
 }

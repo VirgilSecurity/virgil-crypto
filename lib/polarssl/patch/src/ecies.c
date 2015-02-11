@@ -48,7 +48,7 @@
 #include "polarssl/cipher.h"
 #include "polarssl/ecdh.h"
 #include "polarssl/md.h"
-#include "polarssl/kdf1.h"
+#include "polarssl/kdf.h"
 
 #if defined(POLARSSL_PLATFORM_C)
 #include "polarssl/platform.h"
@@ -217,7 +217,9 @@ static int ecies_ka(ecp_keypair *public, const ecp_keypair *private, mpi *shared
 
 static int ecies_kdf(const unsigned char *input, size_t ilen, unsigned char *output, size_t olen)
 {
-    return kdf1(input, ilen, output, olen);
+    const kdf_info_t *kdf_info = kdf_info_from_type(POLARSSL_KDF_KDF1);
+    const md_info_t *md_info = md_info_from_type(POLARSSL_MD_SHA256);
+    return kdf(kdf_info, md_info, input, ilen, output, olen);
 }
 
 static int ecies_hmac(const unsigned char *input, size_t ilen,

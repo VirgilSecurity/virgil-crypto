@@ -35,49 +35,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef POLARSSL_ECIES_H
-#define POLARSSL_ECIES_H
+#ifndef POLARSSL_KDF2_H
+#define POLARSSL_KDF2_H
 
-#include "config.h"
+#include <stddef.h>
 
-#if defined(POLARSSL_ECP_C)
-#include "polarssl/ecp.h"
-#endif
+#include "md.h"
 
-#if defined(_MSC_VER) && !defined(EFIX64) && !defined(EFI32)
-#include <basetsd.h>
-typedef UINT32 uint32_t;
-typedef UINT64 uint64_t;
-#else
-#include <inttypes.h>
-#endif
-
-#define POLARSSL_ERR_ECIES_BAD_INPUT_DATA                    -0x7F80  /**< Bad input parameters to function. */
-#define POLARSSL_ERR_ECIES_OUTPUT_TOO_SMALL                  -0x7F00  /**< Output buffer too small. */
-#define POLARSSL_ERR_ECIES_MALFORMED_DATA                    -0x7E80  /**< Encrypted data is malformed. */
+#define POLARSSL_ERR_KDF2_BAD_INPUT_DATA             -0x007D /**< Bad input parameters to function. */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /**
- * \brief          Perform ECIES encryption.
+ * \brief          KDF2 (ISO-18033-2) implementation.
  * \return         0 if successful
  */
-int ecies_encrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
-        unsigned char *output, size_t *olen, size_t osize,
-        int (*f_rng)(void *, unsigned char *, size_t), void *p_rng);
-/**
- * \brief          Perform ECIES decryption.
- * \return         0 if successful
- */
-int ecies_decrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
-        unsigned char *output, size_t *olen, size_t osize,
-        int (*f_rng)(void *, unsigned char *, size_t), void *p_rng);
-
+int kdf2(const md_info_t *md_info, const unsigned char *input, size_t ilen,
+        unsigned char *output, size_t olen);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* POLARSSL_ECIES_H */
+#endif /* POLARSSL_KDF2_H */

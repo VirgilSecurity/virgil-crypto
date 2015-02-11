@@ -35,49 +35,83 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef POLARSSL_ECIES_H
-#define POLARSSL_ECIES_H
-
-#include "config.h"
-
-#if defined(POLARSSL_ECP_C)
-#include "polarssl/ecp.h"
-#endif
-
-#if defined(_MSC_VER) && !defined(EFIX64) && !defined(EFI32)
-#include <basetsd.h>
-typedef UINT32 uint32_t;
-typedef UINT64 uint64_t;
+#if !defined(POLARSSL_CONFIG_FILE)
+#include "polarssl/config.h"
 #else
-#include <inttypes.h>
+#include POLARSSL_CONFIG_FILE
 #endif
 
-#define POLARSSL_ERR_ECIES_BAD_INPUT_DATA                    -0x7F80  /**< Bad input parameters to function. */
-#define POLARSSL_ERR_ECIES_OUTPUT_TOO_SMALL                  -0x7F00  /**< Output buffer too small. */
-#define POLARSSL_ERR_ECIES_MALFORMED_DATA                    -0x7E80  /**< Encrypted data is malformed. */
+#if defined(POLARSSL_KDF_C)
 
-#ifdef __cplusplus
-extern "C" {
+#include "polarssl/kdf.h"
+#include "polarssl/kdf_wrap.h"
+
+#include <stdlib.h>
+
+#if defined(_MSC_VER) && !defined strcasecmp && !defined(EFIX64) && \
+    !defined(EFI32)
+#define strcasecmp  _stricmp
 #endif
 
-/**
- * \brief          Perform ECIES encryption.
- * \return         0 if successful
- */
-int ecies_encrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
-        unsigned char *output, size_t *olen, size_t osize,
-        int (*f_rng)(void *, unsigned char *, size_t), void *p_rng);
-/**
- * \brief          Perform ECIES decryption.
- * \return         0 if successful
- */
-int ecies_decrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
-        unsigned char *output, size_t *olen, size_t osize,
-        int (*f_rng)(void *, unsigned char *, size_t), void *p_rng);
+static const int supported_kdfs[] = {
 
+#if defined(POLARSSL_KDF1_C)
+        POLARSSL_KDF_KDF1,
+#endif
 
-#ifdef __cplusplus
+#if defined(POLARSSL_KDF2_C)
+        POLARSSL_KDF_KDF2,
+#endif
+        POLARSSL_KDF_NONE
+};
+
+const int *kdf_list( void )
+{
+    return( supported_kdfs );
 }
-#endif
 
-#endif /* POLARSSL_ECIES_H */
+const kdf_info_t *kdf_info_from_string( const char *kdf_name )
+{
+    if( NULL == kdf_name )
+        return( NULL );
+
+    /* Get the appropriate key derivation function information */
+#if defined(POLARSSL_KDF1_C)
+    if( !strcasecmp( "KDF1", kdf_name ) )
+        return kdf_info_from_type( POLARSSL_KDF_KDF1 );
+#endif
+#if defined(POLARSSL_KDF2_C)
+    if( !strcasecmp( "KDF2", kdf_name ) )
+        return kdf_info_from_type( POLARSSL_KDF_KDF2 );
+#endif
+    return( NULL );
+}
+
+const kdf_info_t *kdf_info_from_type( kdf_type_t kdf_type )
+{
+    switch( kdf_type )
+    {
+#if defined(POLARSSL_KDF1_C)
+        case POLARSSL_KDF_KDF1:
+            return( &kdf1_info );
+#endif
+#if defined(POLARSSL_KDF2_C)
+        case POLARSSL_KDF_KDF2:
+            return( &kdf2_info );
+#endif
+        default:
+            return( NULL );
+    }
+}
+
+
+int kdf( const kdf_info_t *kdf_info, const md_info_t *md_info, const unsigned char *input, size_t ilen,
+            unsigned char *output, size_t olen)
+{
+    if( kdf_info == NULL )
+        return( POLARSSL_ERR_KDF_BAD_INPUT_DATA );
+
+    return kdf_info->kdf( md_info, input, ilen, output, olen );
+}
+
+#endif /* POLARSSL_KDF_C */

@@ -57,6 +57,7 @@ set (TEST_FILE_LIST
     VirgilPBE_Test.php
     VirgilVersion_Test.php
     VirgilCustomParams_Test.php
+    VirgilKDF_Test.php
 
     StringSource.php
     StringSink.php

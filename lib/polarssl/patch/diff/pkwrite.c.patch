@@ -1,12 +1,12 @@
 --- library/pkwrite.c	2014-07-11 12:28:56.000000000 +0300
-+++ library/pkwrite.c	2014-10-02 11:03:54.000000000 +0300
++++ library/pkwrite.c	2015-02-09 17:17:45.000000000 +0200
 @@ -34,6 +34,8 @@
  #include "polarssl/pk.h"
  #include "polarssl/asn1write.h"
  #include "polarssl/oid.h"
 +#include "polarssl/entropy.h"
 +#include "polarssl/ctr_drbg.h"
-
+ 
  #if defined(POLARSSL_RSA_C)
  #include "polarssl/rsa.h"
 @@ -47,6 +49,9 @@
@@ -16,13 +16,13 @@
 +#if defined(POLARSSL_PKCS12_C)
 +#include "polarssl/pkcs12.h"
 +#endif
-
+ 
  #if defined(POLARSSL_PLATFORM_C)
  #include "polarssl/platform.h"
 @@ -129,6 +134,57 @@
  }
  #endif /* POLARSSL_ECP_C */
-
+ 
 +#if defined(POLARSSL_PK_WRITE_ENCRYPTED_KEY)
 +static int asn1_get_params( unsigned char **p, const unsigned char *end,
 +                            asn1_buf *params )
@@ -79,7 +79,7 @@
  {
 @@ -199,7 +255,16 @@
  }
-
+ 
  int pk_write_key_der( pk_context *key, unsigned char *buf, size_t size )
 +#if defined(POLARSSL_PK_WRITE_ENCRYPTED_KEY)
  {
@@ -96,7 +96,7 @@
      size_t len = 0;
 @@ -259,12 +324,24 @@
          len += pub_len;
-
+ 
          /* parameters */
 +#if defined(POLARSSL_PK_WRITE_ENCRYPTED_KEY)
 +        if( pwd == NULL || pwdlen == 0 )
@@ -108,7 +108,7 @@
 +#endif /* POLARSSL_PK_WRITE_ENCRYPTED_KEY */
 +
          ASN1_CHK_ADD( par_len, pk_write_ec_param( &c, buf, ec ) );
-
+ 
          ASN1_CHK_ADD( par_len, asn1_write_len( &c, buf, par_len ) );
          ASN1_CHK_ADD( par_len, asn1_write_tag( &c, buf,
                              ASN1_CONTEXT_SPECIFIC | ASN1_CONSTRUCTED | 0 ) );
@@ -116,13 +116,13 @@
 +#if defined(POLARSSL_PK_WRITE_ENCRYPTED_KEY)
 +        }
 +#endif /* POLARSSL_PK_WRITE_ENCRYPTED_KEY */
-
+ 
          /* privateKey: write as MPI then fix tag */
          ASN1_CHK_ADD( len, asn1_write_mpi( &c, buf, &ec->d ) );
 @@ -281,6 +358,180 @@
  #endif /* POLARSSL_ECP_C */
          return( POLARSSL_ERR_PK_FEATURE_UNAVAILABLE );
-
+ 
 +#if defined(POLARSSL_PK_WRITE_ENCRYPTED_KEY)
 +
 +    if( pwd != NULL && pwdlen > 0 && len > 0)
@@ -299,19 +299,19 @@
 +
      return( (int) len );
  }
-
+ 
 @@ -293,6 +544,8 @@
  #define PEM_END_PRIVATE_KEY_RSA     "-----END RSA PRIVATE KEY-----\n"
  #define PEM_BEGIN_PRIVATE_KEY_EC    "-----BEGIN EC PRIVATE KEY-----\n"
  #define PEM_END_PRIVATE_KEY_EC      "-----END EC PRIVATE KEY-----\n"
 +#define PEM_BEGIN_PRIVATE_KEY_ENC   "-----BEGIN ENCRYPTED PRIVATE KEY-----\n"
 +#define PEM_END_PRIVATE_KEY_ENC     "-----END ENCRYPTED PRIVATE KEY-----\n"
-
+ 
  int pk_write_pubkey_pem( pk_context *key, unsigned char *buf, size_t size )
  {
 @@ -317,15 +570,37 @@
  }
-
+ 
  int pk_write_key_pem( pk_context *key, unsigned char *buf, size_t size )
 +#if defined(POLARSSL_PK_WRITE_ENCRYPTED_KEY)
 +{
@@ -326,7 +326,7 @@
      unsigned char output_buf[4096];
      const char *begin, *end;
      size_t olen = 0;
-
+ 
 +#if defined(POLARSSL_PK_WRITE_ENCRYPTED_KEY)
 +    if( ( ret = pk_write_key_enc_der( key, output_buf, sizeof(output_buf),
 +                                      pwd, pwdlen ) ) < 0 )
@@ -335,7 +335,7 @@
      if( ( ret = pk_write_key_der( key, output_buf, sizeof(output_buf) ) ) < 0 )
          return( ret );
 +#endif /* POLARSSL_PK_WRITE_ENCRYPTED_KEY */
-
+ 
 +#if defined(POLARSSL_PK_WRITE_ENCRYPTED_KEY)
 +    if (pwd != NULL && pwdlen > 0)
 +    {

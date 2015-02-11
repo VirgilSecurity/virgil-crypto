@@ -1,5 +1,5 @@
 --- library/asn1write.c	2014-07-11 12:28:56.000000000 +0300
-+++ library/asn1write.c	2014-10-02 18:16:12.000000000 +0300
++++ library/asn1write.c	2015-02-09 17:17:45.000000000 +0200
 @@ -206,26 +206,66 @@
  {
      int ret;
@@ -24,14 +24,14 @@
 +    const unsigned char * curr = begin + inc;
 +    int is_trim_finished = 0;
 +    size_t trimed_cnt = 0;
-
+ 
 -    // TODO negative values and values larger than 128
 -    // DER format assumes 2s complement for numbers, so the leftmost bit
 -    // should be 0 for positive numbers and 1 for negative numbers.
 -    //
      if( *p - start < 1 )
          return( POLARSSL_ERR_ASN1_BUF_TOO_SMALL );
-
+ 
 -    len += 1;
 -    *--(*p) = val;
 -
@@ -55,7 +55,7 @@
 +                is_trim_finished = 1;
 +            }
 +        }
-
+ 
 -        *--(*p) = 0x00;
 -        len += 1;
 +        if( is_trim_finished )
@@ -65,7 +65,7 @@
 +
 +        prev = curr;
      }
-
+ 
 +    /* process integer last byte */
 +    val_buf[val_buf_len++] = *prev;
 +
@@ -78,4 +78,4 @@
 +
      ASN1_CHK_ADD( len, asn1_write_len( p, start, len ) );
      ASN1_CHK_ADD( len, asn1_write_tag( p, start, ASN1_INTEGER ) );
-
+ 

@@ -1,0 +1,123 @@
+<?php
+/**
+ * Copyright (C) 2014 Virgil Security Inc.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     (1) Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *     (2) Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in
+ *     the documentation and/or other materials provided with the
+ *     distribution.
+ *
+ *     (3) Neither the name of the copyright holder nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+include_once "@PHP_MODULE_FILE_NAME@";
+
+/**
+ * @covers VirgilKDF algorithms
+ */
+class VirgilKDF_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilKDF::kdf1
+     * @covers VirgilKDF::derive
+     */
+    public function test_kdf1() {
+        $initialSequnce = "test sequnce";
+        $derivedSequenceLength = 512;
+        $kdf = VirgilKDF::kdf1();
+
+        $this->assertInstanceOf("VirgilKDF", $kdf);
+        $this->assertEquals("KDF1", $kdf->name());
+
+        $derivedSequence = $kdf->derive($initialSequnce, $derivedSequenceLength);
+
+        $this->assertEquals($derivedSequenceLength, strlen($derivedSequence));
+    }
+
+    /**
+     * @covers VirgilKDF::kdf2
+     * @covers VirgilKDF::derive
+     */
+    public function test_kdf2() {
+        $initialSequnce = "test sequnce";
+        $derivedSequenceLength = 512;
+        $kdf = VirgilKDF::kdf2();
+
+        $this->assertInstanceOf("VirgilKDF", $kdf);
+        $this->assertEquals("KDF2", $kdf->name());
+
+        $derivedSequence = $kdf->derive($initialSequnce, $derivedSequenceLength);
+
+        $this->assertEquals($derivedSequenceLength, strlen($derivedSequence));
+    }
+
+    /**
+     * @covers VirgilKDF::kdf1
+     * @covers VirgilKDF::derive
+     * @covers VirgilKDF::toAsn
+     * @covers VirgilKDF::fromAsn1
+     */
+    public function test_kdf1_asn1_compatible() {
+        $this->_test_kdf_asn1_compatible(VirgilKDF::kdf1());
+    }
+
+    /**
+     * @covers VirgilKDF::kdf2
+     * @covers VirgilKDF::derive
+     * @covers VirgilKDF::toAsn
+     * @covers VirgilKDF::fromAsn1
+     */
+    public function test_kdf2_asn1_compatible() {
+        $this->_test_kdf_asn1_compatible(VirgilKDF::kdf2());
+    }
+
+    /**
+     * @covers VirgilKDF::derive
+     * @covers VirgilKDF::toAsn
+     * @covers VirgilKDF::fromAsn1
+     */
+    private function _test_kdf_asn1_compatible($kdf) {
+        $initialSequnce = "test sequnce";
+        $derivedSequenceLength = 512;
+        // Use basic KDF
+        $derivedSequence = $kdf->derive($initialSequnce, $derivedSequenceLength);
+        // Save KDF
+        $kdfAsn1 = $kdf->toAsn1();
+        // Restore KDF
+        $restoredKdf = new VirgilKdf();
+        $restoredKdf->fromAsn1($kdfAsn1);
+        // Check KDF names
+        $this->assertEquals($kdf->name(), $restoredKdf->name());
+        // Use restored KDF
+        $restoredDerivedSequence = $restoredKdf->derive($initialSequnce, $derivedSequenceLength);
+        $this->assertEquals($derivedSequence, $restoredDerivedSequence);
+    }
+
+}
+
+?>

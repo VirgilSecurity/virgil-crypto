@@ -187,8 +187,10 @@ def insertObjectsToFile(filePath, insertedObjects, insertedPositionRegEx, additi
 
     insertedObjectsFiltered = set()
     for insertedObjectCandidate in insertedObjects:
-        if not insertedObjectCandidate in editedFileContent:
+        if not re.search(r"\s+%s\s+" % (insertedObjectCandidate), editedFileContent):
             insertedObjectsFiltered.add(insertedObjectCandidate)
+        else:
+            print "WARNING. Inserted object is ommited: %s" % (insertedObjectCandidate)
 
     objectsWadAdded = False
     for line in fileinput.input(filePath, inplace=True):

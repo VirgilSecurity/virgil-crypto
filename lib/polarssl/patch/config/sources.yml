@@ -5,12 +5,14 @@ new_headers:
     - kdf2.h
     - kdf_wrap.h
     - ecies.h
+    - ecies_envelope.h
 new_sources:
     - kdf.c
     - kdf1.c
     - kdf2.c
     - kdf_wrap.c
     - ecies.c
+    - ecies_envelope.c
 patch_sources:
 makefile_objects:
     add_after_regex : '^OBJS=.*$'
@@ -21,6 +23,7 @@ makefile_objects:
         - kdf2.o
         - kdf_wrap.o
         - ecies.o
+        - ecies_envelope.o
 cmakelists_objects:
     add_after_regex : '^set\(src.*$'
     additional_endline_delimeter : ''
@@ -30,6 +33,7 @@ cmakelists_objects:
         - kdf2.c
         - kdf_wrap.c
         - ecies.c
+        - ecies_envelope.c
 svn_patch_files:
     - oid.h.patch
     - oid.c.patch

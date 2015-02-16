@@ -43,6 +43,7 @@
 #if defined(POLARSSL_ECIES_C)
 
 #include "polarssl/ecies.h"
+#include "polarssl/ecies_envelope.h"
 
 #include "polarssl/pk.h"
 #include "polarssl/cipher.h"
@@ -62,146 +63,20 @@
 #include <stdio.h>
 #endif /* POLARSSL_ECIES_DEBUG */
 
-#define ECIES_CHECK_RESULT(result) if((result) < 0) goto exit;
+#define INVOKE_AND_CHECK(result,invocation) if ((result = invocation) < 0) goto exit;
+
+#define ACCUMULATE_AND_CHECK(result, len, invocation) \
+do { if ((result = invocation) < 0) goto exit; else len += result; } while (0)
 
 #define ECIES_OCTET_SIZE 8
 #define ECIES_SIZE_TO_OCTETS(size) ((size + 7) / ECIES_OCTET_SIZE)
 
-#define ECIES_HMAC_SIZE 256
-#define ECIES_HMAC_LEN ECIES_SIZE_TO_OCTETS(ECIES_HMAC_SIZE)
-
-#define ECIES_ENC_SIZE 256
-#define ECIES_ENC_LEN ECIES_SIZE_TO_OCTETS(ECIES_ENC_SIZE)
-
-#define ECIES_IV_SIZE 128
-#define ECIES_IV_LEN ECIES_SIZE_TO_OCTETS(ECIES_IV_SIZE)
-
-#define ECIES_KDF_LEN (ECIES_HMAC_LEN + ECIES_ENC_LEN + ECIES_IV_LEN)
-
+#define ECIES_ENVELOPE_VERSION 0
 #define ECIES_CIPHER_PADDING POLARSSL_PADDING_PKCS7
-#define ECIES_CIPHER_MODE POLARSSL_CIPHER_AES_256_CBC
-
-#define ECIES_STR(s) #s
-#define ECIES_XSTR(s) ECIES_STR(s)
-
-#define ECIES_MD_SHA_INFO_FROM_SIZE(size) md_info_from_string("SHA"ECIES_XSTR(size))
-
-typedef union {
-    struct {
-        unsigned char hmac[ECIES_HMAC_LEN];
-        unsigned char enc[ECIES_ENC_LEN];
-        unsigned char iv[ECIES_IV_LEN];
-    } key;
-    unsigned char data[ECIES_KDF_LEN];
-} ecies_kdf_value_t;
-
-typedef struct {
-    unsigned char data[ECIES_HMAC_LEN];
-} ecies_hmac_t;
-
-typedef struct {
-    uint32_t version; // Not used at this implementation.
-    uint32_t pub_key_pos;
-    uint32_t pub_key_len;
-    uint32_t hmac_pos;
-    uint32_t hmac_len;
-    uint32_t enc_pos;
-    uint32_t enc_len;
-    uint32_t reserved; // Not used at this implementation.
-} ecies_encrypt_message_header_t;
-
-static void reverse_bytes(void *start, size_t size) {
-    unsigned char *lo = (unsigned char *)start;
-    unsigned char *hi = (unsigned char *)start + size - 1;
-    unsigned char swap;
-    while (lo < hi) {
-        swap = *lo;
-        *lo++ = *hi;
-        *hi-- = swap;
-    }
-}
-
-static int ecies_write_uint32(uint32_t val, unsigned char **p, const unsigned char *end)
-{
-    int len = sizeof(val);
-    const int one_const = 1;
-    const int is_bigendian = (*(char*)&one_const) == 0;
-
-    if (end - *p < len) {
-        return POLARSSL_ERR_ECIES_OUTPUT_TOO_SMALL;
-    }
-
-    memcpy (*p, (const unsigned char *)&val, len);
-    if (is_bigendian) {
-        reverse_bytes(*p, len);
-    }
-    *p += len;
-    return len;
-}
-
-static int ecies_read_uint32(uint32_t *val, const unsigned char **p, const unsigned char *end)
-{
-    int len = 0;
-    const int one_const = 1;
-    const int is_bigendian = (*(char*)&one_const) == 0;
-
-    if (val == NULL) {
-        return POLARSSL_ERR_ECIES_BAD_INPUT_DATA;
-    }
-
-    len = sizeof(*val);
-    if (end - *p < len) {
-        return POLARSSL_ERR_ECIES_BAD_INPUT_DATA;
-    }
-
-    memcpy (val, *p, len);
-    if (is_bigendian) {
-        reverse_bytes(val, len);
-    }
-    *p += len;
-
-    return len;
-}
-
-static int ecies_write_encrypt_header(const ecies_encrypt_message_header_t *header,
-        unsigned char *start, const unsigned char *end)
-{
-    int result = 0;
-    unsigned char *p = start;
-    if (end - start < (int)sizeof(ecies_encrypt_message_header_t)) {
-        return POLARSSL_ERR_ECIES_OUTPUT_TOO_SMALL;
-    }
-    ECIES_CHECK_RESULT(result = ecies_write_uint32(header->version, &p, end));
-    ECIES_CHECK_RESULT(result = ecies_write_uint32(header->pub_key_pos, &p, end));
-    ECIES_CHECK_RESULT(result = ecies_write_uint32(header->pub_key_len, &p, end));
-    ECIES_CHECK_RESULT(result = ecies_write_uint32(header->hmac_pos, &p, end));
-    ECIES_CHECK_RESULT(result = ecies_write_uint32(header->hmac_len, &p, end));
-    ECIES_CHECK_RESULT(result = ecies_write_uint32(header->enc_pos, &p, end));
-    ECIES_CHECK_RESULT(result = ecies_write_uint32(header->enc_len, &p, end));
-    ECIES_CHECK_RESULT(result = ecies_write_uint32(header->reserved, &p, end));
-exit:
-    return result;
-}
-
-static int ecies_read_encrypt_header(ecies_encrypt_message_header_t *header,
-        const unsigned char *start, const unsigned char *end)
-{
-    int result = 0;
-    const unsigned char *p = start;
-    if (end - start < (int)sizeof(ecies_encrypt_message_header_t)) {
-        return POLARSSL_ERR_ECIES_MALFORMED_DATA;
-    }
-    ECIES_CHECK_RESULT(result = ecies_read_uint32(&(header->version), &p, end));
-    ECIES_CHECK_RESULT(result = ecies_read_uint32(&(header->pub_key_pos), &p, end));
-    ECIES_CHECK_RESULT(result = ecies_read_uint32(&(header->pub_key_len), &p, end));
-    ECIES_CHECK_RESULT(result = ecies_read_uint32(&(header->hmac_pos), &p, end));
-    ECIES_CHECK_RESULT(result = ecies_read_uint32(&(header->hmac_len), &p, end));
-    ECIES_CHECK_RESULT(result = ecies_read_uint32(&(header->enc_pos), &p, end));
-    ECIES_CHECK_RESULT(result = ecies_read_uint32(&(header->enc_len), &p, end));
-    ECIES_CHECK_RESULT(result = ecies_read_uint32(&(header->reserved), &p, end));
-exit:
-    return result;
-}
+#define ECIES_CIPHER_TYPE POLARSSL_CIPHER_AES_256_CBC
+#define ECIES_MD_TYPE POLARSSL_MD_SHA256
+#define ECIES_HMAC_TYPE POLARSSL_MD_SHA256
+#define ECIES_KDF_TYPE POLARSSL_KDF_KDF1
 
 static int ecies_ka(ecp_keypair *public, const ecp_keypair *private, mpi *shared,
         int(*f_rng)(void *, unsigned char *, size_t), void *p_rng)
@@ -215,69 +90,6 @@ static int ecies_ka(ecp_keypair *public, const ecp_keypair *private, mpi *shared
     return ecdh_compute_shared(&public->grp, shared, &public->Q, &private->d, f_rng, p_rng);
 }
 
-static int ecies_kdf(const unsigned char *input, size_t ilen, unsigned char *output, size_t olen)
-{
-    const kdf_info_t *kdf_info = kdf_info_from_type(POLARSSL_KDF_KDF1);
-    const md_info_t *md_info = md_info_from_type(POLARSSL_MD_SHA256);
-    return kdf(kdf_info, md_info, input, ilen, output, olen);
-}
-
-static int ecies_hmac(const unsigned char *input, size_t ilen,
-        const unsigned char *key, size_t keylen, ecies_hmac_t *hmac)
-{
-    const md_info_t *md_info = NULL;
-
-    memset(hmac->data, 0, ECIES_HMAC_LEN);
-
-    md_info = ECIES_MD_SHA_INFO_FROM_SIZE(ECIES_HMAC_SIZE);
-
-    return md_hmac(md_info, key, keylen, input, ilen, hmac->data);
-}
-
-int ecies_write_public_key(ecp_keypair *key, unsigned char *output, size_t olen)
-{
-    int result = 0;
-    pk_context pk;
-
-    if (key == NULL || output == NULL) {
-        return POLARSSL_ERR_ECIES_BAD_INPUT_DATA;
-    }
-
-    pk_init(&pk);
-    pk.pk_info = pk_info_from_type(POLARSSL_PK_ECKEY);
-    pk.pk_ctx = key;
-    result = pk_write_pubkey_der(&pk, output, olen);
-    ECIES_CHECK_RESULT(result);
-    memcpy(output, output + olen - result, result);
-exit:
-    pk.pk_ctx = NULL;
-    pk_free(&pk);
-    return result;
-}
-
-int ecies_read_public_key(const unsigned char *input, size_t ilen, ecp_keypair **key)
-{
-    int result = 0;
-    pk_context pk;
-
-    if (input == NULL ||  key == NULL || *key != NULL) {
-        return POLARSSL_ERR_ECIES_BAD_INPUT_DATA;
-    }
-
-    pk_init(&pk);
-    result = pk_parse_public_key(&pk, input, ilen);
-    ECIES_CHECK_RESULT(result);
-exit:
-    if (result == 0 && pk.pk_ctx != NULL) {
-        if (pk_can_do(&pk, POLARSSL_PK_ECKEY)) {
-            *key = pk.pk_ctx; // SHOULD be released in client code.
-        } else {
-            pk_free(&pk);
-            result = POLARSSL_ERR_ECIES_MALFORMED_DATA;
-        }
-    }
-    return result;
-}
 
 #ifdef POLARSSL_ECIES_DEBUG
 static void ecies_print_buf(const char *title, const unsigned char *buf, size_t buf_len)
@@ -295,132 +107,150 @@ int ecies_encrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
         unsigned char *output, size_t *olen, size_t osize,
         int (*f_rng)(void *, unsigned char *, size_t), void *p_rng)
 {
-    // Define counters.
     int result = 0;
-    size_t offset = 0;
-    size_t chunk_len = 0;
-    size_t osize_left = 0;
-    // Define keys and hmac data.
     ecp_keypair ephemeral_key;
     mpi shared_key;
-    unsigned char * shared_key_binary = NULL;
+    unsigned char *shared_key_binary = NULL; // MUST be released
     size_t shared_key_binary_len = 0;
-    ecies_kdf_value_t kdf_value;
-    ecies_hmac_t hmac_value;
-    // Define cipher data.
+    const md_info_t *md_info = NULL;
+    const kdf_info_t *kdf_info = NULL;
+    const md_info_t *hmac_info = NULL;
+    unsigned char *kdf_value = NULL; // MUST be released
+    size_t hmac_len = 0;
+    unsigned char *hmac = NULL; // MUST be released
+    size_t kdf_len = 0;
+    unsigned char *cipher_key = NULL; // pointer inside data: kdf_value
+    size_t cipher_key_len = 0;
+    unsigned char *cipher_iv = NULL; // MUST be released
+    size_t cipher_iv_len = 0;
+    unsigned char *hmac_key = NULL; // pointer inside data: kdf_value
+    size_t hmac_key_len = 0;
     cipher_context_t cipher_ctx;
     size_t cipher_block_size = 0;
-    size_t cipher_outlen = 0;
-    unsigned char * cipher_buffer = NULL;
-    // Encrypted message
-    ecies_encrypt_message_header_t encrypt_header;
-    unsigned char *encrypt_data = NULL;
+    size_t cipher_enc_data_len = 0;
+    size_t cipher_enc_header_len = 0;
+    unsigned char *cipher_enc_data = NULL; // pointer inside data: output
 
     if (key == NULL || input == NULL || output == NULL || olen == NULL) {
         return POLARSSL_ERR_ECIES_BAD_INPUT_DATA;
     }
 
-    if (osize < sizeof(ecies_encrypt_message_header_t)) {
-        return POLARSSL_ERR_ECIES_OUTPUT_TOO_SMALL;
-    }
-
     // Init structures.
-    encrypt_data = output + sizeof(encrypt_header);
-    osize_left = osize - sizeof(encrypt_header);
     *olen = 0;
+
+    md_info = md_info_from_type(ECIES_MD_TYPE);
+    kdf_info = kdf_info_from_type(ECIES_KDF_TYPE);
+    hmac_info = md_info_from_type(ECIES_HMAC_TYPE);
+
     mpi_init(&shared_key);
     ecp_keypair_init(&ephemeral_key);
     cipher_init(&cipher_ctx);
-    result = cipher_init_ctx(&cipher_ctx, cipher_info_from_type(ECIES_CIPHER_MODE));
-    ECIES_CHECK_RESULT(result);
-    memset(&hmac_value, 0, sizeof(hmac_value));
-    memset(&kdf_value, 0, sizeof(kdf_value));
-    memset(&encrypt_header, 0, sizeof(encrypt_header));
-    shared_key_binary_len = ECIES_SIZE_TO_OCTETS(key->grp.pbits);
+    INVOKE_AND_CHECK(result,
+        cipher_init_ctx(&cipher_ctx, cipher_info_from_type(ECIES_CIPHER_TYPE))
+    );
+
+    cipher_iv_len = cipher_get_iv_size(&cipher_ctx);
+    cipher_key_len = ECIES_SIZE_TO_OCTETS(cipher_get_key_size(&cipher_ctx));
+    hmac_len = md_get_size(hmac_info);
+    hmac_key_len = hmac_len;
+    kdf_len = cipher_key_len + hmac_key_len;
+
+    kdf_value = polarssl_malloc(kdf_len);
+    memset(kdf_value, 0, kdf_len);
+
+    cipher_key = kdf_value;
+    hmac_key = kdf_value + cipher_key_len;
 
     // 1. Generate ephemeral keypair.
-    result = ecp_gen_key(key->grp.id, &ephemeral_key, f_rng, p_rng);
-    ECIES_CHECK_RESULT(result);
-    // 2. Write ephemeral public key to crypto message
-    encrypt_header.pub_key_pos = 0;
-    result = ecies_write_public_key(&ephemeral_key, encrypt_data + encrypt_header.pub_key_pos, osize_left);
-    ECIES_CHECK_RESULT(result);
-    encrypt_header.pub_key_len = result;
-    osize_left -= result;
-    // 3. Compute shared secret key.
-    result = ecies_ka(key, &ephemeral_key, &shared_key, f_rng, p_rng);
-    ECIES_CHECK_RESULT(result);
+    INVOKE_AND_CHECK(result,
+        ecp_gen_key(key->grp.id, &ephemeral_key, f_rng, p_rng)
+    );
+    // 2. Compute shared secret key.
+    INVOKE_AND_CHECK(result,
+        ecies_ka(key, &ephemeral_key, &shared_key, f_rng, p_rng)
+    );
+    shared_key_binary_len = ECIES_SIZE_TO_OCTETS(key->grp.pbits);
     shared_key_binary = polarssl_malloc(shared_key_binary_len);
     memset(shared_key_binary, 0, shared_key_binary_len);
-    result = mpi_write_binary(&shared_key, shared_key_binary, shared_key_binary_len);
-    ECIES_CHECK_RESULT(result);
-    // 4. Derive keys (encryption key and hmac key).
-    result = ecies_kdf(shared_key_binary, shared_key_binary_len, kdf_value.data, ECIES_KDF_LEN);
-    ECIES_CHECK_RESULT(result);
-    // 5. Encrypt given message.
-    result = cipher_setkey(&cipher_ctx, kdf_value.key.enc, ECIES_ENC_SIZE, POLARSSL_ENCRYPT);
-    ECIES_CHECK_RESULT(result);
-    result = cipher_set_padding_mode(&cipher_ctx, ECIES_CIPHER_PADDING);
-    ECIES_CHECK_RESULT(result);
-    result = cipher_set_iv(&cipher_ctx, kdf_value.key.iv, ECIES_IV_LEN);
-    ECIES_CHECK_RESULT(result);
-    result = cipher_reset(&cipher_ctx);
-    ECIES_CHECK_RESULT(result);
+    INVOKE_AND_CHECK(result,
+        mpi_write_binary(&shared_key, shared_key_binary, shared_key_binary_len)
+    );
+    // 3. Derive keys (encryption key and hmac key).
+    INVOKE_AND_CHECK(result,
+        kdf(kdf_info, md_info, shared_key_binary, shared_key_binary_len, kdf_value, kdf_len)
+    );
+    // 4. Encrypt given message.
+    cipher_iv = polarssl_malloc(cipher_iv_len);
+    memset(cipher_iv, 0, cipher_iv_len);
+    INVOKE_AND_CHECK(result,
+        f_rng(p_rng, cipher_iv, cipher_iv_len)
+    );
+    INVOKE_AND_CHECK(result,
+        cipher_setkey(&cipher_ctx, cipher_key, cipher_key_len * ECIES_OCTET_SIZE, POLARSSL_ENCRYPT)
+    );
+    INVOKE_AND_CHECK(result,
+        cipher_set_padding_mode(&cipher_ctx, ECIES_CIPHER_PADDING)
+    );
+    INVOKE_AND_CHECK(result,
+        cipher_reset(&cipher_ctx)
+    );
     cipher_block_size = cipher_get_block_size(&cipher_ctx);
-    cipher_buffer = polarssl_malloc(2 * cipher_block_size);
-    encrypt_header.enc_pos = encrypt_header.pub_key_pos + encrypt_header.pub_key_len;
-    encrypt_header.enc_len = 0;
-    for (offset = 0; offset < ilen; offset += cipher_get_block_size(&cipher_ctx)) {
-        chunk_len = (ilen - offset > cipher_get_block_size(&cipher_ctx)) ?
-                cipher_get_block_size(&cipher_ctx) : (size_t)(ilen - offset);
-        cipher_outlen = 0;
-        cipher_update(&cipher_ctx, input + offset, chunk_len, cipher_buffer, &cipher_outlen);
-        if (osize_left < cipher_outlen) {
-            result = POLARSSL_ERR_ECIES_OUTPUT_TOO_SMALL;
-        }
-        ECIES_CHECK_RESULT(result);
-        memcpy(encrypt_data + encrypt_header.enc_pos + encrypt_header.enc_len,
-                cipher_buffer, cipher_outlen);
-        encrypt_header.enc_len += cipher_outlen;
-        osize_left -= cipher_outlen;
-    }
-    result = cipher_finish(&cipher_ctx, cipher_buffer, &cipher_outlen);
-    ECIES_CHECK_RESULT(result);
-    if (osize_left < cipher_outlen) {
+    cipher_enc_data_len = ilen + cipher_block_size;
+    if (osize < cipher_enc_data_len) {
         result = POLARSSL_ERR_ECIES_OUTPUT_TOO_SMALL;
+        goto exit;
     }
-    ECIES_CHECK_RESULT(result);
-    memcpy(encrypt_data + encrypt_header.enc_pos + encrypt_header.enc_len, cipher_buffer, cipher_outlen);
-    encrypt_header.enc_len += cipher_outlen;
-    osize_left -= cipher_outlen;
+    cipher_enc_data = output + osize - cipher_enc_data_len;
+    INVOKE_AND_CHECK(result,
+        cipher_crypt(&cipher_ctx, cipher_iv, cipher_iv_len, input, ilen,
+                cipher_enc_data, &cipher_enc_data_len)
+    );
     // 5. Get HMAC for encrypted message.
-    result = ecies_hmac(encrypt_data + encrypt_header.enc_pos, encrypt_header.enc_len,
-            kdf_value.key.hmac, ECIES_HMAC_LEN, &hmac_value);
-    ECIES_CHECK_RESULT(result);
-    encrypt_header.hmac_pos = encrypt_header.enc_pos + encrypt_header.enc_len;
-    encrypt_header.hmac_len = ECIES_HMAC_LEN;
-    if (osize_left < ECIES_HMAC_LEN) {
-        result = POLARSSL_ERR_ECIES_OUTPUT_TOO_SMALL;
-    }
-    ECIES_CHECK_RESULT(result);
-    memcpy(encrypt_data + encrypt_header.hmac_pos, hmac_value.data, ECIES_HMAC_LEN);
-    osize_left -= ECIES_HMAC_LEN;
-    // 6. Write encryption header.
-    result = ecies_write_encrypt_header(&encrypt_header, output, output + osize);
-    ECIES_CHECK_RESULT(result);
-
-
+    hmac = polarssl_malloc(hmac_len);
+    memset(hmac, 0, hmac_len);
+    INVOKE_AND_CHECK(result,
+        md_hmac(hmac_info, hmac_key, hmac_key_len, cipher_enc_data, cipher_enc_data_len, hmac)
+    );
+    // 6. Write envelope.
+    cipher_enc_header_len = 0;
+    ACCUMULATE_AND_CHECK(result, cipher_enc_header_len,
+        ecies_write_content_info(&cipher_enc_data, output, ECIES_CIPHER_TYPE,
+                cipher_iv, cipher_iv_len, cipher_enc_data_len)
+    );
+    ACCUMULATE_AND_CHECK(result, cipher_enc_header_len,
+        ecies_write_hmac(&cipher_enc_data, output, md_get_type(hmac_info), hmac, hmac_len)
+    );
+    ACCUMULATE_AND_CHECK(result, cipher_enc_header_len,
+        ecies_write_kdf(&cipher_enc_data, output, kdf_get_type(kdf_info), md_get_type(md_info))
+    );
+    ACCUMULATE_AND_CHECK(result, cipher_enc_header_len,
+        ecies_write_originator(&cipher_enc_data, output, &ephemeral_key)
+    );
+    ACCUMULATE_AND_CHECK(result, cipher_enc_header_len,
+        ecies_write_version(&cipher_enc_data, output, ECIES_ENVELOPE_VERSION)
+    );
+    ACCUMULATE_AND_CHECK(result, cipher_enc_header_len,
+        ecies_write_envelope(&cipher_enc_data, output, cipher_enc_header_len)
+    );
+    memmove(output, cipher_enc_data, cipher_enc_header_len);
+    memset(output + cipher_enc_header_len, 0, osize - cipher_enc_header_len);
 exit:
-    if (cipher_buffer != NULL) {
-        polarssl_free(cipher_buffer);
-    }
+    *olen = cipher_enc_header_len;
     cipher_free(&cipher_ctx);
     ecp_keypair_free(&ephemeral_key);
     mpi_free(&shared_key);
-    if (shared_key_binary) {
+    if (shared_key_binary != NULL) {
         polarssl_free(shared_key_binary);
     }
-    *olen = osize - osize_left;
+    if (kdf_value != NULL) {
+        polarssl_free(kdf_value);
+    }
+    if (cipher_iv != NULL) {
+        polarssl_free(cipher_iv);
+    }
+    if (hmac != NULL) {
+        polarssl_free(hmac);
+    }
     return result;
 }
 
@@ -429,124 +259,135 @@ int ecies_decrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
         unsigned char *output, size_t *olen, size_t osize,
         int (*f_rng)(void *, unsigned char *, size_t), void *p_rng)
 {
-    // Define counters.
     int result = 0;
-    size_t ioffset = 0;
-    size_t ooffset = 0;
-    size_t chunk_len = 0;
-    size_t osize_left = 0;
-    // Define keys and hmac data.
-    ecp_keypair *ephemeral_key = NULL;
+    int version = 0;
+    ecp_keypair *ephemeral_key = NULL; // MUST be released
     mpi shared_key;
-    unsigned char *shared_key_binary = NULL;
+    unsigned char *shared_key_binary = NULL; // MUST be released
     size_t shared_key_binary_len = 0;
-    ecies_kdf_value_t kdf_value;
-    ecies_hmac_t hmac_value;
-    // Define cipher data.
+    md_type_t md_type = POLARSSL_MD_NONE;
+    kdf_type_t kdf_type = POLARSSL_KDF_NONE;
+    md_type_t hmac_type = POLARSSL_MD_NONE;
+    unsigned char *kdf_value = NULL; // MUST be released
+    size_t hmac_base_len = 0;
+    unsigned char *hmac_base = NULL; // pointer inside data: input
+    size_t hmac_len = 0;
+    unsigned char *hmac = NULL; // MUST be released
+    size_t kdf_len = 0;
+    unsigned char *cipher_key = NULL; // pointer inside data: kdf_value
+    size_t cipher_key_len = 0;
+    unsigned char *hmac_key = NULL; // pointer inside data: kdf_value
+    size_t hmac_key_len = 0;
+    unsigned char *cipher_iv = NULL; // pointer inside data: input
+    size_t cipher_iv_len = 0;
+    cipher_type_t cipher_type = POLARSSL_CIPHER_NONE;
     cipher_context_t cipher_ctx;
-    size_t cipher_block_size = 0;
-    size_t cipher_outlen = 0;
-    unsigned char * cipher_buffer = NULL;
-    // Encrypted message
-    ecies_encrypt_message_header_t encrypt_header;
-    const unsigned char *encrypt_data = NULL;
+    size_t cipher_enc_data_len = 0;
+    size_t cipher_enc_header_len = 0;
+    unsigned char *cipher_enc_data = NULL; // pointer inside data: input
+    unsigned char *cipher_enc_header = NULL; // pointer inside data: input
 
-    if (key == NULL || input == NULL || ilen < sizeof(encrypt_header) ||
-            output == NULL || olen == NULL) {
+    if (key == NULL || input == NULL || output == NULL || olen == NULL) {
         return POLARSSL_ERR_ECIES_BAD_INPUT_DATA;
     }
 
     // Init structures.
-    mpi_init(&shared_key);
-    ecp_keypair_init(ephemeral_key);
-    memset(&hmac_value, 0, sizeof(hmac_value));
-    memset(&kdf_value, 0, sizeof(kdf_value));
-    result = ecies_read_encrypt_header(&encrypt_header, input, input + sizeof(encrypt_header));
-    ECIES_CHECK_RESULT(result);
-    encrypt_data = input + sizeof(encrypt_header);
-    osize_left = osize;
     *olen = 0;
-    shared_key_binary_len = ECIES_SIZE_TO_OCTETS(key->grp.pbits);
-
-    // 1. Get ephemeral public key from encrypted message.
-    result = ecies_read_public_key(encrypt_data + encrypt_header.pub_key_pos, encrypt_header.pub_key_len,
-            &ephemeral_key);
-    ECIES_CHECK_RESULT(result);
-    // 2. Compute shared secret key.
-    result = ecies_ka(ephemeral_key, key, &shared_key, f_rng, p_rng);
-    ECIES_CHECK_RESULT(result);
-    shared_key_binary = polarssl_malloc(ECIES_SIZE_TO_OCTETS(key->grp.pbits));
-    memset(shared_key_binary, 0, shared_key_binary_len);
-    result = mpi_write_binary(&shared_key, shared_key_binary, shared_key_binary_len);
-    ECIES_CHECK_RESULT(result);
-    // 3. Derive keys (encryption key and hmac key).
-    result = ecies_kdf(shared_key_binary, shared_key_binary_len, kdf_value.data, ECIES_KDF_LEN);
-    ECIES_CHECK_RESULT(result);
-    // 4. Get HMAC for encrypted message.
-    result = ecies_hmac(encrypt_data + encrypt_header.enc_pos, encrypt_header.enc_len,
-            kdf_value.key.hmac, ECIES_HMAC_LEN, &hmac_value);
-    ECIES_CHECK_RESULT(result);
-    // 5. Compare computed HMAC with original.
-    if (encrypt_header.hmac_len == ECIES_HMAC_LEN) {
-        result = memcmp(encrypt_data + encrypt_header.hmac_pos, hmac_value.data, ECIES_HMAC_LEN);
-        if (result != 0) {
-            result = POLARSSL_ERR_ECIES_MALFORMED_DATA;
-        }
-    } else {
+    cipher_enc_header = (unsigned char *)input;
+    INVOKE_AND_CHECK(result,
+        ecies_read_envelope(&cipher_enc_header, input + ilen, &cipher_enc_header_len)
+    );
+    INVOKE_AND_CHECK(result,
+        ecies_read_version(&cipher_enc_header, input + ilen, &version)
+    );
+    if (version != ECIES_ENVELOPE_VERSION) {
         result = POLARSSL_ERR_ECIES_MALFORMED_DATA;
+        goto exit;
     }
-    ECIES_CHECK_RESULT(result);
-    // 6. Decrypt given message.
-    cipher_init(&cipher_ctx);
-    result = cipher_init_ctx(&cipher_ctx, cipher_info_from_type(ECIES_CIPHER_MODE));
-    ECIES_CHECK_RESULT(result);
-    result = cipher_setkey(&cipher_ctx, kdf_value.key.enc, ECIES_ENC_SIZE, POLARSSL_DECRYPT);
-    ECIES_CHECK_RESULT(result);
-    result = cipher_set_padding_mode(&cipher_ctx, ECIES_CIPHER_PADDING);
-    ECIES_CHECK_RESULT(result);
-    result = cipher_set_iv(&cipher_ctx, kdf_value.key.iv, ECIES_IV_LEN);
-    ECIES_CHECK_RESULT(result);
-    result = cipher_reset(&cipher_ctx);
-    ECIES_CHECK_RESULT(result);
-    cipher_block_size = cipher_get_block_size(&cipher_ctx);
-    cipher_buffer = polarssl_malloc(2 * cipher_block_size);
-    for (ioffset = 0, ooffset = 0; ioffset < encrypt_header.enc_len; ioffset += cipher_get_block_size(&cipher_ctx)) {
-        chunk_len = (encrypt_header.enc_len - ioffset > cipher_get_block_size(&cipher_ctx)) ?
-                cipher_get_block_size(&cipher_ctx) : (size_t)(encrypt_header.enc_len - ioffset);
-        cipher_outlen = 0;
-        cipher_update(&cipher_ctx, encrypt_data + encrypt_header.enc_pos + ioffset, chunk_len, cipher_buffer,
-                &cipher_outlen);
-        if (osize_left < cipher_outlen) {
-            result = POLARSSL_ERR_ECIES_OUTPUT_TOO_SMALL;
-        }
-        ECIES_CHECK_RESULT(result);
-        memcpy(output + ooffset, cipher_buffer, cipher_outlen);
-        ooffset += cipher_outlen;
-        osize_left -= cipher_outlen;
-    }
-    result = cipher_finish(&cipher_ctx, cipher_buffer, &cipher_outlen);
-    ECIES_CHECK_RESULT(result);
-    if (osize_left < cipher_outlen) {
-        result = POLARSSL_ERR_ECIES_OUTPUT_TOO_SMALL;
-    }
-    ECIES_CHECK_RESULT(result);
-    memcpy(output + ooffset, cipher_buffer, cipher_outlen);
-    ooffset += cipher_outlen;
-    osize_left -= cipher_outlen;
+    INVOKE_AND_CHECK(result,
+        ecies_read_originator(&cipher_enc_header, input + ilen, &ephemeral_key)
+    );
+    INVOKE_AND_CHECK(result,
+        ecies_read_kdf(&cipher_enc_header, input + ilen, &kdf_type, &md_type)
+    );
+    INVOKE_AND_CHECK(result,
+        ecies_read_hmac(&cipher_enc_header, input + ilen, &hmac_type, &hmac_base, &hmac_base_len)
+    );
+    INVOKE_AND_CHECK(result,
+        ecies_read_content_info(&cipher_enc_header, input + ilen, &cipher_type,
+                &cipher_iv, &cipher_iv_len, &cipher_enc_data, &cipher_enc_data_len)
+    );
 
+    mpi_init(&shared_key);
+    cipher_init(&cipher_ctx);
+    INVOKE_AND_CHECK(result,
+        cipher_init_ctx(&cipher_ctx, cipher_info_from_type(cipher_type))
+    );
+    cipher_key_len = ECIES_SIZE_TO_OCTETS(cipher_get_key_size(&cipher_ctx));
+    hmac_len = md_get_size(md_info_from_type(hmac_type));
+    hmac_key_len = hmac_len;
+    kdf_len = cipher_key_len + hmac_key_len;
+    kdf_value = polarssl_malloc(kdf_len);
+    memset(kdf_value, 0, kdf_len);
+    cipher_key = kdf_value;
+    hmac_key = kdf_value + cipher_key_len;
+    hmac = polarssl_malloc(hmac_len);
+    memset(hmac, 0, hmac_len);
+
+    // 1. Compute shared secret key.
+    INVOKE_AND_CHECK(result,
+        ecies_ka(ephemeral_key, key, &shared_key, f_rng, p_rng)
+    );
+    shared_key_binary_len = ECIES_SIZE_TO_OCTETS(key->grp.pbits);
+    shared_key_binary = polarssl_malloc(shared_key_binary_len);
+    memset(shared_key_binary, 0, shared_key_binary_len);
+    INVOKE_AND_CHECK(result,
+        mpi_write_binary(&shared_key, shared_key_binary, shared_key_binary_len)
+    );
+    // 2. Derive keys (encryption key and hmac key).
+    INVOKE_AND_CHECK(result,
+        kdf(kdf_info_from_type(kdf_type), md_info_from_type(md_type),
+                shared_key_binary, shared_key_binary_len, kdf_value, kdf_len)
+    );
+    // 3. Get HMAC for encrypted message and compare it.
+    INVOKE_AND_CHECK(result,
+        md_hmac(md_info_from_type(hmac_type), hmac_key, hmac_key_len, cipher_enc_data, cipher_enc_data_len, hmac)
+    );
+    if (hmac_base_len != hmac_len || memcmp(hmac_base, hmac, hmac_len) != 0) {
+        result = POLARSSL_ERR_ECIES_MALFORMED_DATA;
+        goto exit;
+    }
+    // 4. Decrypt given message.
+    INVOKE_AND_CHECK(result,
+        cipher_setkey(&cipher_ctx, cipher_key, cipher_key_len * ECIES_OCTET_SIZE, POLARSSL_DECRYPT)
+    );
+    INVOKE_AND_CHECK(result,
+        cipher_set_padding_mode(&cipher_ctx, ECIES_CIPHER_PADDING)
+    );
+    INVOKE_AND_CHECK(result,
+        cipher_reset(&cipher_ctx)
+    );
+    if (osize < cipher_enc_data_len) {
+        result = POLARSSL_ERR_ECIES_OUTPUT_TOO_SMALL;
+        goto exit;
+    }
+    INVOKE_AND_CHECK(result,
+        cipher_crypt(&cipher_ctx, cipher_iv, cipher_iv_len, cipher_enc_data, cipher_enc_data_len,
+                output, olen)
+    );
 exit:
-    if (cipher_buffer != NULL) {
-        polarssl_free(cipher_buffer);
-    }
     cipher_free(&cipher_ctx);
-    if (ephemeral_key != NULL) {
-        ecp_keypair_free(ephemeral_key);
-    }
-    if (shared_key_binary) {
+    ecp_keypair_free(ephemeral_key);
+    mpi_free(&shared_key);
+    if (shared_key_binary != NULL) {
         polarssl_free(shared_key_binary);
     }
-    mpi_free(&shared_key);
-    *olen = osize - osize_left;
+    if (kdf_value != NULL) {
+        polarssl_free(kdf_value);
+    }
+    if (hmac != NULL) {
+        polarssl_free(hmac);
+    }
     return result;
 }
 

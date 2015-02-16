@@ -55,6 +55,7 @@ typedef UINT64 uint64_t;
 #define POLARSSL_ERR_ECIES_BAD_INPUT_DATA                    -0x7F80  /**< Bad input parameters to function. */
 #define POLARSSL_ERR_ECIES_OUTPUT_TOO_SMALL                  -0x7F00  /**< Output buffer too small. */
 #define POLARSSL_ERR_ECIES_MALFORMED_DATA                    -0x7E80  /**< Encrypted data is malformed. */
+#define POLARSSL_ERR_ECIES_MALLOC_FAILED                     -0x7D00  /**< Memory allocation failed */
 
 #ifdef __cplusplus
 extern "C" {

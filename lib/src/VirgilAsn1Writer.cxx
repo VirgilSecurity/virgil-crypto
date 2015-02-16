@@ -52,7 +52,7 @@ using virgil::crypto::VirgilCryptoException;
 static const size_t kBufLenDefault = 2048;
 
 static const size_t kAsn1TagValueSize = 1;
-static const size_t kAsn1LengthValueSize = 2;
+static const size_t kAsn1LengthValueSize = 3;
 static const size_t kAsn1IntegerValueSize = kAsn1TagValueSize + kAsn1LengthValueSize + 8;
 
 #define RETURN_POINTER_DIFF_AFTER_INVOCATION(pointer,invocation) \
@@ -198,10 +198,12 @@ size_t VirgilAsn1Writer::writeSet(const std::vector<VirgilByteArray>& set) {
             for (std::vector<VirgilByteArray>::const_reverse_iterator it = orderedSet.rbegin();
                     it != orderedSet.rend(); ++it) {
                 len += it->size();
+                ensureBufferEnough(it->size());
                 POLARSSL_ERROR_HANDLER(
                     ::asn1_write_raw_buffer(&p_, start_, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN((*it)))
                 );
             }
+            ensureBufferEnough(kAsn1LengthValueSize + kAsn1TagValueSize);
             POLARSSL_ERROR_HANDLER(
                 ::asn1_write_len(&p_, start_, len)
             );

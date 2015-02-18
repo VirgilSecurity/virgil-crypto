@@ -40,6 +40,12 @@
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
+#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::asn1::VirgilAsn1Reader;
+
+#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::asn1::VirgilAsn1Writer;
+
 namespace virgil { namespace crypto { namespace asn1 {
 
 /**
@@ -50,16 +56,28 @@ public:
     /**
      * @brief Save object state to the ASN.1 structure.
      */
-    virtual VirgilByteArray toAsn1() const = 0;
+    VirgilByteArray toAsn1() const;
     /**
      * @brief Restore object state from the ASN.1 structure.
      */
-    virtual void fromAsn1(const VirgilByteArray& asn1) = 0;
+    void fromAsn1(const VirgilByteArray& asn1);
     /**
      * @brief Polymorphic destructor.
      */
      virtual ~VirgilAsn1Compatible() throw() {}
 protected:
+    /**
+     * @brief Write object state to the writer.
+     * @param asn1Writer writer that should be payloaded by subclasses.
+     * @param childWrittenBytes count of bytes that was written by subclasses.
+     * @retrun Writen bytes count.
+     */
+    virtual size_t writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const = 0;
+    /**
+     * @brief Read object state from the reader.
+     * @param asn1Reader reader payloaded with ASN.1 to be read.
+     */
+    virtual void readAsn1(VirgilAsn1Reader& asn1Reader) = 0;
     /**
      * @brief If given parameter is empty exception will be thrown.
      * @throw virgil::crypto::VirgilCryptoException.

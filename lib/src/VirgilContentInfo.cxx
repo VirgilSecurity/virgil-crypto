@@ -59,28 +59,23 @@ static const unsigned char kCMS_CustomParamsTag = 0;
 VirgilContentInfo::~VirgilContentInfo() throw() {
 }
 
-VirgilByteArray VirgilContentInfo::toAsn1() const {
-
-    VirgilAsn1Writer asn1Writer;
-
+size_t VirgilContentInfo::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t len = 0;
     if (!customParams.empty()) {
-        size_t customParamsLen = asn1Writer.writeData(customParams.toAsn1());
-        len += customParamsLen;
-        len += asn1Writer.writeContextTag(kCMS_CustomParamsTag, customParamsLen);
+        len += customParams.writeAsn1(asn1Writer);
+        len += asn1Writer.writeContextTag(kCMS_CustomParamsTag, len);
     }
 
-    len += asn1Writer.writeData(cmsContent.toAsn1());
+    len += cmsContent.writeAsn1(asn1Writer);
     len += asn1Writer.writeSequence(len);
 
-    return asn1Writer.finish();
+    return len + childWrittenBytes;
 }
 
-void VirgilContentInfo::fromAsn1(const VirgilByteArray& asn1) {
-    VirgilAsn1Reader asn1Reader(asn1);
+void VirgilContentInfo::readAsn1(VirgilAsn1Reader& asn1Reader) {
     (void)asn1Reader.readSequence();
-    cmsContent.fromAsn1(asn1Reader.readData());
+    cmsContent.readAsn1(asn1Reader);
     if (asn1Reader.readContextTag(kCMS_CustomParamsTag) > 0) {
-        customParams.fromAsn1(asn1Reader.readData());
+        customParams.readAsn1(asn1Reader);
     }
 }

@@ -63,10 +63,7 @@ static const unsigned char kCMS_ContentTag = 0;
 VirgilCMSContent::~VirgilCMSContent() throw() {
 }
 
-VirgilByteArray VirgilCMSContent::toAsn1() const {
-
-    VirgilAsn1Writer asn1Writer;
-
+size_t VirgilCMSContent::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t len = 0;
 
     checkAsn1ParamNotEmpty(content, "content");
@@ -75,12 +72,10 @@ VirgilByteArray VirgilCMSContent::toAsn1() const {
     len += asn1Writer.writeOID(contentTypeToOID(contentType));
     len += asn1Writer.writeSequence(len);
 
-    return asn1Writer.finish();
+    return len + childWrittenBytes;
 }
 
-void VirgilCMSContent::fromAsn1(const VirgilByteArray& asn1) {
-
-    VirgilAsn1Reader asn1Reader(asn1);
+void VirgilCMSContent::readAsn1(VirgilAsn1Reader& asn1Reader) {
     (void)asn1Reader.readSequence();
     contentType = oidToContentType(asn1Reader.readOID());
     if (asn1Reader.readContextTag(kCMS_ContentTag) > 0) {

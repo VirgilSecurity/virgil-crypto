@@ -284,23 +284,21 @@ void VirgilSymmetricCipher::checkState() const {
     }
 }
 
-VirgilByteArray VirgilSymmetricCipher::toAsn1() const {
+size_t VirgilSymmetricCipher::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     checkState();
     const char *oid = 0;
     size_t oidLen;
     POLARSSL_ERROR_HANDLER(
         ::oid_get_oid_by_cipher_alg(impl_->type, &oid, &oidLen)
     );
-    VirgilAsn1Writer asn1Writer;
     size_t len = 0;
     len += asn1Writer.writeOctetString(impl_->iv);
     len += asn1Writer.writeOID(std::string(oid, oidLen));
     len += asn1Writer.writeSequence(len);
-    return asn1Writer.finish();
+    return len + childWrittenBytes;
 }
 
-void VirgilSymmetricCipher::fromAsn1(const VirgilByteArray& asn1) {
-    VirgilAsn1Reader asn1Reader(asn1);
+void VirgilSymmetricCipher::readAsn1(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
     std::string oid = asn1Reader.readOID();
 

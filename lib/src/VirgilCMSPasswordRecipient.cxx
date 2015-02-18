@@ -62,10 +62,7 @@ static const int kCMS_PasswordRecipientVersion = 0;
 VirgilCMSPasswordRecipient::~VirgilCMSPasswordRecipient() throw() {
 }
 
-VirgilByteArray VirgilCMSPasswordRecipient::toAsn1() const {
-
-    VirgilAsn1Writer asn1Writer;
-
+size_t VirgilCMSPasswordRecipient::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t len = 0;
 
     checkAsn1ParamNotEmpty(encryptedKey);
@@ -83,11 +80,10 @@ VirgilByteArray VirgilCMSPasswordRecipient::toAsn1() const {
     len += asn1Writer.writeInteger(kCMS_PasswordRecipientVersion);
     len += asn1Writer.writeSequence(len);
 
-    return asn1Writer.finish();
+    return len + childWrittenBytes;
 }
 
-void VirgilCMSPasswordRecipient::fromAsn1(const VirgilByteArray& asn1) {
-    VirgilAsn1Reader asn1Reader(asn1);
+void VirgilCMSPasswordRecipient::readAsn1(VirgilAsn1Reader& asn1Reader) {
     (void)asn1Reader.readSequence();
     int version = asn1Reader.readInteger();
     if (version != kCMS_PasswordRecipientVersion) {

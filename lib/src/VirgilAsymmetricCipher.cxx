@@ -371,23 +371,21 @@ bool VirgilAsymmetricCipher::verify(const VirgilByteArray& hash, const VirgilByt
             VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(hash), VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(sign)) == 0;
 }
 
-VirgilByteArray VirgilAsymmetricCipher::toAsn1() const {
+size_t VirgilAsymmetricCipher::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     checkState();
     const char *oid = 0;
     size_t oidLen;
     POLARSSL_ERROR_HANDLER(
         ::oid_get_oid_by_pk_alg(impl_->pkType(), &oid, &oidLen)
     );
-    VirgilAsn1Writer asn1Writer;
     size_t len = 0;
     len += asn1Writer.writeNull();
     len += asn1Writer.writeOID(std::string(oid, oidLen));
     len += asn1Writer.writeSequence(len);
-    return asn1Writer.finish();
+    return len + childWrittenBytes;
 }
 
-void VirgilAsymmetricCipher::fromAsn1(const VirgilByteArray& asn1) {
-    VirgilAsn1Reader asn1Reader(asn1);
+void VirgilAsymmetricCipher::readAsn1(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
     std::string oid = asn1Reader.readOID();
 

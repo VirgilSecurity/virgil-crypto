@@ -37,10 +37,28 @@
 #include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
 using virgil::crypto::asn1::VirgilAsn1Compatible;
 
+#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::asn1::VirgilAsn1Reader;
+
+#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::asn1::VirgilAsn1Writer;
+
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
 #include <sstream>
+
+VirgilByteArray VirgilAsn1Compatible::toAsn1() const {
+    VirgilAsn1Writer asn1Writer;
+    (void)writeAsn1(asn1Writer);
+    return asn1Writer.finish();
+}
+
+void VirgilAsn1Compatible::fromAsn1(const VirgilByteArray& asn1) {
+    VirgilAsn1Reader asn1Reader(asn1);
+    readAsn1(asn1Reader);
+}
+
 
 void VirgilAsn1Compatible::checkAsn1ParamNotEmpty(const VirgilByteArray& param,  const char *paramName) const {
     if (param.empty()) {

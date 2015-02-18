@@ -360,14 +360,15 @@ void VirgilPBE::checkState() const {
     }
 }
 
-VirgilByteArray VirgilPBE::toAsn1() const {
+size_t VirgilPBE::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     checkState();
-    return impl_->algId;
+    size_t len = asn1Writer.writeData(impl_->algId);
+    return len + childWrittenBytes;
 }
 
-void VirgilPBE::fromAsn1(const VirgilByteArray& asn1) {
+void VirgilPBE::readAsn1(VirgilAsn1Reader& asn1Reader) {
     if (impl_) {
         delete impl_;
     }
-    impl_ = new VirgilPBEImpl(asn1);
+    impl_ = new VirgilPBEImpl(asn1Reader.readData());
 }

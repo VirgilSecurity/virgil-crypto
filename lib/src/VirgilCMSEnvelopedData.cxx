@@ -65,10 +65,7 @@ static const unsigned char kCMS_OtherRecipientTag = 4;
 VirgilCMSEnvelopedData::~VirgilCMSEnvelopedData() throw() {
 }
 
-VirgilByteArray VirgilCMSEnvelopedData::toAsn1() const {
-
-    VirgilAsn1Writer asn1Writer;
-
+size_t VirgilCMSEnvelopedData::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t len = 0;
     // encryptedContentInfo
     len += asn1Writer.writeData(encryptedContent.toAsn1());
@@ -93,14 +90,13 @@ VirgilByteArray VirgilCMSEnvelopedData::toAsn1() const {
     len += asn1Writer.writeInteger(defineVersion());
     len += asn1Writer.writeSequence(len);
 
-    return asn1Writer.finish();
+    return len + childWrittenBytes;
 }
 
-void VirgilCMSEnvelopedData::fromAsn1(const VirgilByteArray& asn1) {
+void VirgilCMSEnvelopedData::readAsn1(VirgilAsn1Reader& asn1Reader) {
     keyTransRecipients.clear();
     passwordRecipients.clear();
 
-    VirgilAsn1Reader asn1Reader(asn1);
     (void)asn1Reader.readSequence();
     (void)asn1Reader.readInteger(); // Ignore version
     if (asn1Reader.readContextTag(kCMS_OriginatorInfoTag) > 0) {
@@ -140,6 +136,7 @@ int VirgilCMSEnvelopedData::defineVersion() const {
         return 3;
     } else if (keyTransRecipients.size() > 0) {
         return 2;
+    } else {
+        return 0;
     }
-    return 0;
 }

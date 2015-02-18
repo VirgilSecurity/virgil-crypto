@@ -78,8 +78,8 @@ public:
      *     EncryptedKey ::= OCTET STRING
      */
     ///@{
-    virtual VirgilByteArray toAsn1() const;
-    virtual void fromAsn1(const VirgilByteArray& asn1);
+    virtual size_t writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
+    virtual void readAsn1(VirgilAsn1Reader& asn1Reader);
     ///@}
 public:
     /**

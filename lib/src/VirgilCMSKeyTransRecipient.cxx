@@ -62,10 +62,7 @@ static const int kCMS_KeyTransRecipientVersion = 2;
 VirgilCMSKeyTransRecipient::~VirgilCMSKeyTransRecipient() throw() {
 }
 
-VirgilByteArray VirgilCMSKeyTransRecipient::toAsn1() const {
-
-    VirgilAsn1Writer asn1Writer;
-
+size_t VirgilCMSKeyTransRecipient::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t len = 0;
 
     checkAsn1ParamNotEmpty(encryptedKey, "encryptedKey");
@@ -82,11 +79,10 @@ VirgilByteArray VirgilCMSKeyTransRecipient::toAsn1() const {
     len += asn1Writer.writeInteger(kCMS_KeyTransRecipientVersion);
     len += asn1Writer.writeSequence(len);
 
-    return asn1Writer.finish();
+    return len + childWrittenBytes;
 }
 
-void VirgilCMSKeyTransRecipient::fromAsn1(const VirgilByteArray& asn1) {
-    VirgilAsn1Reader asn1Reader(asn1);
+void VirgilCMSKeyTransRecipient::readAsn1(VirgilAsn1Reader& asn1Reader) {
     (void)asn1Reader.readSequence();
     int version = asn1Reader.readInteger();
     if (version != kCMS_KeyTransRecipientVersion) {

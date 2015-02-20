@@ -48,8 +48,9 @@ using virgil::service::VirgilCipher;
 
 int print_usage(std::ostream& out, const char *programName) {
     out << "Usage: " << programName << " <enc_data> <pwd>" << std::endl;
-    out << "    <enc_data> - [in] encrypted data file to be decrypted" << std::endl;
-    out << "    <pwd>      - [in] password" << std::endl;
+    out << "    <enc_data>     - [in] encrypted data file to be decrypted" << std::endl;
+    out << "    <content_info> - [in] encrypted data content info file" << std::endl;
+    out << "    <pwd>          - [in] password" << std::endl;
     return -1;
 }
 
@@ -75,6 +76,18 @@ int main(int argc, char **argv) {
             std::back_inserter(encryptedData));
     encryptedDataFile.close();
 
+    // Parse argument: content_info
+    ++currArgPos;
+    std::ifstream contentInfoFile(argv[currArgPos], std::ios::in | std::ios::binary);
+    if (!contentInfoFile.is_open()) {
+        std::cerr << "Unable to open file: " <<  argv[currArgPos] << std::endl;
+        return print_usage(std::cerr, programName);
+    }
+    VirgilByteArray contentInfo;
+    std::copy(std::istreambuf_iterator<char>(contentInfoFile), std::istreambuf_iterator<char>(),
+            std::back_inserter(contentInfo));
+    contentInfoFile.close();
+
     // Parse argument: pwd
     ++currArgPos;
     VirgilByteArray password = VIRGIL_BYTE_ARRAY_FROM_STD_STRING(std::string(argv[currArgPos]));
@@ -82,11 +95,14 @@ int main(int argc, char **argv) {
     // Create cipher.
     VirgilCipher cipher;
 
+    // Set content info
+    cipher.setContentInfo(contentInfo);
+
     // Decrypt.
     VirgilByteArray decryptedData = cipher.decryptWithPassword(encryptedData, password);
 
-    // Print decrypted data.
-    std::cout << VIRGIL_BYTE_ARRAY_TO_STD_STRING(decryptedData) << std::endl;
+    // Out decrypted data.
+    std::copy(decryptedData.begin(), decryptedData.end(), std::ostreambuf_iterator<char>(std::cout));
 
     return 0;
 }

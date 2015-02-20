@@ -49,15 +49,14 @@ using virgil::service::VirgilSigner;
 #include <virgil/service/data/VirgilSign.h>
 using virgil::service::data::VirgilSign;
 
-#include <virgil/service/data/marshalling/VirgilAsn1DataMarshaller.h>
-using virgil::service::data::marshalling::VirgilAsn1DataMarshaller;
-
 int print_usage(std::ostream& out, const char *programName) {
-    out << "Usage: " << programName << " <data> <private_key> <private_key_pwd> <sign>" << std::endl;
+    out << "Usage: " << programName;
+    out << " <data> <signer_cert_id> <private_key> <private_key_pwd> [<out_format>]" << std::endl;
     out << "    <data>            - [in]  data to be signed" << std::endl;
+    out << "    <signer_cert_id>  - [in]  signer certificate isentifier" << std::endl;
     out << "    <private_key>     - [in]  private key file" << std::endl;
     out << "    <private_key_pwd> - [in]  private key password" << std::endl;
-    out << "    <sign>            - [out] data sign file" << std::endl;
+    out << "    <out_format>      - [in]  sign serialization format (asn1 | json)" << std::endl;
     return -1;
 }
 
@@ -73,7 +72,11 @@ int main(int argc, char **argv) {
 
     // Parse argument: data
     ++currArgPos;
-    VirgilByteArray data = VIRGIL_BYTE_ARRAY_FROM_STD_STRING(std::string(argv[currArgPos]));
+    VirgilByteArray data = VIRGIL_BYTE_ARRAY_FROM_C_STRING(argv[currArgPos]);
+
+    // Parse argument: signer_cert_id
+    ++currArgPos;
+    VirgilByteArray signerCertificateId = VIRGIL_BYTE_ARRAY_FROM_C_STRING(argv[currArgPos]);
 
     // Parse argument: private_key
     ++currArgPos;
@@ -89,29 +92,33 @@ int main(int argc, char **argv) {
 
     // Parse argument: private_key_pwd
     ++currArgPos;
-    VirgilByteArray privateKeyPassword = VIRGIL_BYTE_ARRAY_FROM_STD_STRING(std::string(argv[currArgPos]));
+    VirgilByteArray privateKeyPassword = VIRGIL_BYTE_ARRAY_FROM_C_STRING(argv[currArgPos]);
 
-    // Parse argument: sign
-    ++currArgPos;
-    std::ofstream signFile(argv[currArgPos], std::ios::out | std::ios::binary);
-    if (!signFile.is_open()) {
-        std::cerr << "Unable to open file: " <<  argv[currArgPos] << std::endl;
-        return print_usage(std::cerr, programName);
+    // Parse argument: format
+    std::string format("json");
+    if (++currArgPos < argc) {
+        format = std::string(argv[currArgPos]);
     }
 
     // Create signer.
     VirgilSigner signer;
 
     // Sign data.
-    VirgilByteArray signerCertificateId = VIRGIL_BYTE_ARRAY_FROM_STD_STRING(std::string("CERT-1234"));
     VirgilSign sign = signer.sign(data, signerCertificateId, privateKey, privateKeyPassword);
 
     // Marshal sign.
-    VirgilAsn1DataMarshaller marshaller;
-    VirgilByteArray signData = marshaller.marshal(sign);
+    VirgilByteArray signData;
+    if (format == "asn1") {
+        signData = sign.toAsn1();
+    } else if (format == "json") {
+        signData = sign.toJson();
+    } else {
+        std::cerr << "Unknown format: " << format << std::endl;
+        return print_usage(std::cerr, programName);
+    }
 
     // Write data sign to file.
-    std::copy(signData.begin(), signData.end(), std::ostreambuf_iterator<char>(signFile));
+    std::copy(signData.begin(), signData.end(), std::ostreambuf_iterator<char>(std::cout));
 
     return 0;
 }

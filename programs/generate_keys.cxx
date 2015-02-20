@@ -40,16 +40,26 @@
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/service/VirgilCipherBase.h>
-using virgil::service::VirgilCipherBase;
-
 #include <virgil/service/data/VirgilKeyPair.h>
 using virgil::service::data::VirgilKeyPair;
 
-int main() {
+int print_usage(std::ostream& out, const char *programName) {
+    out << "Usage: " << programName << " [<pwd>]" << std::endl;
+    out << "    <pwd>  - [in] private key password" << std::endl;
+    return -1;
+}
+
+int main(int argc, char **argv) {
+    // Parse arguments.
+    const char *programName = argv[0];
+    unsigned currArgPos = 0;
+    // Parse argument: pwd
+    VirgilByteArray pwd;
+    if (++currArgPos < argc) {
+        pwd = VIRGIL_BYTE_ARRAY_FROM_C_STRING(argv[currArgPos]);
+    }
     // Generate keypair and protect private key with password (optional).
-    VirgilKeyPair keyPair = VirgilCipherBase().generateKeyPair(
-            VIRGIL_BYTE_ARRAY_FROM_STD_STRING(std::string("password")));
+    VirgilKeyPair keyPair = VirgilKeyPair(pwd);
     // Export public key.
     std::cout << "Public key : " << std::endl;
     std::cout << VIRGIL_BYTE_ARRAY_TO_STD_STRING(keyPair.publicKey()) << std::endl;

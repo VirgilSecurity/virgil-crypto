@@ -44,24 +44,23 @@
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/service/data/marshalling/VirgilDataMarshaller.h>
-using virgil::service::data::marshalling::VirgilDataMarshaller;
+#include <virgil/service/data/VirgilTicket.h>
+using virgil::service::data::VirgilTicket;
 
-#include <virgil/service/data/marshalling/VirgilJsonDataMarshaller.h>
-using virgil::service::data::marshalling::VirgilJsonDataMarshaller;
+#include <virgil/service/data/VirgilUniqueTicketType.h>
+#include <virgil/service/data/VirgilUniqueTicket.h>
+using virgil::service::data::VirgilUniqueTicket;
 
-#include <virgil/service/data/marshalling/VirgilAsn1DataMarshaller.h>
-using virgil::service::data::marshalling::VirgilAsn1DataMarshaller;
-
-#include <virgil/service/data/VirgilUserInfoTicket.h>
-using virgil::service::data::VirgilUserInfoTicket;
+#include <virgil/service/data/VirgilInfoTicketType.h>
+#include <virgil/service/data/VirgilInfoTicket.h>
+using virgil::service::data::VirgilInfoTicket;
 
 int print_usage(std::ostream& out, const char *programName) {
-    out << "Usage: " << programName << " <first_name> <last_name> <format> <out>" << std::endl;
-    out << "    <first_name> - [in]  user's first name" << std::endl;
-    out << "    <last_name>  - [in]  user's last name" << std::endl;
+    out << "Usage: " << programName << " <class_name> <type> <value> <out>" << std::endl;
+    out << "    <class_name> - [in]  ticket class: (info_ticket | unique_ticket)" << std::endl;
+    out << "    <type>       - [in]  ticket type (email | phone | first_name | ...)" << std::endl;
+    out << "    <value>      - [in]  ticket value (any)" << std::endl;
     out << "    <format>     - [in]  marshalling format: json | asn1" << std::endl;
-    out << "    <out>        - [out] file with marshalled user info" << std::endl;
     return -1;
 }
 
@@ -75,55 +74,48 @@ int main(int argc, char **argv) {
         return print_usage(std::cerr, programName);
     }
 
-    // Parse argument: first_name
+    // Parse argument: class_name
     ++currArgPos;
-    VirgilByteArray firstName = VIRGIL_BYTE_ARRAY_FROM_STD_STRING(std::string(argv[currArgPos]));
+    std::string className = std::string(argv[currArgPos]);
 
-    // Parse argument: last_name
+    // Parse argument: type
     ++currArgPos;
-    VirgilByteArray lastName = VIRGIL_BYTE_ARRAY_FROM_STD_STRING(std::string(argv[currArgPos]));
+    std::string type = std::string(argv[currArgPos]);
+
+    // Parse argument: value
+    ++currArgPos;
+    VirgilByteArray value = VIRGIL_BYTE_ARRAY_FROM_C_STRING(argv[currArgPos]);
 
     // Parse argument: format
     ++currArgPos;
     std::string format = std::string(argv[currArgPos]);
 
-    // Parse argument: out
-    ++currArgPos;
-    std::ofstream outFile(argv[currArgPos], std::ios::out | std::ios::binary);
-    if (!outFile.is_open()) {
-        std::cerr << "Unable to open file: " <<  argv[currArgPos] << std::endl;
-        return print_usage(std::cerr, programName);
-    }
+    // Create appropriate ticket
+    VirgilTicket *ticket = 0;
+    if (className == "info_ticket") {
+        ticket = new VirgilInfoTicket(virgil_info_ticket_type_from_string(type), value);
 
-    // Create marshaller.
-    VirgilDataMarshaller *marshaller = (VirgilDataMarshaller *)0;
-    if (format == "json") {
-        marshaller = new VirgilJsonDataMarshaller();
-    } else if (format == "asn1") {
-        marshaller = new VirgilAsn1DataMarshaller();
+    } else if (className == "unique_ticket") {
+        ticket = new VirgilUniqueTicket(virgil_unique_ticket_type_from_string(type), value);
     } else {
-        std::cerr << "Unknown marshalling format was specified: " << format << std::endl;
+        std::cerr << "Unknown ticket class: " << className << std::endl;
         return print_usage(std::cerr, programName);
     }
 
-    try {
-        // Create object to be marshalled.
-        VirgilUserInfoTicket userInfoTicket(firstName, lastName, 21);
-
-        // Marshal object.
-        VirgilByteArray data = marshaller->marshal(userInfoTicket);
-
-        // Write marshalled data to file.
-        std::copy(data.begin(), data.end(), std::ostreambuf_iterator<char>(outFile));
-
-        // Dispose resources.
-        delete marshaller;
-    } catch (const std::exception& exception) {
-        std::cerr << "Marshalling failed due to exception: " << exception.what() << std::endl;
-        if (marshaller) {
-            delete marshaller;
-        }
+    // Marshal ticket.
+    VirgilByteArray data;
+    if (format == "asn1") {
+        data = ticket->toAsn1();
+    } else if (format == "json") {
+        data = ticket->toJson();
+    } else {
+        std::cerr << "Unknown format: " << format << std::endl;
+        return print_usage(std::cerr, programName);
     }
 
+    // Write marshalled data to file.
+    std::copy(data.begin(), data.end(), std::ostreambuf_iterator<char>(std::cout));
+
+    delete ticket;
     return 0;
 }

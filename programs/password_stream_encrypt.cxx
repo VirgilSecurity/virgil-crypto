@@ -53,9 +53,10 @@ using virgil::service::stream::VirgilStreamDataSink;
 
 int print_usage(std::ostream& out, const char *programName) {
     out << "Usage: " << programName << " <data> <pwd> <enc_data>" << std::endl;
-    out << "    <data>     - [in]  file to be encrypted" << std::endl;
-    out << "    <pwd>      - [in]  password" << std::endl;
-    out << "    <enc_data> - [out] encrypted data file" << std::endl;
+    out << "    <data>         - [in]  file to be encrypted" << std::endl;
+    out << "    <pwd>          - [in]  password" << std::endl;
+    out << "    <enc_data>     - [out] encrypted data file" << std::endl;
+    out << "    <content_info> - [out] encrypted data content info file" << std::endl;
     return -1;
 }
 
@@ -65,7 +66,7 @@ int main(int argc, char **argv) {
     unsigned currArgPos = 0;
 
     // Check arguments num.
-    if (argc < 4) {
+    if (argc < 5) {
         return print_usage(std::cerr, programName);
     }
 
@@ -85,12 +86,23 @@ int main(int argc, char **argv) {
     ++currArgPos;
     std::ofstream encryptedDataFile(argv[currArgPos], std::ios::out | std::ios::binary);
     if (!encryptedDataFile.is_open()) {
-        std::cerr << "Unable to open file: " << argv[currArgPos] <<  std::endl;
+        std::cerr << "Unable to open file: " <<  argv[currArgPos] << std::endl;
+        return print_usage(std::cerr, programName);
+    }
+
+    // Parse argument: content_info
+    ++currArgPos;
+    std::ofstream contentInfoFile(argv[currArgPos], std::ios::out | std::ios::binary);
+    if (!contentInfoFile.is_open()) {
+        std::cerr << "Unable to open file: " <<  argv[currArgPos] << std::endl;
         return print_usage(std::cerr, programName);
     }
 
     // Create cipher.
     VirgilStreamCipher cipher;
+
+    // Add recipients
+    cipher.addPasswordRecipient(password);
 
     // Prepare input source.
     VirgilStreamDataSource dataSource(dataFile);
@@ -99,7 +111,11 @@ int main(int argc, char **argv) {
     VirgilStreamDataSink dataSink(encryptedDataFile);
 
     // Encrypt stream.
-    cipher.encryptWithPassword(dataSource, dataSink, password);
+    cipher.encrypt(dataSource, dataSink);
+    VirgilByteArray contentInfo = cipher.getContentInfo();
+
+    // Write content info to file.
+    std::copy(contentInfo.begin(), contentInfo.end(), std::ostreambuf_iterator<char>(contentInfoFile));
 
     return 0;
 }

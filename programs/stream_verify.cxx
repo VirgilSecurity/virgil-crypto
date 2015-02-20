@@ -53,13 +53,10 @@ using virgil::service::stream::VirgilStreamDataSource;
 #include <virgil/service/data/VirgilSign.h>
 using virgil::service::data::VirgilSign;
 
-#include <virgil/service/data/marshalling/VirgilAsn1DataMarshaller.h>
-using virgil::service::data::marshalling::VirgilAsn1DataMarshaller;
-
 int print_usage(std::ostream& out, const char *programName) {
     out << "Usage: " << programName << " <data> <sign> <public_key>" << std::endl;
     out << "    <data>       - [in] data file to be verified" << std::endl;
-    out << "    <sign>       - [in] data sign file" << std::endl;
+    out << "    <sign>       - [in] file with serialized sign" << std::endl;
     out << "    <public_key> - [in] public key file" << std::endl;
     return -1;
 }
@@ -106,29 +103,41 @@ int main(int argc, char **argv) {
             std::back_inserter(publicKey));
     publicKeyFile.close();
 
-    // Create signer.
-    VirgilStreamSigner signer;
-
     // Prepare input source.
     VirgilStreamDataSource dataSource(dataFile);
 
-    VirgilSign *sign = (VirgilSign *)0;
-    try {
-        // Demarshal sign.
-        VirgilAsn1DataMarshaller marshaller;
-        sign = marshaller.demarshalSign(signData);
-
-        // Verify data.
-        bool verified = signer.verify(dataSource, *sign, publicKey);
-        std::cout << "Verified: " << (verified ? "YES" : "NO") << std::endl;
-
-        // Dispose resources.
-        delete sign;
-    } catch (const std::exception& exception) {
-        std::cerr << "Verification failed due to exception: " << exception.what() << std::endl;
-        if (sign) {
-            delete sign;
+    // Demarshal sign
+    bool signDefined = false;
+    VirgilSign sign;
+    if (!signDefined) {
+        try {
+            // Demarshal sign from ASN.1.
+            sign.fromAsn1(signData);
+            signDefined = true;
+        } catch (...) {
+            // Do nothing. Try next serialization format.
         }
+    }
+    if (!signDefined) {
+        try {
+            // Demarshal sign from JSON.
+            sign.fromJson(signData);
+            signDefined = true;
+        } catch (...) {
+            // Do nothing. Try next serialization format.
+        }
+    }
+
+    // Create signer.
+    VirgilStreamSigner signer;
+
+    if (signDefined) {
+        // Verify data.
+        bool verified = signer.verify(dataSource, sign, publicKey);
+        std::cout << "Verified: " << (verified ? "YES" : "NO") << std::endl;
+    } else {
+        std::cout << "Verified failed: Possible malformed sign." << std::endl;
+        return print_usage(std::cerr, programName);
     }
 
     return 0;

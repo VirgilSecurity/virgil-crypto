@@ -54,9 +54,10 @@ using virgil::service::stream::VirgilStreamDataSink;
 
 int print_usage(std::ostream& out, const char *programName) {
     out << "Usage: " << programName << " <enc_data> <pwd> <dec_data>" << std::endl;
-    out << "    <enc_data> - [in]  encrypted data file to be decrypted" << std::endl;
-    out << "    <pwd>      - [in]  password" << std::endl;
-    out << "    <dec_data> - [out] decrypted data file" << std::endl;
+    out << "    <enc_data>     - [in]  encrypted data file to be decrypted" << std::endl;
+    out << "    <content_info> - [in]  encrypted data content info file" << std::endl;
+    out << "    <pwd>          - [in]  password" << std::endl;
+    out << "    <dec_data>     - [out] decrypted data file" << std::endl;
     return -1;
 }
 
@@ -66,7 +67,7 @@ int main(int argc, char **argv) {
     unsigned currArgPos = 0;
 
     // Check arguments num.
-    if (argc < 4) {
+    if (argc < 3) {
         return print_usage(std::cerr, programName);
     }
 
@@ -77,6 +78,22 @@ int main(int argc, char **argv) {
         std::cerr << "Unable to open file: " <<  argv[currArgPos] << std::endl;
         return print_usage(std::cerr, programName);
     }
+    VirgilByteArray encryptedData;
+    std::copy(std::istreambuf_iterator<char>(encryptedDataFile), std::istreambuf_iterator<char>(),
+            std::back_inserter(encryptedData));
+    encryptedDataFile.close();
+
+    // Parse argument: content_info
+    ++currArgPos;
+    std::ifstream contentInfoFile(argv[currArgPos], std::ios::in | std::ios::binary);
+    if (!contentInfoFile.is_open()) {
+        std::cerr << "Unable to open file: " <<  argv[currArgPos] << std::endl;
+        return print_usage(std::cerr, programName);
+    }
+    VirgilByteArray contentInfo;
+    std::copy(std::istreambuf_iterator<char>(contentInfoFile), std::istreambuf_iterator<char>(),
+            std::back_inserter(contentInfo));
+    contentInfoFile.close();
 
     // Parse argument: pwd
     ++currArgPos;
@@ -92,6 +109,9 @@ int main(int argc, char **argv) {
 
     // Create cipher.
     VirgilStreamCipher cipher;
+
+    // Set content info
+    cipher.setContentInfo(contentInfo);
 
     // Prepare input source.
     VirgilStreamDataSource dataSource(encryptedDataFile);

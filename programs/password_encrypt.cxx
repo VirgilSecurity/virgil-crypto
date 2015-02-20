@@ -46,14 +46,12 @@ using virgil::VirgilByteArray;
 #include <virgil/service/VirgilCipher.h>
 using virgil::service::VirgilCipher;
 
-#include <virgil/service/VirgilCipherDatagram.h>
-using virgil::service::VirgilCipherDatagram;
-
 int print_usage(std::ostream& out, const char *programName) {
     out << "Usage: " << programName << " <data> <pwd> <enc_data>" << std::endl;
-    out << "    <data>     - [in]  string to be encrypted" << std::endl;
-    out << "    <pwd>      - [in]  password" << std::endl;
-    out << "    <enc_data> - [out] encrypted data file" << std::endl;
+    out << "    <data>         - [in]  string to be encrypted" << std::endl;
+    out << "    <pwd>          - [in]  password" << std::endl;
+    out << "    <enc_data>     - [out] encrypted data file" << std::endl;
+    out << "    <content_info> - [out] encrypted data content info file" << std::endl;
     return -1;
 }
 
@@ -63,7 +61,7 @@ int main(int argc, char **argv) {
     unsigned currArgPos = 0;
 
     // Check arguments num.
-    if (argc < 4) {
+    if (argc < 5) {
         return print_usage(std::cerr, programName);
     }
 
@@ -83,14 +81,29 @@ int main(int argc, char **argv) {
         return print_usage(std::cerr, programName);
     }
 
+    // Parse argument: content_info
+    ++currArgPos;
+    std::ofstream contentInfoFile(argv[currArgPos], std::ios::out | std::ios::binary);
+    if (!contentInfoFile.is_open()) {
+        std::cerr << "Unable to open file: " <<  argv[currArgPos] << std::endl;
+        return print_usage(std::cerr, programName);
+    }
+
     // Create cipher.
     VirgilCipher cipher;
 
+    // Add recipients
+    cipher.addPasswordRecipient(password);
+
     // Encrypt data.
-    VirgilByteArray encryptedData = cipher.encryptWithPassword(data, password);
+    VirgilByteArray encryptedData = cipher.encrypt(data);
+    VirgilByteArray contentInfo = cipher.getContentInfo();
 
     // Write encrypted data to file.
     std::copy(encryptedData.begin(), encryptedData.end(), std::ostreambuf_iterator<char>(encryptedDataFile));
+
+    // Write content info to file.
+    std::copy(contentInfo.begin(), contentInfo.end(), std::ostreambuf_iterator<char>(contentInfoFile));
 
     return 0;
 }

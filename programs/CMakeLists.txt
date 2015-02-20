@@ -36,7 +36,13 @@
 
 cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 
-include_directories (${virgil_SOURCE_DIR}/include)
+# Define variables
+set (VIRGIL_LIB_NAME virgil)
+
+# Add include directory of wrapped module
+include_directories (${${VIRGIL_LIB_NAME}_SOURCE_DIR}/include)
+include_directories (${${VIRGIL_LIB_NAME}_BINARY_DIR}/include)
+include_directories (${CMAKE_CURRENT_BINARY_DIR}/../lib/jsoncpp/include)
 
 aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR} SRC_LIST)
 

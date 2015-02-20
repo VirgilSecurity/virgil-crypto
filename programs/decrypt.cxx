@@ -49,7 +49,7 @@ using virgil::service::VirgilCipher;
 int print_usage(std::ostream& out, const char *programName) {
     out << "Usage: " << programName << " <enc_data> <enc_key> <private_key> <private_key_pwd>" << std::endl;
     out << "    <enc_data>        - [in] encrypted data file to be decrypted" << std::endl;
-    out << "    <enc_key>         - [in] encryption key file" << std::endl;
+    out << "    <content_info>    - [in] encrypted data content info file" << std::endl;
     out << "    <private_key>     - [in] private key file" << std::endl;
     out << "    <private_key_pwd> - [in] private key password" << std::endl;
     return -1;
@@ -77,17 +77,17 @@ int main(int argc, char **argv) {
             std::back_inserter(encryptedData));
     encryptedDataFile.close();
 
-    // Parse argument: enc_key
+    // Parse argument: content_info
     ++currArgPos;
-    std::ifstream encryptionKeyFile(argv[currArgPos], std::ios::in | std::ios::binary);
-    if (!encryptionKeyFile.is_open()) {
+    std::ifstream contentInfoFile(argv[currArgPos], std::ios::in | std::ios::binary);
+    if (!contentInfoFile.is_open()) {
         std::cerr << "Unable to open file: " <<  argv[currArgPos] << std::endl;
         return print_usage(std::cerr, programName);
     }
-    VirgilByteArray encryptionKey;
-    std::copy(std::istreambuf_iterator<char>(encryptionKeyFile), std::istreambuf_iterator<char>(),
-            std::back_inserter(encryptionKey));
-    encryptionKeyFile.close();
+    VirgilByteArray contentInfo;
+    std::copy(std::istreambuf_iterator<char>(contentInfoFile), std::istreambuf_iterator<char>(),
+            std::back_inserter(contentInfo));
+    contentInfoFile.close();
 
     // Parse argument: private_key
     ++currArgPos;
@@ -103,16 +103,19 @@ int main(int argc, char **argv) {
 
     // Parse argument: private_key_pwd
     ++currArgPos;
-    VirgilByteArray privateKeyPassword = VIRGIL_BYTE_ARRAY_FROM_STD_STRING(std::string(argv[currArgPos]));
+    VirgilByteArray privateKeyPassword = VIRGIL_BYTE_ARRAY_FROM_C_STRING(argv[currArgPos]);
 
     // Create cipher.
     VirgilCipher cipher;
 
-    // Decrypt.
-    VirgilByteArray decryptedData = cipher.decrypt(encryptedData, encryptionKey, privateKey, privateKeyPassword);
+    // Set encrypted data header.
+    cipher.setContentInfo(contentInfo);
 
-    // Print decrypted data.
-    std::cout << VIRGIL_BYTE_ARRAY_TO_STD_STRING(decryptedData) << std::endl;
+    // Decrypt.
+    VirgilByteArray decryptedData = cipher.decryptWithKey(encryptedData, privateKey, privateKeyPassword);
+
+    // Out decrypted data.
+    std::copy(decryptedData.begin(), decryptedData.end(), std::ostreambuf_iterator<char>(std::cout));
 
     return 0;
 }

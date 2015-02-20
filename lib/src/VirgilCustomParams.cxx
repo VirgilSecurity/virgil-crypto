@@ -120,7 +120,7 @@ void VirgilCustomParams::removeData(const VirgilByteArray& key) {
 }
 
 
-size_t VirgilCustomParams::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilCustomParams::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     std::vector<VirgilByteArray> keyValues;
 
     for (std::map<VirgilByteArray, int>::const_iterator it = intValues_.begin();
@@ -166,7 +166,7 @@ size_t VirgilCustomParams::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childW
     return len + childWrittenBytes;
 }
 
-void VirgilCustomParams::readAsn1(VirgilAsn1Reader& asn1Reader) {
+void VirgilCustomParams::asn1Read(VirgilAsn1Reader& asn1Reader) {
     intValues_.clear();
     stringValues_.clear();
     dataValues_.clear();

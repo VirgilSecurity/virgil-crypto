@@ -54,17 +54,17 @@ VirgilByteArray VirgilCertificate::publicKey() const {
 VirgilCertificate::~VirgilCertificate() throw() {
 }
 
-size_t VirgilCertificate::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilCertificate::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = 0;
     writtenBytes += asn1Writer.writeOctetString(publicKey_);
-    writtenBytes += id().writeAsn1(asn1Writer);
+    writtenBytes += id().asn1Write(asn1Writer);
     writtenBytes += asn1Writer.writeSequence(writtenBytes + childWrittenBytes);
     return writtenBytes + childWrittenBytes;
 }
 
-void VirgilCertificate::readAsn1(VirgilAsn1Reader& asn1Reader) {
+void VirgilCertificate::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
-    id().readAsn1(asn1Reader);
+    id().asn1Read(asn1Reader);
     publicKey_ = asn1Reader.readOctetString();
 }
 

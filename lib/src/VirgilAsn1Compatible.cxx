@@ -50,13 +50,13 @@ using virgil::crypto::VirgilCryptoException;
 
 VirgilByteArray VirgilAsn1Compatible::toAsn1() const {
     VirgilAsn1Writer asn1Writer;
-    (void)writeAsn1(asn1Writer);
+    (void)asn1Write(asn1Writer);
     return asn1Writer.finish();
 }
 
 void VirgilAsn1Compatible::fromAsn1(const VirgilByteArray& asn1) {
     VirgilAsn1Reader asn1Reader(asn1);
-    readAsn1(asn1Reader);
+    asn1Read(asn1Reader);
 }
 
 

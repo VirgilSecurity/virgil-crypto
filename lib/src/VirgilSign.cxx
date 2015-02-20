@@ -72,19 +72,19 @@ VirgilByteArray VirgilSign::signerCertificateId() const {
     return signerCertificateId_;
 }
 
-size_t VirgilSign::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilSign::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = 0;
     writtenBytes += asn1Writer.writeOctetString(signedDigest_);
     writtenBytes += asn1Writer.writeUTF8String(signerCertificateId_);
     writtenBytes += asn1Writer.writeUTF8String(hashName_);
-    writtenBytes += id().writeAsn1(asn1Writer);
+    writtenBytes += id().asn1Write(asn1Writer);
     writtenBytes += asn1Writer.writeSequence(writtenBytes + childWrittenBytes);
     return writtenBytes + childWrittenBytes;
 }
 
-void VirgilSign::readAsn1(VirgilAsn1Reader& asn1Reader) {
+void VirgilSign::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
-    id().readAsn1(asn1Reader);
+    id().asn1Read(asn1Reader);
     hashName_ = asn1Reader.readUTF8String();
     signerCertificateId_ = asn1Reader.readUTF8String();
     signedDigest_ = asn1Reader.readOctetString();

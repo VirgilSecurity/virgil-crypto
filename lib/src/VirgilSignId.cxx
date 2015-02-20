@@ -55,13 +55,13 @@ void VirgilSignId::setSignId(const VirgilByteArray& signId) {
     signId_ = signId;
 }
 
-size_t VirgilSignId::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilSignId::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = asn1Writer.writeUTF8String(signId_);
-    return VirgilTicketId::writeAsn1(asn1Writer, writtenBytes + childWrittenBytes);
+    return VirgilTicketId::asn1Write(asn1Writer, writtenBytes + childWrittenBytes);
 }
 
-void VirgilSignId::readAsn1(VirgilAsn1Reader& asn1Reader) {
-    VirgilTicketId::readAsn1(asn1Reader);
+void VirgilSignId::asn1Read(VirgilAsn1Reader& asn1Reader) {
+    VirgilTicketId::asn1Read(asn1Reader);
     signId_ = asn1Reader.readUTF8String();
 }
 

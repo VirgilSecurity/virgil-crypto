@@ -360,13 +360,13 @@ void VirgilPBE::checkState() const {
     }
 }
 
-size_t VirgilPBE::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilPBE::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     checkState();
     size_t len = asn1Writer.writeData(impl_->algId);
     return len + childWrittenBytes;
 }
 
-void VirgilPBE::readAsn1(VirgilAsn1Reader& asn1Reader) {
+void VirgilPBE::asn1Read(VirgilAsn1Reader& asn1Reader) {
     if (impl_) {
         delete impl_;
     }

@@ -61,7 +61,7 @@ static const unsigned char kCMS_EncryptedContentTag = 0;
 VirgilCMSEncryptedContent::~VirgilCMSEncryptedContent() throw() {
 }
 
-size_t VirgilCMSEncryptedContent::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilCMSEncryptedContent::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t len = 0;
     if (!encryptedContent.empty()) {
         size_t encryptedContentLen = asn1Writer.writeOctetString(encryptedContent);
@@ -78,7 +78,7 @@ size_t VirgilCMSEncryptedContent::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t
     return len + childWrittenBytes;
 }
 
-void VirgilCMSEncryptedContent::readAsn1(VirgilAsn1Reader& asn1Reader) {
+void VirgilCMSEncryptedContent::asn1Read(VirgilAsn1Reader& asn1Reader) {
     (void)asn1Reader.readSequence();
     (void)asn1Reader.readOID(); // Ignore OID
     contentEncryptionAlgorithm = asn1Reader.readData();

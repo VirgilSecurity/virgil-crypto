@@ -67,8 +67,8 @@ public:
      *     certfificateId UTF8String
      */
     ///@{
-    virtual size_t writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
-    virtual void readAsn1(VirgilAsn1Reader& asn1Reader);
+    virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
+    virtual void asn1Read(VirgilAsn1Reader& asn1Reader);
     ///@}
     /**
      * @name VirgilJsonCompatible implementation

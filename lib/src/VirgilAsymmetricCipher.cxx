@@ -371,7 +371,7 @@ bool VirgilAsymmetricCipher::verify(const VirgilByteArray& hash, const VirgilByt
             VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(hash), VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(sign)) == 0;
 }
 
-size_t VirgilAsymmetricCipher::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilAsymmetricCipher::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     checkState();
     const char *oid = 0;
     size_t oidLen;
@@ -385,7 +385,7 @@ size_t VirgilAsymmetricCipher::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t ch
     return len + childWrittenBytes;
 }
 
-void VirgilAsymmetricCipher::readAsn1(VirgilAsn1Reader& asn1Reader) {
+void VirgilAsymmetricCipher::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
     std::string oid = asn1Reader.readOID();
 

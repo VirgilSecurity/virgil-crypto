@@ -125,17 +125,17 @@ bool VirgilInfoTicket::isInfoTicket() const {
     return true;
 }
 
-size_t VirgilInfoTicket::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilInfoTicket::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = 0;
     writtenBytes += asn1Writer.writeUTF8String(value_);
     writtenBytes += asn1Writer.writeUTF8String(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(gInfoTicketTypeConverter(type_)));
     writtenBytes += asn1Writer.writeUTF8String(VIRGIL_BYTE_ARRAY_FROM_C_STRING(kInfoTicket_ClassName));
 
-    return VirgilTicket::writeAsn1(asn1Writer, writtenBytes + childWrittenBytes);
+    return VirgilTicket::asn1Write(asn1Writer, writtenBytes + childWrittenBytes);
 }
 
-void VirgilInfoTicket::readAsn1(VirgilAsn1Reader& asn1Reader) {
-    VirgilTicket::readAsn1(asn1Reader);
+void VirgilInfoTicket::asn1Read(VirgilAsn1Reader& asn1Reader) {
+    VirgilTicket::asn1Read(asn1Reader);
     if (VIRGIL_BYTE_ARRAY_TO_STD_STRING(asn1Reader.readUTF8String()) != std::string(kInfoTicket_ClassName)) {
         throw VirgilException(std::string("VirgilInfoTicket: ") +
                 "Wrong class name for this class.");

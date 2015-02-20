@@ -59,23 +59,23 @@ static const unsigned char kCMS_CustomParamsTag = 0;
 VirgilContentInfo::~VirgilContentInfo() throw() {
 }
 
-size_t VirgilContentInfo::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilContentInfo::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t len = 0;
     if (!customParams.empty()) {
-        len += customParams.writeAsn1(asn1Writer);
+        len += customParams.asn1Write(asn1Writer);
         len += asn1Writer.writeContextTag(kCMS_CustomParamsTag, len);
     }
 
-    len += cmsContent.writeAsn1(asn1Writer);
+    len += cmsContent.asn1Write(asn1Writer);
     len += asn1Writer.writeSequence(len);
 
     return len + childWrittenBytes;
 }
 
-void VirgilContentInfo::readAsn1(VirgilAsn1Reader& asn1Reader) {
+void VirgilContentInfo::asn1Read(VirgilAsn1Reader& asn1Reader) {
     (void)asn1Reader.readSequence();
-    cmsContent.readAsn1(asn1Reader);
+    cmsContent.asn1Read(asn1Reader);
     if (asn1Reader.readContextTag(kCMS_CustomParamsTag) > 0) {
-        customParams.readAsn1(asn1Reader);
+        customParams.asn1Read(asn1Reader);
     }
 }

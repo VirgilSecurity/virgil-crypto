@@ -55,13 +55,13 @@ void VirgilTicketId::setTicketId(const VirgilByteArray& ticketId) {
     ticketId_ = ticketId;
 }
 
-size_t VirgilTicketId::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilTicketId::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = asn1Writer.writeUTF8String(ticketId_);
-    return VirgilCertificateId::writeAsn1(asn1Writer, writtenBytes + childWrittenBytes);
+    return VirgilCertificateId::asn1Write(asn1Writer, writtenBytes + childWrittenBytes);
 }
 
-void VirgilTicketId::readAsn1(VirgilAsn1Reader& asn1Reader) {
-    VirgilCertificateId::readAsn1(asn1Reader);
+void VirgilTicketId::asn1Read(VirgilAsn1Reader& asn1Reader) {
+    VirgilCertificateId::asn1Read(asn1Reader);
     ticketId_ = asn1Reader.readUTF8String();
 }
 

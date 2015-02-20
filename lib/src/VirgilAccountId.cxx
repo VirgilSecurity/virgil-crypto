@@ -55,13 +55,13 @@ void VirgilAccountId::setAccountId(const VirgilByteArray& accountId) {
     accountId_ = accountId;
 }
 
-size_t VirgilAccountId::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilAccountId::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = asn1Writer.writeUTF8String(accountId_);
-    return VirgilId::writeAsn1(asn1Writer, writtenBytes + childWrittenBytes);
+    return VirgilId::asn1Write(asn1Writer, writtenBytes + childWrittenBytes);
 }
 
-void VirgilAccountId::readAsn1(VirgilAsn1Reader& asn1Reader) {
-    VirgilId::readAsn1(asn1Reader);
+void VirgilAccountId::asn1Read(VirgilAsn1Reader& asn1Reader) {
+    VirgilId::asn1Read(asn1Reader);
     accountId_ = asn1Reader.readUTF8String();
 }
 

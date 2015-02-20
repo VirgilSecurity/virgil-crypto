@@ -146,7 +146,7 @@ void VirgilKDF::checkState() const {
     }
 }
 
-size_t VirgilKDF::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilKDF::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     checkState();
 
     size_t len = 0;
@@ -173,7 +173,7 @@ size_t VirgilKDF::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenByt
     return len + childWrittenBytes;
 }
 
-void VirgilKDF::readAsn1(VirgilAsn1Reader& asn1Reader) {
+void VirgilKDF::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1_buf oidAsn1Buf;
     std::string oid;
 

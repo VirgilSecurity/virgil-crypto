@@ -266,7 +266,7 @@ void VirgilHash::checkState() const {
     }
 }
 
-size_t VirgilHash::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilHash::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     checkState();
     const char *oid = 0;
     size_t oidLen;
@@ -280,7 +280,7 @@ size_t VirgilHash::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBy
     return len + childWrittenBytes;
 }
 
-void VirgilHash::readAsn1(VirgilAsn1Reader& asn1Reader) {
+void VirgilHash::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
     std::string oid = asn1Reader.readOID();
 

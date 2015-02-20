@@ -47,11 +47,11 @@ using virgil::VirgilByteArray;
 static const char *kJsonKey_Id = "id";
 ///@}
 
-size_t VirgilId::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilId::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     return asn1Writer.writeSequence(childWrittenBytes) + childWrittenBytes;
 }
 
-void VirgilId::readAsn1(VirgilAsn1Reader& asn1Reader) {
+void VirgilId::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
 }
 

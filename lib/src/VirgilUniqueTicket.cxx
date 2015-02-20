@@ -125,17 +125,17 @@ bool VirgilUniqueTicket::isUniqueTicket() const {
     return true;
 }
 
-size_t VirgilUniqueTicket::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilUniqueTicket::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = 0;
     writtenBytes += asn1Writer.writeUTF8String(value_);
     writtenBytes += asn1Writer.writeUTF8String(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(gUniqueTicketTypeConverter(type_)));
     writtenBytes += asn1Writer.writeUTF8String(VIRGIL_BYTE_ARRAY_FROM_C_STRING(kUniqueTicket_ClassName));
 
-    return VirgilTicket::writeAsn1(asn1Writer, writtenBytes + childWrittenBytes);
+    return VirgilTicket::asn1Write(asn1Writer, writtenBytes + childWrittenBytes);
 }
 
-void VirgilUniqueTicket::readAsn1(VirgilAsn1Reader& asn1Reader) {
-    VirgilTicket::readAsn1(asn1Reader);
+void VirgilUniqueTicket::asn1Read(VirgilAsn1Reader& asn1Reader) {
+    VirgilTicket::asn1Read(asn1Reader);
     VirgilByteArray className = asn1Reader.readUTF8String();
     if (className != VIRGIL_BYTE_ARRAY_FROM_C_STRING(kUniqueTicket_ClassName)) {
         throw VirgilException(std::string("VirgilUniqueTicket: ") +

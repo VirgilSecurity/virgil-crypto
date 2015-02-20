@@ -65,7 +65,7 @@ static const unsigned char kCMS_OtherRecipientTag = 4;
 VirgilCMSEnvelopedData::~VirgilCMSEnvelopedData() throw() {
 }
 
-size_t VirgilCMSEnvelopedData::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilCMSEnvelopedData::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t len = 0;
     // encryptedContentInfo
     len += asn1Writer.writeData(encryptedContent.toAsn1());
@@ -93,7 +93,7 @@ size_t VirgilCMSEnvelopedData::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t ch
     return len + childWrittenBytes;
 }
 
-void VirgilCMSEnvelopedData::readAsn1(VirgilAsn1Reader& asn1Reader) {
+void VirgilCMSEnvelopedData::asn1Read(VirgilAsn1Reader& asn1Reader) {
     keyTransRecipients.clear();
     passwordRecipients.clear();
 

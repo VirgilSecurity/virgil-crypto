@@ -142,16 +142,16 @@ const VirgilInfoTicket& VirgilTicket::asUserInfoTicket() const {
     return dynamic_cast<const VirgilInfoTicket&>(*this);
 }
 
-size_t VirgilTicket::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilTicket::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = 0;
-    writtenBytes += id().writeAsn1(asn1Writer);
+    writtenBytes += id().asn1Write(asn1Writer);
     writtenBytes += asn1Writer.writeSequence(writtenBytes + childWrittenBytes);
     return writtenBytes + childWrittenBytes;
 }
 
-void VirgilTicket::readAsn1(VirgilAsn1Reader& asn1Reader) {
+void VirgilTicket::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
-    id().readAsn1(asn1Reader);
+    id().asn1Read(asn1Reader);
 }
 
 Json::Value VirgilTicket::jsonWrite(Json::Value& childValue) const {

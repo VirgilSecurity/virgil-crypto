@@ -284,7 +284,7 @@ void VirgilSymmetricCipher::checkState() const {
     }
 }
 
-size_t VirgilSymmetricCipher::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+size_t VirgilSymmetricCipher::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     checkState();
     const char *oid = 0;
     size_t oidLen;
@@ -298,7 +298,7 @@ size_t VirgilSymmetricCipher::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t chi
     return len + childWrittenBytes;
 }
 
-void VirgilSymmetricCipher::readAsn1(VirgilAsn1Reader& asn1Reader) {
+void VirgilSymmetricCipher::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
     std::string oid = asn1Reader.readOID();
 

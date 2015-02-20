@@ -72,12 +72,12 @@ protected:
      * @param childWrittenBytes count of bytes that was written by subclasses.
      * @retrun Writen bytes count.
      */
-    virtual size_t writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const = 0;
+    virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const = 0;
     /**
      * @brief Read object state from the reader.
      * @param asn1Reader reader payloaded with ASN.1 to be read.
      */
-    virtual void readAsn1(VirgilAsn1Reader& asn1Reader) = 0;
+    virtual void asn1Read(VirgilAsn1Reader& asn1Reader) = 0;
     /**
      * @brief If given parameter is empty exception will be thrown.
      * @throw virgil::crypto::VirgilCryptoException.

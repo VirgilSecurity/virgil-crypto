@@ -128,14 +128,14 @@ const VirgilUniqueTicket& VirgilTicket::asUniqueTicket() const {
 
 bool VirgilTicket::isInfoTicket() const { return false; }
 
-VirgilInfoTicket& VirgilTicket::asUserInfoTicket() {
+VirgilInfoTicket& VirgilTicket::asInfoTicket() {
     if (!isInfoTicket()) {
         throw VirgilException("Dynamic cast error from VirgilTicket to VirgilInfoTicket.");
     }
     return dynamic_cast<VirgilInfoTicket&>(*this);
 }
 
-const VirgilInfoTicket& VirgilTicket::asUserInfoTicket() const {
+const VirgilInfoTicket& VirgilTicket::asInfoTicket() const {
     if (!isInfoTicket()) {
         throw VirgilException("Dynamic cast error from VirgilTicket to VirgilInfoTicket.");
     }

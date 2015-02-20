@@ -93,8 +93,8 @@ public:
      * @return current obect with type cast to VirgilInfoTicket.
      * @exception VirgilException if isInfoTicket() returns false.
      */
-    VirgilInfoTicket& asUserInfoTicket();
-    const VirgilInfoTicket& asUserInfoTicket() const;
+    VirgilInfoTicket& asInfoTicket();
+    const VirgilInfoTicket& asInfoTicket() const;
     /**
      * @name VirgilAsn1Compatible implementation
      *

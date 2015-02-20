@@ -37,12 +37,12 @@
 #include <virgil/service/data/VirgilInfoTicket.h>
 using virgil::service::data::VirgilInfoTicket;
 
+#include <virgil/service/data/VirgilInfoTicketType.h>
+
 #include <virgil/VirgilException.h>
 using virgil::VirgilException;
 
-#include <map>
 #include <string>
-#include <sstream>
 
 /**
  * @name JSON Keys
@@ -58,49 +58,6 @@ static const char *kJsonKey_Value = "value";
 ///@{
 static const char *kInfoTicket_ClassName = "info_ticket";
 ///@}
-
-class InfoTicketTypeConverter {
-private:
-public:
-    InfoTicketTypeConverter() {
-        toString_[VirgilInfoTicketType_FirstName] = "first_name";
-        toString_[VirgilInfoTicketType_LastName] = "last_name";
-        toString_[VirgilInfoTicketType_MiddleName] = "middle_name";
-        toString_[VirgilInfoTicketType_Nickname] = "nickname";
-        toString_[VirgilInfoTicketType_BirthDate] = "birth_date";
-
-        std::map<VirgilInfoTicketType, std::string>::const_iterator toStringIt = toString_.begin();
-        for (; toStringIt != toString_.end(); ++toStringIt) {
-            toType_[toStringIt->second] = toStringIt->first;
-        }
-    }
-
-    VirgilInfoTicketType operator()(const std::string& name) const {
-        std::map<std::string, VirgilInfoTicketType>::const_iterator it = toType_.find(name);
-        if (it == toType_.end()) {
-            std::ostringstream message;
-            message << "VirgilInfoTicketType: cannot find type for given name: " << name << ".";
-            throw VirgilException(message.str());
-        }
-        return it->second;
-    }
-
-    std::string operator()(VirgilInfoTicketType type) const {
-        std::map<VirgilInfoTicketType, std::string>::const_iterator it = toString_.find(type);
-        if (it == toString_.end()) {
-            std::ostringstream message;
-            message << "VirgilInfoTicketType: cannot find name for given type: " << type << ".";
-            throw VirgilException(message.str());
-        }
-        return it->second;
-    }
-private:
-    std::map<VirgilInfoTicketType, std::string> toString_;
-    std::map<std::string, VirgilInfoTicketType> toType_;
-};
-
-static const InfoTicketTypeConverter gInfoTicketTypeConverter;
-
 
 VirgilInfoTicket::VirgilInfoTicket()
         : type_(VirgilInfoTicketType_None), value_() {
@@ -128,7 +85,8 @@ bool VirgilInfoTicket::isInfoTicket() const {
 size_t VirgilInfoTicket::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = 0;
     writtenBytes += asn1Writer.writeUTF8String(value_);
-    writtenBytes += asn1Writer.writeUTF8String(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(gInfoTicketTypeConverter(type_)));
+    writtenBytes += asn1Writer.writeUTF8String(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(
+            virgil_info_ticket_type_to_string(type_)));
     writtenBytes += asn1Writer.writeUTF8String(VIRGIL_BYTE_ARRAY_FROM_C_STRING(kInfoTicket_ClassName));
 
     return VirgilTicket::asn1Write(asn1Writer, writtenBytes + childWrittenBytes);
@@ -140,13 +98,13 @@ void VirgilInfoTicket::asn1Read(VirgilAsn1Reader& asn1Reader) {
         throw VirgilException(std::string("VirgilInfoTicket: ") +
                 "Wrong class name for this class.");
     }
-    type_ = gInfoTicketTypeConverter(VIRGIL_BYTE_ARRAY_TO_STD_STRING(asn1Reader.readUTF8String()));
+    type_ = virgil_info_ticket_type_from_string(VIRGIL_BYTE_ARRAY_TO_STD_STRING(asn1Reader.readUTF8String()));
     value_ = asn1Reader.readUTF8String();
 }
 
 Json::Value VirgilInfoTicket::jsonWrite(Json::Value& childValue) const {
     childValue[kJsonKey_ClassName] = kInfoTicket_ClassName;
-    childValue[kJsonKey_Type] = gInfoTicketTypeConverter(type_);
+    childValue[kJsonKey_Type] = virgil_info_ticket_type_to_string(type_);
     childValue[kJsonKey_Value] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(value_);
     return VirgilTicket::jsonWrite(childValue);
 }
@@ -157,7 +115,7 @@ Json::Value VirgilInfoTicket::jsonRead(const Json::Value& parentValue) {
         throw VirgilException(std::string("VirgilInfoTicket: ") +
                 "Wrong class name for this class.");
     }
-    type_ = gInfoTicketTypeConverter(jsonGetString(childValue, kJsonKey_Type));
+    type_ = virgil_info_ticket_type_from_string(jsonGetString(childValue, kJsonKey_Type));
     value_ = jsonGetStringAsByteArray(childValue, kJsonKey_Value);
     return childValue;
 }

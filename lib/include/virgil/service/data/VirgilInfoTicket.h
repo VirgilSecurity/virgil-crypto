@@ -34,26 +34,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_DATA_VIRGIL_INFO_TICKET_H
-#define VIRGIL_DATA_VIRGIL_INFO_TICKET_H
+#ifndef VIRGIL_SERVICE_DATA_VIRGIL_INFO_TICKET_H
+#define VIRGIL_SERVICE_DATA_VIRGIL_INFO_TICKET_H
 
 #include <virgil/service/data/VirgilTicket.h>
 using virgil::service::data::VirgilTicket;
 
+#include <virgil/service/data/VirgilInfoTicketType.h>
+
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
-
-/**
- * @brief VirgilInfoTicket types
- */
-typedef enum {
-    VirgilInfoTicketType_None = 0,
-    VirgilInfoTicketType_FirstName,
-    VirgilInfoTicketType_LastName,
-    VirgilInfoTicketType_MiddleName,
-    VirgilInfoTicketType_Nickname,
-    VirgilInfoTicketType_BirthDate
-} VirgilInfoTicketType;
 
 namespace virgil { namespace service { namespace data {
 
@@ -131,4 +121,4 @@ private:
 
 }}}
 
-#endif /* VIRGIL_DATA_VIRGIL_ID_TICKET_H */
+#endif /* VIRGIL_SERVICE_DATA_VIRGIL_INFO_TICKET_H */

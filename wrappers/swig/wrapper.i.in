@@ -68,6 +68,13 @@
 #endif
 %enddef
 
+%define INCLUDE_TYPE(typeName, includePath)
+%insert("header") %{
+#include <includePath/typeName.h>
+%}
+%include <includePath/typeName.h>
+%enddef
+
 %define INCLUDE_CLASS(className, package, includePath)
 DEFINE_NAMESPACE(className, package)
 %insert("header") %{
@@ -249,7 +256,9 @@ INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilIdProvider, virgil::service::data, vir
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilAccount, virgil::service::data, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCertificate, virgil::service::data, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilTicket, virgil::service::data, virgil/service/data)
+INCLUDE_TYPE(VirgilUniqueTicketType, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilUniqueTicket, virgil::service::data, virgil/service/data)
+INCLUDE_TYPE(VirgilInfoTicketType, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilInfoTicket, virgil::service::data, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilSign, virgil::service::data, virgil/service/data)
 ///@}

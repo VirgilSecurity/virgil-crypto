@@ -37,12 +37,12 @@
 #include <virgil/service/data/VirgilUniqueTicket.h>
 using virgil::service::data::VirgilUniqueTicket;
 
+#include <virgil/service/data/VirgilUniqueTicketType.h>
+
 #include <virgil/VirgilException.h>
 using virgil::VirgilException;
 
-#include <map>
 #include <string>
-#include <sstream>
 
 /**
  * @name JSON Keys
@@ -58,49 +58,6 @@ static const char *kJsonKey_Value = "value";
 ///@{
 static const char *kUniqueTicket_ClassName = "unique_ticket";
 ///@}
-
-class UniqueTicketTypeConverter {
-private:
-public:
-    UniqueTicketTypeConverter() {
-        toString_[VirgilUniqueTicketType_Email] = "email";
-        toString_[VirgilUniqueTicketType_Phone] = "phone";
-        toString_[VirgilUniqueTicketType_Fax] = "fax";
-        toString_[VirgilUniqueTicketType_Domain] = "domain";
-        toString_[VirgilUniqueTicketType_MacAddress] = "mac_address";
-        toString_[VirgilUniqueTicketType_Application] = "application";
-
-        std::map<VirgilUniqueTicketType, std::string>::const_iterator toStringIt = toString_.begin();
-        for (; toStringIt != toString_.end(); ++toStringIt) {
-            toType_[toStringIt->second] = toStringIt->first;
-        }
-    }
-
-    VirgilUniqueTicketType operator()(const std::string& name) const {
-        std::map<std::string, VirgilUniqueTicketType>::const_iterator it = toType_.find(name);
-        if (it == toType_.end()) {
-            std::ostringstream message;
-            message << "VirgilUniqueTicketType: cannot find type for given name: " << name << ".";
-            throw VirgilException(message.str());
-        }
-        return it->second;
-    }
-
-    std::string operator()(VirgilUniqueTicketType type) const {
-        std::map<VirgilUniqueTicketType, std::string>::const_iterator it = toString_.find(type);
-        if (it == toString_.end()) {
-            std::ostringstream message;
-            message << "VirgilUniqueTicketType: cannot find name for given type: " << type << ".";
-            throw VirgilException(message.str());
-        }
-        return it->second;
-    }
-private:
-    std::map<VirgilUniqueTicketType, std::string> toString_;
-    std::map<std::string, VirgilUniqueTicketType> toType_;
-};
-
-static const UniqueTicketTypeConverter gUniqueTicketTypeConverter;
 
 VirgilUniqueTicket::VirgilUniqueTicket()
         : type_(VirgilUniqueTicketType_None), value_() {
@@ -128,7 +85,8 @@ bool VirgilUniqueTicket::isUniqueTicket() const {
 size_t VirgilUniqueTicket::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = 0;
     writtenBytes += asn1Writer.writeUTF8String(value_);
-    writtenBytes += asn1Writer.writeUTF8String(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(gUniqueTicketTypeConverter(type_)));
+    writtenBytes += asn1Writer.writeUTF8String(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(
+            virgil_unique_ticket_type_to_string(type_)));
     writtenBytes += asn1Writer.writeUTF8String(VIRGIL_BYTE_ARRAY_FROM_C_STRING(kUniqueTicket_ClassName));
 
     return VirgilTicket::asn1Write(asn1Writer, writtenBytes + childWrittenBytes);
@@ -141,13 +99,13 @@ void VirgilUniqueTicket::asn1Read(VirgilAsn1Reader& asn1Reader) {
         throw VirgilException(std::string("VirgilUniqueTicket: ") +
                 "Wrong class name for this class: " + VIRGIL_BYTE_ARRAY_TO_STD_STRING(className));
     }
-    type_ = gUniqueTicketTypeConverter(VIRGIL_BYTE_ARRAY_TO_STD_STRING(asn1Reader.readUTF8String()));
+    type_ = virgil_unique_ticket_type_from_string(VIRGIL_BYTE_ARRAY_TO_STD_STRING(asn1Reader.readUTF8String()));
     value_ = asn1Reader.readUTF8String();
 }
 
 Json::Value VirgilUniqueTicket::jsonWrite(Json::Value& childValue) const {
     childValue[kJsonKey_ClassName] = kUniqueTicket_ClassName;
-    childValue[kJsonKey_Type] = gUniqueTicketTypeConverter(type_);
+    childValue[kJsonKey_Type] = virgil_unique_ticket_type_to_string(type_);
     childValue[kJsonKey_Value] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(value_);
     return VirgilTicket::jsonWrite(childValue);
 }
@@ -158,7 +116,7 @@ Json::Value VirgilUniqueTicket::jsonRead(const Json::Value& parentValue) {
         throw VirgilException(std::string("VirgilUniqueTicket: ") +
                 "Wrong class name for this class.");
     }
-    type_ = gUniqueTicketTypeConverter(jsonGetString(childValue, kJsonKey_Type));
+    type_ = virgil_unique_ticket_type_from_string(jsonGetString(childValue, kJsonKey_Type));
     value_ = jsonGetStringAsByteArray(childValue, kJsonKey_Value);
     return childValue;
 }

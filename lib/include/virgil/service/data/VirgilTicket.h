@@ -43,10 +43,13 @@ using virgil::service::data::VirgilIdProvider;
 #include <virgil/service/data/VirgilTicketId.h>
 using virgil::service::data::VirgilTicketId;
 
+#include <virgil/VirgilByteArray.h>
+using virgil::VirgilByteArray;
+
 namespace virgil { namespace service { namespace data {
 
-class VirgilUserIdTicket;
-class VirgilUserInfoTicket;
+class VirgilUniqueTicket;
+class VirgilInfoTicket;
 
 /**
  * @brief This base class for all Virgil Security tickets.
@@ -56,32 +59,79 @@ class VirgilUserInfoTicket;
 class VirgilTicket : public VirgilIdProvider<VirgilTicketId> {
 public:
     /**
+     * @name Factory methods
+     * @warning Returned object SHOULD be released by the caller.
+     */
+    ///@{
+    /**
+     * @brief Create ticket from the ASN.1.
+     */
+    static VirgilTicket* createFromAsn1(const VirgilByteArray& asn1);
+    /**
+     * @brief Create ticket from the JSON.
+     */
+    static VirgilTicket* createFromJson(const VirgilByteArray& json);
+    ///@}
+public:
+    /**
+     * @return true if underlying ticket is VirgilUniqueTicket class object.
+     * @note Default implementation returns false.
+     */
+    virtual bool isUniqueTicket() const;
+    /**
+     * @return current obect with type cast to VirgilUniqueTicket.
+     * @exception VirgilException if isUniqueTicket() returns false.
+     */
+    VirgilUniqueTicket& asUniqueTicket();
+    const VirgilUniqueTicket& asUniqueTicket() const;
+    /**
+     * @return true if underlying ticket is VirgilInfoTicket class object.
+     * @note Default implementation returns false.
+     */
+    virtual bool isInfoTicket() const;
+    /**
+     * @return current obect with type cast to VirgilInfoTicket.
+     * @exception VirgilException if isInfoTicket() returns false.
+     */
+    VirgilInfoTicket& asUserInfoTicket();
+    const VirgilInfoTicket& asUserInfoTicket() const;
+    /**
+     * @name VirgilAsn1Compatible implementation
+     *
+     * Marshalling format:
+     *     VirgilTicket ::= SEQUENCE {
+     *         id VirgilTicketId
+     *     }
+     *     VirgilTicketId ::= SEQUENCE {
+     *         accountId UTF8String,
+     *         certificateId UTF8String,
+     *         ticketId UTF8String
+     *     }
+     */
+    ///@{
+    virtual size_t writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
+    virtual void readAsn1(VirgilAsn1Reader& asn1Reader);
+    ///@}
+    /**
+     * @name VirgilJsonCompatible implementation
+     *
+     * Marshalling format:
+     *    {
+     *        "id" : {
+     *            "account_id" : "UTF8String",
+     *            "certificate_id" : "UTF8String",
+     *            "ticket_id" : "UTF8String"
+     *        }
+     *    }
+     */
+    ///@{
+    virtual Json::Value jsonWrite(Json::Value& childObject) const;
+    virtual Json::Value jsonRead(const Json::Value& parentValue);
+    ///@}
+    /**
      * @brief Polymorphic destructor.
      */
     virtual ~VirgilTicket() throw();
-    /**
-     * @return true if underlying ticket is VirgilUserIdTicket class object.
-     * @note Default implementation returns false.
-     */
-    virtual bool isUserIdTicket() const;
-    /**
-     * @return current obect with type cast to VirgilUserIdTicket.
-     * @exception VirgilException if isUserIdTicket() returns false.
-     */
-    VirgilUserIdTicket& asUserIdTicket();
-    const VirgilUserIdTicket& asUserIdTicket() const;
-    /**
-     * @return true if underlying ticket is VirgilUserInfoTicket class object.
-     * @note Default implementation returns false.
-     */
-    virtual bool isUserInfoTicket() const;
-    /**
-     * @return current obect with type cast to VirgilUserInfoTicket.
-     * @exception VirgilException if isUserInfoTicket() returns false.
-     */
-    VirgilUserInfoTicket& asUserInfoTicket();
-    const VirgilUserInfoTicket& asUserInfoTicket() const;
-
 };
 
 }}}

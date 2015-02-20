@@ -49,9 +49,6 @@ using virgil::service::data::VirgilCertificate;
 #include <virgil/service/data/VirgilTicket.h>
 using virgil::service::data::VirgilTicket;
 
-#include <virgil/service/stream/VirgilDataSource.h>
-using virgil::service::stream::VirgilDataSource;
-
 namespace virgil { namespace service {
 
 /**

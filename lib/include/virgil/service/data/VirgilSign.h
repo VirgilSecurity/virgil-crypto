@@ -54,6 +54,13 @@ namespace virgil { namespace service { namespace data {
 class VirgilSign : public VirgilIdProvider<VirgilSignId> {
 public:
     /**
+     * @brief Configures ticket with type VirgilInfoTicketType_None and with empty value.
+     * @note Use this constructor only in conjuction with demarshalling methods.
+     * @see fromAsn1()
+     * @see fromJson()
+     */
+    VirgilSign();
+    /**
      * @brief Initialize data object.
      * @param hashName - identification name of the hash algorithm (MD5, SHA256, SHA512, etc),
      *                   that was used during sign process.
@@ -78,6 +85,47 @@ public:
      * @brief Return signer's certificate.
      */
     VirgilByteArray signerCertificateId() const;
+    /**
+     * @name VirgilAsn1Compatible implementation
+     *
+     * Marshalling format:
+     *     VirgilSign ::= SEQUENCE {
+     *         id VirgilSignId,
+     *         hashName UTF8String,
+     *         signerCertificateId UTF8String
+     *         signedDigest OCTET STRING,
+     *     }
+     *     VirgilSignId ::= SEQUENCE {
+     *         accountId UTF8String,
+     *         certificateId UTF8String,
+     *         ticketId UTF8String,
+     *         signId UTF8String
+     *     }
+     */
+    ///@{
+    virtual size_t writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
+    virtual void readAsn1(VirgilAsn1Reader& asn1Reader);
+    ///@}
+    /**
+     * @name VirgilJsonCompatible implementation
+     *
+     * Marshalling format:
+     *    {
+     *       "id" : {
+     *          "account_id" : "UTF8String",
+     *          "certificate_id" : "UTF8String",
+     *          "ticket_id" : "UTF8String",
+     *          "sign_id" : "UTF8String"
+     *       },
+     *       "hash_name" : "UTF8String",
+     *       "signed_digest" : "Base64String",
+     *       "signer_certificate_id" : "UTF8String"
+     *    }
+     */
+    ///@{
+    virtual Json::Value jsonWrite(Json::Value& childObject) const;
+    virtual Json::Value jsonRead(const Json::Value& parentValue);
+    ///@}
 private:
     VirgilByteArray hashName_;
     VirgilByteArray signedDigest_;

@@ -37,6 +37,13 @@
 #include <virgil/service/data/VirgilCertificate.h>
 using virgil::service::data::VirgilCertificate;
 
+/**
+ * @name JSON Keys
+ */
+///@{
+static const char *kJsonKey_PublicKey = "public_key";
+///@}
+
 VirgilCertificate::VirgilCertificate(const VirgilByteArray& publicKey) : publicKey_(publicKey) {
 }
 
@@ -45,4 +52,31 @@ VirgilByteArray VirgilCertificate::publicKey() const {
 }
 
 VirgilCertificate::~VirgilCertificate() throw() {
+}
+
+size_t VirgilCertificate::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+    size_t writtenBytes = 0;
+    writtenBytes += asn1Writer.writeOctetString(publicKey_);
+    writtenBytes += id().writeAsn1(asn1Writer);
+    writtenBytes += asn1Writer.writeSequence(writtenBytes + childWrittenBytes);
+    return writtenBytes + childWrittenBytes;
+}
+
+void VirgilCertificate::readAsn1(VirgilAsn1Reader& asn1Reader) {
+    asn1Reader.readSequence();
+    id().readAsn1(asn1Reader);
+    publicKey_ = asn1Reader.readOctetString();
+}
+
+Json::Value VirgilCertificate::jsonWrite(Json::Value& childValue) const {
+    Json::Value idChildrenValue(Json::objectValue);
+    Json::Value idValue = id().jsonWrite(idChildrenValue);
+    childValue[kJsonKey_PublicKey] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(publicKey_);
+    return jsonMergeObjects(childValue, idValue);
+}
+
+Json::Value VirgilCertificate::jsonRead(const Json::Value& parentValue) {
+    (void)id().jsonRead(parentValue);
+    publicKey_ = jsonGetStringAsByteArray(parentValue, kJsonKey_PublicKey);
+    return parentValue;
 }

@@ -1,0 +1,205 @@
+<?php
+/**
+ * Copyright (C) 2014 Virgil Security Inc.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     (1) Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *     (2) Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in
+ *     the documentation and/or other materials provided with the
+ *     distribution.
+ *
+ *     (3) Neither the name of the copyright holder nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+include_once "@PHP_MODULE_FILE_NAME@";
+
+/**
+ * @covers ASN.1 and JSON marshalling algorithms
+ */
+class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
+
+    public function test_account_asn1_marshalling_demarshalling() {
+        $this->check_object_asn1_marshalling_demarshalling(
+            new VirgilAccount(),
+            file_get_contents("data/asn1_account.der")
+        );
+    }
+
+    public function test_account_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilAccount(),
+            file_get_contents("data/json_account.json")
+        );
+    }
+
+    public function test_certificate_asn1_marshalling_demarshalling() {
+        $this->check_object_asn1_marshalling_demarshalling(
+            new VirgilCertificate(),
+            file_get_contents("data/asn1_certificate.der")
+        );
+    }
+
+    public function test_certificate_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilCertificate(),
+            file_get_contents("data/json_certificate.json")
+        );
+    }
+
+    public function test_sign_asn1_marshalling_demarshalling() {
+        $this->check_object_asn1_marshalling_demarshalling(
+            new VirgilSign(),
+            file_get_contents("data/asn1_sign.der")
+        );
+    }
+
+    public function test_sign_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilSign(),
+            file_get_contents("data/json_sign.json")
+        );
+    }
+
+    public function test_unique_ticket_email_asn1_marshalling_demarshalling() {
+        $this->check_object_asn1_marshalling_demarshalling(
+            new VirgilUniqueTicket(),
+            file_get_contents("data/asn1_unique_ticket_email.der")
+        );
+    }
+
+    public function test_unique_ticket_email_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilUniqueTicket(),
+            file_get_contents("data/json_unique_ticket_email.json")
+        );
+    }
+
+    public function test_unique_ticket_phone_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilUniqueTicket(),
+            file_get_contents("data/json_unique_ticket_phone.json")
+        );
+    }
+
+    public function test_unique_ticket_fax_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilUniqueTicket(),
+            file_get_contents("data/json_unique_ticket_fax.json")
+        );
+    }
+
+    public function test_unique_ticket_domain_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilUniqueTicket(),
+            file_get_contents("data/json_unique_ticket_domain.json")
+        );
+    }
+
+    public function test_unique_ticket_application_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilUniqueTicket(),
+            file_get_contents("data/json_unique_ticket_application.json")
+        );
+    }
+
+    public function test_unique_ticket_mac_address_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilUniqueTicket(),
+            file_get_contents("data/json_unique_ticket_mac_address.json")
+        );
+    }
+
+    public function test_unique_ticket_phone_asn1_marshalling_demarshalling() {
+        $this->check_object_asn1_marshalling_demarshalling(
+            new VirgilUniqueTicket(),
+            file_get_contents("data/asn1_unique_ticket_phone.der")
+        );
+    }
+
+    public function test_unique_ticket_fax_asn1_marshalling_demarshalling() {
+        $this->check_object_asn1_marshalling_demarshalling(
+            new VirgilUniqueTicket(),
+            file_get_contents("data/asn1_unique_ticket_fax.der")
+        );
+    }
+
+    public function test_info_ticket_first_name_asn1_marshalling_demarshalling() {
+        $this->check_object_asn1_marshalling_demarshalling(
+            new VirgilInfoTicket(),
+            file_get_contents("data/asn1_info_ticket_first_name.der")
+        );
+    }
+
+    public function test_info_ticket_first_name_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilInfoTicket(),
+            file_get_contents("data/json_info_ticket_first_name.json")
+        );
+    }
+
+    public function test_info_ticket_last_name_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilInfoTicket(),
+            file_get_contents("data/json_info_ticket_last_name.json")
+        );
+    }
+
+    public function test_info_ticket_middle_name_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilInfoTicket(),
+            file_get_contents("data/json_info_ticket_middle_name.json")
+        );
+    }
+
+    public function test_info_ticket_nickname_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilInfoTicket(),
+            file_get_contents("data/json_info_ticket_nickname.json")
+        );
+    }
+
+    public function test_info_ticket_birth_date_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilInfoTicket(),
+            file_get_contents("data/json_info_ticket_birth_date.json")
+        );
+    }
+
+    private function check_object_asn1_marshalling_demarshalling($obj, $asn1Base) {
+        $obj->fromAsn1($asn1Base);
+        $asn1 = $obj->toAsn1();
+        $this->assertEquals($asn1Base, $asn1);
+    }
+
+    private function check_object_json_marshalling_demarshalling($obj, $jsonBase) {
+        $obj->fromJson($jsonBase);
+        $json = $obj->toJson();
+        $this->assertEquals($jsonBase, $json);
+    }
+}
+
+?>

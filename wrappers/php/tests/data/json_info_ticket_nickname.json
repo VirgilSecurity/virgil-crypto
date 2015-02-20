@@ -1,12 +1,10 @@
 {
-   "data" : {
-      "user_id" : "user@domain.com",
-      "user_id_type" : "email"
-   },
+   "class_name" : "info_ticket",
    "id" : {
       "account_id" : "USER-1234",
       "certificate_id" : "CERT-1234",
       "ticket_id" : "TICKET-1234"
    },
-   "type" : "user_id_ticket"
+   "type" : "nickname",
+   "value" : "BestMan"
 }

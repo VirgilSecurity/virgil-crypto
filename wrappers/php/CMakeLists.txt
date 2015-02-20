@@ -61,7 +61,7 @@ configure_file (
 
 set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY CPLUSPLUS ON)
 set_property (
-    SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-includeall" "-ignoremissing"
+    SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing"
 )
 
 swig_add_module (${PHP_MODULE_NAME} php5 "${WRAPPER_INTERFACE_FILE}")

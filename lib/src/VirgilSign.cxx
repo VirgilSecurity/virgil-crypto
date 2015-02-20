@@ -40,6 +40,18 @@ using virgil::service::data::VirgilSign;
 #include <virgil/service/data/VirgilCertificate.h>
 using virgil::service::data::VirgilCertificate;
 
+/**
+ * @name JSON Keys
+ */
+///@{
+static const char *kJsonKey_HashName = "hash_name";
+static const char *kJsonKey_SignedDigest = "signed_digest";
+static const char *kJsonKey_SignerCertificateId = "signer_certificate_id";
+///@}
+
+VirgilSign::VirgilSign() {
+}
+
 VirgilSign::VirgilSign(const VirgilByteArray& hashName, const VirgilByteArray& signedDigest,
                 const VirgilByteArray& signerCertificateId)
         : hashName_(hashName), signedDigest_(signedDigest), signerCertificateId_(signerCertificateId) {
@@ -58,4 +70,39 @@ VirgilByteArray VirgilSign::signedDigest() const {
 
 VirgilByteArray VirgilSign::signerCertificateId() const {
     return signerCertificateId_;
+}
+
+size_t VirgilSign::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+    size_t writtenBytes = 0;
+    writtenBytes += asn1Writer.writeOctetString(signedDigest_);
+    writtenBytes += asn1Writer.writeUTF8String(signerCertificateId_);
+    writtenBytes += asn1Writer.writeUTF8String(hashName_);
+    writtenBytes += id().writeAsn1(asn1Writer);
+    writtenBytes += asn1Writer.writeSequence(writtenBytes + childWrittenBytes);
+    return writtenBytes + childWrittenBytes;
+}
+
+void VirgilSign::readAsn1(VirgilAsn1Reader& asn1Reader) {
+    asn1Reader.readSequence();
+    id().readAsn1(asn1Reader);
+    hashName_ = asn1Reader.readUTF8String();
+    signerCertificateId_ = asn1Reader.readUTF8String();
+    signedDigest_ = asn1Reader.readOctetString();
+}
+
+Json::Value VirgilSign::jsonWrite(Json::Value& childValue) const {
+    Json::Value idChildrenValue(Json::objectValue);
+    Json::Value idValue = id().jsonWrite(idChildrenValue);
+    childValue[kJsonKey_HashName] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(hashName_);
+    childValue[kJsonKey_SignedDigest] = jsonRawDataToValue(signedDigest_);
+    childValue[kJsonKey_SignerCertificateId] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(signerCertificateId_);
+    return jsonMergeObjects(childValue, idValue);
+}
+
+Json::Value VirgilSign::jsonRead(const Json::Value& parentValue) {
+    (void)id().jsonRead(parentValue);
+    hashName_ = jsonGetStringAsByteArray(parentValue, kJsonKey_HashName);
+    signedDigest_ = jsonRawDataFromValue(parentValue[kJsonKey_SignedDigest]);
+    signerCertificateId_ = jsonGetStringAsByteArray(parentValue, kJsonKey_SignerCertificateId);
+    return parentValue;
 }

@@ -46,9 +46,6 @@ using virgil::service::data::VirgilSign;
 #include <virgil/service/data/VirgilTicket.h>
 using virgil::service::data::VirgilTicket;
 
-#include <virgil/service/data/marshalling/VirgilAsn1DataMarshaller.h>
-using virgil::service::data::marshalling::VirgilAsn1DataMarshaller;
-
 #include <virgil/crypto/VirgilHash.h>
 using virgil::crypto::VirgilHash;
 
@@ -80,8 +77,7 @@ VirgilSign VirgilSigner::sign(VirgilTicket& ticket, const VirgilByteArray& signe
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
     VirgilHash hash = VirgilHash::sha256();
 
-    VirgilAsn1DataMarshaller marshaller;
-    VirgilByteArray digest = hash.hash(marshaller.marshal(ticket));
+    VirgilByteArray digest = hash.hash(ticket.toAsn1());
 
     VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
     cipher.setPrivateKey(privateKey, privateKeyPassword);
@@ -93,8 +89,7 @@ VirgilSign VirgilSigner::sign(VirgilTicket& ticket, const VirgilByteArray& signe
 bool VirgilSigner::verify(VirgilTicket& ticket, const VirgilSign& sign, const VirgilByteArray& publicKey) {
     VirgilHash hash = VirgilHash::withName(sign.hashName());
 
-    VirgilAsn1DataMarshaller marshaller;
-    VirgilByteArray digest = hash.hash(marshaller.marshal(ticket));
+    VirgilByteArray digest = hash.hash(ticket.toAsn1());
 
     VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
     cipher.setPublicKey(publicKey);

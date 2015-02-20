@@ -40,10 +40,38 @@ using virgil::service::data::VirgilAccountId;
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
+/**
+ * @name JSON Keys
+ */
+///@{
+static const char *kJsonKey_AccountId = "account_id";
+///@}
+
 VirgilByteArray VirgilAccountId::accountId() const {
     return accountId_;
 }
 
 void VirgilAccountId::setAccountId(const VirgilByteArray& accountId) {
     accountId_ = accountId;
+}
+
+size_t VirgilAccountId::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+    size_t writtenBytes = asn1Writer.writeUTF8String(accountId_);
+    return VirgilId::writeAsn1(asn1Writer, writtenBytes + childWrittenBytes);
+}
+
+void VirgilAccountId::readAsn1(VirgilAsn1Reader& asn1Reader) {
+    VirgilId::readAsn1(asn1Reader);
+    accountId_ = asn1Reader.readUTF8String();
+}
+
+Json::Value VirgilAccountId::jsonWrite(Json::Value& childValue) const {
+    childValue[kJsonKey_AccountId] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(accountId_);
+    return VirgilId::jsonWrite(childValue);
+}
+
+Json::Value VirgilAccountId::jsonRead(const Json::Value& parentValue) {
+    Json::Value childValue = VirgilId::jsonRead(parentValue);
+    accountId_ = jsonGetStringAsByteArray(childValue, kJsonKey_AccountId);
+    return childValue;
 }

@@ -37,13 +37,16 @@
 #ifndef VIRGIL_DATA_VIRGIL_ID_PROVIDER_H
 #define VIRGIL_DATA_VIRGIL_ID_PROVIDER_H
 
+#include <virgil/service/data/VirgilJsonCompatible.h>
+using virgil::service::data::VirgilJsonCompatible;
+
 namespace virgil { namespace service { namespace data {
 
 /**
  * @brief This class provides template with identifier accessors.
  */
 template <typename ID>
-class VirgilIdProvider {
+class VirgilIdProvider : public VirgilJsonCompatible {
 public:
     /**
      * @name Accessors

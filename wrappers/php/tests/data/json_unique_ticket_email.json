@@ -1,12 +1,10 @@
 {
-   "data" : {
-      "user_id" : "+1 777 777 7777",
-      "user_id_type" : "fax"
-   },
+   "class_name" : "unique_ticket",
    "id" : {
       "account_id" : "USER-1234",
       "certificate_id" : "CERT-1234",
       "ticket_id" : "TICKET-1234"
    },
-   "type" : "user_id_ticket"
+   "type" : "email",
+   "value" : "user@domain.com"
 }

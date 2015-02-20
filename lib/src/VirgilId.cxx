@@ -34,19 +34,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/data/VirgilUserIdTicket.h>
-using virgil::service::data::VirgilUserIdTicket;
+#include "virgil/service/data/VirgilId.h"
+using virgil::service::data::VirgilId;
 
-#include <virgil/service/data/VirgilUserIdType.h>
-using virgil::service::data::VirgilUserIdType;
+#include <virgil/VirgilByteArray.h>
+using virgil::VirgilByteArray;
 
-VirgilUserIdTicket::VirgilUserIdTicket(const VirgilByteArray& userId, const VirgilUserIdType& userIdType)
-        : userId_(userId), userIdType_(userIdType) {}
+/**
+ * @name JSON Keys
+ */
+///@{
+static const char *kJsonKey_Id = "id";
+///@}
 
-VirgilUserIdTicket::~VirgilUserIdTicket() throw() {}
+size_t VirgilId::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+    return asn1Writer.writeSequence(childWrittenBytes) + childWrittenBytes;
+}
 
-VirgilByteArray VirgilUserIdTicket::userId() const { return userId_; }
+void VirgilId::readAsn1(VirgilAsn1Reader& asn1Reader) {
+    asn1Reader.readSequence();
+}
 
-const VirgilUserIdType& VirgilUserIdTicket::userIdType() const { return userIdType_; }
+Json::Value VirgilId::jsonWrite(Json::Value& childValue) const {
+    Json::Value idObject(Json::objectValue);
+    idObject[kJsonKey_Id] = childValue;
+    return idObject;
+}
 
-bool VirgilUserIdTicket::isUserIdTicket() const { return true; }
+Json::Value VirgilId::jsonRead(const Json::Value& parentValue) {
+    return parentValue[kJsonKey_Id];
+}

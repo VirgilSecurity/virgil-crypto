@@ -51,6 +51,35 @@ namespace virgil { namespace service { namespace data {
 class VirgilAccount : public VirgilIdProvider<VirgilAccountId> {
 public:
     /**
+     * @name VirgilAsn1Compatible implementation
+     *
+     * Marshalling format:
+     *     VirgilAccount ::= SEQUENCE {
+     *         id VirgilAccountId
+     *     }
+     *     VirgilAccountId ::= SEQUENCE {
+     *         accountId UTF8String
+     *     }
+     */
+    ///@{
+    virtual size_t writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
+    virtual void readAsn1(VirgilAsn1Reader& asn1Reader);
+    ///@}
+    /**
+     * @name VirgilJsonCompatible implementation
+     *
+     * Marshalling format:
+     *    {
+     *        "id" : {
+     *            "account_id" : "UTF8String"
+     *        }
+     *    }
+     */
+    ///@{
+    virtual Json::Value jsonWrite(Json::Value& childObject) const;
+    virtual Json::Value jsonRead(const Json::Value& parentValue);
+    ///@}
+    /**
      * @brief Polymorphic destructor.
      */
     virtual ~VirgilAccount() throw();

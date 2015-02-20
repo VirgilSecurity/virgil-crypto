@@ -52,6 +52,7 @@ set (WRAPPED_LIB_NAME virgil)
 # Add include directory of wrapped module
 include_directories (${${WRAPPED_LIB_NAME}_SOURCE_DIR}/include)
 include_directories (${${WRAPPED_LIB_NAME}_BINARY_DIR}/include)
+include_directories (${CMAKE_CURRENT_BINARY_DIR}/../lib/jsoncpp/include)
 include_directories (swig)
 
 # Add wrappers

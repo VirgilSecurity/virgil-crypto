@@ -40,6 +40,13 @@ using virgil::service::data::VirgilCertificateId;
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
+/**
+ * @name JSON Keys
+ */
+///@{
+static const char *kJsonKey_CertificateId = "certificate_id";
+///@}
+
 VirgilByteArray VirgilCertificateId::certificateId() const {
     return certificateId_;
 }
@@ -47,3 +54,26 @@ VirgilByteArray VirgilCertificateId::certificateId() const {
 void VirgilCertificateId::setCertificateId(const VirgilByteArray& certificateId) {
     certificateId_ = certificateId;
 }
+
+size_t VirgilCertificateId::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+    size_t writtenBytes = asn1Writer.writeUTF8String(certificateId_);
+    return VirgilAccountId::writeAsn1(asn1Writer, writtenBytes + childWrittenBytes);
+}
+
+void VirgilCertificateId::readAsn1(VirgilAsn1Reader& asn1Reader) {
+    VirgilAccountId::readAsn1(asn1Reader);
+    certificateId_ = asn1Reader.readUTF8String();
+}
+
+Json::Value VirgilCertificateId::jsonWrite(Json::Value& childValue) const {
+    childValue[kJsonKey_CertificateId] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(certificateId_);
+    return VirgilAccountId::jsonWrite(childValue);
+}
+
+Json::Value VirgilCertificateId::jsonRead(const Json::Value& parentValue) {
+    Json::Value childValue = VirgilAccountId::jsonRead(parentValue);
+    certificateId_ = jsonGetStringAsByteArray(childValue, kJsonKey_CertificateId);
+    return childValue;
+}
+
+

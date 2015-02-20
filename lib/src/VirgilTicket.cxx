@@ -37,45 +37,130 @@
 #include <virgil/service/data/VirgilTicket.h>
 using virgil::service::data::VirgilTicket;
 
-#include <virgil/service/data/VirgilUserIdTicket.h>
-using virgil::service::data::VirgilUserIdTicket;
+#include <virgil/service/data/VirgilUniqueTicket.h>
+using virgil::service::data::VirgilUniqueTicket;
 
-#include <virgil/service/data/VirgilUserInfoTicket.h>
-using virgil::service::data::VirgilUserInfoTicket;
+#include <virgil/service/data/VirgilInfoTicket.h>
+using virgil::service::data::VirgilInfoTicket;
 
 #include <virgil/VirgilException.h>
 using virgil::VirgilException;
 
+#include <string>
+
+VirgilTicket * VirgilTicket::createFromAsn1(const VirgilByteArray& asn1) {
+    VirgilTicket *ticket = 0;
+    std::string what;
+    if (ticket == 0) {
+        try {
+            ticket = new VirgilUniqueTicket();
+            ticket->fromAsn1(asn1);
+        } catch (const VirgilException& exception) {
+            delete ticket;
+            ticket = 0;
+            what = exception.what();
+        }
+    }
+    if (ticket == 0) {
+        try {
+            ticket = new VirgilInfoTicket();
+            ticket->fromAsn1(asn1);
+        } catch (const VirgilException& exception) {
+            delete ticket;
+            ticket = 0;
+            what = exception.what();
+        }
+    }
+    if (ticket == 0) {
+        throw VirgilException(what);
+    }
+    return ticket;
+}
+
+VirgilTicket * VirgilTicket::createFromJson(const VirgilByteArray& json) {
+    VirgilTicket *ticket = 0;
+    std::string what;
+    if (ticket == 0) {
+        try {
+            ticket = new VirgilUniqueTicket();
+            ticket->fromJson(json);
+        } catch (const VirgilException& exception) {
+            delete ticket;
+            ticket = 0;
+            what = exception.what();
+        }
+    }
+    if (ticket == 0) {
+        try {
+            ticket = new VirgilInfoTicket();
+            ticket->fromJson(json);
+        } catch (const VirgilException& exception) {
+            delete ticket;
+            ticket = 0;
+            what = exception.what();
+        }
+    }
+    if (ticket == 0) {
+        throw VirgilException("No ticket was found. Reason: " + what);
+    }
+    return ticket;
+}
+
+
+
 VirgilTicket::~VirgilTicket() throw() {}
 
-bool VirgilTicket::isUserIdTicket() const { return false; }
+bool VirgilTicket::isUniqueTicket() const { return false; }
 
-VirgilUserIdTicket& VirgilTicket::asUserIdTicket() {
-    if (!isUserIdTicket()) {
-        throw VirgilException("Dynamic cast error from VirgilTicket to VirgilUserIdTicket.");
+VirgilUniqueTicket& VirgilTicket::asUniqueTicket() {
+    if (!isUniqueTicket()) {
+        throw VirgilException("Dynamic cast error from VirgilTicket to VirgilUniqueTicket.");
     }
-    return dynamic_cast<VirgilUserIdTicket&>(*this);
+    return dynamic_cast<VirgilUniqueTicket&>(*this);
 }
 
-const VirgilUserIdTicket& VirgilTicket::asUserIdTicket() const {
-    if (!isUserIdTicket()) {
-        throw VirgilException("Dynamic cast error from VirgilTicket to VirgilUserIdTicket.");
+const VirgilUniqueTicket& VirgilTicket::asUniqueTicket() const {
+    if (!isUniqueTicket()) {
+        throw VirgilException("Dynamic cast error from VirgilTicket to VirgilUniqueTicket.");
     }
-    return dynamic_cast<const VirgilUserIdTicket&>(*this);
+    return dynamic_cast<const VirgilUniqueTicket&>(*this);
 }
 
-bool VirgilTicket::isUserInfoTicket() const { return false; }
+bool VirgilTicket::isInfoTicket() const { return false; }
 
-VirgilUserInfoTicket& VirgilTicket::asUserInfoTicket() {
-    if (!isUserInfoTicket()) {
-        throw VirgilException("Dynamic cast error from VirgilTicket to VirgilUserInfoTicket.");
+VirgilInfoTicket& VirgilTicket::asUserInfoTicket() {
+    if (!isInfoTicket()) {
+        throw VirgilException("Dynamic cast error from VirgilTicket to VirgilInfoTicket.");
     }
-    return dynamic_cast<VirgilUserInfoTicket&>(*this);
+    return dynamic_cast<VirgilInfoTicket&>(*this);
 }
 
-const VirgilUserInfoTicket& VirgilTicket::asUserInfoTicket() const {
-    if (!isUserInfoTicket()) {
-        throw VirgilException("Dynamic cast error from VirgilTicket to VirgilUserInfoTicket.");
+const VirgilInfoTicket& VirgilTicket::asUserInfoTicket() const {
+    if (!isInfoTicket()) {
+        throw VirgilException("Dynamic cast error from VirgilTicket to VirgilInfoTicket.");
     }
-    return dynamic_cast<const VirgilUserInfoTicket&>(*this);
+    return dynamic_cast<const VirgilInfoTicket&>(*this);
+}
+
+size_t VirgilTicket::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+    size_t writtenBytes = 0;
+    writtenBytes += id().writeAsn1(asn1Writer);
+    writtenBytes += asn1Writer.writeSequence(writtenBytes + childWrittenBytes);
+    return writtenBytes + childWrittenBytes;
+}
+
+void VirgilTicket::readAsn1(VirgilAsn1Reader& asn1Reader) {
+    asn1Reader.readSequence();
+    id().readAsn1(asn1Reader);
+}
+
+Json::Value VirgilTicket::jsonWrite(Json::Value& childValue) const {
+    Json::Value idChildrenValue(Json::objectValue);
+    Json::Value idValue = id().jsonWrite(idChildrenValue);
+    return jsonMergeObjects(childValue, idValue);
+}
+
+Json::Value VirgilTicket::jsonRead(const Json::Value& parentValue) {
+    id().jsonRead(parentValue);
+    return parentValue;
 }

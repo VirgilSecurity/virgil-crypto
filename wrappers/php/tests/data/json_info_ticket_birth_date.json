@@ -1,0 +1,10 @@
+{
+   "class_name" : "info_ticket",
+   "id" : {
+      "account_id" : "USER-1234",
+      "certificate_id" : "CERT-1234",
+      "ticket_id" : "TICKET-1234"
+   },
+   "type" : "birth_date",
+   "value" : "01/01/2000"
+}

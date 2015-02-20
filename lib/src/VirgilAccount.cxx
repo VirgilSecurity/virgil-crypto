@@ -40,3 +40,25 @@ using virgil::service::data::VirgilAccount;
 VirgilAccount::~VirgilAccount() throw() {
 }
 
+size_t VirgilAccount::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+    size_t writtenBytes = 0;
+    writtenBytes += id().writeAsn1(asn1Writer);
+    writtenBytes += asn1Writer.writeSequence(writtenBytes + childWrittenBytes);
+    return writtenBytes + childWrittenBytes;
+}
+
+void VirgilAccount::readAsn1(VirgilAsn1Reader& asn1Reader) {
+    asn1Reader.readSequence();
+    id().readAsn1(asn1Reader);
+}
+
+Json::Value VirgilAccount::jsonWrite(Json::Value& childValue) const {
+    Json::Value idChildrenValue(Json::objectValue);
+    Json::Value idValue = id().jsonWrite(idChildrenValue);
+    return jsonMergeObjects(childValue, idValue);
+}
+
+Json::Value VirgilAccount::jsonRead(const Json::Value& parentValue) {
+    (void)id().jsonRead(parentValue);
+    return parentValue;
+}

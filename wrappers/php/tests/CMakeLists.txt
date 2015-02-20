@@ -51,8 +51,7 @@ set (TEST_FILE_LIST
     VirgilSigner_Test.php
     VirgilAsn1Reader_Test.php
     VirgilAsn1Writer_Test.php
-    VirgilJsonDataMarshaller_Test.php
-    VirgilAsn1DataMarshaller_Test.php
+    VirgilMarshalling_Test.php
     VirgilRandom_Test.php
     VirgilPBE_Test.php
     VirgilVersion_Test.php

@@ -34,58 +34,99 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_DATA_VIRGIL_USER_ID_TICKET_H
-#define VIRGIL_DATA_VIRGIL_USER_ID_TICKET_H
+#ifndef VIRGIL_DATA_VIRGIL_INFO_TICKET_H
+#define VIRGIL_DATA_VIRGIL_INFO_TICKET_H
 
 #include <virgil/service/data/VirgilTicket.h>
 using virgil::service::data::VirgilTicket;
 
-#include <virgil/service/data/VirgilUserIdType.h>
-using virgil::service::data::VirgilUserIdType;
-
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <string>
-using std::string;
+/**
+ * @brief VirgilInfoTicket types
+ */
+typedef enum {
+    VirgilInfoTicketType_None = 0,
+    VirgilInfoTicketType_FirstName,
+    VirgilInfoTicketType_LastName,
+    VirgilInfoTicketType_MiddleName,
+    VirgilInfoTicketType_Nickname,
+    VirgilInfoTicketType_BirthDate
+} VirgilInfoTicketType;
 
 namespace virgil { namespace service { namespace data {
 
 /**
- * @brief This class describes Virgil Security ticket that contains information about user's unique identifier.
+ * @brief This class describes Virgil Security ticket that one line contains information.
  *
- * The purpose of this ticket is describe user's unique identifier as email, phone number, etc.
+ * The purpose of this ticket to describe simple user's information as first name, last name, etc.
  */
-class VirgilUserIdTicket : public VirgilTicket {
+class VirgilInfoTicket : public VirgilTicket {
 public:
     /**
-     * @brief Configures ticket with specific identifier and it's type.
+     * @brief Configures ticket with type VirgilInfoTicketType_None and with empty value.
+     * @note Use this constructor only in conjuction with demarshalling methods.
+     * @see fromAsn1()
+     * @see fromJson()
      */
-    VirgilUserIdTicket(const VirgilByteArray& userId, const VirgilUserIdType& userIdType);
+    VirgilInfoTicket();
+    /**
+     * @brief Configures ticket with specific type and value.
+     */
+    VirgilInfoTicket(VirgilInfoTicketType type, const VirgilByteArray& value);
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilUserIdTicket() throw();
+    virtual ~VirgilInfoTicket() throw();
     /**
      * @return true.
      */
-    virtual bool isUserIdTicket() const;
+    virtual bool isInfoTicket() const;
     /**
      * @name Accessors
      */
     ///@{
     /**
-     * @return user's unique identifier.
+     * @return Unique identifier.
      */
-    VirgilByteArray userId() const;
+    VirgilByteArray value() const;
     /**
-     * @return type of ticket's user identifier.
+     * @return ticket's type.
      */
-    const VirgilUserIdType& userIdType() const;
+    VirgilInfoTicketType type() const;
+    ///@}
+    /**
+     * @name VirgilAsn1Compatible implementation
+     *
+     * Marshalling format:
+     *     {
+     *         className UTF8String,
+     *         type UTF8String,
+     *         value UTF8String
+     *     }
+     */
+    ///@{
+    virtual size_t writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
+    virtual void readAsn1(VirgilAsn1Reader& asn1Reader);
+    ///@}
+    /**
+     * @name VirgilJsonCompatible implementation
+     *
+     * Marshalling format:
+     *    {
+     *        "class_name" : "UTF8String",
+     *        "type" : "UTF8String",
+     *        "value" : "Base64String"
+     *    }
+     */
+    ///@{
+    virtual Json::Value jsonWrite(Json::Value& childObject) const;
+    virtual Json::Value jsonRead(const Json::Value& parentValue);
     ///@}
 private:
-    VirgilByteArray userId_;
-    VirgilUserIdType userIdType_;
+    VirgilInfoTicketType type_;
+    VirgilByteArray value_;
 };
 
 }}}

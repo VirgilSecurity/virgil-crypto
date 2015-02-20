@@ -34,57 +34,53 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_DATA_MARCHALLING_VIRGIL_DATA_MARSHALLER_H
-#define VIRGIL_DATA_MARCHALLING_VIRGIL_DATA_MARSHALLER_H
+#ifndef VIRGIL_DATA_VIRGIL_ID_H
+#define VIRGIL_DATA_VIRGIL_ID_H
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/service/data/VirgilAccount.h>
-using virgil::service::data::VirgilAccount;
+#include <virgil/service/data/VirgilJsonCompatible.h>
+using virgil::service::data::VirgilJsonCompatible;
 
-#include <virgil/service/data/VirgilCertificate.h>
-using virgil::service::data::VirgilCertificate;
-
-#include <virgil/service/data/VirgilTicket.h>
-using virgil::service::data::VirgilTicket;
-
-#include <virgil/service/data/VirgilSign.h>
-using virgil::service::data::VirgilSign;
-
-#include <virgil/service/data/VirgilKeyPair.h>
-using virgil::service::data::VirgilKeyPair;
-
-namespace virgil { namespace service { namespace data { namespace marshalling {
+namespace virgil { namespace service { namespace data {
 
 /**
- * @brief This class provides interface for data-objects' marshalling.
+ * @brief This is common class for all unique identifiers inside Virgil Service.
  */
-class VirgilDataMarshaller {
+class VirgilId : public VirgilJsonCompatible {
 public:
     /**
-     * @name Marshaling
-     * @brief Transform object representation to data format suitable for storage or transmission.
+     * @name VirgilAsn1Compatible implementation
+     *
+     * Marshalling format:
+     *     id ::= SEQUENCE {
+     *         -- data added by subclasses
+     *     }
      */
     ///@{
-    virtual VirgilByteArray marshal(const VirgilAccount& account) = 0;
-    virtual VirgilByteArray marshal(const VirgilCertificate& certificate) = 0;
-    virtual VirgilByteArray marshal(const VirgilTicket& ticket) = 0;
-    virtual VirgilByteArray marshal(const VirgilSign& sign) = 0;
+    virtual size_t writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
+    virtual void readAsn1(VirgilAsn1Reader& asn1Reader);
     ///@}
     /**
-     * @name Demarshaling
-     * @brief Restore object representation from data format suitable for storage or transmission.
+     * @name VirgilJsonCompatible implementation
+     *
+     * Marshalling format:
+     *     {
+     *         "id" : {
+     *         }
+     *     }
      */
     ///@{
-    virtual VirgilAccount * demarshalAccount(const VirgilByteArray& data) = 0;
-    virtual VirgilCertificate * demarshalCertificate(const VirgilByteArray& data) = 0;
-    virtual VirgilTicket * demarshalTicket(const VirgilByteArray& data) = 0;
-    virtual VirgilSign * demarshalSign(const VirgilByteArray& data) = 0;
+    virtual Json::Value jsonWrite(Json::Value& childObject) const;
+    virtual Json::Value jsonRead(const Json::Value& parentValue);
     ///@}
-    virtual ~VirgilDataMarshaller() throw() {}
+    /**
+     * @brief Polymorphic destructor.
+     */
+    virtual ~VirgilId() throw() {};
 };
 
-}}}}
+}}}
 
-#endif /* VIRGIL_DATA_MARCHALLING_VIRGIL_DATA_MARSHALLER_H */
+#endif /* VIRGIL_DATA_VIRGIL_ID_H */

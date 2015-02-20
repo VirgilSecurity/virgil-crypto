@@ -1,12 +1,10 @@
 {
-   "data" : {
-      "user_id" : "virgilsecurity.com",
-      "user_id_type" : "domain"
-   },
+   "class_name" : "unique_ticket",
    "id" : {
       "account_id" : "USER-1234",
       "certificate_id" : "CERT-1234",
       "ticket_id" : "TICKET-1234"
    },
-   "type" : "user_id_ticket"
+   "type" : "phone",
+   "value" : "+1 777 666 3333"
 }

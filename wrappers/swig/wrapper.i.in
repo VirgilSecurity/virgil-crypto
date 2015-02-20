@@ -183,6 +183,26 @@ INCLUDE_CLASS(VirgilVersion, virgil, virgil)
 ///@}
 
 /**
+ * @name Package: virgil::crypto::asn1
+ */
+///@{
+INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto::asn1, virgil/crypto/asn1)
+INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto::asn1, virgil/crypto/asn1)
+INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::asn1, virgil/crypto/asn1)
+///@}
+
+/**
+ * @name Package: virgil::crypto::cms
+ */
+///@{
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSKeyTransRecipient, virgil::crypto::cms, virgil/crypto/cms)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSPasswordRecipient, virgil::crypto::cms, virgil/crypto/cms)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEncryptedContent, virgil::crypto::cms, virgil/crypto/cms)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEnvelopedData, virgil::crypto::cms, virgil/crypto/cms)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSContent, virgil::crypto::cms, virgil/crypto/cms)
+///@}
+
+/**
  * @name Package: virgil::crypto
  */
 ///@{
@@ -202,23 +222,17 @@ INCLUDE_CLASS(VirgilAsymmetricCipher, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilRandom, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilPBE, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilCustomParams, virgil::crypto, virgil/crypto)
-///@}
-
-/**
- * @name Package: virgil::crypto::asn1
- */
-///@{
-INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::asn1, virgil/crypto/asn1)
-INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto::asn1, virgil/crypto/asn1)
-INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto::asn1, virgil/crypto/asn1)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilContentInfo, virgil::crypto, virgil/crypto)
 ///@}
 
 /**
  * @name Package: virgil::service::data
  */
 ///@{
+INCLUDE_CLASS(VirgilJsonCompatible, virgil::service::data, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilKeyPair, virgil::service::data, virgil/service/data)
 
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilId, virgil::service::data, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilAccountId, virgil::service::data, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCertificateId, virgil::service::data, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilTicketId, virgil::service::data, virgil/service/data)
@@ -230,27 +244,25 @@ INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilIdProvider, virgil::service::data, vir
 %template(VirgilTicketIdProvider) virgil::service::data::VirgilIdProvider<VirgilTicketId>;
 %template(VirgilSignIdProvider) virgil::service::data::VirgilIdProvider<VirgilSignId>;
 
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilUserIdType, virgil::service::data, virgil/service/data)
+%newobject *::createFromAsn1;
+%newobject *::createFromJson;
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilAccount, virgil::service::data, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCertificate, virgil::service::data, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilTicket, virgil::service::data, virgil/service/data)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilUserIdTicket, virgil::service::data, virgil/service/data)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilUserInfoTicket, virgil::service::data, virgil/service/data)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilUniqueTicket, virgil::service::data, virgil/service/data)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilInfoTicket, virgil::service::data, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilSign, virgil::service::data, virgil/service/data)
 ///@}
 
 
 /**
- * @name Package: virgil::service::data::marshalling
+ * @name Package: virgil::service
  */
 ///@{
-%newobject *::demarshalAccount;
-%newobject *::demarshalCertificate;
-%newobject *::demarshalTicket;
-%newobject *::demarshalSign;
-INCLUDE_CLASS(VirgilDataMarshaller, virgil::service::data::marshalling, virgil/service/data/marshalling)
-INCLUDE_CLASS(VirgilJsonDataMarshaller, virgil::service::data::marshalling, virgil/service/data/marshalling)
-INCLUDE_CLASS(VirgilAsn1DataMarshaller, virgil::service::data::marshalling, virgil/service/data/marshalling)
+INCLUDE_CLASS(VirgilCipherBase, virgil::service, virgil/service)
+INCLUDE_CLASS(VirgilCipher, virgil::service, virgil/service)
+INCLUDE_CLASS(VirgilChunkCipher, virgil::service, virgil/service)
+INCLUDE_CLASS(VirgilSigner, virgil::service, virgil/service)
 ///@}
 
 /**
@@ -261,14 +273,4 @@ INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::service::stream, virgil/se
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::service::stream, virgil/service/stream)
 INCLUDE_CLASS(VirgilStreamSigner, virgil::service::stream, virgil/service/stream)
 INCLUDE_CLASS(VirgilStreamCipher, virgil::service::stream, virgil/service/stream)
-///@}
-
-/**
- * @name Package: virgil::service
- */
-///@{
-INCLUDE_CLASS(VirgilCipherBase, virgil::service, virgil/service)
-INCLUDE_CLASS(VirgilCipher, virgil::service, virgil/service)
-INCLUDE_CLASS(VirgilChunkCipher, virgil::service, virgil/service)
-INCLUDE_CLASS(VirgilSigner, virgil::service, virgil/service)
 ///@}

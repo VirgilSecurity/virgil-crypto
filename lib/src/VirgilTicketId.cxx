@@ -40,10 +40,38 @@ using virgil::service::data::VirgilTicketId;
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
+/**
+ * @name JSON Keys
+ */
+///@{
+static const char *kJsonKey_TicketId = "ticket_id";
+///@}
+
 VirgilByteArray VirgilTicketId::ticketId() const {
     return ticketId_;
 }
 
 void VirgilTicketId::setTicketId(const VirgilByteArray& ticketId) {
     ticketId_ = ticketId;
+}
+
+size_t VirgilTicketId::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+    size_t writtenBytes = asn1Writer.writeUTF8String(ticketId_);
+    return VirgilCertificateId::writeAsn1(asn1Writer, writtenBytes + childWrittenBytes);
+}
+
+void VirgilTicketId::readAsn1(VirgilAsn1Reader& asn1Reader) {
+    VirgilCertificateId::readAsn1(asn1Reader);
+    ticketId_ = asn1Reader.readUTF8String();
+}
+
+Json::Value VirgilTicketId::jsonWrite(Json::Value& childValue) const {
+    childValue[kJsonKey_TicketId] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(ticketId_);
+    return VirgilCertificateId::jsonWrite(childValue);
+}
+
+Json::Value VirgilTicketId::jsonRead(const Json::Value& parentValue) {
+    Json::Value childValue = VirgilCertificateId::jsonRead(parentValue);
+    ticketId_ = jsonGetStringAsByteArray(childValue, kJsonKey_TicketId);
+    return childValue;
 }

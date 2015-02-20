@@ -40,10 +40,38 @@ using virgil::service::data::VirgilSignId;
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
+/**
+ * @name JSON Keys
+ */
+///@{
+static const char *kJsonKey_SignId = "sign_id";
+///@}
+
 VirgilByteArray VirgilSignId::signId() const {
     return signId_;
 }
 
 void VirgilSignId::setSignId(const VirgilByteArray& signId) {
     signId_ = signId;
+}
+
+size_t VirgilSignId::writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
+    size_t writtenBytes = asn1Writer.writeUTF8String(signId_);
+    return VirgilTicketId::writeAsn1(asn1Writer, writtenBytes + childWrittenBytes);
+}
+
+void VirgilSignId::readAsn1(VirgilAsn1Reader& asn1Reader) {
+    VirgilTicketId::readAsn1(asn1Reader);
+    signId_ = asn1Reader.readUTF8String();
+}
+
+Json::Value VirgilSignId::jsonWrite(Json::Value& childValue) const {
+    childValue[kJsonKey_SignId] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(signId_);
+    return VirgilTicketId::jsonWrite(childValue);
+}
+
+Json::Value VirgilSignId::jsonRead(const Json::Value& parentValue) {
+    Json::Value childValue = VirgilTicketId::jsonRead(parentValue);
+    signId_ = jsonGetStringAsByteArray(childValue, kJsonKey_SignId);
+    return childValue;
 }

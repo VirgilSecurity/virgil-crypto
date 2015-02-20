@@ -61,7 +61,31 @@ public:
     VirgilByteArray ticketId() const;
     void setTicketId(const VirgilByteArray& ticketId);
     ///@}
-
+    /**
+     * @name VirgilAsn1Compatible implementation
+     *
+     * Marshalling format:
+     *     ticketId UTF8String
+     */
+    ///@{
+    virtual size_t writeAsn1(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
+    virtual void readAsn1(VirgilAsn1Reader& asn1Reader);
+    ///@}
+    /**
+     * @name VirgilJsonCompatible implementation
+     *
+     * Marshalling format:
+     *     {
+     *         "ticketId" : "UTF8String"
+     *     }
+     */
+    ///@{
+    virtual Json::Value jsonWrite(Json::Value& childObject) const;
+    virtual Json::Value jsonRead(const Json::Value& parentValue);
+    ///@}
+    /**
+     * @brief Polymorphic destructor.
+     */
     virtual ~VirgilTicketId() throw() {};
 private:
     VirgilByteArray ticketId_;

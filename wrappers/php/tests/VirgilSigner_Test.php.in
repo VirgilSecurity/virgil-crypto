@@ -222,8 +222,8 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
      * @covers VirgilSigner::sign
      * @covers VirgilSigner::verify
      */
-    public function test_user_id_ticket_sign_verify_with_generated_keys() {
-        $ticket = new VirgilUserIdTicket("user@domain.com", VirgilUserIdType::email());
+    public function test_unique_ticket_sign_verify_with_generated_keys() {
+        $ticket = new VirgilUniqueTicket(virgil_php::VirgilUniqueTicketType_Email, "user@domain.com");
         $signerCertificateId = "CERT-1234";
 
         $key = new VirgilKeyPair();
@@ -240,8 +240,8 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
      * @covers VirgilSigner::sign
      * @covers VirgilSigner::verify
      */
-    public function test_user_info_ticket_sign_verify_with_generated_keys() {
-        $ticket = new VirgilUserInfoTicket("Jon", "Doe", 31);
+    public function test_info_ticket_first_name_sign_verify_with_generated_keys() {
+        $ticket = new VirgilInfoTicket(virgil_php::VirgilInfoTicketType_FirstName, "Jon");
         $signerCertificateId = "CERT-1234";
 
         $key = new VirgilKeyPair();

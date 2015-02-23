@@ -43,6 +43,9 @@ using virgil::VirgilByteArray;
 #include <virgil/service/data/VirgilSign.h>
 using virgil::service::data::VirgilSign;
 
+#include <virgil/crypto/VirgilHash.h>
+using virgil::crypto::VirgilHash;
+
 #include <virgil/service/stream/VirgilDataSource.h>
 using virgil::service::stream::VirgilDataSource;
 
@@ -56,6 +59,11 @@ namespace virgil { namespace service { namespace stream {
 class VirgilStreamSigner {
 public:
     /**
+     * @brief Create signer with predefined hash function.
+     * @note Specified hash function algorithm is used only during signing.
+     */
+    explicit VirgilStreamSigner(const VirgilHash& hash = VirgilHash::sha256());
+    /**
      * @brief Sign data provided by the source with given private key.
      * @return Virgil Security sign.
      */
@@ -66,6 +74,8 @@ public:
      * @return true if sign is valid and data was not malformed.
      */
     bool verify(VirgilDataSource& source, const VirgilSign& sign, const VirgilByteArray& publicKey);
+private:
+    VirgilHash hash_;
 };
 
 }}}

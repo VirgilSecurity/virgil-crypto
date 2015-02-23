@@ -52,20 +52,22 @@ using virgil::crypto::VirgilHash;
 #include <virgil/crypto/VirgilAsymmetricCipher.h>
 using virgil::crypto::VirgilAsymmetricCipher;
 
+VirgilStreamSigner::VirgilStreamSigner(const VirgilHash& hash) : hash_(hash) {
+}
+
 VirgilSign VirgilStreamSigner::sign(VirgilDataSource& source, const VirgilByteArray& signerCertificateId,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
-    VirgilHash hash = VirgilHash::sha256();
-    hash.start();
+    hash_.start();
     while (source.hasData()) {
-        hash.update(source.read());
+        hash_.update(source.read());
     }
-    VirgilByteArray digest = hash.finish();
+    VirgilByteArray digest = hash_.finish();
 
     VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
     cipher.setPrivateKey(privateKey, privateKeyPassword);
     VirgilByteArray sign = cipher.sign(digest);
 
-    return VirgilSign(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(hash.name()), sign, signerCertificateId);
+    return VirgilSign(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(hash_.name()), sign, signerCertificateId);
 }
 
 bool VirgilStreamSigner::verify(VirgilDataSource& source, const VirgilSign& sign, const VirgilByteArray& publicKey) {

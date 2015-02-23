@@ -52,16 +52,18 @@ using virgil::crypto::VirgilHash;
 #include <virgil/crypto/VirgilAsymmetricCipher.h>
 using virgil::crypto::VirgilAsymmetricCipher;
 
+VirgilSigner::VirgilSigner(const VirgilHash& hash) : hash_(hash) {
+}
+
 VirgilSign VirgilSigner::sign(const VirgilByteArray& data, const VirgilByteArray& signerCertificateId,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
-    VirgilHash hash = VirgilHash::sha256();
-    VirgilByteArray digest = hash.hash(data);
+    VirgilByteArray digest = hash_.hash(data);
 
     VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
     cipher.setPrivateKey(privateKey, privateKeyPassword);
     VirgilByteArray sign = cipher.sign(digest);
 
-    return VirgilSign(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(hash.name()), sign, signerCertificateId);
+    return VirgilSign(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(hash_.name()), sign, signerCertificateId);
 }
 
 bool VirgilSigner::verify(const VirgilByteArray& data, const VirgilSign& sign, const VirgilByteArray& publicKey) {
@@ -75,15 +77,13 @@ bool VirgilSigner::verify(const VirgilByteArray& data, const VirgilSign& sign, c
 
 VirgilSign VirgilSigner::sign(VirgilTicket& ticket, const VirgilByteArray& signerCertificateId,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
-    VirgilHash hash = VirgilHash::sha256();
-
-    VirgilByteArray digest = hash.hash(ticket.toAsn1());
+    VirgilByteArray digest = hash_.hash(ticket.toAsn1());
 
     VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
     cipher.setPrivateKey(privateKey, privateKeyPassword);
     VirgilByteArray sign = cipher.sign(digest);
 
-    return VirgilSign(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(hash.name()), sign, signerCertificateId);
+    return VirgilSign(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(hash_.name()), sign, signerCertificateId);
 }
 
 bool VirgilSigner::verify(VirgilTicket& ticket, const VirgilSign& sign, const VirgilByteArray& publicKey) {

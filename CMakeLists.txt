@@ -55,6 +55,7 @@
 #     - VIRGIL_VERSION_MAJOR - library major version number.
 #     - VIRGIL_VERSION_MINOR - library minor version number.
 #     - VIRGIL_VERSION_PATCH - library patch number.
+#     - VIRGIL_SOVERSION     - library ABI version.
 #
 
 cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
@@ -92,7 +93,9 @@ set (VIRGIL_VERSION_MAJOR 0)
 set (VIRGIL_VERSION_MINOR 2)
 set (VIRGIL_VERSION_PATCH 0)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
+set (VIRGIL_SOVERSION 1)
 message (STATUS "Virgil version: " ${VIRGIL_VERSION})
+message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 
 # Set configurable platform
 set (PLATFORM_NAME "CPP" CACHE STRING "Select target platform / language")

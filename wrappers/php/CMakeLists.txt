@@ -70,6 +70,8 @@ set_target_properties(${SWIG_MODULE_${PHP_MODULE_NAME}_REAL_NAME} PROPERTIES PRE
 # Conform to http://www.php-cpp.com/documentation/install
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set_property (TARGET ${PHP_MODULE_NAME} APPEND_STRING PROPERTY LINK_FLAGS "-undefined dynamic_lookup")
+else()
+    set_target_properties(${PHP_MODULE_NAME} PROPERTIES VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
 endif ()
 swig_link_libraries (${PHP_MODULE_NAME} ${WRAPPED_LIB_NAME})
 

@@ -43,9 +43,6 @@ using virgil::VirgilByteArray;
 #include <virgil/service/data/VirgilSign.h>
 using virgil::service::data::VirgilSign;
 
-#include <virgil/service/data/VirgilTicket.h>
-using virgil::service::data::VirgilTicket;
-
 #include <virgil/crypto/VirgilHash.h>
 using virgil::crypto::VirgilHash;
 
@@ -75,9 +72,9 @@ bool VirgilSigner::verify(const VirgilByteArray& data, const VirgilSign& sign, c
     return cipher.verify(digest, sign.signedDigest());
 }
 
-VirgilSign VirgilSigner::sign(VirgilTicket& ticket, const VirgilByteArray& signerCertificateId,
+VirgilSign VirgilSigner::sign(const VirgilAsn1Compatible& asn1Object, const VirgilByteArray& signerCertificateId,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
-    VirgilByteArray digest = hash_.hash(ticket.toAsn1());
+    VirgilByteArray digest = hash_.hash(asn1Object.toAsn1());
 
     VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
     cipher.setPrivateKey(privateKey, privateKeyPassword);
@@ -86,10 +83,11 @@ VirgilSign VirgilSigner::sign(VirgilTicket& ticket, const VirgilByteArray& signe
     return VirgilSign(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(hash_.name()), sign, signerCertificateId);
 }
 
-bool VirgilSigner::verify(VirgilTicket& ticket, const VirgilSign& sign, const VirgilByteArray& publicKey) {
+bool VirgilSigner::verify(const VirgilAsn1Compatible& asn1Object, const VirgilSign& sign,
+            const VirgilByteArray& publicKey) {
     VirgilHash hash = VirgilHash::withName(sign.hashName());
 
-    VirgilByteArray digest = hash.hash(ticket.toAsn1());
+    VirgilByteArray digest = hash.hash(asn1Object.toAsn1());
 
     VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
     cipher.setPublicKey(publicKey);

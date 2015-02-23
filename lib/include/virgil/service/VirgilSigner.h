@@ -49,8 +49,8 @@ using virgil::crypto::VirgilHash;
 #include <virgil/service/data/VirgilCertificate.h>
 using virgil::service::data::VirgilCertificate;
 
-#include <virgil/service/data/VirgilTicket.h>
-using virgil::service::data::VirgilTicket;
+#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::asn1::VirgilAsn1Compatible;
 
 namespace virgil { namespace service {
 
@@ -78,16 +78,16 @@ public:
      */
     bool verify(const VirgilByteArray& data, const VirgilSign& sign, const VirgilByteArray& publicKey);
     /**
-     * @brief Sign given ticket with the private key.
+     * @brief Sign data object that conforms to interface VirgilAsn1Conpatible with the private key.
      * @return Virgil Security sign.
      */
-    VirgilSign sign(VirgilTicket& ticket, const VirgilByteArray& signerCertificateId,
+    VirgilSign sign(const VirgilAsn1Compatible& asn1Object, const VirgilByteArray& signerCertificateId,
             const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
-     * @brief Verify sign and ticket to be conformed to the given public key.
+     * @brief Verify data object that conforms to interface VirgilAsn1Conpatible with the public key.
      * @return true if sign is valid and data was not malformed.
      */
-    bool verify(VirgilTicket& ticket, const VirgilSign& sign, const VirgilByteArray& publicKey);
+    bool verify(const VirgilAsn1Compatible& asn1Object, const VirgilSign& sign, const VirgilByteArray& publicKey);
 private:
     VirgilHash hash_;
 };

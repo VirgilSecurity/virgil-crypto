@@ -45,13 +45,32 @@ include_once "StringSink.php";
 class VirgilStreamCipher_Test extends PHPUnit_Framework_TestCase {
 
     /**
-     * @covers VirgilCipher::addKeyRecipient
-     * @covers VirgilCipher::addPasswordRecipient
-     * @covers VirgilCipher::encrypt
-     * @covers VirgilCipher::decryptWithKey
-     * @covers VirgilCipher::decryptWithPassword
+     * @covers VirgilStreamCipher::addKeyRecipient
+     * @covers VirgilStreamCipher::addPasswordRecipient
+     * @covers VirgilStreamCipher::encrypt
+     * @covers VirgilStreamCipher::decryptWithKey
+     * @covers VirgilStreamCipher::decryptWithPassword
+     * @covers VirgilStreamCipher::decryptWithPassword
+     * @covers VirgilStreamCipher::getContentInfo
+     * @covers VirgilStreamCipher::setContentInfo
      */
     public function test_encryption_decryption_with_generated_keys() {
+        $this->check_encryption_decryption_with_generated_keys(false);
+    }
+
+    /**
+     * @covers VirgilStreamCipher::addKeyRecipient
+     * @covers VirgilStreamCipher::addPasswordRecipient
+     * @covers VirgilStreamCipher::encrypt
+     * @covers VirgilStreamCipher::decryptWithKey
+     * @covers VirgilStreamCipher::decryptWithPassword
+     * @covers VirgilStreamCipher::decryptWithPassword
+     */
+    public function test_encryption_decryption_with_generated_keys_and_embedded_content_info() {
+        $this->check_encryption_decryption_with_generated_keys(true);
+    }
+
+    private function check_encryption_decryption_with_generated_keys($embedContentInfo) {
         $initialString = "very long string to be encrypted";
         // Key recipient - Bob
         $bobCertificateId = "BOB-CERT-1234";
@@ -73,12 +92,16 @@ class VirgilStreamCipher_Test extends PHPUnit_Framework_TestCase {
         // Encrypt data
         $encryptSource = new StringSource($initialString);
         $encryptSink = new StringSink();
-        $cipher->encrypt($encryptSource, $encryptSink);
-        $encryptedContentInfo = $cipher->getContentInfo();
+        $cipher->encrypt($encryptSource, $encryptSink, $embedContentInfo);
+        if ($embedContentInfo == false) {
+            $encryptedContentInfo = $cipher->getContentInfo();
+        }
         // Create new cipher
         $cipher = new VirgilStreamCipher();
-        // Set content info
-        $cipher->setContentInfo($encryptedContentInfo);
+        if ($embedContentInfo == false) {
+            // Set content info
+            $cipher->setContentInfo($encryptedContentInfo);
+        }
         // Decrypt encrypted data
         $bobDecryptSource = new StringSource($encryptSink->getResult());
         $bobDecryptSink = new StringSink();
@@ -100,11 +123,11 @@ class VirgilStreamCipher_Test extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @covers VirgilCipher::addKeyRecipient
-     * @covers VirgilCipher::addPasswordRecipient
-     * @covers VirgilCipher::encrypt
-     * @covers VirgilCipher::decryptWithKey
-     * @covers VirgilCipher::decryptWithPassword
+     * @covers VirgilStreamCipher::addKeyRecipient
+     * @covers VirgilStreamCipher::addPasswordRecipient
+     * @covers VirgilStreamCipher::encrypt
+     * @covers VirgilStreamCipher::decryptWithKey
+     * @covers VirgilStreamCipher::decryptWithPassword
      */
     public function test_encryption_decryption_with_known_keys() {
         $initialString = "very long string to be encrypted";

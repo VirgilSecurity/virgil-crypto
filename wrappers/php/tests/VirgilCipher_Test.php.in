@@ -48,8 +48,25 @@ class VirgilCipher_Test extends PHPUnit_Framework_TestCase {
      * @covers VirgilCipher::encrypt
      * @covers VirgilCipher::decryptWithKey
      * @covers VirgilCipher::decryptWithPassword
+     * @covers VirgilCipher::getContentInfo
+     * @covers VirgilCipher::setContentInfo
      */
     public function test_encryption_decryption_with_generated_keys() {
+        $this->check_encryption_decryption_with_generated_keys(false);
+    }
+
+    /**
+     * @covers VirgilCipher::addKeyRecipient
+     * @covers VirgilCipher::addPasswordRecipient
+     * @covers VirgilCipher::encrypt
+     * @covers VirgilCipher::decryptWithKey
+     * @covers VirgilCipher::decryptWithPassword
+     */
+    public function test_encryption_decryption_with_generated_keys_and_embedded_content_info() {
+        $this->check_encryption_decryption_with_generated_keys(true);
+    }
+
+    private function check_encryption_decryption_with_generated_keys($embedContentInfo) {
         $initialString = "very long string to be encrypted";
         // Key recipient - Bob
         $bobCertificateId = "BOB-CERT-1234";
@@ -69,12 +86,16 @@ class VirgilCipher_Test extends PHPUnit_Framework_TestCase {
         $cipher->addKeyRecipient($tedCertificateId, $tedKey->publicKey());
         $cipher->addPasswordRecipient($alicePassword);
         // Encrypt data
-        $encryptedData = $cipher->encrypt($initialString);
-        $encryptedContentInfo = $cipher->getContentInfo();
+        $encryptedData = $cipher->encrypt($initialString, $embedContentInfo);
+        if ($embedContentInfo == false) {
+            $encryptedContentInfo = $cipher->getContentInfo();
+        }
         // Create new cipher
         $cipher = new VirgilCipher();
-        // Set content info
-        $cipher->setContentInfo($encryptedContentInfo);
+        if ($embedContentInfo == false) {
+            // Set content info
+            $cipher->setContentInfo($encryptedContentInfo);
+        }
         // Decrypt encrypted data
         $bobPlainText = $cipher->decryptWithKey($encryptedData, $bobCertificateId, $bobKey->privateKey());
         $tedPlainText = $cipher->decryptWithKey($encryptedData, $tedCertificateId, $tedKey->privateKey(),
@@ -153,7 +174,8 @@ class VirgilCipher_Test extends PHPUnit_Framework_TestCase {
         // Check decrypted data
         $this->assertEquals($initialString, $bobPlainText);
         $this->assertEquals($initialString, $tedPlainText);
-        $this->assertEquals($initialString, $alicePlainText);    }
+        $this->assertEquals($initialString, $alicePlainText);
+    }
 }
 
 ?>

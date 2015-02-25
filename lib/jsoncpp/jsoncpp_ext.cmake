@@ -87,6 +87,7 @@ endif ()
 
 ExternalProject_Add (jsoncpp_project
     GIT_REPOSITORY "https://github.com/open-source-parsers/jsoncpp.git"
+    GIT_TAG "0.8.3"
     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/jsoncpp"
     CMAKE_ARGS ${CMAKE_ARGS}
 )

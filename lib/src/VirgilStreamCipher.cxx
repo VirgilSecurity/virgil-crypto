@@ -49,13 +49,20 @@ using virgil::crypto::VirgilSymmetricCipher;
 #include <virgil/crypto/VirgilAsymmetricCipher.h>
 using virgil::crypto::VirgilAsymmetricCipher;
 
+#include <virgil/crypto/VirgilContentInfo.h>
+using virgil::crypto::VirgilContentInfo;
 
 VirgilStreamCipher::~VirgilStreamCipher() throw() {
 }
 
-void VirgilStreamCipher::encrypt(VirgilDataSource& source, VirgilDataSink& sink) {
+void VirgilStreamCipher::encrypt(VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo) {
 
     VirgilSymmetricCipher& symmetricCipher = initEncryption();
+    buildContentInfo();
+
+    if (embedContentInfo && sink.isGood()) {
+        sink.write(getContentInfo());
+    }
 
     while (source.hasData() && sink.isGood()) {
         sink.write(symmetricCipher.update(source.read()));
@@ -64,7 +71,6 @@ void VirgilStreamCipher::encrypt(VirgilDataSource& source, VirgilDataSink& sink)
         sink.write(symmetricCipher.finish());
     }
 
-    buildContentInfo();
     clearCipherInfo();
 }
 
@@ -72,27 +78,49 @@ void VirgilStreamCipher::decryptWithKey(VirgilDataSource& source, VirgilDataSink
         const VirgilByteArray& certificateId, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
 
-    VirgilSymmetricCipher& symmetricCipher = initDecryptionWithKey(certificateId, privateKey, privateKeyPassword);
-
-    while (source.hasData() && sink.isGood()) {
-        sink.write(symmetricCipher.update(source.read()));
-    }
-    if (sink.isGood()) {
-        sink.write(symmetricCipher.finish());
-    }
-
-    clearCipherInfo();
+    VirgilByteArray firstChunk = tryReadContentInfo(source);
+    VirgilSymmetricCipher& cipher = initDecryptionWithKey(certificateId, privateKey, privateKeyPassword);
+    decrypt(source, sink, cipher, firstChunk);
 }
 
 void VirgilStreamCipher::decryptWithPassword(VirgilDataSource& source, VirgilDataSink& sink,
         const VirgilByteArray& pwd) {
-    VirgilSymmetricCipher& symmetricCipher = initDecryptionWithPassword(pwd);
 
+    VirgilByteArray firstChunk = tryReadContentInfo(source);
+    VirgilSymmetricCipher& cipher = initDecryptionWithPassword(pwd);
+    decrypt(source, sink, cipher, firstChunk);
+}
+
+VirgilByteArray VirgilStreamCipher::tryReadContentInfo(VirgilDataSource& source) {
+
+    const size_t minDataSize = 16;
+    VirgilByteArray data;
+    while (data.size() < minDataSize && source.hasData()) {
+        VirgilByteArray nextData = source.read();
+        data.insert(data.end(), nextData.begin(), nextData.end());
+    }
+    size_t contentInfoSize = VirgilContentInfo::defineSize(data);
+    if (contentInfoSize > 0) {
+        while (data.size() < contentInfoSize  && source.hasData()) {
+            VirgilByteArray nextData = source.read();
+            data.insert(data.end(), nextData.begin(), nextData.end());
+        }
+        return VirgilCipherBase::tryReadContentInfo(data);
+    }
+    return data;
+}
+
+void VirgilStreamCipher::decrypt(VirgilDataSource& source, VirgilDataSink& sink,
+        VirgilSymmetricCipher& cipher, const VirgilByteArray& firstChunk) {
+
+    if (sink.isGood()) {
+        sink.write(cipher.update(firstChunk));
+    }
     while (source.hasData() && sink.isGood()) {
-        sink.write(symmetricCipher.update(source.read()));
+        sink.write(cipher.update(source.read()));
     }
     if (sink.isGood()) {
-        sink.write(symmetricCipher.finish());
+        sink.write(cipher.finish());
     }
 
     clearCipherInfo();

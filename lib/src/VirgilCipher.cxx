@@ -46,17 +46,22 @@ using virgil::crypto::VirgilSymmetricCipher;
 VirgilCipher::~VirgilCipher() throw() {
 }
 
-VirgilByteArray VirgilCipher::encrypt(const VirgilByteArray& data) {
+VirgilByteArray VirgilCipher::encrypt(const VirgilByteArray& data, bool embedContentInfo) {
     VirgilSymmetricCipher& symmetricCipher = initEncryption();
+    VirgilByteArray encryptedData;
+
+    buildContentInfo();
+    if (embedContentInfo) {
+        VirgilByteArray contentInfo = getContentInfo();
+        encryptedData.swap(contentInfo);
+    }
 
     VirgilByteArray firstChunk = symmetricCipher.update(data);
     VirgilByteArray secondChunk = symmetricCipher.finish();
 
-    VirgilByteArray encryptedData;
     encryptedData.insert(encryptedData.end(), firstChunk.begin(), firstChunk.end());
     encryptedData.insert(encryptedData.end(), secondChunk.begin(), secondChunk.end());
 
-    buildContentInfo();
     clearCipherInfo();
     return encryptedData;
 }
@@ -65,25 +70,21 @@ VirgilByteArray VirgilCipher::decryptWithKey(const VirgilByteArray& encryptedDat
         const VirgilByteArray& certificateId, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
 
-    VirgilSymmetricCipher& symmetricCipher =
-            initDecryptionWithKey(certificateId, privateKey, privateKeyPassword);
-
-    VirgilByteArray firstChunk = symmetricCipher.update(encryptedData);
-    VirgilByteArray secondChunk = symmetricCipher.finish();
-
-    VirgilByteArray decryptedData;
-    decryptedData.insert(decryptedData.end(), firstChunk.begin(), firstChunk.end());
-    decryptedData.insert(decryptedData.end(), secondChunk.begin(), secondChunk.end());
-
-    clearCipherInfo();
-    return decryptedData;
+    VirgilByteArray payload = tryReadContentInfo(encryptedData);
+    VirgilSymmetricCipher& cipher = initDecryptionWithKey(certificateId, privateKey, privateKeyPassword);
+    return decrypt(payload, cipher);
 }
 
 VirgilByteArray VirgilCipher::decryptWithPassword(const VirgilByteArray& encryptedData, const VirgilByteArray& pwd) {
-    VirgilSymmetricCipher& symmetricCipher = initDecryptionWithPassword(pwd);
+    VirgilByteArray payload = tryReadContentInfo(encryptedData);
+    VirgilSymmetricCipher& cipher = initDecryptionWithPassword(pwd);
+    return decrypt(payload, cipher);
+}
 
-    VirgilByteArray firstChunk = symmetricCipher.update(encryptedData);
-    VirgilByteArray secondChunk = symmetricCipher.finish();
+
+VirgilByteArray VirgilCipher::decrypt(const VirgilByteArray& encryptedData, VirgilSymmetricCipher& cipher) {
+    VirgilByteArray firstChunk = cipher.update(encryptedData);
+    VirgilByteArray secondChunk = cipher.finish();
 
     VirgilByteArray decryptedData;
     decryptedData.insert(decryptedData.end(), firstChunk.begin(), firstChunk.end());

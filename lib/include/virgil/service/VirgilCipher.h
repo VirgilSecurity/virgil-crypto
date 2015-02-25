@@ -60,11 +60,16 @@ public:
 public:
     /**
      * @brief Encrypt given data.
+     * @param data - data to be encrypted.
+     * @param embedContentInfo - determines whether to embed content info the the encrypted data, or not.
+     * @note Store content info to use it for decription process, if embedContentInfo parameter is false.
+     * @see getContentInfo()
+     * @return encrypted data.
      */
-    VirgilByteArray encrypt(const VirgilByteArray& data);
+    VirgilByteArray encrypt(const VirgilByteArray& data, bool embedContentInfo = false);
     /**
      * @brief Decrypt given data for recipient defined by certificate id and private key.
-     * @note Content info MUST be defined.
+     * @note Content info MUST be defined, if it was not embedded to the encrypted data.
      * @see method setContentInfo().
      * @return Decrypted data.
      */
@@ -73,11 +78,17 @@ public:
             const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
      * @brief Decrypt given data for recipient defined by password.
-     * @note Content info MUST be defined.
+     * @note Content info MUST be defined, if it was not embedded to the encrypted data.
      * @see method setContentInfo().
      * @return Decrypted data.
      */
     VirgilByteArray decryptWithPassword(const VirgilByteArray& encryptedData, const VirgilByteArray& pwd);
+private:
+    /**
+     * @brief Decrypt given data.
+     * @return Decrypted data.
+     */
+    VirgilByteArray decrypt(const VirgilByteArray& encryptedData, VirgilSymmetricCipher& cipher);
 };
 
 }}

@@ -135,6 +135,15 @@ public:
     ///@}
 protected:
     /**
+     * @brief Make attempt to read content info from the encrypted data.
+     *
+     * Payload content info if was detected in the encrypted data.
+     *
+     * @param encryptedData - data that was encrypted.
+     * return Encrypted data without content info.
+     */
+    VirgilByteArray tryReadContentInfo(const VirgilByteArray& encryptedData);
+    /**
      * @brief Configures symmetric cipher for encryption.
      * @return Configured cipher.
      * @note cipher's key randomly generated.

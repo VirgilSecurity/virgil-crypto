@@ -63,10 +63,16 @@ public:
     VirgilCustomParams customParams;
 public:
     /**
+     * @brief Read content info size as part of the data.
+     * @return Size of the content info if it is exist as part of the data, 0 - otherwise.
+     */
+    static size_t defineSize(const VirgilByteArray& data);
+    /**
      * @name VirgilAsn1Compatible implementation
      *
      * Marshalling format:
      *     VirgilContentInfo ::= SEQUENCE {
+     *         version ::= INTEGER { v0(0) },
      *         cmsContent ContentInfo, -- Imports from RFC 5652
      *         customParams [0] IMPLICIT VirgilCustomParams OPTIONAL
      *     }

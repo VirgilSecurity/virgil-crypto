@@ -136,6 +136,15 @@ const VirgilCustomParams& VirgilCipherBase::customParameters() const {
     return contentInfo_.customParams;
 }
 
+VirgilByteArray VirgilCipherBase::tryReadContentInfo(const VirgilByteArray& encryptedData) {
+    size_t contentInfoSize = VirgilContentInfo::defineSize(encryptedData);
+    if (contentInfoSize > 0) {
+        setContentInfo(encryptedData);
+        return VirgilByteArray(encryptedData.begin() + contentInfoSize, encryptedData.end());
+    }
+    return encryptedData;
+}
+
 VirgilSymmetricCipher& VirgilCipherBase::initEncryption() {
     symmetricCipher_ = VirgilSymmetricCipher::aes256();
     symmetricCipherKey_ = random_.randomize(symmetricCipher_.keyLength());

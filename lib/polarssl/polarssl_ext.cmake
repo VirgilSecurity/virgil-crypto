@@ -102,7 +102,8 @@ if (EXISTS ${POLARSSL_CONFIG_PLATFORM_DEFINES})
 endif ()
 
 ExternalProject_Add (polarssl_project
-    URL "${CMAKE_CURRENT_SOURCE_DIR}/polarssl/bundle/polarssl-1.3.8-gpl.tgz"
+    GIT_REPOSITORY "https://github.com/ARMmbed/mbedtls.git"
+    GIT_TAG "polarssl-1.3.8"
     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/polarssl"
     CMAKE_ARGS ${CMAKE_ARGS}
     PATCH_COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/polarssl/patch/patch.py" ${PATCH_COMMAND_ARGS}

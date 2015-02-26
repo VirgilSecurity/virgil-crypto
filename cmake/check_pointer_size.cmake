@@ -40,7 +40,7 @@
 #
 function (check_pointer_size pointer_size)
     if (CMAKE_CROSSCOMPILING)
-        unset (${pointer_size} PARENT_SCOPE)
+        set (${pointer_size} "" PARENT_SCOPE)
     else ()
         file (WRITE
             ${CMAKE_BINARY_DIR}/CMakeTmp/check_pointer_size.cxx
@@ -58,7 +58,7 @@ function (check_pointer_size pointer_size)
         if (COMPILE_RESULT AND RUN_RESULT GREATER 0)
             set (${pointer_size} ${RUN_RESULT} PARENT_SCOPE)
         else ()
-            unset (${pointer_size} PARENT_SCOPE)
+            set (${pointer_size} "" PARENT_SCOPE)
         endif ()
     endif ()
 endfunction (check_pointer_size)

@@ -161,7 +161,13 @@ include (CMakeForceCompiler)
 CMAKE_FORCE_C_COMPILER (/usr/bin/clang Apple)
 CMAKE_FORCE_CXX_COMPILER (/usr/bin/clang++ Apple)
 
-set(CMAKE_AR ar CACHE FILEPATH "" FORCE)
+# Force ar
+set (CMAKE_AR /usr/bin/ar CACHE FILEPATH "" FORCE)
+set (CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> <LINK_FLAGS> crs <TARGET> <OBJECTS>")
+set (CMAKE_C_ARCHIVE_APPEND "<CMAKE_AR> <LINK_FLAGS> rs <TARGET> <OBJECTS>")
+set (CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> <LINK_FLAGS> crs <TARGET> <OBJECTS>")
+set (CMAKE_CXX_ARCHIVE_APPEND "<CMAKE_AR> <LINK_FLAGS> rs <TARGET> <OBJECTS>")
+
 
 # Skip the platform compiler checks for cross compiling
 set (CMAKE_CXX_COMPILER_WORKS TRUE)

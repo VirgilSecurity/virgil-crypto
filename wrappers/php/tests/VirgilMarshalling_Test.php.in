@@ -70,17 +70,31 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
-    public function test_sign_asn1_marshalling_demarshalling() {
+    public function test_data_sign_asn1_marshalling_demarshalling() {
         $this->check_object_asn1_marshalling_demarshalling(
             new VirgilSign(),
-            file_get_contents("data/asn1_sign.der")
+            file_get_contents("data/asn1_data_sign.der")
         );
     }
 
-    public function test_sign_json_marshalling_demarshalling() {
+    public function test_data_sign_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilSign(),
-            file_get_contents("data/json_sign.json")
+            file_get_contents("data/json_data_sign.json")
+        );
+    }
+
+    public function test_ticket_sign_asn1_marshalling_demarshalling() {
+        $this->check_object_asn1_marshalling_demarshalling(
+            new VirgilSign(),
+            file_get_contents("data/asn1_ticket_sign.der")
+        );
+    }
+
+    public function test_ticket_sign_json_marshalling_demarshalling() {
+        $this->check_object_json_marshalling_demarshalling(
+            new VirgilSign(),
+            file_get_contents("data/json_ticket_sign.json")
         );
     }
 

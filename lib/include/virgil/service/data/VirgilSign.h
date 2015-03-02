@@ -90,7 +90,7 @@ public:
      *
      * Marshalling format:
      *     VirgilSign ::= SEQUENCE {
-     *         id VirgilSignId,
+     *         id [0] IMPLICIT VirgilSignId OPTIONAL,
      *         hashName UTF8String,
      *         signerCertificateId UTF8String
      *         signedDigest OCTET STRING,
@@ -121,6 +121,8 @@ public:
      *       "signed_digest" : "Base64String",
      *       "signer_certificate_id" : "UTF8String"
      *    }
+     *
+     * @note "id" parameter is optional.
      */
     ///@{
     virtual Json::Value jsonWrite(Json::Value& childObject) const;

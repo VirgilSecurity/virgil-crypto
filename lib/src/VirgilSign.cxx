@@ -41,6 +41,13 @@ using virgil::service::data::VirgilSign;
 using virgil::service::data::VirgilCertificate;
 
 /**
+ * @name ASN.1 tags
+ */
+///@{
+static const unsigned char kASN1_IdTag = 0;
+///@}
+
+/**
  * @name JSON Keys
  */
 ///@{
@@ -77,30 +84,41 @@ size_t VirgilSign::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBy
     writtenBytes += asn1Writer.writeOctetString(signedDigest_);
     writtenBytes += asn1Writer.writeUTF8String(signerCertificateId_);
     writtenBytes += asn1Writer.writeUTF8String(hashName_);
-    writtenBytes += id().asn1Write(asn1Writer);
+    if (!id().isEmpty()) {
+        size_t idLen = id().asn1Write(asn1Writer);
+        writtenBytes += idLen;
+        writtenBytes += asn1Writer.writeContextTag(kASN1_IdTag, idLen);
+    }
     writtenBytes += asn1Writer.writeSequence(writtenBytes + childWrittenBytes);
     return writtenBytes + childWrittenBytes;
 }
 
 void VirgilSign::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
-    id().asn1Read(asn1Reader);
+    if (asn1Reader.readContextTag(kASN1_IdTag) > 0) {
+        id().asn1Read(asn1Reader);
+    }
     hashName_ = asn1Reader.readUTF8String();
     signerCertificateId_ = asn1Reader.readUTF8String();
     signedDigest_ = asn1Reader.readOctetString();
 }
 
 Json::Value VirgilSign::jsonWrite(Json::Value& childValue) const {
-    Json::Value idChildrenValue(Json::objectValue);
-    Json::Value idValue = id().jsonWrite(idChildrenValue);
     childValue[kJsonKey_HashName] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(hashName_);
     childValue[kJsonKey_SignedDigest] = jsonRawDataToValue(signedDigest_);
     childValue[kJsonKey_SignerCertificateId] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(signerCertificateId_);
-    return jsonMergeObjects(childValue, idValue);
+    if (!id().isEmpty()) {
+        Json::Value idChildrenValue(Json::objectValue);
+        Json::Value idValue = id().jsonWrite(idChildrenValue);
+        return jsonMergeObjects(childValue, idValue);
+    }
+    return childValue;
 }
 
 Json::Value VirgilSign::jsonRead(const Json::Value& parentValue) {
-    (void)id().jsonRead(parentValue);
+    if (parentValue["id"].isObject()) {
+        (void)id().jsonRead(parentValue);
+    }
     hashName_ = jsonGetStringAsByteArray(parentValue, kJsonKey_HashName);
     signedDigest_ = jsonRawDataFromValue(parentValue[kJsonKey_SignedDigest]);
     signerCertificateId_ = jsonGetStringAsByteArray(parentValue, kJsonKey_SignerCertificateId);

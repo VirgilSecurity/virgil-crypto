@@ -84,7 +84,7 @@ public:
     /**
      * @brief Define whether no one parameter is set.
      */
-    bool empty() const;
+    bool isEmpty() const;
     ///@}
     /**
      * @name Manage Parameters

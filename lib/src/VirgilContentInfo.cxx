@@ -90,7 +90,7 @@ size_t VirgilContentInfo::defineSize(const VirgilByteArray& data) {
 
 size_t VirgilContentInfo::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t len = 0;
-    if (!customParams.empty()) {
+    if (!customParams.isEmpty()) {
         len += customParams.asn1Write(asn1Writer);
         len += asn1Writer.writeContextTag(kAsn1_CustomParamsTag, len);
     }

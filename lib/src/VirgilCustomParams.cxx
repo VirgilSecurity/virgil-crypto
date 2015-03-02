@@ -61,7 +61,7 @@ static const unsigned char kCMS_DataValueTag = 2;
 VirgilCustomParams::~VirgilCustomParams() throw() {
 }
 
-bool VirgilCustomParams::empty() const {
+bool VirgilCustomParams::isEmpty() const {
     return intValues_.empty() && stringValues_.empty() && dataValues_.empty();
 }
 

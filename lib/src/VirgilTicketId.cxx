@@ -55,6 +55,15 @@ void VirgilTicketId::setTicketId(const VirgilByteArray& ticketId) {
     ticketId_ = ticketId;
 }
 
+bool VirgilTicketId::isEmpty() const {
+    return ticketId_.empty() || VirgilCertificateId::isEmpty();
+}
+
+void VirgilTicketId::clear() {
+    ticketId_.clear();
+    VirgilCertificateId::clear();
+}
+
 size_t VirgilTicketId::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = asn1Writer.writeUTF8String(ticketId_);
     return VirgilCertificateId::asn1Write(asn1Writer, writtenBytes + childWrittenBytes);

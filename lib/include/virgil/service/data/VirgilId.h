@@ -51,6 +51,20 @@ namespace virgil { namespace service { namespace data {
 class VirgilId : public VirgilJsonCompatible {
 public:
     /**
+     * @name ID management
+     */
+    ///@{
+    /**
+     * @brief Returns true if 'id' is not specified.
+     * @note ID is empty if at least one of ids are empty.
+     */
+    virtual bool isEmpty() const = 0;
+    /**
+     * @brief Clear 'id'.
+     */
+    virtual void clear() = 0;
+    ///@}
+    /**
      * @name VirgilAsn1Compatible implementation
      *
      * Marshalling format:

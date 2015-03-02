@@ -62,6 +62,19 @@ public:
     void setTicketId(const VirgilByteArray& ticketId);
     ///@}
     /**
+     * @name ID management
+     */
+    ///@{
+    /**
+     * @brief Returns true if ticket id is not specified or one of the parent ids are not specified.
+     */
+    virtual bool isEmpty() const;
+    /**
+     * @brief Clears ticket id and all parent ids.
+     */
+    virtual void clear();
+    ///@}
+    /**
      * @name VirgilAsn1Compatible implementation
      *
      * Marshalling format:

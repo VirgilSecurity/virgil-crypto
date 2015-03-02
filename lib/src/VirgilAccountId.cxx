@@ -60,6 +60,14 @@ size_t VirgilAccountId::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrit
     return VirgilId::asn1Write(asn1Writer, writtenBytes + childWrittenBytes);
 }
 
+bool VirgilAccountId::isEmpty() const {
+    return accountId_.empty();
+}
+
+void VirgilAccountId::clear() {
+    accountId_.clear();
+}
+
 void VirgilAccountId::asn1Read(VirgilAsn1Reader& asn1Reader) {
     VirgilId::asn1Read(asn1Reader);
     accountId_ = asn1Reader.readUTF8String();

@@ -55,6 +55,15 @@ void VirgilSignId::setSignId(const VirgilByteArray& signId) {
     signId_ = signId;
 }
 
+bool VirgilSignId::isEmpty() const {
+    return signId_.empty() || VirgilTicketId::isEmpty();
+}
+
+void VirgilSignId::clear() {
+    signId_.clear();
+    VirgilTicketId::clear();
+}
+
 size_t VirgilSignId::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = asn1Writer.writeUTF8String(signId_);
     return VirgilTicketId::asn1Write(asn1Writer, writtenBytes + childWrittenBytes);

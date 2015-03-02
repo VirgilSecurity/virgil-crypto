@@ -1,0 +1,124 @@
+<?php
+/**
+ * Copyright (C) 2014 Virgil Security Inc.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     (1) Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *     (2) Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in
+ *     the documentation and/or other materials provided with the
+ *     distribution.
+ *
+ *     (3) Neither the name of the copyright holder nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+include_once "@PHP_MODULE_FILE_NAME@";
+
+/**
+ * @covers VirgilId
+ */
+class VirgilId_Test extends PHPUnit_Framework_TestCase {
+
+    /**
+     * @covers VirgilAccountId::isEmpty
+     * @covers VirgilAccountId::clear
+     */
+    public function test_virgil_account_id() {
+        $virgilAccountId = new VirgilAccountId();
+        $this->assertTrue($virgilAccountId->isEmpty());
+
+        $virgilAccountId->setAccountId("ACC-1234");
+        $this->assertFalse($virgilAccountId->isEmpty());
+
+        $virgilAccountId->clear();
+        $this->assertTrue($virgilAccountId->isEmpty());
+    }
+
+    /**
+     * @covers VirgilCertificateId::isEmpty
+     * @covers VirgilCertificateId::clear
+     */
+    public function test_virgil_certificate_id() {
+        $virgilCertificateId = new VirgilCertificateId();
+        $this->assertTrue($virgilCertificateId->isEmpty());
+
+        $virgilCertificateId->setAccountId("ACC-1234");
+        $this->assertTrue($virgilCertificateId->isEmpty());
+
+        $virgilCertificateId->setCertificateId("CERT-1234");
+        $this->assertFalse($virgilCertificateId->isEmpty());
+
+        $virgilCertificateId->clear();
+        $this->assertTrue($virgilCertificateId->isEmpty());
+    }
+
+    /**
+     * @covers VirgilTicketId::isEmpty
+     * @covers VirgilTicketId::clear
+     */
+    public function test_virgil_ticket_id() {
+        $virgilTicketId = new VirgilTicketId();
+        $this->assertTrue($virgilTicketId->isEmpty());
+
+        $virgilTicketId->setAccountId("ACC-1234");
+        $this->assertTrue($virgilTicketId->isEmpty());
+
+        $virgilTicketId->setCertificateId("CERT-1234");
+        $this->assertTrue($virgilTicketId->isEmpty());
+
+        $virgilTicketId->setTicketId("TICKET-1234");
+        $this->assertFalse($virgilTicketId->isEmpty());
+
+        $virgilTicketId->clear();
+        $this->assertTrue($virgilTicketId->isEmpty());
+    }
+
+    /**
+     * @covers VirgilSignId::isEmpty
+     * @covers VirgilSignId::clear
+     */
+    public function test_virgil_sign_id() {
+        $virgilSignId = new VirgilSignId();
+        $this->assertTrue($virgilSignId->isEmpty());
+
+        $virgilSignId->setAccountId("ACC-1234");
+        $this->assertTrue($virgilSignId->isEmpty());
+
+        $virgilSignId->setCertificateId("CERT-1234");
+        $this->assertTrue($virgilSignId->isEmpty());
+
+        $virgilSignId->setTicketId("TICKET-1234-1234");
+        $this->assertTrue($virgilSignId->isEmpty());
+
+        $virgilSignId->setSignId("SIGN-1234");
+        $this->assertFalse($virgilSignId->isEmpty());
+
+        $virgilSignId->clear();
+        $this->assertTrue($virgilSignId->isEmpty());
+    }
+}
+
+?>

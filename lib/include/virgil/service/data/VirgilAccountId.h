@@ -59,6 +59,19 @@ public:
     void setAccountId(const VirgilByteArray& accountId);
     ///@}
     /**
+     * @name ID management
+     */
+    ///@{
+    /**
+     * @brief Returns true if account id is not specified or one of the parent ids are not specified.
+     */
+    virtual bool isEmpty() const;
+    /**
+     * @brief Clears account id and all parent ids.
+     */
+    virtual void clear();
+    ///@}
+    /**
      * @name VirgilAsn1Compatible implementation
      *
      * Marshalling format:

@@ -55,6 +55,15 @@ void VirgilCertificateId::setCertificateId(const VirgilByteArray& certificateId)
     certificateId_ = certificateId;
 }
 
+bool VirgilCertificateId::isEmpty() const {
+    return certificateId_.empty() || VirgilAccountId::isEmpty();
+}
+
+void VirgilCertificateId::clear() {
+    certificateId_.clear();
+    VirgilAccountId::clear();
+}
+
 size_t VirgilCertificateId::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = asn1Writer.writeUTF8String(certificateId_);
     return VirgilAccountId::asn1Write(asn1Writer, writtenBytes + childWrittenBytes);

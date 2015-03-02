@@ -62,6 +62,19 @@ public:
     void setSignId(const VirgilByteArray& signId);
     ///@}
     /**
+     * @name ID management
+     */
+    ///@{
+    /**
+     * @brief Returns true if sign id is not specified or one of the parent ids are not specified.
+     */
+    virtual bool isEmpty() const;
+    /**
+     * @brief Clears sign id and all parent ids.
+     */
+    virtual void clear();
+    ///@}
+    /**
      * @name VirgilAsn1Compatible implementation
      *
      * Marshalling format:

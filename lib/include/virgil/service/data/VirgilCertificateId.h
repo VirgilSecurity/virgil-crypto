@@ -61,6 +61,19 @@ public:
     void setCertificateId(const VirgilByteArray& certificateId);
     ///@}
     /**
+     * @name ID management
+     */
+    ///@{
+    /**
+     * @brief Returns true if certificate id is not specified or one of the parent ids are not specified.
+     */
+    virtual bool isEmpty() const;
+    /**
+     * @brief Clears certificate id and all parent ids.
+     */
+    virtual void clear();
+    ///@}
+    /**
      * @name VirgilAsn1Compatible implementation
      *
      * Marshalling format:

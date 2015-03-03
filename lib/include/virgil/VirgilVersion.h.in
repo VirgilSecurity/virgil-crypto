@@ -63,23 +63,23 @@ public:
      * Return version number in the format MMNNPP (Major, Minor, Patch).
      *
      */
-    static size_t number();
+    static size_t asHexNumber();
     /**
      * Return the version number as string.
      */
-    static std::string string();
+    static std::string asString();
     /**
      * Return the major version number.
      */
-    static size_t major();
+    static size_t majorNumber();
     /**
      * Return the minor version number.
      */
-    static size_t  minor();
+    static size_t  minorNumber();
     /**
      * Return the minor version number.
      */
-    static size_t patch();
+    static size_t patchNumber();
 
 };
 

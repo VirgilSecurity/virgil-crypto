@@ -76,20 +76,6 @@
 
 %}
 
-%insert ("header") %{
-
-// Fix to the bug: https://bugzilla.redhat.com/show_bug.cgi?id=130601
-
-#ifdef major
-#undef major
-#endif
-
-#ifdef minor
-#undef minor
-#endif
-
-%}
-
 /**
  * @name Helper macros
  */

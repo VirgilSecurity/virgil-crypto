@@ -43,18 +43,18 @@ include_once "@PHP_MODULE_FILE_NAME@";
 class VirgilVersion_Test extends PHPUnit_Framework_TestCase {
 
     /**
-     * @covers VirgilVersion::minor
-     * @covers VirgilVersion::major
-     * @covers VirgilVersion::patch
-     * @covers VirgilVersion::string
-     * @covers VirgilVersion::number
+     * @covers VirgilVersion::minorNumber
+     * @covers VirgilVersion::majorNumber
+     * @covers VirgilVersion::patchNumber
+     * @covers VirgilVersion::asString
+     * @covers VirgilVersion::asHexNumber
      */
     public function test_version() {
-        $this->assertEquals(@VIRGIL_VERSION_MAJOR@, VirgilVersion::major());
-        $this->assertEquals(@VIRGIL_VERSION_MINOR@, VirgilVersion::minor());
-        $this->assertEquals(@VIRGIL_VERSION_PATCH@, VirgilVersion::patch());
-        $this->assertEquals((@VIRGIL_VERSION_MAJOR@ << 16 | @VIRGIL_VERSION_MINOR@ << 8 | @VIRGIL_VERSION_PATCH@), VirgilVersion::number());
-        $this->assertEquals("@VIRGIL_VERSION@", VirgilVersion::string());
+        $this->assertEquals(@VIRGIL_VERSION_MAJOR@, VirgilVersion::majorNumber());
+        $this->assertEquals(@VIRGIL_VERSION_MINOR@, VirgilVersion::minorNumber());
+        $this->assertEquals(@VIRGIL_VERSION_PATCH@, VirgilVersion::patchNumber());
+        $this->assertEquals((@VIRGIL_VERSION_MAJOR@ << 16 | @VIRGIL_VERSION_MINOR@ << 8 | @VIRGIL_VERSION_PATCH@), VirgilVersion::asHexNumber());
+        $this->assertEquals("@VIRGIL_VERSION@", VirgilVersion::asString());
     }
 }
 

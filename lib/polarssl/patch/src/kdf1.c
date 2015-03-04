@@ -81,7 +81,6 @@ int kdf1(const md_info_t *md_info, const unsigned char *input, size_t ilen,
     hash_len = md_get_size(md_info);
 
     // Get KDF parameters
-    counter = 0;
     counter_len = (size_t)ceil(olen / hash_len);
 
     // Start hashing

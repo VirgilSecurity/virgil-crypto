@@ -63,7 +63,7 @@ int kdf2(const md_info_t *md_info, const unsigned char *input, size_t ilen,
         return( POLARSSL_ERR_KDF2_BAD_INPUT_DATA );
 
     int result = 0;
-    size_t counter = 0;
+    size_t counter = 1;
     size_t counter_len = 0;
     unsigned char counter_string[4] = {0x0};
 
@@ -81,7 +81,6 @@ int kdf2(const md_info_t *md_info, const unsigned char *input, size_t ilen,
     hash_len = md_get_size(md_info);
 
     // Get KDF parameters
-    counter = 1;
     counter_len = (size_t)ceil(olen / hash_len);
 
     // Start hashing

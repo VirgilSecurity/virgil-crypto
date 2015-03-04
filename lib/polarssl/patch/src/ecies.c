@@ -156,6 +156,9 @@ int ecies_encrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
     kdf_len = cipher_key_len + hmac_key_len;
 
     kdf_value = polarssl_malloc(kdf_len);
+    if (kdf_value == NULL) {
+        INVOKE_AND_CHECK(result, POLARSSL_ERR_ECIES_MALLOC_FAILED)
+    }
     memset(kdf_value, 0, kdf_len);
 
     cipher_key = kdf_value;
@@ -171,6 +174,9 @@ int ecies_encrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
     );
     shared_key_binary_len = ECIES_SIZE_TO_OCTETS(key->grp.pbits);
     shared_key_binary = polarssl_malloc(shared_key_binary_len);
+    if (shared_key_binary == NULL) {
+        INVOKE_AND_CHECK(result, POLARSSL_ERR_ECIES_MALLOC_FAILED)
+    }
     memset(shared_key_binary, 0, shared_key_binary_len);
     INVOKE_AND_CHECK(result,
         mpi_write_binary(&shared_key, shared_key_binary, shared_key_binary_len)
@@ -181,6 +187,9 @@ int ecies_encrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
     );
     // 4. Encrypt given message.
     cipher_iv = polarssl_malloc(cipher_iv_len);
+    if (cipher_iv == NULL) {
+        INVOKE_AND_CHECK(result, POLARSSL_ERR_ECIES_MALLOC_FAILED)
+    }
     memset(cipher_iv, 0, cipher_iv_len);
     INVOKE_AND_CHECK(result,
         f_rng(p_rng, cipher_iv, cipher_iv_len)
@@ -207,6 +216,9 @@ int ecies_encrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
     );
     // 5. Get HMAC for encrypted message.
     hmac = polarssl_malloc(hmac_len);
+    if (hmac == NULL) {
+        INVOKE_AND_CHECK(result, POLARSSL_ERR_ECIES_MALLOC_FAILED)
+    }
     memset(hmac, 0, hmac_len);
     INVOKE_AND_CHECK(result,
         md_hmac(hmac_info, hmac_key, hmac_key_len, cipher_enc_data, cipher_enc_data_len, hmac)
@@ -293,6 +305,7 @@ int ecies_decrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
 
     // Init structures.
     *olen = 0;
+    cipher_init(&cipher_ctx);
     cipher_enc_header = (unsigned char *)input;
     INVOKE_AND_CHECK(result,
         ecies_read_envelope(&cipher_enc_header, input + ilen, &cipher_enc_header_len)
@@ -319,7 +332,6 @@ int ecies_decrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
     );
 
     mpi_init(&shared_key);
-    cipher_init(&cipher_ctx);
     INVOKE_AND_CHECK(result,
         cipher_init_ctx(&cipher_ctx, cipher_info_from_type(cipher_type))
     );
@@ -328,10 +340,16 @@ int ecies_decrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
     hmac_key_len = hmac_len;
     kdf_len = cipher_key_len + hmac_key_len;
     kdf_value = polarssl_malloc(kdf_len);
+    if (kdf_value == NULL) {
+        INVOKE_AND_CHECK(result, POLARSSL_ERR_ECIES_MALLOC_FAILED)
+    }
     memset(kdf_value, 0, kdf_len);
     cipher_key = kdf_value;
     hmac_key = kdf_value + cipher_key_len;
     hmac = polarssl_malloc(hmac_len);
+    if (hmac == NULL) {
+        INVOKE_AND_CHECK(result, POLARSSL_ERR_ECIES_MALLOC_FAILED)
+    }
     memset(hmac, 0, hmac_len);
 
     // 1. Compute shared secret key.
@@ -340,6 +358,9 @@ int ecies_decrypt(ecp_keypair *key, const unsigned char *input, size_t ilen,
     );
     shared_key_binary_len = ECIES_SIZE_TO_OCTETS(key->grp.pbits);
     shared_key_binary = polarssl_malloc(shared_key_binary_len);
+    if (shared_key_binary == NULL) {
+        INVOKE_AND_CHECK(result, POLARSSL_ERR_ECIES_MALLOC_FAILED)
+    }
     memset(shared_key_binary, 0, shared_key_binary_len);
     INVOKE_AND_CHECK(result,
         mpi_write_binary(&shared_key, shared_key_binary, shared_key_binary_len)

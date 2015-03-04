@@ -79,6 +79,10 @@ public:
         init_(other.pkType());
     }
 
+    ~VirgilAsymmetricCipherImpl() {
+        free_();
+    }
+
     VirgilAsymmetricCipherImpl& operator=(const VirgilAsymmetricCipherImpl& rhs) {
         if (this == &rhs) {
             return *this;

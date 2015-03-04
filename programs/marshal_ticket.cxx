@@ -109,6 +109,7 @@ int main(int argc, char **argv) {
     } else if (format == "json") {
         data = ticket->toJson();
     } else {
+        delete ticket;
         std::cerr << "Unknown format: " << format << std::endl;
         return print_usage(std::cerr, programName);
     }

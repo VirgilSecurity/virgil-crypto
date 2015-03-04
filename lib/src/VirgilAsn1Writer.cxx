@@ -45,8 +45,10 @@ using virgil::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
 
 #include <cstddef>
+#include <climits>
 #include <cstring>
 #include <algorithm>
+#include <stdexcept>
 #include <polarssl/asn1write.h>
 
 static const size_t kBufLenDefault = 2048;
@@ -258,11 +260,11 @@ void VirgilAsn1Writer::relocateBuffer(size_t newBufLen) {
     }
     unsigned char *newBuf = new unsigned char[newBufLen];
     size_t writtenBytes = 0;
-    memset(newBuf, newBufLen, 0x00);
+    memset(newBuf, 0x00, newBufLen);
     if (buf_ && p_ && start_) {
         writtenBytes = bufLen_ - (p_ - start_);
         memcpy(newBuf + newBufLen - writtenBytes, p_, writtenBytes);
-        delete buf_;
+        delete[] buf_;
     }
     buf_ = newBuf;
     bufLen_ = newBufLen;
@@ -272,13 +274,18 @@ void VirgilAsn1Writer::relocateBuffer(size_t newBufLen) {
 
 void VirgilAsn1Writer::ensureBufferEnough(size_t len) {
     checkState();
-    ptrdiff_t unusedSpace = (p_ - start_);
-    if (unusedSpace < (ptrdiff_t)len) {
-        ptrdiff_t usedSpace = (start_ + bufLen_ - p_);
+    size_t unusedSpace = (size_t)(p_ - start_);
+    if (unusedSpace < len) {
+        size_t usedSpace = size_t(start_ + bufLen_ - p_);
         size_t newBufLen = bufLen_;
         do {
-            newBufLen <<= 1;
-        } while ((int)newBufLen - (int)usedSpace - (int)len < 0);
+            if (newBufLen < (UINT_MAX >> 1)) {
+                newBufLen <<= 1;
+            } else {
+                throw std::overflow_error(std::string("VirgilAsn1Writer: ") +
+                        "Internal buffer cannot be enlarged. Maximum size is reached.");
+            }
+        } while (newBufLen < usedSpace + len);
         relocateBuffer(newBufLen);
     }
 }
@@ -288,7 +295,7 @@ void VirgilAsn1Writer::dispose() throw() {
     start_ = 0;
     bufLen_ = 0;
     if (buf_) {
-        delete buf_;
+        delete[] buf_;
         buf_ = 0;
     }
 }

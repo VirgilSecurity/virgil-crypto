@@ -51,15 +51,13 @@ using virgil::VirgilException;
 VirgilTicket * VirgilTicket::createFromAsn1(const VirgilByteArray& asn1) {
     VirgilTicket *ticket = 0;
     std::string what;
-    if (ticket == 0) {
-        try {
-            ticket = new VirgilUniqueTicket();
-            ticket->fromAsn1(asn1);
-        } catch (const VirgilException& exception) {
-            delete ticket;
-            ticket = 0;
-            what = exception.what();
-        }
+    try {
+        ticket = new VirgilUniqueTicket();
+        ticket->fromAsn1(asn1);
+    } catch (const VirgilException& exception) {
+        delete ticket;
+        ticket = 0;
+        what = exception.what();
     }
     if (ticket == 0) {
         try {
@@ -80,15 +78,13 @@ VirgilTicket * VirgilTicket::createFromAsn1(const VirgilByteArray& asn1) {
 VirgilTicket * VirgilTicket::createFromJson(const VirgilByteArray& json) {
     VirgilTicket *ticket = 0;
     std::string what;
-    if (ticket == 0) {
-        try {
-            ticket = new VirgilUniqueTicket();
-            ticket->fromJson(json);
-        } catch (const VirgilException& exception) {
-            delete ticket;
-            ticket = 0;
-            what = exception.what();
-        }
+    try {
+        ticket = new VirgilUniqueTicket();
+        ticket->fromJson(json);
+    } catch (const VirgilException& exception) {
+        delete ticket;
+        ticket = 0;
+        what = exception.what();
     }
     if (ticket == 0) {
         try {

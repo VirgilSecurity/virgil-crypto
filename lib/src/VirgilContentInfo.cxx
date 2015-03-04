@@ -63,6 +63,9 @@ VirgilContentInfo::~VirgilContentInfo() throw() {
 }
 
 size_t VirgilContentInfo::defineSize(const VirgilByteArray& data) {
+    if (data.empty()) {
+        return 0;
+    }
     VirgilByteArray::const_pointer p_begin = data.data();
     VirgilByteArray::const_pointer p_end = p_begin + data.size();
     VirgilByteArray::pointer p = const_cast<VirgilByteArray::pointer>(p_begin);

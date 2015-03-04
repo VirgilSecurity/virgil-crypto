@@ -344,6 +344,9 @@ count_sequence (InputIterator first, InputIterator last, const T& val) {
 }
 
 bool VirgilPBE::trimPKCS7Padding(VirgilByteArray& data) const {
+    if (data.empty()) {
+        return true;
+    }
     size_t expectedPaddingCount = data.back();
     size_t actualPaddingCount = count_sequence(data.rbegin(), data.rend(), data.back());
     if (actualPaddingCount >= expectedPaddingCount) {

@@ -2,12 +2,12 @@
 
 ## Introduction
 This is cross-platform library that contains code
-to interact with [VirgilSecurity](http://VirgilSecurity.com) infrastructure.
+to interact with [Virgil Security](http://VirgilSecurity.com) infrastructure.
 
 ## Library purposes
 1. Encrypt and decrypt data.
 1. Sign and verify data.
-1. Work with objects from [VirgilSecurity PKI Service](http://VirgilSecurity.com).
+1. Work with objects from [Virgil Security PKI Service](http://VirgilSecurity.com).
 
 ## Where library can be used
 * on the client-side application;

@@ -7,9 +7,8 @@ before_install:
     - sudo apt-get install -y python-yaml
     - sudo apt-get install -y php5
     - sudo apt-get install -y phpunit
-    - sudo pear channel-discover pear.phpunit.de
-    - sudo pear channel-discover components.ez.no
-    - sudo pear install phpunit/PHP_CodeCoverage
+    - sudo pear config-set auto_discover 1
+    - sudo pear install pear.phpunit.de/PHPUnit
     - wget http://downloads.sourceforge.net/swig/swig-3.0.5.tar.gz -O /tmp/swig-3.0.5.tar.gz
     - tar -xvf /tmp/swig-3.0.5.tar.gz --directory /tmp
     - cd /tmp/swig-3.0.5 && ./configure --prefix=/usr && make && sudo make install

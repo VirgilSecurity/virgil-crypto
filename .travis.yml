@@ -8,9 +8,6 @@ env:
     matrix:
         - PLATFORM_NAME=CPP
         - PLATFORM_NAME=PHP
-before_install:
-    - sudo echo 'Defaults env_keep +="BUILD_DIR_NAME"' >> /etc/sudoers
-    - sudo echo 'Defaults env_keep +="PLATFORM_NAME"' >> /etc/sudoers
-    - sudo ./ci/install_deps.sh
+before_install: ./ci/install_deps.sh
 before_script: ./ci/configure.sh
 script: ./ci/run.sh

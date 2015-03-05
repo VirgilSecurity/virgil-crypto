@@ -37,23 +37,23 @@
 
 set -ev
 
-apt-get update -qq
-apt-get install -y python-yaml
+sudo apt-get update -qq
+sudo apt-get install -y python-yaml
 
 if [ "${PLATFORM_NAME}" != "CPP" ] && [ "${PLATFORM_EMBEDDED}" != "ON" ]; then
     # Install SWIG
     wget http://downloads.sourceforge.net/swig/swig-3.0.5.tar.gz -O /tmp/swig-3.0.5.tar.gz
     tar -xvf /tmp/swig-3.0.5.tar.gz --directory /tmp > /dev/null
-    cd /tmp/swig-3.0.5 && ./configure --prefix=/usr && make && make install
+    cd /tmp/swig-3.0.5 && ./configure --prefix=/usr && make && sudo make install
 fi
 
 if [ "${PLATFORM_NAME}" == "PHP" ]; then
     # Install PHP runtime
-    apt-get install -y php5
+    sudo apt-get install -y php5
     # Install PHP developer libs
-    apt-get install -y php5-dev
+    sudo apt-get install -y php5-dev
     # Install PHPUnit
     wget https://phar.phpunit.de/phpunit.phar -O /tmp/phpunit.phar
-    chmod +x /tmp/phpunit.phar
-    mv -f /tmp/phpunit.phar /usr/bin/phpunit
+    sudo chmod +x /tmp/phpunit.phar
+    sudo mv -f /tmp/phpunit.phar /usr/bin/phpunit
 fi

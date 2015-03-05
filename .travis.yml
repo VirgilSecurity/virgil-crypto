@@ -9,7 +9,7 @@ before_install:
     - sudo apt-get install -y phpunit
     - wget http://downloads.sourceforge.net/swig/swig-3.0.5.tar.gz -O /tmp/swig-3.0.5.tar.gz
     - tar -xvf /tmp/swig-3.0.5.tar.gz
-    - cd swig-3.0.5 && ./configure --prefix=/usr && make && make install
+    - cd swig-3.0.5 && ./configure --prefix=/usr && make && sudo make install
 before_script:
     - mkdir build
     - cd build

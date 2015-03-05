@@ -47,7 +47,7 @@ if [ "${PLATFORM_NAME}" != "CPP" ] && [ "${PLATFORM_EMBEDDED}" != "ON" ]; then
     cd /tmp/swig-3.0.5 && ./configure --prefix=/usr && make && make install
 fi
 
-if [ "${PLATFORM_NAME}" = "PHP" ]; then
+if [ "${PLATFORM_NAME}" == "PHP" ]; then
     # Install PHP runtime
     apt-get install -y php5
     # Install PHP developer libs

@@ -3,8 +3,11 @@ compiler:
     - clang
     - gcc
 env:
-    - PLATFORM_NAME=CPP
-    - PLATFORM_NAME=PHP
+    global:
+        - BUILD_DIR_NAME=build
+    matrix:
+        - PLATFORM_NAME=CPP
+        - PLATFORM_NAME=PHP
 before_install: sudo ./ci/install_deps.sh
 before_script: ./ci/configure.sh
 script: ./ci/run.sh

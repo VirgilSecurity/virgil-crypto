@@ -48,7 +48,10 @@ if [ "${PLATFORM_NAME}" = "CPP" ]; then
 fi
 
 # Run CMake
-cd ${TRAVIS_BUILD_DIR}
-mkdir build
-cd build
+cd "${TRAVIS_BUILD_DIR}"
+if [ -d "${BUILD_DIR_NAME}" ]; then
+    rm -fr "${BUILD_DIR_NAME}"
+fi
+mkdir "${BUILD_DIR_NAME}"
+cd "${BUILD_DIR_NAME}"
 cmake "${CMAKE_ARGS}" ..

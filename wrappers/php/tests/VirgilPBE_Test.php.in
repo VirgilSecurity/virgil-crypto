@@ -38,7 +38,7 @@
 include_once "@PHP_MODULE_FILE_NAME@";
 
 /**
- * @covers VirgilPBE algorithms
+ * @coversDefaultClass VirgilPBE
  */
 class VirgilPBE_Test extends PHPUnit_Framework_TestCase {
 

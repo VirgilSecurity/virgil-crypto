@@ -40,7 +40,7 @@ include_once "StringSource.php";
 include_once "StringSink.php";
 
 /**
- * @covers VirgilChunkCipher algorithms
+ * @coversDefaultClass VirgilChunkCipher
  */
 class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
 

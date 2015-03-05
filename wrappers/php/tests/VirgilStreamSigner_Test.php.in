@@ -39,7 +39,7 @@ include_once "@PHP_MODULE_FILE_NAME@";
 include_once "StringSource.php";
 
 /**
- * @covers VirgilStreamSigner algorithms
+ * @coversDefaultClass VirgilStreamSigner
  */
 class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
 

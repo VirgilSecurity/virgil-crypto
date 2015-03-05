@@ -38,7 +38,7 @@
 include_once "@PHP_MODULE_FILE_NAME@";
 
 /**
- * @covers VirgilSymmetricCipher AES256 CBC algorithm
+ * @coversDefaultClass VirgilSymmetricCipher
  */
 class VirgilSymmetricCipher_AES256_CBC_Test extends PHPUnit_Framework_TestCase {
 
@@ -55,7 +55,14 @@ class VirgilSymmetricCipher_AES256_CBC_Test extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @covers VirgilSymmetricCipher (encoding)
+     * @covers VirgilSymmetricCipher::setPadding
+     * @covers VirgilSymmetricCipher::blockSize
+     * @covers VirgilSymmetricCipher::ivSize
+     * @covers VirgilSymmetricCipher::setIV
+     * @covers VirgilSymmetricCipher::setEncryptionKey
+     * @covers VirgilSymmetricCipher::reset
+     * @covers VirgilSymmetricCipher::update
+     * @covers VirgilSymmetricCipher::finish
      * @depends test_aes256_object_creation
      */
     public function test_aes256_encoding(VirgilSymmetricCipher $cipher) {
@@ -93,7 +100,14 @@ class VirgilSymmetricCipher_AES256_CBC_Test extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @covers VirgilSymmetricCipher (decoding)
+     * @covers VirgilSymmetricCipher::setPadding
+     * @covers VirgilSymmetricCipher::blockSize
+     * @covers VirgilSymmetricCipher::ivSize
+     * @covers VirgilSymmetricCipher::setIV
+     * @covers VirgilSymmetricCipher::setDecryptionKey
+     * @covers VirgilSymmetricCipher::reset
+     * @covers VirgilSymmetricCipher::update
+     * @covers VirgilSymmetricCipher::finish
      * @depends test_aes256_object_creation
      */
     public function test_aes256_decoding(VirgilSymmetricCipher $cipher) {

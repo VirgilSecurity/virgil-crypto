@@ -38,7 +38,7 @@
 include_once "@PHP_MODULE_FILE_NAME@";
 
 /**
- * @covers VirgilAsymmetricCipher RSA algorithms
+ * @coversDefaultClass VirgilAsymmetricCipher
  */
 class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
 

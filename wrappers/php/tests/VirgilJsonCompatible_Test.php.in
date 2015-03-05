@@ -38,17 +38,14 @@
 include_once "@PHP_MODULE_FILE_NAME@";
 
 /**
- * @covers ASN.1 and JSON marshalling algorithms
+ * @coversDefaultClass VirgilJsonCompatible
  */
-class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
+class VirgilJsonCompatible_Test extends PHPUnit_Framework_TestCase {
 
-    public function test_account_asn1_marshalling_demarshalling() {
-        $this->check_object_asn1_marshalling_demarshalling(
-            new VirgilAccount(),
-            file_get_contents("data/asn1_account.der")
-        );
-    }
-
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_account_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilAccount(),
@@ -56,13 +53,10 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
-    public function test_certificate_asn1_marshalling_demarshalling() {
-        $this->check_object_asn1_marshalling_demarshalling(
-            new VirgilCertificate(),
-            file_get_contents("data/asn1_certificate.der")
-        );
-    }
-
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_certificate_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilCertificate(),
@@ -70,13 +64,10 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
-    public function test_data_sign_asn1_marshalling_demarshalling() {
-        $this->check_object_asn1_marshalling_demarshalling(
-            new VirgilSign(),
-            file_get_contents("data/asn1_data_sign.der")
-        );
-    }
-
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_data_sign_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilSign(),
@@ -84,13 +75,10 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
-    public function test_ticket_sign_asn1_marshalling_demarshalling() {
-        $this->check_object_asn1_marshalling_demarshalling(
-            new VirgilSign(),
-            file_get_contents("data/asn1_ticket_sign.der")
-        );
-    }
-
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_ticket_sign_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilSign(),
@@ -98,13 +86,10 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
-    public function test_unique_ticket_email_asn1_marshalling_demarshalling() {
-        $this->check_object_asn1_marshalling_demarshalling(
-            new VirgilUniqueTicket(),
-            file_get_contents("data/asn1_unique_ticket_email.der")
-        );
-    }
-
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_unique_ticket_email_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilUniqueTicket(),
@@ -112,6 +97,10 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_unique_ticket_phone_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilUniqueTicket(),
@@ -119,6 +108,10 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_unique_ticket_fax_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilUniqueTicket(),
@@ -126,6 +119,10 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_unique_ticket_domain_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilUniqueTicket(),
@@ -133,6 +130,10 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_unique_ticket_application_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilUniqueTicket(),
@@ -140,6 +141,10 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_unique_ticket_mac_address_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilUniqueTicket(),
@@ -147,27 +152,10 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
-    public function test_unique_ticket_phone_asn1_marshalling_demarshalling() {
-        $this->check_object_asn1_marshalling_demarshalling(
-            new VirgilUniqueTicket(),
-            file_get_contents("data/asn1_unique_ticket_phone.der")
-        );
-    }
-
-    public function test_unique_ticket_fax_asn1_marshalling_demarshalling() {
-        $this->check_object_asn1_marshalling_demarshalling(
-            new VirgilUniqueTicket(),
-            file_get_contents("data/asn1_unique_ticket_fax.der")
-        );
-    }
-
-    public function test_info_ticket_first_name_asn1_marshalling_demarshalling() {
-        $this->check_object_asn1_marshalling_demarshalling(
-            new VirgilInfoTicket(),
-            file_get_contents("data/asn1_info_ticket_first_name.der")
-        );
-    }
-
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_info_ticket_first_name_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilInfoTicket(),
@@ -175,6 +163,10 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_info_ticket_last_name_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilInfoTicket(),
@@ -182,6 +174,10 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_info_ticket_middle_name_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilInfoTicket(),
@@ -189,6 +185,10 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_info_ticket_nickname_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilInfoTicket(),
@@ -196,17 +196,15 @@ class VirgilMarshalling_Test extends PHPUnit_Framework_TestCase {
         );
     }
 
+    /**
+     * @covers VirgilJsonCompatible::fromJson
+     * @covers VirgilJsonCompatible::toJson
+     */
     public function test_info_ticket_birth_date_json_marshalling_demarshalling() {
         $this->check_object_json_marshalling_demarshalling(
             new VirgilInfoTicket(),
             file_get_contents("data/json_info_ticket_birth_date.json")
         );
-    }
-
-    private function check_object_asn1_marshalling_demarshalling($obj, $asn1Base) {
-        $obj->fromAsn1($asn1Base);
-        $asn1 = $obj->toAsn1();
-        $this->assertEquals($asn1Base, $asn1);
     }
 
     private function check_object_json_marshalling_demarshalling($obj, $jsonBase) {

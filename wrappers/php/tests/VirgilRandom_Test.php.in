@@ -39,7 +39,7 @@ include_once "@PHP_MODULE_FILE_NAME@";
 include_once "StringSource.php";
 
 /**
- * @covers VirgilRandom algorithms
+ * @coversDefaultClass VirgilRandom
  */
 class VirgilRandom_Test extends PHPUnit_Framework_TestCase {
 

@@ -51,13 +51,14 @@ set (TEST_FILE_LIST
     VirgilSigner_Test.php
     VirgilAsn1Reader_Test.php
     VirgilAsn1Writer_Test.php
-    VirgilMarshalling_Test.php
     VirgilRandom_Test.php
     VirgilPBE_Test.php
     VirgilVersion_Test.php
     VirgilCustomParams_Test.php
     VirgilKDF_Test.php
     VirgilId_Test.php
+    VirgilAsn1Compatible_Test.php
+    VirgilJsonCompatible_Test.php
 
     StringSource.php
     StringSink.php

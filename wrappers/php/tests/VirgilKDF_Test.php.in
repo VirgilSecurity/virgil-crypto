@@ -38,7 +38,7 @@
 include_once "@PHP_MODULE_FILE_NAME@";
 
 /**
- * @covers VirgilKDF algorithms
+ * @coversDefaultClass VirgilKDF
  */
 class VirgilKDF_Test extends PHPUnit_Framework_TestCase {
 
@@ -79,7 +79,7 @@ class VirgilKDF_Test extends PHPUnit_Framework_TestCase {
     /**
      * @covers VirgilKDF::kdf1
      * @covers VirgilKDF::derive
-     * @covers VirgilKDF::toAsn
+     * @covers VirgilKDF::toAsn1
      * @covers VirgilKDF::fromAsn1
      */
     public function test_kdf1_asn1_compatible() {
@@ -89,7 +89,7 @@ class VirgilKDF_Test extends PHPUnit_Framework_TestCase {
     /**
      * @covers VirgilKDF::kdf2
      * @covers VirgilKDF::derive
-     * @covers VirgilKDF::toAsn
+     * @covers VirgilKDF::toAsn1
      * @covers VirgilKDF::fromAsn1
      */
     public function test_kdf2_asn1_compatible() {
@@ -98,7 +98,7 @@ class VirgilKDF_Test extends PHPUnit_Framework_TestCase {
 
     /**
      * @covers VirgilKDF::derive
-     * @covers VirgilKDF::toAsn
+     * @covers VirgilKDF::toAsn1
      * @covers VirgilKDF::fromAsn1
      */
     private function _test_kdf_asn1_compatible($kdf) {

@@ -38,7 +38,7 @@
 include_once "@PHP_MODULE_FILE_NAME@";
 
 /**
- * @covers VirgilId
+ * @coversDefaultClass VirgilId
  */
 class VirgilId_Test extends PHPUnit_Framework_TestCase {
 

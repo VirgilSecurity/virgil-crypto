@@ -38,7 +38,7 @@
 include_once "@PHP_MODULE_FILE_NAME@";
 
 /**
- * @covers VirgilHash SHA256 algorithms
+ * @coversDefaultClass VirgilHash
  */
 class VirgilHash_SHA256_Test extends PHPUnit_Framework_TestCase {
 
@@ -116,7 +116,7 @@ class VirgilHash_SHA256_Test extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @covers VirgilHash::hmacHash
+     * @covers VirgilHash::hmac
      * @depends test_sha256_object_creation
      */
     public function test_sha256_hmac(VirgilHash $hash) {

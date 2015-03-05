@@ -38,12 +38,12 @@
 include_once "@PHP_MODULE_FILE_NAME@";
 
 /**
- * @covers VirgilAsn1Reader algorithms
+ * @coversDefaultClass VirgilAsn1Reader
  */
 class VirgilAsn1Reader_Test extends PHPUnit_Framework_TestCase {
 
     /**
-     * @covers VirgilAsn1Reader::new
+     * @covers VirgilAsn1Reader::__construct
      */
     public function test_asn1_reader_creation() {
         $asn1Reader = new VirgilAsn1Reader();

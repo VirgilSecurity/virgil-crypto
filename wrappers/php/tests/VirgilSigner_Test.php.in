@@ -39,7 +39,7 @@ include_once "@PHP_MODULE_FILE_NAME@";
 include_once "StringSource.php";
 
 /**
- * @covers VirgilSigner algorithms
+ * @coversDefaultClass VirgilSigner
  */
 class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
 
@@ -92,7 +92,7 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @covers VirgilCipher::generateKeyPair
+     * @covers VirgilKeyPair::__construct
      * @covers VirgilSigner::sign
      * @covers VirgilSigner::verify
      * @expectedException Exception

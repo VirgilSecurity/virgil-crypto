@@ -38,7 +38,7 @@
 include_once "@PHP_MODULE_FILE_NAME@";
 
 /**
- * @covers VirgilCipher algorithms
+ * @coversDefaultClass VirgilCipher
  */
 class VirgilCipher_Test extends PHPUnit_Framework_TestCase {
 

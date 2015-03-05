@@ -7,6 +7,7 @@ before_install:
     - sudo apt-get install -y swig
     - sudo apt-get install -y python-yaml
     - sudo apt-get install -y php5
+    - sudo apt-get install -y php5-dev
     - sudo apt-get install -y phpunit
 before_script:
     - mkdir build

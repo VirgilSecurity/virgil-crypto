@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/VirgilSecurity/virgil.svg?branch=master)](https://travis-ci.org/VirgilSecurity/virgil)
+
 # Library: virgil
 
 ## Introduction

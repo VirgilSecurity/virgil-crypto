@@ -8,9 +8,10 @@ before_install:
     - sudo apt-get install -y php5
     - sudo apt-get install -y phpunit
     - wget http://downloads.sourceforge.net/swig/swig-3.0.5.tar.gz -O /tmp/swig-3.0.5.tar.gz
-    - tar -xvf /tmp/swig-3.0.5.tar.gz
-    - cd swig-3.0.5 && ./configure --prefix=/usr && make && sudo make install
+    - tar -xvf /tmp/swig-3.0.5.tar.gz --directory /tmp/swig-3.0.5
+    - cd /tmp/swig-3.0.5 && ./configure --prefix=/usr && make && sudo make install
 before_script:
+    - cd $TRAVIS_BUILD_DIR
     - mkdir build
     - cd build
     - cmake -DPLATFORM_NAME=PHP ..

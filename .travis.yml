@@ -8,6 +8,6 @@ env:
     matrix:
         - PLATFORM_NAME=CPP
         - PLATFORM_NAME=PHP
-before_install: sudo ./ci/install_deps.sh
+before_install: sudo -E bash -f ./ci/install_deps.sh
 before_script: ./ci/configure.sh
 script: ./ci/run.sh

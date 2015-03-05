@@ -54,4 +54,4 @@ if [ -d "${BUILD_DIR_NAME}" ]; then
 fi
 mkdir "${BUILD_DIR_NAME}"
 cd "${BUILD_DIR_NAME}"
-cmake "${CMAKE_ARGS}" ..
+cmake ${CMAKE_ARGS} ..

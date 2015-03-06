@@ -122,7 +122,10 @@ endif ()
 
 # Build submodules
 add_subdirectory (lib)
-if (PLATFORM_NAME_LOWER STREQUAL "cpp" AND BUILD_CPP_PROGRAMS)
-    add_subdirectory (programs)
+if (PLATFORM_NAME_LOWER STREQUAL "cpp")
+    add_subdirectory (tests)
+    if (BUILD_CPP_PROGRAMS)
+        add_subdirectory (programs)
+    endif()
 endif ()
 add_subdirectory (wrappers)

@@ -39,6 +39,8 @@
 
 #include <cstring>
 #include <string>
+#include <sstream>
+#include <iomanip>
 #include <vector>
 #include <algorithm>
 
@@ -71,6 +73,18 @@ inline virgil::VirgilByteArray virgil_byte_array_from_std_string(const std::stri
 
 inline std::string virgil_byte_array_to_std_string(const virgil::VirgilByteArray& array) {
     return std::string(reinterpret_cast<const char *>(array.data()), array.size());
+}
+
+inline std::string virgil_byte_array_to_hex_string(const virgil::VirgilByteArray& array, bool formatted = false) {
+    std::ostringstream hexStream;
+    hexStream << std::setfill('0');
+    for(size_t i = 0; i < array.size(); ++i) {
+        hexStream << std::hex << std::setw(2) << (int)array[i];
+        if (formatted) {
+            hexStream << (((i + 1) % 16 == 0) ? "\n" : " ");
+        }
+    }
+    return hexStream.str();
 }
 
 #define VIRGIL_BYTE_ARRAY_FROM_C_STRING(str) virgil_byte_array_from_c_string(str)

@@ -139,8 +139,10 @@ const VirgilCustomParams& VirgilCipherBase::customParameters() const {
 VirgilByteArray VirgilCipherBase::tryReadContentInfo(const VirgilByteArray& encryptedData) {
     size_t contentInfoSize = VirgilContentInfo::defineSize(encryptedData);
     if (contentInfoSize > 0) {
-        setContentInfo(encryptedData);
-        return VirgilByteArray(encryptedData.begin() + contentInfoSize, encryptedData.end());
+        VirgilByteArray contentInfo(encryptedData.begin(), encryptedData.begin() + contentInfoSize);
+        VirgilByteArray payload(encryptedData.begin() + contentInfoSize, encryptedData.end());
+        setContentInfo(contentInfo);
+        return payload;
     }
     return encryptedData;
 }

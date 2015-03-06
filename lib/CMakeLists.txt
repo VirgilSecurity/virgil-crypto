@@ -49,8 +49,8 @@ configure_file(
     ${CMAKE_CURRENT_BINARY_DIR}/include/virgil/VirgilVersion.h
 )
 
-include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
-include_directories (${CMAKE_CURRENT_BINARY_DIR}/include)
+set (LIB_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/include")
+include_directories (${LIB_INCLUDE_DIRS})
 if (CMAKE_MAJOR_VERSION LESS 3)
     include_directories (${POLARSSL_INCLUDE_DIR})
     include_directories (${JSONCPP_INCLUDE_DIR})
@@ -68,6 +68,7 @@ add_library (${PROJECT_NAME} STATIC ${src})
 set_property (TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME ${PROJECT_NAME})
 set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
+set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${LIB_INCLUDE_DIRS})
 
 target_link_libraries (${PROJECT_NAME} polarssl jsoncpp)
 add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD

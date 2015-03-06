@@ -119,6 +119,11 @@ void VirgilCustomParams::removeData(const VirgilByteArray& key) {
     dataValues_.erase(key);
 }
 
+void VirgilCustomParams::clear() {
+    intValues_.clear();
+    stringValues_.clear();
+    dataValues_.clear();
+}
 
 size_t VirgilCustomParams::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     std::vector<VirgilByteArray> keyValues;

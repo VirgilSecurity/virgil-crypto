@@ -46,6 +46,7 @@ package com.virgilsecurity {
     import com.hurlant.util.Hex;
 
     import com.virgilsecurity.*;
+    import com.virgilsecurity.extension.*;
     import com.virgilsecurity.wrapper.CModule;
 
     public class VirgilCertificateTest {
@@ -83,7 +84,7 @@ package com.virgilsecurity {
             assertThat(certificateId.accountId().readInt(), equalTo(TEST_ACCOUNT_ID));
             assertThat(certificateId.certificateId().readInt(), equalTo(TEST_CERTIFICATE_ID));
 
-            var publicKeyData:ByteArray = ConvertionUtils.utfStringToArray(TEST_PUBLIC_KEY_PEM);
+            var publicKeyData:ByteArray = ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM);
             var certificate:VirgilCertificate = VirgilCertificate.create(publicKeyData);
 
             var publicKeyDataExtracted:ByteArray = certificate.publicKey();
@@ -91,7 +92,7 @@ package com.virgilsecurity {
             assertThat(publicKeyData.length, equalTo(publicKeyDataExtracted.length));
 
             assertThat(certificate.cPtr, not(equalTo(0)));
-            assertThat(ConvertionUtils.arrayToUTFString(publicKeyDataExtracted), TEST_PUBLIC_KEY_PEM);
+            assertThat(ConvertionUtils.arrayToAsciiString(publicKeyDataExtracted), TEST_PUBLIC_KEY_PEM);
             assertThat(certificate.id().accountId().length, equalTo(0));
             assertThat(certificate.id().certificateId().length, equalTo(0));
 
@@ -115,5 +116,4 @@ package com.virgilsecurity {
             certificate.destroy();
         }
     }
-
 }

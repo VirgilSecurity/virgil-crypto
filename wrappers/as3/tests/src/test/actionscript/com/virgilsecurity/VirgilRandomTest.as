@@ -46,6 +46,7 @@ package com.virgilsecurity {
     import com.hurlant.util.Hex;
 
     import com.virgilsecurity.*;
+    import com.virgilsecurity.extension.*;
     import com.virgilsecurity.wrapper.CModule;
 
     public class VirgilRandomTest {
@@ -69,7 +70,7 @@ package com.virgilsecurity {
         }
 
         [Test(description="Test VirgilRandom.sign() and VirgilRandom.verify().")]
-        public function test_random_sign_verify():void {
+        public function test_random():void {
             const bytesNum:uint = 1024;
             var randomData:ByteArray = random_.randomize(bytesNum);
             assertThat(randomData.length, equalTo(bytesNum));

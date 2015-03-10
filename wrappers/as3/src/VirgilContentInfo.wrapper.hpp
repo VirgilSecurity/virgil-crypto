@@ -34,45 +34,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity {
-    import flash.utils.ByteArray;
+#ifndef AS3_VIRGIL_CONTENT_INFO_HPP
+#define AS3_VIRGIL_CONTENT_INFO_HPP
 
-    public class ConvertionUtils {
+#include <virgil/crypto/VirgilContentInfo.h>
+using virgil::crypto::VirgilContentInfo;
 
-        static public function asciiStringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeMultiByte(string, "iso-8859-1");
-            result.position = 0;
-            return result;
-        }
+#include "as3_utils.hpp"
 
-        static public function arrayToAsciiString(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readMultiByte(array.length, "iso-8859-1");
-            } finally {
-                array.position = pos;
-            }
-            return  result;
-        }
+enum {
+    kContentInfoHeaderMinLength = 16
+};
 
-        static public function utf8StringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeUTFBytes(string);
-            result.position = 0;
-            return result;
-        }
-
-        static public function arrayToUTF8String(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readUTFBytes(array.length);
-            } finally {
-                array.position = pos;
-            }
-            return result;;
-        }
+AS3_DECL_FUNC(_wrap_VirgilContentInfo_defineSize, "(asContentInfo:ByteArray):uint") {
+    AS3_TO_C_BYTE_ARRAY(asContentInfo, cContentInfo);
+    if (cContentInfo.size() < kContentInfoHeaderMinLength) {
+        AS3_THROW_EXCEPTION("VirgilContentInfo: Not enough data to determine content info length.");
+        return;
     }
+    size_t cContentInfoSize = VirgilContentInfo::defineSize(cContentInfo);
+    AS3_RETURN_C_UINT(cContentInfoSize);
 }
+
+#endif /* AS3_VIRGIL_CONTENT_INFO_HPP */
+

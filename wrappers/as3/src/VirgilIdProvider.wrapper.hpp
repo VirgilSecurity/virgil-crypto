@@ -34,45 +34,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity {
-    import flash.utils.ByteArray;
+#ifndef AS3_VIRGIL_ID_PROVIDER_HPP
+#define AS3_VIRGIL_ID_PROVIDER_HPP
 
-    public class ConvertionUtils {
+#include "as3_utils.hpp"
 
-        static public function asciiStringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeMultiByte(string, "iso-8859-1");
-            result.position = 0;
-            return result;
-        }
-
-        static public function arrayToAsciiString(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readMultiByte(array.length, "iso-8859-1");
-            } finally {
-                array.position = pos;
-            }
-            return  result;
-        }
-
-        static public function utf8StringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeUTFBytes(string);
-            result.position = 0;
-            return result;
-        }
-
-        static public function arrayToUTF8String(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readUTFBytes(array.length);
-            } finally {
-                array.position = pos;
-            }
-            return result;;
-        }
-    }
+#define AS3_IMPL_VIRGIL_ID_PROVIDER(className) \
+AS3_DECL_FUNC(_wrap_##className##_id, "(asSelf:int):int") { \
+    AS3_TO_C_PTR(className, asSelf, cSelf); \
+    const className##Id& cId = cSelf->id(); \
+    AS3_RETURN_C_PTR(&cId); \
+} \
+AS3_DECL_FUNC(_wrap_##className##_setId, "(asSelf:int, asId:int):void") { \
+    AS3_TO_C_PTR(className, asSelf, cSelf); \
+    AS3_TO_C_PTR(className##Id, asId, cId); \
+    cSelf->setId(*cId); \
+    AS3_RETURN_VOID(); \
 }
+
+#endif /* AS3_VIRGIL_ID_PROVIDER_HPP */
+

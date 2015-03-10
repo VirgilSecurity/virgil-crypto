@@ -34,45 +34,39 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity {
-    import flash.utils.ByteArray;
+#ifndef AS3_VIRGIL_VERSION_HPP
+#define AS3_VIRGIL_VERSION_HPP
 
-    public class ConvertionUtils {
+#include <virgil/VirgilVersion.h>
+using virgil::VirgilVersion;
 
-        static public function asciiStringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeMultiByte(string, "iso-8859-1");
-            result.position = 0;
-            return result;
-        }
+#include "as3_utils.hpp"
+#include <string>
 
-        static public function arrayToAsciiString(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readMultiByte(array.length, "iso-8859-1");
-            } finally {
-                array.position = pos;
-            }
-            return  result;
-        }
-
-        static public function utf8StringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeUTFBytes(string);
-            result.position = 0;
-            return result;
-        }
-
-        static public function arrayToUTF8String(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readUTFBytes(array.length);
-            } finally {
-                array.position = pos;
-            }
-            return result;;
-        }
-    }
+AS3_DECL_FUNC(_wrap_VirgilVersion_asString, "():String") {
+    std::string cVersion = VirgilVersion::asString();
+    AS3_RETURN_STD_STRING(cVersion);
 }
+
+AS3_DECL_FUNC(_wrap_VirgilVersion_asHexNumber, "():uint") {
+    size_t cVersion = VirgilVersion::asHexNumber();
+    AS3_RETURN_C_UINT(cVersion);
+}
+
+AS3_DECL_FUNC(_wrap_VirgilVersion_majorNumber, "():uint") {
+    size_t cNumber = VirgilVersion::majorNumber();
+    AS3_RETURN_C_UINT(cNumber);
+}
+
+AS3_DECL_FUNC(_wrap_VirgilVersion_minorNumber, "():uint") {
+    size_t cNumber = VirgilVersion::minorNumber();
+    AS3_RETURN_C_UINT(cNumber);
+}
+
+AS3_DECL_FUNC(_wrap_VirgilVersion_patchNumber, "():uint") {
+    size_t cNumber = VirgilVersion::patchNumber();
+    AS3_RETURN_C_UINT(cNumber);
+}
+
+#endif /* AS3_VIRGIL_VERSION_HPP */
+

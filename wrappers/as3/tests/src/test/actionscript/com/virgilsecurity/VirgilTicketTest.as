@@ -46,6 +46,7 @@ package com.virgilsecurity {
     import com.hurlant.util.Hex;
 
     import com.virgilsecurity.*;
+    import com.virgilsecurity.extension.*;
     import com.virgilsecurity.wrapper.CModule;
 
     public class VirgilTicketTest {
@@ -58,7 +59,8 @@ package com.virgilsecurity {
 
         [Before(description="Creates VirgilTicket object and stores it in the 'ticket_' variable.")]
         public function create_ticket() : void {
-            ticket_ = VirgilTicket.create();
+            ticket_ = VirgilUniqueTicket.create(VirgilUniqueTicketType.Email,
+                ConvertionUtils.asciiStringToArray("test@test.com"));
             assertThat(ticket_.cPtr, not(equalTo(0)));
         }
 
@@ -90,7 +92,7 @@ package com.virgilsecurity {
             assertThat(ConvertionUtils.arrayToAsciiString(ticket_.id().ticketId()), equalTo("789"));
         }
 
-        [Test(description="Test VirgilTicketId 'id' accessor is mutable")]
+        [Test(description="Test VirgilTicketId 'id' accessor is mutable.")]
         public function test_ticket_id_mutable():void {
             assertThat(ticket_.id().accountId().length, equalTo(0));
             assertThat(ticket_.id().certificateId().length, equalTo(0));
@@ -106,16 +108,14 @@ package com.virgilsecurity {
             assertThat(ConvertionUtils.arrayToAsciiString(ticket_.id().ticketId()), equalTo("789"));
         }
 
-        [Test(description="Test VirgilTicket::isUserIdTicket().")]
-        public function test_ticket_isUserIdTicket():void {
-            assertThat(ticket_.isUserIdTicket(), equalTo(false));
+        [Test(description="Test VirgilTicket.isUniqueTicket().")]
+        public function test_ticket_isUniqueTicket():void {
+            assertThat(ticket_.isUniqueTicket(), equalTo(true));
         }
 
-        [Test(description="Test VirgilTicket::isUserInfoTicket().")]
-        public function test_ticket_isUserInfoTicket():void {
-            assertThat(ticket_.isUserInfoTicket(), equalTo(false));
+        [Test(description="Test VirgilTicket.isInfoTicket().")]
+        public function test_ticket_isInfoTicket():void {
+            assertThat(ticket_.isInfoTicket(), equalTo(false));
         }
-
     }
-
 }

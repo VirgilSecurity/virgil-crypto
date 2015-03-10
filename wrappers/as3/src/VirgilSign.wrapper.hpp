@@ -34,45 +34,47 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity {
-    import flash.utils.ByteArray;
+#ifndef AS3_VIRGIL_SIGN_HPP
+#define AS3_VIRGIL_SIGN_HPP
 
-    public class ConvertionUtils {
+#include <virgil/service/data/VirgilSign.h>
+using virgil::service::data::VirgilSign;
 
-        static public function asciiStringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeMultiByte(string, "iso-8859-1");
-            result.position = 0;
-            return result;
-        }
+#include "as3_utils.hpp"
+#include "VirgilIdProvider.wrapper.hpp"
 
-        static public function arrayToAsciiString(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readMultiByte(array.length, "iso-8859-1");
-            } finally {
-                array.position = pos;
-            }
-            return  result;
-        }
+AS3_IMPL_VIRGIL_ID_PROVIDER(VirgilSign)
 
-        static public function utf8StringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeUTFBytes(string);
-            result.position = 0;
-            return result;
-        }
+AS3_IMPL_CONSTRUCTOR(VirgilSign)
+AS3_IMPL_DESTRUCTOR(VirgilSign)
 
-        static public function arrayToUTF8String(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readUTFBytes(array.length);
-            } finally {
-                array.position = pos;
-            }
-            return result;;
-        }
-    }
+AS3_DECL_FUNC(_wrap_new_VirgilSign_init,
+        "(asHashName:ByteArray, asSignedDigest:ByteArray, asSignerCertificateId:ByteArray):int") {
+    AS3_TO_C_BYTE_ARRAY(asHashName, cHashName);
+    AS3_TO_C_BYTE_ARRAY(asSignedDigest, cSignedDigest);
+    AS3_TO_C_BYTE_ARRAY(asSignerCertificateId, cSignerCertificateId);
+
+    VirgilSign *cSelf = new VirgilSign(cHashName, cSignedDigest, cSignerCertificateId);
+
+    AS3_RETURN_C_PTR(cSelf);
 }
+
+AS3_DECL_FUNC(_wrap_VirgilSign_hashName, "(asSelf:int):ByteArray") {
+    AS3_TO_C_PTR(VirgilSign, asSelf, cSelf);
+    VirgilByteArray cHashName = cSelf->hashName();
+    AS3_RETURN_C_BYTE_ARRAY(cHashName);
+}
+
+AS3_DECL_FUNC(_wrap_VirgilSign_signedDigest, "(asSelf:int):ByteArray") {
+    AS3_TO_C_PTR(VirgilSign, asSelf, cSelf);
+    VirgilByteArray cSignedDigest = cSelf->signedDigest();
+    AS3_RETURN_C_BYTE_ARRAY(cSignedDigest);
+}
+
+AS3_DECL_FUNC(_wrap_VirgilSign_signerCertificateId, "(asSelf:int):ByteArray") {
+    AS3_TO_C_PTR(VirgilSign, asSelf, cSelf);
+    VirgilByteArray cSignerCertificateId = cSelf->signerCertificateId();
+    AS3_RETURN_C_BYTE_ARRAY(cSignerCertificateId);
+}
+
+#endif /* AS3_VIRGIL_SIGN_HPP */

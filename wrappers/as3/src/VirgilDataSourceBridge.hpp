@@ -34,45 +34,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity {
-    import flash.utils.ByteArray;
+#ifndef AS3_VIRGIL_DATA_SOURCE_BRIDGE_HPP
+#define AS3_VIRGIL_DATA_SOURCE_BRIDGE_HPP
 
-    public class ConvertionUtils {
+#include <virgil/service/stream/VirgilDataSource.h>
+using virgil::service::stream::VirgilDataSource;
 
-        static public function asciiStringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeMultiByte(string, "iso-8859-1");
-            result.position = 0;
-            return result;
-        }
+#include "as3_utils.hpp"
 
-        static public function arrayToAsciiString(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readMultiByte(array.length, "iso-8859-1");
-            } finally {
-                array.position = pos;
-            }
-            return  result;
-        }
-
-        static public function utf8StringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeUTFBytes(string);
-            result.position = 0;
-            return result;
-        }
-
-        static public function arrayToUTF8String(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readUTFBytes(array.length);
-            } finally {
-                array.position = pos;
-            }
-            return result;;
-        }
+class VirgilDataSourceBridge : public VirgilDataSource {
+public:
+    explicit VirgilDataSourceBridge(const AS3::local::var& cDataSource) : cDataSource_(cDataSource) {
     }
-}
+
+    virtual bool hasData() {
+        inline_as3("var asDataSource:* = null;");
+        AS3_CopyVarxxToVar(asDataSource, cDataSource_);
+        bool result = false;
+        inline_as3(
+            "%0 = asDataSource.hasData();"
+            : "=r"(result)
+        );
+        return result;
+    }
+
+    __attribute__((
+        annotate("as3import:flash.utils.ByteArray")
+    ))
+    virtual VirgilByteArray read() {
+        inline_as3("var asDataSource:* = null;");
+        AS3_CopyVarxxToVar(asDataSource, cDataSource_);
+        inline_as3(
+            "var asData:ByteArray = asDataSource.read();"
+        );
+        AS3_TO_C_BYTE_ARRAY(asData, cData);
+        return cData;
+    }
+    virtual ~VirgilDataSourceBridge() throw() {}
+private:
+    AS3::local::var cDataSource_;
+};
+
+#endif /* AS3_VIRGIL_DATA_SOURCE_BRIDGE_HPP */

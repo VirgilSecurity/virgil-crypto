@@ -34,45 +34,42 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity {
-    import flash.utils.ByteArray;
+#ifndef AS3_VIRGIL_DATA_SINK_BRIDGE_HPP
+#define AS3_VIRGIL_DATA_SINK_BRIDGE_HPP
 
-    public class ConvertionUtils {
+#include <virgil/service/stream/VirgilDataSink.h>
+using virgil::service::stream::VirgilDataSink;
 
-        static public function asciiStringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeMultiByte(string, "iso-8859-1");
-            result.position = 0;
-            return result;
-        }
+#include "as3_utils.hpp"
 
-        static public function arrayToAsciiString(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readMultiByte(array.length, "iso-8859-1");
-            } finally {
-                array.position = pos;
-            }
-            return  result;
-        }
-
-        static public function utf8StringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeUTFBytes(string);
-            result.position = 0;
-            return result;
-        }
-
-        static public function arrayToUTF8String(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readUTFBytes(array.length);
-            } finally {
-                array.position = pos;
-            }
-            return result;;
-        }
+class VirgilDataSinkBridge : public VirgilDataSink {
+public:
+    explicit VirgilDataSinkBridge(const AS3::local::var& cDataSink) : cDataSink_(cDataSink) {
     }
-}
+
+    virtual bool isGood() {
+        inline_as3("var asDataSink:* = null;");
+        AS3_CopyVarxxToVar(asDataSink, cDataSink_);
+        bool result = false;
+        inline_as3(
+            "%0 = asDataSink.isGood();"
+            : "=r"(result)
+        );
+        return result;
+    }
+
+    __attribute__((
+        annotate("as3import:flash.utils.ByteArray")
+    ))
+    virtual void write(const VirgilByteArray& cData) {
+        AS3_FROM_C_BYTE_ARRAY(cData, asData);
+        inline_as3("var asDataSink:* = null;");
+        AS3_CopyVarxxToVar(asDataSink, cDataSink_);
+        inline_as3("asDataSink.write(asData);");
+    }
+    virtual ~VirgilDataSinkBridge() throw() {}
+private:
+    AS3::local::var cDataSink_;
+};
+
+#endif /* AS3_VIRGIL_DATA_SINK_BRIDGE_HPP */

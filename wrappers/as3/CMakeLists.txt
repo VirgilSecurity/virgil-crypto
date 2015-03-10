@@ -67,36 +67,38 @@ else ()
     message (STATUS "Found nm: " ${CMAKE_NM})
 endif ()
 
-# Configure inlcudes
-set (INCLUDES "-I${${WRAPPED_LIB_NAME}_SOURCE_DIR}/include" "-I${CMAKE_CURRENT_SOURCE_DIR}/include")
-
-# Build wrapper
-set (WRAPPER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/wrapper.cxx)
-set (WRAPPER_OBJ ${CMAKE_CURRENT_BINARY_DIR}/wrapper.o)
+# Add include directory of wrapped module
+set (INCLUDES
+    "-I${${WRAPPED_LIB_NAME}_SOURCE_DIR}/include"
+    "-I${${WRAPPED_LIB_NAME}_BINARY_DIR}/include"
+    "-I${${WRAPPED_LIB_NAME}_BINARY_DIR}/jsoncpp/include")
 
 if (CMAKE_BUILD_TYPE)
     string (TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
+    set (CMAKE_CXX_FLAGS_OPTIONAL ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}})
 endif ()
 
+# Build wrapper OBJ
+file(GLOB WRAPPER_HPP "${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp")
+set (WRAPPER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/wrapper.cxx)
+set (WRAPPER_OBJ ${CMAKE_CURRENT_BINARY_DIR}/wrapper.o)
 add_custom_command (OUTPUT ${WRAPPER_OBJ}
     COMMAND ${CMAKE_CXX_COMPILER}
-    ARGS -c ${CMAKE_CXX_FLAGS} ${INCLUDES}
+    ARGS -c ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_OPTIONAL} ${INCLUDES}
     -o ${WRAPPER_OBJ} ${WRAPPER_SRC}
+    DEPENDS ${WRAPPER_HPP}
     DEPENDS ${WRAPPER_SRC}
 )
 
 # Build wrapper ABC
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/wrapper.as
-    ${CMAKE_CURRENT_BINARY_DIR}/wrapper.as
-    COPYONLY
-)
-set (WRAPPER_AS3 ${CMAKE_CURRENT_BINARY_DIR}/wrapper.as)
-set (WRAPPER_ABC ${CMAKE_CURRENT_BINARY_DIR}/wrapper.abc)
+set (WRAPPER_NAME wrapper)
+file(GLOB WRAPPER_AS3 "${CMAKE_CURRENT_SOURCE_DIR}/src/*.as")
+set (WRAPPER_ABC ${WRAPPER_NAME}.abc)
 add_custom_command (OUTPUT ${WRAPPER_ABC}
+    COMMENT "Building ${WRAPPER_ABC}"
     COMMAND ${Java_JAVA_EXECUTABLE}
-    ARGS -jar ${AS3_COMPILER} -merge -md -import ${BUILTIN_ABC} ${WRAPPER_AS3}
+    ARGS -jar ${AS3_COMPILER} -merge -md -import ${BUILTIN_ABC}
+         -outdir ${CMAKE_CURRENT_BINARY_DIR} -out ${WRAPPER_NAME} ${WRAPPER_AS3}
     DEPENDS ${BUILTIN_ABC}
     DEPENDS ${WRAPPER_AS3}
 )
@@ -115,9 +117,10 @@ add_custom_command (OUTPUT ${WRAPPER_EXPORT_FILE}
 # Link wrapper with target library
 set (WRAPPER_SWC ${CMAKE_CURRENT_BINARY_DIR}/${SWIG_MODULE_NAME}.swc)
 add_custom_target (${SWIG_MODULE_NAME} ALL
+    COMMENT "Building ${SWIG_MODULE_NAME}.swc"
     COMMAND ${CMAKE_CXX_COMPILER}
-            -emit-swc=${SWIG_MODULE_NAMESPACE} ${CMAKE_CXX_FLAGS} -o ${WRAPPER_SWC}
-            ${WRAPPER_OBJ} ${WRAPPER_ABC}
+            -emit-swc=${SWIG_MODULE_NAMESPACE} ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_OPTIONAL}
+            -o ${WRAPPER_SWC} ${WRAPPER_OBJ} ${WRAPPER_ABC}
             $<TARGET_LINKER_FILE:${WRAPPED_LIB_NAME}> ${CMAKE_BINARY_DIR}/libs/libpolarssl.a
             ${CMAKE_BINARY_DIR}/libs/libjsoncpp.a -lAS3++
     DEPENDS ${WRAPPER_OBJ}

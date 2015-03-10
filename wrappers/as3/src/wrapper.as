@@ -43,44 +43,64 @@ import flash.utils.IDataInput;
 import flash.utils.IDataOutput;
 
 import com.virgilsecurity.wrapper.*;
+import com.virgilsecurity.extension.*;
 
-public class VirgilRandom {
-    public var cPtr:int;
-
-    public static function create(personalInfo:ByteArray):VirgilRandom {
-        var obj = new VirgilRandom();
-        obj.cPtr = _wrap_new_VirgilRandom(personalInfo);
-        return obj;
+public class VirgilVersion {
+    public static function asString():String {
+        return _wrap_VirgilVersion_asString();
     }
-
-    public function destroy():void {
-        _wrap_delete_VirgilRandom(cPtr);
+    public static function asHexNumber():uint {
+        return _wrap_VirgilVersion_asHexNumber();
     }
-
-    public function randomize(bytesNum:uint):ByteArray {
-        return _wrap_VirgilRandom_randomize(cPtr, bytesNum);
+    public static function majorNumber():uint {
+        return _wrap_VirgilVersion_majorNumber();
+    }
+    public static function minorNumber():uint {
+        return _wrap_VirgilVersion_minorNumber();
+    }
+    public static function patchNumber():uint {
+        return _wrap_VirgilVersion_patchNumber();
     }
 }
 
-public class VirgilAccountId {
-    public var cPtr:int;
+public class VirgilSerializable extends CObject implements IVirgilAsn1Compatible, IVirgilJsonCompatible {
+    public function toAsn1():ByteArray {
+        return _wrap_VirgilSerializable_toAsn1(this.cPtr);
+    }
+    public function fromAsn1(asn1:ByteArray):void {
+        _wrap_VirgilSerializable_fromAsn1(this.cPtr, asn1);
+    }
+    public function toJson():ByteArray {
+        return _wrap_VirgilSerializable_toJson(this.cPtr);
+    }
+    public function fromJson(json:ByteArray):void {
+        _wrap_VirgilSerializable_fromJson(this.cPtr, json);
+    }
+}
 
+public class VirgilId extends VirgilSerializable {
+    public function isEmpty():Boolean {
+        return _wrap_VirgilId_isEmpty(this.cPtr);
+    }
+    public function clear():void {
+        _wrap_VirgilId_clear(this.cPtr);
+    }
+}
+
+public class VirgilAccountId extends VirgilId {
     public static function create():VirgilAccountId {
         var obj = new VirgilAccountId();
         obj.cPtr = _wrap_new_VirgilAccountId();
         return obj;
     }
-
     public function destroy():void {
-        _wrap_delete_VirgilAccountId(cPtr);
+        _wrap_delete_VirgilAccountId(this.cPtr);
     }
-
     public function accountId():ByteArray {
-        return _wrap_VirgilAccountId_accountId(cPtr);
+        return _wrap_VirgilAccountId_accountId(this.cPtr);
     }
-
     public function setAccountId(accountId:ByteArray):void {
-        _wrap_VirgilAccountId_setAccountId(cPtr, accountId);
+        _wrap_VirgilAccountId_setAccountId(this.cPtr, accountId);
     }
 }
 
@@ -90,17 +110,11 @@ public class VirgilCertificateId extends VirgilAccountId {
         obj.cPtr = _wrap_new_VirgilCertificateId();
         return obj;
     }
-
-    override public function destroy():void {
-        _wrap_delete_VirgilCertificateId(cPtr);
-    }
-
     public function certificateId():ByteArray {
-        return _wrap_VirgilCertificateId_certificateId(cPtr);
+        return _wrap_VirgilCertificateId_certificateId(this.cPtr);
     }
-
     public function setCertificateId(certificateId:ByteArray):void {
-        _wrap_VirgilCertificateId_setCertificateId(cPtr, certificateId);
+        _wrap_VirgilCertificateId_setCertificateId(this.cPtr, certificateId);
     }
 }
 
@@ -110,17 +124,11 @@ public class VirgilTicketId extends VirgilCertificateId {
         obj.cPtr = _wrap_new_VirgilTicketId();
         return obj;
     }
-
-    override public function destroy():void {
-        _wrap_delete_VirgilTicketId(cPtr);
-    }
-
     public function ticketId():ByteArray {
-        return _wrap_VirgilTicketId_ticketId(cPtr);
+        return _wrap_VirgilTicketId_ticketId(this.cPtr);
     }
-
     public function setTicketId(ticketId:ByteArray):void {
-        _wrap_VirgilTicketId_setTicketId(cPtr, ticketId);
+        _wrap_VirgilTicketId_setTicketId(this.cPtr, ticketId);
     }
 }
 
@@ -130,468 +138,277 @@ public class VirgilSignId extends VirgilTicketId {
         obj.cPtr = _wrap_new_VirgilSignId();
         return obj;
     }
-
-    override public function destroy():void {
-        _wrap_delete_VirgilSignId(cPtr);
-    }
-
     public function signId():ByteArray {
-        return _wrap_VirgilSignId_signId(cPtr);
+        return _wrap_VirgilSignId_signId(this.cPtr);
     }
-
     public function setSignId(signId:ByteArray):void {
-        _wrap_VirgilSignId_setSignId(cPtr, signId);
+        _wrap_VirgilSignId_setSignId(this.cPtr, signId);
     }
 }
 
-public class VirgilAccount {
-    public var cPtr:int;
-
+public class VirgilAccount extends VirgilSerializable {
     public static function create():VirgilAccount {
         var obj = new VirgilAccount();
         obj.cPtr = _wrap_new_VirgilAccount();
         return obj;
     }
-
     public function destroy():void {
-        _wrap_delete_VirgilAccount(cPtr);
+        _wrap_delete_VirgilAccount(this.cPtr);
     }
-
     public function id():VirgilAccountId {
         var accountId:VirgilAccountId = new VirgilAccountId();
-        accountId.cPtr = _wrap_VirgilAccount_id(cPtr);
+        accountId.cPtr = _wrap_VirgilAccount_id(this.cPtr);
         return accountId;
     }
-
     public function setId(accountId:VirgilAccountId):void {
-        _wrap_VirgilAccount_setId(cPtr, accountId.cPtr);
+        _wrap_VirgilAccount_setId(this.cPtr, accountId.cPtr);
     }
 }
 
-public class VirgilCertificate {
-    public var cPtr:int;
-
+public class VirgilCertificate extends VirgilSerializable {
     public static function create(publicKey:ByteArray):VirgilCertificate {
+        var obj = new VirgilCertificate();
+        obj.cPtr = _wrap_new_VirgilCertificate_init(publicKey);
+        return obj;
+    }
+    public static function createDefault():VirgilCertificate {
         var obj = new VirgilCertificate();
         obj.cPtr = _wrap_new_VirgilCertificate(publicKey);
         return obj;
     }
-
     public function destroy():void {
-        _wrap_delete_VirgilCertificate(cPtr);
+        _wrap_delete_VirgilCertificate(this.cPtr);
     }
-
     public function id():VirgilCertificateId {
         var certificateId:VirgilCertificateId = new VirgilCertificateId();
-        certificateId.cPtr = _wrap_VirgilCertificate_id(cPtr);
+        certificateId.cPtr = _wrap_VirgilCertificate_id(this.cPtr);
         return certificateId;
     }
-
     public function setId(certificateId:VirgilCertificateId):void {
-        _wrap_VirgilCertificate_setId(cPtr, certificateId.cPtr);
+        _wrap_VirgilCertificate_setId(this.cPtr, certificateId.cPtr);
     }
-
     public function publicKey():ByteArray {
-        return _wrap_VirgilCertificate_publicKey(cPtr);
+        return _wrap_VirgilCertificate_publicKey(this.cPtr);
     }
 }
 
-public class VirgilTicket {
-    public var cPtr:int;
-
-    public static function create():VirgilTicket {
-        var obj = new VirgilTicket();
-        obj.cPtr = _wrap_new_VirgilTicket();
-        return obj;
+public class VirgilTicket extends VirgilSerializable {
+    public static function createFromAsn1(asn1:ByteArray):VirgilTicket {
+        var ticket:VirgilTicket = new VirgilTicket();
+        ticket.cPtr = _wrap_VirgilTicket_createFromAsn1(asn1);
+        return ticket;
     }
-
+    public static function createFromJson(json:ByteArray):VirgilTicket {
+        var ticket:VirgilTicket = new VirgilTicket();
+        ticket.cPtr = _wrap_VirgilTicket_createFromJson(json);
+        return ticket;
+    }
     public function destroy():void {
-        _wrap_delete_VirgilTicket(cPtr);
+        _wrap_delete_VirgilTicket(this.cPtr);
     }
-
     public function id():VirgilTicketId {
         var ticketId:VirgilTicketId = new VirgilTicketId();
-        ticketId.cPtr = _wrap_VirgilTicket_id(cPtr);
+        ticketId.cPtr = _wrap_VirgilTicket_id(this.cPtr);
         return ticketId;
     }
-
     public function setId(ticketId:VirgilTicketId):void {
-        _wrap_VirgilTicket_setId(cPtr, ticketId.cPtr);
+        _wrap_VirgilTicket_setId(this.cPtr, ticketId.cPtr);
     }
-
-    public function isUserIdTicket():Boolean {
-        return _wrap_VirgilTicket_isUserIdTicket(cPtr);
+    public function isUniqueTicket():Boolean {
+        return _wrap_VirgilTicket_isUniqueTicket(this.cPtr);
     }
-
-    public function asUserIdTicket():VirgilUserIdTicket {
-        var userIdTicket:VirgilUserIdTicket = new VirgilUserIdTicket();
-        userIdTicket.cPtr = _wrap_VirgilTicket_asUserIdTicket(cPtr);
-        return userIdTicket;
+    public function asUniqueTicket():VirgilUniqueTicket {
+        var uniqueTicket:VirgilUniqueTicket = new VirgilUniqueTicket();
+        uniqueTicket.cPtr = _wrap_VirgilTicket_asUniqueTicket(this.cPtr);
+        return uniqueTicket;
     }
-
-    public function isUserInfoTicket():Boolean {
-        return _wrap_VirgilTicket_isUserInfoTicket(cPtr);
+    public function isInfoTicket():Boolean {
+        return _wrap_VirgilTicket_isInfoTicket(this.cPtr);
     }
-
-    public function asUserInfoTicket():VirgilUserInfoTicket {
-        var userInfoTicket:VirgilUserInfoTicket = new VirgilUserInfoTicket();
-        userInfoTicket.cPtr = _wrap_VirgilTicket_asUserInfoTicket(cPtr);
-        return userInfoTicket;
+    public function asInfoTicket():VirgilInfoTicket {
+        var infoTicket:VirgilInfoTicket = new VirgilInfoTicket();
+        infoTicket.cPtr = _wrap_VirgilTicket_asInfoTicket(this.cPtr);
+        return infoTicket;
     }
 }
 
-public class VirgilUserIdType {
-    public var cPtr:int;
-
-    public static function email():VirgilUserIdType {
-        var obj = new VirgilUserIdType();
-        obj.cPtr = _wrap_VirgilUserIdType_email();
+public class VirgilUniqueTicket extends VirgilTicket {
+    public static function create(type:VirgilUniqueTicketType, value:ByteArray):VirgilUniqueTicket {
+        var obj = new VirgilUniqueTicket();
+        obj.cPtr = _wrap_new_VirgilUniqueTicket_init(type.code, value);
         return obj;
     }
-
-    public static function phone():VirgilUserIdType {
-        var obj = new VirgilUserIdType();
-        obj.cPtr = _wrap_VirgilUserIdType_phone();
+    public static function createDefault():VirgilUniqueTicket {
+        var obj = new VirgilUniqueTicket();
+        obj.cPtr = _wrap_new_VirgilUniqueTicket();
         return obj;
     }
-
-    public static function fax():VirgilUserIdType {
-        var obj = new VirgilUserIdType();
-        obj.cPtr = _wrap_VirgilUserIdType_fax();
-        return obj;
+    public function type():VirgilUniqueTicketType {
+        return VirgilUniqueTicketType.fromCode(_wrap_VirgilUniqueTicket_type(this.cPtr));
     }
 
-    public static function domain():VirgilUserIdType {
-        var obj = new VirgilUserIdType();
-        obj.cPtr = _wrap_VirgilUserIdType_domain();
-        return obj;
-    }
-
-    public static function macAddress():VirgilUserIdType {
-        var obj = new VirgilUserIdType();
-        obj.cPtr = _wrap_VirgilUserIdType_macAddress();
-        return obj;
-    }
-
-    public static function application():VirgilUserIdType {
-        var obj = new VirgilUserIdType();
-        obj.cPtr = _wrap_VirgilUserIdType_application();
-        return obj;
-    }
-
-    public function isEmail():Boolean {
-        return _wrap_VirgilUserIdType_isEmail(cPtr);
-    }
-
-    public function isPhone():Boolean {
-        return _wrap_VirgilUserIdType_isPhone(cPtr);
-    }
-
-    public function isFax():Boolean {
-        return _wrap_VirgilUserIdType_isFax(cPtr);
-    }
-
-    public function isDomain():Boolean {
-        return _wrap_VirgilUserIdType_isDomain(cPtr);
-    }
-
-    public function isMacAddress():Boolean {
-        return _wrap_VirgilUserIdType_isMacAddress(cPtr);
-    }
-
-    public function isApplication():Boolean {
-        return _wrap_VirgilUserIdType_isApplication(cPtr);
-    }
-
-    public function name():String {
-        return _wrap_VirgilUserIdType_name(cPtr);
-    }
-
-    public function code():int {
-        return _wrap_VirgilUserIdType_code(cPtr);
-    }
-
-    public function equals(other:VirgilUserIdType):Boolean {
-        return _wrap_VirgilUserIdType_equals(cPtr, other.cPtr);
-    }
-
-
-
-}
-
-public class VirgilUserIdTicket extends VirgilTicket {
-    public static function create(userId:ByteArray, userIdType:VirgilUserIdType):VirgilUserIdTicket {
-        var obj = new VirgilUserIdTicket();
-        obj.cPtr = _wrap_new_VirgilUserIdTicket(userId, userIdType.cPtr);
-        return obj;
-    }
-
-    override public function destroy():void {
-        _wrap_delete_VirgilUserIdTicket(cPtr);
-    }
-
-    public function userId():ByteArray {
-        return _wrap_VirgilUserIdTicket_userId(cPtr);
-    }
-
-    public function userIdType():VirgilUserIdType {
-        var userIdType:VirgilUserIdType = new VirgilUserIdType();
-        userIdType.cPtr = _wrap_VirgilUserIdTicket_userIdType(cPtr);
-        return userIdType;
+    public function value():ByteArray {
+        return _wrap_VirgilUniqueTicket_value(this.cPtr);
     }
 }
 
-public class VirgilUserInfoTicket extends VirgilTicket {
-    public static function create(userFirstName:ByteArray, userLastName:ByteArray, userAge:uint)
-            :VirgilUserInfoTicket {
-        var obj = new VirgilUserInfoTicket();
-        obj.cPtr = _wrap_new_VirgilUserInfoTicket(userFirstName, userLastName, userAge);
+public class VirgilInfoTicket extends VirgilTicket {
+    public static function create(type:VirgilInfoTicketType, value:ByteArray):VirgilInfoTicket {
+        var obj = new VirgilInfoTicket();
+        obj.cPtr = _wrap_new_VirgilInfoTicket_init(type.code, value);
         return obj;
     }
-
-    override public function destroy():void {
-        _wrap_delete_VirgilUserInfoTicket(cPtr);
+    public static function createDefault():VirgilInfoTicket {
+        var obj = new VirgilInfoTicket();
+        obj.cPtr = _wrap_new_VirgilInfoTicket();
+        return obj;
     }
-
-    public function userFirstName():ByteArray {
-        return _wrap_VirgilUserInfoTicket_userFirstName(cPtr);
+    public function type():VirgilInfoTicketType {
+        return VirgilInfoTicketType.fromCode(_wrap_VirgilInfoTicket_type(this.cPtr));
     }
-
-    public function userLastName():ByteArray {
-        return _wrap_VirgilUserInfoTicket_userLastName(cPtr);
-    }
-
-    public function userAge():uint {
-        return _wrap_VirgilUserInfoTicket_userAge(cPtr);
+    public function value():ByteArray {
+        return _wrap_VirgilInfoTicket_value(this.cPtr);
     }
 }
 
-public class VirgilSign {
-    public var cPtr:int;
-
+public class VirgilSign extends VirgilSerializable {
     public static function create(hashName:ByteArray, signedDigest:ByteArray,
             signerCertificateId:ByteArray):VirgilSign {
         var obj = new VirgilSign();
-        obj.cPtr = _wrap_new_VirgilSign(hashName, signedDigest, signerCertificateId);
+        obj.cPtr = _wrap_new_VirgilSign_init(hashName, signedDigest, signerCertificateId);
         return obj;
     }
-
-    public function destroy():void {
-        _wrap_delete_VirgilSign(cPtr);
+    public static function createDefault():VirgilSign {
+        var obj = new VirgilSign();
+        obj.cPtr = _wrap_new_VirgilSign();
+        return obj;
     }
-
+    public function destroy():void {
+        _wrap_delete_VirgilSign(this.cPtr);
+    }
     public function id():VirgilSignId {
         var signId:VirgilSignId = new VirgilSignId();
-        signId.cPtr = _wrap_VirgilSign_id(cPtr);
+        signId.cPtr = _wrap_VirgilSign_id(this.cPtr);
         return signId;
     }
-
     public function setId(signId:VirgilSignId):void {
-        _wrap_VirgilSign_setId(cPtr, signId.cPtr);
+        _wrap_VirgilSign_setId(this.cPtr, signId.cPtr);
     }
-
     public function hashName():ByteArray {
-        return _wrap_VirgilSign_hashName(cPtr);
+        return _wrap_VirgilSign_hashName(this.cPtr);
     }
-
     public function signedDigest():ByteArray {
-        return _wrap_VirgilSign_signedDigest(cPtr);
+        return _wrap_VirgilSign_signedDigest(this.cPtr);
     }
-
     public function signerCertificateId():ByteArray {
-        return _wrap_VirgilSign_signerCertificateId(cPtr);
+        return _wrap_VirgilSign_signerCertificateId(this.cPtr);
     }
 }
 
-public class VirgilKeyPair {
-    public var cPtr:int;
+public class VirgilRandom extends CObject {
+    public static function create(personalInfo:ByteArray):VirgilRandom {
+        var obj = new VirgilRandom();
+        obj.cPtr = _wrap_new_VirgilRandom(personalInfo);
+        return obj;
+    }
+    public function destroy():void {
+        _wrap_delete_VirgilRandom(this.cPtr);
+    }
+    public function randomize(bytesNum:uint):ByteArray {
+        return _wrap_VirgilRandom_randomize(this.cPtr, bytesNum);
+    }
+}
 
+public class VirgilKeyPair extends CObject {
     public static function create(publicKey:ByteArray, privateKey:ByteArray):VirgilKeyPair {
         var obj = new VirgilKeyPair();
-        obj.cPtr = _wrap_new_VirgilKeyPair(publicKey, privateKey);
+        obj.cPtr = _wrap_new_VirgilKeyPair_init(publicKey, privateKey);
         return obj;
     }
-
-    public function destroy():void {
-        _wrap_delete_VirgilKeyPair(cPtr);
+    public static function generate(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_new_VirgilKeyPair_generate(password);
+        return obj;
     }
-
+    public function destroy():void {
+        _wrap_delete_VirgilKeyPair(this.cPtr);
+    }
     public function publicKey():ByteArray {
-        return _wrap_VirgilKeyPair_publicKey(cPtr);
+        return _wrap_VirgilKeyPair_publicKey(this.cPtr);
     }
-
     public function privateKey():ByteArray {
-        return _wrap_VirgilKeyPair_privateKey(cPtr);
+        return _wrap_VirgilKeyPair_privateKey(this.cPtr);
     }
 }
 
-public interface VirgilDataSink {
-    function isGood():Boolean;
-    function write(data:ByteArray):void;
-}
-
-public interface VirgilDataSource {
-    function hasData():Boolean;
-    function read():ByteArray;
-}
-
-public class VirgilDataSinkWrapper implements VirgilDataSink {
-    private var dataOutput_:IDataOutput;
-
-    function VirgilDataSinkWrapper(dataOutput:IDataOutput) {
-        reset(dataOutput);
+public class VirgilCustomParams extends CObject {
+    public function isEmpty():Boolean {
+        return _wrap_VirgilCustomParameters_isEmpty(this.cPtr);
     }
-
-    public function reset(dataOutput:IDataOutput):void {
-        dataOutput_ = dataOutput;
+    public function clear():void {
+        return _wrap_VirgilCustomParameters_clear(this.cPtr);
     }
-
-    public function isGood():Boolean {
-        return true;
+    public function setInteger(key:ByteArray, value:int):void {
+        _wrap_VirgilCustomParameters_setInteger(this.cPtr, key, value);
     }
-
-    public function write(data:ByteArray):void {
-        dataOutput_.writeBytes(data);
+    public function getInteger(key:ByteArray):int {
+        return _wrap_VirgilCustomParameters_getInteger(this.cPtr, key);
     }
-}
-
-public class VirgilDataSourceWrapper implements VirgilDataSource {
-    private var dataInput_:IDataInput;
-    private var chunkSize_:uint;
-
-    function VirgilDataSourceWrapper(dataInput:IDataInput, chunkSize:uint = 1024 * 1024) {
-        chunkSize_ = chunkSize;
-        reset(dataInput);
+    public function removeInteger(key:ByteArray):void {
+        _wrap_VirgilCustomParameters_removeInteger(this.cPtr, key);
     }
-
-    public function reset(dataInput:IDataInput):void {
-        dataInput_ = dataInput;
+    public function setString(key:ByteArray, value:ByteArray):void {
+        _wrap_VirgilCustomParameters_setString(this.cPtr, key, value);
     }
-
-    public function hasData():Boolean {
-        return dataInput_.bytesAvailable > 0;
+    public function getString(key:ByteArray):ByteArray {
+        return _wrap_VirgilCustomParameters_getString(this.cPtr, key);
     }
-
-    public function read():ByteArray {
-        var data:ByteArray = new ByteArray();
-        dataInput_.readBytes(data, 0, Math.min(chunkSize_, dataInput_.bytesAvailable));
-        return data;
+    public function removeString(key:ByteArray):void {
+        _wrap_VirgilCustomParameters_removeString(this.cPtr, key);
+    }
+    public function setData(key:ByteArray, value:ByteArray):void {
+        _wrap_VirgilCustomParameters_setData(this.cPtr, key, value);
+    }
+    public function getData(key:ByteArray):ByteArray {
+        return _wrap_VirgilCustomParameters_getData(this.cPtr, key);
+    }
+    public function removeData(key:ByteArray):void {
+        _wrap_VirgilCustomParameters_removeData(this.cPtr, key);
     }
 }
 
-public class VirgilDataMarshaller {
-    public var cPtr:int;
-
-    public function destroy():void {
-        throw new Error("This method MUST be implemented in the derived class.");
-    }
-
-    public function marshalAccount(account:VirgilAccount):ByteArray {
-        return _wrap_VirgilDataMarshaller_marshalVirgilAccount(cPtr, account.cPtr);
-    }
-
-    public function marshalCertificate(certificate:VirgilCertificate):ByteArray {
-        return _wrap_VirgilDataMarshaller_marshalVirgilCertificate(cPtr, certificate.cPtr);
-    }
-
-    public function marshalTicket(ticket:VirgilTicket):ByteArray {
-        return _wrap_VirgilDataMarshaller_marshalVirgilTicket(cPtr, ticket.cPtr);
-    }
-
-    public function marshalSign(sign:VirgilSign):ByteArray {
-        return _wrap_VirgilDataMarshaller_marshalVirgilSign(cPtr, sign.cPtr);
-    }
-
-    public function demarshalAccount(data:ByteArray):VirgilAccount {
-        var account:VirgilAccount = new VirgilAccount();
-        account.cPtr = _wrap_VirgilDataMarshaller_demarshalVirgilAccount(cPtr, data);
-        return account;
-    }
-
-    public function demarshalCertificate(data:ByteArray):VirgilCertificate {
-        var certificate:VirgilCertificate = new VirgilCertificate();
-        certificate.cPtr = _wrap_VirgilDataMarshaller_demarshalVirgilCertificate(cPtr, data);
-        return certificate;s
-    }
-
-    public function demarshalTicket(data:ByteArray):VirgilTicket {
-        var ticket:VirgilTicket = new VirgilTicket();
-        ticket.cPtr = _wrap_VirgilDataMarshaller_demarshalVirgilTicket(cPtr, data);
-        return ticket;
-    }
-
-    public function demarshalSign(data:ByteArray):VirgilSign {
-        var sign:VirgilSign = new VirgilSign();
-        sign.cPtr = _wrap_VirgilDataMarshaller_demarshalVirgilSign(cPtr, data);
-        return sign;
-    }
-
-}
-
-public class VirgilJsonDataMarshaller extends VirgilDataMarshaller {
-
-    public static function create():VirgilJsonDataMarshaller {
-        var obj = new VirgilJsonDataMarshaller();
-        obj.cPtr = _wrap_new_VirgilJsonDataMarshaller();
-        return obj;
-    }
-
-    public override function destroy():void {
-        _wrap_delete_VirgilJsonDataMarshaller(cPtr);
+public class VirgilContentInfo {
+    public static function defineSize(contentInfo:ByteArray):uint {
+        return _wrap_VirgilContentInfo_defineSize(contentInfo);
     }
 }
 
-public class VirgilAsn1DataMarshaller extends VirgilDataMarshaller {
-
-    public static function create():VirgilAsn1DataMarshaller {
-        var obj = new VirgilAsn1DataMarshaller();
-        obj.cPtr = _wrap_new_VirgilAsn1DataMarshaller();
-        return obj;
+public class VirgilCipherBase extends CObject {
+    public function addKeyRecipient(certificateId:ByteArray, publicKey:ByteArray):void {
+        _wrap_VirgilCipherBase_addKeyRecipient(this.cPtr, certificateId, publicKey);
     }
-
-    public override function destroy():void {
-        _wrap_delete_VirgilAsn1DataMarshaller(cPtr);
+    public function removeKeyRecipient(certificateId:ByteArray):void {
+        _wrap_VirgilCipherBase_removeKeyRecipient(this.cPtr, certificateId);
     }
-}
-
-public class VirgilCipherDatagram {
-    public var cPtr:int;
-
-    public function destroy():void {
-        _wrap_delete_VirgilCipher(cPtr);
+    public function addPasswordRecipient(password:ByteArray):void {
+        _wrap_VirgilCipherBase_addPasswordRecipient(this.cPtr, password);
     }
-
-    public function encryptionKey():ByteArray {
-        return _wrap_VirgilCipherDatagram_encryptionKey(cPtr);
+    public function removePasswordRecipient(password:ByteArray):void {
+        _wrap_VirgilCipherBase_removePasswordRecipient(this.cPtr, password);
     }
-
-    public function encryptedData():ByteArray {
-        return _wrap_VirgilCipherDatagram_encryptedData(cPtr);
+    public function removeAllRecipients():void {
+        _wrap_VirgilCipherBase_removeAllRecipients(this.cPtr);
     }
-}
-
-public class VirgilCipherBase {
-    public var cPtr:int;
-
-    public static function create():VirgilCipherBase {
-        var obj = new VirgilCipherBase();
-        obj.cPtr = _wrap_new_VirgilCipherBase();
-        return obj;
+    public function getContentInfo():ByteArray {
+        return _wrap_VirgilCipherBase_getContentInfo(this.cPtr);
     }
-
-    public function destroy():void {
-        _wrap_delete_VirgilCipherBase(cPtr);
+    public function setContentInfo(contentInfo:ByteArray):void {
+        _wrap_VirgilCipherBase_setContentInfo(this.cPtr, contentInfo);
     }
-
-    public function generateKeyPair(password:ByteArray = null):VirgilKeyPair {
-        var keyPair:VirgilKeyPair = new VirgilKeyPair();
-        keyPair.cPtr = _wrap_VirgilCipherBase_generateKeyPair(cPtr, password);
-        return keyPair;
-    }
-
-    public function reencryptKey(encryptionKey:ByteArray, publicKey:ByteArray,
-            privateKey:ByteArray, privateKeyPassword:ByteArray = null):ByteArray {
-        return _wrap_VirgilCipherBase_reencryptKey(cPtr, encryptionKey, publicKey, privateKey, privateKeyPassword);
+    public function customParameters():VirgilCustomParams {
+        var customParams:VirgilCustomParams = new VirgilCustomParams();
+        customParams.cPtr = _wrap_VirgilCipherBase_customParameters(this.cPtr);
+        return customParams;
     }
 }
 
@@ -601,28 +418,19 @@ public class VirgilCipher extends VirgilCipherBase {
         obj.cPtr = _wrap_new_VirgilCipher();
         return obj;
     }
-
-    override public function destroy():void {
-        _wrap_delete_VirgilCipher(cPtr);
+    public function destroy():void {
+        _wrap_delete_VirgilCipher(this.cPtr);
     }
-
-    public function encrypt(data:ByteArray, asPublicKey:ByteArray):VirgilCipherDatagram {
-        var datagram:VirgilCipherDatagram = new VirgilCipherDatagram();
-        datagram.cPtr = _wrap_VirgilCipher_encrypt(cPtr, data, asPublicKey);
-        return datagram;
+    public function encrypt(data:ByteArray, embedContentInfo:Boolean = false):ByteArray {
+        return _wrap_VirgilCipher_encrypt(this.cPtr, data, embedContentInfo);
     }
-
-    public function decrypt(data:ByteArray, encryptionKey:ByteArray,
+    public function decryptWithKey(encryptedData:ByteArray, certificateId:ByteArray,
             privateKey:ByteArray, privateKeyPassword:ByteArray = null):ByteArray {
-        return _wrap_VirgilCipher_decrypt(cPtr, data, encryptionKey, privateKey, privateKeyPassword);
+        return _wrap_VirgilCipher_decryptWithKey(this.cPtr, encryptedData, certificateId,
+                privateKey, privateKeyPassword);
     }
-
-    public function encryptWithPassword(data:ByteArray, password:ByteArray):ByteArray {
-        return _wrap_VirgilCipher_encryptWithPassword(cPtr, data, password);
-    }
-
-    public function decryptWithPassword(data:ByteArray, password:ByteArray):ByteArray {
-        return _wrap_VirgilCipher_decryptWithPassword(cPtr, data, password);
+    public function decryptWithPassword(encryptedData:ByteArray, password:ByteArray):ByteArray {
+        return _wrap_VirgilCipher_decryptWithPassword(this.cPtr, encryptedData, password);
     }
 }
 
@@ -632,27 +440,21 @@ public class VirgilStreamCipher extends VirgilCipherBase {
         obj.cPtr = _wrap_new_VirgilStreamCipher();
         return obj;
     }
-
-    override public function destroy():void {
-        _wrap_delete_VirgilStreamCipher(cPtr);
+    public function destroy():void {
+        _wrap_delete_VirgilStreamCipher(this.cPtr);
     }
-
-    public function encrypt(dataSource:VirgilDataSource, dataSink:VirgilDataSink, asPublicKey:ByteArray):ByteArray {
-        return _wrap_VirgilStreamCipher_encrypt(cPtr, dataSource, dataSink, asPublicKey);
+    public function encrypt(dataSource:IVirgilDataSource, dataSink:IVirgilDataSink,
+            embedContentInfo:Boolean = false):void {
+        _wrap_VirgilStreamCipher_encrypt(this.cPtr, dataSource, dataSink, embedContentInfo);
     }
-
-    public function decrypt(dataSource:VirgilDataSource, dataSink:VirgilDataSink, encryptionKey:ByteArray,
+    public function decryptWithKey(dataSource:IVirgilDataSource, dataSink:IVirgilDataSink, certificateId:ByteArray,
             privateKey:ByteArray, privateKeyPassword:ByteArray = null):void {
-        return _wrap_VirgilStreamCipher_decrypt(
-                cPtr, dataSource, dataSink, encryptionKey, privateKey, privateKeyPassword);
+        _wrap_VirgilStreamCipher_decryptWithKey(
+                cPtr, dataSource, dataSink, certificateId, privateKey, privateKeyPassword);
     }
-
-    public function encryptWithPassword(dataSource:VirgilDataSource, dataSink:VirgilDataSink, password:ByteArray):void {
-        return _wrap_VirgilStreamCipher_encryptWithPassword(cPtr, dataSource, dataSink, password);
-    }
-
-    public function decryptWithPassword(dataSource:VirgilDataSource, dataSink:VirgilDataSink, password:ByteArray):void {
-        return _wrap_VirgilStreamCipher_decryptWithPassword(cPtr, dataSource, dataSink, password);
+    public function decryptWithPassword(dataSource:IVirgilDataSource, dataSink:IVirgilDataSink,
+                password:ByteArray):void {
+        _wrap_VirgilStreamCipher_decryptWithPassword(this.cPtr, dataSource, dataSink, password);
     }
 }
 
@@ -662,97 +464,76 @@ public class VirgilChunkCipher extends VirgilCipherBase {
         obj.cPtr = _wrap_new_VirgilChunkCipher();
         return obj;
     }
-
-    override public function destroy():void {
-        _wrap_delete_VirgilChunkCipher(cPtr);
+    public function destroy():void {
+        _wrap_delete_VirgilChunkCipher(this.cPtr);
     }
-
-    public function adjustEncryptionChunkSize(preferredChunkSize:uint):uint {
-        return _wrap_VirgilChunkCipher_adjustEncryptionChunkSize(cPtr, preferredChunkSize);
+    public function startEncryption(preferredChunkSize:uint):uint {
+        return _wrap_VirgilChunkCipher_startEncryption(this.cPtr, preferredChunkSize);
     }
-
-    public function adjustDecryptionChunkSize(encryptionChunkSize:uint):uint {
-        return _wrap_VirgilChunkCipher_adjustDecryptionChunkSize(cPtr, encryptionChunkSize);
+    public function startDecryptionWithKey(certificateId:ByteArray, privateKey:ByteArray,
+                privateKeyPassword:ByteArray = null):uint {
+        return _wrap_VirgilChunkCipher_startDecryptionWithKey(this.cPtr, certificateId,
+                privateKey, privateKeyPassword);
     }
-
-    public function startEncryption(publicKey:ByteArray):ByteArray {
-        return _wrap_VirgilChunkCipher_startEncryption(cPtr, publicKey);
+    public function startDecryptionWithPassword(password:ByteArray):uint {
+        return _wrap_VirgilChunkCipher_startDecryptionWithKey(this.cPtr, password);
     }
-
-    public function startDecryption(encryptionKey:ByteArray, privateKey:ByteArray,
-                privateKeyPassword:ByteArray = null):void {
-        return _wrap_VirgilChunkCipher_startDecryption(cPtr, encryptionKey, privateKey, privateKeyPassword);
-    }
-
     public function process(data:ByteArray):ByteArray {
-        return _wrap_VirgilChunkCipher_process(cPtr, data);
+        return _wrap_VirgilChunkCipher_process(this.cPtr, data);
     }
-
     public function finalize():void {
-        return _wrap_VirgilChunkCipher_finalize(cPtr);
+        return _wrap_VirgilChunkCipher_finalize(this.cPtr);
     }
 }
 
-public class VirgilSigner {
-    public var cPtr:int;
-
+public class VirgilSigner extends CObject {
     public static function create():VirgilSigner {
         var obj = new VirgilSigner();
         obj.cPtr = _wrap_new_VirgilSigner();
         return obj;
     }
-
     public function destroy():void {
-        _wrap_delete_VirgilSigner(cPtr);
+        _wrap_delete_VirgilSigner(this.cPtr);
     }
-
     public function sign(data:ByteArray, signerCertificateId:ByteArray,
             privateKey:ByteArray, privateKeyPassword:ByteArray = null):VirgilSign {
         var sign:VirgilSign = new VirgilSign();
-        sign.cPtr = _wrap_VirgilSigner_sign(cPtr, data, signerCertificateId, privateKey, privateKeyPassword);
+        sign.cPtr = _wrap_VirgilSigner_sign(this.cPtr, data, signerCertificateId, privateKey, privateKeyPassword);
         return sign;
     }
-
     public function verify(data:ByteArray, sign:VirgilSign, publicKey:ByteArray):Boolean {
-        return _wrap_VirgilSigner_verify(cPtr, data, sign.cPtr, publicKey);
+        return _wrap_VirgilSigner_verify(this.cPtr, data, sign.cPtr, publicKey);
     }
-
-    public function signTicket(ticket:VirgilTicket, signerCertificateId:ByteArray,
+    public function signObject(obj:IVirgilAsn1Compatible, signerCertificateId:ByteArray,
             privateKey:ByteArray, privateKeyPassword:ByteArray = null):VirgilSign {
         var sign:VirgilSign = new VirgilSign();
-        sign.cPtr = _wrap_VirgilSigner_signTicket(
-                cPtr, ticket.cPtr, signerCertificateId, privateKey, privateKeyPassword);
+        sign.cPtr = _wrap_VirgilSigner_signObject(
+                cPtr, obj.cPtr, signerCertificateId, privateKey, privateKeyPassword);
         return sign;
     }
-
-    public function verifyTicket(ticket:VirgilTicket, sign:VirgilSign, publicKey:ByteArray):Boolean {
-        return _wrap_VirgilSigner_verifyTicket(cPtr, ticket.cPtr, sign.cPtr, publicKey);
+    public function verifyObject(obj:IVirgilAsn1Compatible, sign:VirgilSign, publicKey:ByteArray):Boolean {
+        return _wrap_VirgilSigner_verifyObject(this.cPtr, obj.cPtr, sign.cPtr, publicKey);
     }
 }
 
-public class VirgilStreamSigner {
-    public var cPtr:int;
-
+public class VirgilStreamSigner extends CObject {
     public static function create():VirgilStreamSigner {
         var obj = new VirgilStreamSigner();
         obj.cPtr = _wrap_new_VirgilStreamSigner();
         return obj;
     }
-
     public function destroy():void {
-        _wrap_delete_VirgilStreamSigner(cPtr);
+        _wrap_delete_VirgilStreamSigner(this.cPtr);
     }
-
-    public function sign(dataSource:VirgilDataSource, signerCertificateId:ByteArray,
+    public function sign(dataSource:IVirgilDataSource, signerCertificateId:ByteArray,
             privateKey:ByteArray, privateKeyPassword:ByteArray = null):VirgilSign {
         var sign:VirgilSign = new VirgilSign();
-        sign.cPtr = _wrap_VirgilStreamSigner_sign(cPtr, dataSource, signerCertificateId, privateKey,
+        sign.cPtr = _wrap_VirgilStreamSigner_sign(this.cPtr, dataSource, signerCertificateId, privateKey,
                 privateKeyPassword);
         return sign;
     }
-
-    public function verify(dataSource:VirgilDataSource, sign:VirgilSign, publicKey:ByteArray):Boolean {
-        return _wrap_VirgilStreamSigner_verify(cPtr, dataSource, sign.cPtr, publicKey);
+    public function verify(dataSource:IVirgilDataSource, sign:VirgilSign, publicKey:ByteArray):Boolean {
+        return _wrap_VirgilStreamSigner_verify(this.cPtr, dataSource, sign.cPtr, publicKey);
     }
 }
 

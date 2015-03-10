@@ -34,45 +34,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity {
-    import flash.utils.ByteArray;
+#ifndef AS3_VIRGIL_ASN1_COMPATIBLE_HPP
+#define AS3_VIRGIL_ASN1_COMPATIBLE_HPP
 
-    public class ConvertionUtils {
+#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::asn1::VirgilAsn1Compatible;
 
-        static public function asciiStringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeMultiByte(string, "iso-8859-1");
-            result.position = 0;
-            return result;
-        }
+#include "as3_utils.hpp"
 
-        static public function arrayToAsciiString(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readMultiByte(array.length, "iso-8859-1");
-            } finally {
-                array.position = pos;
-            }
-            return  result;
-        }
-
-        static public function utf8StringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeUTFBytes(string);
-            result.position = 0;
-            return result;
-        }
-
-        static public function arrayToUTF8String(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readUTFBytes(array.length);
-            } finally {
-                array.position = pos;
-            }
-            return result;;
-        }
-    }
+#define AS3_IMPL_VIRGIL_ASN1_COMPATIBLE(className) \
+AS3_DECL_FUNC(_wrap_##className##_toAsn1, "(asSelf:int):ByteArray") { \
+    AS3_TO_C_PTR(VirgilAsn1Compatible, asSelf, cSelf); \
+    VirgilByteArray cAsn1 = cSelf->toAsn1(); \
+    AS3_RETURN_C_BYTE_ARRAY(cAsn1); \
+} \
+AS3_DECL_FUNC(_wrap_##className##_fromAsn1, "(asSelf:int, asAsn1:ByteArray):void") { \
+    AS3_TO_C_PTR(VirgilAsn1Compatible, asSelf, cSelf); \
+    AS3_TO_C_BYTE_ARRAY(asAsn1, cAsn1); \
+    cSelf->fromAsn1(cAsn1); \
+    AS3_RETURN_VOID(); \
 }
+
+#endif /* AS3_VIRGIL_ASN1_COMPATIBLE_HPP */

@@ -36,48 +36,43 @@
 
 #include <cstdlib>
 #include <cstddef>
-
 #include <string>
 
 #include <AS3/AS3.h>
 #include <AS3/AS3++.h>
 
-#include <virgil/wrapper_utils.h>
-
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include "VirgilRandom.wrapper.cxx"
+#include "VirgilVersion.wrapper.hpp"
 
-#include "VirgilAccountId.wrapper.cxx"
-#include "VirgilCertificateId.wrapper.cxx"
-#include "VirgilTicketId.wrapper.cxx"
-#include "VirgilSigntId.wrapper.cxx"
+#include "VirgilSerializable.wrapper.hpp"
 
-#include "VirgilAccount.wrapper.cxx"
-#include "VirgilCertificate.wrapper.cxx"
-#include "VirgilTicket.wrapper.cxx"
-#include "VirgilUserIdType.wrapper.cxx"
-#include "VirgilUserIdTicket.wrapper.cxx"
-#include "VirgilUserInfoTicket.wrapper.cxx"
-#include "VirgilSign.wrapper.cxx"
+#include "VirgilId.wrapper.hpp"
+#include "VirgilAccountId.wrapper.hpp"
+#include "VirgilCertificateId.wrapper.hpp"
+#include "VirgilTicketId.wrapper.hpp"
+#include "VirgilSigntId.wrapper.hpp"
 
-#include "VirgilKeyPair.wrapper.cxx"
+#include "VirgilAccount.wrapper.hpp"
+#include "VirgilCertificate.wrapper.hpp"
+#include "VirgilTicket.wrapper.hpp"
+#include "VirgilUniqueTicket.wrapper.hpp"
+#include "VirgilInfoTicket.wrapper.hpp"
+#include "VirgilSign.wrapper.hpp"
 
-#include "VirgilDataSource.wrapper.cxx"
-#include "VirgilDataSink.wrapper.cxx"
+#include "VirgilRandom.wrapper.hpp"
+#include "VirgilKeyPair.wrapper.hpp"
 
-#include "VirgilDataMarshaller.wrapper.cxx"
-#include "VirgilJsonDataMarshaller.wrapper.cxx"
-#include "VirgilAsn1DataMarshaller.wrapper.cxx"
+#include "VirgilContentInfo.wrapper.hpp"
+#include "VirgilCustomParams.wrapper.hpp"
 
-#include "VirgilCipherDatagram.wrapper.cxx"
-#include "VirgilCipherBase.wrapper.cxx"
-#include "VirgilCipher.wrapper.cxx"
-#include "VirgilStreamCipher.wrapper.cxx"
-#include "VirgilChunkCipher.wrapper.cxx"
-#include "VirgilSigner.wrapper.cxx"
-#include "VirgilStreamSigner.wrapper.cxx"
+#include "VirgilCipherBase.wrapper.hpp"
+#include "VirgilCipher.wrapper.hpp"
+#include "VirgilStreamCipher.wrapper.hpp"
+#include "VirgilChunkCipher.wrapper.hpp"
+#include "VirgilSigner.wrapper.hpp"
+#include "VirgilStreamSigner.wrapper.hpp"
 
 int main() {
     AS3_GoAsync();

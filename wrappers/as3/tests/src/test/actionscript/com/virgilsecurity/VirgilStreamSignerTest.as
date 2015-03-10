@@ -46,12 +46,13 @@ package com.virgilsecurity {
     import com.hurlant.util.Hex;
 
     import com.virgilsecurity.*;
+    import com.virgilsecurity.extension.*;
     import com.virgilsecurity.wrapper.CModule;
 
     public class VirgilStreamSignerTest {
         private var signer_:VirgilStreamSigner;
 
-        private static const TEST_SIGNER_CERTIFICATE_ID : String = "CERT-1234";
+        private static const TEST_SIGNER_CERTIFICATE_ID : String = "b31c921e-ee1f-4bd1-9c1d-c145e17dac0d";
         private static const TEST_PUBLIC_KEY_PEM : String =
                 "-----BEGIN PUBLIC KEY-----\n" +
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEa+CTMPBSOFoeZQIPiUOc84r2\n" +
@@ -69,7 +70,7 @@ package com.virgilsecurity {
                 "3FCCmHqzsxpEQCEwnd47BOP7sd6Nwy37YlX95RM=\n" +
                 "-----END EC PRIVATE KEY-----\n";
 
-        private static const TEST_PLAIN_TEXT : String = "This string will be signed.";
+        private static const TEST_PLAIN_DATA : String = "This string will be signed.";
 
         [BeforeClass(description = "Init library")]
         public static function setup():void {
@@ -90,19 +91,20 @@ package com.virgilsecurity {
 
         [Test(description="Test VirgilStreamSigner.sign() and VirgilStreamSigner.verify().")]
         public function test_signer_sign_verify():void {
-            var plainTextData:ByteArray = ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT);
-
-            var plainTextDataSource:VirgilDataSourceWrapper = new VirgilDataSourceWrapper(plainTextData);
-
-            var sign:VirgilSign = signer_.sign(plainTextDataSource,
+            // Prepare source for data to be signed
+            var plainData:ByteArray = ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA);
+            var plainDataSource:IVirgilDataSource = new VirgilDataSource(plainData);
+            // Sign
+            var sign:VirgilSign = signer_.sign(plainDataSource,
                     ConvertionUtils.asciiStringToArray(TEST_SIGNER_CERTIFICATE_ID),
                     ConvertionUtils.asciiStringToArray(TEST_PRIVATE_KEY_PEM));
-
-            plainTextData.position = 0;
-            var verified:Boolean = signer_.verify(plainTextDataSource, sign,
+            // Reset data source
+            plainData.position = 0;
+            // Verify
+            var verified:Boolean = signer_.verify(plainDataSource, sign,
                     ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM));
             assertThat(verified, equalTo(true));
-
+            // Dispose resources
             sign.destroy();
         }
     }

@@ -46,11 +46,10 @@ package com.virgilsecurity {
     import com.hurlant.util.Hex;
 
     import com.virgilsecurity.*;
+    import com.virgilsecurity.extension.*;
     import com.virgilsecurity.wrapper.CModule;
 
     public class VirgilKeyPairTest {
-        private var keyPair_:VirgilKeyPair;
-
         private static const TEST_PUBLIC_KEY_PEM : String =
                 "-----BEGIN PUBLIC KEY-----\n" +
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEa+CTMPBSOFoeZQIPiUOc84r2\n" +
@@ -73,29 +72,35 @@ package com.virgilsecurity {
             CModule.startAsync();
         }
 
-        [Before(description="Creates VirgilKeyPair object and stores it in the 'keyPair_' variable.")]
-        public function create_keyPair() : void {
-            keyPair_ = VirgilKeyPair.create(
+        [Test(description="Test create VirgilKeyPair with known keys.")]
+        public function test_keypair_create():void {
+            var keyPair:VirgilKeyPair = VirgilKeyPair.create(
                     ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM),
                     ConvertionUtils.asciiStringToArray(TEST_PRIVATE_KEY_PEM)
                 );
-            assertThat(keyPair_.cPtr, not(equalTo(0)));
+            assertThat(keyPair.cPtr, not(equalTo(0)));
+            assertThat(ConvertionUtils.arrayToAsciiString(keyPair.publicKey()), equalTo(TEST_PUBLIC_KEY_PEM));
+            assertThat(ConvertionUtils.arrayToAsciiString(keyPair.privateKey()), equalTo(TEST_PRIVATE_KEY_PEM));
+            keyPair.destroy();
         }
 
-        [After(description="Destroy VirgilKeyPair object stored it in the 'keyPair_' variable.")]
-        public function destroy_keyPair() : void {
-            keyPair_.destroy();
-            keyPair_ = null;
+        [Test(description="Test generate VirgilKeyPair.")]
+        public function test_keypair_generate():void {
+            var keyPair:VirgilKeyPair = VirgilKeyPair.generate();
+            assertThat(keyPair.cPtr, not(equalTo(0)));
+            assertThat(keyPair.publicKey().length, not(equalTo(0)));
+            assertThat(keyPair.privateKey().length, not(equalTo(0)));
+            keyPair.destroy();
         }
 
-        [Test(description="Test VirgilKeyPair::publicKey().")]
-        public function test_keyPair_publicKey():void {
-            assertThat(ConvertionUtils.arrayToAsciiString(keyPair_.publicKey()), equalTo(TEST_PUBLIC_KEY_PEM));
-        }
-
-        [Test(description="Test VirgilKeyPair::privateKey().")]
-        public function test_keyPair_privateKey():void {
-            assertThat(ConvertionUtils.arrayToAsciiString(keyPair_.privateKey()), equalTo(TEST_PRIVATE_KEY_PEM));
+        [Test(description="Test generate VirgilKeyPair.")]
+        public function test_keypair_generate_with_password():void {
+            var keyPair:VirgilKeyPair = VirgilKeyPair.generate(
+                    ConvertionUtils.asciiStringToArray("password"));
+            assertThat(keyPair.cPtr, not(equalTo(0)));
+            assertThat(keyPair.publicKey().length, not(equalTo(0)));
+            assertThat(keyPair.privateKey().length, not(equalTo(0)));
+            keyPair.destroy();
         }
     }
 }

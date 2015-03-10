@@ -34,45 +34,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity {
-    import flash.utils.ByteArray;
+#ifndef AS3_VIRGIL_RANDOM_HPP
+#define AS3_VIRGIL_RANDOM_HPP
 
-    public class ConvertionUtils {
+#include <virgil/crypto/VirgilRandom.h>
+using virgil::crypto::VirgilRandom;
 
-        static public function asciiStringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeMultiByte(string, "iso-8859-1");
-            result.position = 0;
-            return result;
-        }
+#include "as3_utils.hpp"
 
-        static public function arrayToAsciiString(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readMultiByte(array.length, "iso-8859-1");
-            } finally {
-                array.position = pos;
-            }
-            return  result;
-        }
+AS3_IMPL_DESTRUCTOR(VirgilRandom)
 
-        static public function utf8StringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeUTFBytes(string);
-            result.position = 0;
-            return result;
-        }
-
-        static public function arrayToUTF8String(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readUTFBytes(array.length);
-            } finally {
-                array.position = pos;
-            }
-            return result;;
-        }
-    }
+AS3_DECL_FUNC(_wrap_new_VirgilRandom, "(asPersonalInfo:ByteArray):int") {
+    AS3_TO_C_BYTE_ARRAY(asPersonalInfo, cPersonalInfo);
+    VirgilRandom *cSelf = new VirgilRandom(cPersonalInfo);
+    AS3_RETURN_C_PTR(cSelf);
 }
+
+AS3_DECL_FUNC(_wrap_VirgilRandom_randomize, "(asSelf:int, asBytesNum:uint):ByteArray") {
+    AS3_TO_C_PTR(VirgilRandom, asSelf, cSelf);
+    AS3_TO_C_UINT(asBytesNum, cBytesNum);
+    VirgilByteArray cRandomBytes = cSelf->randomize(cBytesNum);
+    AS3_RETURN_C_BYTE_ARRAY(cRandomBytes);
+}
+
+#endif /* AS3_VIRGIL_RANDOM_HPP */

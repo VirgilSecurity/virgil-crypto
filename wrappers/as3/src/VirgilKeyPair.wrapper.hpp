@@ -34,45 +34,39 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity {
-    import flash.utils.ByteArray;
+#ifndef AS3_VIRGIL_KEY_PAIR_HPP
+#define AS3_VIRGIL_KEY_PAIR_HPP
 
-    public class ConvertionUtils {
+#include <virgil/service/data/VirgilKeyPair.h>
+using virgil::service::data::VirgilKeyPair;
 
-        static public function asciiStringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeMultiByte(string, "iso-8859-1");
-            result.position = 0;
-            return result;
-        }
+#include "as3_utils.hpp"
 
-        static public function arrayToAsciiString(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readMultiByte(array.length, "iso-8859-1");
-            } finally {
-                array.position = pos;
-            }
-            return  result;
-        }
+AS3_IMPL_DESTRUCTOR(VirgilKeyPair)
 
-        static public function utf8StringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeUTFBytes(string);
-            result.position = 0;
-            return result;
-        }
-
-        static public function arrayToUTF8String(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readUTFBytes(array.length);
-            } finally {
-                array.position = pos;
-            }
-            return result;;
-        }
-    }
+AS3_DECL_FUNC(_wrap_new_VirgilKeyPair_init, "(asPublicKey:ByteArray, asPrivateKey:ByteArray):int") {
+    AS3_TO_C_BYTE_ARRAY(asPublicKey, cPublicKey);
+    AS3_TO_C_BYTE_ARRAY(asPrivateKey, cPrivateKey);
+    VirgilKeyPair *cSelf = new VirgilKeyPair(cPublicKey, cPrivateKey);
+    AS3_RETURN_C_PTR(cSelf);
 }
+
+AS3_DECL_FUNC(_wrap_new_VirgilKeyPair_generate, "(asPassword:ByteArray):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+    VirgilKeyPair *cSelf = new VirgilKeyPair(cPassword);
+    AS3_RETURN_C_PTR(cSelf);
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_publicKey, "(asSelf:int):ByteArray") {
+    AS3_TO_C_PTR(VirgilKeyPair, asSelf, cSelf);
+    VirgilByteArray cPublicKey = cSelf->publicKey();
+    AS3_RETURN_C_BYTE_ARRAY(cPublicKey);
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_privateKey, "(asSelf:int):ByteArray") {
+    AS3_TO_C_PTR(VirgilKeyPair, asSelf, cSelf);
+    VirgilByteArray cPrivateKey = cSelf->privateKey();
+    AS3_RETURN_C_BYTE_ARRAY(cPrivateKey);
+}
+
+#endif /* AS3_VIRGIL_KEY_PAIR_HPP */

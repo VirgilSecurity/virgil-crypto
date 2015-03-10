@@ -46,11 +46,13 @@ package com.virgilsecurity {
     import com.hurlant.util.Hex;
 
     import com.virgilsecurity.*;
+    import com.virgilsecurity.extension.*;
     import com.virgilsecurity.wrapper.CModule;
 
     public class VirgilChunkCipherTest {
         private var cipher_:VirgilChunkCipher;
 
+        private static const TEST_CERTIFICATE_ID : String = "08be0958-3fab-480f-9c99-47388cfcc73a";
         private static const TEST_PUBLIC_KEY_PEM : String =
                 "-----BEGIN PUBLIC KEY-----\n" +
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEa+CTMPBSOFoeZQIPiUOc84r2\n" +
@@ -69,8 +71,11 @@ package com.virgilsecurity {
                 "-----END EC PRIVATE KEY-----\n";
 
         private static const TEST_PASSWORD : String = "password";
+        private static const TEST_PLAIN_DATA : String = "This very long string will be encrypted.";
 
-        private static const TEST_PLAIN_TEXT : String = "This very long string will be encrypted.";
+        private static const TEST_NAME_KEY : String = "name";
+        private static const TEST_NAME_VALUE : String = "sample data";
+        private static const TEST_SIZE_KEY : String = "size";
 
         [BeforeClass(description = "Init library")]
         public static function setup():void {
@@ -92,24 +97,49 @@ package com.virgilsecurity {
         [Test(description="Test VirgilChunkCipher main functionality.")]
         public function test_cipher():void {
             var dataChunk:ByteArray = new ByteArray();
-            const encryptionChunkSize:uint = cipher_.adjustEncryptionChunkSize(5);
-
-            // Encrypt
-            var encryptionKey:ByteArray = cipher_.startEncryption(
+            const preferredChunkSize:uint = 5;
+            var plainData:ByteArray = ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA);
+            // Add recipients
+            cipher_.addKeyRecipient(
+                    ConvertionUtils.asciiStringToArray(TEST_CERTIFICATE_ID),
                     ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM));
-
+            // Add custom info if needed
+            cipher_.customParameters().setString(
+                    ConvertionUtils.utf8StringToArray(TEST_NAME_KEY),
+                    ConvertionUtils.utf8StringToArray(TEST_NAME_VALUE));
+            cipher_.customParameters().setInteger(
+                    ConvertionUtils.utf8StringToArray(TEST_SIZE_KEY), plainData.length);
+            // Initialize encryption.
+            const actualChunkSize:uint = cipher_.startEncryption(preferredChunkSize);
+            // Encrypt
             var encryptedData:ByteArray = new ByteArray();
-            var plainData:ByteArray = ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT);
             while (plainData.bytesAvailable > 0) {
                 dataChunk.clear();
-                plainData.readBytes(dataChunk, 0, Math.min(encryptionChunkSize, plainData.bytesAvailable));
+                plainData.readBytes(dataChunk, 0, Math.min(actualChunkSize, plainData.bytesAvailable));
                 encryptedData.writeBytes(cipher_.process(dataChunk));
             }
+            // Finish encryption
             cipher_.finalize();
+            // Store content info
+            var contentInfo:ByteArray = cipher_.getContentInfo();
 
+            // Reset cipher (optional)
+            cipher_.removeAllRecipients();
+            cipher_.customParameters().clear();
+
+            // Configure cipher before decryption with content info
+            cipher_.setContentInfo(contentInfo);
+            // Check parameters
+            assertThat(ConvertionUtils.arrayToUTF8String(
+                    cipher_.customParameters().getString(ConvertionUtils.utf8StringToArray(TEST_NAME_KEY))),
+                    equalTo(TEST_NAME_VALUE));
+            assertThat(cipher_.customParameters().getInteger(ConvertionUtils.utf8StringToArray(TEST_SIZE_KEY)),
+                    equalTo(plainData.length));
+            // Initialize decryption
+            const decryptionChunkSize:uint = cipher_.startDecryptionWithKey(
+                    ConvertionUtils.asciiStringToArray(TEST_CERTIFICATE_ID),
+                    ConvertionUtils.asciiStringToArray(TEST_PRIVATE_KEY_PEM));
             // Decrypt
-            const decryptionChunkSize:uint = cipher_.adjustDecryptionChunkSize(encryptionChunkSize);
-            cipher_.startDecryption(encryptionKey, ConvertionUtils.asciiStringToArray(TEST_PRIVATE_KEY_PEM));
             var decryptedData:ByteArray = new ByteArray();
             encryptedData.position = 0;
             while (encryptedData.bytesAvailable > 0) {
@@ -117,11 +147,11 @@ package com.virgilsecurity {
                 encryptedData.readBytes(dataChunk, 0, Math.min(decryptionChunkSize, encryptedData.bytesAvailable));
                 decryptedData.writeBytes(cipher_.process(dataChunk));
             }
+            // Finalize decryption
             cipher_.finalize();
 
             // Check results
-            assertThat(ConvertionUtils.arrayToAsciiString(decryptedData), equalTo(TEST_PLAIN_TEXT));
+            assertThat(ConvertionUtils.arrayToAsciiString(decryptedData), equalTo(TEST_PLAIN_DATA));
         }
-
     }
 }

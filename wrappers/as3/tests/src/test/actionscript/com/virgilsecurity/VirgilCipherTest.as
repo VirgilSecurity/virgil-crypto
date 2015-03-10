@@ -46,11 +46,14 @@ package com.virgilsecurity {
     import com.hurlant.util.Hex;
 
     import com.virgilsecurity.*;
+    import com.virgilsecurity.extension.*;
     import com.virgilsecurity.wrapper.CModule;
 
     public class VirgilCipherTest {
         private var cipher_:VirgilCipher;
 
+        private static const TEST_GEN_CERTIFICATE_ID : String = "899e2c59-8e55-498e-92bb-6c44048ad876";
+        private static const TEST_EC_CERTIFICATE_ID : String = "33c39175-accd-48d6-a071-da7cd9a84ff9";
         private static const TEST_EC_PUBLIC_KEY : String =
                 "-----BEGIN PUBLIC KEY-----\n" +
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEa+CTMPBSOFoeZQIPiUOc84r2\n" +
@@ -66,6 +69,7 @@ package com.virgilsecurity {
                 "wA53hZIKueUh+QAF53C9X6uaP98Jiu8RMZNplo9p4BZpCwP90A2rxRSatEFHOOtw\n" +
                 "3FCCmHqzsxpEQCEwnd47BOP7sd6Nwy37YlX95RM=\n" +
                 "-----END EC PRIVATE KEY-----\n";
+        private static const TEST_RSA_CERTIFICATE_ID : String = "bbd6f78a-b8b5-43cf-8220-25696defb465";
         private static const TEST_RSA_PUBLIC_KEY : String =
                 "-----BEGIN PUBLIC KEY-----\n" +
                 "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaro\n" +
@@ -84,7 +88,7 @@ package com.virgilsecurity {
 
         private static const TEST_PASSWORD : String = "password";
 
-        private static const TEST_PLAIN_TEXT : String = "This string will be encrypted.";
+        private static const TEST_PLAIN_DATA : String = "This string will be encrypted.";
 
         [BeforeClass(description = "Init library")]
         public static function setup():void {
@@ -103,70 +107,76 @@ package com.virgilsecurity {
             cipher_ = null;
         }
 
-
-        [Test(description="Test VirgilCipher.generateKeyPair().")]
-        public function test_cipher_generateKeyPair():void {
-            var keyPair:VirgilKeyPair = cipher_.generateKeyPair();
-            assertThat(keyPair.publicKey().length, not(equalTo(0)));
-            assertThat(keyPair.privateKey().length, not(equalTo(0)));
-        }
-
-        [Test(description="Test VirgilCipher.encrypt() and VirgilCipher.decrypt().")]
-        public function test_cipher_encrypt_decrypt():void {
-            var keyPair:VirgilKeyPair = cipher_.generateKeyPair();
-
-            var cipherDatagram:VirgilCipherDatagram = cipher_.encrypt(
-                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT),
-                    ConvertionUtils.asciiStringToArray(TEST_EC_PUBLIC_KEY));
-
-            var plainText:ByteArray = cipher_.decrypt(cipherDatagram.encryptedData(), cipherDatagram.encryptionKey(),
-                    ConvertionUtils.asciiStringToArray(TEST_EC_PRIVATE_KEY));
-
-            assertThat(ConvertionUtils.arrayToAsciiString(plainText), equalTo(TEST_PLAIN_TEXT));
-        }
-
-        [Test(description="Test VirgilCipher.generateKeyPair(), VirgilCipher.encrypt(), VirgilCipher.decrypt().")]
+        [Test(description="Test cipher encrypt and decrypt with generated keys and separated content info.")]
         public function test_cipher_encrypt_decrypt_with_generated_keys():void {
-            var keyPair:VirgilKeyPair = cipher_.generateKeyPair();
+            // Generate key pair
+            var keyPair:VirgilKeyPair = VirgilKeyPair.generate();
+            // Encrypt
+            cipher_.addKeyRecipient(
+                    ConvertionUtils.asciiStringToArray(TEST_GEN_CERTIFICATE_ID), keyPair.publicKey());
+            var encryptedData:ByteArray = cipher_.encrypt(
+                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA), false);
+            var contentInfo:ByteArray = cipher_.getContentInfo();
+            // Clear cipher (optional)
+            cipher_.removeAllRecipients();
+            // Decrypt
+            cipher_.setContentInfo(contentInfo);
+            var plainData:ByteArray = cipher_.decryptWithKey(encryptedData,
+                    ConvertionUtils.asciiStringToArray(TEST_GEN_CERTIFICATE_ID), keyPair.privateKey());
 
-            var cipherDatagram:VirgilCipherDatagram = cipher_.encrypt(
-                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT), keyPair.publicKey());
-
-            var plainText:ByteArray = cipher_.decrypt(
-                    cipherDatagram.encryptedData(), cipherDatagram.encryptionKey(), keyPair.privateKey());
-
-            assertThat(ConvertionUtils.arrayToAsciiString(plainText), equalTo(TEST_PLAIN_TEXT));
+            assertThat(ConvertionUtils.arrayToAsciiString(plainData), equalTo(TEST_PLAIN_DATA));
+            keyPair.destroy();
         }
 
-        [Test(description="Test VirgilCipher.encrypt(), VirgilCipher.decrypt() and VirgilCipher.reencryptKey().")]
-        public function test_cipher_reencryptKey():void {
-            var keyPair:VirgilKeyPair = cipher_.generateKeyPair();
-
-            var cipherDatagram:VirgilCipherDatagram = cipher_.encrypt(
-                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT),
+        [Test(description="Test cipher encrypt and decrypt with known EC keys and embedded content info.")]
+        public function test_cipher_encrypt_decrypt_with_known_EC_keys_and_embedded_content_info():void {
+            // Encrypt
+            cipher_.addKeyRecipient(
+                    ConvertionUtils.asciiStringToArray(TEST_EC_CERTIFICATE_ID),
                     ConvertionUtils.asciiStringToArray(TEST_EC_PUBLIC_KEY));
-
-            var sharedEncryptionKey:ByteArray = cipher_.reencryptKey(cipherDatagram.encryptionKey(),
-                    ConvertionUtils.asciiStringToArray(TEST_RSA_PUBLIC_KEY),
+            var encryptedData:ByteArray = cipher_.encrypt(
+                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA), true);
+            // Clear cipher (optional)
+            cipher_.removeAllRecipients();
+            // Decrypt
+            var plainData:ByteArray = cipher_.decryptWithKey(encryptedData,
+                    ConvertionUtils.asciiStringToArray(TEST_EC_CERTIFICATE_ID),
                     ConvertionUtils.asciiStringToArray(TEST_EC_PRIVATE_KEY));
 
+            assertThat(ConvertionUtils.arrayToAsciiString(plainData), equalTo(TEST_PLAIN_DATA));
+        }
 
-            var plainText:ByteArray = cipher_.decrypt(cipherDatagram.encryptedData(), sharedEncryptionKey,
+        [Test(description="Test cipher encrypt and decrypt with known RSA keys and embedded content info.")]
+        public function test_cipher_encrypt_decrypt_with_known_RSA_keys_and_embedded_content_info():void {
+            // Encrypt
+            cipher_.addKeyRecipient(
+                    ConvertionUtils.asciiStringToArray(TEST_RSA_CERTIFICATE_ID),
+                    ConvertionUtils.asciiStringToArray(TEST_RSA_PUBLIC_KEY));
+            var encryptedData:ByteArray = cipher_.encrypt(
+                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA), true);
+            // Clear cipher (optional)
+            cipher_.removeAllRecipients();
+            // Decrypt
+            var plainData:ByteArray = cipher_.decryptWithKey(encryptedData,
+                    ConvertionUtils.asciiStringToArray(TEST_RSA_CERTIFICATE_ID),
                     ConvertionUtils.asciiStringToArray(TEST_RSA_PRIVATE_KEY));
 
-            assertThat(ConvertionUtils.arrayToAsciiString(plainText), equalTo(TEST_PLAIN_TEXT));
+            assertThat(ConvertionUtils.arrayToAsciiString(plainData), equalTo(TEST_PLAIN_DATA));
         }
 
-        [Test(description="Test VirgilCipher.encryptWithPassword(), VirgilCipher.decryptWithPassword.")]
-        public function test_cipher_encrypt_decrypt_with_password():void {
-            var encodedData:ByteArray = cipher_.encryptWithPassword(
-                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_TEXT),
+        [Test(description="Test cipher encrypt and decrypt with password and embedded content info.")]
+        public function test_cipher_encrypt_decrypt_with_password_and_embedded_content_info():void {
+            // Encrypt
+            cipher_.addPasswordRecipient(ConvertionUtils.asciiStringToArray(TEST_PASSWORD));
+            var encryptedData:ByteArray = cipher_.encrypt(
+                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA), true);
+            // Clear cipher (optional)
+            cipher_.removeAllRecipients();
+            // Decrypt
+            var plainData:ByteArray = cipher_.decryptWithPassword(encryptedData,
                     ConvertionUtils.asciiStringToArray(TEST_PASSWORD));
 
-            var decodedData:ByteArray = cipher_.decryptWithPassword(encodedData,
-                    ConvertionUtils.asciiStringToArray(TEST_PASSWORD));
-
-            assertThat(ConvertionUtils.arrayToAsciiString(decodedData), TEST_PLAIN_TEXT);
+            assertThat(ConvertionUtils.arrayToAsciiString(plainData), equalTo(TEST_PLAIN_DATA));
         }
     }
 }

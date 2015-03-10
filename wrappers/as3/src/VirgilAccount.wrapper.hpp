@@ -34,45 +34,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity {
-    import flash.utils.ByteArray;
+#ifndef AS3_VIRGIL_ACCOUNT_HPP
+#define AS3_VIRGIL_ACCOUNT_HPP
 
-    public class ConvertionUtils {
+#include <virgil/service/data/VirgilAccount.h>
+using virgil::service::data::VirgilAccount;
 
-        static public function asciiStringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeMultiByte(string, "iso-8859-1");
-            result.position = 0;
-            return result;
-        }
+#include "as3_utils.hpp"
+#include "VirgilIdProvider.wrapper.hpp"
 
-        static public function arrayToAsciiString(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readMultiByte(array.length, "iso-8859-1");
-            } finally {
-                array.position = pos;
-            }
-            return  result;
-        }
+AS3_IMPL_CONSTRUCTOR(VirgilAccount)
+AS3_IMPL_DESTRUCTOR(VirgilAccount)
 
-        static public function utf8StringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeUTFBytes(string);
-            result.position = 0;
-            return result;
-        }
+AS3_IMPL_VIRGIL_ID_PROVIDER(VirgilAccount)
 
-        static public function arrayToUTF8String(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readUTFBytes(array.length);
-            } finally {
-                array.position = pos;
-            }
-            return result;;
-        }
-    }
-}
+#endif /* AS3_VIRGIL_ACCOUNT_HPP */
+

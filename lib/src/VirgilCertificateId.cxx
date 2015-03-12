@@ -75,7 +75,7 @@ void VirgilCertificateId::asn1Read(VirgilAsn1Reader& asn1Reader) {
 }
 
 Json::Value VirgilCertificateId::jsonWrite(Json::Value& childValue) const {
-    childValue[kJsonKey_CertificateId] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(certificateId_);
+    childValue[kJsonKey_CertificateId] = virgil_byte_array_to_std_string(certificateId_);
     return VirgilAccountId::jsonWrite(childValue);
 }
 

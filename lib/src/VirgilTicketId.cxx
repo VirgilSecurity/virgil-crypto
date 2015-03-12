@@ -75,7 +75,7 @@ void VirgilTicketId::asn1Read(VirgilAsn1Reader& asn1Reader) {
 }
 
 Json::Value VirgilTicketId::jsonWrite(Json::Value& childValue) const {
-    childValue[kJsonKey_TicketId] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(ticketId_);
+    childValue[kJsonKey_TicketId] = virgil_byte_array_to_std_string(ticketId_);
     return VirgilCertificateId::jsonWrite(childValue);
 }
 

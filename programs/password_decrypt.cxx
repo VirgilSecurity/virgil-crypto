@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 
     // Parse argument: pwd
     ++currArgPos;
-    VirgilByteArray password = VIRGIL_BYTE_ARRAY_FROM_STD_STRING(std::string(argv[currArgPos]));
+    VirgilByteArray password = virgil_byte_array_from_std_string(std::string(argv[currArgPos]));
 
     // Create cipher.
     VirgilCipher cipher;

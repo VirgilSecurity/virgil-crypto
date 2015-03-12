@@ -87,9 +87,6 @@ inline std::string virgil_byte_array_to_hex_string(const virgil::VirgilByteArray
     return hexStream.str();
 }
 
-#define VIRGIL_BYTE_ARRAY_FROM_C_STRING(str) virgil_byte_array_from_c_string(str)
-#define VIRGIL_BYTE_ARRAY_FROM_STD_STRING(str) virgil_byte_array_from_std_string(str)
-#define VIRGIL_BYTE_ARRAY_TO_STD_STRING(array) virgil_byte_array_to_std_string(array)
 /**
  * @name ByteArray security clear utilities
  */
@@ -97,5 +94,4 @@ inline void virgil_byte_array_zeroize(virgil::VirgilByteArray& array) {
     std::fill(array.begin(), array.end(), 0);
 }
 
-#define VIRGIL_BYTE_ARRAY_ZEROIZE(array) virgil_byte_array_zeroize(array)
 #endif /* VIRGIL_BYTE_ARRAY_H */

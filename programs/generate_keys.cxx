@@ -56,15 +56,15 @@ int main(int argc, char **argv) {
     // Parse argument: pwd
     VirgilByteArray pwd;
     if (++currArgPos < argc) {
-        pwd = VIRGIL_BYTE_ARRAY_FROM_C_STRING(argv[currArgPos]);
+        pwd = virgil_byte_array_from_c_string(argv[currArgPos]);
     }
     // Generate keypair and protect private key with password (optional).
     VirgilKeyPair keyPair = VirgilKeyPair(pwd);
     // Export public key.
     std::cout << "Public key : " << std::endl;
-    std::cout << VIRGIL_BYTE_ARRAY_TO_STD_STRING(keyPair.publicKey()) << std::endl;
+    std::cout << virgil_byte_array_to_std_string(keyPair.publicKey()) << std::endl;
     // Export private key.
     std::cout << "Private key: " << std::endl;
-    std::cout << VIRGIL_BYTE_ARRAY_TO_STD_STRING(keyPair.privateKey()) << std::endl;
+    std::cout << virgil_byte_array_to_std_string(keyPair.privateKey()) << std::endl;
     return 0;
 }

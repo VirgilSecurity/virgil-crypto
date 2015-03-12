@@ -67,11 +67,11 @@ int main(int argc, char **argv) {
 
     // Parse argument: data
     ++currArgPos;
-    VirgilByteArray data = VIRGIL_BYTE_ARRAY_FROM_STD_STRING(std::string(argv[currArgPos]));
+    VirgilByteArray data = virgil_byte_array_from_std_string(std::string(argv[currArgPos]));
 
     // Parse argument: pwd
     ++currArgPos;
-    VirgilByteArray password = VIRGIL_BYTE_ARRAY_FROM_STD_STRING(std::string(argv[currArgPos]));
+    VirgilByteArray password = virgil_byte_array_from_std_string(std::string(argv[currArgPos]));
 
     // Parse argument: enc_data
     ++currArgPos;

@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 
     // Parse argument: data
     ++currArgPos;
-    VirgilByteArray data = VIRGIL_BYTE_ARRAY_FROM_C_STRING(argv[currArgPos]);
+    VirgilByteArray data = virgil_byte_array_from_c_string(argv[currArgPos]);
 
     // Parse argument: sign
     ++currArgPos;

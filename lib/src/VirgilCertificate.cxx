@@ -71,7 +71,7 @@ void VirgilCertificate::asn1Read(VirgilAsn1Reader& asn1Reader) {
 Json::Value VirgilCertificate::jsonWrite(Json::Value& childValue) const {
     Json::Value idChildrenValue(Json::objectValue);
     Json::Value idValue = id().jsonWrite(idChildrenValue);
-    childValue[kJsonKey_PublicKey] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(publicKey_);
+    childValue[kJsonKey_PublicKey] = virgil_byte_array_to_std_string(publicKey_);
     return jsonMergeObjects(childValue, idValue);
 }
 

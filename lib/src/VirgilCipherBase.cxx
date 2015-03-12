@@ -80,7 +80,7 @@ static const VirgilSymmetricCipher::VirgilSymmetricCipherPadding kSymmetricCiphe
 ///@}
 
 VirgilCipherBase::VirgilCipherBase()
-        : random_(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(std::string("virgil::service::VirgilCipherBase"))),
+        : random_(virgil_byte_array_from_std_string(std::string("virgil::service::VirgilCipherBase"))),
         symmetricCipher_(), symmetricCipherKey_(), contentInfo_(), envelopedData_(),
         keyRecipients_(), passwordRecipients_() {
 }
@@ -186,7 +186,7 @@ static VirgilByteArray decryptContentEncryptionKey(
         }
     }
     throw VirgilException(std::string("VirgilCipherBase: ") + "Recipient with given certificate id (" +
-            VIRGIL_BYTE_ARRAY_TO_STD_STRING(certificateId) + ") is not found.");
+            virgil_byte_array_to_std_string(certificateId) + ") is not found.");
 }
 
 VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithPassword(const VirgilByteArray& pwd) {
@@ -258,7 +258,7 @@ void VirgilCipherBase::buildContentInfo() {
 
 void VirgilCipherBase::clearCipherInfo() {
     symmetricCipher_.clear();
-    VIRGIL_BYTE_ARRAY_ZEROIZE(symmetricCipherKey_);
+    virgil_byte_array_zeroize(symmetricCipherKey_);
 }
 
 VirgilSymmetricCipher& VirgilCipherBase::getSymmetricCipher() {

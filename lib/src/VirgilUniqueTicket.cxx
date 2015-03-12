@@ -84,20 +84,20 @@ bool VirgilUniqueTicket::isUniqueTicket() const {
 size_t VirgilUniqueTicket::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = 0;
     writtenBytes += asn1Writer.writeUTF8String(value_);
-    writtenBytes += asn1Writer.writeUTF8String(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(
+    writtenBytes += asn1Writer.writeUTF8String(virgil_byte_array_from_std_string(
             virgil_unique_ticket_type_to_string(type_)));
     return VirgilTicket::asn1Write(asn1Writer, writtenBytes + childWrittenBytes);
 }
 
 void VirgilUniqueTicket::asn1Read(VirgilAsn1Reader& asn1Reader) {
     VirgilTicket::asn1Read(asn1Reader);
-    type_ = virgil_unique_ticket_type_from_string(VIRGIL_BYTE_ARRAY_TO_STD_STRING(asn1Reader.readUTF8String()));
+    type_ = virgil_unique_ticket_type_from_string(virgil_byte_array_to_std_string(asn1Reader.readUTF8String()));
     value_ = asn1Reader.readUTF8String();
 }
 
 Json::Value VirgilUniqueTicket::jsonWrite(Json::Value& childValue) const {
     childValue[kJsonKey_Type] = virgil_unique_ticket_type_to_string(type_);
-    childValue[kJsonKey_Value] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(value_);
+    childValue[kJsonKey_Value] = virgil_byte_array_to_std_string(value_);
     return VirgilTicket::jsonWrite(childValue);
 }
 

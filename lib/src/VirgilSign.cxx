@@ -104,9 +104,9 @@ void VirgilSign::asn1Read(VirgilAsn1Reader& asn1Reader) {
 }
 
 Json::Value VirgilSign::jsonWrite(Json::Value& childValue) const {
-    childValue[kJsonKey_HashName] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(hashName_);
+    childValue[kJsonKey_HashName] = virgil_byte_array_to_std_string(hashName_);
     childValue[kJsonKey_SignedDigest] = jsonRawDataToValue(signedDigest_);
-    childValue[kJsonKey_SignerCertificateId] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(signerCertificateId_);
+    childValue[kJsonKey_SignerCertificateId] = virgil_byte_array_to_std_string(signerCertificateId_);
     if (!id().isEmpty()) {
         Json::Value idChildrenValue(Json::objectValue);
         Json::Value idValue = id().jsonWrite(idChildrenValue);

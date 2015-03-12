@@ -60,7 +60,7 @@ VirgilSign VirgilSigner::sign(const VirgilByteArray& data, const VirgilByteArray
     cipher.setPrivateKey(privateKey, privateKeyPassword);
     VirgilByteArray sign = cipher.sign(digest);
 
-    return VirgilSign(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(hash_.name()), sign, signerCertificateId);
+    return VirgilSign(virgil_byte_array_from_std_string(hash_.name()), sign, signerCertificateId);
 }
 
 bool VirgilSigner::verify(const VirgilByteArray& data, const VirgilSign& sign, const VirgilByteArray& publicKey) {
@@ -80,7 +80,7 @@ VirgilSign VirgilSigner::sign(const VirgilAsn1Compatible& asn1Object, const Virg
     cipher.setPrivateKey(privateKey, privateKeyPassword);
     VirgilByteArray sign = cipher.sign(digest);
 
-    return VirgilSign(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(hash_.name()), sign, signerCertificateId);
+    return VirgilSign(virgil_byte_array_from_std_string(hash_.name()), sign, signerCertificateId);
 }
 
 bool VirgilSigner::verify(const VirgilAsn1Compatible& asn1Object, const VirgilSign& sign,

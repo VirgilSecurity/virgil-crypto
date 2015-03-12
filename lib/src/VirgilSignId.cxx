@@ -75,7 +75,7 @@ void VirgilSignId::asn1Read(VirgilAsn1Reader& asn1Reader) {
 }
 
 Json::Value VirgilSignId::jsonWrite(Json::Value& childValue) const {
-    childValue[kJsonKey_SignId] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(signId_);
+    childValue[kJsonKey_SignId] = virgil_byte_array_to_std_string(signId_);
     return VirgilTicketId::jsonWrite(childValue);
 }
 

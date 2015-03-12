@@ -48,7 +48,6 @@ using virgil::VirgilException;
  * @name JSON Keys
  */
 ///@{
-static const char *kJsonKey_ClassName = "class_name";
 static const char *kJsonKey_Type = "type";
 static const char *kJsonKey_Value = "value";
 ///@}
@@ -87,23 +86,16 @@ size_t VirgilInfoTicket::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWri
     writtenBytes += asn1Writer.writeUTF8String(value_);
     writtenBytes += asn1Writer.writeUTF8String(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(
             virgil_info_ticket_type_to_string(type_)));
-    writtenBytes += asn1Writer.writeUTF8String(VIRGIL_BYTE_ARRAY_FROM_C_STRING(kInfoTicket_ClassName));
-
     return VirgilTicket::asn1Write(asn1Writer, writtenBytes + childWrittenBytes);
 }
 
 void VirgilInfoTicket::asn1Read(VirgilAsn1Reader& asn1Reader) {
     VirgilTicket::asn1Read(asn1Reader);
-    if (VIRGIL_BYTE_ARRAY_TO_STD_STRING(asn1Reader.readUTF8String()) != std::string(kInfoTicket_ClassName)) {
-        throw VirgilException(std::string("VirgilInfoTicket: ") +
-                "Wrong class name for this class.");
-    }
     type_ = virgil_info_ticket_type_from_string(VIRGIL_BYTE_ARRAY_TO_STD_STRING(asn1Reader.readUTF8String()));
     value_ = asn1Reader.readUTF8String();
 }
 
 Json::Value VirgilInfoTicket::jsonWrite(Json::Value& childValue) const {
-    childValue[kJsonKey_ClassName] = kInfoTicket_ClassName;
     childValue[kJsonKey_Type] = virgil_info_ticket_type_to_string(type_);
     childValue[kJsonKey_Value] = VIRGIL_BYTE_ARRAY_TO_STD_STRING(value_);
     return VirgilTicket::jsonWrite(childValue);
@@ -111,11 +103,15 @@ Json::Value VirgilInfoTicket::jsonWrite(Json::Value& childValue) const {
 
 Json::Value VirgilInfoTicket::jsonRead(const Json::Value& parentValue) {
     Json::Value childValue = VirgilTicket::jsonRead(parentValue);
-    if (jsonGetString(childValue, kJsonKey_ClassName) != std::string(kInfoTicket_ClassName)) {
-        throw VirgilException(std::string("VirgilInfoTicket: ") +
-                "Wrong class name for this class.");
-    }
     type_ = virgil_info_ticket_type_from_string(jsonGetString(childValue, kJsonKey_Type));
     value_ = jsonGetStringAsByteArray(childValue, kJsonKey_Value);
     return childValue;
+}
+
+std::string VirgilInfoTicket::ClassName() {
+    return kInfoTicket_ClassName;
+}
+
+std::string VirgilInfoTicket::className() const {
+    return VirgilInfoTicket::ClassName();
 }

@@ -46,6 +46,8 @@ using virgil::service::data::VirgilTicketId;
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
+#include <string>
+
 namespace virgil { namespace service { namespace data {
 
 class VirgilUniqueTicket;
@@ -100,6 +102,7 @@ public:
      *
      * Marshalling format:
      *     VirgilTicket ::= SEQUENCE {
+     *         className UTF8String,
      *         id VirgilTicketId
      *     }
      *     VirgilTicketId ::= SEQUENCE {
@@ -117,6 +120,7 @@ public:
      *
      * Marshalling format:
      *    {
+     *        "class_name" : "UTF8String",
      *        "id" : {
      *            "account_id" : "UTF8String",
      *            "certificate_id" : "UTF8String",
@@ -132,6 +136,13 @@ public:
      * @brief Polymorphic destructor.
      */
     virtual ~VirgilTicket() throw();
+protected:
+    /**
+     * @brief Returns class name.
+     * @note This method is used for marshalling, so it MUST be defined in subclasses.
+     * @note Also all subclasses SHOULD define class version of this method with name ClassName().
+     */
+    virtual std::string className() const = 0;
 };
 
 }}}

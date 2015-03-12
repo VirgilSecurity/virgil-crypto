@@ -48,61 +48,44 @@ using virgil::VirgilException;
 
 #include <string>
 
+/**
+ * @name JSON Keys
+ */
+///@{
+static const char *kJsonKey_ClassName = "class_name";
+///@}
+
+static VirgilTicket * ticketFromClassName(const std::string& className) {
+    if (className == VirgilUniqueTicket::ClassName()) {
+        return new VirgilUniqueTicket();
+    }
+    if (className == VirgilInfoTicket::ClassName()) {
+        return new VirgilInfoTicket();
+    }
+    throw VirgilException(std::string("VirgilTicket:") +
+            "Can not find implementation for ticket with class name: " + className + ".");
+}
+
 VirgilTicket * VirgilTicket::createFromAsn1(const VirgilByteArray& asn1) {
-    VirgilTicket *ticket = 0;
-    std::string what;
-    try {
-        ticket = new VirgilUniqueTicket();
-        ticket->fromAsn1(asn1);
-    } catch (const VirgilException& exception) {
-        delete ticket;
-        ticket = 0;
-        what = exception.what();
-    }
-    if (ticket == 0) {
-        try {
-            ticket = new VirgilInfoTicket();
-            ticket->fromAsn1(asn1);
-        } catch (const VirgilException& exception) {
-            delete ticket;
-            ticket = 0;
-            what = exception.what();
-        }
-    }
-    if (ticket == 0) {
-        throw VirgilException(what);
-    }
+    VirgilAsn1Reader asn1Reader(asn1);
+    asn1Reader.readSequence();
+    VirgilByteArray className = asn1Reader.readUTF8String();
+    VirgilTicket *ticket = ticketFromClassName(VIRGIL_BYTE_ARRAY_TO_STD_STRING(className));
+    ticket->fromAsn1(asn1);
     return ticket;
 }
 
 VirgilTicket * VirgilTicket::createFromJson(const VirgilByteArray& json) {
-    VirgilTicket *ticket = 0;
-    std::string what;
-    try {
-        ticket = new VirgilUniqueTicket();
-        ticket->fromJson(json);
-    } catch (const VirgilException& exception) {
-        delete ticket;
-        ticket = 0;
-        what = exception.what();
+    Json::Reader reader(Json::Features::strictMode());
+    Json::Value rootObject;
+    if (!reader.parse(VIRGIL_BYTE_ARRAY_TO_STD_STRING(json), rootObject)) {
+        throw VirgilException(reader.getFormattedErrorMessages());
     }
-    if (ticket == 0) {
-        try {
-            ticket = new VirgilInfoTicket();
-            ticket->fromJson(json);
-        } catch (const VirgilException& exception) {
-            delete ticket;
-            ticket = 0;
-            what = exception.what();
-        }
-    }
-    if (ticket == 0) {
-        throw VirgilException("No ticket was found. Reason: " + what);
-    }
+    std::string className = jsonGetString(rootObject, kJsonKey_ClassName);
+    VirgilTicket *ticket = ticketFromClassName(className);
+    ticket->fromJson(json);
     return ticket;
 }
-
-
 
 VirgilTicket::~VirgilTicket() throw() {}
 
@@ -141,22 +124,37 @@ const VirgilInfoTicket& VirgilTicket::asInfoTicket() const {
 size_t VirgilTicket::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = 0;
     writtenBytes += id().asn1Write(asn1Writer);
+    writtenBytes += asn1Writer.writeUTF8String(VIRGIL_BYTE_ARRAY_FROM_STD_STRING(className()));
     writtenBytes += asn1Writer.writeSequence(writtenBytes + childWrittenBytes);
     return writtenBytes + childWrittenBytes;
 }
 
 void VirgilTicket::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
+    VirgilByteArray name = asn1Reader.readUTF8String();
+    if (VIRGIL_BYTE_ARRAY_TO_STD_STRING(name) != className()) {
+        throw VirgilException(std::string("VirgilTicket: ") +
+                "Wrong class name for this class. " +
+                "Found: " + VIRGIL_BYTE_ARRAY_TO_STD_STRING(name) +
+                ", but expected: " + className() + ".");
+    }
     id().asn1Read(asn1Reader);
 }
 
 Json::Value VirgilTicket::jsonWrite(Json::Value& childValue) const {
     Json::Value idChildrenValue(Json::objectValue);
     Json::Value idValue = id().jsonWrite(idChildrenValue);
+    childValue[kJsonKey_ClassName] = className();
     return jsonMergeObjects(childValue, idValue);
 }
 
 Json::Value VirgilTicket::jsonRead(const Json::Value& parentValue) {
     id().jsonRead(parentValue);
+    std::string name = jsonGetString(parentValue, kJsonKey_ClassName);
+    if (name != className()) {
+        throw VirgilException(std::string("VirgilTicket: ") +
+                "Wrong class name for this class. " +
+                "Found: " + name + ", but expected: " + className() + ".");
+    }
     return parentValue;
 }

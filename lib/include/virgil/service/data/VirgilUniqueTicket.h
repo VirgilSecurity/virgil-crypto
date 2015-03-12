@@ -55,6 +55,11 @@ namespace virgil { namespace service { namespace data {
 class VirgilUniqueTicket : public VirgilTicket {
 public:
     /**
+     * @brief Returns class name.
+     */
+     static std::string ClassName();
+public:
+    /**
      * @brief Configures ticket with type VirgilUniqueTicketType_None and with empty value.
      * @note Use this constructor only in conjuction with demarshalling methods.
      * @see fromAsn1()
@@ -114,6 +119,11 @@ public:
     virtual Json::Value jsonWrite(Json::Value& childObject) const;
     virtual Json::Value jsonRead(const Json::Value& parentValue);
     ///@}
+protected:
+    /**
+     * @brief Returns class name.
+     */
+    virtual std::string className() const;
 private:
     VirgilUniqueTicketType type_;
     VirgilByteArray value_;

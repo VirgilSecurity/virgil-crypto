@@ -45,6 +45,8 @@ using virgil::service::data::VirgilTicket;
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
+#include <string>
+
 namespace virgil { namespace service { namespace data {
 
 /**
@@ -53,6 +55,11 @@ namespace virgil { namespace service { namespace data {
  * The purpose of this ticket to describe simple user's information as first name, last name, etc.
  */
 class VirgilInfoTicket : public VirgilTicket {
+public:
+    /**
+     * @brief Returns class name.
+     */
+     static std::string ClassName();
 public:
     /**
      * @brief Configures ticket with type VirgilInfoTicketType_None and with empty value.
@@ -91,7 +98,6 @@ public:
      *
      * Marshalling format:
      *     {
-     *         className UTF8String,
      *         type UTF8String,
      *         value UTF8String
      *     }
@@ -105,7 +111,6 @@ public:
      *
      * Marshalling format:
      *    {
-     *        "class_name" : "UTF8String",
      *        "type" : "UTF8String",
      *        "value" : "Base64String"
      *    }
@@ -113,7 +118,12 @@ public:
     ///@{
     virtual Json::Value jsonWrite(Json::Value& childObject) const;
     virtual Json::Value jsonRead(const Json::Value& parentValue);
+protected:
     ///@}
+    /**
+     * @brief Returns class name.
+     */
+    virtual std::string className() const;
 private:
     VirgilInfoTicketType type_;
     VirgilByteArray value_;

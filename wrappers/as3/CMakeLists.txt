@@ -70,8 +70,7 @@ endif ()
 # Add include directory of wrapped module
 set (INCLUDES
     "-I${${WRAPPED_LIB_NAME}_SOURCE_DIR}/include"
-    "-I${${WRAPPED_LIB_NAME}_BINARY_DIR}/include"
-    "-I${${WRAPPED_LIB_NAME}_BINARY_DIR}/jsoncpp/include")
+    "-I${${WRAPPED_LIB_NAME}_BINARY_DIR}/include")
 
 if (CMAKE_BUILD_TYPE)
     string (TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)

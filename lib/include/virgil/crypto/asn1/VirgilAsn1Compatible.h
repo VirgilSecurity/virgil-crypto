@@ -65,7 +65,6 @@ public:
      * @brief Polymorphic destructor.
      */
      virtual ~VirgilAsn1Compatible() throw() {}
-protected:
     /**
      * @brief Write object state to the writer.
      * @param asn1Writer writer that should be payloaded by subclasses.
@@ -78,6 +77,7 @@ protected:
      * @param asn1Reader reader payloaded with ASN.1 to be read.
      */
     virtual void asn1Read(VirgilAsn1Reader& asn1Reader) = 0;
+protected:
     /**
      * @brief If given parameter is empty exception will be thrown.
      * @throw virgil::crypto::VirgilCryptoException.

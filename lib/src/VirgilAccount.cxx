@@ -37,6 +37,8 @@
 #include <virgil/service/data/VirgilAccount.h>
 using virgil::service::data::VirgilAccount;
 
+#include <json/json.h>
+
 VirgilAccount::~VirgilAccount() throw() {
 }
 

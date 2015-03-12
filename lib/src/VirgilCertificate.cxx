@@ -37,6 +37,8 @@
 #include <virgil/service/data/VirgilCertificate.h>
 using virgil::service::data::VirgilCertificate;
 
+#include <json/json.h>
+
 /**
  * @name JSON Keys
  */

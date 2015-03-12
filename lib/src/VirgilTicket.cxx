@@ -48,6 +48,8 @@ using virgil::VirgilException;
 
 #include <string>
 
+#include <json/json.h>
+
 /**
  * @name JSON Keys
  */

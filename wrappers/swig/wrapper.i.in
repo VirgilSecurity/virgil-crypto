@@ -211,6 +211,10 @@ INCLUDE_CLASS(VirgilVersion, virgil, virgil)
  * @name Package: virgil::crypto::asn1
  */
 ///@{
+%ignore *::asn1Write;
+%ignore *::asn1Read;
+%ignore *::jsonWrite;
+%ignore *::jsonRead;
 INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto::asn1, virgil/crypto/asn1)
 INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto::asn1, virgil/crypto/asn1)
 INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::asn1, virgil/crypto/asn1)

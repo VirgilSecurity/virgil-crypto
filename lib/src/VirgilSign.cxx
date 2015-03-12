@@ -40,6 +40,8 @@ using virgil::service::data::VirgilSign;
 #include <virgil/service/data/VirgilCertificate.h>
 using virgil::service::data::VirgilCertificate;
 
+#include <json/json.h>
+
 /**
  * @name ASN.1 tags
  */

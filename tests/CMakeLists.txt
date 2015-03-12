@@ -44,7 +44,6 @@ set (TEST_RUNNER test_runner)
 if (CMAKE_MAJOR_VERSION LESS 3)
     include_directories (${${VIRGIL_LIB_NAME}_SOURCE_DIR}/include)
     include_directories (${${VIRGIL_LIB_NAME}_BINARY_DIR}/include)
-    include_directories (${CMAKE_CURRENT_BINARY_DIR}/../lib/jsoncpp/include)
 endif (CMAKE_MAJOR_VERSION LESS 3)
 
 aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR} SRC_LIST)

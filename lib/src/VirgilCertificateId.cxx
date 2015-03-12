@@ -40,6 +40,8 @@ using virgil::service::data::VirgilCertificateId;
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
+#include <json/json.h>
+
 /**
  * @name JSON Keys
  */

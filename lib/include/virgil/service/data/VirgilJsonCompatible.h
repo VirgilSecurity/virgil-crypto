@@ -43,7 +43,9 @@ using virgil::crypto::asn1::VirgilAsn1Compatible;
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <json/json.h>
+namespace Json {
+    class Value;
+}
 
 namespace virgil { namespace service { namespace data {
 
@@ -64,7 +66,6 @@ public:
      * @brief Polymorphic destructor.
      */
      virtual ~VirgilJsonCompatible() throw() {}
-protected:
     /**
      * @brief Write object state to the writer.
      * @param childValue - JSON value written by the child.
@@ -77,6 +78,7 @@ protected:
      * @return Read JSON value, that SHOULD be used by children.
      */
     virtual Json::Value jsonRead(const Json::Value& parentValue) = 0;
+protected:
     /**
      * @brief If given parameter is empty exception will be thrown.
      * @throw virgil::VirgilException.
@@ -86,11 +88,6 @@ protected:
      * @name JSON utility methods
      */
     ///@{
-    /**
-     * @brief Read JSON value under given key and check it's type.
-     * @throw VirgilException if value not found or value type is mismatch.
-     */
-    static Json::Value jsonGetValue(const Json::Value& json, const char *key, Json::ValueType valueType);
     /**
      * @brief Read JSON string value under given key.
      * @throw VirgilException if value not found or value is not a string.

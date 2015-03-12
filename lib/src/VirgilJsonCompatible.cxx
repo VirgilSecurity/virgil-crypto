@@ -46,6 +46,8 @@ using virgil::VirgilException;
 #include <string>
 #include <sstream>
 
+#include <json/json.h>
+
 VirgilByteArray VirgilJsonCompatible::toJson() const {
     Json::Value childValue(Json::objectValue);
     Json::Value rootObject = jsonWrite(childValue);
@@ -95,7 +97,7 @@ static std::string jsonValueTypeToString_(Json::ValueType jsonType) {
     }
 }
 
-Json::Value VirgilJsonCompatible::jsonGetValue(const Json::Value& json, const char *key, Json::ValueType valueType) {
+static Json::Value jsonGetValue(const Json::Value& json, const char *key, Json::ValueType valueType) {
     Json::Value value = json[key];
     if (value.type() != valueType) {
         throw VirgilException(std::string("VirgilJsonCompatible: ") +

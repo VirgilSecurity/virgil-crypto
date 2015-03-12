@@ -57,9 +57,9 @@ package com.virgilsecurity {
 
         [Test(description="Test VirgilVersion 'id' accessors.")]
         public function test_version():void {
-            assertThat(VirgilVersion.majorNumber(), equalTo(0));
-            assertThat(VirgilVersion.minorNumber(), equalTo(4));
-            assertThat(VirgilVersion.patchNumber(), equalTo(2));
+            assertThat(VirgilVersion.majorVersion(), equalTo(0));
+            assertThat(VirgilVersion.minorVersion(), equalTo(4));
+            assertThat(VirgilVersion.patchVersion(), equalTo(2));
         }
     }
 }

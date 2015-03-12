@@ -49,17 +49,17 @@ public class VirgilVersion {
     public static function asString():String {
         return _wrap_VirgilVersion_asString();
     }
-    public static function asHexNumber():uint {
-        return _wrap_VirgilVersion_asHexNumber();
+    public static function asNumber():uint {
+        return _wrap_VirgilVersion_asNumber();
     }
-    public static function majorNumber():uint {
-        return _wrap_VirgilVersion_majorNumber();
+    public static function majorVersion():uint {
+        return _wrap_VirgilVersion_majorVersion();
     }
-    public static function minorNumber():uint {
-        return _wrap_VirgilVersion_minorNumber();
+    public static function minorVersion():uint {
+        return _wrap_VirgilVersion_minorVersion();
     }
-    public static function patchNumber():uint {
-        return _wrap_VirgilVersion_patchNumber();
+    public static function patchVersion():uint {
+        return _wrap_VirgilVersion_patchVersion();
     }
 }
 

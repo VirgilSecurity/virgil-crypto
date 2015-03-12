@@ -48,23 +48,23 @@ AS3_DECL_FUNC(_wrap_VirgilVersion_asString, "():String") {
     AS3_RETURN_STD_STRING(cVersion);
 }
 
-AS3_DECL_FUNC(_wrap_VirgilVersion_asHexNumber, "():uint") {
-    size_t cVersion = VirgilVersion::asHexNumber();
+AS3_DECL_FUNC(_wrap_VirgilVersion_asNumber, "():uint") {
+    size_t cVersion = VirgilVersion::asNumber();
     AS3_RETURN_C_UINT(cVersion);
 }
 
-AS3_DECL_FUNC(_wrap_VirgilVersion_majorNumber, "():uint") {
-    size_t cNumber = VirgilVersion::majorNumber();
+AS3_DECL_FUNC(_wrap_VirgilVersion_majorVersion, "():uint") {
+    size_t cNumber = VirgilVersion::majorVersion();
     AS3_RETURN_C_UINT(cNumber);
 }
 
-AS3_DECL_FUNC(_wrap_VirgilVersion_minorNumber, "():uint") {
-    size_t cNumber = VirgilVersion::minorNumber();
+AS3_DECL_FUNC(_wrap_VirgilVersion_minorVersion, "():uint") {
+    size_t cNumber = VirgilVersion::minorVersion();
     AS3_RETURN_C_UINT(cNumber);
 }
 
-AS3_DECL_FUNC(_wrap_VirgilVersion_patchNumber, "():uint") {
-    size_t cNumber = VirgilVersion::patchNumber();
+AS3_DECL_FUNC(_wrap_VirgilVersion_patchVersion, "():uint") {
+    size_t cNumber = VirgilVersion::patchVersion();
     AS3_RETURN_C_UINT(cNumber);
 }
 

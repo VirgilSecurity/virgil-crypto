@@ -44,18 +44,20 @@
 
 include(CheckCCompilerFlag)
 
-# Configure compiler settings
-check_c_compiler_flag (-fPIC COMPILER_SUPPORT_PIC)
-if (COMPILER_SUPPORT_PIC)
-    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-endif()
+if (NOT PLATFORM_EMBEDDED)
+    # Configure compiler settings
+    check_c_compiler_flag (-fPIC COMPILER_SUPPORT_PIC)
+    if (COMPILER_SUPPORT_PIC)
+        set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+    endif()
 
-check_c_compiler_flag (-fPIC COMPILER_SUPPORT_ARCH)
-if (CMAKE_OSX_ARCHITECTURES AND COMPILER_SUPPORT_ARCH)
-    foreach (arch ${CMAKE_OSX_ARCHITECTURES})
-        set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -arch ${arch}")
-    endforeach (arch)
-endif (CMAKE_OSX_ARCHITECTURES AND COMPILER_SUPPORT_ARCH)
+    check_c_compiler_flag (-fPIC COMPILER_SUPPORT_ARCH)
+    if (CMAKE_OSX_ARCHITECTURES AND COMPILER_SUPPORT_ARCH)
+        foreach (arch ${CMAKE_OSX_ARCHITECTURES})
+            set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -arch ${arch}")
+        endforeach (arch)
+    endif (CMAKE_OSX_ARCHITECTURES AND COMPILER_SUPPORT_ARCH)
+endif (NOT PLATFORM_EMBEDDED)
 
 # Add external project build steps
 set (CMAKE_ARGS

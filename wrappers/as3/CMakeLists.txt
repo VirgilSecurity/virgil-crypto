@@ -114,7 +114,7 @@ add_custom_command (OUTPUT ${WRAPPER_EXPORT_FILE}
 )
 
 # Link wrapper with target library
-set (WRAPPER_SWC ${CMAKE_CURRENT_BINARY_DIR}/${SWIG_MODULE_NAME}.swc)
+set (WRAPPER_SWC ${CMAKE_CURRENT_BINARY_DIR}/${SWIG_MODULE_NAME}-${VIRGIL_VERSION}.swc)
 add_custom_target (${SWIG_MODULE_NAME} ALL
     COMMENT "Building ${SWIG_MODULE_NAME}.swc"
     COMMAND ${CMAKE_CXX_COMPILER}

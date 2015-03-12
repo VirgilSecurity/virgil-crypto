@@ -104,10 +104,10 @@ package com.virgilsecurity {
                     ConvertionUtils.asciiStringToArray(TEST_CERTIFICATE_ID),
                     ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM));
             // Add custom info if needed
-            cipher_.customParameters().setString(
+            cipher_.customParams().setString(
                     ConvertionUtils.utf8StringToArray(TEST_NAME_KEY),
                     ConvertionUtils.utf8StringToArray(TEST_NAME_VALUE));
-            cipher_.customParameters().setInteger(
+            cipher_.customParams().setInteger(
                     ConvertionUtils.utf8StringToArray(TEST_SIZE_KEY), plainData.length);
             // Initialize encryption.
             const actualChunkSize:uint = cipher_.startEncryption(preferredChunkSize);
@@ -125,15 +125,15 @@ package com.virgilsecurity {
 
             // Reset cipher (optional)
             cipher_.removeAllRecipients();
-            cipher_.customParameters().clear();
+            cipher_.customParams().clear();
 
             // Configure cipher before decryption with content info
             cipher_.setContentInfo(contentInfo);
             // Check parameters
             assertThat(ConvertionUtils.arrayToUTF8String(
-                    cipher_.customParameters().getString(ConvertionUtils.utf8StringToArray(TEST_NAME_KEY))),
+                    cipher_.customParams().getString(ConvertionUtils.utf8StringToArray(TEST_NAME_KEY))),
                     equalTo(TEST_NAME_VALUE));
-            assertThat(cipher_.customParameters().getInteger(ConvertionUtils.utf8StringToArray(TEST_SIZE_KEY)),
+            assertThat(cipher_.customParams().getInteger(ConvertionUtils.utf8StringToArray(TEST_SIZE_KEY)),
                     equalTo(plainData.length));
             // Initialize decryption
             const decryptionChunkSize:uint = cipher_.startDecryptionWithKey(

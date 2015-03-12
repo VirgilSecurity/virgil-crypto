@@ -128,11 +128,11 @@ void VirgilCipherBase::setContentInfo(const VirgilByteArray& contentInfo) {
     }
 }
 
-VirgilCustomParams& VirgilCipherBase::customParameters() {
+VirgilCustomParams& VirgilCipherBase::customParams() {
     return contentInfo_.customParams;
 }
 
-const VirgilCustomParams& VirgilCipherBase::customParameters() const {
+const VirgilCustomParams& VirgilCipherBase::customParams() const {
     return contentInfo_.customParams;
 }
 

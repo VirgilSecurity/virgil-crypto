@@ -79,13 +79,13 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
         VirgilByteArray hexParamKey = virgil_byte_array_from_c_string("data_param_value");
         VirgilByteArray hexParamValue = virgil_byte_array_from_c_string("will be stored as octet string");
 
-        cipher.customParameters().setInteger(intParamKey, intParamValue);
-        cipher.customParameters().setString(strParamKey, strParamValue);
-        cipher.customParameters().setData(hexParamKey, hexParamValue);
+        cipher.customParams().setInteger(intParamKey, intParamValue);
+        cipher.customParams().setString(strParamKey, strParamValue);
+        cipher.customParams().setData(hexParamKey, hexParamValue);
 
         VirgilByteArray encryptedData = cipher.encrypt(testData, true);
         cipher.removeAllRecipients();
-        cipher.customParameters().clear();
+        cipher.customParams().clear();
 
         VirgilByteArray decryptedData;
         REQUIRE_NOTHROW(
@@ -93,9 +93,9 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
         );
         REQUIRE(testData == decryptedData);
 
-        REQUIRE(cipher.customParameters().getInteger(intParamKey) == intParamValue);
-        REQUIRE(cipher.customParameters().getString(strParamKey) == strParamValue);
-        REQUIRE(cipher.customParameters().getData(hexParamKey) == hexParamValue);
+        REQUIRE(cipher.customParams().getInteger(intParamKey) == intParamValue);
+        REQUIRE(cipher.customParams().getString(strParamKey) == strParamValue);
+        REQUIRE(cipher.customParams().getData(hexParamKey) == hexParamValue);
     }
 
     SECTION("and separated content info") {
@@ -125,9 +125,9 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
         VirgilByteArray hexParamKey = virgil_byte_array_from_c_string("data_param_value");
         VirgilByteArray hexParamValue = virgil_byte_array_from_c_string("will be stored as octet string");
 
-        cipher.customParameters().setInteger(intParamKey, intParamValue);
-        cipher.customParameters().setString(strParamKey, strParamValue);
-        cipher.customParameters().setData(hexParamKey, hexParamValue);
+        cipher.customParams().setInteger(intParamKey, intParamValue);
+        cipher.customParams().setString(strParamKey, strParamValue);
+        cipher.customParams().setData(hexParamKey, hexParamValue);
 
         VirgilByteArray encryptedData = cipher.encrypt(testData, false);
         VirgilByteArray contentInfo = cipher.getContentInfo();
@@ -143,9 +143,9 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
         );
         REQUIRE(testData == decryptedData);
 
-        REQUIRE(cipher.customParameters().getInteger(intParamKey) == intParamValue);
-        REQUIRE(cipher.customParameters().getString(strParamKey) == strParamValue);
-        REQUIRE(cipher.customParameters().getData(hexParamKey) == hexParamValue);
+        REQUIRE(cipher.customParams().getInteger(intParamKey) == intParamValue);
+        REQUIRE(cipher.customParams().getString(strParamKey) == strParamValue);
+        REQUIRE(cipher.customParams().getData(hexParamKey) == hexParamValue);
     }
 }
 

@@ -127,12 +127,12 @@ void VirgilChunkCipher::finalize() {
 }
 
 void VirgilChunkCipher::storeChunkSize(size_t chunkSize) {
-    customParameters().setInteger(
+    customParams().setInteger(
             VIRGIL_BYTE_ARRAY_FROM_C_STRING(kCustomParameterKey_ChunkSize), chunkSize);
 }
 
 size_t VirgilChunkCipher::retrieveChunkSize() const {
-    return customParameters().getInteger(
+    return customParams().getInteger(
             VIRGIL_BYTE_ARRAY_FROM_C_STRING(kCustomParameterKey_ChunkSize));
 }
 

@@ -405,9 +405,9 @@ public class VirgilCipherBase extends CObject {
     public function setContentInfo(contentInfo:ByteArray):void {
         _wrap_VirgilCipherBase_setContentInfo(this.cPtr, contentInfo);
     }
-    public function customParameters():VirgilCustomParams {
+    public function customParams():VirgilCustomParams {
         var customParams:VirgilCustomParams = new VirgilCustomParams();
-        customParams.cPtr = _wrap_VirgilCipherBase_customParameters(this.cPtr);
+        customParams.cPtr = _wrap_VirgilCipherBase_customParams(this.cPtr);
         return customParams;
     }
 }

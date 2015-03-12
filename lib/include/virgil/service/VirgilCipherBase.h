@@ -126,12 +126,12 @@ public:
      * @note Use this method to add custom parameters to the content info object.
      * @note Use this method before encryption process.
      */
-    VirgilCustomParams& customParameters();
+    VirgilCustomParams& customParams();
     /**
      * @brief Provide readonly access to the object that handles custom parameters.
      * @note Use this method to read custom parameters from the content info object.
      */
-    const VirgilCustomParams& customParameters() const;
+    const VirgilCustomParams& customParams() const;
     ///@}
 protected:
     /**

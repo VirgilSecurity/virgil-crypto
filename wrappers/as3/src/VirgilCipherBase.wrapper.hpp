@@ -102,9 +102,9 @@ AS3_THROWABLE_SECTION_START
 AS3_THROWABLE_SECTION_END
 }
 
-AS3_DECL_FUNC(_wrap_VirgilCipherBase_customParameters, "(asSelf:int):int") {
+AS3_DECL_FUNC(_wrap_VirgilCipherBase_customParams, "(asSelf:int):int") {
     AS3_TO_C_PTR(VirgilCipherBase, asSelf, cSelf);
-    const VirgilCustomParams& cCustomParameters= cSelf->customParameters();
+    const VirgilCustomParams& cCustomParameters= cSelf->customParams();
     AS3_RETURN_C_PTR(&cCustomParameters);
 }
 

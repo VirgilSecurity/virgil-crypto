@@ -119,7 +119,7 @@ add_custom_target (${SWIG_MODULE_NAME} ALL
     COMMENT "Building ${SWIG_MODULE_NAME}.swc"
     COMMAND ${CMAKE_CXX_COMPILER}
             -emit-swc=${SWIG_MODULE_NAMESPACE} ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_OPTIONAL}
-            -flto-api=${WRAPPER_EXPORT_FILE}
+            -flto-api=${WRAPPER_EXPORT_FILE} -jvmopt=-Xmx4G
             -o ${WRAPPER_SWC} ${WRAPPER_OBJ} ${WRAPPER_ABC}
             $<TARGET_LINKER_FILE:${WRAPPED_LIB_NAME}> ${CMAKE_BINARY_DIR}/libs/libpolarssl.a
             ${CMAKE_BINARY_DIR}/libs/libjsoncpp.a -lAS3++

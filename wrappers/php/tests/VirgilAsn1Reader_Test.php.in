@@ -81,8 +81,7 @@ class VirgilAsn1Reader_Test extends PHPUnit_Framework_TestCase {
      * @depends test_asn1_reader_creation
      */
     public function test_asn1_read_utf8_string(VirgilAsn1Reader $asn1Reader) {
-        $str = "Строка в UTF8";
-        $expectedUTF8StringValue = iconv(mb_detect_encoding($str, mb_detect_order(), true), "UTF-8", $str);
+        $expectedUTF8StringValue = "Строка в UTF8";
         $asn1 = file_get_contents("data/asn1_utf8_string.der");
         $asn1Reader->reset($asn1);
         $utf8StringValue = $asn1Reader->readUTF8String();

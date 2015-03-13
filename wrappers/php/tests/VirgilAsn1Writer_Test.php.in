@@ -82,8 +82,7 @@ class VirgilAsn1Writer_Test extends PHPUnit_Framework_TestCase {
      */
     public function test_asn1_write_utf8_string(VirgilAsn1Writer $asn1Writer) {
         $expectedAsn1 = file_get_contents("data/asn1_utf8_string.der");
-        $str = "Строка в UTF8";
-        $utf8StringValue = iconv(mb_detect_encoding($str, mb_detect_order(), true), "UTF-8", $str);
+        $utf8StringValue = "Строка в UTF8";
         $asn1Writer->reset();
         $asn1Writer->writeUTF8String($utf8StringValue);
         $asn1 = $asn1Writer->finish();

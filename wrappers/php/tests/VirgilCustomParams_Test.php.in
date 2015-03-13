@@ -54,9 +54,7 @@ class VirgilCustomParams_Test extends PHPUnit_Framework_TestCase {
         $fileSizeValue = 1234567890;
 
         $fileNameKey = "fileName";
-        $fileNameValue = "Имя файла";
-        $fileNameValueUTF8 =
-                iconv(mb_detect_encoding($fileNameValue, mb_detect_order(), true), "UTF-8", $fileNameValue);
+        $fileNameValueUTF8 = "Имя файла";
 
         $fileHashKey = "md5";
         $fileHashValue = pack("H*", "6F8DB599DE986FAB7A21625B7916589C");

@@ -1,9 +1,10 @@
 buildscript {
     repositories {
+        mavenLocal()
         mavenCentral()
     }
     dependencies {
-        classpath group: 'org.gradlefx', name: 'gradlefx', version: '0.8.1'
+        classpath group: 'org.gradlefx', name: 'gradlefx', version: '1.1'
     }
 }
 
@@ -16,21 +17,23 @@ additionalCompilerOptions = [
 
 repositories {
     maven {
-        name 'glassfish-releases'
-        url "http://opensource.adobe.com/svn/opensource/cairngorm3/maven-repository"
+        name 'hamcrest-as3-repo'
+        url "https://repository.sonatype.org/content/groups/forge"
     }
 }
 
-dependencies {
-    merged files('@AS3_MODULE_FILE_NAME@')
+//dependency versions
+ext.hamcrest_as3_version = '1.1.0'
 
-    test group: 'org.hamcrest', name: 'hamcrest-as3', version: '1.1', ext: 'swc'
+dependencies {
+    test group: 'hamcrest-as3', name: 'hamcrest-as3', version: hamcrest_as3_version, ext: 'swc'
     test files(
-            'lib/flexUnitTasks-4.1.0-8.jar',
-            'lib/flexunit-4.1.0-8-as3_4.1.0.16076.swc',
-            'lib/flexunit-4.1.0-8-flex_4.1.0.16076.swc',
-            'lib/flexunit-cilistener-4.1.0-8-4.1.0.16076.swc',
-            'lib/flexunit-uilistener-4.1.0-8-4.1.0.16076.swc')
+            project.file('lib/flexUnitTasks-4.1.0-8.jar').absolutePath,
+            project.file('lib/flexunit-4.1.0-8-as3_4.1.0.16076.swc').absolutePath,
+            project.file('lib/flexunit-4.1.0-8-flex_4.1.0.16076.swc').absolutePath,
+            project.file('lib/flexunit-cilistener-4.1.0-8-4.1.0.16076.swc').absolutePath,
+            project.file('lib/flexunit-uilistener-4.1.0-8-4.1.0.16076.swc').absolutePath)
+    merged files('@AS3_MODULE_FILE_NAME@')
 }
 
 flexUnit {

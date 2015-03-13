@@ -26,6 +26,6 @@ PHP | Unix, Linux, OS X
 C# | Any that supports .NET platform
 AS3 | Any
 Node.js | Any
-Ruby - Coming April 2015
-Python - Coming May 2015
+Ruby | Coming April 2015
+Python | Coming May 2015
 

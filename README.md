@@ -36,4 +36,5 @@ AS3 | Any
 Node.js | Any
 Ruby | Coming April 2015
 Python | Coming May 2015
+Chrome | Available by Request
 

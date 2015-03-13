@@ -21,7 +21,7 @@ Language | Platform
 C++ | Any
 PHP | Unix, Linux, OS X
 C# | Any .NET platform or Xamarin
-AS3 | Any
+ActionScript 3 | Any
 Node.js | Any
 Ruby | Coming April 2015
 Swift,Objective-C | Coming April 2015

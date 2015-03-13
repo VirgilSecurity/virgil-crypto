@@ -141,6 +141,5 @@ install (FILES ${WRAPPER_SWC}
         DESTINATION ${AS3_INSTALL_DIR}/${INSTALL_LIB_DIR_NAME})
 
 # Unit tests
-set (AS3_MODULE_FILE_NAME ${WRAPPER_SWC})
 add_subdirectory (tests)
 add_subdirectory (demo)

@@ -33,7 +33,7 @@ dependencies {
             project.file('lib/flexunit-4.1.0-8-flex_4.1.0.16076.swc').absolutePath,
             project.file('lib/flexunit-cilistener-4.1.0-8-4.1.0.16076.swc').absolutePath,
             project.file('lib/flexunit-uilistener-4.1.0-8-4.1.0.16076.swc').absolutePath)
-    merged files('@AS3_MODULE_FILE_NAME@')
+    merged files('@WRAPPER_SWC@')
 }
 
 flexUnit {

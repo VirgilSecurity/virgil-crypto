@@ -35,7 +35,7 @@
 #
 
 # Input:
-#     AS3_MODULE_FILE_NAME - PHP file name of the module under test.
+#     WRAPPER_SWC - AS3 SWC file name.
 
 find_program (GRADLE_MODULE gradle)
 
@@ -60,7 +60,7 @@ if (GRADLE_MODULE AND DEFINED ENV{FLEX_HOME})
     endforeach (TEST_FILE)
 
     add_test (
-        NAME ${AS3_MODULE_FILE_NAME}
+        NAME ${WRAPPER_SWC}
         COMMAND ${GRADLE_MODULE} build
     )
 

@@ -75,7 +75,7 @@
         /* File loading variables */
         private static const FILE_TYPES:Array = [new FileFilter("Any file", "*")];
         private var inFileStream:FileStream;
-        private var encryptionKeyFileStream:FileStream;
+        private var contentInfoFileStream:FileStream;
         private var outFileStream:FileStream;
         /* State variables */
         private var isLastOperationWasEncryptd:Boolean = false;
@@ -84,6 +84,7 @@
         private var timerFileProcessEnd:uint = 0;
         /* Hardcoded asymmetric keys */
         private static const PLAIN_TEXT:String = "This string will be encrypted.";
+        private static const EC_CERT_ID:String = "893bbe82-9c84-4958-9447-50526f57acdc";
         private static const EC_PUBLIC_KEY:String =
                 "-----BEGIN PUBLIC KEY-----\n" +
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEa+CTMPBSOFoeZQIPiUOc84r2\n" +
@@ -203,9 +204,9 @@
             // create the inFileStream instance
             var file:File = new File();
             // listen for when they select a file
-            file.addEventListener(Event.SELECT, encryptionKeyFileIsSelected);
+            file.addEventListener(Event.SELECT, contentInfoFileIsSelected);
             // listen for when then cancel out of the browse dialog
-            file.addEventListener(Event.CANCEL, encryptionKeyFileIsCanceled);
+            file.addEventListener(Event.CANCEL, contentInfoFileIsCanceled);
             // open a native browse dialog that filters for text files
             if (encryptionOptionsGroup.selection == encryptionOptionEncrypt) {
                 file.browseForSave("Save encryption key file");
@@ -214,20 +215,20 @@
             }
         }
 
-        private function encryptionKeyFileIsSelected(event:Event):void {
+        private function contentInfoFileIsSelected(event:Event):void {
             outDebugMessage("Selected file: " + event.target.nativePath);
 
             var file:File = event.target as File;
-            encryptionKeyFileStream = new FileStream();
+            contentInfoFileStream = new FileStream();
             if (encryptionOptionsGroup.selection == encryptionOptionEncrypt) {
-                encryptionKeyFileStream.open(file, FileMode.WRITE);
+                contentInfoFileStream.open(file, FileMode.WRITE);
             } else if (encryptionOptionsGroup.selection == encryptionOptionDecrypt) {
-                encryptionKeyFileStream.open(file, FileMode.READ);
+                contentInfoFileStream.open(file, FileMode.READ);
             }
             updateControlPanel();
         }
 
-        private function encryptionKeyFileIsCanceled(event:Event):void {
+        private function contentInfoFileIsCanceled(event:Event):void {
             outDebugMessage("File selection is canceled.");
         }
 
@@ -264,7 +265,7 @@
             selectInputFileButton.enabled = true;
             selectKeyFileButton.enabled = true;
             selectOutputFileButton.enabled = true;
-            if (inFileStream != null && outFileStream != null && encryptionKeyFileStream != null) {
+            if (inFileStream != null && outFileStream != null && contentInfoFileStream != null) {
                 processFileButton.enabled = true;
             }
         }
@@ -272,50 +273,66 @@
         /* File processing */
         private function processFileEncryption():void {
             timerFileProcessStart = getTimer();
-
-            var cipher:VirgilChunkCipher = VirgilChunkCipher.create();
-
-            var dataChunk:ByteArray = new ByteArray();
-            const encryptionChunkSize:uint = cipher.adjustEncryptionChunkSize(1024 * 1024);
-
-            var encryptionKey:ByteArray = cipher.startEncryption(stringToBytes(EC_PUBLIC_KEY));
-            encryptionKeyFileStream.writeBytes(encryptionKey);
-            while (inFileStream.bytesAvailable > 0) {
-                dataChunk.clear();
-                inFileStream.readBytes(dataChunk, 0, Math.min(encryptionChunkSize, inFileStream.bytesAvailable));
-                outFileStream.writeBytes(cipher.process(dataChunk));
+            try {
+                // Create cipher
+                var cipher:VirgilChunkCipher = VirgilChunkCipher.create();
+                // Add key recipients
+                cipher.addKeyRecipient(stringToBytes(EC_CERT_ID), stringToBytes(EC_PUBLIC_KEY));
+                // Init encryption
+                const encryptionChunkSize:uint = cipher.startEncryption(1024 * 1024);
+                // Encrypt
+                var dataChunk:ByteArray = new ByteArray();
+                while (inFileStream.bytesAvailable > 0) {
+                    dataChunk.clear();
+                    inFileStream.readBytes(dataChunk, 0, Math.min(encryptionChunkSize, inFileStream.bytesAvailable));
+                    outFileStream.writeBytes(cipher.process(dataChunk));
+                }
+                // Finalize encryption
+                cipher.finalize();
+                // Save content info
+                var contentInfo:ByteArray = cipher.getContentInfo();
+                contentInfoFileStream.writeBytes(contentInfo);
+                // Output measurement
+                timerFileProcessEnd = getTimer();
+                outDebugMessage("File is processed in: " + (timerFileProcessEnd - timerFileProcessStart) + " ms.");
+            } catch (error:Error) {
+                outDebugMessage("File processing failed:\n" + error.message);
+            } finally {
+                cipher.destroy();
+                unblockUI();
             }
-            cipher.finalize();
-            cipher.destroy();
-            timerFileProcessEnd = getTimer();
-            unblockUI();
-            outDebugMessage("File is processed in: " + (timerFileProcessEnd - timerFileProcessStart) + " ms.");
         }
 
         private function processFileDecryption():void {
             timerFileProcessStart = getTimer();
-
-            var cipher:VirgilChunkCipher = VirgilChunkCipher.create();
-
-            var dataChunk:ByteArray = new ByteArray();
-            const encryptionChunkSize:uint = cipher.adjustEncryptionChunkSize(1024 * 1024);
-            const decryptionChunkSize:uint = cipher.adjustEncryptionChunkSize(encryptionChunkSize);
-
-            var encryptionKey:ByteArray = new ByteArray();
-            encryptionKeyFileStream.readBytes(encryptionKey);
-            encryptionKey.position = 0;
-
-            cipher.startDecryption(encryptionKey, stringToBytes(EC_PRIVATE_KEY));
-            while (inFileStream.bytesAvailable > 0) {
-                dataChunk.clear();
-                inFileStream.readBytes(dataChunk, 0, Math.min(encryptionChunkSize, inFileStream.bytesAvailable));
-                outFileStream.writeBytes(cipher.process(dataChunk));
+            try {
+                // Create cipher
+                var cipher:VirgilChunkCipher = VirgilChunkCipher.create();
+                // Read and configure content info
+                var contentInfo:ByteArray = new ByteArray();
+                contentInfoFileStream.readBytes(contentInfo);
+                cipher.setContentInfo(contentInfo);
+                // Init decryption
+                const decryptionChunkSize:uint =
+                        cipher.startDecryptionWithKey(stringToBytes(EC_CERT_ID), stringToBytes(EC_PRIVATE_KEY));
+                // Decrypt
+                var dataChunk:ByteArray = new ByteArray();
+                while (inFileStream.bytesAvailable > 0) {
+                    dataChunk.clear();
+                    inFileStream.readBytes(dataChunk, 0, Math.min(decryptionChunkSize, inFileStream.bytesAvailable));
+                    outFileStream.writeBytes(cipher.process(dataChunk));
+                }
+                // Finalize decryption
+                cipher.finalize();
+                // Output measurement
+                timerFileProcessEnd = getTimer();
+                outDebugMessage("File is processed in: " + (timerFileProcessEnd - timerFileProcessStart) + " ms.");
+            } catch (error:Error) {
+                outDebugMessage("File processing failed:\n" + error.message);
+            } finally {
+                cipher.destroy();
+                unblockUI();
             }
-            cipher.finalize();
-            cipher.destroy();
-            timerFileProcessEnd = getTimer();
-            unblockUI();
-            outDebugMessage("File is processed in: " + (timerFileProcessEnd - timerFileProcessStart) + " ms.");
         }
 
         /* Debug console */

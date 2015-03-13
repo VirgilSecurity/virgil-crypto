@@ -39,6 +39,7 @@ cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 if (DEFINED ENV{FLEX_HOME})
 
     find_program (FLEX_COMPILER NAMES amxmlc PATHS $ENV{FLEX_HOME}/bin )
+    find_program (FLEX_RUNNER NAMES adl PATHS $ENV{FLEX_HOME}/bin )
     if (FLEX_COMPILER)
         configure_file (
             ${CMAKE_CURRENT_SOURCE_DIR}/EncryptApp-AIR.xml
@@ -51,9 +52,18 @@ if (DEFINED ENV{FLEX_HOME})
                     -library-path+=${WRAPPER_SWC} ${CMAKE_CURRENT_SOURCE_DIR}/EncryptApp.mxml -o EncryptApp.swf
             DEPENDS ${WRAPPER_SWC}
         )
-    else ()
+    else (FLEX_COMPILER)
         message (WARNING "Flex compiler amxmlc was not found at:" $ENV{FLEX_HOME}/bin)
-    endif ()
+    endif (FLEX_COMPILER)
+
+    if (FLEX_RUNNER)
+        add_custom_target (demo_run
+            COMMAND ${FLEX_RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/EncryptApp-AIR.xml
+        )
+        add_dependencies (demo_run demo)
+    else (FLEX_RUNNER)
+        message (WARNING "Flex adl was not found at:" $ENV{FLEX_HOME}/bin)
+    endif (FLEX_RUNNER)
 
 else ()
     message (WARNING "FLEX_HOME is not defined, target 'demo' is OFF.")

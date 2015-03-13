@@ -56,7 +56,7 @@ POSSIBILITY OF SUCH DAMAGE.
             </s:Form>
             <s:Button id="selectInputFileButton" label="Source file..." enabled="false"
                 percentWidth="100" click="onSelectInputFile(event)"/>
-            <s:Button id="selectKeyFileButton" label="Encryption key file..." enabled="false"
+            <s:Button id="selectKeyFileButton" label="ContentInfo file..." enabled="false"
                 percentWidth="100" click="onSelectKeyFile(event)"/>
             <s:Button id="selectOutputFileButton" label="Destination file..." enabled="false"
                 percentWidth="100" click="onSelectOutputFile(event)"/>

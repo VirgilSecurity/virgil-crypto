@@ -31,7 +31,7 @@ Language | Platform
 -------- | --------
 C++ | Any
 PHP | Unix, Linux, OS X
-C# | Any that supports .NET platform
+C# | Any .NET platform or Xamarin
 AS3 | Any
 Node.js | Any
 Ruby | Coming April 2015

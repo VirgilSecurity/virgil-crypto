@@ -13,6 +13,8 @@ See [wiki](https://github.com/VirgilSecurity/virgil/wiki) page for more details.
 1. Encrypt and decrypt data.
 1. Sign and verify data.
 1. Work with objects from [Virgil Security PKI Service](http://VirgilSecurity.com).
+Virgil Key Infrustructure API is available in preview.
+Email: support@virgilsecurity.com to get early access
 
 ## Where library can be used
 * on the client-side application;

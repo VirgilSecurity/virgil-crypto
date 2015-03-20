@@ -39,7 +39,7 @@
 # Define variables:
 #     - MBEDTLS_LIBRARY_NAME - library file name
 #     - MBEDTLS_INCLUDE_DIR  - full path to the library includes
-#     - MBEDTLS_LIBRARY      - full patch to the library
+#     - MBEDTLS_LIBRARY      - full path to the library
 #
 
 include(CheckCCompilerFlag)
@@ -86,17 +86,17 @@ if (IOS AND DEFINED IOS_PLATFORM)
     )
 endif ()
 
-set (MBEDTLS_PATCH_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/patch")
-set (MBEDTLS_CONFIG_DEFINES "${MBEDTLS_PATCH_DIR}/config/defines.yml")
-set (MBEDTLS_CONFIG_PLATFORM_DEFINES "${MBEDTLS_PATCH_DIR}/config/defines_${PLATFORM_NAME_LOWER}.yml")
+set (MBEDTLS_CONFIGURE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/configure")
+set (MBEDTLS_CONFIG_DEFINES "${MBEDTLS_CONFIGURE_DIR}/settings/defines.yml")
+set (MBEDTLS_CONFIG_PLATFORM_DEFINES "${MBEDTLS_CONFIGURE_DIR}/settings/defines_${PLATFORM_NAME_LOWER}.yml")
 
-set (PATCH_COMMAND_ARGS
+set (CONFIGURE_COMMAND_ARGS
     --input-dir=<SOURCE_DIR>
     --config-defines=${MBEDTLS_CONFIG_DEFINES}
 )
 
 if (EXISTS ${MBEDTLS_CONFIG_PLATFORM_DEFINES})
-    list (APPEND PATCH_COMMAND_ARGS
+    list (APPEND CONFIGURE_COMMAND_ARGS
         --config-platform-defines=${MBEDTLS_CONFIG_PLATFORM_DEFINES}
     )
 endif ()
@@ -106,7 +106,7 @@ ExternalProject_Add (mbedtls_project
     GIT_TAG "mbedtls-1.3"
     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbedtls"
     CMAKE_ARGS ${CMAKE_ARGS}
-    PATCH_COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/patch/patch.py" ${PATCH_COMMAND_ARGS}
+    PATCH_COMMAND python "${MBEDTLS_CONFIGURE_DIR}/configure.py" ${CONFIGURE_COMMAND_ARGS}
 )
 
 # Payload targets and output variables

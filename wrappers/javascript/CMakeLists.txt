@@ -105,7 +105,7 @@ set (JS_INCLUDES "${${WRAPPED_LIB_NAME}_SOURCE_DIR}/include")
 list_to_json_array (${JS_INCLUDES} JS_INCLUDES_JSON_ARRAY)
 
 # Define libraries for JS node
-set (JS_LIBRARIES_JSON_ARRAY "['-L${EXTERNAL_LIBS_DIR}','-lpolarssl','-l${WRAPPED_LIB_NAME}']")
+set (JS_LIBRARIES_JSON_ARRAY "['-L${EXTERNAL_LIBS_DIR}','-lmbedtls','-l${WRAPPED_LIB_NAME}']")
 
 # Configure node-gyp build file
 configure_file(

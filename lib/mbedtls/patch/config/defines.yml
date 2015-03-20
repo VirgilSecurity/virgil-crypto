@@ -1,6 +1,11 @@
 ---
 uncomment_macros :
     - POLARSSL_ENTROPY_FORCE_SHA256
+    - POLARSSL_PK_WRITE_ENCRYPTED_KEY
+    - POLARSSL_PK_ECIES_C
+    - POLARSSL_PK_KDF_C
+    - POLARSSL_PK_KDF1_C
+    - POLARSSL_PK_KDF2_C
 comment_macros :
     - POLARSSL_HAVE_IPV6
     - POLARSSL_CIPHER_MODE_CFB
@@ -54,30 +59,19 @@ comment_macros :
     - POLARSSL_X509_CRT_WRITE_C
     - POLARSSL_X509_CSR_WRITE_C
     - POLARSSL_X509_RSASSA_PSS_SUPPORT
+    - POLARSSL_X509_CHECK_KEY_USAGE
+    - POLARSSL_X509_CHECK_EXTENDED_KEY_USAGE
+    - POLARSSL_SSL_ENCRYPT_THEN_MAC
+    - POLARSSL_SSL_EXTENDED_MASTER_SECRET
+    - POLARSSL_SSL_FALLBACK_SCSV
+    - POLARSSL_SSL_CBC_RECORD_SPLITTING
+    - POLARSSL_SSL_ALPN
 add_new_macros_after_regex : '^[\s]*(#define[\s]+POLARSSL_ECP_C)'
-new_macros :
-    - '#define POLARSSL_ECIES_C'
-    - '#define POLARSSL_PK_WRITE_ENCRYPTED_KEY'
-    - '#define POLARSSL_KDF_C'
-    - '#define POLARSSL_KDF1_C'
-    - '#define POLARSSL_KDF2_C'
+new_macros:
 add_check_macros_after_regex : '^[\s]*(#define[\s]+POLARSSL_CHECK_CONFIG_H)'
 check_macros :
-    - |
-        #if defined(POLARSSL_PK_WRITE_ENCRYPTED_KEY) &&    \
-            ( !defined(POLARSSL_DES_C) ||                  \
-              !defined(POLARSSL_PKCS12_C) ||               \
-              !defined(POLARSSL_SHA1_C) )
-        #error "POLARSSL_PK_WRITE_ENCRYPTED_KEY defined, but not all prerequisites"
-        #endif
     - |
         #if defined(POLARSSL_NO_PLATFORM_ENTROPY) && !defined(POLARSSL_HAVEGE_C)
         #warning "POLARSSL_NO_PLATFORM_ENTROPY defined, but POLARSSL_HAVEGE_C not defined"
         #endif
     - |
-        #if defined(POLARSSL_KDF_C) &&    \
-            ( !defined(POLARSSL_KDF1_C) &&                 \
-              !defined(POLARSSL_KDF2_C) )
-        #error "POLARSSL_KDF_C defined, but not all prerequisites"
-        #endif
-

@@ -184,14 +184,14 @@ public:
             if (pwd_.empty()) {
                 return ::pk_write_key_pem(ctx_, buf, bufLen);
             } else {
-                return ::pk_write_key_enc_pem(ctx_, buf, bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd_));
+                return ::pk_write_key_pem_ext(ctx_, buf, bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd_));
             }
         }
         if (type_ == Private && format_ == DER) {
             if (pwd_.empty()) {
                 return ::pk_write_key_der(ctx_, buf, bufLen);
             } else {
-                return ::pk_write_key_enc_der(ctx_, buf, bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd_));
+                return ::pk_write_key_der_ext(ctx_, buf, bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd_));
             }
         }
         throw std::logic_error("Unexpected PolarsslKeyExport::Format and/or PolarsslKeyExport::Type value was given.");

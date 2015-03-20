@@ -122,7 +122,7 @@ add_custom_command (OUTPUT ${WRAPPER_SWC}
             -emit-swc=${SWIG_MODULE_NAMESPACE} ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_OPTIONAL}
             -flto-api=${WRAPPER_EXPORT_FILE} -jvmopt=-Xmx4G
             -o ${WRAPPER_SWC} ${WRAPPER_OBJ} ${WRAPPER_ABC}
-            $<TARGET_LINKER_FILE:${WRAPPED_LIB_NAME}> ${CMAKE_BINARY_DIR}/libs/libpolarssl.a
+            $<TARGET_LINKER_FILE:${WRAPPED_LIB_NAME}> ${CMAKE_BINARY_DIR}/libs/libmbedtls.a
             ${CMAKE_BINARY_DIR}/libs/libjsoncpp.a -lAS3++
     DEPENDS ${WRAPPER_OBJ}
     DEPENDS ${WRAPPER_ABC}

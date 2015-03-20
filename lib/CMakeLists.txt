@@ -40,7 +40,7 @@ project (virgil)
 
 # Include and build external libraries
 include (ExternalProject)
-include (${CMAKE_CURRENT_SOURCE_DIR}/polarssl/polarssl_ext.cmake)
+include (${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/mbedtls_ext.cmake)
 include (${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp/jsoncpp_ext.cmake)
 
 # Configure includes
@@ -52,7 +52,7 @@ configure_file(
 set (LIB_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/include")
 include_directories (${LIB_INCLUDE_DIRS})
 if (CMAKE_MAJOR_VERSION LESS 3)
-    include_directories (${POLARSSL_INCLUDE_DIR})
+    include_directories (${MBEDTLS_INCLUDE_DIR})
     include_directories (${JSONCPP_INCLUDE_DIR})
 endif (CMAKE_MAJOR_VERSION LESS 3)
 
@@ -70,7 +70,7 @@ set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${LIB_INCLUDE_DIRS})
 
-target_link_libraries (${PROJECT_NAME} polarssl jsoncpp)
+target_link_libraries (${PROJECT_NAME} mbedtls jsoncpp)
 add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy_if_different
@@ -83,7 +83,7 @@ set (VIRGIL_LIB_INSTALL_DIR ${PLATFORM_NAME_LOWER})
 if (PLATFORM_NAME_LOWER STREQUAL "cpp" OR (PLATFORM_EMBEDDED AND NOT(PLATFORM_NAME_LOWER STREQUAL "as3")))
     install (TARGETS ${PROJECT_NAME}
             ARCHIVE DESTINATION "${VIRGIL_LIB_INSTALL_DIR}/${INSTALL_LIB_DIR_NAME}")
-    install (FILES ${POLARSSL_LIBRARY}
+    install (FILES ${MBEDTLS_LIBRARY}
             DESTINATION "${VIRGIL_LIB_INSTALL_DIR}/${INSTALL_LIB_DIR_NAME}")
     install (FILES ${JSONCPP_LIBRARY}
             DESTINATION "${VIRGIL_LIB_INSTALL_DIR}/${INSTALL_LIB_DIR_NAME}")

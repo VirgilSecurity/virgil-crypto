@@ -37,9 +37,9 @@
 # An extrenal project for PolarSSL library build
 #
 # Define variables:
-#     - POLARSSL_LIBRARY_NAME - library file name
-#     - POLARSSL_INCLUDE_DIR  - full path to the library includes
-#     - POLARSSL_LIBRARY      - full patch to the library
+#     - MBEDTLS_LIBRARY_NAME - library file name
+#     - MBEDTLS_INCLUDE_DIR  - full path to the library includes
+#     - MBEDTLS_LIBRARY      - full patch to the library
 #
 
 include(CheckCCompilerFlag)
@@ -86,48 +86,47 @@ if (IOS AND DEFINED IOS_PLATFORM)
     )
 endif ()
 
-set (POLARSSL_PATCH_DIR "${CMAKE_CURRENT_SOURCE_DIR}/polarssl/patch")
-set (POLARSSL_CONFIG_DEFINES "${POLARSSL_PATCH_DIR}/config/defines.yml")
-set (POLARSSL_CONFIG_PLATFORM_DEFINES "${POLARSSL_PATCH_DIR}/config/defines_${PLATFORM_NAME_LOWER}.yml")
-set (POLARSSL_CONFIG_SOURCES "${POLARSSL_PATCH_DIR}/config/sources.yml")
+set (MBEDTLS_PATCH_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/patch")
+set (MBEDTLS_CONFIG_DEFINES "${MBEDTLS_PATCH_DIR}/config/defines.yml")
+set (MBEDTLS_CONFIG_PLATFORM_DEFINES "${MBEDTLS_PATCH_DIR}/config/defines_${PLATFORM_NAME_LOWER}.yml")
 
 set (PATCH_COMMAND_ARGS
     --input-dir=<SOURCE_DIR>
-    --config-defines=${POLARSSL_CONFIG_DEFINES}
-    --config-sources=${POLARSSL_CONFIG_SOURCES}
+    --config-defines=${MBEDTLS_CONFIG_DEFINES}
 )
 
-if (EXISTS ${POLARSSL_CONFIG_PLATFORM_DEFINES})
+if (EXISTS ${MBEDTLS_CONFIG_PLATFORM_DEFINES})
     list (APPEND PATCH_COMMAND_ARGS
-        --config-platform-defines=${POLARSSL_CONFIG_PLATFORM_DEFINES}
+        --config-platform-defines=${MBEDTLS_CONFIG_PLATFORM_DEFINES}
     )
 endif ()
 
-ExternalProject_Add (polarssl_project
-    GIT_REPOSITORY "https://github.com/ARMmbed/mbedtls.git"
-    GIT_TAG "polarssl-1.3.8"
-    PREFIX "${CMAKE_CURRENT_BINARY_DIR}/polarssl"
+ExternalProject_Add (mbedtls_project
+    GIT_REPOSITORY "https://github.com/VirgilSecurity/mbedtls.git"
+    GIT_TAG "mbedtls-1.3"
+    PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbedtls"
     CMAKE_ARGS ${CMAKE_ARGS}
-    PATCH_COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/polarssl/patch/patch.py" ${PATCH_COMMAND_ARGS}
+    PATCH_COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/patch/patch.py" ${PATCH_COMMAND_ARGS}
 )
 
 # Payload targets and output variables
-ExternalProject_Get_Property (polarssl_project INSTALL_DIR)
+ExternalProject_Get_Property (mbedtls_project INSTALL_DIR)
 
-set (POLARSSL_LIBRARY_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}polarssl${CMAKE_STATIC_LIBRARY_SUFFIX})
-set (POLARSSL_INCLUDE_DIR "${INSTALL_DIR}/include")
-set (POLARSSL_LIBRARY "${INSTALL_DIR}/lib/${POLARSSL_LIBRARY_NAME}")
+set (MBEDTLS_LIBRARY_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}mbedtls${CMAKE_STATIC_LIBRARY_SUFFIX})
+set (MBEDTLS_INCLUDE_DIR "${INSTALL_DIR}/include")
+set (MBEDTLS_LIBRARY "${INSTALL_DIR}/lib/${MBEDTLS_LIBRARY_NAME}")
 
 # Workaround of http://public.kitware.com/Bug/view.php?id=14495
-file (MAKE_DIRECTORY ${POLARSSL_INCLUDE_DIR})
+file (MAKE_DIRECTORY ${MBEDTLS_INCLUDE_DIR})
 
-add_custom_target (copy_polarssl_lib
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${POLARSSL_LIBRARY}" "${EXTERNAL_LIBS_DIR}/${POLARSSL_LIBRARY_NAME}"
-    DEPENDS polarssl_project
+add_custom_target (copy_mbedtls_lib
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${MBEDTLS_LIBRARY}"
+            "${EXTERNAL_LIBS_DIR}/${MBEDTLS_LIBRARY_NAME}"
+    DEPENDS mbedtls_project
 )
 
-add_library (polarssl STATIC IMPORTED)
-set_property (TARGET polarssl PROPERTY IMPORTED_LOCATION ${POLARSSL_LIBRARY})
-set_property (TARGET polarssl PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${POLARSSL_INCLUDE_DIR})
-add_dependencies (polarssl polarssl_project copy_polarssl_lib)
+add_library (mbedtls STATIC IMPORTED)
+set_property (TARGET mbedtls PROPERTY IMPORTED_LOCATION ${MBEDTLS_LIBRARY})
+set_property (TARGET mbedtls PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${MBEDTLS_INCLUDE_DIR})
+add_dependencies (mbedtls mbedtls_project copy_mbedtls_lib)
 

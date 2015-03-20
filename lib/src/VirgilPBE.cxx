@@ -282,30 +282,30 @@ VirgilByteArray VirgilPBE::decrypt(const VirgilByteArray& data, const VirgilByte
 
 VirgilByteArray VirgilPBE::process(const VirgilByteArray& data, const VirgilByteArray& pwd, int mode) const {
     checkState();
-    const size_t CIPHER_BLOCK_SIZE_MAX = 64;
-    VirgilByteArray output(data.size() + CIPHER_BLOCK_SIZE_MAX);
+    VirgilByteArray output(data.size() + POLARSSL_MAX_BLOCK_LENGTH);
     asn1_buf pbeParams = impl_->pbeParams;
+    size_t olen = data.size(); // For RC4: output lenght = input length
     switch (impl_->type) {
         case VIRGIL_PBE_PKCS5:
             POLARSSL_ERROR_HANDLER(
-                ::pkcs5_pbes2(&pbeParams, mode,
+                ::pkcs5_pbes2_ext(&pbeParams, mode,
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
-                        output.data())
+                        output.data(), &olen)
             );
             break;
         case VIRGIL_PBE_PKCS12:
             POLARSSL_ERROR_HANDLER(
-                pkcs12_pbe(&pbeParams, mode,
+                ::pkcs12_pbe_ext(&pbeParams, mode,
                         impl_->cipherType, impl_->mdType,
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
-                        output.data())
+                        output.data(), &olen)
             );
             break;
         case VIRGIL_PBE_PKCS12_SHA1_RC4_128:
             POLARSSL_ERROR_HANDLER(
-                pkcs12_pbe_sha1_rc4_128(&pbeParams, mode,
+                ::pkcs12_pbe_sha1_rc4_128(&pbeParams, mode,
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
                         output.data())
@@ -314,46 +314,8 @@ VirgilByteArray VirgilPBE::process(const VirgilByteArray& data, const VirgilByte
         default:
             throw VirgilCryptoException("VirgilPBE: Given algorithm is not supported.");
     }
-    trimTrailingZeros(output);
-    // Trim trailing padding. Only in decryption mode.
-    if ((impl_->type == VIRGIL_PBE_PKCS5 && mode == PKCS5_DECRYPT) ||
-            (impl_->type != VIRGIL_PBE_PKCS5 && mode == PKCS12_PBE_DECRYPT)) {
-        trimPadding(output);
-    }
+    output.resize(olen);
     return output;
-}
-
-
-void VirgilPBE::trimTrailingZeros(VirgilByteArray& data) const {
-    while (data.size() > 0 && data.back() == 0x00) {
-        data.pop_back();
-    }
-}
-
-void VirgilPBE::trimPadding(VirgilByteArray& data) const {
-    trimPKCS7Padding(data);
-}
-
-
-template <class InputIterator, class T>
-static typename std::iterator_traits<InputIterator>::difference_type
-count_sequence (InputIterator first, InputIterator last, const T& val) {
-    typename std::iterator_traits<InputIterator>::difference_type ret = 0;
-    for (; first != last && *first == val; ++first, ++ret);
-    return ret;
-}
-
-bool VirgilPBE::trimPKCS7Padding(VirgilByteArray& data) const {
-    if (data.empty()) {
-        return true;
-    }
-    size_t expectedPaddingCount = data.back();
-    size_t actualPaddingCount = count_sequence(data.rbegin(), data.rend(), data.back());
-    if (actualPaddingCount >= expectedPaddingCount) {
-        data.resize(data.size() - expectedPaddingCount);
-        return true;
-    }
-    return false;
 }
 
 void VirgilPBE::checkState() const {

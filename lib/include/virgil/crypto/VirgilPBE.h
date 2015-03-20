@@ -156,19 +156,6 @@ private:
      * @brief Encrypt or decrypt data depend on the mode.
      */
     VirgilByteArray process(const VirgilByteArray& data, const VirgilByteArray& pwd, int mode) const;
-    /**
-     * @brief Trim trailing zeros.
-     */
-     void trimTrailingZeros(VirgilByteArray& data) const;
-    /**
-     * @brief Trim padding.
-     */
-     void trimPadding(VirgilByteArray& data) const;
-    /**
-     * @brief Trim PKCS#7 padding.
-     * @return true if PKCS#7 padding was detected and successfully trimmed.
-     */
-     bool trimPKCS7Padding(VirgilByteArray& data) const;
 private:
     VirgilPBEImpl *impl_;
 };

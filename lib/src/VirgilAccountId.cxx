@@ -76,7 +76,7 @@ void VirgilAccountId::asn1Read(VirgilAsn1Reader& asn1Reader) {
 }
 
 Json::Value VirgilAccountId::jsonWrite(Json::Value& childValue) const {
-    childValue[kJsonKey_AccountId] = virgil_byte_array_to_std_string(accountId_);
+    childValue[kJsonKey_AccountId] = virgil::bytes2str(accountId_);
     return VirgilId::jsonWrite(childValue);
 }
 

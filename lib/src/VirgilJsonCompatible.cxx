@@ -51,13 +51,13 @@ using virgil::VirgilException;
 VirgilByteArray VirgilJsonCompatible::toJson() const {
     Json::Value childValue(Json::objectValue);
     Json::Value rootObject = jsonWrite(childValue);
-    return virgil_byte_array_from_std_string(Json::StyledWriter().write(rootObject));
+    return virgil::str2bytes(Json::StyledWriter().write(rootObject));
 }
 
 void VirgilJsonCompatible::fromJson(const VirgilByteArray& json) {
     Json::Reader reader(Json::Features::strictMode());
     Json::Value rootObject;
-    if (!reader.parse(virgil_byte_array_to_std_string(json), rootObject)) {
+    if (!reader.parse(virgil::bytes2str(json), rootObject)) {
         throw VirgilException(reader.getFormattedErrorMessages());
     }
     jsonRead(rootObject);
@@ -112,7 +112,7 @@ std::string VirgilJsonCompatible::jsonGetString(const Json::Value& json, const c
 }
 
 VirgilByteArray VirgilJsonCompatible::jsonGetStringAsByteArray(const Json::Value& json, const char *key) {
-    return virgil_byte_array_from_std_string(jsonGetString(json, key));
+    return virgil::str2bytes(jsonGetString(json, key));
 }
 
 Json::Value VirgilJsonCompatible::jsonRawDataToValue(const VirgilByteArray& data) {

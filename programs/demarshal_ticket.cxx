@@ -102,13 +102,13 @@ int main(int argc, char **argv) {
             const VirgilInfoTicket& infoTicket = ticket->asInfoTicket();
             std::cout << "Ticket: " << "VirgilInfoTicket" << std::endl;
             std::cout << "Type  : " << infoTicket.type() << std::endl;
-            std::cout << "Value : " << virgil_byte_array_to_std_string(infoTicket.value()) << std::endl;
+            std::cout << "Value : " << virgil::bytes2str(infoTicket.value()) << std::endl;
         }
         if (ticket->isUniqueTicket()) {
             const VirgilUniqueTicket& uniqueTicket = ticket->asUniqueTicket();
             std::cout << "Ticket: " << "VirgilUniqueTicket" << std::endl;
             std::cout << "Type  : " << uniqueTicket.type() << std::endl;
-            std::cout << "Value : " << virgil_byte_array_to_std_string(uniqueTicket.value()) << std::endl;
+            std::cout << "Value : " << virgil::bytes2str(uniqueTicket.value()) << std::endl;
         }
 
         // Dispose resources.

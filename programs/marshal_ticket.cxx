@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
 
     // Parse argument: value
     ++currArgPos;
-    VirgilByteArray value = virgil_byte_array_from_c_string(argv[currArgPos]);
+    VirgilByteArray value = virgil::str2bytes(argv[currArgPos]);
 
     // Parse argument: format
     ++currArgPos;

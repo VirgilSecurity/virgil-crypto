@@ -67,11 +67,11 @@ int main(int argc, char **argv) {
 
     // Parse argument: data
     ++currArgPos;
-    VirgilByteArray data = virgil_byte_array_from_c_string(argv[currArgPos]);
+    VirgilByteArray data = virgil::str2bytes(argv[currArgPos]);
 
     // Parse argument: cert_id
     ++currArgPos;
-    VirgilByteArray certId = virgil_byte_array_from_c_string(argv[currArgPos]);
+    VirgilByteArray certId = virgil::str2bytes(argv[currArgPos]);
 
     // Parse argument: public_key
     ++currArgPos;

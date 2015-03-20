@@ -75,7 +75,7 @@ int VirgilCustomParams::getInteger(const VirgilByteArray& key) const {
         return keyValue->second;
     } else {
         throw VirgilCryptoException(std::string("VirgilCustomParams") +
-                "Key '" + virgil_byte_array_to_std_string(key) + "' is not found.");
+                "Key '" + virgil::bytes2str(key) + "' is not found.");
     }
 }
 
@@ -93,7 +93,7 @@ VirgilByteArray VirgilCustomParams::getString(const VirgilByteArray& key) const 
         return keyValue->second;
     } else {
         throw VirgilCryptoException(std::string("VirgilCustomParams") +
-                "Key '" + virgil_byte_array_to_std_string(key) + "' is not found.");
+                "Key '" + virgil::bytes2str(key) + "' is not found.");
     }
 }
 
@@ -111,7 +111,7 @@ VirgilByteArray VirgilCustomParams::getData(const VirgilByteArray& key) const {
         return keyValue->second;
     } else {
         throw VirgilCryptoException(std::string("VirgilCustomParams") +
-                "Key '" + virgil_byte_array_to_std_string(key) + "' is not found.");
+                "Key '" + virgil::bytes2str(key) + "' is not found.");
     }
 }
 

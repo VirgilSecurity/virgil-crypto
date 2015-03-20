@@ -67,7 +67,7 @@ VirgilSign VirgilStreamSigner::sign(VirgilDataSource& source, const VirgilByteAr
     cipher.setPrivateKey(privateKey, privateKeyPassword);
     VirgilByteArray sign = cipher.sign(digest);
 
-    return VirgilSign(virgil_byte_array_from_std_string(hash_.name()), sign, signerCertificateId);
+    return VirgilSign(virgil::str2bytes(hash_.name()), sign, signerCertificateId);
 }
 
 bool VirgilStreamSigner::verify(VirgilDataSource& source, const VirgilSign& sign, const VirgilByteArray& publicKey) {

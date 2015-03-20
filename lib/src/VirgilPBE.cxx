@@ -90,11 +90,11 @@ public:
     cipher_type_t cipherType;
 public:
     VirgilPBEImpl() : type(VIRGIL_PBE_NONE),
-            random(virgil_byte_array_from_std_string(std::string("com.virgilsecurity.VirgilPBE"))) {
+            random(virgil::str2bytes(std::string("com.virgilsecurity.VirgilPBE"))) {
     }
 
     explicit VirgilPBEImpl(VirgilPBEType pbeType, const VirgilByteArray& salt, size_t iterationCount) : type(pbeType),
-            random(virgil_byte_array_from_std_string(std::string("com.virgilsecurity.VirgilPBE"))) {
+            random(virgil::str2bytes(std::string("com.virgilsecurity.VirgilPBE"))) {
         const size_t adjustedIterationCount =
                 iterationCount < VirgilPBE::kIterationCountMin ? VirgilPBE::kIterationCountMin : iterationCount;
         switch (pbeType) {
@@ -110,7 +110,7 @@ public:
 
     }
     explicit VirgilPBEImpl(const VirgilByteArray& pbeAlgId) : type(VIRGIL_PBE_NONE),
-            random(virgil_byte_array_from_std_string(std::string("com.virgilsecurity.VirgilPBE"))) {
+            random(virgil::str2bytes(std::string("com.virgilsecurity.VirgilPBE"))) {
         init_(pbeAlgId);
     }
 private:

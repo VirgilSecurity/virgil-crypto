@@ -72,11 +72,11 @@ int main(int argc, char **argv) {
 
     // Parse argument: data
     ++currArgPos;
-    VirgilByteArray data = virgil_byte_array_from_c_string(argv[currArgPos]);
+    VirgilByteArray data = virgil::str2bytes(argv[currArgPos]);
 
     // Parse argument: signer_cert_id
     ++currArgPos;
-    VirgilByteArray signerCertificateId = virgil_byte_array_from_c_string(argv[currArgPos]);
+    VirgilByteArray signerCertificateId = virgil::str2bytes(argv[currArgPos]);
 
     // Parse argument: private_key
     ++currArgPos;
@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
 
     // Parse argument: private_key_pwd
     ++currArgPos;
-    VirgilByteArray privateKeyPassword = virgil_byte_array_from_c_string(argv[currArgPos]);
+    VirgilByteArray privateKeyPassword = virgil::str2bytes(argv[currArgPos]);
 
     // Parse argument: format
     std::string format("json");

@@ -164,7 +164,7 @@ VirgilHash VirgilHash::sha512() {
 }
 
 VirgilHash VirgilHash::withName(const VirgilByteArray& name) {
-    return VirgilHash(virgil_byte_array_to_std_string(name).c_str());
+    return VirgilHash(virgil::bytes2str(name).c_str());
 }
 
 VirgilHash::VirgilHash() : impl_(new VirgilHashImpl(POLARSSL_MD_NONE)) {

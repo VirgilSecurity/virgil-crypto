@@ -190,6 +190,11 @@ using package::className;
     %include "php/VirgilByteArray.i"
 #endif
 
+%ignore virgil::str2bytes;
+%ignore virgil::bytes2str;
+%ignore virgil::hex2bytes;
+%ignore virgil::bytes2hex;
+%ignore virgil::bytes_zeroize;
 INCLUDE_CLASS(VirgilByteArray, virgil, virgil)
 
 #ifndef SWIGPHP

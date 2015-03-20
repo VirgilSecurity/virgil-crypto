@@ -62,5 +62,5 @@ inline VirgilByteArray hex2bytes(const std::string hexStr) {
 }
 
 inline std::string bytes2hex(const VirgilByteArray& bytes) {
-    return virgil_byte_array_to_std_string(bytes);
+    return virgil::bytes2str(bytes);
 }

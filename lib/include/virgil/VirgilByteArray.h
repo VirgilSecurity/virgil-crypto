@@ -57,25 +57,52 @@ typedef std::vector<unsigned char> VirgilByteArray;
 /**
  * @name ByteArray convertion utilities
  */
+/// @{
 #define VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(array) reinterpret_cast<const unsigned char *>(array.data()), array.size()
 
 #define VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(ptr, len)\
         virgil::VirgilByteArray(reinterpret_cast<virgil::VirgilByteArray::const_pointer>(ptr), \
         reinterpret_cast<virgil::VirgilByteArray::const_pointer>((ptr) + (len)))
+///@}
 
-inline virgil::VirgilByteArray virgil_byte_array_from_c_string(const char *str) {
-    return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(str, strlen(str));
-}
+namespace virgil {
 
-inline virgil::VirgilByteArray virgil_byte_array_from_std_string(const std::string& str) {
+/**
+ * @brief Represents given string as byte array.
+ */
+inline VirgilByteArray str2bytes(const std::string& str) {
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(str.data(), str.size());
 }
-
-inline std::string virgil_byte_array_to_std_string(const virgil::VirgilByteArray& array) {
+/**
+ * @brief Represent given byte array as string.
+ */
+inline std::string bytes2str(const VirgilByteArray& array) {
     return std::string(reinterpret_cast<const char *>(array.data()), array.size());
 }
-
-inline std::string virgil_byte_array_to_hex_string(const virgil::VirgilByteArray& array, bool formatted = false) {
+/**
+ * @brief Translate given HEX string to the byte array.
+ * @param hexStr - HEX string.
+ * @return Byte array.
+ */
+inline VirgilByteArray hex2bytes(const std::string hexStr) {
+    VirgilByteArray result;
+    std::istringstream istr(hexStr);
+    char hexChars[3] = {0x00};
+    while (istr.read(hexChars, 2)) {
+        int byte = 0;
+        std::istringstream(hexChars) >> std::hex >> byte;
+        result.push_back((unsigned char)byte);
+    }
+    return result;
+}
+/**
+ * @brief Translate given byte array to the HEX string.
+ * @param array - byte array.
+ * @param formatted - if true, endline will be inserted every 16 bytes,
+ *                    and all bytes will be separated with whitespaces.
+ * @return HEX string.
+ */
+inline std::string bytes2hex(const VirgilByteArray& array, bool formatted = false) {
     std::ostringstream hexStream;
     hexStream << std::setfill('0');
     for(size_t i = 0; i < array.size(); ++i) {
@@ -86,12 +113,17 @@ inline std::string virgil_byte_array_to_hex_string(const virgil::VirgilByteArray
     }
     return hexStream.str();
 }
-
 /**
  * @name ByteArray security clear utilities
  */
-inline void virgil_byte_array_zeroize(virgil::VirgilByteArray& array) {
+///@{
+/**
+ * @brief Make all bytes zero.
+ */
+inline void bytes_zeroize(VirgilByteArray& array) {
     std::fill(array.begin(), array.end(), 0);
 }
+///@}
 
+}
 #endif /* VIRGIL_BYTE_ARRAY_H */

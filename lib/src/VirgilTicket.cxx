@@ -72,7 +72,7 @@ VirgilTicket * VirgilTicket::createFromAsn1(const VirgilByteArray& asn1) {
     VirgilAsn1Reader asn1Reader(asn1);
     asn1Reader.readSequence();
     VirgilByteArray className = asn1Reader.readUTF8String();
-    VirgilTicket *ticket = ticketFromClassName(virgil_byte_array_to_std_string(className));
+    VirgilTicket *ticket = ticketFromClassName(virgil::bytes2str(className));
     ticket->fromAsn1(asn1);
     return ticket;
 }
@@ -80,7 +80,7 @@ VirgilTicket * VirgilTicket::createFromAsn1(const VirgilByteArray& asn1) {
 VirgilTicket * VirgilTicket::createFromJson(const VirgilByteArray& json) {
     Json::Reader reader(Json::Features::strictMode());
     Json::Value rootObject;
-    if (!reader.parse(virgil_byte_array_to_std_string(json), rootObject)) {
+    if (!reader.parse(virgil::bytes2str(json), rootObject)) {
         throw VirgilException(reader.getFormattedErrorMessages());
     }
     std::string className = jsonGetString(rootObject, kJsonKey_ClassName);
@@ -126,7 +126,7 @@ const VirgilInfoTicket& VirgilTicket::asInfoTicket() const {
 size_t VirgilTicket::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t writtenBytes = 0;
     writtenBytes += id().asn1Write(asn1Writer);
-    writtenBytes += asn1Writer.writeUTF8String(virgil_byte_array_from_std_string(className()));
+    writtenBytes += asn1Writer.writeUTF8String(virgil::str2bytes(className()));
     writtenBytes += asn1Writer.writeSequence(writtenBytes + childWrittenBytes);
     return writtenBytes + childWrittenBytes;
 }
@@ -134,10 +134,10 @@ size_t VirgilTicket::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWritten
 void VirgilTicket::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
     VirgilByteArray name = asn1Reader.readUTF8String();
-    if (virgil_byte_array_to_std_string(name) != className()) {
+    if (virgil::bytes2str(name) != className()) {
         throw VirgilException(std::string("VirgilTicket: ") +
                 "Wrong class name for this class. " +
-                "Found: " + virgil_byte_array_to_std_string(name) +
+                "Found: " + virgil::bytes2str(name) +
                 ", but expected: " + className() + ".");
     }
     id().asn1Read(asn1Reader);

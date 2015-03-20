@@ -51,9 +51,9 @@ using virgil::service::VirgilCipher;
 
 
 TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
-    VirgilByteArray password = virgil_byte_array_from_c_string("password");
-    VirgilByteArray testData = virgil_byte_array_from_c_string("this string will be encrypted");
-    VirgilByteArray certificateId = virgil_byte_array_from_c_string("2e8176ba-34db-4c65-b977-c5eac687c4ac");
+    VirgilByteArray password = virgil::str2bytes("password");
+    VirgilByteArray testData = virgil::str2bytes("this string will be encrypted");
+    VirgilByteArray certificateId = virgil::str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
     VirgilKeyPair keyPair(password);
 
     VirgilCipher cipher;
@@ -72,12 +72,12 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
     }
 
     SECTION("and embedded content info with custom parameters") {
-        VirgilByteArray intParamKey = virgil_byte_array_from_c_string("int_parameter_key");
+        VirgilByteArray intParamKey = virgil::str2bytes("int_parameter_key");
         const int intParamValue = 35777;
-        VirgilByteArray strParamKey = virgil_byte_array_from_c_string("string_parameter_key");
-        VirgilByteArray strParamValue = virgil_byte_array_from_c_string("string parameter");
-        VirgilByteArray hexParamKey = virgil_byte_array_from_c_string("data_param_value");
-        VirgilByteArray hexParamValue = virgil_byte_array_from_c_string("will be stored as octet string");
+        VirgilByteArray strParamKey = virgil::str2bytes("string_parameter_key");
+        VirgilByteArray strParamValue = virgil::str2bytes("string parameter");
+        VirgilByteArray hexParamKey = virgil::str2bytes("data_param_value");
+        VirgilByteArray hexParamValue = virgil::str2bytes("will be stored as octet string");
 
         cipher.customParams().setInteger(intParamKey, intParamValue);
         cipher.customParams().setString(strParamKey, strParamValue);
@@ -118,12 +118,12 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
     }
 
     SECTION("and separated content info with custom parameters") {
-        VirgilByteArray intParamKey = virgil_byte_array_from_c_string("int_parameter_key");
+        VirgilByteArray intParamKey = virgil::str2bytes("int_parameter_key");
         const int intParamValue = 35777;
-        VirgilByteArray strParamKey = virgil_byte_array_from_c_string("string_parameter_key");
-        VirgilByteArray strParamValue = virgil_byte_array_from_c_string("string parameter");
-        VirgilByteArray hexParamKey = virgil_byte_array_from_c_string("data_param_value");
-        VirgilByteArray hexParamValue = virgil_byte_array_from_c_string("will be stored as octet string");
+        VirgilByteArray strParamKey = virgil::str2bytes("string_parameter_key");
+        VirgilByteArray strParamValue = virgil::str2bytes("string parameter");
+        VirgilByteArray hexParamKey = virgil::str2bytes("data_param_value");
+        VirgilByteArray hexParamValue = virgil::str2bytes("will be stored as octet string");
 
         cipher.customParams().setInteger(intParamKey, intParamValue);
         cipher.customParams().setString(strParamKey, strParamValue);
@@ -150,9 +150,9 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
 }
 
 TEST_CASE("encrypt and decrypt with password", "[cipher]") {
-    VirgilByteArray password = virgil_byte_array_from_c_string("password");
-    VirgilByteArray wrongPassword = virgil_byte_array_from_c_string("wrong password");
-    VirgilByteArray testData = virgil_byte_array_from_c_string("this string will be encrypted");
+    VirgilByteArray password = virgil::str2bytes("password");
+    VirgilByteArray wrongPassword = virgil::str2bytes("wrong password");
+    VirgilByteArray testData = virgil::str2bytes("this string will be encrypted");
 
     VirgilCipher cipher;
     cipher.addPasswordRecipient(password);

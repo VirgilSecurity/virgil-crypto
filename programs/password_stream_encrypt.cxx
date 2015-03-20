@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 
     // Parse argument: pwd
     ++currArgPos;
-    VirgilByteArray password = virgil_byte_array_from_std_string(std::string(argv[currArgPos]));
+    VirgilByteArray password = virgil::str2bytes(std::string(argv[currArgPos]));
 
     // Parse argument: enc_data
     ++currArgPos;

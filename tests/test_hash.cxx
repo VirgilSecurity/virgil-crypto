@@ -40,12 +40,13 @@
  */
 
 #include "catch.hpp"
-#include "util.hpp"
 
 #include <string>
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
+using virgil::hex2bytes;
+using virgil::str2bytes;
 
 #include <virgil/crypto/VirgilHash.h>
 using virgil::crypto::VirgilHash;
@@ -53,17 +54,17 @@ using virgil::crypto::VirgilHash;
 TEST_CASE("MD5", "[hash]") {
     VirgilHash hash = VirgilHash::md5();
     SECTION("Test vector RFC1321 #1") {
-        VirgilByteArray testVector = virgil_byte_array_from_c_string("");
+        VirgilByteArray testVector = str2bytes("");
         VirgilByteArray testVectorHash = hex2bytes("d41d8cd98f00b204e9800998ecf8427e");
         REQUIRE(hash.hash(testVector) == testVectorHash);
     }
     SECTION("Test vector RFC1321 #2") {
-        VirgilByteArray testVector = virgil_byte_array_from_c_string("a");
+        VirgilByteArray testVector = str2bytes("a");
         VirgilByteArray testVectorHash = hex2bytes("0cc175b9c0f1b6a831c399e269772661");
         REQUIRE(hash.hash(testVector) == testVectorHash);
     }
     SECTION("Test vector RFC1321 #3") {
-        VirgilByteArray testVector = virgil_byte_array_from_c_string("abc");
+        VirgilByteArray testVector = str2bytes("abc");
         VirgilByteArray testVectorHash = hex2bytes("900150983cd24fb0d6963f7d28e17f72");
         REQUIRE(hash.hash(testVector) == testVectorHash);
     }
@@ -72,7 +73,7 @@ TEST_CASE("MD5", "[hash]") {
 TEST_CASE("SHA-256", "[hash]") {
     VirgilHash hash = VirgilHash::sha256();
     SECTION("Test vector NIST CAVS #1") {
-        VirgilByteArray testVector = virgil_byte_array_from_c_string("");
+        VirgilByteArray testVector = str2bytes("");
         VirgilByteArray testVectorHash = hex2bytes(
                 "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
         REQUIRE(hash.hash(testVector) == testVectorHash);
@@ -94,7 +95,7 @@ TEST_CASE("SHA-256", "[hash]") {
 TEST_CASE("SHA-384", "[hash]") {
     VirgilHash hash = VirgilHash::sha384();
     SECTION("Test vector NIST CAVS #1") {
-        VirgilByteArray testVector = virgil_byte_array_from_c_string("");
+        VirgilByteArray testVector = str2bytes("");
         VirgilByteArray testVectorHash = hex2bytes(
                 "38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da"
                 "274edebfe76f65fbd51ad2f14898b95b");
@@ -119,7 +120,7 @@ TEST_CASE("SHA-384", "[hash]") {
 TEST_CASE("SHA-512", "[hash]") {
     VirgilHash hash = VirgilHash::sha512();
     SECTION("Test vector NIST CAVS #1") {
-        VirgilByteArray testVector = virgil_byte_array_from_c_string("");
+        VirgilByteArray testVector = str2bytes("");
         VirgilByteArray testVectorHash = hex2bytes(
                 "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce"
                 "47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e");

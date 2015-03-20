@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
 
     // Parse argument: private_key_pwd
     ++currArgPos;
-    VirgilByteArray privateKeyPassword = virgil_byte_array_from_c_string(argv[currArgPos]);
+    VirgilByteArray privateKeyPassword = virgil::str2bytes(argv[currArgPos]);
 
     // Create cipher.
     VirgilStreamCipher cipher;

@@ -155,6 +155,10 @@ VirgilHash VirgilHash::sha256() {
     return VirgilHash(POLARSSL_MD_SHA256);
 }
 
+VirgilHash VirgilHash::sha384() {
+    return VirgilHash(POLARSSL_MD_SHA384);
+}
+
 VirgilHash VirgilHash::sha512() {
     return VirgilHash(POLARSSL_MD_SHA512);
 }

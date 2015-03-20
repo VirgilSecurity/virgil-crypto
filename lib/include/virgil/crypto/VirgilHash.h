@@ -65,6 +65,7 @@ public:
     ///@{
     static VirgilHash md5();
     static VirgilHash sha256();
+    static VirgilHash sha384();
     static VirgilHash sha512();
     static VirgilHash withName(const VirgilByteArray& name);
     ///@}

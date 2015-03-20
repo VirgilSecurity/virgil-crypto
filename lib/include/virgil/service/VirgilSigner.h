@@ -65,7 +65,7 @@ public:
      * @brief Create signer with predefined hash function.
      * @note Specified hash function algorithm is used only during signing.
      */
-    explicit VirgilSigner(const VirgilHash& hash = VirgilHash::sha256());
+    explicit VirgilSigner(const VirgilHash& hash = VirgilHash::sha384());
     /**
      * @brief Sign given data with given private key.
      * @return Virgil Security sign.

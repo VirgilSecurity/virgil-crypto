@@ -44,6 +44,8 @@
 
 include(CheckCCompilerFlag)
 
+set (MBEDTLS_PROJECT_NAME mbedtls_project)
+
 if (NOT PLATFORM_EMBEDDED)
     # Configure compiler settings
     check_c_compiler_flag (-fPIC COMPILER_SUPPORT_PIC)
@@ -101,16 +103,16 @@ if (EXISTS ${MBEDTLS_CONFIG_PLATFORM_DEFINES})
     )
 endif ()
 
-ExternalProject_Add (mbedtls_project
+ExternalProject_Add (${MBEDTLS_PROJECT_NAME}
     GIT_REPOSITORY "https://github.com/VirgilSecurity/mbedtls.git"
     GIT_TAG "mbedtls-1.3"
     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbedtls"
     CMAKE_ARGS ${CMAKE_ARGS}
-    PATCH_COMMAND python "${MBEDTLS_CONFIGURE_DIR}/configure.py" ${CONFIGURE_COMMAND_ARGS}
+    UPDATE_COMMAND python "${MBEDTLS_CONFIGURE_DIR}/configure.py" ${CONFIGURE_COMMAND_ARGS}
 )
 
 # Payload targets and output variables
-ExternalProject_Get_Property (mbedtls_project INSTALL_DIR)
+ExternalProject_Get_Property (${MBEDTLS_PROJECT_NAME} INSTALL_DIR)
 
 set (MBEDTLS_LIBRARY_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}mbedtls${CMAKE_STATIC_LIBRARY_SUFFIX})
 set (MBEDTLS_INCLUDE_DIR "${INSTALL_DIR}/include")
@@ -122,11 +124,11 @@ file (MAKE_DIRECTORY ${MBEDTLS_INCLUDE_DIR})
 add_custom_target (copy_mbedtls_lib
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${MBEDTLS_LIBRARY}"
             "${EXTERNAL_LIBS_DIR}/${MBEDTLS_LIBRARY_NAME}"
-    DEPENDS mbedtls_project
+    DEPENDS ${MBEDTLS_PROJECT_NAME}
 )
 
 add_library (mbedtls STATIC IMPORTED)
 set_property (TARGET mbedtls PROPERTY IMPORTED_LOCATION ${MBEDTLS_LIBRARY})
 set_property (TARGET mbedtls PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${MBEDTLS_INCLUDE_DIR})
-add_dependencies (mbedtls mbedtls_project copy_mbedtls_lib)
+add_dependencies (mbedtls ${MBEDTLS_PROJECT_NAME} copy_mbedtls_lib)
 

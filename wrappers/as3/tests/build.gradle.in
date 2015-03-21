@@ -12,7 +12,7 @@ apply plugin: 'gradlefx'
 type = 'swc'
 
 additionalCompilerOptions = [
-    '-strict=false'
+    '-strict=true'
 ]
 
 repositories {

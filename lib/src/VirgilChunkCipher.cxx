@@ -84,6 +84,7 @@ size_t VirgilChunkCipher::startEncryption(size_t preferredChunkSize) {
     VirgilSymmetricCipher& symmetricCipher = initEncryption();
     size_t actualChunkSize = adjustEncryptionChunkSize(preferredChunkSize, symmetricCipher.blockSize());
     storeChunkSize(actualChunkSize);
+    buildContentInfo();
     return actualChunkSize;
 }
 
@@ -120,9 +121,6 @@ VirgilByteArray VirgilChunkCipher::process(const VirgilByteArray& data) {
 }
 
 void VirgilChunkCipher::finalize() {
-    if (getSymmetricCipher().isEncryptionMode()) {
-        buildContentInfo();
-    }
     clearCipherInfo();
 }
 

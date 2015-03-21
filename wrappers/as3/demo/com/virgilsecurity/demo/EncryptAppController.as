@@ -64,7 +64,6 @@
         /* UI elemnets */
         [Bindable] public var selectInputFileButton:Button;
         [Bindable] public var selectOutputFileButton:Button;
-        [Bindable] public var selectKeyFileButton:Button;
         [Bindable] public var processFileButton:Button;
         [Bindable] public var debugArea:TextArea;
         [Bindable] public var blockerView:Group;
@@ -75,7 +74,6 @@
         /* File loading variables */
         private static const FILE_TYPES:Array = [new FileFilter("Any file", "*")];
         private var inFileStream:FileStream;
-        private var contentInfoFileStream:FileStream;
         private var outFileStream:FileStream;
         /* State variables */
         private var isLastOperationWasEncryptd:Boolean = false;
@@ -122,23 +120,11 @@
         }
 
         public function onSelectInputFile(event:Event):void {
-            if (encryptionOptionsGroup.selection == encryptionOptionEncrypt) {
-                requestFileToBeProcessed("Choose file for encryption");
-            } else if (encryptionOptionsGroup.selection == encryptionOptionDecrypt) {
-                requestFileToBeProcessed("Choose file for decryption");
-            }
+            requestFileToBeProcessed("Choose input file...");
         }
 
         public function onSelectOutputFile(event:Event):void {
-            if (encryptionOptionsGroup.selection == encryptionOptionEncrypt) {
-                requestOutputFile("Save encrypted file as...");
-            } else if (encryptionOptionsGroup.selection == encryptionOptionDecrypt) {
-                requestOutputFile("Save decrypted file as...");
-            }
-        }
-
-        public function onSelectKeyFile(event:Event):void {
-            requestEncryptionKeyFile();
+            requestOutputFile("Save output file as...");
         }
 
         public function onProcessFile(event:Event):void {
@@ -200,38 +186,6 @@
             outDebugMessage("File selection is canceled.");
         }
 
-        private function requestEncryptionKeyFile():void {
-            // create the inFileStream instance
-            var file:File = new File();
-            // listen for when they select a file
-            file.addEventListener(Event.SELECT, contentInfoFileIsSelected);
-            // listen for when then cancel out of the browse dialog
-            file.addEventListener(Event.CANCEL, contentInfoFileIsCanceled);
-            // open a native browse dialog that filters for text files
-            if (encryptionOptionsGroup.selection == encryptionOptionEncrypt) {
-                file.browseForSave("Save encryption key file");
-            } else if (encryptionOptionsGroup.selection == encryptionOptionDecrypt) {
-                file.browseForOpen("Choose encryption key file", FILE_TYPES);
-            }
-        }
-
-        private function contentInfoFileIsSelected(event:Event):void {
-            outDebugMessage("Selected file: " + event.target.nativePath);
-
-            var file:File = event.target as File;
-            contentInfoFileStream = new FileStream();
-            if (encryptionOptionsGroup.selection == encryptionOptionEncrypt) {
-                contentInfoFileStream.open(file, FileMode.WRITE);
-            } else if (encryptionOptionsGroup.selection == encryptionOptionDecrypt) {
-                contentInfoFileStream.open(file, FileMode.READ);
-            }
-            updateControlPanel();
-        }
-
-        private function contentInfoFileIsCanceled(event:Event):void {
-            outDebugMessage("File selection is canceled.");
-        }
-
         /* File saving process handlers */
         private function requestOutputFile(title:String):void {
             // create the outFileStream instance
@@ -262,10 +216,8 @@
 
         /* UI configuration */
         private function updateControlPanel():void {
-            selectInputFileButton.enabled = true;
-            selectKeyFileButton.enabled = true;
-            selectOutputFileButton.enabled = true;
-            if (inFileStream != null && outFileStream != null && contentInfoFileStream != null) {
+            if (encryptionOptionsGroup.selection != null &&
+                    inFileStream != null && outFileStream != null) {
                 processFileButton.enabled = true;
             }
         }
@@ -280,6 +232,8 @@
                 cipher.addKeyRecipient(stringToBytes(EC_CERT_ID), stringToBytes(EC_PUBLIC_KEY));
                 // Init encryption
                 const encryptionChunkSize:uint = cipher.startEncryption(1024 * 1024);
+                // Save content info
+                outFileStream.writeBytes(cipher.getContentInfo());
                 // Encrypt
                 var dataChunk:ByteArray = new ByteArray();
                 while (inFileStream.bytesAvailable > 0) {
@@ -289,9 +243,6 @@
                 }
                 // Finalize encryption
                 cipher.finalize();
-                // Save content info
-                var contentInfo:ByteArray = cipher.getContentInfo();
-                contentInfoFileStream.writeBytes(contentInfo);
                 // Output measurement
                 timerFileProcessEnd = getTimer();
                 outDebugMessage("File is processed in: " + (timerFileProcessEnd - timerFileProcessStart) + " ms.");
@@ -309,8 +260,15 @@
                 // Create cipher
                 var cipher:VirgilChunkCipher = VirgilChunkCipher.create();
                 // Read and configure content info
+                const contentInfoInitialDataSize:uint = 16;
                 var contentInfo:ByteArray = new ByteArray();
-                contentInfoFileStream.readBytes(contentInfo);
+                inFileStream.readBytes(contentInfo, 0, contentInfoInitialDataSize);
+                const contentInfoSize:uint = VirgilContentInfo.defineSize(contentInfo);
+                if (contentInfoSize == 0 || contentInfoSize < contentInfoInitialDataSize) {
+                    throw new Error("Encrypted file does not contain embedded content info.");
+                }
+                inFileStream.readBytes(contentInfo, contentInfo.bytesAvailable,
+                        contentInfoSize - contentInfoInitialDataSize);
                 cipher.setContentInfo(contentInfo);
                 // Init decryption
                 const decryptionChunkSize:uint =

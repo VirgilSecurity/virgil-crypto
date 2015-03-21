@@ -124,6 +124,7 @@ add_custom_command (OUTPUT ${WRAPPER_SWC}
             -o ${WRAPPER_SWC} ${WRAPPER_OBJ} ${WRAPPER_ABC}
             $<TARGET_LINKER_FILE:${WRAPPED_LIB_NAME}> ${CMAKE_BINARY_DIR}/libs/libmbedtls.a
             ${CMAKE_BINARY_DIR}/libs/libjsoncpp.a -lAS3++
+    DEPENDS $<TARGET_LINKER_FILE:${WRAPPED_LIB_NAME}>
     DEPENDS ${WRAPPER_OBJ}
     DEPENDS ${WRAPPER_ABC}
     DEPENDS ${WRAPPER_EXPORT_FILE}

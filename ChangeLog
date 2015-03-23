@@ -1,0 +1,59 @@
+virgil ChangeLog (Sorted per date)
+
+= Version 0.6.0 released 2015-03-23
+Bugfix:
+  * CMake: Fix build options for jsoncpp library.
+  * CMake: Define max java heap size for AS3 compilation process to prevent
+           build fail.
+  * AS3: Add try-catch section to the 'VirgilChunkCipher::startEncryption()'
+         method wrapper.
+
+Improvements:
+  * CMake: Add version to the AS3 library file name.
+  * CMake: Display full AS3 library name (including version) when build.
+  * CMake: Prevent copy C++ headers to the AS3 installation folder.
+  * CMake: Make AS3 library build only if needed.
+  * CMake: Replace variable AS3_MODULE_FILE_NAME with synonym WRAPPER_SWC.
+  * AS3: Change gradle configuration file to work with gradle version 2.3
+       and gradlefx version 1.1.0.
+  * CMake: Use UPDATE command instead of PATCH command in the
+           ExternalProject_Add.
+  * Lib: Add SHA-384 algorithm.
+  * CMake: Add AS3 wrapper dependency on the library 'virgil'.
+
+Changes:
+  * AS3 Demo: Change demo app to be conformed with library version 0.5.0.
+  * AS3 Demo: Embed content info to the encrypted file.
+  * PHP: Remove 'iconv' and 'mb_detect_encoding' dependencies from unit tests.
+  * All: Switch from 'polarssl' main branch to the 'mbed TLS' fork made by
+         Virgil Security.
+  * CMake: Refactor 'mbed TLS' patch. Now its configure files: 'config.h'
+           and 'check_config.h' only.
+  * Lib: PBE: use external functions.
+  * Lib: Change SHA-256 to SHA-384 as default signer hash algorithm.
+  * Lib: Rename VirgilByteArray utility functions to short versions.
+  * Lib: Function 'getContentInfo()' become available immediately after
+         function 'startEncryption()' call in the class VirgilChunkCipher.
+  * AS3: Build AS3 unit tests in the strict mode.
+
+= Version 0.5.0 released 2015-03-12
+Features:
+  * AS3: Implement Action Script 3 wrapper for virgil library version 0.4.0.
+
+Improvements:
+  * AS3: Speed and size optimization by using flascc Link Time Optimizer (LTO).
+  * AS3: Make all tests configurable.
+  * AS3: Configure test VirgilVersionTest with CMAKE variables.
+
+Changes:
+  * CMake: Apply platform specific compiler options only for native platforms
+           build.
+  * Lib: Changed marshalling / demarshalling process for tickets.
+         Now 'class_name' field is handled by the base class.
+  * Lib: Rename VirgilCipherBase::customParameters() to
+         VirgilCipherBase::customParams().
+  * Lib: Renaming VirgilVersion class methods.
+  * Lib: Remove macroses: VIRGIL_BYTE_ARRAY_FROM_C_STRING,
+         VIRGIL_BYTE_ARRAY_FROM_STD_STRING, VIRGIL_BYTE_ARRAY_TO_STD_STRING,
+         VIRGIL_BYTE_ARRAY_ZEROIZE. Use inline functions analogue instead.
+  * Lib: Remove 'jsoncpp' library dependency from the public API.

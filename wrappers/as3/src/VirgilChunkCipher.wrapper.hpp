@@ -48,8 +48,10 @@ AS3_IMPL_DESTRUCTOR(VirgilChunkCipher)
 AS3_DECL_FUNC(_wrap_VirgilChunkCipher_startEncryption, "(asSelf:int, asPreferredChunkSize:uint):uint") {
     AS3_TO_C_PTR(VirgilChunkCipher, asSelf, cSelf);
     AS3_TO_C_UINT(asPreferredChunkSize, cPreferredChunkSize);
+AS3_THROWABLE_SECTION_START
     size_t cAdjustedChunkSize = cSelf->startEncryption(cPreferredChunkSize);
     AS3_RETURN_C_UINT(cAdjustedChunkSize);
+AS3_THROWABLE_SECTION_END
 }
 
 AS3_DECL_FUNC(_wrap_VirgilChunkCipher_startDecryptionWithKey, "(asSelf:int, asCertificateId:ByteArray, "

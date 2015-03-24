@@ -64,6 +64,8 @@
 #include "VirgilSigner.wrapper.hpp"
 #include "VirgilStreamSigner.wrapper.hpp"
 
+#include "VirgilHash.wrapper.hpp"
+
 int main() {
     AS3_GoAsync();
 }

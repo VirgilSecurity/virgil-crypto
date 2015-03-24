@@ -40,7 +40,13 @@
 #include <AS3/AS3.h>
 #include <AS3/AS3++.h>
 
+#include <cstdlib>
+#include <cstddef>
+#include <string>
 #include <stdexcept>
+
+#include <virgil/VirgilByteArray.h>
+using virgil::VirgilByteArray;
 
 #define kPackage "com.virgilsecurity.wrapper"
 

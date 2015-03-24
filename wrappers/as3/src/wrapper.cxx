@@ -34,16 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cstdlib>
-#include <cstddef>
-#include <string>
-
-#include <AS3/AS3.h>
-#include <AS3/AS3++.h>
-
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
-
 #include "VirgilVersion.wrapper.hpp"
 
 #include "VirgilSerializable.wrapper.hpp"

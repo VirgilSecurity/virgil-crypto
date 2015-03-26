@@ -136,7 +136,6 @@ using package::className;
 %include <std_except.i>
 %include <std_common.i>
 %include <std_string.i>
-%include <std_vector.i>
 ///@}
 
 /**
@@ -189,6 +188,16 @@ using package::className;
 #ifdef SWIGPHP
     %include "php/VirgilByteArray.i"
 #endif
+#ifdef SWIGCSHARP
+    %include "csharp/VirgilByteArray.i"
+#endif
+
+#if !defined(SWIGPHP) && !defined(SWIGCSHARP)
+%include <std_vector.i>
+namespace std {
+   %template(VirgilByteArray) vector<unsigned char>;
+};
+#endif
 
 %ignore virgil::str2bytes;
 %ignore virgil::bytes2str;
@@ -196,12 +205,6 @@ using package::className;
 %ignore virgil::bytes2hex;
 %ignore virgil::bytes_zeroize;
 INCLUDE_CLASS(VirgilByteArray, virgil, virgil)
-
-#ifndef SWIGPHP
-namespace std {
-   %template(VirgilByteArray) vector<unsigned char>;
-};
-#endif
 
 INCLUDE_CLASS(VirgilException, virgil, virgil)
 

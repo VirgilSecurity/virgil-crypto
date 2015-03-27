@@ -34,7 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /**
  * @name Module name
  */
@@ -141,6 +140,11 @@ using package::className;
  * @name Common renames
  */
 ///@{
+#if defined(SWIGCSHARP)
+    %rename("%(camelcase)s", %$isfunction) "";
+    %rename("%(camelcase)s", %$isvariable) "";
+#endif /* defined(SWIGCSHARP) */
+
 %ignore operator=;
 %ignore operator==;
 ///@}

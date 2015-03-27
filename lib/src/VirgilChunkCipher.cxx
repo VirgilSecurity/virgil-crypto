@@ -120,7 +120,7 @@ VirgilByteArray VirgilChunkCipher::process(const VirgilByteArray& data) {
     return result;
 }
 
-void VirgilChunkCipher::finalize() {
+void VirgilChunkCipher::finish() {
     clearCipherInfo();
 }
 

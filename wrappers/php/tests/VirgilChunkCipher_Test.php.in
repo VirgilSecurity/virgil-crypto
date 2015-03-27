@@ -76,7 +76,7 @@ class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
             $encryptedData .= $cipher->process($chunk);
         }
         // Finalize encryption to avoid security issues.
-        $cipher->finalize();
+        $cipher->finish();
         // Store content info.
         $contentInfo = $cipher->getContentInfo();
 
@@ -118,7 +118,7 @@ class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
             $plainText .= $cipher->process($chunk);
         }
         // Finalize decryption to avoid security issues.
-        $cipher->finalize();
+        $cipher->finish();
         // Validate results
         $this->assertEquals($initialText, $plainText);
     }
@@ -149,7 +149,7 @@ class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
             $plainText .= $cipher->process($chunk);
         }
         // Finalize decryption to avoid security issues.
-        $cipher->finalize();
+        $cipher->finish();
         // Validate results
         $this->assertEquals($initialText, $plainText);
     }

@@ -119,7 +119,7 @@ package com.virgilsecurity {
                 encryptedData.writeBytes(cipher_.process(dataChunk));
             }
             // Finish encryption
-            cipher_.finalize();
+            cipher_.finish();
             // Store content info
             var contentInfo:ByteArray = cipher_.getContentInfo();
 
@@ -148,7 +148,7 @@ package com.virgilsecurity {
                 decryptedData.writeBytes(cipher_.process(dataChunk));
             }
             // Finalize decryption
-            cipher_.finalize();
+            cipher_.finish();
 
             // Check results
             assertThat(ConvertionUtils.arrayToAsciiString(decryptedData), equalTo(TEST_PLAIN_DATA));

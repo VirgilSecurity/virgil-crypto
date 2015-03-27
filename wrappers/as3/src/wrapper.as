@@ -481,8 +481,8 @@ public class VirgilChunkCipher extends VirgilCipherBase {
     public function process(data:ByteArray):ByteArray {
         return _wrap_VirgilChunkCipher_process(this.cPtr, data);
     }
-    public function finalize():void {
-        return _wrap_VirgilChunkCipher_finalize(this.cPtr);
+    public function finish():void {
+        return _wrap_VirgilChunkCipher_finish(this.cPtr);
     }
 }
 

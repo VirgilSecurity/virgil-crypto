@@ -242,7 +242,7 @@
                     outFileStream.writeBytes(cipher.process(dataChunk));
                 }
                 // Finalize encryption
-                cipher.finalize();
+                cipher.finish();
                 // Output measurement
                 timerFileProcessEnd = getTimer();
                 outDebugMessage("File is processed in: " + (timerFileProcessEnd - timerFileProcessStart) + " ms.");
@@ -281,7 +281,7 @@
                     outFileStream.writeBytes(cipher.process(dataChunk));
                 }
                 // Finalize decryption
-                cipher.finalize();
+                cipher.finish();
                 // Output measurement
                 timerFileProcessEnd = getTimer();
                 outDebugMessage("File is processed in: " + (timerFileProcessEnd - timerFileProcessStart) + " ms.");

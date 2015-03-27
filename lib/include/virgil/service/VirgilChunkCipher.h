@@ -91,7 +91,7 @@ public:
      * @brief Finalize encryption or decryption process.
      * @note Call this method after encryption or decryption are done to prevent security issues.
      */
-    void finalize();
+    void finish();
     /**
      * @brief Polymorphic destructor.
      */

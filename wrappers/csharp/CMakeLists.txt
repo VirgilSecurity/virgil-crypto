@@ -51,8 +51,6 @@ set (SWIG_MODULE_NAME ${CSHARP_MODULE_NAME})
 find_package( CSharp REQUIRED )
 include( ${CSHARP_USE_FILE} )
 
-set (CSHARP_VIRGILCRYPTO_ASSEMBLY_VERSION "1.0.*")
-
 # Make sure the nested directory structure exists
 set (CSHARP_SOURCE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/src CACHE INTERNAL "")
 set (CSHARP_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin CACHE INTERNAL "")
@@ -99,12 +97,15 @@ set (VIRGILCRYPTO_SWIG_TARGET_NAME ${SWIG_MODULE_${CSHARP_MODULE_NAME}_REAL_NAME
 set_target_properties (${VIRGILCRYPTO_SWIG_TARGET_NAME}
         PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CSHARP_BINARY_DIRECTORY})
 
-# Configure AssemblyInfo.cs
-configure_file (
-    ${CMAKE_CURRENT_SOURCE_DIR}/AssemblyInfo.cs.in
-    ${CSHARP_SOURCE_DIRECTORY}/AssemblyInfo.cs
-    @ONLY
-)
+file (GLOB_RECURSE ASSEMBLY_SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cs")
+foreach (CS_FILE ${ASSEMBLY_SRC})
+    string (REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/src/" "" CS_FILE_NAME ${CS_FILE})
+    configure_file (
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/${CS_FILE_NAME}
+        ${CSHARP_SOURCE_DIRECTORY}/${CS_FILE_NAME}
+        @ONLY
+    )
+endforeach (CS_FILE)
 
 # Add assembly dependencies
 csharp_add_library (${CSHARP_ASSEMBLY_NAME} "${CSHARP_SOURCE_DIRECTORY}/*.cs")

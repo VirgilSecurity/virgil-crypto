@@ -1,4 +1,4 @@
-#region Copyright Insight Software Consortium
+#region "Copyright (C) 2014 Virgil Security Inc."
 /**
  * Copyright (C) 2014 Virgil Security Inc.
  *
@@ -39,7 +39,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyVersion("@CSHARP_VIRGILCRYPTO_ASSEMBLY_VERSION@")]
+[assembly: AssemblyVersion("@VIRGIL_VERSION@")]
 [assembly: AssemblyTitle("C# wrapper over '@WRAPPED_LIB_NAME@' library version @VIRGIL_VERSION@")]
 [assembly: AssemblyCopyright("Copyright Virgil Security Inc., GPL, Version 2")]
 [assembly: AssemblyDescription("This assembly provides API to the dynamic loaded module " +

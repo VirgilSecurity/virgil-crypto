@@ -117,7 +117,10 @@ set (EXTERNAL_LIBS_DIR "${CMAKE_CURRENT_BINARY_DIR}/libs" CACHE INTERNAL
 
 # Platform dependent configuration
 if (NOT PLATFORM_EMBEDDED AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set (CMAKE_OSX_ARCHITECTURES x86_64 i386 CACHE STRING "Target OS X architectures")
+    if (NOT CMAKE_OSX_ARCHITECTURES)
+        set (CMAKE_OSX_ARCHITECTURES x86_64 i386)
+    endif ()
+    message (STATUS "OS X architectures: ${CMAKE_OSX_ARCHITECTURES}")
 endif ()
 
 # Build submodules

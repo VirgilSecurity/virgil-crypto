@@ -185,19 +185,18 @@ using package::className;
  * @name Package: virgil
  */
 ///@{
-#ifdef SWIGPHP
+#if defined(SWIGPHP)
     %include "php/VirgilByteArray.i"
-#endif
-#ifdef SWIGCSHARP
+#else /* defined(SWIGPHP) */
+#if defined(SWIGCSHARP)
     %include "csharp/VirgilByteArray.i"
-#endif
-
-#if !defined(SWIGPHP) && !defined(SWIGCSHARP)
-%include <std_vector.i>
-namespace std {
-   %template(VirgilByteArray) vector<unsigned char>;
-};
-#endif
+#else /* defined(SWIGCSHARP) */
+  %include <std_vector.i>
+  namespace std {
+     %template(VirgilByteArray) vector<unsigned char>;
+  };
+#endif /* defined(SWIGCSHARP) */
+#endif /* defined(SWIGPHP) */
 
 %ignore virgil::str2bytes;
 %ignore virgil::bytes2str;

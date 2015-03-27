@@ -127,7 +127,6 @@ using package::className;
 %enddef
 ///@}
 
-
 /**
  * @name Common includes
  */
@@ -142,8 +141,8 @@ using package::className;
  * @name Common renames
  */
 ///@{
-%rename (assign) operator=;
-%rename (equals) operator==;
+%ignore operator=;
+%ignore operator==;
 ///@}
 
 /**

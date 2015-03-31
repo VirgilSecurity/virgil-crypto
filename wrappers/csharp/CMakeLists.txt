@@ -73,6 +73,10 @@ configure_file (
     "${wrappers_SOURCE_DIR}/swig/wrapper.i.in"
     "${WRAPPER_INTERFACE_FILE}"
 )
+configure_file (
+    "${wrappers_SOURCE_DIR}/swig/csharp/csharphead.swg.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/csharphead.swg"
+)
 
 set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY CPLUSPLUS ON)
 set_property (

@@ -340,7 +340,7 @@ SWIGEXPORT void SWIGSTDCALL SWIG_CSharp_RegisterCopyToUnmanaged_##CSTYPE##_Array
         }
         #endregion
     }
-   static protected SWIG_##CSTYPE##_ArrayHelper CSTYPE##ArrayHelper = new SWIG_##CSTYPE##_ArrayHelper();
+    static protected SWIG_##CSTYPE##_ArrayHelper CSTYPE##ArrayHelper = new SWIG_##CSTYPE##_ArrayHelper();
     #endregion
 %}
 

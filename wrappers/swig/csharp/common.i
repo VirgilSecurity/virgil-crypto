@@ -42,3 +42,6 @@
 // VirgilByteArray typemap
 #define SWIG_VIRGIL_BYTE_ARRAY
 %include "VirgilByteArray.i"
+
+// Dynamic library loader
+%include "VirgilLibLoader.i"

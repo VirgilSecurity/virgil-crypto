@@ -11,3 +11,4 @@ env:
 before_install: ./ci/install_deps.sh
 before_script: ./ci/configure.sh
 script: ./ci/run.sh
+sudo: required

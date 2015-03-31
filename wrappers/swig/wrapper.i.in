@@ -34,21 +34,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @name Module name
- */
-///@{
+// Module name
 %module(directors="1") @SWIG_MODULE_NAME@
-///@}
 
-/**
- * @name Wrapper configuration section
- */
-///@{
+// Wrapper configuration section
 #cmakedefine SWIG_WRAP_NAMESPACE
 #cmakedefine SWIG_WRAP_LOW_LEVEL_API
 #cmakedefine SWIG_WRAP_COPY_CONSTRUCTOR
-///@}
+
+%insert ("begin") %{
+#include <cstddef>
+%}
 
 #if defined(SWIG_WRAP_LOW_LEVEL_API)
 %insert ("header") %{
@@ -56,151 +52,17 @@
 %}
 #endif
 
-
-%pragma(php) phpinfo="
-  php_info_print_table_start();
-  php_info_print_table_header(2, \"Directive\", \"Value\");
-  php_info_print_table_row(2, \"Version\", VIRGIL_VERSION);
-#if defined(SWIG_WRAP_LOW_LEVEL_API)
-  php_info_print_table_row(2, \"Low-level API support\", \"enabled\");
-#else
-  php_info_print_table_row(2, \"Low-level API support\", \"disabled\");
-#endif
-  php_info_print_table_end();
-"
-
-%insert ("begin") %{
-
-#include <cstddef>
-
-%}
-
-/**
- * @name Helper macros
- */
-///@{
-%define DEFINE_NAMESPACE(className, package)
-#if defined(SWIG_WRAP_NAMESPACE)
-    %nspace package::className;
-#endif
-%enddef
-
-%define INCLUDE_TYPE(typeName, includePath)
-%insert("header") %{
-#include <includePath/typeName.h>
-%}
-%include <includePath/typeName.h>
-%enddef
-
-%define INCLUDE_CLASS(className, package, includePath)
-DEFINE_NAMESPACE(className, package)
-%insert("header") %{
-#include <includePath/className.h>
-using package::className;
-%}
-%include <includePath/className.h>
-%enddef
-
-%define INCLUDE_CLASS_WITH_DIRECTOR(className, package, includePath)
-DEFINE_NAMESPACE(className, package)
-%insert("header") %{
-#include <includePath/className.h>
-using package::className;
-%}
-%feature("director") className;
-%include <includePath/className.h>
-%enddef
-
-%define INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(className, package, includePath)
-DEFINE_NAMESPACE(className, package)
-%insert("header") %{
-#include <includePath/className.h>
-using package::className;
-%}
-#if defined(SWIG_WRAP_COPY_CONSTRUCTOR)
-    %copyctor className;
-#else
-    %ignore package::className::className(const package::className &);
-#endif
-%include <includePath/className.h>
-%enddef
-///@}
-
-/**
- * @name Common includes
- */
-///@{
+// Standard includes
 %include <exception.i>
 %include <std_except.i>
 %include <std_common.i>
 %include <std_string.i>
-///@}
 
-/**
- * @name Common renames
- */
-///@{
-#if defined(SWIGCSHARP)
-    %rename("%(camelcase)s", %$isfunction) "";
-    %rename("%(camelcase)s", %$isvariable) "";
-#endif /* defined(SWIGCSHARP) */
+// Custom includes
+%include "common.i"
+%include "util.i"
 
-%ignore operator=;
-%ignore operator==;
-///@}
-
-/**
- * @name Exception handling
- */
-///@{
-#ifdef SWIGPHP
-%{
-// Redefine SWIG_exception macro for PHP
-#undef SWIG_exception
-#define SWIG_exception(code, msg) { zend_throw_exception(NULL, (char*)msg, code TSRMLS_CC); return; }
-%}
-#endif
-
-#ifdef SWIGPHP
-%feature("director:except") {
-    if ($error == FAILURE) {
-        throw Swig::DirectorMethodException();
-    }
-}
-#endif
-%exception {
-    try {
-        $action
-    }
-#ifdef SWIGPHP
-    catch (Swig::DirectorException &exception) {
-        SWIG_fail;
-    }
-#endif
-    SWIG_CATCH_STDEXCEPT
-    catch (...) {
-        SWIG_exception(SWIG_UnknownError, "Unknown exception");
-    }
-}
-///@}
-
-/**
- * @name Package: virgil
- */
-///@{
-#if defined(SWIGPHP)
-    %include "php/VirgilByteArray.i"
-#else /* defined(SWIGPHP) */
-#if defined(SWIGCSHARP)
-    %include "csharp/VirgilByteArray.i"
-#else /* defined(SWIGCSHARP) */
-  %include <std_vector.i>
-  namespace std {
-     %template(VirgilByteArray) vector<unsigned char>;
-  };
-#endif /* defined(SWIGCSHARP) */
-#endif /* defined(SWIGPHP) */
-
+// Package: virgil
 %ignore virgil::str2bytes;
 %ignore virgil::bytes2str;
 %ignore virgil::hex2bytes;
@@ -215,12 +77,8 @@ INCLUDE_CLASS(VirgilException, virgil, virgil)
 %ignore VIRGIL_VERSION_MINOR;
 %ignore VIRGIL_VERSION_PATCH;
 INCLUDE_CLASS(VirgilVersion, virgil, virgil)
-///@}
 
-/**
- * @name Package: virgil::crypto::asn1
- */
-///@{
+// Package: virgil::crypto::asn1
 %ignore *::asn1Write;
 %ignore *::asn1Read;
 %ignore *::jsonWrite;
@@ -228,23 +86,15 @@ INCLUDE_CLASS(VirgilVersion, virgil, virgil)
 INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto::asn1, virgil/crypto/asn1)
 INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto::asn1, virgil/crypto/asn1)
 INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::asn1, virgil/crypto/asn1)
-///@}
 
-/**
- * @name Package: virgil::crypto::cms
- */
-///@{
+// Package: virgil::crypto::cms
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSKeyTransRecipient, virgil::crypto::cms, virgil/crypto/cms)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSPasswordRecipient, virgil::crypto::cms, virgil/crypto/cms)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEncryptedContent, virgil::crypto::cms, virgil/crypto/cms)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEnvelopedData, virgil::crypto::cms, virgil/crypto/cms)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSContent, virgil::crypto::cms, virgil/crypto/cms)
-///@}
 
-/**
- * @name Package: virgil::crypto
- */
-///@{
+// Package: virgil::crypto
 #if defined(SWIG_WRAP_LOW_LEVEL_API)
 DEFINE_NAMESPACE(VirgilSymmetricCipherPadding, virgil::crypto)
 DEFINE_NAMESPACE(ECKeyGroup, virgil::crypto)
@@ -262,12 +112,8 @@ INCLUDE_CLASS(VirgilRandom, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilPBE, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilCustomParams, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilContentInfo, virgil::crypto, virgil/crypto)
-///@}
 
-/**
- * @name Package: virgil::service::data
- */
-///@{
+// Package: virgil::service::data
 INCLUDE_CLASS(VirgilJsonCompatible, virgil::service::data, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilKeyPair, virgil::service::data, virgil/service/data)
 
@@ -293,25 +139,15 @@ INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilUniqueTicket, virgil::service::data, v
 INCLUDE_TYPE(VirgilInfoTicketType, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilInfoTicket, virgil::service::data, virgil/service/data)
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilSign, virgil::service::data, virgil/service/data)
-///@}
 
-
-/**
- * @name Package: virgil::service
- */
-///@{
+// Package: virgil::service
 INCLUDE_CLASS(VirgilCipherBase, virgil::service, virgil/service)
 INCLUDE_CLASS(VirgilCipher, virgil::service, virgil/service)
 INCLUDE_CLASS(VirgilChunkCipher, virgil::service, virgil/service)
 INCLUDE_CLASS(VirgilSigner, virgil::service, virgil/service)
-///@}
 
-/**
- * @name Package: virgil::service::stream
- */
-///@{
+// Package: virgil::service::stream
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::service::stream, virgil/service/stream)
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::service::stream, virgil/service/stream)
 INCLUDE_CLASS(VirgilStreamSigner, virgil::service::stream, virgil/service/stream)
 INCLUDE_CLASS(VirgilStreamCipher, virgil::service::stream, virgil/service/stream)
-///@}

@@ -1,5 +1,30 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 0.7.0 released 2015-03-31
+Bugfix:
+  * CMake: Fix CMAKE_OSX_ARCHITECTURES variable default definition.
+
+Features:
+  * C#: Add mapping C++ VirgilByteArray to the C# byte[].
+  * C#: Add runtime selection of the library architecture: x86 or x86_64.
+  * AS3: Add wrapper for class VirgilHash.
+
+Improvements:
+  * C#: Set assembly version to the library current version.
+  * AS3: Move utility headers to the appropriate place.
+  * SWIG: Simplify including type mappings for VirgilByteArray.
+  * SWIG: Move language specific typemaps to separate files.
+
+Changes:
+  * All: Rename method VirgilChunkCipher::finalize() to
+         VirgilChunkCipher::finish() due to name confilcts on some platforms.
+  * SWIG C#: Make first letter of all functions and properties uppercase.
+  * CMake C#. Rename .NET assembly of the shared library from 'virgil.assembly' to 'Virgil.Net'
+  * CMake: Selection of install directory for C# now depends on variables:
+           CMAKE_SYSTEM_NAME, CMAKE_OSX_ARCHITECTURES, COMPILER_ARCH_32,
+           COMPILER_ARCH_64.
+  * SWIG: Ignore 'operator=' and 'operator=='.
+
 = Version 0.6.0 released 2015-03-23
 Bugfix:
   * CMake: Fix build options for jsoncpp library.

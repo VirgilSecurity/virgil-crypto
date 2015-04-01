@@ -38,12 +38,16 @@ cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 
 project (${WRAPPED_LIB_NAME}_csharp)
 
+# Capitalize first character in the wrapped library name
+include (uppercase_first_char)
+uppercase_first_char (${WRAPPED_LIB_NAME} WRAPPED_LIB_NAME_CAP)
+
 # Configure cmake modules location
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 # Configure C#
 set (CSHARP_INSTALL_DIR csharp)
-set (CSHARP_ASSEMBLY_NAME ${WRAPPED_LIB_NAME}.assembly)
+set (CSHARP_ASSEMBLY_NAME ${WRAPPED_LIB_NAME_CAP}.Net)
 set (CSHARP_MODULE_NAME ${PROJECT_NAME})
 set (SWIG_MODULE_NAME ${CSHARP_MODULE_NAME})
 
@@ -95,9 +99,10 @@ add_custom_command (TARGET ${CSHARP_MODULE_NAME} POST_BUILD
         COMMENT "Copy generated source files from ${CSHARP_SWIG_OUTPUT_DIRECTORY} to ${CSHARP_SOURCE_DIRECTORY}."
     )
 
-
 # Configure assembly
 set (VIRGILCRYPTO_SWIG_TARGET_NAME ${SWIG_MODULE_${CSHARP_MODULE_NAME}_REAL_NAME})
+set_target_properties (${VIRGILCRYPTO_SWIG_TARGET_NAME}
+        PROPERTIES OUTPUT_NAME ${CSHARP_MODULE_NAME})
 set_target_properties (${VIRGILCRYPTO_SWIG_TARGET_NAME}
         PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CSHARP_BINARY_DIRECTORY})
 

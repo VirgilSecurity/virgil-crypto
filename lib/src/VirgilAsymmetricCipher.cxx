@@ -379,11 +379,18 @@ size_t VirgilAsymmetricCipher::asn1Write(VirgilAsn1Writer& asn1Writer, size_t ch
     checkState();
     const char *oid = 0;
     size_t oidLen;
+    size_t len = 0;
+    if (impl_->pkType() == POLARSSL_PK_ECKEY && pk_ec(*impl_->ctx)->grp.id != POLARSSL_ECP_DP_NONE) {
+        POLARSSL_ERROR_HANDLER(
+            ::oid_get_oid_by_ec_grp(pk_ec(*impl_->ctx)->grp.id, &oid, &oidLen)
+        );
+        len += asn1Writer.writeOID(std::string(oid, oidLen));
+    } else {
+        len += asn1Writer.writeNull();
+    }
     POLARSSL_ERROR_HANDLER(
         ::oid_get_oid_by_pk_alg(impl_->pkType(), &oid, &oidLen)
     );
-    size_t len = 0;
-    len += asn1Writer.writeNull();
     len += asn1Writer.writeOID(std::string(oid, oidLen));
     len += asn1Writer.writeSequence(len);
     return len + childWrittenBytes;
@@ -392,6 +399,7 @@ size_t VirgilAsymmetricCipher::asn1Write(VirgilAsn1Writer& asn1Writer, size_t ch
 void VirgilAsymmetricCipher::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
     std::string oid = asn1Reader.readOID();
+    (void)asn1Reader.readData(); // Ignore params
 
     asn1_buf oidAsn1Buf;
     oidAsn1Buf.len = oid.size();

@@ -38,7 +38,7 @@
 set -ev
 
 # Configure CMake arguments
-CMAKE_ARGS=""
+CMAKE_ARGS="-DLOW_LEVEL_API=${LOW_LEVEL_API}"
 if [ "${PLATFORM_NAME}" ]; then
     CMAKE_ARGS+=" -DPLATFORM_NAME=${PLATFORM_NAME}"
 fi

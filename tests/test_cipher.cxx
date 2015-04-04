@@ -49,6 +49,9 @@ using virgil::VirgilByteArray;
 #include <virgil/service/VirgilCipher.h>
 using virgil::service::VirgilCipher;
 
+#include <virgil/service/data/VirgilKeyPair.h>
+using virgil::service::data::VirgilKeyPair;
+
 
 TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
     VirgilByteArray password = virgil::str2bytes("password");

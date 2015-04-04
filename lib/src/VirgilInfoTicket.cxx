@@ -42,6 +42,12 @@ using virgil::service::data::VirgilInfoTicket;
 #include <virgil/VirgilException.h>
 using virgil::VirgilException;
 
+#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::asn1::VirgilAsn1Reader;
+
+#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::asn1::VirgilAsn1Writer;
+
 #include <string>
 
 #include <json/json.h>

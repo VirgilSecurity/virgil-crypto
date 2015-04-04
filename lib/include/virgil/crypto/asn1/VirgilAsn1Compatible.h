@@ -40,11 +40,18 @@
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
+/**
+ * @name Forward declaration
+ */
+/// @{
+namespace virgil { namespace crypto { namespace asn1 {
+    class VirgilAsn1Reader;
+    class VirgilAsn1Writer;
+}}}
 using virgil::crypto::asn1::VirgilAsn1Reader;
-
-#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
 using virgil::crypto::asn1::VirgilAsn1Writer;
+/// @}
+
 
 namespace virgil { namespace crypto { namespace asn1 {
 

@@ -37,6 +37,12 @@
 #include <virgil/service/data/VirgilAccount.h>
 using virgil::service::data::VirgilAccount;
 
+#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::asn1::VirgilAsn1Reader;
+
+#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::asn1::VirgilAsn1Writer;
+
 #include <json/json.h>
 
 VirgilAccount::~VirgilAccount() throw() {

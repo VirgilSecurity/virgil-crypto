@@ -45,9 +45,6 @@ using virgil::VirgilByteArray;
 #include <virgil/service/VirgilCipherBase.h>
 using virgil::service::VirgilCipherBase;
 
-#include <virgil/crypto/VirgilSymmetricCipher.h>
-using virgil::crypto::VirgilSymmetricCipher;
-
 namespace virgil { namespace service {
 
 /**

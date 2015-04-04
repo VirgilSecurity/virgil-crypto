@@ -50,6 +50,7 @@ int print_usage(std::ostream& out, const char *programName) {
     out << "Usage: " << programName << " <enc_data> <enc_key> <private_key> <private_key_pwd>" << std::endl;
     out << "    <enc_data>        - [in] encrypted data file to be decrypted" << std::endl;
     out << "    <content_info>    - [in] encrypted data content info file" << std::endl;
+    out << "    <cert_id>         - [in] public key certificate identifier" << std::endl;
     out << "    <private_key>     - [in] private key file" << std::endl;
     out << "    <private_key_pwd> - [in] private key password" << std::endl;
     return -1;
@@ -89,6 +90,10 @@ int main(int argc, char **argv) {
             std::back_inserter(contentInfo));
     contentInfoFile.close();
 
+    // Parse argument: cert_id
+    ++currArgPos;
+    VirgilByteArray certId = virgil::str2bytes(argv[currArgPos]);
+
     // Parse argument: private_key
     ++currArgPos;
     std::ifstream privateKeyFile(argv[currArgPos], std::ios::in);
@@ -112,7 +117,7 @@ int main(int argc, char **argv) {
     cipher.setContentInfo(contentInfo);
 
     // Decrypt.
-    VirgilByteArray decryptedData = cipher.decryptWithKey(encryptedData, privateKey, privateKeyPassword);
+    VirgilByteArray decryptedData = cipher.decryptWithKey(encryptedData, certId, privateKey, privateKeyPassword);
 
     // Out decrypted data.
     std::copy(decryptedData.begin(), decryptedData.end(), std::ostreambuf_iterator<char>(std::cout));

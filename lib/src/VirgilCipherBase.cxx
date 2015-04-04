@@ -36,6 +36,7 @@
 
 #include <virgil/service/VirgilCipherBase.h>
 using virgil::service::VirgilCipherBase;
+using virgil::service::VirgilCipherBaseImpl;
 
 #include <cstring>
 #include <string>
@@ -62,14 +63,43 @@ using virgil::crypto::VirgilPBE;
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
+#include <virgil/crypto/VirgilContentInfo.h>
+using virgil::crypto::VirgilContentInfo;
+
 #include <virgil/crypto/cms/VirgilCMSContent.h>
 using virgil::crypto::cms::VirgilCMSContent;
+
+#include <virgil/crypto/cms/VirgilCMSEnvelopedData.h>
+using virgil::crypto::cms::VirgilCMSEnvelopedData;
 
 #include <virgil/crypto/cms/VirgilCMSKeyTransRecipient.h>
 using virgil::crypto::cms::VirgilCMSKeyTransRecipient;
 
 #include <virgil/crypto/cms/VirgilCMSPasswordRecipient.h>
 using virgil::crypto::cms::VirgilCMSPasswordRecipient;
+
+namespace virgil { namespace service {
+
+/**
+ * @brief Handle class fields.
+ */
+class VirgilCipherBaseImpl {
+public:
+    VirgilCipherBaseImpl() :
+        random(virgil::str2bytes(std::string("virgil::service::VirgilCipherBase"))),
+        symmetricCipher(), symmetricCipherKey(), contentInfo(), envelopedData(),
+        keyRecipients(), passwordRecipients() {}
+public:
+    VirgilRandom random;
+    VirgilSymmetricCipher symmetricCipher;
+    VirgilByteArray symmetricCipherKey;
+    VirgilContentInfo contentInfo;
+    VirgilCMSEnvelopedData envelopedData;
+    std::map<VirgilByteArray, VirgilByteArray> keyRecipients; /**< certificate id -> public key */
+    std::set<VirgilByteArray> passwordRecipients; /**< passwords */
+};
+
+}}
 
 /**
  * @name Configuration constants.
@@ -79,61 +109,59 @@ static const VirgilSymmetricCipher::VirgilSymmetricCipherPadding kSymmetricCiphe
         VirgilSymmetricCipher::VirgilSymmetricCipherPadding_PKCS7;
 ///@}
 
-VirgilCipherBase::VirgilCipherBase()
-        : random_(virgil::str2bytes(std::string("virgil::service::VirgilCipherBase"))),
-        symmetricCipher_(), symmetricCipherKey_(), contentInfo_(), envelopedData_(),
-        keyRecipients_(), passwordRecipients_() {
+VirgilCipherBase::VirgilCipherBase() : impl_(new VirgilCipherBaseImpl()) {
 }
 
 VirgilCipherBase::~VirgilCipherBase() throw() {
+    delete impl_;
 }
 
 void VirgilCipherBase::addKeyRecipient(const VirgilByteArray& certificateId, const VirgilByteArray& publicKey) {
     if (certificateId.empty() || publicKey.empty()) {
         throw VirgilException("VirgilCipherBase: Parameters 'certificateId' or 'publicKey' are not specified.");
     }
-    keyRecipients_[certificateId] = publicKey;
+    impl_->keyRecipients[certificateId] = publicKey;
 }
 
 void VirgilCipherBase::removeKeyRecipient(const VirgilByteArray& certificateId) {
-    keyRecipients_.erase(certificateId);
+    impl_->keyRecipients.erase(certificateId);
 }
 
 void VirgilCipherBase::addPasswordRecipient(const VirgilByteArray& pwd) {
     if (pwd.empty()) {
         throw VirgilException("VirgilCipherBase: Parameter 'pwd' is not specified.");
     }
-    passwordRecipients_.insert(pwd);
+    impl_->passwordRecipients.insert(pwd);
 }
 
 void VirgilCipherBase::removePasswordRecipient(const VirgilByteArray& pwd) {
-    passwordRecipients_.erase(pwd);
+    impl_->passwordRecipients.erase(pwd);
 }
 
 void VirgilCipherBase::removeAllRecipients() {
-    keyRecipients_.clear();
-    passwordRecipients_.clear();
+    impl_->keyRecipients.clear();
+    impl_->passwordRecipients.clear();
 }
 
 VirgilByteArray VirgilCipherBase::getContentInfo() const {
-    return contentInfo_.toAsn1();
+    return impl_->contentInfo.toAsn1();
 }
 
 void VirgilCipherBase::setContentInfo(const VirgilByteArray& contentInfo) {
-    contentInfo_.fromAsn1(contentInfo);
-    if (contentInfo_.cmsContent.contentType == crypto::cms::VirgilCMSContentType_EnvelopedData) {
-        envelopedData_.fromAsn1(contentInfo_.cmsContent.content);
+    impl_->contentInfo.fromAsn1(contentInfo);
+    if (impl_->contentInfo.cmsContent.contentType == crypto::cms::VirgilCMSContentType_EnvelopedData) {
+        impl_->envelopedData.fromAsn1(impl_->contentInfo.cmsContent.content);
     } else {
         throw VirgilException("VirgilCipherBase: Unsupported content info type was given.");
     }
 }
 
 VirgilCustomParams& VirgilCipherBase::customParams() {
-    return contentInfo_.customParams;
+    return impl_->contentInfo.customParams;
 }
 
 const VirgilCustomParams& VirgilCipherBase::customParams() const {
-    return contentInfo_.customParams;
+    return impl_->contentInfo.customParams;
 }
 
 VirgilByteArray VirgilCipherBase::tryReadContentInfo(const VirgilByteArray& encryptedData) {
@@ -148,15 +176,15 @@ VirgilByteArray VirgilCipherBase::tryReadContentInfo(const VirgilByteArray& encr
 }
 
 VirgilSymmetricCipher& VirgilCipherBase::initEncryption() {
-    symmetricCipher_ = VirgilSymmetricCipher::aes256();
-    symmetricCipherKey_ = random_.randomize(symmetricCipher_.keyLength());
-    VirgilByteArray symmetricCipherIV = random_.randomize(symmetricCipher_.ivSize());
-    symmetricCipher_.setEncryptionKey(symmetricCipherKey_);
-    symmetricCipher_.setIV(symmetricCipherIV);
-    symmetricCipher_.setPadding(kSymmetricCipher_Padding);
-    symmetricCipher_.reset();
+    impl_->symmetricCipher = VirgilSymmetricCipher::aes256();
+    impl_->symmetricCipherKey = impl_->random.randomize(impl_->symmetricCipher.keyLength());
+    VirgilByteArray symmetricCipherIV = impl_->random.randomize(impl_->symmetricCipher.ivSize());
+    impl_->symmetricCipher.setEncryptionKey(impl_->symmetricCipherKey);
+    impl_->symmetricCipher.setIV(symmetricCipherIV);
+    impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    impl_->symmetricCipher.reset();
 
-    return symmetricCipher_;
+    return impl_->symmetricCipher;
 }
 
 static VirgilByteArray decryptContentEncryptionKey(
@@ -191,35 +219,35 @@ static VirgilByteArray decryptContentEncryptionKey(
 
 VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithPassword(const VirgilByteArray& pwd) {
     VirgilByteArray contentEncryptionKey =
-            decryptContentEncryptionKey(envelopedData_.passwordRecipients, pwd);
-    symmetricCipher_ = VirgilSymmetricCipher();
-    symmetricCipher_.fromAsn1(envelopedData_.encryptedContent.contentEncryptionAlgorithm);
-    symmetricCipher_.setDecryptionKey(contentEncryptionKey);
-    symmetricCipher_.setPadding(kSymmetricCipher_Padding);
-    symmetricCipher_.reset();
-    return symmetricCipher_;
+            decryptContentEncryptionKey(impl_->envelopedData.passwordRecipients, pwd);
+    impl_->symmetricCipher = VirgilSymmetricCipher();
+    impl_->symmetricCipher.fromAsn1(impl_->envelopedData.encryptedContent.contentEncryptionAlgorithm);
+    impl_->symmetricCipher.setDecryptionKey(contentEncryptionKey);
+    impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    impl_->symmetricCipher.reset();
+    return impl_->symmetricCipher;
 }
 
 VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithKey(const VirgilByteArray& certificateId,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
 
     VirgilByteArray contentEncryptionKey =
-            decryptContentEncryptionKey(envelopedData_.keyTransRecipients, certificateId, privateKey, privateKeyPassword);
-    symmetricCipher_ = VirgilSymmetricCipher();
-    symmetricCipher_.fromAsn1(envelopedData_.encryptedContent.contentEncryptionAlgorithm);
-    symmetricCipher_.setDecryptionKey(contentEncryptionKey);
-    symmetricCipher_.setPadding(kSymmetricCipher_Padding);
-    symmetricCipher_.reset();
-    return symmetricCipher_;
+            decryptContentEncryptionKey(impl_->envelopedData.keyTransRecipients, certificateId, privateKey, privateKeyPassword);
+    impl_->symmetricCipher = VirgilSymmetricCipher();
+    impl_->symmetricCipher.fromAsn1(impl_->envelopedData.encryptedContent.contentEncryptionAlgorithm);
+    impl_->symmetricCipher.setDecryptionKey(contentEncryptionKey);
+    impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    impl_->symmetricCipher.reset();
+    return impl_->symmetricCipher;
 }
 
 void VirgilCipherBase::buildContentInfo() {
     // Remove stale recipients.
-    envelopedData_.keyTransRecipients.clear();
-    envelopedData_.passwordRecipients.clear();
+    impl_->envelopedData.keyTransRecipients.clear();
+    impl_->envelopedData.passwordRecipients.clear();
     // Add KeyTransRecipient's
-    for (KeyRecipientsType::const_iterator it = keyRecipients_.begin();
-            it != keyRecipients_.end(); ++it) {
+    for (std::map<VirgilByteArray, VirgilByteArray>::const_iterator it = impl_->keyRecipients.begin();
+            it != impl_->keyRecipients.end(); ++it) {
         const VirgilByteArray& certificateId = it->first;
         const VirgilByteArray& publicKey = it->second;
 
@@ -228,39 +256,39 @@ void VirgilCipherBase::buildContentInfo() {
 
         VirgilCMSKeyTransRecipient recipient;
         recipient.recipientIdentifier = certificateId;
-        recipient.encryptedKey = asymmetricCipher.encrypt(symmetricCipherKey_);
+        recipient.encryptedKey = asymmetricCipher.encrypt(impl_->symmetricCipherKey);
         recipient.keyEncryptionAlgorithm = asymmetricCipher.toAsn1();
 
-        envelopedData_.keyTransRecipients.push_back(recipient);
+        impl_->envelopedData.keyTransRecipients.push_back(recipient);
     }
     // Add PasswordRecipient's
-    for (PasswordRecipientsType::const_iterator it = passwordRecipients_.begin();
-            it != passwordRecipients_.end(); ++it) {
+    for (std::set<VirgilByteArray>::const_iterator it = impl_->passwordRecipients.begin();
+            it != impl_->passwordRecipients.end(); ++it) {
         const VirgilByteArray& password = *it;
 
-        const VirgilByteArray salt = random_.randomize(16);
+        const VirgilByteArray salt = impl_->random.randomize(16);
         const size_t iterationCount = 2048;
 
         VirgilPBE pbe = VirgilPBE::pkcs12(salt, iterationCount);
 
         VirgilCMSPasswordRecipient recipient;
         recipient.keyEncryptionAlgorithm = pbe.toAsn1();
-        recipient.encryptedKey = pbe.encrypt(symmetricCipherKey_, password);
-        envelopedData_.passwordRecipients.push_back(recipient);
+        recipient.encryptedKey = pbe.encrypt(impl_->symmetricCipherKey, password);
+        impl_->envelopedData.passwordRecipients.push_back(recipient);
     }
     // Add information about content encryption algorithm.
-    envelopedData_.encryptedContent.contentEncryptionAlgorithm = symmetricCipher_.toAsn1();
-    envelopedData_.encryptedContent.encryptedContent.clear();
+    impl_->envelopedData.encryptedContent.contentEncryptionAlgorithm = impl_->symmetricCipher.toAsn1();
+    impl_->envelopedData.encryptedContent.encryptedContent.clear();
     // Define content info
-    contentInfo_.cmsContent.contentType = crypto::cms::VirgilCMSContentType_EnvelopedData;
-    contentInfo_.cmsContent.content = envelopedData_.toAsn1();
+    impl_->contentInfo.cmsContent.contentType = crypto::cms::VirgilCMSContentType_EnvelopedData;
+    impl_->contentInfo.cmsContent.content = impl_->envelopedData.toAsn1();
 }
 
 void VirgilCipherBase::clearCipherInfo() {
-    symmetricCipher_.clear();
-    virgil::bytes_zeroize(symmetricCipherKey_);
+    impl_->symmetricCipher.clear();
+    virgil::bytes_zeroize(impl_->symmetricCipherKey);
 }
 
 VirgilSymmetricCipher& VirgilCipherBase::getSymmetricCipher() {
-    return symmetricCipher_;
+    return impl_->symmetricCipher;
 }

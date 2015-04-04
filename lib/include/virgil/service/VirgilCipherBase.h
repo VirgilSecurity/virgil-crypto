@@ -40,26 +40,26 @@
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/crypto/VirgilRandom.h>
-using virgil::crypto::VirgilRandom;
-
-#include <virgil/crypto/VirgilSymmetricCipher.h>
-using virgil::crypto::VirgilSymmetricCipher;
-
-#include <virgil/service/data/VirgilKeyPair.h>
-using virgil::service::data::VirgilKeyPair;
-
-#include <virgil/crypto/VirgilContentInfo.h>
-using virgil::crypto::VirgilContentInfo;
-
 #include <virgil/crypto/VirgilCustomParams.h>
 using virgil::crypto::VirgilCustomParams;
 
-#include <virgil/crypto/cms/VirgilCMSEnvelopedData.h>
-using virgil::crypto::cms::VirgilCMSEnvelopedData;
-
 #include <map>
 #include <set>
+
+/**
+ * @name Forward declaration
+ */
+/// @{
+namespace virgil {
+    namespace service {
+        class VirgilCipherBaseImpl;
+    }
+    namespace crypto {
+        class VirgilSymmetricCipher;
+    }
+}
+using virgil::crypto::VirgilSymmetricCipher;
+/// @}
 
 namespace virgil { namespace service {
 
@@ -201,16 +201,10 @@ protected:
       */
     void clearCipherInfo();
 private:
-    typedef std::map<VirgilByteArray, VirgilByteArray> KeyRecipientsType; /**< certificate id -> public key */
-    typedef std::set<VirgilByteArray> PasswordRecipientsType; /**< passwords */
+    VirgilCipherBase(const VirgilCipherBase& other);
+    VirgilCipherBase& operator=(const VirgilCipherBase& rhs);
 private:
-    VirgilRandom random_;
-    VirgilSymmetricCipher symmetricCipher_;
-    VirgilByteArray symmetricCipherKey_;
-    VirgilContentInfo contentInfo_;
-    VirgilCMSEnvelopedData envelopedData_;
-    KeyRecipientsType keyRecipients_;
-    PasswordRecipientsType passwordRecipients_;
+    VirgilCipherBaseImpl *impl_;
 };
 
 }}

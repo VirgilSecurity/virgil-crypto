@@ -34,17 +34,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-file (GLOB STALE_DATA_FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/*.der"
-    "${CMAKE_CURRENT_BINARY_DIR}/*.pem"
-    "${CMAKE_CURRENT_BINARY_DIR}/*.json"
-)
-if (STALE_DATA_FILES)
-    file (REMOVE ${STALE_DATA_FILES})
+if (LOW_LEVEL_API)
+    install (DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION "${VIRGIL_LIB_INSTALL_DIR}"
+        FILES_MATCHING
+        PATTERN "*.h"
+    )
+else ()
+    install (DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} DESTINATION "${VIRGIL_LIB_INSTALL_DIR}"
+        FILES_MATCHING
+        PATTERN "*.h"
+        PATTERN "cms" EXCLUDE
+        PATTERN "VirgilOID.h" EXCLUDE
+        PATTERN "VirgilAsn1Reader.h" EXCLUDE
+        PATTERN "VirgilAsn1Writer.h" EXCLUDE
+        PATTERN "VirgilAsn1Writer.h" EXCLUDE
+        PATTERN "VirgilKDF.h" EXCLUDE
+        PATTERN "PolarsslException.h" EXCLUDE
+        PATTERN "VirgilKeyPairGenerator.h" EXCLUDE
+        PATTERN "VirgilSymmetricCipher.h" EXCLUDE
+        PATTERN "VirgilAsymmetricCipher.h" EXCLUDE
+        PATTERN "VirgilRandom.h" EXCLUDE
+        PATTERN "VirgilPBE.h" EXCLUDE
+        PATTERN "VirgilContentInfo.h" EXCLUDE
+    )
 endif ()
 
-file (GLOB DATA_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.der" "*.pem" "*.json")
-
-foreach (FILE ${DATA_FILES})
-    configure_file (${FILE} ${CMAKE_CURRENT_BINARY_DIR}/${FILE} COPYONLY)
-endforeach (FILE)
+install (DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} DESTINATION "${VIRGIL_LIB_INSTALL_DIR}"
+    FILES_MATCHING
+    PATTERN "*.h"
+    PATTERN "CMakeFiles" EXCLUDE
+)

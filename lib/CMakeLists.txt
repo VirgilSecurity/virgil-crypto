@@ -88,13 +88,5 @@ if (PLATFORM_NAME_LOWER STREQUAL "cpp" OR (PLATFORM_EMBEDDED AND NOT(PLATFORM_NA
     install (FILES ${JSONCPP_LIBRARY}
             DESTINATION "${VIRGIL_LIB_INSTALL_DIR}/${INSTALL_LIB_DIR_NAME}")
 
-    install (DIRECTORY
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        DESTINATION "${VIRGIL_LIB_INSTALL_DIR}"
-        PATTERN "*.in" EXCLUDE
-    )
-    install (DIRECTORY
-        ${CMAKE_CURRENT_BINARY_DIR}/include
-        DESTINATION "${VIRGIL_LIB_INSTALL_DIR}"
-    )
+    add_subdirectory (include)
 endif ()

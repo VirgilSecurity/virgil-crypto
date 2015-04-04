@@ -37,6 +37,7 @@
 #
 # Configurable variables:
 #     - PLATFORM_NAME - name of target platform and/or language.
+#     - LOW_LEVEL_API - boolean value that defines whether to include low-level API or not.
 #     - BUILD_CPP_PROGRAMS - boolean value that defines whether build C++ programs or not.
 #
 #     - INSTALL_LIB_DIR_NAME - name of the directory where libraries will be installed.
@@ -100,9 +101,11 @@ message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 # Set configurable platform
 set (PLATFORM_NAME "CPP" CACHE STRING "Select target platform / language")
 set_property (CACHE PLATFORM_NAME PROPERTY STRINGS "CPP" "CSHARP" "AS3" "JS" "PHP")
-set (BUILD_CPP_PROGRAMS OFF CACHE BOOL "Defines whether build C++ programs or not")
 string (TOLOWER "${PLATFORM_NAME}" PLATFORM_NAME_LOWER)
 message (STATUS "Selected platform and/or language is: " ${PLATFORM_NAME})
+
+set (LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API or not")
+set (BUILD_CPP_PROGRAMS OFF CACHE BOOL "Defines whether build C++ programs or not")
 
 # Set configurable path variables
 set (INSTALL_LIB_DIR_NAME lib CACHE STRING "Installation directory name for libraries")

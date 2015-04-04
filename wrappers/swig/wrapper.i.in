@@ -39,16 +39,17 @@
 
 // Wrapper configuration section
 #cmakedefine SWIG_WRAP_NAMESPACE
-#cmakedefine SWIG_WRAP_LOW_LEVEL_API
 #cmakedefine SWIG_WRAP_COPY_CONSTRUCTOR
+
+#cmakedefine LOW_LEVEL_API
 
 %insert ("begin") %{
 #include <cstddef>
 %}
 
-#if defined(SWIG_WRAP_LOW_LEVEL_API)
+#if defined(LOW_LEVEL_API)
 %insert ("header") %{
-#define SWIG_WRAP_LOW_LEVEL_API
+#define LOW_LEVEL_API
 %}
 #endif
 
@@ -83,35 +84,49 @@ INCLUDE_CLASS(VirgilVersion, virgil, virgil)
 %ignore *::asn1Read;
 %ignore *::jsonWrite;
 %ignore *::jsonRead;
-INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto::asn1, virgil/crypto/asn1)
-INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto::asn1, virgil/crypto/asn1)
+#if defined(LOW_LEVEL_API)
+    INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto::asn1, virgil/crypto/asn1)
+    INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto::asn1, virgil/crypto/asn1)
+#else
+    %ignore VirgilAsn1Reader;
+    %ignore VirgilAsn1Writer;
+#endif /* LOW_LEVEL_API */
 INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::asn1, virgil/crypto/asn1)
 
 // Package: virgil::crypto::cms
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSKeyTransRecipient, virgil::crypto::cms, virgil/crypto/cms)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSPasswordRecipient, virgil::crypto::cms, virgil/crypto/cms)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEncryptedContent, virgil::crypto::cms, virgil/crypto/cms)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEnvelopedData, virgil::crypto::cms, virgil/crypto/cms)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSContent, virgil::crypto::cms, virgil/crypto/cms)
+#if defined(LOW_LEVEL_API)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSKeyTransRecipient, virgil::crypto::cms, virgil/crypto/cms)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSPasswordRecipient, virgil::crypto::cms, virgil/crypto/cms)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEncryptedContent, virgil::crypto::cms, virgil/crypto/cms)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEnvelopedData, virgil::crypto::cms, virgil/crypto/cms)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSContent, virgil::crypto::cms, virgil/crypto/cms)
+#else
+    %ignore VirgilCMSKeyTransRecipient;
+    %ignore VirgilCMSPasswordRecipient;
+    %ignore VirgilCMSEncryptedContent;
+    %ignore VirgilCMSEnvelopedData;
+    %ignore VirgilCMSContent;
+#endif /* LOW_LEVEL_API */
+
 
 // Package: virgil::crypto
-#if defined(SWIG_WRAP_LOW_LEVEL_API)
-DEFINE_NAMESPACE(VirgilSymmetricCipherPadding, virgil::crypto)
-DEFINE_NAMESPACE(ECKeyGroup, virgil::crypto)
-DEFINE_NAMESPACE(VirgilKeyPairType, virgil::crypto)
+#if defined(LOW_LEVEL_API)
+    DEFINE_NAMESPACE(VirgilSymmetricCipherPadding, virgil::crypto)
+    DEFINE_NAMESPACE(ECKeyGroup, virgil::crypto)
+    DEFINE_NAMESPACE(VirgilKeyPairType, virgil::crypto)
 
-INCLUDE_CLASS(VirgilKDF, virgil::crypto, virgil/crypto)
+    INCLUDE_CLASS(VirgilKDF, virgil::crypto, virgil/crypto)
+    INCLUDE_CLASS(VirgilKeyPairGenerator, virgil::crypto, virgil/crypto)
+    INCLUDE_CLASS(VirgilSymmetricCipher, virgil::crypto, virgil/crypto)
+    INCLUDE_CLASS(VirgilAsymmetricCipher, virgil::crypto, virgil/crypto)
+    INCLUDE_CLASS(VirgilRandom, virgil::crypto, virgil/crypto)
+    INCLUDE_CLASS(VirgilPBE, virgil::crypto, virgil/crypto)
+    INCLUDE_CLASS(VirgilContentInfo, virgil::crypto, virgil/crypto)
+#endif /* defined(LOW_LEVEL_API) */
 INCLUDE_CLASS(VirgilCryptoException, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilHash, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilBase64, virgil::crypto, virgil/crypto)
-INCLUDE_CLASS(VirgilKeyPairGenerator, virgil::crypto, virgil/crypto)
-INCLUDE_CLASS(VirgilSymmetricCipher, virgil::crypto, virgil/crypto)
-INCLUDE_CLASS(VirgilAsymmetricCipher, virgil::crypto, virgil/crypto)
-#endif /* defined(SWIG_WRAP_LOW_LEVEL_API) */
-INCLUDE_CLASS(VirgilRandom, virgil::crypto, virgil/crypto)
-INCLUDE_CLASS(VirgilPBE, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilCustomParams, virgil::crypto, virgil/crypto)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilContentInfo, virgil::crypto, virgil/crypto)
 
 // Package: virgil::service::data
 INCLUDE_CLASS(VirgilJsonCompatible, virgil::service::data, virgil/service/data)

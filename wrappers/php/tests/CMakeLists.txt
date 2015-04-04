@@ -37,25 +37,17 @@
 # Input:
 #     PHP_MODULE_FILE_NAME - PHP file name of the module under test.
 
-set (TEST_FILE_LIST
+set (TEST_FILES
     VirgilHash_MD5_Test.php
     VirgilHash_SHA256_Test.php
     VirgilHash_SHA512_Test.php
-    VirgilSymmetricCipher_AES256_CBC_Test.php
-    VirgilAsymmetricCipher_EC_Test.php
-    VirgilAsymmetricCipher_RSA_Test.php
     VirgilCipher_Test.php
     VirgilStreamCipher_Test.php
     VirgilChunkCipher_Test.php
     VirgilStreamSigner_Test.php
     VirgilSigner_Test.php
-    VirgilAsn1Reader_Test.php
-    VirgilAsn1Writer_Test.php
-    VirgilRandom_Test.php
-    VirgilPBE_Test.php
     VirgilVersion_Test.php
     VirgilCustomParams_Test.php
-    VirgilKDF_Test.php
     VirgilId_Test.php
     VirgilAsn1Compatible_Test.php
     VirgilJsonCompatible_Test.php
@@ -64,14 +56,33 @@ set (TEST_FILE_LIST
     StringSink.php
 )
 
+if (LOW_LEVEL_API)
+    list (APPEND TEST_FILES
+        VirgilSymmetricCipher_AES256_CBC_Test.php
+        VirgilAsymmetricCipher_EC_Test.php
+        VirgilAsymmetricCipher_RSA_Test.php
+        VirgilAsn1Reader_Test.php
+        VirgilAsn1Writer_Test.php
+        VirgilRandom_Test.php
+        VirgilPBE_Test.php
+        VirgilKDF_Test.php
+    )
+endif (LOW_LEVEL_API)
+
 add_subdirectory (data)
 
-foreach (TEST_FILE ${TEST_FILE_LIST})
+file (GLOB STALE_TEST_FILES "${CMAKE_CURRENT_BINARY_DIR}/*.php")
+if (STALE_TEST_FILES)
+    file (REMOVE ${STALE_TEST_FILES})
+endif ()
+
+foreach (TEST_FILE ${TEST_FILES})
     configure_file (
         ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_FILE}.in
         ${CMAKE_CURRENT_BINARY_DIR}/${TEST_FILE}
         @ONLY
     )
+    list (APPEND PHP_ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/${TEST_FILE}")
 endforeach (TEST_FILE)
 
 find_program (PHP_MODULE php)

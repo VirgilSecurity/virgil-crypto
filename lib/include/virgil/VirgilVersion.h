@@ -40,18 +40,6 @@
 #include <cstddef>
 #include <string>
 
-/**
- * The version number x.y.z is split into three parts.
- * Major, Minor, Patch
- */
-enum {
-    VIRGIL_VERSION_MAJOR = @VIRGIL_VERSION_MAJOR@,
-    VIRGIL_VERSION_MINOR = @VIRGIL_VERSION_MINOR@,
-    VIRGIL_VERSION_PATCH = @VIRGIL_VERSION_PATCH@
-};
-
-static const char *VIRGIL_VERSION = "@VIRGIL_VERSION@";
-
 namespace virgil {
 
 /**
@@ -80,7 +68,6 @@ public:
      * Return the minor version number.
      */
     static size_t patchVersion();
-
 };
 
 }

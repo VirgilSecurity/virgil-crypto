@@ -43,12 +43,6 @@ include (ExternalProject)
 include (${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/mbedtls_ext.cmake)
 include (${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp/jsoncpp_ext.cmake)
 
-# Configure includes
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/VirgilVersion.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/include/virgil/VirgilVersion.h
-)
-
 set (LIB_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/include")
 include_directories (${LIB_INCLUDE_DIRS})
 if (CMAKE_MAJOR_VERSION LESS 3)
@@ -58,12 +52,23 @@ endif (CMAKE_MAJOR_VERSION LESS 3)
 
 
 # Define sources list
-file (GLOB src "src/*")
+aux_source_directory ("src" src)
 if (PLATFORM_NAME_LOWER STREQUAL "cpp")
-    file (GLOB platform_src "src/platform/*")
+    aux_source_directory ("src/platform" platform_src)
     list (APPEND src ${platform_src})
 endif()
 
+foreach (src_file ${src})
+    configure_file (
+        "${CMAKE_CURRENT_SOURCE_DIR}/${src_file}"
+        "${CMAKE_CURRENT_BINARY_DIR}/${src_file}"
+        @ONLY
+    )
+endforeach ()
+
+aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src src)
+
+# Build
 add_library (${PROJECT_NAME} STATIC ${src})
 set_property (TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME ${PROJECT_NAME})
 set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
@@ -78,8 +83,8 @@ add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
             ${EXTERNAL_LIBS_DIR}/$<TARGET_FILE_NAME:${PROJECT_NAME}>
 )
 
+# Install
 set (VIRGIL_LIB_INSTALL_DIR ${PLATFORM_NAME_LOWER})
-
 if (INSTALL_CORE_LIB)
     install (TARGETS ${PROJECT_NAME}
             ARCHIVE DESTINATION "${VIRGIL_LIB_INSTALL_DIR}/${INSTALL_LIB_DIR_NAME}/${INSTALL_ARCH_DIR_NAME}")

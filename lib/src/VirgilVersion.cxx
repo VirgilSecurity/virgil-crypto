@@ -9,17 +9,17 @@ size_t VirgilVersion::asNumber() {
 }
 
 std::string VirgilVersion::asString() {
-    return std::string(VIRGIL_VERSION);
+    return std::string("@VIRGIL_VERSION@");
 }
 
 size_t VirgilVersion::majorVersion() {
-    return VIRGIL_VERSION_MAJOR;
+    return @VIRGIL_VERSION_MAJOR@;
 }
 
 size_t VirgilVersion::minorVersion() {
-    return VIRGIL_VERSION_MINOR;
+    return @VIRGIL_VERSION_MINOR@;
 }
 
 size_t VirgilVersion::patchVersion() {
-    return VIRGIL_VERSION_PATCH;
+    return @VIRGIL_VERSION_PATCH@;
 }

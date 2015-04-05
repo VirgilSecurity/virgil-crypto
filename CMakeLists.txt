@@ -36,23 +36,24 @@
 
 #
 # Configurable variables:
-#     - PLATFORM_NAME - name of target platform and/or language.
-#     - LOW_LEVEL_API - boolean value that defines whether to include low-level API or not.
+#     - PLATFORM_NAME      - name of target platform and/or language.
+#     - LOW_LEVEL_API      - boolean value that defines whether to include low-level API or not.
 #     - BUILD_CPP_PROGRAMS - boolean value that defines whether build C++ programs or not.
+#     - INSTALL_CORE_LIB   - boolean value that defines whether install core library and it's dependencies or not,
+#                            if this value is NO or undefined - only wrapped library will be installed.
 #
-#     - INSTALL_LIB_DIR_NAME - name of the directory where libraries will be installed.
-#     - INSTALL_BIN_DIR_NAME - name of the directory where binaries will be installed.
-#     - INSTALL_API_DIR_NAME - name of the directory where API source files will be installed.
-#     - INSTALL_X86_DIR_NAME - name of the directory where 32-bit libraries and binaries will be installed.
-#     - INSTALL_X64_DIR_NAME - name of the directory where 64-bit libraries and binaries will be installed.
+#     - INSTALL_LIB_DIR_NAME  - name of the directory where libraries will be installed.
+#     - INSTALL_BIN_DIR_NAME  - name of the directory where binaries will be installed.
+#     - INSTALL_API_DIR_NAME  - name of the directory where API source files will be installed.
+#     - INSTALL_X86_DIR_NAME  - name of the directory where 32-bit libraries and binaries will be installed.
+#     - INSTALL_X64_DIR_NAME  - name of the directory where 64-bit libraries and binaries will be installed.
 #
 # Define variables:
-#     - PLATFORM_NAME_LOWER - lowercase(PLATFORM_NAME).
+#     - PLATFORM_NAME_LOWER   - lowercase(PLATFORM_NAME).
+#     - POINTER_SIZE          - compiler pointer size.
+#     - INSTALL_ARCH_DIR_NAME - INSTALL_X86_DIR_NAME or INSTALL_X64_DIR_NAME or empty.
 #
-#     - COMPILER_ARCH_32 - boolean value that defines whether compiler build in 32-bit mode or not.
-#     - COMPILER_ARCH_64 - boolean value that defines whether compiler build in 64-bit mode or not.
-#
-#     - VIRGIL_VERSION - library full version.
+#     - VIRGIL_VERSION       - library full version.
 #     - VIRGIL_VERSION_MAJOR - library major version number.
 #     - VIRGIL_VERSION_MINOR - library minor version number.
 #     - VIRGIL_VERSION_PATCH - library patch number.
@@ -76,16 +77,6 @@ else ()
     message (STATUS "Compiler pointer size: UNDEFINED")
 endif ()
 
-if (POINTER_SIZE)
-    if (POINTER_SIZE EQUAL 4)
-        set (COMPILER_ARCH_32 TRUE)
-        set (COMPILER_ARCH_64 FALSE)
-    elseif (POINTER_SIZE EQUAL 8)
-        set (COMPILER_ARCH_32 FALSE)
-        set (COMPILER_ARCH_64 TRUE)
-    endif ()
-endif (POINTER_SIZE)
-
 # Configure testing
 enable_testing ()
 
@@ -98,33 +89,62 @@ set (VIRGIL_SOVERSION 1)
 message (STATUS "Virgil version: " ${VIRGIL_VERSION})
 message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 
-# Set configurable platform
-set (PLATFORM_NAME "CPP" CACHE STRING "Select target platform / language")
-set_property (CACHE PLATFORM_NAME PROPERTY STRINGS "CPP" "CSHARP" "AS3" "JS" "PHP")
+# Configure platform
+if (CMAKE_CROSSCOMPILING AND NOT PLATFORM_NAME)
+    set (PLATFORM_NAME ${CMAKE_SYSTEM_NAME} CACHE STRING "Target platform / language")
+else ()
+    set (PLATFORM_NAME "CPP" CACHE STRING "Target platform / language")
+    set_property (CACHE PLATFORM_NAME PROPERTY STRINGS "CPP" "CSHARP" "AS3" "JS" "PHP")
+endif ()
 string (TOLOWER "${PLATFORM_NAME}" PLATFORM_NAME_LOWER)
 message (STATUS "Selected platform and/or language is: " ${PLATFORM_NAME})
 
 set (LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API or not")
 set (BUILD_CPP_PROGRAMS OFF CACHE BOOL "Defines whether build C++ programs or not")
 
-# Set configurable path variables
+# Platform dependent configuration
+if (NOT CMAKE_CROSSCOMPILING AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    if (NOT CMAKE_OSX_ARCHITECTURES)
+        set (CMAKE_OSX_ARCHITECTURES x86_64 i386)
+    endif ()
+    message (STATUS "OS X architectures: ${CMAKE_OSX_ARCHITECTURES}")
+endif ()
+
+# Configure path variables
 set (INSTALL_LIB_DIR_NAME lib CACHE STRING "Installation directory name for libraries")
 set (INSTALL_BIN_DIR_NAME bin CACHE STRING "Installation directory name for executables")
 set (INSTALL_API_DIR_NAME api CACHE STRING "Installation directory name for interface files")
 set (INSTALL_X86_DIR_NAME x86 CACHE STRING "Installation directory name for 32-bit libraries and binaries")
 set (INSTALL_X64_DIR_NAME x64 CACHE STRING "Installation directory name for 64-bit libraries and binaries")
 
-# Set interbnal path variables
+set (INSTALL_ARCH_DIR_NAME "")
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND CMAKE_OSX_ARCHITECTURES)
+    if (CMAKE_OSX_ARCHITECTURES STREQUAL "i386")
+        set (INSTALL_ARCH_DIR_NAME ${INSTALL_X86_DIR_NAME})
+    elseif (CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
+        set (INSTALL_ARCH_DIR_NAME ${INSTALL_X64_DIR_NAME})
+    endif ()
+else ()
+    if (POINTER_SIZE EQUAL 4)
+        set (INSTALL_ARCH_DIR_NAME ${INSTALL_X86_DIR_NAME})
+    elseif (POINTER_SIZE EQUAL 8)
+        set (INSTALL_ARCH_DIR_NAME ${INSTALL_X64_DIR_NAME})
+    endif ()
+endif ()
+
+# Configure internal path variables
 set (EXTERNAL_LIBS_DIR "${CMAKE_CURRENT_BINARY_DIR}/libs" CACHE INTERNAL
         "Path to the folder where all libs MUST be located after build")
 
-# Platform dependent configuration
-if (NOT PLATFORM_EMBEDDED AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    if (NOT CMAKE_OSX_ARCHITECTURES)
-        set (CMAKE_OSX_ARCHITECTURES x86_64 i386)
-    endif ()
-    message (STATUS "OS X architectures: ${CMAKE_OSX_ARCHITECTURES}")
+# Configure submodules installation
+set (INSTALL_CORE_LIB_TMP OFF)
+if ((PLATFORM_NAME_LOWER STREQUAL "cpp") OR
+        (PLATFORM_NAME_LOWER STREQUAL "pnacl") OR
+        (PLATFORM_NAME_LOWER STREQUAL "ios"))
+    set (INSTALL_CORE_LIB_TMP ON)
 endif ()
+set (INSTALL_CORE_LIB ${INSTALL_CORE_LIB_TMP} CACHE BOOL
+        "defines whether install core library and it's dependencies or not")
 
 # Build submodules
 add_subdirectory (lib)

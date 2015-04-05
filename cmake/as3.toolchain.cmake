@@ -36,12 +36,10 @@
 
 include (CMakeForceCompiler)
 
-set (AS3                         ON)
-set (PLATFORM_EMBEDDED           ON)
-set (PLATFORM_NAME               "AS3" CACHE STRING "")
+set (PLATFORM_NAME               "AS3" CACHE STRING "Platform name")
 set (PLATFORM_PREFIX             "$ENV{CROSSBRIDGE_HOME}/sdk")
 
-set (CMAKE_SYSTEM_NAME           "Linux" CACHE STRING "Target system.")
+set (CMAKE_SYSTEM_NAME           "Generic" CACHE STRING "Target system.")
 set (CMAKE_SYSTEM_PROCESSOR      "LLVM-IR" CACHE STRING "Target processor.")
 set (CMAKE_FIND_ROOT_PATH        "${PLATFORM_PREFIX};${PLATFORM_PREFIX}/usr;${PLATFORM_PREFIX}/usr/lib")
 set (CMAKE_AR                    "${PLATFORM_PREFIX}/usr/bin/ar" CACHE STRING "")

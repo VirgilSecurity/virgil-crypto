@@ -30,13 +30,13 @@
 #  Thanks to the android-cmake project for providing the command
 
 # Standard settings
+set (PLATFORM_NAME "iOS" CACHE STRING "Platform name")
+
 set (CMAKE_SYSTEM_NAME Darwin)
 set (CMAKE_SYSTEM_VERSION 1)
 set (UNIX True)
 set (APPLE True)
 set (IOS True)
-set (PLATFORM_EMBEDDED ON)
-set (PLATFORM_NAME "iOS" CACHE STRING "")
 
 # Required as of cmake 2.8.10
 set (CMAKE_OSX_DEPLOYMENT_TARGET "" CACHE STRING "Force unset of the deployment target for iOS" FORCE)

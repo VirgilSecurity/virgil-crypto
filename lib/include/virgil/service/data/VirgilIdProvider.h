@@ -48,6 +48,8 @@ namespace virgil { namespace service { namespace data {
 template <typename ID>
 class VirgilIdProvider : public VirgilJsonCompatible {
 public:
+    typedef ID value_type;
+public:
     /**
      * @name Accessors
      */

@@ -71,7 +71,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-     virtual ~VirgilAsn1Compatible() throw() {}
+    virtual ~VirgilAsn1Compatible() throw() {}
     /**
      * @brief Write object state to the writer.
      * @param asn1Writer writer that should be payloaded by subclasses.

@@ -58,9 +58,3 @@ else ()
         PATTERN "VirgilContentInfo.h" EXCLUDE
     )
 endif ()
-
-install (DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} DESTINATION "${VIRGIL_LIB_INSTALL_DIR}"
-    FILES_MATCHING
-    PATTERN "*.h"
-    PATTERN "CMakeFiles" EXCLUDE
-)

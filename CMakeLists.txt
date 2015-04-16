@@ -42,6 +42,7 @@
 #     - INSTALL_CORE_LIB   - boolean value that defines whether install core library and it's dependencies or not,
 #                            if this value is NO or undefined - only wrapped library will be installed.
 #
+#     - INSTALL_DIR_NAME      - name of the root directory where all components will be installed.
 #     - INSTALL_LIB_DIR_NAME  - name of the directory where libraries will be installed.
 #     - INSTALL_BIN_DIR_NAME  - name of the directory where binaries will be installed.
 #     - INSTALL_API_DIR_NAME  - name of the directory where API source files will be installed.
@@ -111,6 +112,7 @@ if (NOT CMAKE_CROSSCOMPILING AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif ()
 
 # Configure path variables
+set (INSTALL_DIR_NAME ${PLATFORM_NAME_LOWER} CACHE STRING "Installation directory name for all components")
 set (INSTALL_LIB_DIR_NAME lib CACHE STRING "Installation directory name for libraries")
 set (INSTALL_BIN_DIR_NAME bin CACHE STRING "Installation directory name for executables")
 set (INSTALL_API_DIR_NAME api CACHE STRING "Installation directory name for interface files")
@@ -155,3 +157,6 @@ if (PLATFORM_NAME_LOWER STREQUAL "cpp")
     endif()
 endif ()
 add_subdirectory (wrappers)
+
+# Installation
+install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/VERSION DESTINATION "${INSTALL_DIR_NAME}")

@@ -41,7 +41,6 @@ include (CMakeFindBinUtils)
 project (${WRAPPED_LIB_NAME}_as3)
 
 # Define module name
-set (AS3_INSTALL_DIR as3)
 set (AS3_MODULE_NAME ${PROJECT_NAME})
 set (SWIG_MODULE_NAME ${AS3_MODULE_NAME})
 set (SWIG_MODULE_NAMESPACE com.virgilsecurity.wrapper)
@@ -138,8 +137,7 @@ get_directory_property (SWIG_EXTRA_CLEAN_FILES ADDITIONAL_MAKE_CLEAN_FILES)
 set_directory_properties (PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${WRAPPER_SWC}")
 
 # Install wrapped library
-install (FILES ${WRAPPER_SWC}
-        DESTINATION ${AS3_INSTALL_DIR}/${INSTALL_LIB_DIR_NAME})
+install (FILES ${WRAPPER_SWC} DESTINATION ${INSTALL_DIR_NAME}/${INSTALL_LIB_DIR_NAME})
 
 # Unit tests
 add_subdirectory (tests)

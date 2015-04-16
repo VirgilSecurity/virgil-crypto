@@ -158,4 +158,13 @@ public class VirgilContentInfo {
     }
 }
 
+public class VirgilBase64 {
+    public static function encode(data:ByteArray):String {
+        return _wrap_VirgilBase64_encode(data);
+    }
+    public static function decode(str:String):ByteArray {
+        return _wrap_VirgilBase64_decode(str);
+    }
+}
+
 }

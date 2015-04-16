@@ -54,9 +54,6 @@
 #include "VirgilRandom.wrapper.hpp"
 #include "VirgilKeyPair.wrapper.hpp"
 
-#include "VirgilContentInfo.wrapper.hpp"
-#include "VirgilCustomParams.wrapper.hpp"
-
 #include "VirgilCipherBase.wrapper.hpp"
 #include "VirgilCipher.wrapper.hpp"
 #include "VirgilStreamCipher.wrapper.hpp"
@@ -64,7 +61,10 @@
 #include "VirgilSigner.wrapper.hpp"
 #include "VirgilStreamSigner.wrapper.hpp"
 
+#include "VirgilContentInfo.wrapper.hpp"
+#include "VirgilCustomParams.wrapper.hpp"
 #include "VirgilHash.wrapper.hpp"
+#include "VirgilBase64.wrapper.hpp"
 
 int main() {
     AS3_GoAsync();

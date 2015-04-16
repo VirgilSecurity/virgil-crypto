@@ -44,6 +44,7 @@ import flash.utils.IDataOutput;
 
 import com.virgilsecurity.wrapper.*;
 import com.virgilsecurity.extension.*;
+import com.virgilsecurity.crypto.*;
 
 public class VirgilVersion {
     public static function asString():String {
@@ -338,48 +339,6 @@ public class VirgilKeyPair extends CObject {
     }
     public function privateKey():ByteArray {
         return _wrap_VirgilKeyPair_privateKey(this.cPtr);
-    }
-}
-
-public class VirgilCustomParams extends CObject {
-    public function isEmpty():Boolean {
-        return _wrap_VirgilCustomParameters_isEmpty(this.cPtr);
-    }
-    public function clear():void {
-        return _wrap_VirgilCustomParameters_clear(this.cPtr);
-    }
-    public function setInteger(key:ByteArray, value:int):void {
-        _wrap_VirgilCustomParameters_setInteger(this.cPtr, key, value);
-    }
-    public function getInteger(key:ByteArray):int {
-        return _wrap_VirgilCustomParameters_getInteger(this.cPtr, key);
-    }
-    public function removeInteger(key:ByteArray):void {
-        _wrap_VirgilCustomParameters_removeInteger(this.cPtr, key);
-    }
-    public function setString(key:ByteArray, value:ByteArray):void {
-        _wrap_VirgilCustomParameters_setString(this.cPtr, key, value);
-    }
-    public function getString(key:ByteArray):ByteArray {
-        return _wrap_VirgilCustomParameters_getString(this.cPtr, key);
-    }
-    public function removeString(key:ByteArray):void {
-        _wrap_VirgilCustomParameters_removeString(this.cPtr, key);
-    }
-    public function setData(key:ByteArray, value:ByteArray):void {
-        _wrap_VirgilCustomParameters_setData(this.cPtr, key, value);
-    }
-    public function getData(key:ByteArray):ByteArray {
-        return _wrap_VirgilCustomParameters_getData(this.cPtr, key);
-    }
-    public function removeData(key:ByteArray):void {
-        _wrap_VirgilCustomParameters_removeData(this.cPtr, key);
-    }
-}
-
-public class VirgilContentInfo {
-    public static function defineSize(contentInfo:ByteArray):uint {
-        return _wrap_VirgilContentInfo_defineSize(contentInfo);
     }
 }
 

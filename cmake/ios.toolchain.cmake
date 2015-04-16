@@ -130,6 +130,14 @@ elseif (${IOS_PLATFORM} STREQUAL "SIMULATOR")
 endif (${IOS_PLATFORM} STREQUAL "OS")
 set (CMAKE_OSX_ARCHITECTURES ${IOS_ARCH} CACHE STRING  "Build architecture for iOS")
 
+# set installation folder
+if (${IOS_PLATFORM} STREQUAL "OS")
+    set (INSTALL_LIB_DIR_NAME "lib/device")
+elseif (${IOS_PLATFORM} STREQUAL "SIMULATOR")
+    set (INSTALL_LIB_DIR_NAME "lib/simulator")
+endif (${IOS_PLATFORM} STREQUAL "OS")
+set (INSTALL_LIB_DIR_NAME ${INSTALL_LIB_DIR_NAME} CACHE STRING  "Installation directory name for all components")
+
 # Set the find root to the iOS developer roots and to user defined paths
 set (CMAKE_FIND_ROOT_PATH
     ${CMAKE_IOS_PLATFORM_DEVELOPER_ROOT}

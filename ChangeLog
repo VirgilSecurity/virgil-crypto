@@ -1,5 +1,30 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 0.8.0 released 2015-04-16
+
+Bugfix:
+  * Lib: Store algorithm parameters in ASN.1 structure when marshal cipher with elliptic-curve key.
+  * Programs: Add omitted parameter 'certificate id'.
+
+Features:
+  * AS3: Add class VirgilBase64.
+  * Ruby. Add wrapper for the ruby.
+  * Python. Add wrapper for the python.
+  * Emscripten: Add emscripten(asm.js) wrapper.
+
+Improvements:
+  * Lib: Encapsulate fields of the class VirgilCipherBase.
+  * Lib: Hide usage of classes: VirgilAsn1Reader and VirgilAsn1Writer.
+  * CMake: Remove redundant installation of library headers.
+  * CMake: Add optional flag LOW_LEVEL_API - default value is OFF.
+  * CMake: Remove unused variable - SIMULATOR.
+
+Changes:
+  * AS3: Move classes 'VirgilCustomParams' and 'VirgilContentInfo' to the package 'com.virgilsecurity.crypto'.
+  * Lib: Add member type 'value_type' to the VirgilIdProvider.
+  * Lib: Move version configuration from header file to the implementation file.
+  * CMake: Change library installation policy, now target folder depends on the machine architecture.
+
 = Version 0.7.0 released 2015-03-31
 Bugfix:
   * CMake: Fix CMAKE_OSX_ARCHITECTURES variable default definition.

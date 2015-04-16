@@ -46,20 +46,19 @@ include(CheckCCompilerFlag)
 
 set (MBEDTLS_PROJECT_NAME mbedtls_project)
 
-if (NOT PLATFORM_EMBEDDED)
+if (NOT CMAKE_CROSSCOMPILING)
     # Configure compiler settings
     check_c_compiler_flag (-fPIC COMPILER_SUPPORT_PIC)
     if (COMPILER_SUPPORT_PIC)
         set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
     endif()
+endif (NOT CMAKE_CROSSCOMPILING)
 
-    check_c_compiler_flag (-fPIC COMPILER_SUPPORT_ARCH)
-    if (CMAKE_OSX_ARCHITECTURES AND COMPILER_SUPPORT_ARCH)
-        foreach (arch ${CMAKE_OSX_ARCHITECTURES})
-            set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -arch ${arch}")
-        endforeach (arch)
-    endif (CMAKE_OSX_ARCHITECTURES AND COMPILER_SUPPORT_ARCH)
-endif (NOT PLATFORM_EMBEDDED)
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND CMAKE_OSX_ARCHITECTURES)
+    foreach (arch ${CMAKE_OSX_ARCHITECTURES})
+        set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -arch ${arch}")
+    endforeach (arch)
+endif ()
 
 # Add external project build steps
 set (CMAKE_ARGS

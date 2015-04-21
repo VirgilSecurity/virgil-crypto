@@ -26,7 +26,7 @@ Node.js | Any
 Ruby | Any
 Swift,Objective-C | Coming April 2015
 Python | Any
-Chrome | Available by Request
+Chrome,Firefox,Safari | Available by Request
 
 ## Library purposes
 1. Encrypt and decrypt data.

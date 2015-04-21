@@ -23,9 +23,9 @@ PHP | Unix, Linux, OS X
 C# | Any .NET platform or Xamarin
 ActionScript 3 | Any
 Node.js | Any
-Ruby | Coming April 2015
+Ruby | Any
 Swift,Objective-C | Coming April 2015
-Python | Coming May 2015
+Python | Any
 Chrome | Available by Request
 
 ## Library purposes

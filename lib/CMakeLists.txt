@@ -43,7 +43,7 @@ include (ExternalProject)
 include (${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/mbedtls_ext.cmake)
 include (${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp/jsoncpp_ext.cmake)
 
-set (LIB_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_BINARY_DIR}/include")
+set (LIB_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories (${LIB_INCLUDE_DIRS})
 if (CMAKE_MAJOR_VERSION LESS 3)
     include_directories (${MBEDTLS_INCLUDE_DIR})

@@ -1,0 +1,55 @@
+.Dd April 22, 2015
+.Dt GENKEY 1
+.Os Darwin
+.Sh NAME
+.Nm genkey
+.Nd generate private key with given parameters
+.Sh SYNOPSIS
+.Nm
+.Op Fl Fl ec Ar curve | Fl Fl rsa Ar nbits
+.Op Fl Fl out Ar file
+.Op Fl Fl pwd Ar arg
+.Op Fl Fl format Ar arg
+.Sh DESCRIPTION
+Generate private key with given parameters.
+.Sh OPTIONS
+.Bl -tag -width "--"
+.It Fl e, Fl Fl ec Ar alg
+Generate elliptic curve key with one of the following curves:
+.Bl -bullet -offset "----"
+.It
+\fBbp256r1\fP - 256-bits Brainpool curve;
+.It
+\fBbp384r1\fP - 384-bits Brainpool curve;
+.It
+\fBbp512r1\fP - 512-bits Brainpool curve (default);
+.It
+\fBsecp192r1\fP - 192-bits NIST curve;
+.It
+\fBsecp224r1\fP - 224-bits NIST curve;
+.It
+\fBsecp256r1\fP - 256-bits NIST curve;
+.It
+\fBsecp384r1\fP - 384-bits NIST curve;
+.It
+\fBsecp521r1\fP - 521-bits NIST curve;
+.It
+\fBsecp192k1\fP - 192-bits "Koblitz" curve;
+.It
+\fBsecp224k1\fP - 224-bits "Koblitz" curve;
+.It
+\fBsecp256k1\fP - 256-bits "Koblitz" curve.
+.El
+.It Fl r,  Fl Fl rsa Ar nbits
+Generate RSA key with a given number of bits.
+.It Fl o, Fl Fl out Ar file
+Private key. If omitted \fBstdout\fP is used.
+.It Fl p, Fl Fl pwd Ar arg
+Password to be used for private key encryption. If omitted no encryption is used.
+.It Fl f, Fl Fl format Ar arg
+Output format: \fBder\fP | \fBpem\fP (default).
+.El
+.Sh SEE ALSO
+.Xr virgil 1 ,
+.Xr virgilkey2pub 1 ,
+.Xr virgilpub2cert 1

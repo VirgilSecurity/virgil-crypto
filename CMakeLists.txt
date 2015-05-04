@@ -36,16 +36,19 @@
 
 #
 # Configurable variables:
-#     - PLATFORM_NAME      - name of target platform and/or language.
-#     - LOW_LEVEL_API      - boolean value that defines whether to include low-level API or not.
-#     - BUILD_CPP_PROGRAMS - boolean value that defines whether build C++ programs or not.
-#     - INSTALL_CORE_LIB   - boolean value that defines whether install core library and it's dependencies or not,
-#                            if this value is NO or undefined - only wrapped library will be installed.
+#     - PLATFORM_NAME     - name of target platform and/or language.
+#     - LOW_LEVEL_API     - boolean value that defines whether to include low-level API or not.
+#     - CPP_BUILD_CLI     - boolean value that defines whether build C++ CLI or not.
+#     - CPP_SPLIT_CLI     - boolean value that defines whether split C++ CLI to separate utilities or not.
+#                           or separate utilities.
+#     - INSTALL_CORE_LIB  - boolean value that defines whether install core library and it's dependencies or not,
+#                           if this value is NO or undefined - only wrapped library will be installed.
 #     - ENABLE_TESTING    - boolean value that defines whether include unit testing or not.
 #
 #     - INSTALL_DIR_NAME      - name of the root directory where all components will be installed.
 #     - INSTALL_LIB_DIR_NAME  - name of the directory where libraries will be installed.
 #     - INSTALL_BIN_DIR_NAME  - name of the directory where binaries will be installed.
+#     - INSTALL_MAN_DIR_NAME  - name of the directory where man pages will be installed.
 #     - INSTALL_API_DIR_NAME  - name of the directory where API source files will be installed.
 #     - INSTALL_X86_DIR_NAME  - name of the directory where 32-bit libraries and binaries will be installed.
 #     - INSTALL_X64_DIR_NAME  - name of the directory where 64-bit libraries and binaries will be installed.
@@ -60,6 +63,11 @@
 #     - VIRGIL_VERSION_MINOR - library minor version number.
 #     - VIRGIL_VERSION_PATCH - library patch number.
 #     - VIRGIL_SOVERSION     - library ABI version.
+#
+#     - CPP_CLI_VERSION       - C++ CLI full version.
+#     - CPP_CLI_VERSION_MAJOR - C++ CLI major version number.
+#     - CPP_CLI_VERSION_MINOR - C++ CLI minor version number.
+#     - CPP_CLI_VERSION_PATCH - C++ CLI patch number.
 #
 
 cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
@@ -79,7 +87,7 @@ else ()
     message (STATUS "Compiler pointer size: UNDEFINED")
 endif ()
 
-# Set version
+# Set library version
 set (VIRGIL_VERSION_MAJOR 0)
 set (VIRGIL_VERSION_MINOR 8)
 set (VIRGIL_VERSION_PATCH 0)
@@ -99,13 +107,14 @@ string (TOLOWER "${PLATFORM_NAME}" PLATFORM_NAME_LOWER)
 message (STATUS "Selected platform and/or language is: " ${PLATFORM_NAME})
 
 set (LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API or not")
-set (BUILD_CPP_PROGRAMS OFF CACHE BOOL "Defines whether build C++ programs or not")
+set (CPP_BUILD_CLI OFF CACHE BOOL "Defines whether build C++ CLI or not")
+set (CPP_SPLIT_CLI OFF CACHE BOOL "Defines whether split C++ CLI to separate utilities or not")
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
 
 # Platform dependent configuration
 if (NOT CMAKE_CROSSCOMPILING AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     if (NOT CMAKE_OSX_ARCHITECTURES)
-        set (CMAKE_OSX_ARCHITECTURES x86_64 i386)
+        set (CMAKE_OSX_ARCHITECTURES "x86_64;i386" CACHE STRING "" FORCE)
     endif ()
     message (STATUS "OS X architectures: ${CMAKE_OSX_ARCHITECTURES}")
 endif ()
@@ -114,6 +123,7 @@ endif ()
 set (INSTALL_DIR_NAME ${PLATFORM_NAME_LOWER} CACHE STRING "Installation directory name for all components")
 set (INSTALL_LIB_DIR_NAME lib CACHE STRING "Installation directory name for libraries")
 set (INSTALL_BIN_DIR_NAME bin CACHE STRING "Installation directory name for executables")
+set (INSTALL_MAN_DIR_NAME "share/man" CACHE STRING "Installation directory name for man pages")
 set (INSTALL_API_DIR_NAME api CACHE STRING "Installation directory name for interface files")
 set (INSTALL_X86_DIR_NAME x86 CACHE STRING "Installation directory name for 32-bit libraries and binaries")
 set (INSTALL_X64_DIR_NAME x64 CACHE STRING "Installation directory name for 64-bit libraries and binaries")
@@ -161,9 +171,18 @@ if (PLATFORM_NAME_LOWER STREQUAL "cpp")
     if (ENABLE_TESTING)
         add_subdirectory (tests)
     endif (ENABLE_TESTING)
-    if (BUILD_CPP_PROGRAMS)
-        add_subdirectory (programs)
-    endif(BUILD_CPP_PROGRAMS)
+    if (CPP_BUILD_CLI)
+        message (STATUS "C++ CLI status: ENABLED")
+        # Set C++ CLI version
+        set (CPP_CLI_VERSION_MAJOR 0)
+        set (CPP_CLI_VERSION_MINOR 1)
+        set (CPP_CLI_VERSION_PATCH 0)
+        set (CPP_CLI_VERSION ${CPP_CLI_VERSION_MAJOR}.${CPP_CLI_VERSION_MINOR}.${CPP_CLI_VERSION_PATCH})
+        message (STATUS "C++ CLI version: " ${CPP_CLI_VERSION})
+        add_subdirectory (cli)
+    else (CPP_BUILD_CLI)
+        message (STATUS "C++ CLI status: DISABLED")
+    endif(CPP_BUILD_CLI)
 endif ()
 add_subdirectory (wrappers)
 

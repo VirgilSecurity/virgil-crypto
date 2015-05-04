@@ -1,0 +1,13 @@
+virgil CLI ChangeLog (Sorted per date)
+
+= Version 0.1.0 released 2015-05-04
+
+Features:
+  * Add command "keygen" - generate private key with given parameters.
+  * Add command "key2pub" - extract public key from the private key.
+  * Add command "pub2cert" - create certificate from the public key and identifiers.
+  * Add command "certinfo" - output detailed information about given certificate.
+  * Add command "encrypt" - encrypt data for given recipients which can be defined by certificates and by passwords.
+  * Add command "decrypt" - decrypt data for given recipient which can be defined by certificate or by password.
+  * Add command "sign" - sign data with private key.
+  * Add command "verify" - verify data with certificate.

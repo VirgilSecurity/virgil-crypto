@@ -35,23 +35,27 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-set -ev
-
-# Configure CMake arguments
-CMAKE_ARGS="-DLOW_LEVEL_API=${LOW_LEVEL_API}"
-if [ "${PLATFORM_NAME}" ]; then
-    CMAKE_ARGS+=" -DPLATFORM_NAME=${PLATFORM_NAME}"
+if [ -z $1 ]; then
+    echo "Directory with man pages is not defined. Please pass it as first argument."
+    exit 1;
 fi
 
-if [ "${PLATFORM_NAME}" = "CPP" ]; then
-    CMAKE_ARGS+=" -DCPP_BUILD_CLI=YES"
+if [ ! -d $1 ]; then
+    echo "Man pages are not exist at path: $1"
+    exit 1;
 fi
 
-# Run CMake
-cd "${TRAVIS_BUILD_DIR}"
-if [ -d "${BUILD_DIR_NAME}" ]; then
-    rm -fr "${BUILD_DIR_NAME}"
-fi
-mkdir "${BUILD_DIR_NAME}"
-cd "${BUILD_DIR_NAME}"
-cmake ${CMAKE_ARGS} ..
+man_dir=$1
+man_pages="$man_dir/*.1"
+for i in $man_pages
+do
+    filename="${i##*/}"
+    filename=${filename%.*}
+    if [ -z $2 ]; then
+        outdir=$1
+    else
+        outdir=$2
+        mkdir -p "$outdir"
+    fi
+    groff -Tpdf -mandoc -c "$i" > "$outdir/$filename.pdf"
+done

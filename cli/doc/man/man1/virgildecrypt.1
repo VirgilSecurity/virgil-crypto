@@ -1,0 +1,33 @@
+.Dd April 22, 2015
+.Dt DECRYPT 1
+.Os Darwin
+.Sh NAME
+.Nm decrypt
+.Nd decrypt data
+.Sh SYNOPSIS
+.Nm
+.Op Fl Fl in Ar file
+.Op Fl Fl out Ar file
+.Op Fl Fl content-info Ar file
+.Op Fl Fl key Ar file Op Fl Fl pwd Ar arg
+.Fl Fl recipient Ar arg
+.Sh DESCRIPTION
+Decrypt data with password or private key.
+.Sh OPTIONS
+.Bl -tag -width "--"
+.It Fl i, Fl Fl in Ar file
+Data to be decrypted. If omitted \fBstdin\fP is used.
+.It Fl o, Fl Fl out Ar file
+Decrypted data. If omitted \fBstdout\fP is used.
+.It Fl c, Fl Fl content-info Ar file
+Content info. Use this option if content info is not embedded in the encrypted data.
+.It Fl k, Fl Fl key Ar file
+Recipient's private key.
+.It Fl p, Fl Fl pwd Ar arg
+Private key password.
+.It Fl r, Fl Fl recipient Ar arg
+If option \fB-key\fP is defined this value is used as recipient's certificate, otherwise this value is used as recipient's password.
+.El
+.Sh SEE ALSO
+.Xr virgil 1 ,
+.Xr virgilencrypt 1

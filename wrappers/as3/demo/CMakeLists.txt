@@ -47,7 +47,7 @@ if (DEFINED ENV{FLEX_HOME})
         configure_file (
             ${CMAKE_CURRENT_SOURCE_DIR}/EncryptApp-AIR.xml
             ${CMAKE_CURRENT_BINARY_DIR}/
-            COPY_ONLY
+            COPYONLY
         )
         add_custom_target (demo
             COMMAND ${FLEX_COMPILER}

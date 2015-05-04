@@ -39,6 +39,7 @@
 #include <algorithm>
 #include <iterator>
 #include <string>
+#include <stdexcept>
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -106,7 +107,7 @@ int MAIN(int argc, char **argv) {
 
         // Prepare input.
         std::istream *inStream = &std::cin;
-        std::ifstream inFile(inArg.getValue(), std::ios::in | std::ios::binary);
+        std::ifstream inFile(inArg.getValue().c_str(), std::ios::in | std::ios::binary);
         if (inFile.good()) {
             inStream = &inFile;
         } else if (!inArg.getValue().empty()) {
@@ -116,7 +117,7 @@ int MAIN(int argc, char **argv) {
 
         // Prepare output.
         std::ostream *outStream = &std::cout;
-        std::ofstream outFile(outArg.getValue(), std::ios::out | std::ios::binary);
+        std::ofstream outFile(outArg.getValue().c_str(), std::ios::out | std::ios::binary);
         if (outFile.good()) {
             outStream = &outFile;
         } else if (!outArg.getValue().empty()) {
@@ -136,7 +137,7 @@ int MAIN(int argc, char **argv) {
 
         // Write content info to file if it was not embedded
         if (!embedContentInfo) {
-            std::ofstream contentInfoFile(contentInfoArg.getValue(), std::ios::out | std::ios::binary);
+            std::ofstream contentInfoFile(contentInfoArg.getValue().c_str(), std::ios::out | std::ios::binary);
             if (contentInfoFile.good()) {
                 VirgilByteArray contentInfo = cipher.getContentInfo();
                 std::copy(contentInfo.begin(), contentInfo.end(), std::ostreambuf_iterator<char>(contentInfoFile));

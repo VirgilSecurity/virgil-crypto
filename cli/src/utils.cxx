@@ -40,6 +40,7 @@
 #include <fstream>
 #include <algorithm>
 #include <iterator>
+#include <stdexcept>
 
 const char * virgil::cli::version() {
     return "@CPP_CLI_VERSION@, virgil library  version: @VIRGIL_VERSION@";
@@ -63,7 +64,7 @@ bool virgil::cli::is_asn1(const VirgilByteArray& data) {
 }
 
 VirgilCertificate virgil::cli::read_certificate(const std::string& fileName) {
-    std::ifstream certificateFile(fileName, std::ios::in | std::ios::binary);
+    std::ifstream certificateFile(fileName.c_str(), std::ios::in | std::ios::binary);
     return virgil::cli::read_certificate(certificateFile, fileName);
 }
 
@@ -89,7 +90,7 @@ VirgilCertificate virgil::cli::read_certificate(std::istream& file, const std::s
 }
 
 VirgilSign virgil::cli::read_sign(const std::string& fileName) {
-    std::ifstream signFile(fileName, std::ios::in | std::ios::binary);
+    std::ifstream signFile(fileName.c_str(), std::ios::in | std::ios::binary);
     return virgil::cli::read_sign(signFile, fileName);
 }
 
@@ -118,7 +119,7 @@ size_t virgil::cli::add_recipients_config(VirgilCipherBase& cipher, const std::v
     size_t addedRecipientsCount = 0;
     for (std::vector<std::string>::const_iterator it = recipientsConfig.begin();
             it != recipientsConfig.end(); ++it) {
-        std::ifstream configFile(*it);
+        std::ifstream configFile(it->c_str());
         if (!configFile.good()) {
             std::cerr << "Warning: " << "can not read recipient config file: " << *it << std::endl;
             continue;
@@ -144,7 +145,7 @@ size_t virgil::cli::add_recipients(VirgilCipherBase& cipher, const std::vector<s
 }
 
 void virgil::cli::add_recipient(VirgilCipherBase& cipher, const std::string& recipient) {
-    std::ifstream certificateFile(recipient, std::ios::in | std::ios::binary);
+    std::ifstream certificateFile(recipient.c_str(), std::ios::in | std::ios::binary);
     if (certificateFile.good()) {
         VirgilCertificate certificate = virgil::cli::read_certificate(certificateFile);
         cipher.addKeyRecipient(certificate.id().certificateId(), certificate.publicKey());

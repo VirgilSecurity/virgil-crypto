@@ -39,6 +39,7 @@
 #include <algorithm>
 #include <iterator>
 #include <string>
+#include <stdexcept>
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -123,7 +124,7 @@ int MAIN(int argc, char **argv) {
 
         // Prepare output.
         std::ostream *outStream = &std::cout;
-        std::ofstream outFile(outArg.getValue(), std::ios::out | std::ios::binary);
+        std::ofstream outFile(outArg.getValue().c_str(), std::ios::out | std::ios::binary);
         if (outFile.good()) {
             outStream = &outFile;
         } else if (!outArg.getValue().empty()) {

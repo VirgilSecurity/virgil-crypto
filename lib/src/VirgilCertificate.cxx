@@ -43,6 +43,9 @@ using virgil::crypto::asn1::VirgilAsn1Reader;
 #include <virgil/crypto/asn1/VirgilAsn1Writer.h>
 using virgil::crypto::asn1::VirgilAsn1Writer;
 
+#include <virgil/crypto/VirgilBase64.h>
+using virgil::crypto::VirgilBase64;
+
 #include <json/json.h>
 
 /**
@@ -51,6 +54,14 @@ using virgil::crypto::asn1::VirgilAsn1Writer;
 ///@{
 static const char *kJsonKey_PublicKey = "public_key";
 ///@}
+
+static bool isAsn1(const VirgilByteArray& data) {
+    return data.size() > 0 && data[0] == 0x30;
+}
+
+static bool isPlainPublicKey(const std::string& publicKey) {
+    return publicKey.find("-----BEGIN PUBLIC KEY-----") != std::string::npos;
+}
 
 VirgilCertificate::VirgilCertificate(const VirgilByteArray& publicKey) : publicKey_(publicKey) {
 }
@@ -79,12 +90,21 @@ void VirgilCertificate::asn1Read(VirgilAsn1Reader& asn1Reader) {
 Json::Value VirgilCertificate::jsonWrite(Json::Value& childValue) const {
     Json::Value idChildrenValue(Json::objectValue);
     Json::Value idValue = id().jsonWrite(idChildrenValue);
-    childValue[kJsonKey_PublicKey] = virgil::bytes2str(publicKey_);
+    if (isAsn1(publicKey_)) {
+        childValue[kJsonKey_PublicKey] = VirgilBase64::encode(publicKey_);
+    } else {
+        childValue[kJsonKey_PublicKey] = virgil::bytes2str(publicKey_);
+    }
     return jsonMergeObjects(childValue, idValue);
 }
 
 Json::Value VirgilCertificate::jsonRead(const Json::Value& parentValue) {
     (void)id().jsonRead(parentValue);
-    publicKey_ = jsonGetStringAsByteArray(parentValue, kJsonKey_PublicKey);
+    std::string key = jsonGetString(parentValue, kJsonKey_PublicKey);
+    if (isPlainPublicKey(key)) {
+        publicKey_ = virgil::str2bytes(key);
+    } else {
+        publicKey_ = VirgilBase64::decode(key);
+    }
     return parentValue;
 }

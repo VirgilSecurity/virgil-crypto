@@ -41,6 +41,7 @@
 #     - BUILD_CPP_PROGRAMS - boolean value that defines whether build C++ programs or not.
 #     - INSTALL_CORE_LIB   - boolean value that defines whether install core library and it's dependencies or not,
 #                            if this value is NO or undefined - only wrapped library will be installed.
+#     - ENABLE_TESTING    - boolean value that defines whether include unit testing or not.
 #
 #     - INSTALL_DIR_NAME      - name of the root directory where all components will be installed.
 #     - INSTALL_LIB_DIR_NAME  - name of the directory where libraries will be installed.
@@ -78,9 +79,6 @@ else ()
     message (STATUS "Compiler pointer size: UNDEFINED")
 endif ()
 
-# Configure testing
-enable_testing ()
-
 # Set version
 set (VIRGIL_VERSION_MAJOR 0)
 set (VIRGIL_VERSION_MINOR 8)
@@ -102,6 +100,7 @@ message (STATUS "Selected platform and/or language is: " ${PLATFORM_NAME})
 
 set (LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API or not")
 set (BUILD_CPP_PROGRAMS OFF CACHE BOOL "Defines whether build C++ programs or not")
+set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
 
 # Platform dependent configuration
 if (NOT CMAKE_CROSSCOMPILING AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -148,13 +147,23 @@ endif ()
 set (INSTALL_CORE_LIB ${INSTALL_CORE_LIB_TMP} CACHE BOOL
         "defines whether install core library and it's dependencies or not")
 
+# Configure testing
+if (ENABLE_TESTING)
+    enable_testing ()
+    message (STATUS "Unit tests status: ENABLED")
+else (ENABLE_TESTING)
+    message (STATUS "Unit tests status: DISABLED")
+endif (ENABLE_TESTING)
+
 # Build submodules
 add_subdirectory (lib)
 if (PLATFORM_NAME_LOWER STREQUAL "cpp")
-    add_subdirectory (tests)
+    if (ENABLE_TESTING)
+        add_subdirectory (tests)
+    endif (ENABLE_TESTING)
     if (BUILD_CPP_PROGRAMS)
         add_subdirectory (programs)
-    endif()
+    endif(BUILD_CPP_PROGRAMS)
 endif ()
 add_subdirectory (wrappers)
 

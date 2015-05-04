@@ -140,5 +140,9 @@ set_directory_properties (PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${WRAPPER_SWC}
 install (FILES ${WRAPPER_SWC} DESTINATION ${INSTALL_DIR_NAME}/${INSTALL_LIB_DIR_NAME})
 
 # Unit tests
-add_subdirectory (tests)
+if (ENABLE_TESTING)
+    add_subdirectory (tests)
+endif (ENABLE_TESTING)
+
+# Demo application
 add_subdirectory (demo)

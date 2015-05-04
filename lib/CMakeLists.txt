@@ -65,8 +65,9 @@ foreach (src_file ${src})
         @ONLY
     )
 endforeach ()
-
+set (src "")
 aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src src)
+aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src/platform src)
 
 # Build
 add_library (${PROJECT_NAME} STATIC ${src})

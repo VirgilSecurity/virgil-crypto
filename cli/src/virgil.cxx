@@ -51,6 +51,7 @@ int certinfo_main(int argc, char **argv);
 int encrypt_main(int argc, char **argv);
 int decrypt_main(int argc, char **argv);
 int sign_main(int argc, char **argv);
+int verify_main(int argc, char **argv);
 
 static void print_usage(std::ostream& out, const char *programName) {
     out << std::endl << "USAGE:" << std::endl;
@@ -90,6 +91,7 @@ int main(int argc, char **argv) {
     commandsMap["encrypt"] = &encrypt_main;
     commandsMap["decrypt"] = &decrypt_main;
     commandsMap["sign"] = &sign_main;
+    commandsMap["verify"] = &verify_main;
     // Parse arguments.
     if (argc < 2) {
         std::cerr << "Error: " << " Required argument missing: " << "command" << std::endl;

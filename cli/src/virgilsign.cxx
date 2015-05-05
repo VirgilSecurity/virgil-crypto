@@ -74,8 +74,8 @@ int MAIN(int argc, char **argv) {
         TCLAP::ValueArg<std::string> outArg("o", "out", "Digest sign. If omitted stdout is used.",
                 false, "", "file");
 
-        TCLAP::ValueArg<std::string> formatArg("f", "format", "Output format: json | asn1 (default).",
-                false, "asn1", "arg");
+        TCLAP::ValueArg<std::string> formatArg("f", "format", "Output format: json | der (default).",
+                false, "der", "arg");
 
         TCLAP::ValueArg<std::string> keyArg("k", "key", "Signer's private key.",
                 true, "", "file");
@@ -135,7 +135,7 @@ int MAIN(int argc, char **argv) {
 
         // Marshal sign.
         VirgilByteArray signData;
-        if (formatArg.getValue() == "asn1") {
+        if (formatArg.getValue() == "der") {
             signData = sign.toAsn1();
         } else if (formatArg.getValue() == "json") {
             signData = sign.toJson();

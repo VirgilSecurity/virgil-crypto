@@ -155,7 +155,7 @@ function test {
 }
 
 # Create working directory
-work_dir=`mktemp -d -t virgil`
+work_dir=`mktemp -d 2>/dev/null || mktemp -d -t virgil`
 if [ ! -d $work_dir ]; then
     echo "Can not create working directory."; exit 1
 fi

@@ -81,3 +81,10 @@ endif (${CPP_SPLIT_CLI})
 if (UNIX)
     install (DIRECTORY "doc/man/" DESTINATION ${INSTALL_DIR_NAME}/${INSTALL_MAN_DIR_NAME})
 endif (UNIX)
+
+if (UNIX AND ENABLE_TESTING)
+    add_test (
+        NAME "test_cli.sh"
+        COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/utils/test_cli.sh" "${CMAKE_CURRENT_BINARY_DIR}"
+    )
+endif (UNIX AND ENABLE_TESTING)

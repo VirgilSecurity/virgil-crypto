@@ -87,7 +87,7 @@ int MAIN(int argc, char **argv) {
         TCLAP::ValueArg<std::string> keyArg("k", "key", "Recipient's private key.",
                 false, "", "file");
 
-        TCLAP::ValueArg<std::string> pwdArg("p", "arg", "Private key password.",
+        TCLAP::ValueArg<std::string> pwdArg("p", "pwd", "Private key password.",
                 false, "", "arg");
 
         TCLAP::ValueArg<std::string> recipientArg("r", "recipient",
@@ -154,7 +154,7 @@ int MAIN(int argc, char **argv) {
             // Decrypt
             cipher.decryptWithKey(dataSource, dataSink, certificate.id().certificateId(),
                     privateKey, privateKeyPassword);
-        } else if (!pwdArg.getValue().empty()) {
+        } else if (!recipientArg.getValue().empty()) {
             // Decrypt
             cipher.decryptWithPassword(dataSource, dataSink, virgil::str2bytes(recipientArg.getValue()));
         } else {

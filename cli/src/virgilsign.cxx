@@ -80,7 +80,7 @@ int MAIN(int argc, char **argv) {
         TCLAP::ValueArg<std::string> keyArg("k", "key", "Signer's private key.",
                 true, "", "file");
 
-        TCLAP::ValueArg<std::string> pwdArg("p", "arg", "Signer's private key password.",
+        TCLAP::ValueArg<std::string> pwdArg("p", "pwd", "Signer's private key password.",
                 false, "", "arg");
 
         TCLAP::ValueArg<std::string> certificateArg("c", "certificate", "Signer's certificate.",

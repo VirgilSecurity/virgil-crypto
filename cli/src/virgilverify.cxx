@@ -68,7 +68,7 @@ int MAIN(int argc, char **argv) {
         // Parse arguments.
         TCLAP::CmdLine cmd("Decrypt data", ' ', virgil::cli::version());
 
-        TCLAP::ValueArg<std::string> inArg("i", "in", "Data to be signed. If omitted stdin is used.",
+        TCLAP::ValueArg<std::string> inArg("i", "in", "Data to be verified. If omitted stdin is used.",
                 false, "", "file");
 
         TCLAP::ValueArg<std::string> outArg("o", "out",

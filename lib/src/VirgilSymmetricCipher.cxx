@@ -278,7 +278,7 @@ VirgilByteArray VirgilSymmetricCipher::finish() {
 }
 
 void VirgilSymmetricCipher::checkState() const {
-    if (impl_->type == POLARSSL_CIPHER_NONE) {
+    if (impl_->type == POLARSSL_CIPHER_NONE || impl_->ctx == 0 || impl_->ctx->cipher_info == 0) {
         throw VirgilCryptoException(std::string("VirgilSymmetricCipher: object has undefined algorithm.") +
                 std::string(" Use one of the factory methods or method 'fromAsn1' to define cipher algorithm."));
     }

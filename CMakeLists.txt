@@ -45,10 +45,11 @@
 #                           if this value is NO or undefined - only wrapped library will be installed.
 #     - ENABLE_TESTING    - boolean value that defines whether include unit testing or not.
 #
-#     - INSTALL_DIR_NAME      - name of the root directory where all components will be installed.
+#     - INSTALL_INC_DIR_NAME  - name of the directory where include will be installed.
 #     - INSTALL_LIB_DIR_NAME  - name of the directory where libraries will be installed.
 #     - INSTALL_BIN_DIR_NAME  - name of the directory where binaries will be installed.
 #     - INSTALL_MAN_DIR_NAME  - name of the directory where man pages will be installed.
+#     - INSTALL_DOC_DIR_NAME  - name of the directory where documentation will be installed.
 #     - INSTALL_API_DIR_NAME  - name of the directory where API source files will be installed.
 #     - INSTALL_X86_DIR_NAME  - name of the directory where 32-bit libraries and binaries will be installed.
 #     - INSTALL_X64_DIR_NAME  - name of the directory where 64-bit libraries and binaries will be installed.
@@ -120,10 +121,11 @@ if (NOT CMAKE_CROSSCOMPILING AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif ()
 
 # Configure path variables
-set (INSTALL_DIR_NAME ${PLATFORM_NAME_LOWER} CACHE STRING "Installation directory name for all components")
+set (INSTALL_INC_DIR_NAME include CACHE STRING "Installation directory name for includes")
 set (INSTALL_LIB_DIR_NAME lib CACHE STRING "Installation directory name for libraries")
 set (INSTALL_BIN_DIR_NAME bin CACHE STRING "Installation directory name for executables")
 set (INSTALL_MAN_DIR_NAME "share/man" CACHE STRING "Installation directory name for man pages")
+set (INSTALL_DOC_DIR_NAME "share/doc" CACHE STRING "Installation directory name for doc pages")
 set (INSTALL_API_DIR_NAME api CACHE STRING "Installation directory name for interface files")
 set (INSTALL_X86_DIR_NAME x86 CACHE STRING "Installation directory name for 32-bit libraries and binaries")
 set (INSTALL_X64_DIR_NAME x64 CACHE STRING "Installation directory name for 64-bit libraries and binaries")

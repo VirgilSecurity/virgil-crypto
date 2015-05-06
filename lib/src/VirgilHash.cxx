@@ -83,7 +83,7 @@ public:
     }
 
     VirgilHashImpl(const VirgilHashImpl& other)
-            : type(POLARSSL_MD_NONE), digest(0), digestSize(0), ctx(0), hmacCtx(0) {
+            : type(POLARSSL_MD_NONE), info(0), digest(0), digestSize(0), ctx(0), hmacCtx(0) {
         init_(other.type);
     }
 

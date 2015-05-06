@@ -89,8 +89,8 @@ public:
     md_type_t mdType;
     cipher_type_t cipherType;
 public:
-    VirgilPBEImpl() : type(VIRGIL_PBE_NONE),
-            random(virgil::str2bytes(std::string("com.virgilsecurity.VirgilPBE"))) {
+    VirgilPBEImpl() : type(VIRGIL_PBE_NONE), random(virgil::str2bytes(std::string("com.virgilsecurity.VirgilPBE"))),
+            algId(), pbeAlgOID(), pbeParams(), mdType(POLARSSL_MD_NONE), cipherType(POLARSSL_CIPHER_NONE) {
     }
 
     explicit VirgilPBEImpl(VirgilPBEType pbeType, const VirgilByteArray& salt, size_t iterationCount) : type(pbeType),

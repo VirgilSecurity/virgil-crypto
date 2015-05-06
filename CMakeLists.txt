@@ -185,6 +185,3 @@ if (PLATFORM_NAME_LOWER STREQUAL "cpp")
     endif(CPP_BUILD_CLI)
 endif ()
 add_subdirectory (wrappers)
-
-# Installation
-install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/VERSION DESTINATION "${INSTALL_DIR_NAME}")

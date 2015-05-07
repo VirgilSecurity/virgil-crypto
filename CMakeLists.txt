@@ -51,13 +51,10 @@
 #     - INSTALL_MAN_DIR_NAME  - name of the directory where man pages will be installed.
 #     - INSTALL_DOC_DIR_NAME  - name of the directory where documentation will be installed.
 #     - INSTALL_API_DIR_NAME  - name of the directory where API source files will be installed.
-#     - INSTALL_X86_DIR_NAME  - name of the directory where 32-bit libraries and binaries will be installed.
-#     - INSTALL_X64_DIR_NAME  - name of the directory where 64-bit libraries and binaries will be installed.
 #
 # Define variables:
 #     - PLATFORM_NAME_LOWER   - lowercase(PLATFORM_NAME).
 #     - POINTER_SIZE          - compiler pointer size.
-#     - INSTALL_ARCH_DIR_NAME - INSTALL_X86_DIR_NAME or INSTALL_X64_DIR_NAME or empty.
 #
 #     - VIRGIL_VERSION       - library full version.
 #     - VIRGIL_VERSION_MAJOR - library major version number.
@@ -127,23 +124,6 @@ set (INSTALL_BIN_DIR_NAME bin CACHE STRING "Installation directory name for exec
 set (INSTALL_MAN_DIR_NAME "share/man" CACHE STRING "Installation directory name for man pages")
 set (INSTALL_DOC_DIR_NAME "share/doc" CACHE STRING "Installation directory name for doc pages")
 set (INSTALL_API_DIR_NAME api CACHE STRING "Installation directory name for interface files")
-set (INSTALL_X86_DIR_NAME x86 CACHE STRING "Installation directory name for 32-bit libraries and binaries")
-set (INSTALL_X64_DIR_NAME x64 CACHE STRING "Installation directory name for 64-bit libraries and binaries")
-
-set (INSTALL_ARCH_DIR_NAME "")
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND CMAKE_OSX_ARCHITECTURES)
-    if (CMAKE_OSX_ARCHITECTURES STREQUAL "i386")
-        set (INSTALL_ARCH_DIR_NAME ${INSTALL_X86_DIR_NAME})
-    elseif (CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
-        set (INSTALL_ARCH_DIR_NAME ${INSTALL_X64_DIR_NAME})
-    endif ()
-else ()
-    if (POINTER_SIZE EQUAL 4)
-        set (INSTALL_ARCH_DIR_NAME ${INSTALL_X86_DIR_NAME})
-    elseif (POINTER_SIZE EQUAL 8)
-        set (INSTALL_ARCH_DIR_NAME ${INSTALL_X64_DIR_NAME})
-    endif ()
-endif ()
 
 # Configure internal path variables
 set (EXTERNAL_LIBS_DIR "${CMAKE_CURRENT_BINARY_DIR}/libs" CACHE INTERNAL

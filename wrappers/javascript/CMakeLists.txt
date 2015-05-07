@@ -122,4 +122,4 @@ add_custom_target (JS_NODE ALL
     )
 
 install (PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/build/Release/${JS_MODULE_NAME}.node"
-        DESTINATION "${INSTALL_LIB_DIR_NAME}/${INSTALL_ARCH_DIR_NAME}")
+        DESTINATION "${INSTALL_LIB_DIR_NAME}")

@@ -41,7 +41,7 @@
 using virgil::VirgilByteArray;
 
 
-namespace virgil { namespace service { namespace stream {
+namespace virgil { namespace service {
 
 /**
  * @brief This is base class for input streams.
@@ -61,6 +61,6 @@ public:
     virtual ~VirgilDataSource() throw() {}
 };
 
-}}}
+}}
 
 #endif /* VIRGIL_DATA_VIRGIL_DATA_SOURCE_H */

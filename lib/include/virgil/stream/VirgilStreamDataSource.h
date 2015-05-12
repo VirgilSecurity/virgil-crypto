@@ -34,43 +34,48 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_DATA_VIRGIL_STREAM_DATA_SINK_H
-#define VIRGIL_DATA_VIRGIL_STREAM_DATA_SINK_H
+#ifndef VIRGIL_STREAM_VIRGIL_STREAM_DATA_SOURCE_H
+#define VIRGIL_STREAM_VIRGIL_STREAM_DATA_SOURCE_H
 
-#include <virgil/service/stream/VirgilDataSink.h>
-using virgil::service::stream::VirgilDataSink;
+#include <virgil/service/VirgilDataSource.h>
+using virgil::service::VirgilDataSource;
 
-#include <ostream>
+#include <istream>
 
-namespace virgil { namespace service { namespace stream {
+namespace virgil { namespace stream {
 
 /**
- * @brief C++ stream implementation of the VirgilDataSink class.
+ * @brief C++ stream implementation of the VirgilDataSource class.
  *
  * @note This class CAN not be used in wrappers.
  */
-class VirgilStreamDataSink : public VirgilDataSink {
+class VirgilStreamDataSource : public VirgilDataSource {
 public:
     /**
-     * @brief Creates data sink based on std::ostream object.
+     * @brief Creates data sink based on std::istream object.
+     * @param in - input stream.
+     * @param chunkSize - size of the data that will be returned by @link read() @endlink method.
+     *                    Note, the real value may be different from the given value, it is only recommendation.
      */
-    explicit VirgilStreamDataSink(std::ostream& out);
+    explicit VirgilStreamDataSource(std::istream& in, size_t chunkSize = 4096);
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilStreamDataSink() throw();
+    virtual ~VirgilStreamDataSource() throw();
     /**
-     * @brief Overriding of @link VirgilDataSink::isGood() @endlink method.
+     * @brief Overriding of @link VirgilDataSource::hasData() @endlink method.
      */
-    virtual bool isGood();
+    virtual bool hasData();
     /**
-     * @brief Overriding of @link VirgilDataSink::write() @endlink method.
+     * @brief Overriding of @link VirgilDataSource::read() @endlink method.
      */
-    virtual void write(const VirgilByteArray& data);
+    virtual VirgilByteArray read();
 private:
-    std::ostream& out_;
+    std::istream& in_;
+    size_t chunkSize_;
 };
 
-}}}
+}}
 
-#endif /* VIRGIL_DATA_VIRGIL_STREAM_DATA_SINK_H */
+
+#endif /* VIRGIL_STREAM_VIRGIL_STREAM_DATA_SOURCE_H */

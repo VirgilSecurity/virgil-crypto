@@ -34,33 +34,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/stream/VirgilStreamDataSource.h>
-using virgil::service::stream::VirgilStreamDataSource;
+#include <virgil/stream/VirgilStreamDataSink.h>
+using virgil::stream::VirgilStreamDataSink;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <algorithm>
-
-static const size_t kChunkSizeMin = 32;
-
-VirgilStreamDataSource::VirgilStreamDataSource(std::istream& in, size_t chunkSize)
-        : in_(in), chunkSize_(std::max(chunkSize, kChunkSizeMin)) {
+VirgilStreamDataSink::VirgilStreamDataSink(std::ostream& out) : out_(out) {
 }
 
-VirgilStreamDataSource::~VirgilStreamDataSource() throw() {
+bool VirgilStreamDataSink::isGood() {
+    return out_.good();
 }
 
-bool VirgilStreamDataSource::hasData() {
-    return !in_.eof();
+void VirgilStreamDataSink::write(const VirgilByteArray& data) {
+    out_.write(reinterpret_cast<const std::ostream::char_type *>(data.data()), data.size());
 }
 
-VirgilByteArray VirgilStreamDataSource::read() {
-    VirgilByteArray result(chunkSize_);
-    in_.read(reinterpret_cast<std::istream::char_type *>(result.data()), chunkSize_);
-    if (!in_) {
-        // Only part of chunk was read, so result MUST be trimmed.
-        result.resize(in_.gcount());
-    }
-    return result;
+VirgilStreamDataSink::~VirgilStreamDataSink() throw() {
 }

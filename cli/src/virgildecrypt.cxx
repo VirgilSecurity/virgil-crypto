@@ -50,14 +50,14 @@ using virgil::VirgilException;
 #include <virgil/service/data/VirgilCertificate.h>
 using virgil::service::data::VirgilCertificate;
 
-#include <virgil/service/stream/VirgilStreamCipher.h>
-using virgil::service::stream::VirgilStreamCipher;
+#include <virgil/service/VirgilStreamCipher.h>
+using virgil::service::VirgilStreamCipher;
 
-#include <virgil/service/stream/VirgilStreamDataSource.h>
-using virgil::service::stream::VirgilStreamDataSource;
+#include <virgil/stream/VirgilStreamDataSource.h>
+using virgil::stream::VirgilStreamDataSource;
 
-#include <virgil/service/stream/VirgilStreamDataSink.h>
-using virgil::service::stream::VirgilStreamDataSink;
+#include <virgil/stream/VirgilStreamDataSink.h>
+using virgil::stream::VirgilStreamDataSink;
 
 #include <tclap/CmdLine.h>
 

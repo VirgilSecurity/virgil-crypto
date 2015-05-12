@@ -34,11 +34,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/stream/VirgilStreamSigner.h>
-using virgil::service::stream::VirgilStreamSigner;
+#include <virgil/service/VirgilStreamSigner.h>
+using virgil::service::VirgilStreamSigner;
 
-#include <virgil/service/stream/VirgilDataSource.h>
-using virgil::service::stream::VirgilDataSource;
+#include <virgil/service/VirgilDataSource.h>
+using virgil::service::VirgilDataSource;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;

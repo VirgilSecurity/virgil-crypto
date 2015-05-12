@@ -34,48 +34,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_DATA_VIRGIL_STREAM_DATA_SOURCE_H
-#define VIRGIL_DATA_VIRGIL_STREAM_DATA_SOURCE_H
+#include <virgil/stream/VirgilStreamDataSource.h>
+using virgil::stream::VirgilStreamDataSource;
 
-#include <virgil/service/stream/VirgilDataSource.h>
-using virgil::service::stream::VirgilDataSource;
+#include <virgil/VirgilByteArray.h>
+using virgil::VirgilByteArray;
 
-#include <istream>
+#include <algorithm>
 
-namespace virgil { namespace service { namespace stream {
+static const size_t kChunkSizeMin = 32;
 
-/**
- * @brief C++ stream implementation of the VirgilDataSource class.
- *
- * @note This class CAN not be used in wrappers.
- */
-class VirgilStreamDataSource : public VirgilDataSource {
-public:
-    /**
-     * @brief Creates data sink based on std::istream object.
-     * @param in - input stream.
-     * @param chunkSize - size of the data that will be returned by @link read() @endlink method.
-     *                    Note, the real value may be different from the given value, it is only recommendation.
-     */
-    explicit VirgilStreamDataSource(std::istream& in, size_t chunkSize = 4096);
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilStreamDataSource() throw();
-    /**
-     * @brief Overriding of @link VirgilDataSource::hasData() @endlink method.
-     */
-    virtual bool hasData();
-    /**
-     * @brief Overriding of @link VirgilDataSource::read() @endlink method.
-     */
-    virtual VirgilByteArray read();
-private:
-    std::istream& in_;
-    size_t chunkSize_;
-};
+VirgilStreamDataSource::VirgilStreamDataSource(std::istream& in, size_t chunkSize)
+        : in_(in), chunkSize_(std::max(chunkSize, kChunkSizeMin)) {
+}
 
-}}}
+VirgilStreamDataSource::~VirgilStreamDataSource() throw() {
+}
 
+bool VirgilStreamDataSource::hasData() {
+    return !in_.eof();
+}
 
-#endif /* VIRGIL_DATA_VIRGIL_STREAM_DATA_SOURCE_H */
+VirgilByteArray VirgilStreamDataSource::read() {
+    VirgilByteArray result(chunkSize_);
+    in_.read(reinterpret_cast<std::istream::char_type *>(result.data()), chunkSize_);
+    if (!in_) {
+        // Only part of chunk was read, so result MUST be trimmed.
+        result.resize(in_.gcount());
+    }
+    return result;
+}

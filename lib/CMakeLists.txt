@@ -53,9 +53,9 @@ endif (CMAKE_MAJOR_VERSION LESS 3)
 
 # Define sources list
 aux_source_directory ("src" src)
-if (PLATFORM_NAME_LOWER STREQUAL "cpp")
-    aux_source_directory ("src/platform" platform_src)
-    list (APPEND src ${platform_src})
+if (LIB_FILE_IO)
+    aux_source_directory ("src/stream" stream_src)
+    list (APPEND src ${stream_src})
 endif()
 
 foreach (src_file ${src})
@@ -67,7 +67,7 @@ foreach (src_file ${src})
 endforeach ()
 set (src "")
 aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src src)
-aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src/platform src)
+aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src/stream src)
 
 # Build
 add_library (${PROJECT_NAME} STATIC ${src})

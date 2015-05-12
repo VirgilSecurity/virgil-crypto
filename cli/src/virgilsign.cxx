@@ -44,11 +44,11 @@
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/service/stream/VirgilStreamSigner.h>
-using virgil::service::stream::VirgilStreamSigner;
+#include <virgil/service/VirgilStreamSigner.h>
+using virgil::service::VirgilStreamSigner;
 
-#include <virgil/service/stream/VirgilStreamDataSource.h>
-using virgil::service::stream::VirgilStreamDataSource;
+#include <virgil/stream/VirgilStreamDataSource.h>
+using virgil::stream::VirgilStreamDataSource;
 
 #include <virgil/service/data/VirgilSign.h>
 using virgil::service::data::VirgilSign;

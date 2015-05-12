@@ -34,50 +34,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SERVICE_VIRGIL_STREAM_SIGNER_H
-#define VIRGIL_SERVICE_VIRGIL_STREAM_SIGNER_H
+#ifndef VIRGIL_STREAM_VIRGIL_STREAM_DATA_SINK_H
+#define VIRGIL_STREAM_VIRGIL_STREAM_DATA_SINK_H
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/service/VirgilDataSink.h>
+using virgil::service::VirgilDataSink;
 
-#include <virgil/service/data/VirgilSign.h>
-using virgil::service::data::VirgilSign;
+#include <ostream>
 
-#include <virgil/crypto/VirgilHash.h>
-using virgil::crypto::VirgilHash;
-
-#include <virgil/service/stream/VirgilDataSource.h>
-using virgil::service::stream::VirgilDataSource;
-
-namespace virgil { namespace service { namespace stream {
+namespace virgil { namespace stream {
 
 /**
- * @brief This class provides high-level interface to sign and verify data using Virgil Security keys.
+ * @brief C++ stream implementation of the VirgilDataSink class.
  *
- * This module can sign / verify data provided by stream.
+ * @note This class CAN not be used in wrappers.
  */
-class VirgilStreamSigner {
+class VirgilStreamDataSink : public VirgilDataSink {
 public:
     /**
-     * @brief Create signer with predefined hash function.
-     * @note Specified hash function algorithm is used only during signing.
+     * @brief Creates data sink based on std::ostream object.
      */
-    explicit VirgilStreamSigner(const VirgilHash& hash = VirgilHash::sha384());
+    explicit VirgilStreamDataSink(std::ostream& out);
     /**
-     * @brief Sign data provided by the source with given private key.
-     * @return Virgil Security sign.
+     * @brief Polymorphic destructor.
      */
-    VirgilSign sign(VirgilDataSource& source, const VirgilByteArray& signerCertificateId,
-            const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    virtual ~VirgilStreamDataSink() throw();
     /**
-     * @brief Verify sign and data provided by the source to be conformed to the given public key.
-     * @return true if sign is valid and data was not malformed.
+     * @brief Overriding of @link VirgilDataSink::isGood() @endlink method.
      */
-    bool verify(VirgilDataSource& source, const VirgilSign& sign, const VirgilByteArray& publicKey);
+    virtual bool isGood();
+    /**
+     * @brief Overriding of @link VirgilDataSink::write() @endlink method.
+     */
+    virtual void write(const VirgilByteArray& data);
 private:
-    VirgilHash hash_;
+    std::ostream& out_;
 };
 
-}}}
+}}
 
-#endif /* VIRGIL_SERVICE_VIRGIL_STREAM_SIGNER_H */
+#endif /* VIRGIL_STREAM_VIRGIL_STREAM_DATA_SINK_H */

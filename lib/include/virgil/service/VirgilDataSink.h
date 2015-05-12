@@ -34,22 +34,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/stream/VirgilStreamDataSink.h>
-using virgil::service::stream::VirgilStreamDataSink;
+#ifndef VIRGIL_DATA_VIRGIL_DATA_SINK_H
+#define VIRGIL_DATA_VIRGIL_DATA_SINK_H
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-VirgilStreamDataSink::VirgilStreamDataSink(std::ostream& out) : out_(out) {
-}
 
-bool VirgilStreamDataSink::isGood() {
-    return out_.good();
-}
+namespace virgil { namespace service {
 
-void VirgilStreamDataSink::write(const VirgilByteArray& data) {
-    out_.write(reinterpret_cast<const std::ostream::char_type *>(data.data()), data.size());
-}
+/**
+ * @brief This is base class for output streams.
+ *
+ * Defines interface that allows write data to the output stream.
+ */
+class VirgilDataSink {
+public:
+    /**
+     * @brief Return true if target object is able to write data.
+     */
+    virtual bool isGood() = 0;
+    /**
+     * @brief Write data to the target object.
+     */
+    virtual void write(const VirgilByteArray& data) = 0;
+    virtual ~VirgilDataSink() throw() {}
+};
 
-VirgilStreamDataSink::~VirgilStreamDataSink() throw() {
-}
+}}
+
+#endif /* VIRGIL_DATA_VIRGIL_DATA_SINK_H */

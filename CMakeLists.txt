@@ -38,6 +38,7 @@
 # Configurable variables:
 #     - PLATFORM_NAME     - name of target platform and/or language.
 #     - LOW_LEVEL_API     - boolean value that defines whether to include low-level API or not.
+#     - LIB_FILE_IO       - boolean value that defines whether to include module depends on file IO or not.
 #     - CPP_BUILD_CLI     - boolean value that defines whether build C++ CLI or not.
 #     - CPP_SPLIT_CLI     - boolean value that defines whether split C++ CLI to separate utilities or not.
 #                           or separate utilities.
@@ -105,6 +106,7 @@ string (TOLOWER "${PLATFORM_NAME}" PLATFORM_NAME_LOWER)
 message (STATUS "Selected platform and/or language is: " ${PLATFORM_NAME})
 
 set (LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API or not")
+set (LIB_FILE_IO OFF CACHE BOOL "Defines whether to include module depends on file IO or not")
 set (CPP_BUILD_CLI OFF CACHE BOOL "Defines whether build C++ CLI or not")
 set (CPP_SPLIT_CLI OFF CACHE BOOL "Defines whether split C++ CLI to separate utilities or not")
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
@@ -154,6 +156,9 @@ if (PLATFORM_NAME_LOWER STREQUAL "cpp")
         add_subdirectory (tests)
     endif (ENABLE_TESTING)
     if (CPP_BUILD_CLI)
+        if (NOT LIB_FILE_IO)
+            message (FATAL_ERROR "C++ CLI prerequisite failed: LIB_FILE_IO is OFF")
+        endif (NOT LIB_FILE_IO)
         message (STATUS "C++ CLI status: ENABLED")
         # Set C++ CLI version
         set (CPP_CLI_VERSION_MAJOR 0)

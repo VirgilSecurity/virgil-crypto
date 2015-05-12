@@ -161,8 +161,7 @@ INCLUDE_CLASS(VirgilCipher, virgil::service, virgil/service)
 INCLUDE_CLASS(VirgilChunkCipher, virgil::service, virgil/service)
 INCLUDE_CLASS(VirgilSigner, virgil::service, virgil/service)
 
-// Package: virgil::service::stream
-INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::service::stream, virgil/service/stream)
-INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::service::stream, virgil/service/stream)
-INCLUDE_CLASS(VirgilStreamSigner, virgil::service::stream, virgil/service/stream)
-INCLUDE_CLASS(VirgilStreamCipher, virgil::service::stream, virgil/service/stream)
+INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::service, virgil/service)
+INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::service, virgil/service)
+INCLUDE_CLASS(VirgilStreamSigner, virgil::service, virgil/service)
+INCLUDE_CLASS(VirgilStreamCipher, virgil::service, virgil/service)

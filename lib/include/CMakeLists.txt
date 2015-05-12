@@ -34,10 +34,17 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
+if (LIB_FILE_IO)
+    set (EXCLUDE_FILE_IO_PATTERN "fake-stream")
+else ()
+    set (EXCLUDE_FILE_IO_PATTERN "stream")
+endif ()
+
 if (LOW_LEVEL_API)
     install (DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/" DESTINATION "${INSTALL_INC_DIR_NAME}"
         FILES_MATCHING
         PATTERN "*.h"
+        PATTERN ${EXCLUDE_FILE_IO_PATTERN} EXCLUDE
     )
 else ()
     install (DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/" DESTINATION "${INSTALL_INC_DIR_NAME}"
@@ -56,5 +63,6 @@ else ()
         PATTERN "VirgilRandom.h" EXCLUDE
         PATTERN "VirgilPBE.h" EXCLUDE
         PATTERN "VirgilContentInfo.h" EXCLUDE
+        PATTERN ${EXCLUDE_FILE_IO_PATTERN} EXCLUDE
     )
 endif ()

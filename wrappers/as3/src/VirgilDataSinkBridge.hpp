@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_DATA_SINK_BRIDGE_HPP
 #define AS3_VIRGIL_DATA_SINK_BRIDGE_HPP
 
-#include <virgil/service/stream/VirgilDataSink.h>
-using virgil::service::stream::VirgilDataSink;
+#include <virgil/service/VirgilDataSink.h>
+using virgil::service::VirgilDataSink;
 
 #include "as3_utils.hpp"
 

@@ -48,9 +48,11 @@ using virgil::VirgilException;
 #include <virgil/service/data/VirgilCertificate.h>
 using virgil::service::data::VirgilCertificate;
 
+#include <virgil/stream/utils.h>
+
 #include <tclap/CmdLine.h>
 
-#include "utils.h"
+#include "version.h"
 
 #ifdef SPLIT_CLI
     #define MAIN main
@@ -58,10 +60,24 @@ using virgil::service::data::VirgilCertificate;
     #define MAIN certinfo_main
 #endif
 
+/**
+ * @brief Return logical "exclusive or" of 3 arguments.
+ */
+inline bool xor3(bool a, bool b, bool c) {
+    return (a && b && c) || (!a && !b && !c);
+}
+
+/**
+ * @brief Returns whether underling data is ASN.1 structure or not.
+ */
+inline bool is_asn1(const VirgilByteArray& data) {
+    return data.size() > 0 && data[0] == 0x30;
+}
+
 int MAIN(int argc, char **argv) {
     try {
         // Parse arguments.
-        TCLAP::CmdLine cmd("Output certificate details.", ' ', virgil::cli::version());
+        TCLAP::CmdLine cmd("Output certificate details.", ' ', cli_version());
 
         TCLAP::ValueArg<std::string> inArg("i", "in", "Certificate. If omitted stdin is used.",
                 false, "", "file");
@@ -106,10 +122,10 @@ int MAIN(int argc, char **argv) {
         }
 
         // Read certificate
-        VirgilCertificate certificate = virgil::cli::read_certificate(*inStream);
+        VirgilCertificate certificate = virgil::stream::read_certificate(*inStream);
 
         // Output certificate details
-        bool showAll = virgil::cli::xor3(accountIdArg.getValue(), certificateIdArg.getValue(), publicKeyArg.getValue());
+        bool showAll = xor3(accountIdArg.getValue(), certificateIdArg.getValue(), publicKeyArg.getValue());
         bool showMultiple = showAll ||
                 (accountIdArg.getValue() && certificateIdArg.getValue()) ||
                 (certificateIdArg.getValue() && publicKeyArg.getValue()) ||
@@ -134,7 +150,7 @@ int MAIN(int argc, char **argv) {
             if (showMultiple) {
                 *outStream << "public key:" << std::endl;
             }
-            if (virgil::cli::is_asn1(publicKey)) {
+            if (is_asn1(publicKey)) {
                 *outStream << virgil::bytes2hex(publicKey, true) << std::endl;
             } else {
                 *outStream << virgil::bytes2str(publicKey);

@@ -34,11 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_PROGRAMS_UTILS_H
-#define VIRGIL_PROGRAMS_UTILS_H
-
-#include <cstddef>
-#include <string>
+#ifndef VIRGIL_STREAM_UTILS
+#define VIRGIL_STREAM_UTILS
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -49,32 +46,16 @@ using virgil::service::data::VirgilSign;
 #include <virgil/service/data/VirgilCertificate.h>
 using virgil::service::data::VirgilCertificate;
 
-#include <virgil/service/VirgilCipherBase.h>
-using virgil::service::VirgilCipherBase;
+#include <iostream>
+#include <string>
 
-namespace virgil { namespace cli {
+namespace virgil { namespace stream {
 
-/**
- * @brief Return logical "exclusive or" of 3 arguments.
- */
-bool xor3(bool a, bool b, bool c);
-/**
- * @brief Returns CLI programs version.
- */
-const char * version();
-/**
- * @brief Returns filename or directory portion of pathname.
- */
-std::string basename(const std::string& path);
-/**
- * @brief Returns whether underling data is ASN.1 structure or not.
- */
-bool is_asn1(const VirgilByteArray& data);
 /**
  * @brief Read certificate from the given file.
  * @param fileName - certfifcate file name.
  * @return Demarshalled certificate.
- * @throw invlaid_argument - if certificate can't be read.
+ * @throw VirgilException - if certificate can't be read.
  */
 VirgilCertificate read_certificate(const std::string& fileName);
 /**
@@ -82,14 +63,14 @@ VirgilCertificate read_certificate(const std::string& fileName);
  * @param file - certfifcate file stream.
  * @param fileName - certfifcate file name.
  * @return Demarshalled certificate.
- * @throw invlaid_argument - if certificate can't be read.
+ * @throw VirgilException - if certificate can't be read.
  */
 VirgilCertificate read_certificate(std::istream& file, const std::string& fileName = "");
 /**
  * @brief Read sign from the given file.
  * @param fileName - certfifcate file name.
  * @return Demarshalled sign.
- * @throw invlaid_argument - if sign can't be read.
+ * @throw VirgilException - if sign can't be read.
  */
 VirgilSign read_sign(const std::string& fileName);
 /**
@@ -97,36 +78,10 @@ VirgilSign read_sign(const std::string& fileName);
  * @param file - certfifcate file stream.
  * @param fileName - certfifcate file name.
  * @return Demarshalled sign.
- * @throw invlaid_argument - if sign can't be read.
+ * @throw VirgilException - if sign can't be read.
  */
 VirgilSign read_sign(std::istream& file, const std::string& fileName = "");
-/**
- * @brief Add recipients from the configuration files to the cipher.
- * @param cipher - recipients added to.
- * @param configFiles - array of configuration files names.
- * @throw invlaid_argument - if certificate file is empty.
- * @throw VirgilException - if certificate file format is corrupted.
- * return Number of added recipients.
- */
-size_t add_recipients_config(VirgilCipherBase& cipher, const std::vector<std::string>& configFiles);
-/**
- * @brief Add recipients from the list to the cipher.
- * @param cipher - recipients added to.
- * @param recipients - array of recipients: password and/or certificate.
- * @throw invlaid_argument - if certificate file is empty.
- * @throw VirgilException - if certificate file format is corrupted.
- * return Number of added recipients.
- */
-size_t add_recipients(VirgilCipherBase& cipher, const std::vector<std::string>& recipients);
-/**
- * @brief Add recipient to the cipher.
- * @param cipher - recipients added to.
- * @param recipient - password and/or certificate.
- * @throw invlaid_argument - if certificate file is empty.
- * @throw VirgilException - if certificate file format is corrupted.
- */
-void add_recipient(VirgilCipherBase& cipher, const std::string& recipient);
 
 }}
 
-#endif /* VIRGIL_PROGRAMS_UTILS_H */
+#endif /* VIRGIL_STREAM_UTILS */

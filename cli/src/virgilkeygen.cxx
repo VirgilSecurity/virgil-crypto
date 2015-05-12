@@ -40,6 +40,7 @@
 #include <iterator>
 #include <string>
 #include <stdexcept>
+#include <map>
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -52,7 +53,7 @@ using virgil::crypto::VirgilAsymmetricCipher;
 
 #include <tclap/CmdLine.h>
 
-#include "utils.h"
+#include "version.h"
 
 #ifdef SPLIT_CLI
     #define MAIN main
@@ -85,7 +86,7 @@ static VirgilKeyPairGenerator::ECKeyGroup ec_key_group_from_param(const std::str
 int MAIN(int argc, char **argv) {
     try {
         // Parse arguments.
-        TCLAP::CmdLine cmd("Generate private key with given parameters.", ' ', virgil::cli::version());
+        TCLAP::CmdLine cmd("Generate private key with given parameters.", ' ', cli_version());
 
         TCLAP::ValueArg<std::string> ecArg("e", "ec",
                 "Generate elliptic curve key with one of the following curves:\n"

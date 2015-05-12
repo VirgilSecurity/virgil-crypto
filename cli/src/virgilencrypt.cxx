@@ -40,6 +40,7 @@
 #include <iterator>
 #include <string>
 #include <stdexcept>
+#include <cstddef>
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -59,9 +60,11 @@ using virgil::stream::VirgilStreamDataSource;
 #include <virgil/stream/VirgilStreamDataSink.h>
 using virgil::stream::VirgilStreamDataSink;
 
+#include <virgil/stream/utils.h>
+
 #include <tclap/CmdLine.h>
 
-#include "utils.h"
+#include "version.h"
 
 #ifdef SPLIT_CLI
     #define MAIN main
@@ -69,10 +72,37 @@ using virgil::stream::VirgilStreamDataSink;
     #define MAIN encrypt_main
 #endif
 
+/**
+ * @brief Add recipients from the configuration files to the cipher.
+ * @param cipher - recipients added to.
+ * @param configFiles - array of configuration files names.
+ * @throw invlaid_argument - if certificate file is empty.
+ * @throw VirgilException - if certificate file format is corrupted.
+ * return Number of added recipients.
+ */
+static size_t add_recipients_config(VirgilCipherBase& cipher, const std::vector<std::string>& configFiles);
+/**
+ * @brief Add recipients from the list to the cipher.
+ * @param cipher - recipients added to.
+ * @param recipients - array of recipients: password and/or certificate.
+ * @throw invlaid_argument - if certificate file is empty.
+ * @throw VirgilException - if certificate file format is corrupted.
+ * return Number of added recipients.
+ */
+static size_t add_recipients(VirgilCipherBase& cipher, const std::vector<std::string>& recipients);
+/**
+ * @brief Add recipient to the cipher.
+ * @param cipher - recipients added to.
+ * @param recipient - password and/or certificate.
+ * @throw invlaid_argument - if certificate file is empty.
+ * @throw VirgilException - if certificate file format is corrupted.
+ */
+static void add_recipient(VirgilCipherBase& cipher, const std::string& recipient);
+
 int MAIN(int argc, char **argv) {
     try {
         // Parse arguments.
-        TCLAP::CmdLine cmd("Encrypt data", ' ', virgil::cli::version());
+        TCLAP::CmdLine cmd("Encrypt data", ' ', cli_version());
 
         TCLAP::ValueArg<std::string> inArg("i", "in", "Data to be encrypted. If omitted stdin is used.",
                 false, "", "file");
@@ -126,8 +156,8 @@ int MAIN(int argc, char **argv) {
         VirgilStreamDataSink dataSink(*outStream);
 
         // Add recipients
-        virgil::cli::add_recipients_config(cipher, recipientsConfigArg.getValue());
-        virgil::cli::add_recipients(cipher, recipientsArg.getValue());
+        add_recipients_config(cipher, recipientsConfigArg.getValue());
+        add_recipients(cipher, recipientsArg.getValue());
 
         // Define whether embed content info or not
         bool embedContentInfo = contentInfoArg.getValue().empty();
@@ -152,5 +182,44 @@ int MAIN(int argc, char **argv) {
     } catch (std::exception& exception) {
         std::cerr << "Error: " << exception.what() << std::endl;
         return EXIT_FAILURE;
+    }
+}
+
+size_t add_recipients_config(VirgilCipherBase& cipher, const std::vector<std::string>& recipientsConfig) {
+    size_t addedRecipientsCount = 0;
+    for (std::vector<std::string>::const_iterator it = recipientsConfig.begin();
+            it != recipientsConfig.end(); ++it) {
+        std::ifstream configFile(it->c_str());
+        if (!configFile.good()) {
+            std::cerr << "Warning: " << "can not read recipient config file: " << *it << std::endl;
+            continue;
+        }
+        // Else
+        std::string recipient;
+        while (configFile >> std::ws && std::getline(configFile, recipient)) {
+            if (!recipient.empty() && recipient[0] != '#') {
+                add_recipient(cipher, recipient);
+                ++addedRecipientsCount;
+            }
+        }
+    }
+    return addedRecipientsCount;
+}
+
+size_t add_recipients(VirgilCipherBase& cipher, const std::vector<std::string>& recipients) {
+    for (std::vector<std::string>::const_iterator it = recipients.begin();
+            it != recipients.end(); ++it) {
+        add_recipient(cipher, *it);
+    }
+    return recipients.size();
+}
+
+void add_recipient(VirgilCipherBase& cipher, const std::string& recipient) {
+    std::ifstream certificateFile(recipient.c_str(), std::ios::in | std::ios::binary);
+    if (certificateFile.good()) {
+        VirgilCertificate certificate = virgil::stream::read_certificate(certificateFile);
+        cipher.addKeyRecipient(certificate.id().certificateId(), certificate.publicKey());
+    } else {
+        cipher.addPasswordRecipient(virgil::str2bytes(recipient));
     }
 }

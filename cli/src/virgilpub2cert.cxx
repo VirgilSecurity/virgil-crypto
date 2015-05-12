@@ -52,7 +52,7 @@ using virgil::service::data::VirgilCertificate;
 
 #include <tclap/CmdLine.h>
 
-#include "utils.h"
+#include "version.h"
 
 #ifdef SPLIT_CLI
     #define MAIN main
@@ -63,7 +63,7 @@ using virgil::service::data::VirgilCertificate;
 int MAIN(int argc, char **argv) {
     try {
         // Parse arguments.
-        TCLAP::CmdLine cmd("Create certificate from the public key and identifiers.", ' ', virgil::cli::version());
+        TCLAP::CmdLine cmd("Create certificate from the public key and identifiers.", ' ', cli_version());
 
         TCLAP::ValueArg<std::string> inArg("i", "in", "Public key. If omitted stdin is used.",
                 false, "", "file");

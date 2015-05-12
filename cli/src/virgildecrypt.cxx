@@ -59,9 +59,11 @@ using virgil::stream::VirgilStreamDataSource;
 #include <virgil/stream/VirgilStreamDataSink.h>
 using virgil::stream::VirgilStreamDataSink;
 
+#include <virgil/stream/utils.h>
+
 #include <tclap/CmdLine.h>
 
-#include "utils.h"
+#include "version.h"
 
 #ifdef SPLIT_CLI
     #define MAIN main
@@ -72,7 +74,7 @@ using virgil::stream::VirgilStreamDataSink;
 int MAIN(int argc, char **argv) {
     try {
         // Parse arguments.
-        TCLAP::CmdLine cmd("Decrypt data", ' ', virgil::cli::version());
+        TCLAP::CmdLine cmd("Decrypt data", ' ', cli_version());
 
         TCLAP::ValueArg<std::string> inArg("i", "in", "Data to be decrypted. If omitted stdin is used.",
                 false, "", "file");
@@ -141,7 +143,7 @@ int MAIN(int argc, char **argv) {
 
         if (!keyArg.getValue().empty()) {
             // Read certificate
-            VirgilCertificate certificate = virgil::cli::read_certificate(recipientArg.getValue());
+            VirgilCertificate certificate = virgil::stream::read_certificate(recipientArg.getValue());
             // Read private key
             std::ifstream keyFile(keyArg.getValue().c_str(), std::ios::in | std::ios::binary);
             if (!keyFile.good() && !keyArg.getValue().empty()) {

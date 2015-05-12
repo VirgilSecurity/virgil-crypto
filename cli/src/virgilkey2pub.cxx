@@ -52,7 +52,7 @@ using virgil::crypto::VirgilAsymmetricCipher;
 
 #include <tclap/CmdLine.h>
 
-#include "utils.h"
+#include "version.h"
 
 #ifdef SPLIT_CLI
     #define MAIN main
@@ -60,10 +60,17 @@ using virgil::crypto::VirgilAsymmetricCipher;
     #define MAIN key2pub_main
 #endif
 
+/**
+ * @brief Returns whether underling data is ASN.1 structure or not.
+ */
+inline bool is_asn1(const VirgilByteArray& data) {
+    return data.size() > 0 && data[0] == 0x30;
+}
+
 int MAIN(int argc, char **argv) {
     try {
         // Parse arguments.
-        TCLAP::CmdLine cmd("Extract public key from the private key.", ' ', virgil::cli::version());
+        TCLAP::CmdLine cmd("Extract public key from the private key.", ' ', cli_version());
 
         TCLAP::ValueArg<std::string> inArg("i", "in", "Private key. If omitted stdin is used.",
                 false, "", "file");
@@ -106,7 +113,7 @@ int MAIN(int argc, char **argv) {
         // Extract public key.
         VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
         cipher.setPrivateKey(privateKey, virgil::str2bytes(pwdArg.getValue()));
-        VirgilByteArray publicKey = virgil::cli::is_asn1(privateKey) ?
+        VirgilByteArray publicKey = is_asn1(privateKey) ?
                 cipher.exportPublicKeyToDER() : cipher.exportPublicKeyToPEM();
 
         // Output public key

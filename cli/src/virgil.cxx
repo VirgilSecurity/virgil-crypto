@@ -40,7 +40,7 @@
 #include <string>
 #include <map>
 
-#include "utils.h"
+#include "version.h"
 
 typedef int (*main_func)(int argc, char **argv);
 
@@ -79,7 +79,7 @@ static void print_usage(std::ostream& out, const char *programName) {
 }
 
 static void print_version(std::ostream& out, const char *programName) {
-    out << programName << "  " << "version: "<< virgil::cli::version() << std::endl;
+    out << programName << "  " << "version: "<< cli_version() << std::endl;
 }
 
 int main(int argc, char **argv) {

@@ -37,14 +37,8 @@
 Module['postRun'] = function() {
 
     Module['VirgilByteArray']['fromUTF8'] = function(string) {
-        var s = unescape(encodeURIComponent(string));
-        var charList = s.split('');
-        var uintArray = [];
-        for (var i = 0; i < charList.length; i++) {
-            uintArray.push(charList[i].charCodeAt(0));
-        }
         var ba = new Module.VirgilByteArray();
-        ba.assign(new Uint8Array(uintArray));
+        ba.fromUTF8(string);
         return ba;
     };
 

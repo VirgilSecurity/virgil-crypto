@@ -34,6 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>

@@ -34,13 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cstdlib>
+#include <cstddef>
 #include <iostream>
 #include <fstream>
 #include <algorithm>
 #include <iterator>
 #include <string>
 #include <stdexcept>
-#include <cstddef>
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;

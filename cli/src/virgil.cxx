@@ -36,6 +36,7 @@
 
 #ifndef SPLIT_CLI
 
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <map>

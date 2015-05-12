@@ -40,7 +40,7 @@ else ()
     set (EXCLUDE_FILE_IO_PATTERN "stream")
 endif ()
 
-if (LOW_LEVEL_API)
+if (LIB_LOW_LEVEL_API)
     install (DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/" DESTINATION "${INSTALL_INC_DIR_NAME}"
         FILES_MATCHING
         PATTERN "*.h"

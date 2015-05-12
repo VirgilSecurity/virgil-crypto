@@ -56,7 +56,7 @@ set (TEST_FILES
     StringSink.php
 )
 
-if (LOW_LEVEL_API)
+if (LIB_LOW_LEVEL_API)
     list (APPEND TEST_FILES
         VirgilSymmetricCipher_AES256_CBC_Test.php
         VirgilAsymmetricCipher_EC_Test.php
@@ -67,7 +67,7 @@ if (LOW_LEVEL_API)
         VirgilPBE_Test.php
         VirgilKDF_Test.php
     )
-endif (LOW_LEVEL_API)
+endif (LIB_LOW_LEVEL_API)
 
 add_subdirectory (data)
 

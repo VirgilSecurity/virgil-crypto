@@ -6,10 +6,10 @@ env:
     global:
         - BUILD_DIR_NAME=build
     matrix:
-        - PLATFORM_NAME=CPP LOW_LEVEL_API=ON
-        - PLATFORM_NAME=CPP LOW_LEVEL_API=OFF
-        - PLATFORM_NAME=PHP LOW_LEVEL_API=ON
-        - PLATFORM_NAME=PHP LOW_LEVEL_API=OFF
+        - PLATFORM_NAME=CPP LIB_LOW_LEVEL_API=ON
+        - PLATFORM_NAME=CPP LIB_LOW_LEVEL_API=OFF
+        - PLATFORM_NAME=PHP LIB_LOW_LEVEL_API=ON
+        - PLATFORM_NAME=PHP LIB_LOW_LEVEL_API=OFF
 before_install: ./ci/install_deps.sh
 before_script: ./ci/configure.sh
 script: ./ci/run.sh

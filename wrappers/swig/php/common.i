@@ -39,7 +39,7 @@
   php_info_print_table_start();
   php_info_print_table_header(2, \"Directive\", \"Value\");
   php_info_print_table_row(2, \"Version\", virgil::VirgilVersion::asString().c_str());
-#if defined(LOW_LEVEL_API)
+#if defined(LIB_LOW_LEVEL_API)
   php_info_print_table_row(2, \"Low-level API support\", \"enabled\");
 #else
   php_info_print_table_row(2, \"Low-level API support\", \"disabled\");

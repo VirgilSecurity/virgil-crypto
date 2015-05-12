@@ -44,7 +44,7 @@ if [ "${PLATFORM_NAME}" ]; then
 fi
 
 if [ "${PLATFORM_NAME}" = "CPP" ]; then
-    CMAKE_ARGS+=" -DCPP_BUILD_CLI=YES"
+    CMAKE_ARGS+=" -DCPP_BUILD_CLI=YES -DLIB_FILE_IO=ON"
 fi
 
 # Run CMake

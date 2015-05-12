@@ -19,6 +19,22 @@
             encryptedData.delete();
             decryptedData.delete();
         };
+        function test_sign() {
+            var pwd = Module.VirgilByteArray.fromUTF8("");
+            var keys = new Module.VirgilKeyPair(pwd);
+            var certId = Module.VirgilByteArray.fromUTF8("17648c7e-9ca3-4707-bdc6-a5c57b7a18fc");
+            var data = Module.VirgilByteArray.fromUTF8("data to be signed");
+            var signer = new Module.VirgilSigner();
+            var sign = signer.sign(data, certId, keys.privateKey(), pwd);
+            var verified = signer.verify(data, sign, keys.publicKey());
+            console.log("Data verification " + (verified ? "passed" : "failed"));
+            pwd.delete();
+            keys.delete();
+            certId.delete();
+            data.delete();
+            signer.delete();
+            sign.delete();
+        };
         var Module = {
             onRuntimeInitialized: function() {
                 console.log(Module.VirgilVersion.asString())

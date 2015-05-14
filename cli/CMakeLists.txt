@@ -36,6 +36,9 @@
 
 cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 
+find_package (cURL REQUIRED)
+include_directories (CURL_INCLUDE_DIRS)
+
 # Define variables
 set (VIRGIL_LIB_NAME virgil)
 
@@ -44,10 +47,12 @@ if (CMAKE_MAJOR_VERSION LESS 3)
     include_directories (${${VIRGIL_LIB_NAME}_SOURCE_DIR}/include)
 endif (CMAKE_MAJOR_VERSION LESS 3)
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/ext)
-include_directories (${CMAKE_CURRENT_SOURCE_DIR}/src)
+include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Define sources list
-aux_source_directory ("src" SRC_LIST)
+aux_source_directory ("src/common" SRC_LIST)
+aux_source_directory ("src/pki" SRC_LIST)
+aux_source_directory ("src/commands" SRC_LIST)
 foreach (src_file ${SRC_LIST})
     configure_file (
         "${CMAKE_CURRENT_SOURCE_DIR}/${src_file}"
@@ -55,26 +60,32 @@ foreach (src_file ${SRC_LIST})
         @ONLY
     )
 endforeach ()
-set (SRC_LIST "")
-aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src SRC_LIST)
+aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src/common SRC_COMMON)
+aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src/pki SRC_PKI)
+aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src/commands SRC_COMMANDS)
+
+add_library (virgil_cli_common ${SRC_COMMON})
+target_link_libraries (virgil_cli_common virgil)
+
+add_library (virgil_cli_pki ${SRC_PKI})
+target_link_libraries (virgil_cli_pki virgil ${CURL_LIBRARIES})
+
+set (COMMON_CLI_NAME virgil)
 
 if (${CPP_SPLIT_CLI})
     add_definitions (-DSPLIT_CLI)
-    add_library (cli_utils "${CMAKE_CURRENT_BINARY_DIR}/src/utils.cxx")
-    target_link_libraries (cli_utils virgil)
-    foreach (SRC ${SRC_LIST})
+    foreach (SRC ${SRC_COMMANDS})
         get_filename_component (TARGET_NAME ${SRC} NAME_WE)
-        if (NOT (${TARGET_NAME} STREQUAL "utils" OR ${TARGET_NAME} STREQUAL "virgil"))
+        if (NOT ${TARGET_NAME} STREQUAL ${COMMON_CLI_NAME})
             add_executable (${TARGET_NAME} ${SRC})
-            target_link_libraries (${TARGET_NAME} cli_utils)
-            target_link_libraries (${TARGET_NAME} virgil)
+            target_link_libraries (${TARGET_NAME} virgil virgil_cli_common virgil_cli_pki)
             install (TARGETS ${TARGET_NAME} DESTINATION ${INSTALL_BIN_DIR_NAME})
         endif ()
     endforeach (SRC)
 else ()
-    add_executable (virgil_cli ${SRC_LIST})
-    target_link_libraries (virgil_cli virgil)
-    set_target_properties (virgil_cli PROPERTIES OUTPUT_NAME virgil)
+    add_executable (virgil_cli ${SRC_COMMANDS})
+    target_link_libraries (virgil_cli virgil virgil_cli_common virgil_cli_pki)
+    set_target_properties (virgil_cli PROPERTIES OUTPUT_NAME ${COMMON_CLI_NAME})
     install (TARGETS virgil_cli DESTINATION ${INSTALL_BIN_DIR_NAME})
 endif (${CPP_SPLIT_CLI})
 

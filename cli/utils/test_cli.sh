@@ -37,14 +37,14 @@
 
 # Returns absolute path of given object
 function abspath {
-    pushd . $> /dev/null
+    pushd . &>/dev/null
     if [ -d "$1" ]; then
         cd "$1"
     else
         cd "`dirname \"$1\"`"
     fi
     echo `pwd -P`
-    popd $> /dev/null
+    popd &>/dev/null
 }
 
 # Check arguments
@@ -115,7 +115,7 @@ function test {
 
     ## -- with embedded content info
     ###       encrypt
-    echo $test_string | eval "$encrypt_cmd" cert.der recipient_password > data.enc || exit 1
+    echo $test_string | eval "$encrypt_cmd" cert:cert.der pass:recipient_password > data.enc || exit 1
     ###       decrypt with key
     decrypted_data=`eval "$decrypt_cmd" --key private.pem --pwd password --recipient cert.der < data.enc` || exit 1
     if [ "$test_string" != "$decrypted_data" ]; then
@@ -129,7 +129,8 @@ function test {
 
     ## -- with content info stored in separate file
     ###       encrypt
-    echo $test_string | eval "$encrypt_cmd" --content-info content.dat recipient_password cert.der > data.enc || exit 1
+    echo $test_string | eval "$encrypt_cmd" --content-info content.dat \
+            pass:recipient_password cert:cert.der > data.enc || exit 1
     ###       decrypt with key
     decrypted_data=`eval "$decrypt_cmd" --key private.pem --pwd password \
             --content-info content.dat --recipient cert.der < data.enc` || exit 1
@@ -145,7 +146,7 @@ function test {
     # Test sign / verify
     echo "Data to be signed" > data.dat
     ## -- sign
-    eval "$sign_cmd" -i data.dat -o sign.der --format der --certificate cert.der --key private.pem --pwd password\
+    eval "$sign_cmd" -i data.dat -o sign.der --format der --certificate cert.der --key private.pem --pwd password \
             || exit 1
     ## -- verify
     verify_result=`eval "$verify_cmd" -i data.dat --sign sign.der --certificate cert.der || exit 1`
@@ -161,14 +162,14 @@ if [ ! -d $work_dir ]; then
 fi
 
 # Go to working directory
-pushd "$work_dir" &> /dev/null
+pushd "$work_dir" &>/dev/null
 
 # Perform test
 test ec
 test rsa
 
 # Go to initial directory
-popd $> /dev/null
+popd &>/dev/null
 
 # Remove working directory
 rm -fr "$work_dir"

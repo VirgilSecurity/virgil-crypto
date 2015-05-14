@@ -9,9 +9,9 @@
 .Op Fl Fl in Ar file
 .Op Fl Fl out Ar file
 .Fl Fl sign Ar file
-.Fl Fl certificate Ar file
+.Fl Fl sign-owner Ar arg
 .Sh DESCRIPTION
-Verify data with given sign and certificate.
+Verify data with given sign.
 .Sh RETURN VALUES
 .Bl -tag -width "--"
 .It \fBEXIT_SUCCESS\fP
@@ -27,8 +27,16 @@ Data to be verified. If omitted \fBstdin\fP is used.
 Verification result: \fBsuccess\fP | f\fBailure\fP. If omitted \fBstdout\fP is used.
 .It Fl s, Fl Fl sign Ar file
 Digest sign.
-.It Fl c, Fl Fl certificate Ar file
-Signer's certificate.
+.It Fl r, Fl Fl sign-owner Ar file
+Sign owner, defined as: \fB[email|phone|fax] : <value>\fR, where
+.Bl -bullet
+.It
+email - recipient's email;
+.It
+phone - recipient's phone;
+.It
+fax - recipient's fax.
+.El
 .El
 .Sh SEE ALSO
 .Xr virgil 1 ,

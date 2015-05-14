@@ -34,12 +34,42 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CLI_VERSION_H
-#define CLI_VERSION_H
+#ifndef VIRGIL_COMMON_PAIR_H
+#define VIRGIL_COMMON_PAIR_H
+
+#include <string>
+#include <vector>
+#include <map>
+#include <utility>
+
+namespace virgil {
 
 /**
- * @brief Returns CLI version.
+ * @brief Parse string pair.
+ *
+ * Pair format: <key>:<value>.
+ * @param str - string to be parsed.
+ * @return Parsed string pair as std::pair<std::string, std::string>.
+ * @throw std::invalid_argument - if given format is invalid.
+ *
+ * Note, all whitespaces before <key> and after <key> will be trimmed.
+ * Note, all whitespaces before <value> and after <value> will be trimmed.
  */
-const char * cli_version();
+std::pair<std::string, std::string> cli_parse_pair(const std::string& str);
 
-#endif /* CLI_VERSION_H */
+/**
+ * @brief Parse array of string pairs.
+ *
+ * Pair format: <key>:<value>.
+ * @param arr - array of strings to be parsed.
+ * @return Parsed string pairs.
+ * @throw std::invalid_argument - if given format is invalid.
+ *
+ * Note, all whitespaces before <key> and after <key> will be trimmed.
+ * Note, all whitespaces before <value> and after <value> will be trimmed.
+ */
+std::map<std::string, std::string> cli_parse_pair_array(const std::vector<std::string>& arr);
+
+}
+
+#endif /* VIRGIL_COMMON_PAIR_H */

@@ -48,61 +48,41 @@ using virgil::VirgilByteArray;
 #include <virgil/VirgilException.h>
 using virgil::VirgilException;
 
-#include <virgil/service/data/VirgilCertificate.h>
-using virgil::service::data::VirgilCertificate;
-
-#include <virgil/service/VirgilStreamCipher.h>
-using virgil::service::VirgilStreamCipher;
-
-#include <virgil/stream/VirgilStreamDataSource.h>
-using virgil::stream::VirgilStreamDataSource;
-
-#include <virgil/stream/VirgilStreamDataSink.h>
-using virgil::stream::VirgilStreamDataSink;
-
-#include <virgil/stream/utils.h>
+#include <virgil/crypto/VirgilAsymmetricCipher.h>
+using virgil::crypto::VirgilAsymmetricCipher;
 
 #include <tclap/CmdLine.h>
 
-#include "version.h"
+#include <cli/version.h>
 
 #ifdef SPLIT_CLI
     #define MAIN main
 #else
-    #define MAIN decrypt_main
+    #define MAIN key2pub_main
 #endif
+
+/**
+ * @brief Returns whether underling data is ASN.1 structure or not.
+ */
+inline bool is_asn1(const VirgilByteArray& data) {
+    return data.size() > 0 && data[0] == 0x30;
+}
 
 int MAIN(int argc, char **argv) {
     try {
         // Parse arguments.
-        TCLAP::CmdLine cmd("Decrypt data", ' ', cli_version());
+        TCLAP::CmdLine cmd("Extract public key from the private key.", ' ', virgil::cli_version());
 
-        TCLAP::ValueArg<std::string> inArg("i", "in", "Data to be decrypted. If omitted stdin is used.",
+        TCLAP::ValueArg<std::string> inArg("i", "in", "Private key. If omitted stdin is used.",
                 false, "", "file");
 
-        TCLAP::ValueArg<std::string> outArg("o", "out", "Decrypted data. If omitted stdout is used.",
-                false, "", "file");
-
-        TCLAP::ValueArg<std::string> contentInfoArg("c", "content-info",
-                "Content info. Use this option if content info is not embedded in the encrypted data.",
-                false, "", "file");
-
-        TCLAP::ValueArg<std::string> keyArg("k", "key", "Recipient's private key.",
+        TCLAP::ValueArg<std::string> outArg("o", "out", "Public key. If omitted stdout is used.",
                 false, "", "file");
 
         TCLAP::ValueArg<std::string> pwdArg("p", "pwd", "Private key password.",
                 false, "", "arg");
 
-        TCLAP::ValueArg<std::string> recipientArg("r", "recipient",
-                "If option -key is defined this value is used as recipient's certificate, "
-                "otherwise this value is used as recipient's password.",
-                true, "", "arg");
-
-
-        cmd.add(recipientArg);
         cmd.add(pwdArg);
-        cmd.add(keyArg);
-        cmd.add(contentInfoArg);
         cmd.add(outArg);
         cmd.add(inArg);
 
@@ -116,7 +96,6 @@ int MAIN(int argc, char **argv) {
         } else if (!inArg.getValue().empty()) {
             throw std::invalid_argument(std::string("can not read file: " + inArg.getValue()));
         }
-        VirgilStreamDataSource dataSource(*inStream);
 
         // Prepare output.
         std::ostream *outStream = &std::cout;
@@ -126,43 +105,20 @@ int MAIN(int argc, char **argv) {
         } else if (!outArg.getValue().empty()) {
             throw std::invalid_argument(std::string("can not write file: " + outArg.getValue()));
         }
-        VirgilStreamDataSink dataSink(*outStream);
 
-        // Create cipher.
-        VirgilStreamCipher cipher;
+        // Read private key.
+        VirgilByteArray privateKey;
+        std::copy(std::istreambuf_iterator<char>(*inStream), std::istreambuf_iterator<char>(),
+                std::back_inserter(privateKey));
 
-        // Set content info.
-        std::ifstream contentInfoFile(contentInfoArg.getValue().c_str(), std::ios::in | std::ios::binary);
-        if (contentInfoFile.good()) {
-            VirgilByteArray contentInfo;
-            std::copy(std::istreambuf_iterator<char>(contentInfoFile), std::istreambuf_iterator<char>(),
-                    std::back_inserter(contentInfo));
-            cipher.setContentInfo(contentInfo);
-        } else if (!contentInfoArg.getValue().empty()) {
-            throw std::invalid_argument(std::string("can not read file: " + contentInfoArg.getValue()));
-        }
+        // Extract public key.
+        VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
+        cipher.setPrivateKey(privateKey, virgil::str2bytes(pwdArg.getValue()));
+        VirgilByteArray publicKey = is_asn1(privateKey) ?
+                cipher.exportPublicKeyToDER() : cipher.exportPublicKeyToPEM();
 
-        if (!keyArg.getValue().empty()) {
-            // Read certificate
-            VirgilCertificate certificate = virgil::stream::read_certificate(recipientArg.getValue());
-            // Read private key
-            std::ifstream keyFile(keyArg.getValue().c_str(), std::ios::in | std::ios::binary);
-            if (!keyFile.good() && !keyArg.getValue().empty()) {
-                throw std::invalid_argument(std::string("can not read file: " + keyArg.getValue()));
-            }
-            VirgilByteArray privateKey;
-            std::copy(std::istreambuf_iterator<char>(keyFile), std::istreambuf_iterator<char>(),
-                    std::back_inserter(privateKey));
-            VirgilByteArray privateKeyPassword = virgil::str2bytes(pwdArg.getValue());
-            // Decrypt
-            cipher.decryptWithKey(dataSource, dataSink, certificate.id().certificateId(),
-                    privateKey, privateKeyPassword);
-        } else if (!recipientArg.getValue().empty()) {
-            // Decrypt
-            cipher.decryptWithPassword(dataSource, dataSink, virgil::str2bytes(recipientArg.getValue()));
-        } else {
-            throw std::invalid_argument(std::string("no recipients are defined"));
-        }
+        // Output public key
+        std::copy(publicKey.begin(), publicKey.end(), std::ostreambuf_iterator<char>(*outStream));
     } catch (TCLAP::ArgException& exception) {
         std::cerr << "Error: " << exception.error() << " for arg " << exception.argId() << std::endl;
         return EXIT_FAILURE;

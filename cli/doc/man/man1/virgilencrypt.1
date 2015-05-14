@@ -22,7 +22,7 @@ Encrypted data. If omitted \fBstdout\fP is used.
 .It Fl c, Fl Fl content-info Ar file
 Content info. If omitted - becomes a part of the encrypted data.
 .It Fl r, Fl Fl recipients Ar file
-File that contains information about recipients. Each line can be either empty line, or comment line, or path to the recipient's certificate, or recipient's password.
+File that contains information about recipients. Each line can be either empty line, or comment line, or recipient.
 .Bd -literal
 \fBFormat\fP:
 # <comment line> | <certfifcate path> | <password>
@@ -30,14 +30,26 @@ File that contains information about recipients. Each line can be either empty l
 .Bd -literal
 \fBExample\fP:
 # Recipients defined by certificates:
-~/certificates/cert1.der
-~/certificates/cert2.json
+cert:~/certificates/cert1.der
+cert:~/certificates/cert2.json
 # Recipients defined by passwords:
-user1_password
-user2_password
+pass:user1_password
+pass:user2_password
+# Recipients defined by user identifier:
+email:test@test.com
+phone:+1 777 666 5555
+fax:+1 777 999 4444
 .Ed
 .It Ar recipient
-Either path to the recipient's certificate, or the recipient's password.
+Format: [cert|pass|email|phone|fax]:<value>
+.Bl -bullet
+.It 
+cert:<value> - path to the recipient's certificate file;
+.It 
+pass:<value> - recipient's password;
+.It 
+email|phone|fax:<value> - recipient's identifier.
+.El
 .El
 .Sh SEE ALSO
 .Xr virgil 1 ,

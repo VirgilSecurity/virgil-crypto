@@ -58,42 +58,43 @@ using virgil::service::data::VirgilSign;
 
 #include <tclap/CmdLine.h>
 
-#include "version.h"
+#include <cli/version.h>
+#include <cli/pair.h>
+#include <cli/pki.h>
 
 #ifdef SPLIT_CLI
     #define MAIN main
 #else
-    #define MAIN sign_main
+    #define MAIN verify_main
 #endif
 
 int MAIN(int argc, char **argv) {
     try {
         // Parse arguments.
-        TCLAP::CmdLine cmd("Decrypt data", ' ', cli_version());
+        TCLAP::CmdLine cmd("Decrypt data", ' ', virgil::cli_version());
 
-        TCLAP::ValueArg<std::string> inArg("i", "in", "Data to be signed. If omitted stdin is used.",
+        TCLAP::ValueArg<std::string> inArg("i", "in", "Data to be verified. If omitted stdin is used.",
                 false, "", "file");
 
-        TCLAP::ValueArg<std::string> outArg("o", "out", "Digest sign. If omitted stdout is used.",
+        TCLAP::ValueArg<std::string> outArg("o", "out",
+                "Verification result: success | failure. If omitted stdout is used.",
                 false, "", "file");
 
-        TCLAP::ValueArg<std::string> formatArg("f", "format", "Output format: json | der (default).",
-                false, "der", "arg");
-
-        TCLAP::ValueArg<std::string> keyArg("k", "key", "Signer's private key.",
+        TCLAP::ValueArg<std::string> signArg("s", "sign", "Digest sign.",
                 true, "", "file");
 
-        TCLAP::ValueArg<std::string> pwdArg("p", "pwd", "Signer's private key password.",
-                false, "", "arg");
-
-        TCLAP::ValueArg<std::string> certificateArg("c", "certificate", "Signer's certificate.",
+        TCLAP::ValueArg<std::string> signOwnerArg("r", "sign-owner",
+                "Sign owner, defined as:"
+                "\n[email|phone|fax] : <value>"
+                "\nwhere:"
+                "\n\t* email - recipient's email;"
+                "\n\t* phone - recipient's phone;"
+                "\n\t* fax - recipient's fax.",
                 true, "", "arg");
 
-        cmd.add(certificateArg);
-        cmd.add(pwdArg);
-        cmd.add(keyArg);
-        cmd.add(formatArg);
-        cmd.add(outArg);
+
+        cmd.add(signOwnerArg);
+        cmd.add(signArg);
         cmd.add(inArg);
 
         cmd.parse(argc, argv);
@@ -117,38 +118,25 @@ int MAIN(int argc, char **argv) {
             throw std::invalid_argument(std::string("can not write file: " + outArg.getValue()));
         }
 
-        // Read certificate
-        VirgilCertificate certificate = virgil::stream::read_certificate(certificateArg.getValue());
+        // Read sign
+        VirgilSign sign = virgil::stream::read_sign(signArg.getValue());
 
-        // Read private key
-        std::ifstream keyFile(keyArg.getValue().c_str(), std::ios::in | std::ios::binary);
-        if (!keyFile.good()) {
-            throw std::invalid_argument(std::string("can not read private key: " + keyArg.getValue()));
-        }
-        VirgilByteArray privateKey;
-        std::copy(std::istreambuf_iterator<char>(keyFile), std::istreambuf_iterator<char>(),
-                std::back_inserter(privateKey));
-        VirgilByteArray privateKeyPassword = virgil::str2bytes(pwdArg.getValue());
+        // Get owner certificate
+        std::pair<std::string, std::string> signOwner = virgil::cli_parse_pair(signOwnerArg.getValue());
+        VirgilCertificate certificate = virgil::pki_get_certificate(signOwner.first, signOwner.second);
 
         // Create signer.
         VirgilStreamSigner signer;
 
-        // Sign data.
-        VirgilSign sign = signer.sign(dataSource, certificate.id().certificateId(), privateKey, privateKeyPassword);
-
-        // Marshal sign.
-        VirgilByteArray signData;
-        if (formatArg.getValue() == "der") {
-            signData = sign.toAsn1();
-        } else if (formatArg.getValue() == "json") {
-            signData = sign.toJson();
+        // Verify data.
+        bool verified = signer.verify(dataSource, sign, certificate.publicKey());
+        if (verified) {
+            *outStream << "success" << std::endl;
+            return EXIT_SUCCESS;
         } else {
-            throw std::invalid_argument(std::string("unknown --format: ") + formatArg.getValue());
+            *outStream << "failure" << std::endl;
+            return EXIT_FAILURE;
         }
-
-        // Write sign to the output.
-        std::copy(signData.begin(), signData.end(), std::ostreambuf_iterator<char>(*outStream));
-
     } catch (TCLAP::ArgException& exception) {
         std::cerr << "Error: " << exception.error() << " for arg " << exception.argId() << std::endl;
         return EXIT_FAILURE;
@@ -156,5 +144,4 @@ int MAIN(int argc, char **argv) {
         std::cerr << "Error: " << exception.what() << std::endl;
         return EXIT_FAILURE;
     }
-    return EXIT_SUCCESS;
 }

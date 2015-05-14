@@ -41,7 +41,7 @@
 #include <string>
 #include <map>
 
-#include "version.h"
+#include <cli/version.h>
 
 typedef int (*main_func)(int argc, char **argv);
 
@@ -53,6 +53,7 @@ int encrypt_main(int argc, char **argv);
 int decrypt_main(int argc, char **argv);
 int sign_main(int argc, char **argv);
 int verify_main(int argc, char **argv);
+int adduser_main(int argc, char **argv);
 
 static void print_usage(std::ostream& out, const char *programName) {
     out << std::endl << "USAGE:" << std::endl;
@@ -63,6 +64,8 @@ static void print_usage(std::ostream& out, const char *programName) {
     out << std::endl << "AVAILABLE COMMANDS:" << std::endl;
     out << "    " << "keygen    " <<
             "Generate private key with a given parameters." << std::endl;
+    out << "    " << "adduser    " <<
+            "Register user on the PKI service." << std::endl;
     out << "    " << "key2pub  " <<
             "Extract public key from the private key." << std::endl;
     out << "    " << "pub2cert  " <<
@@ -80,12 +83,13 @@ static void print_usage(std::ostream& out, const char *programName) {
 }
 
 static void print_version(std::ostream& out, const char *programName) {
-    out << programName << "  " << "version: "<< cli_version() << std::endl;
+    out << programName << "  " << "version: "<< virgil::cli_version() << std::endl;
 }
 
 int main(int argc, char **argv) {
     std::map<std::string, main_func> commandsMap;
     commandsMap["keygen"] = &keygen_main;
+    commandsMap["adduser"] = &adduser_main;
     commandsMap["key2pub"] = &key2pub_main;
     commandsMap["pub2cert"] = &pub2cert_main;
     commandsMap["certinfo"] = &certinfo_main;

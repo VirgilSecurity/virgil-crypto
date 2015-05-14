@@ -37,8 +37,6 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
-#include <algorithm>
-#include <iterator>
 #include <string>
 #include <stdexcept>
 
@@ -51,39 +49,56 @@ using virgil::VirgilException;
 #include <virgil/service/data/VirgilCertificate.h>
 using virgil::service::data::VirgilCertificate;
 
+#include <virgil/stream/utils.h>
+
 #include <tclap/CmdLine.h>
 
-#include "version.h"
+#include <cli/version.h>
 
 #ifdef SPLIT_CLI
     #define MAIN main
 #else
-    #define MAIN pub2cert_main
+    #define MAIN certinfo_main
 #endif
+
+/**
+ * @brief Return logical "exclusive or" of 3 arguments.
+ */
+inline bool xor3(bool a, bool b, bool c) {
+    return (a && b && c) || (!a && !b && !c);
+}
+
+/**
+ * @brief Returns whether underling data is ASN.1 structure or not.
+ */
+inline bool is_asn1(const VirgilByteArray& data) {
+    return data.size() > 0 && data[0] == 0x30;
+}
 
 int MAIN(int argc, char **argv) {
     try {
         // Parse arguments.
-        TCLAP::CmdLine cmd("Create certificate from the public key and identifiers.", ' ', cli_version());
+        TCLAP::CmdLine cmd("Output certificate details.", ' ', virgil::cli_version());
 
-        TCLAP::ValueArg<std::string> inArg("i", "in", "Public key. If omitted stdin is used.",
+        TCLAP::ValueArg<std::string> inArg("i", "in", "Certificate. If omitted stdin is used.",
                 false, "", "file");
 
-        TCLAP::ValueArg<std::string> outArg("o", "out", "Certificate. If omitted stdout is used.",
+        TCLAP::ValueArg<std::string> outArg("o", "out", "Certificate information. If omitted stdout is used.",
                 false, "", "file");
 
-        TCLAP::ValueArg<std::string> formatArg("f", "format", "Output format: json | der (default).",
-                false, "der", "arg");
+        TCLAP::SwitchArg accountIdArg("a", "account-id", "Output account identifier.",
+                false);
 
-        TCLAP::ValueArg<std::string> accountIdArg("a", "account-id", "Account identifier.",
-                false, "", "arg");
+        TCLAP::SwitchArg certificateIdArg("c", "certificate-id", "Output certificate identifier.",
+                false);
 
-        TCLAP::ValueArg<std::string> certificateIdArg("c", "certificate-id", "Certificate identifier.",
-                true, "", "arg");
+        TCLAP::SwitchArg publicKeyArg("p", "public-key", "Output public key.",
+                false);
 
+
+        cmd.add(publicKeyArg);
         cmd.add(certificateIdArg);
         cmd.add(accountIdArg);
-        cmd.add(formatArg);
         cmd.add(outArg);
         cmd.add(inArg);
 
@@ -107,30 +122,41 @@ int MAIN(int argc, char **argv) {
             throw std::invalid_argument(std::string("can not write file: " + outArg.getValue()));
         }
 
-        // Read public key.
-        VirgilByteArray publicKey;
-        std::copy(std::istreambuf_iterator<char>(*inStream), std::istreambuf_iterator<char>(),
-                std::back_inserter(publicKey));
+        // Read certificate
+        VirgilCertificate certificate = virgil::stream::read_certificate(*inStream);
 
-        // Create certificate
-        VirgilCertificate certificate(publicKey);
-        certificate.id().setAccountId(virgil::str2bytes(accountIdArg.getValue()));
-        certificate.id().setCertificateId(virgil::str2bytes(certificateIdArg.getValue()));
+        // Output certificate details
+        bool showAll = xor3(accountIdArg.getValue(), certificateIdArg.getValue(), publicKeyArg.getValue());
+        bool showMultiple = showAll ||
+                (accountIdArg.getValue() && certificateIdArg.getValue()) ||
+                (certificateIdArg.getValue() && publicKeyArg.getValue()) ||
+                (accountIdArg.getValue() && publicKeyArg.getValue());
 
-        // Marshal certificate
-        VirgilByteArray certificateData;
-        if (formatArg.getValue() == "der") {
-            certificateData = certificate.toAsn1();
-        } else if (formatArg.getValue() == "json") {
-            certificateData = certificate.toJson();
-        } else {
-            throw std::invalid_argument(std::string("unknown --format: ") + formatArg.getValue());
+        if (accountIdArg.getValue() || showAll) {
+            if (showMultiple) {
+                *outStream << "account id: ";
+            }
+            *outStream << virgil::bytes2str(certificate.id().accountId()) << std::endl;
         }
 
-        // Output marshalled certificate
-        std::copy(certificateData.begin(), certificateData.end(), std::ostreambuf_iterator<char>(*outStream));
+        if (certificateIdArg.getValue() || showAll) {
+            if (showMultiple) {
+                *outStream << "certificate id: ";
+            }
+            *outStream << virgil::bytes2str(certificate.id().certificateId()) << std::endl;
+        }
 
-        return EXIT_SUCCESS;
+        if (publicKeyArg.getValue() || showAll) {
+            VirgilByteArray publicKey = certificate.publicKey();
+            if (showMultiple) {
+                *outStream << "public key:" << std::endl;
+            }
+            if (is_asn1(publicKey)) {
+                *outStream << virgil::bytes2hex(publicKey, true) << std::endl;
+            } else {
+                *outStream << virgil::bytes2str(publicKey);
+            }
+        }
     } catch (TCLAP::ArgException& exception) {
         std::cerr << "Error: " << exception.error() << " for arg " << exception.argId() << std::endl;
         return EXIT_FAILURE;
@@ -138,4 +164,5 @@ int MAIN(int argc, char **argv) {
         std::cerr << "Error: " << exception.what() << std::endl;
         return EXIT_FAILURE;
     }
+    return EXIT_SUCCESS;
 }

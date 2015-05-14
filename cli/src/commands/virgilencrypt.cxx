@@ -61,11 +61,17 @@ using virgil::stream::VirgilStreamDataSource;
 #include <virgil/stream/VirgilStreamDataSink.h>
 using virgil::stream::VirgilStreamDataSink;
 
+#include <virgil/crypto/VirgilBase64.h>
+using virgil::crypto::VirgilBase64;
+
 #include <virgil/stream/utils.h>
 
 #include <tclap/CmdLine.h>
+#include <json/json.h>
 
-#include "version.h"
+#include <cli/version.h>
+#include <cli/pair.h>
+#include <cli/pki.h>
 
 #ifdef SPLIT_CLI
     #define MAIN main
@@ -85,7 +91,7 @@ static size_t add_recipients_config(VirgilCipherBase& cipher, const std::vector<
 /**
  * @brief Add recipients from the list to the cipher.
  * @param cipher - recipients added to.
- * @param recipients - array of recipients: password and/or certificate.
+ * @param recipients - array of recipients <type:value>, where type can be [cert|pass|email|phone|fax].
  * @throw invlaid_argument - if certificate file is empty.
  * @throw VirgilException - if certificate file format is corrupted.
  * return Number of added recipients.
@@ -94,16 +100,17 @@ static size_t add_recipients(VirgilCipherBase& cipher, const std::vector<std::st
 /**
  * @brief Add recipient to the cipher.
  * @param cipher - recipients added to.
- * @param recipient - password and/or certificate.
+ * @param recipient - <type:value>, where type can be [cert|pass|email|phone|fax].
  * @throw invlaid_argument - if certificate file is empty.
  * @throw VirgilException - if certificate file format is corrupted.
  */
 static void add_recipient(VirgilCipherBase& cipher, const std::string& recipient);
 
+
 int MAIN(int argc, char **argv) {
     try {
         // Parse arguments.
-        TCLAP::CmdLine cmd("Encrypt data", ' ', cli_version());
+        TCLAP::CmdLine cmd("Encrypt data", ' ', virgil::cli_version());
 
         TCLAP::ValueArg<std::string> inArg("i", "in", "Data to be encrypted. If omitted stdin is used.",
                 false, "", "file");
@@ -117,11 +124,18 @@ int MAIN(int argc, char **argv) {
 
         TCLAP::MultiArg<std::string> recipientsConfigArg("r", "recipients",
                 "File that contains information about recipients. Each line can be either empty line, "
-                "or comment line, or path to the recipient's certificate, or recipient's password.",
+                "or comment line, or recipient defined as:"
+                "\n[cert|pass|email|phone|fax] : <value>"
+                "\nwhere:"
+                "\n\t* cert - path to the recipient's certificate file;"
+                "\n\t* pass - recipient's password;"
+                "\n\t* email - recipient's email;"
+                "\n\t* phone - recipient's phone;"
+                "\n\t* fax - recipient's fax.",
                 false, "file");
 
         TCLAP::UnlabeledMultiArg<std::string> recipientsArg("recipient",
-                "Either path to the recipient's certificate, or the recipient's password.",
+                "Same as significant line in the configuration file.",
                 false, "recipient", true);
 
 
@@ -216,11 +230,16 @@ size_t add_recipients(VirgilCipherBase& cipher, const std::vector<std::string>& 
 }
 
 void add_recipient(VirgilCipherBase& cipher, const std::string& recipient) {
-    std::ifstream certificateFile(recipient.c_str(), std::ios::in | std::ios::binary);
-    if (certificateFile.good()) {
-        VirgilCertificate certificate = virgil::stream::read_certificate(certificateFile);
+    std::pair<std::string, std::string> recipientPair = virgil::cli_parse_pair(recipient);
+    const std::string& recipientIdType = recipientPair.first;
+    const std::string& recipientId = recipientPair.second;
+    if (recipientIdType == "cert") {
+        VirgilCertificate certificate = virgil::stream::read_certificate(recipientId);
         cipher.addKeyRecipient(certificate.id().certificateId(), certificate.publicKey());
+    } else if (recipientIdType == "pass") {
+        cipher.addPasswordRecipient(virgil::str2bytes(recipientId));
     } else {
-        cipher.addPasswordRecipient(virgil::str2bytes(recipient));
+        VirgilCertificate certificate = virgil::pki_get_certificate(recipientIdType, recipientId);
+        cipher.addKeyRecipient(certificate.id().certificateId(), certificate.publicKey());
     }
 }

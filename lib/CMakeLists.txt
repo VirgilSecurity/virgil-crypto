@@ -43,8 +43,8 @@ include (ExternalProject)
 include (${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/mbedtls_ext.cmake)
 include (${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp/jsoncpp_ext.cmake)
 
-set (LIB_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include")
-include_directories (${LIB_INCLUDE_DIRS})
+set (VIRGIL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+include_directories (${VIRGIL_INCLUDE_DIR})
 if (CMAKE_MAJOR_VERSION LESS 3)
     include_directories (${MBEDTLS_INCLUDE_DIR})
     include_directories (${JSONCPP_INCLUDE_DIR})
@@ -74,7 +74,7 @@ add_library (${PROJECT_NAME} STATIC ${src})
 set_property (TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME ${PROJECT_NAME})
 set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
-set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${LIB_INCLUDE_DIRS})
+set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${VIRGIL_INCLUDE_DIR})
 
 target_link_libraries (${PROJECT_NAME} mbedtls jsoncpp)
 add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
@@ -87,7 +87,7 @@ add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
 # Install
 if (INSTALL_CORE_LIB)
     install (TARGETS ${PROJECT_NAME}
-            ARCHIVE DESTINATION "${INSTALL_LIB_DIR_NAME}")
+            DESTINATION "${INSTALL_LIB_DIR_NAME}")
     install (FILES ${MBEDTLS_LIBRARY}
             DESTINATION "${INSTALL_LIB_DIR_NAME}")
     install (FILES ${JSONCPP_LIBRARY}

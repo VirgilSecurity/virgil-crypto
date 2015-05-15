@@ -44,8 +44,11 @@ set (VIRGIL_LIB_NAME virgil)
 
 # Add include directory of wrapped module
 if (CMAKE_MAJOR_VERSION LESS 3)
-    include_directories (${${VIRGIL_LIB_NAME}_SOURCE_DIR}/include)
+    include_directories (${VIRGIL_INCLUDE_DIR})
+    include_directories (${MBEDTLS_INCLUDE_DIR})
+    include_directories (${JSONCPP_INCLUDE_DIR})
 endif (CMAKE_MAJOR_VERSION LESS 3)
+
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/ext)
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
 

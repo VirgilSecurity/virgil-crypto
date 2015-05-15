@@ -81,6 +81,9 @@ add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
             ${EXTERNAL_LIBS_DIR}/$<TARGET_FILE_NAME:${PROJECT_NAME}>
 )
 
+# Export includes
+set (VIRGIL_INCLUDE_DIR ${VIRGIL_INCLUDE_DIR} PARENT_SCOPE)
+
 # Install
 if (INSTALL_CORE_LIB)
     install (TARGETS ${PROJECT_NAME}

@@ -36,7 +36,7 @@
 
 cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 
-find_package (cURL REQUIRED)
+find_package (CURL REQUIRED)
 include_directories (CURL_INCLUDE_DIRS)
 
 # Define variables

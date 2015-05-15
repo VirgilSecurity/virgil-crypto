@@ -55,13 +55,13 @@ VirgilCertificate virgil::stream::read_certificate(const std::string& fileName) 
 
 VirgilCertificate virgil::stream::read_certificate(std::istream& file, const std::string& fileName) {
     if (!file.good()) {
-        throw VirgilException(std::string("can not read recipient's certificate from file: " + fileName));
+        throw VirgilException(std::string("can not read certificate from file: " + fileName));
     }
     VirgilByteArray certificateData;
     std::copy(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>(),
             std::back_inserter(certificateData));
     if (certificateData.empty()) {
-        throw VirgilException(std::string("recipient's certificate file is empty: ") + fileName);
+        throw VirgilException(std::string("certificate file is empty: ") + fileName);
     }
     VirgilCertificate certificate;
     if (is_asn1(certificateData)) {

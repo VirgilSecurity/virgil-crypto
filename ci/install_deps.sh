@@ -40,6 +40,10 @@ set -ev
 sudo apt-get update -qq
 sudo apt-get install -y python-yaml
 
+if [ "${PLATFORM_NAME}" == "CPP" ]
+    sudo apt-get install -y libcurl4-openssl-dev
+fi
+
 if [ "${PLATFORM_NAME}" != "CPP" ] && [ "${PLATFORM_EMBEDDED}" != "ON" ]; then
     # Install SWIG
     wget http://downloads.sourceforge.net/swig/swig-3.0.5.tar.gz -O /tmp/swig-3.0.5.tar.gz

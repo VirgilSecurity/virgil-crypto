@@ -162,7 +162,7 @@ if (PLATFORM_NAME_LOWER STREQUAL "cpp")
         message (STATUS "C++ CLI status: ENABLED")
         # Set C++ CLI version
         set (CPP_CLI_VERSION_MAJOR 0)
-        set (CPP_CLI_VERSION_MINOR 1)
+        set (CPP_CLI_VERSION_MINOR 2)
         set (CPP_CLI_VERSION_PATCH 0)
         set (CPP_CLI_VERSION ${CPP_CLI_VERSION_MAJOR}.${CPP_CLI_VERSION_MINOR}.${CPP_CLI_VERSION_PATCH})
         message (STATUS "C++ CLI version: " ${CPP_CLI_VERSION})

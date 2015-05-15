@@ -1,5 +1,25 @@
 virgil CLI ChangeLog (Sorted per date)
 
+= Version 0.2.0 released 2015-05-15
+
+Bugfix:
+  * Use standard constructor of class 'ifstream'.
+  * Change parameter 'p' long name from 'arg' to 'pwd'.
+  * Add required include statement <cstdlib>.
+
+Improvements:
+  * Fix misspelling in the help text.
+  * Add "happy path" test.
+  * Modify 'encrypt' and 'verify' commands to work with Virgil PKI service thru user's identifier.
+
+Changes:
+  * Change parameter 'asn1' to 'der'.
+  * Change parameters format for 'encrypt' command.
+
+Features:
+  * Add 'verify' command.
+  * Add 'adduser' command
+
 = Version 0.1.0 released 2015-05-04
 
 Features:

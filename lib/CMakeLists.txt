@@ -45,11 +45,8 @@ include (${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp/jsoncpp_ext.cmake)
 
 set (VIRGIL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories (${VIRGIL_INCLUDE_DIR})
-if (CMAKE_MAJOR_VERSION LESS 3)
-    include_directories (${MBEDTLS_INCLUDE_DIR})
-    include_directories (${JSONCPP_INCLUDE_DIR})
-endif (CMAKE_MAJOR_VERSION LESS 3)
-
+include_directories (${MBEDTLS_INCLUDE_DIR})
+include_directories (${JSONCPP_INCLUDE_DIR})
 
 # Define sources list
 aux_source_directory ("src" src)

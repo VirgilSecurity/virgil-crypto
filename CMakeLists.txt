@@ -36,15 +36,16 @@
 
 #
 # Configurable variables:
-#     - PLATFORM_NAME     - name of target platform and/or language.
-#     - LIB_LOW_LEVEL_API - boolean value that defines whether to include low-level API or not.
-#     - LIB_FILE_IO       - boolean value that defines whether to include module depends on file IO or not.
-#     - CPP_BUILD_CLI     - boolean value that defines whether build C++ CLI or not.
-#     - CPP_SPLIT_CLI     - boolean value that defines whether split C++ CLI to separate utilities or not.
-#                           or separate utilities.
-#     - INSTALL_CORE_LIB  - boolean value that defines whether install core library and it's dependencies or not,
-#                           if this value is NO or undefined - only wrapped library will be installed.
-#     - ENABLE_TESTING    - boolean value that defines whether include unit testing or not.
+#     - PLATFORM_NAME       - name of target platform and/or language.
+#     - LIB_LOW_LEVEL_API   - boolean value that defines whether to include low-level API or not.
+#     - LIB_FILE_IO         - boolean value that defines whether to include module depends on file IO or not.
+#     - CPP_BUILD_CLI       - boolean value that defines whether build C++ CLI or not.
+#     - CPP_SPLIT_CLI       - boolean value that defines whether split C++ CLI to separate utilities or not.
+#                             or separate utilities.
+#     - INSTALL_CORE_LIB    - boolean value that defines whether install core library and it's dependencies or not,
+#                             if this value is NO or undefined - only wrapped library will be installed.
+#     - INSTALL_EXT_HEADERS - boolean value that defines whether install third-party library headers or not.
+#     - ENABLE_TESTING      - boolean value that defines whether include unit testing or not.
 #
 #     - INSTALL_INC_DIR_NAME  - name of the directory where include will be installed.
 #     - INSTALL_LIB_DIR_NAME  - name of the directory where libraries will be installed.
@@ -140,6 +141,8 @@ if ((PLATFORM_NAME_LOWER STREQUAL "cpp") OR
 endif ()
 set (INSTALL_CORE_LIB ${INSTALL_CORE_LIB_TMP} CACHE BOOL
         "defines whether install core library and it's dependencies or not")
+set (INSTALL_EXT_HEADERS OFF CACHE BOOL
+        "defines whether install third-party library headers or not")
 
 # Configure testing
 if (ENABLE_TESTING)

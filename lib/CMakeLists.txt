@@ -95,3 +95,8 @@ if (INSTALL_CORE_LIB)
 
     add_subdirectory (include)
 endif ()
+
+if (INSTALL_EXT_HEADERS)
+    install (DIRECTORY ${JSONCPP_INCLUDE_DIR}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
+    install (DIRECTORY ${MBEDTLS_INCLUDE_DIR}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
+endif ()

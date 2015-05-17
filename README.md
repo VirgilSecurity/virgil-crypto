@@ -24,7 +24,7 @@ C# | Any .NET platform or Xamarin
 ActionScript 3 | Any
 Node.js | Any
 Ruby | Any
-Swift,Objective-C | Coming April 2015
+Swift,Objective-C | OS X
 Python | Any
 Chrome,Firefox,Safari | Available by Request
 
@@ -32,8 +32,8 @@ Chrome,Firefox,Safari | Available by Request
 1. Encrypt and decrypt data.
 1. Sign and verify data.
 1. Work with objects from [Virgil Security PKI Service](http://VirgilSecurity.com).
-Virgil Key Infrustructure API is available in preview.
-Email: support@virgilsecurity.com to get early access
+Virgil Key Infrastructure API is available in preview.
+Email: support@VirgilSecurity.com to get early access
 
 ## Where library can be used
 * on the client-side application;

@@ -1,5 +1,37 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 0.9.0 released 2015-05-18
+
+Bugfix:
+  * Lib: Fix marshalling public key with certificate if it has DER format.
+  * Lib: Fix 64520, 64521 - Uninitialized pointer field.
+  * Lib: Fix 64515, 64516, 64517, 64518 - Division or modulo by zero.
+  * PHP Tests: Remove expected exception message from the test requirement, as several valid messages are exist.
+  * AS3 Demo: Fix build - add missed import.
+  * CMake: Fix warning COPY_ONLY - unknown argument.
+  * CMake: Fix compatibility with cmake 2.8.
+
+Features:
+  * Emscripten: Add 'sign/verify' functionality to the example.
+
+Improvements:
+  * Remove comments syntax from the LICENSE.
+  * Emscripten: Remove code duplicate.
+
+Changes:
+  * Lib: Split package virgil::service::stream.
+  * Lib: Move functions 'read_certificate' and 'read_sign' from CLI to the library.
+  * Remove wrapper node.js build with node-gyp.
+  * CMake: Replace variable PLATFORM_EMBEDDED with variable CMAKE_CROSSCOMPILING.
+  * CMake: Add configurable variable INSTALL_DIR_NAME.
+  * CMake: Add configurable variable ENABLE_TESTING.
+  * CMake: Remove file 'VERSION' from the installation process.
+  * CMake: Remove redundant variable 'INSTALL_DIR_NAME'.
+  * CMake: Remove variables 'INSTALL_ARCH_DIR_NAME', 'INSTALL_X86_DIR_NAME', 'INSTALL_X64_DIR_NAME'.
+  * CMake: Add configurable variable INSTALL_EXT_HEADERS.
+  * CMake: Make 'virgil' library includes available within parent scope.
+  * CMake: Rename property 'LOW_LEVEL_API' to 'LIB_LOW_LEVEL_API'.
+
 = Version 0.8.0 released 2015-04-16
 
 Bugfix:

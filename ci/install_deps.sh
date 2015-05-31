@@ -37,7 +37,7 @@
 
 set -ev
 
-sudo add-apt-repository -y ppa:george-edison55/cmake-3.x
+sudo add-apt-repository -y ppa:smspillaz/cmake-2.8.12
 sudo apt-get update -qq
 sudo apt-get install -y python-yaml
 sudo apt-get upgrade

@@ -38,7 +38,7 @@
 set -ev
 
 cd "${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}"
-make
+make VERBOSE=1
 
 if [ "${PLATFORM_NAME}" == "PHP" ] || [ "${PLATFORM_NAME}" == "CPP" ]; then
     ctest --verbose

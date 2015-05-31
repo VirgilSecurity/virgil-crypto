@@ -94,7 +94,6 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
      * @covers VirgilStreamSigner::sign
      * @covers VirgilStreamSigner::verify
      * @expectedException Exception
-     * @expectedExceptionMessage PK - Given private key password does not allow for correct decryption
      */
     public function test_data_sign_verify_with_generated_keys_and_wrong_password() {
         $initialString = "very long string to be signed";

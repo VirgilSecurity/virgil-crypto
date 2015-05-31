@@ -39,6 +39,7 @@ set -ev
 
 sudo apt-get update -qq
 sudo apt-get install -y python-yaml
+sudo apt-get install cmake
 
 if [ "${PLATFORM_NAME}" == "CPP" ]; then
     sudo apt-get install -y libcurl4-openssl-dev

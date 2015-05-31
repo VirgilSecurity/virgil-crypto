@@ -41,12 +41,10 @@ project (virgil)
 # Include and build external libraries
 include (ExternalProject)
 include (${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/mbedtls_ext.cmake)
-include (${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp/jsoncpp_ext.cmake)
 
 set (VIRGIL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories (${VIRGIL_INCLUDE_DIR})
 include_directories (${MBEDTLS_INCLUDE_DIR})
-include_directories (${JSONCPP_INCLUDE_DIR})
 
 # Define sources list
 aux_source_directory ("src" src)
@@ -73,7 +71,7 @@ set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${VIRGIL_INCLUDE_DIR})
 
-target_link_libraries (${PROJECT_NAME} mbedtls jsoncpp)
+target_link_libraries (${PROJECT_NAME} mbedtls)
 add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy_if_different
@@ -90,13 +88,10 @@ if (INSTALL_CORE_LIB)
             DESTINATION "${INSTALL_LIB_DIR_NAME}")
     install (FILES ${MBEDTLS_LIBRARY}
             DESTINATION "${INSTALL_LIB_DIR_NAME}")
-    install (FILES ${JSONCPP_LIBRARY}
-            DESTINATION "${INSTALL_LIB_DIR_NAME}")
 
     add_subdirectory (include)
 endif ()
 
 if (INSTALL_EXT_HEADERS)
-    install (DIRECTORY ${JSONCPP_INCLUDE_DIR}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
     install (DIRECTORY ${MBEDTLS_INCLUDE_DIR}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
 endif ()

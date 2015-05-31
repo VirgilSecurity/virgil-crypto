@@ -34,9 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/VirgilCipherBase.h>
-using virgil::service::VirgilCipherBase;
-using virgil::service::VirgilCipherBaseImpl;
+#include <virgil/VirgilCipherBase.h>
+using virgil::VirgilCipherBase;
+using virgil::VirgilCipherBaseImpl;
 
 #include <cstring>
 #include <string>
@@ -78,7 +78,7 @@ using virgil::crypto::cms::VirgilCMSKeyTransRecipient;
 #include <virgil/crypto/cms/VirgilCMSPasswordRecipient.h>
 using virgil::crypto::cms::VirgilCMSPasswordRecipient;
 
-namespace virgil { namespace service {
+namespace virgil {
 
 /**
  * @brief Handle class fields.
@@ -86,7 +86,7 @@ namespace virgil { namespace service {
 class VirgilCipherBaseImpl {
 public:
     VirgilCipherBaseImpl() :
-        random(virgil::str2bytes(std::string("virgil::service::VirgilCipherBase"))),
+        random(virgil::str2bytes(std::string("virgil::VirgilCipherBase"))),
         symmetricCipher(), symmetricCipherKey(), contentInfo(), envelopedData(),
         keyRecipients(), passwordRecipients() {}
 public:
@@ -95,11 +95,11 @@ public:
     VirgilByteArray symmetricCipherKey;
     VirgilContentInfo contentInfo;
     VirgilCMSEnvelopedData envelopedData;
-    std::map<VirgilByteArray, VirgilByteArray> keyRecipients; /**< certificate id -> public key */
+    std::map<VirgilByteArray, VirgilByteArray> keyRecipients; /**< recipient id -> public key */
     std::set<VirgilByteArray> passwordRecipients; /**< passwords */
 };
 
-}}
+}
 
 /**
  * @name Configuration constants.
@@ -116,15 +116,15 @@ VirgilCipherBase::~VirgilCipherBase() throw() {
     delete impl_;
 }
 
-void VirgilCipherBase::addKeyRecipient(const VirgilByteArray& certificateId, const VirgilByteArray& publicKey) {
-    if (certificateId.empty() || publicKey.empty()) {
-        throw VirgilException("VirgilCipherBase: Parameters 'certificateId' or 'publicKey' are not specified.");
+void VirgilCipherBase::addKeyRecipient(const VirgilByteArray& recipientId, const VirgilByteArray& publicKey) {
+    if (recipientId.empty() || publicKey.empty()) {
+        throw VirgilException("VirgilCipherBase: Parameters 'recipientId' or 'publicKey' are not specified.");
     }
-    impl_->keyRecipients[certificateId] = publicKey;
+    impl_->keyRecipients[recipientId] = publicKey;
 }
 
-void VirgilCipherBase::removeKeyRecipient(const VirgilByteArray& certificateId) {
-    impl_->keyRecipients.erase(certificateId);
+void VirgilCipherBase::removeKeyRecipient(const VirgilByteArray& recipientId) {
+    impl_->keyRecipients.erase(recipientId);
 }
 
 void VirgilCipherBase::addPasswordRecipient(const VirgilByteArray& pwd) {
@@ -203,18 +203,18 @@ static VirgilByteArray decryptContentEncryptionKey(
 }
 
 static VirgilByteArray decryptContentEncryptionKey(
-        const std::vector<VirgilCMSKeyTransRecipient>& keyTransRecipients, const VirgilByteArray& certificateId,
+        const std::vector<VirgilCMSKeyTransRecipient>& keyTransRecipients, const VirgilByteArray& recipientId,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray()) {
     std::vector<VirgilCMSKeyTransRecipient>::const_iterator recipientIt = keyTransRecipients.begin();
     for (; recipientIt != keyTransRecipients.end(); ++recipientIt) {
-        if (recipientIt->recipientIdentifier == certificateId) {
+        if (recipientIt->recipientIdentifier == recipientId) {
             VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::none();
             asymmetricCipher.setPrivateKey(privateKey, privateKeyPassword);
             return asymmetricCipher.decrypt(recipientIt->encryptedKey);
         }
     }
-    throw VirgilException(std::string("VirgilCipherBase: ") + "Recipient with given certificate id (" +
-            virgil::bytes2str(certificateId) + ") is not found.");
+    throw VirgilException(std::string("VirgilCipherBase: ") + "Recipient with given id (" +
+            virgil::bytes2str(recipientId) + ") is not found.");
 }
 
 VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithPassword(const VirgilByteArray& pwd) {
@@ -228,11 +228,11 @@ VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithPassword(const Virgil
     return impl_->symmetricCipher;
 }
 
-VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithKey(const VirgilByteArray& certificateId,
+VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithKey(const VirgilByteArray& recipientId,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
 
     VirgilByteArray contentEncryptionKey =
-            decryptContentEncryptionKey(impl_->envelopedData.keyTransRecipients, certificateId, privateKey, privateKeyPassword);
+            decryptContentEncryptionKey(impl_->envelopedData.keyTransRecipients, recipientId, privateKey, privateKeyPassword);
     impl_->symmetricCipher = VirgilSymmetricCipher();
     impl_->symmetricCipher.fromAsn1(impl_->envelopedData.encryptedContent.contentEncryptionAlgorithm);
     impl_->symmetricCipher.setDecryptionKey(contentEncryptionKey);
@@ -248,14 +248,14 @@ void VirgilCipherBase::buildContentInfo() {
     // Add KeyTransRecipient's
     for (std::map<VirgilByteArray, VirgilByteArray>::const_iterator it = impl_->keyRecipients.begin();
             it != impl_->keyRecipients.end(); ++it) {
-        const VirgilByteArray& certificateId = it->first;
+        const VirgilByteArray& recipientId = it->first;
         const VirgilByteArray& publicKey = it->second;
 
         VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::none();
         asymmetricCipher.setPublicKey(publicKey);
 
         VirgilCMSKeyTransRecipient recipient;
-        recipient.recipientIdentifier = certificateId;
+        recipient.recipientIdentifier = recipientId;
         recipient.encryptedKey = asymmetricCipher.encrypt(impl_->symmetricCipherKey);
         recipient.keyEncryptionAlgorithm = asymmetricCipher.toAsn1();
 

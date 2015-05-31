@@ -34,61 +34,44 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "virgil/service/data/VirgilSignId.h"
-using virgil::service::data::VirgilSignId;
+#ifndef VIRGIL_SIGNER_H
+#define VIRGIL_SIGNER_H
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::asn1::VirgilAsn1Reader;
+#include <virgil/crypto/VirgilHash.h>
+using virgil::crypto::VirgilHash;
 
-#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::asn1::VirgilAsn1Writer;
-
-#include <json/json.h>
+namespace virgil {
 
 /**
- * @name JSON Keys
+ * @brief This class provides high-level interface to sign and verify data using Virgil Security keys.
+ *
+ * This module can sign / verify as raw data and Virgil Security tickets.
  */
-///@{
-static const char *kJsonKey_SignId = "sign_id";
-///@}
+class VirgilSigner {
+public:
+    /**
+     * @brief Create signer with predefined hash function.
+     * @note Specified hash function algorithm is used only during signing.
+     */
+    explicit VirgilSigner(const VirgilHash& hash = VirgilHash::sha384());
+    /**
+     * @brief Sign data with given private key.
+     * @return Virgil Security sign.
+     */
+    VirgilByteArray sign(const VirgilByteArray& data, const VirgilByteArray& privateKey,
+            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    /**
+     * @brief Verify sign and data to be conformed to the given public key.
+     * @return true if sign is valid and data was not malformed.
+     */
+    bool verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
+private:
+    VirgilHash hash_;
+};
 
-VirgilByteArray VirgilSignId::signId() const {
-    return signId_;
 }
 
-void VirgilSignId::setSignId(const VirgilByteArray& signId) {
-    signId_ = signId;
-}
-
-bool VirgilSignId::isEmpty() const {
-    return signId_.empty() || VirgilTicketId::isEmpty();
-}
-
-void VirgilSignId::clear() {
-    signId_.clear();
-    VirgilTicketId::clear();
-}
-
-size_t VirgilSignId::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
-    size_t writtenBytes = asn1Writer.writeUTF8String(signId_);
-    return VirgilTicketId::asn1Write(asn1Writer, writtenBytes + childWrittenBytes);
-}
-
-void VirgilSignId::asn1Read(VirgilAsn1Reader& asn1Reader) {
-    VirgilTicketId::asn1Read(asn1Reader);
-    signId_ = asn1Reader.readUTF8String();
-}
-
-Json::Value VirgilSignId::jsonWrite(Json::Value& childValue) const {
-    childValue[kJsonKey_SignId] = virgil::bytes2str(signId_);
-    return VirgilTicketId::jsonWrite(childValue);
-}
-
-Json::Value VirgilSignId::jsonRead(const Json::Value& parentValue) {
-    Json::Value childValue = VirgilTicketId::jsonRead(parentValue);
-    signId_ = jsonGetStringAsByteArray(childValue, kJsonKey_SignId);
-    return childValue;
-}
+#endif /* VIRGIL_SIGNER_H */

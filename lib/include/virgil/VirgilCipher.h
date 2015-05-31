@@ -34,11 +34,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SERVICE_VIRGIL_CIPHER_H
-#define VIRGIL_SERVICE_VIRGIL_CIPHER_H
+#ifndef VIRGIL_CIPHER_H
+#define VIRGIL_CIPHER_H
 
-#include <virgil/service/VirgilCipherBase.h>
-using virgil::service::VirgilCipherBase;
+#include <virgil/VirgilCipherBase.h>
+using virgil::VirgilCipherBase;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -46,7 +46,7 @@ using virgil::VirgilByteArray;
 #include <vector>
 #include <vector>
 
-namespace virgil { namespace service {
+namespace virgil {
 
 /**
  * @brief This class provides high-level interface to encrypt / decrypt data using Virgil Security keys.
@@ -68,13 +68,13 @@ public:
      */
     VirgilByteArray encrypt(const VirgilByteArray& data, bool embedContentInfo = false);
     /**
-     * @brief Decrypt given data for recipient defined by certificate id and private key.
+     * @brief Decrypt given data for recipient defined by id and private key.
      * @note Content info MUST be defined, if it was not embedded to the encrypted data.
      * @see method setContentInfo().
      * @return Decrypted data.
      */
     VirgilByteArray decryptWithKey(const VirgilByteArray& encryptedData,
-            const VirgilByteArray& certificateId, const VirgilByteArray& privateKey,
+            const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
             const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
      * @brief Decrypt given data for recipient defined by password.
@@ -91,6 +91,6 @@ private:
     VirgilByteArray decrypt(const VirgilByteArray& encryptedData, VirgilSymmetricCipher& cipher);
 };
 
-}}
+}
 
-#endif /* VIRGIL_SERVICE_VIRGIL_CIPHER_H */
+#endif /* VIRGIL_CIPHER_H */

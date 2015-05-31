@@ -76,7 +76,7 @@ public:
      * @brief Write object state to the writer.
      * @param asn1Writer writer that should be payloaded by subclasses.
      * @param childWrittenBytes count of bytes that was written by subclasses.
-     * @retrun Writen bytes count.
+     * @return Writen bytes count.
      */
     virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const = 0;
     /**

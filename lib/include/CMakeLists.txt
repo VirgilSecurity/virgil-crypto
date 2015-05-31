@@ -54,7 +54,6 @@ else ()
         PATTERN "VirgilOID.h" EXCLUDE
         PATTERN "VirgilAsn1Reader.h" EXCLUDE
         PATTERN "VirgilAsn1Writer.h" EXCLUDE
-        PATTERN "VirgilAsn1Writer.h" EXCLUDE
         PATTERN "VirgilKDF.h" EXCLUDE
         PATTERN "PolarsslException.h" EXCLUDE
         PATTERN "VirgilKeyPairGenerator.h" EXCLUDE

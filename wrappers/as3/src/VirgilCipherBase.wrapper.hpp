@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_CIPHER_BASE_HPP
 #define AS3_VIRGIL_CIPHER_BASE_HPP
 
-#include <virgil/service/VirgilCipherBase.h>
-using virgil::service::VirgilCipherBase;
+#include <virgil/VirgilCipherBase.h>
+using virgil::VirgilCipherBase;
 
 #include <virgil/crypto/VirgilCustomParams.h>
 using virgil::crypto::VirgilCustomParams;

@@ -60,15 +60,11 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
     public function test_data_sign_verify_with_generated_keys() {
         $initialString = "very long string to be signed";
         $dataSource = new StringSource($initialString);
-        $signerCertificateId = "CERT-1234";
-
-        $signer = new VirgilStreamSigner();
-
         $key = new VirgilKeyPair();
 
+        $signer = new VirgilStreamSigner();
         $dataSource->reset();
-        $sign = $signer->sign($dataSource, $signerCertificateId, $key->privateKey());
-
+        $sign = $signer->sign($dataSource, $key->privateKey());
         $dataSource->reset();
         $verifyResult = $signer->verify($dataSource, $sign, $key->publicKey());
 
@@ -82,15 +78,12 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
     public function test_data_sign_verify_with_generated_keys_with_password() {
         $initialString = "very long string to be signed";
         $privateKeyPassword = "password";
-        $signerCertificateId = "CERT-1234";
-
         $key = new VirgilKeyPair($privateKeyPassword);
-        $signer = new VirgilStreamSigner();
 
+        $signer = new VirgilStreamSigner();
         $dataSource = new StringSource($initialString);
         $dataSource->reset();
-        $sign = $signer->sign($dataSource, $signerCertificateId, $key->privateKey(), $privateKeyPassword);
-
+        $sign = $signer->sign($dataSource, $key->privateKey(), $privateKeyPassword);
         $dataSource->reset();
         $verifyResult = $signer->verify($dataSource, $sign, $key->publicKey());
 
@@ -106,17 +99,13 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
     public function test_data_sign_verify_with_generated_keys_and_wrong_password() {
         $initialString = "very long string to be signed";
         $privateKeyPassword = "password";
-        $signerCertificateId = "CERT-1234";
-
         $key = new VirgilKeyPair($privateKeyPassword);
 
         $signer = new VirgilStreamSigner();
-
         $dataSource = new StringSource($initialString);
         $dataSource->reset();
-        $sign = $signer->sign($dataSource, $signerCertificateId, $key->privateKey(),
+        $sign = $signer->sign($dataSource, $key->privateKey(),
                 $privateKeyPassword . "Wrong password");
-
         $dataSource->reset();
         $verifyResult = $signer->verify($dataSource, $sign, $key->publicKey());
 
@@ -145,13 +134,10 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
                 "-----END EC PRIVATE KEY-----\n";
         $initialString = "very long string to be signed";
         $dataSource = new StringSource($initialString);
-        $signerCertificateId = "CERT-1234";
 
         $signer = new VirgilStreamSigner();
-
         $dataSource->reset();
-        $sign = $signer->sign($dataSource, $signerCertificateId, $privateKeyPem512);
-
+        $sign = $signer->sign($dataSource, $privateKeyPem512);
         $dataSource->reset();
         $verifyResult = $signer->verify($dataSource, $sign, $publicKeyPem512);
 
@@ -175,16 +161,13 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
                 "CQC+XFKzIAH+MwIJALN08MfUfeXbAgkAjTtUBB/YOq8CCFpg9LrPS7CtAghJSJ6m\n".
                 "C0nIMQ==\n".
                 "-----END RSA PRIVATE KEY-----\n";
-
         $initialString = "string to be signed";
         $dataSource = new StringSource($initialString);
-        $signerCertificateId = "CERT-1234";
+
 
         $signer = new VirgilStreamSigner();
-
         $dataSource->reset();
-        $sign = $signer->sign($dataSource, $signerCertificateId, $privateKeyPem128);
-
+        $sign = $signer->sign($dataSource, $privateKeyPem128);
         $dataSource->reset();
         $verifyResult = $signer->verify($dataSource, $sign, $publicKeyPem128);
 
@@ -219,16 +202,12 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
                 "1a7lKNR7ZwFS4vJaV+spAkAXHzK0j2mcWVVGwfbjtTNZMcJXFFMwwChXqrJSmJuf\n".
                 "9n6CqsAWIqytPE/eccgCSqU1XGR5gvrsx7NnPvvqilFs\n".
                 "-----END RSA PRIVATE KEY-----\n".
-
         $initialString = "very long string to be signed";
         $dataSource = new StringSource($initialString);
-        $signerCertificateId = "CERT-1234";
 
         $signer = new VirgilStreamSigner();
-
         $dataSource->reset();
-        $sign = $signer->sign($dataSource, $signerCertificateId, $privateKeyPem1024);
-
+        $sign = $signer->sign($dataSource, $privateKeyPem1024);
         $dataSource->reset();
         $verifyResult = $signer->verify($dataSource, $sign, $publicKeyPem1024);
 

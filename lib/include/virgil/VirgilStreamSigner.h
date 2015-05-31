@@ -34,33 +34,47 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_DATA_VIRGIL_DATA_SINK_H
-#define VIRGIL_DATA_VIRGIL_DATA_SINK_H
+#ifndef VIRGIL_STREAM_SIGNER_H
+#define VIRGIL_STREAM_SIGNER_H
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
+#include <virgil/crypto/VirgilHash.h>
+using virgil::crypto::VirgilHash;
 
-namespace virgil { namespace service {
+#include <virgil/VirgilDataSource.h>
+using virgil::VirgilDataSource;
+
+namespace virgil {
 
 /**
- * @brief This is base class for output streams.
+ * @brief This class provides high-level interface to sign and verify data using Virgil Security keys.
  *
- * Defines interface that allows write data to the output stream.
+ * This module can sign / verify data provided by stream.
  */
-class VirgilDataSink {
+class VirgilStreamSigner {
 public:
     /**
-     * @brief Return true if target object is able to write data.
+     * @brief Create signer with predefined hash function.
+     * @note Specified hash function algorithm is used only during signing.
      */
-    virtual bool isGood() = 0;
+    explicit VirgilStreamSigner(const VirgilHash& hash = VirgilHash::sha384());
     /**
-     * @brief Write data to the target object.
+     * @brief Sign data provided by the source with given private key.
+     * @return Virgil Security sign.
      */
-    virtual void write(const VirgilByteArray& data) = 0;
-    virtual ~VirgilDataSink() throw() {}
+    VirgilByteArray sign(VirgilDataSource& source, const VirgilByteArray& privateKey,
+            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    /**
+     * @brief Verify sign and data provided by the source to be conformed to the given public key.
+     * @return true if sign is valid and data was not malformed.
+     */
+    bool verify(VirgilDataSource& source, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
+private:
+    VirgilHash hash_;
 };
 
-}}
+}
 
-#endif /* VIRGIL_DATA_VIRGIL_DATA_SINK_H */
+#endif /* VIRGIL_STREAM_SIGNER_H */

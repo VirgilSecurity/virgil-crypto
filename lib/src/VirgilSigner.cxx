@@ -34,14 +34,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/VirgilSigner.h>
-using virgil::service::VirgilSigner;
+#include <virgil/VirgilSigner.h>
+using virgil::VirgilSigner;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
-
-#include <virgil/service/data/VirgilSign.h>
-using virgil::service::data::VirgilSign;
 
 #include <virgil/crypto/VirgilHash.h>
 using virgil::crypto::VirgilHash;
@@ -49,48 +46,46 @@ using virgil::crypto::VirgilHash;
 #include <virgil/crypto/VirgilAsymmetricCipher.h>
 using virgil::crypto::VirgilAsymmetricCipher;
 
+#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::asn1::VirgilAsn1Reader;
+
+#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::asn1::VirgilAsn1Writer;
+
 VirgilSigner::VirgilSigner(const VirgilHash& hash) : hash_(hash) {
 }
 
-VirgilSign VirgilSigner::sign(const VirgilByteArray& data, const VirgilByteArray& signerCertificateId,
-        const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
+VirgilByteArray VirgilSigner::sign(const VirgilByteArray& data, const VirgilByteArray& privateKey,
+        const VirgilByteArray& privateKeyPassword) {
+    // Calculate data digest
     VirgilByteArray digest = hash_.hash(data);
-
+    // Prepare cipher
     VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
     cipher.setPrivateKey(privateKey, privateKeyPassword);
-    VirgilByteArray sign = cipher.sign(digest);
-
-    return VirgilSign(virgil::str2bytes(hash_.name()), sign, signerCertificateId);
+    // Sign digest
+    VirgilByteArray signedDigest = cipher.sign(digest);
+    // Create sign
+    VirgilAsn1Writer asn1Writer;
+    size_t asn1Len = 0;
+    asn1Len += asn1Writer.writeOctetString(signedDigest);
+    asn1Len += hash_.asn1Write(asn1Writer);
+    asn1Len += asn1Writer.writeSequence(asn1Len);
+    // Return sign as binary data
+    return asn1Writer.finish();
 }
 
-bool VirgilSigner::verify(const VirgilByteArray& data, const VirgilSign& sign, const VirgilByteArray& publicKey) {
-    VirgilHash hash = VirgilHash::withName(sign.hashName());
+bool VirgilSigner::verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey) {
+    // Read sign
+    VirgilAsn1Reader asn1Reader(sign);
+    asn1Reader.readSequence();
+    VirgilHash hash;
+    hash.asn1Read(asn1Reader);
+    VirgilByteArray signedDigest = asn1Reader.readOctetString();
+    // Calculate data digest
     VirgilByteArray digest = hash.hash(data);
-
+    // Prepare cipher
     VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
     cipher.setPublicKey(publicKey);
-    return cipher.verify(digest, sign.signedDigest());
+    // Verify
+    return cipher.verify(digest, signedDigest);
 }
-
-VirgilSign VirgilSigner::sign(const VirgilAsn1Compatible& asn1Object, const VirgilByteArray& signerCertificateId,
-        const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
-    VirgilByteArray digest = hash_.hash(asn1Object.toAsn1());
-
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
-    cipher.setPrivateKey(privateKey, privateKeyPassword);
-    VirgilByteArray sign = cipher.sign(digest);
-
-    return VirgilSign(virgil::str2bytes(hash_.name()), sign, signerCertificateId);
-}
-
-bool VirgilSigner::verify(const VirgilAsn1Compatible& asn1Object, const VirgilSign& sign,
-            const VirgilByteArray& publicKey) {
-    VirgilHash hash = VirgilHash::withName(sign.hashName());
-
-    VirgilByteArray digest = hash.hash(asn1Object.toAsn1());
-
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
-    cipher.setPublicKey(publicKey);
-    return cipher.verify(digest, sign.signedDigest());
-}
-

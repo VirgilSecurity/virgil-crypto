@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/VirgilCipher.h>
-using virgil::service::VirgilCipher;
+#include <virgil/VirgilCipher.h>
+using virgil::VirgilCipher;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -67,11 +67,11 @@ VirgilByteArray VirgilCipher::encrypt(const VirgilByteArray& data, bool embedCon
 }
 
 VirgilByteArray VirgilCipher::decryptWithKey(const VirgilByteArray& encryptedData,
-        const VirgilByteArray& certificateId, const VirgilByteArray& privateKey,
+        const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
 
     VirgilByteArray payload = tryReadContentInfo(encryptedData);
-    VirgilSymmetricCipher& cipher = initDecryptionWithKey(certificateId, privateKey, privateKeyPassword);
+    VirgilSymmetricCipher& cipher = initDecryptionWithKey(recipientId, privateKey, privateKeyPassword);
     return decrypt(payload, cipher);
 }
 

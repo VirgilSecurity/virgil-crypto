@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/VirgilChunkCipher.h>
-using virgil::service::VirgilChunkCipher;
+#include <virgil/VirgilChunkCipher.h>
+using virgil::VirgilChunkCipher;
 
 #include <cstring>
 #include <cmath>
@@ -88,9 +88,9 @@ size_t VirgilChunkCipher::startEncryption(size_t preferredChunkSize) {
     return actualChunkSize;
 }
 
-size_t VirgilChunkCipher::startDecryptionWithKey(const VirgilByteArray& certificateId,
+size_t VirgilChunkCipher::startDecryptionWithKey(const VirgilByteArray& recipientId,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
-    VirgilSymmetricCipher& symmetricCipher = initDecryptionWithKey(certificateId, privateKey, privateKeyPassword);
+    VirgilSymmetricCipher& symmetricCipher = initDecryptionWithKey(recipientId, privateKey, privateKeyPassword);
     return adjustDecryptionChunkSize(retrieveChunkSize(), symmetricCipher.blockSize());
 }
 

@@ -51,7 +51,7 @@ namespace virgil { namespace crypto { namespace cms {
  */
 class VirgilCMSKeyTransRecipient : public VirgilAsn1Compatible {
 public:
-    /**<! Identifier of the recipient's certificate. */
+    /**<! Recipient's identifier. */
     VirgilByteArray recipientIdentifier;
     /**<! Identifies the encryption algorithm, and any associated parameters. */
     VirgilByteArray keyEncryptionAlgorithm;

@@ -44,7 +44,7 @@ import flash.utils.IDataOutput;
 
 import com.virgilsecurity.extension.*;
 
-public class VirgilHash extends CObject implements IVirgilAsn1Compatible {
+public class VirgilHash extends CObject {
     public static function create():VirgilHash {
         var obj = new VirgilHash();
         obj.cPtr = _wrap_new_VirgilHash();
@@ -77,12 +77,6 @@ public class VirgilHash extends CObject implements IVirgilAsn1Compatible {
     }
     public function destroy():void {
         _wrap_delete_VirgilHash(this.cPtr);
-    }
-    public function toAsn1():ByteArray {
-        return _wrap_VirgilSerializable_toAsn1(this.cPtr);
-    }
-    public function fromAsn1(asn1:ByteArray):void {
-        _wrap_VirgilSerializable_fromAsn1(this.cPtr, asn1);
     }
     public function name():String {
         return _wrap_VirgilHash_name(this.cPtr);

@@ -34,76 +34,76 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_DATA_VIRGIL_SIGN_ID_H
-#define VIRGIL_DATA_VIRGIL_SIGN_ID_H
+#ifndef VIRGIL_CHUNK_CIPHER_H
+#define VIRGIL_CHUNK_CIPHER_H
 
-#include <virgil/service/data/VirgilTicketId.h>
-using virgil::service::data::VirgilTicketId;
+#include <cstddef>
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-namespace virgil { namespace service { namespace data {
+#include <virgil/VirgilCipherBase.h>
+using virgil::VirgilCipherBase;
+
+namespace virgil {
 
 /**
- * @brief This class handle unique identifier of Virgil Service sign.
- *
- * This class thru inheritance contains sign identifier as well as ticket identifier,
- *         and certificate identifier, and account identifier.
+ * @brief This class provides high-level interface to encrypt / decrypt data splitted to chunks.
+ * @note Virgil Security keys is used for encryption and decryption.
+ * @note This class algorithms are not compatible with VirgilCipher and VirgilStreamCipher class algorithms.
  */
-class VirgilSignId : public VirgilTicketId {
+class VirgilChunkCipher : public VirgilCipherBase {
 public:
     /**
-     * @name ticketId accessors
-     * @brief Provides getter and setter for Virgil Service ticket identifier.
+     * @name Constants
      */
     ///@{
-    VirgilByteArray signId() const;
-    void setSignId(const VirgilByteArray& signId);
+    enum {
+        kPreferredChunkSize = 1024 * 1024 - 1 /**< 1MiB - 1b for padding */
+    };
     ///@}
+public:
     /**
-     * @name ID management
+     * @brief Initialize data chunk encryption with given chunk size.
+     * @return Actual chunk size.
      */
-    ///@{
+    size_t startEncryption(size_t preferredChunkSize = kPreferredChunkSize);
     /**
-     * @brief Returns true if sign id is not specified or one of the parent ids are not specified.
+     * @brief Initialize multipart decryption with given private key.
+     * @return Actual chunk size.
      */
-    virtual bool isEmpty() const;
+    size_t startDecryptionWithKey(const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
+                const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
-     * @brief Clears sign id and all parent ids.
+     * @brief Initialize multipart decryption with given private key.
+     * @return Actual chunk size.
      */
-    virtual void clear();
-    ///@}
+    size_t startDecryptionWithPassword(const VirgilByteArray& pwd);
     /**
-     * @name VirgilAsn1Compatible implementation
-     *
-     * Marshalling format:
-     *     signId UTF8String
+     * @brief Encrypt / Decrypt given data chunk.
+     * @return Encrypted / Decrypted data chunk.
      */
-    ///@{
-    virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
-    virtual void asn1Read(VirgilAsn1Reader& asn1Reader);
-    ///@}
+    VirgilByteArray process(const VirgilByteArray& data);
     /**
-     * @name VirgilJsonCompatible implementation
-     *
-     * Marshalling format:
-     *     {
-     *         "signId" : "UTF8String"
-     *     }
+     * @brief Finalize encryption or decryption process.
+     * @note Call this method after encryption or decryption are done to prevent security issues.
      */
-    ///@{
-    virtual Json::Value jsonWrite(Json::Value& childObject) const;
-    virtual Json::Value jsonRead(const Json::Value& parentValue);
-    ///@}
+    void finish();
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilSignId() throw() {};
+    virtual ~VirgilChunkCipher() throw();
 private:
-    VirgilByteArray signId_;
+    /**
+     * @brief Store actual chunk size in the custom parameters.
+     */
+    void storeChunkSize(size_t chunkSize);
+    /**
+     * @brief Retrieve actual chunk size from the custom parameters.
+     */
+    size_t retrieveChunkSize() const;
 };
 
-}}}
+}
 
-#endif /* VIRGIL_DATA_VIRGIL_SIGN_ID_H */
+#endif /* VIRGIL_CHUNK_CIPHER_H */

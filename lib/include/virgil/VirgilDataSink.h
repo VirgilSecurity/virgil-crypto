@@ -34,27 +34,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AS3_VIRGIL_SIGN_ID_HPP
-#define AS3_VIRGIL_SIGN_ID_HPP
+#ifndef VIRGIL_DATA_VIRGIL_DATA_SINK_H
+#define VIRGIL_DATA_VIRGIL_DATA_SINK_H
 
-#include <virgil/service/data/VirgilSignId.h>
-using virgil::service::data::VirgilSignId;
+#include <virgil/VirgilByteArray.h>
+using virgil::VirgilByteArray;
 
-#include "as3_utils.hpp"
 
-AS3_IMPL_CONSTRUCTOR(VirgilSignId)
+namespace virgil {
 
-AS3_DECL_FUNC(_wrap_VirgilSignId_signId, "(asSelf:int):ByteArray") {
-    AS3_TO_C_PTR(VirgilSignId, asSelf, cSelf);
-    VirgilByteArray cSignId = cSelf->signId();
-    AS3_RETURN_C_BYTE_ARRAY(cSignId);
+/**
+ * @brief This is base class for output streams.
+ *
+ * Defines interface that allows write data to the output stream.
+ */
+class VirgilDataSink {
+public:
+    /**
+     * @brief Return true if target object is able to write data.
+     */
+    virtual bool isGood() = 0;
+    /**
+     * @brief Write data to the target object.
+     */
+    virtual void write(const VirgilByteArray& data) = 0;
+    virtual ~VirgilDataSink() throw() {}
+};
+
 }
 
-AS3_DECL_FUNC(_wrap_VirgilSignId_setSignId, "(asSelf:int, asSignId:ByteArray):void") {
-    AS3_TO_C_PTR(VirgilSignId, asSelf, cSelf);
-    AS3_TO_C_BYTE_ARRAY(asSignId, cSignId);
-    cSelf->setSignId(cSignId);
-    AS3_RETURN_VOID();
-}
-
-#endif /* AS3_VIRGIL_SIGN_ID_HPP */
+#endif /* VIRGIL_DATA_VIRGIL_DATA_SINK_H */

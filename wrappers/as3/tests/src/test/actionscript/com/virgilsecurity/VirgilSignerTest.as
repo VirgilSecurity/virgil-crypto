@@ -52,7 +52,6 @@ package com.virgilsecurity {
     public class VirgilSignerTest {
         private var signer_:VirgilSigner;
 
-        private static const TEST_SIGNER_CERTIFICATE_ID : String = "b7d8cdc0-d81c-4da8-96ad-2c569c443097";
         private static const TEST_PUBLIC_KEY_PEM : String =
                 "-----BEGIN PUBLIC KEY-----\n" +
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEa+CTMPBSOFoeZQIPiUOc84r2\n" +
@@ -93,34 +92,12 @@ package com.virgilsecurity {
         public function test_signer_sign_verify():void {
             var plainDataData:ByteArray = ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA);
 
-            var sign:VirgilSign = signer_.sign(plainDataData,
-                    ConvertionUtils.asciiStringToArray(TEST_SIGNER_CERTIFICATE_ID),
+            var sign:ByteArray = signer_.sign(plainDataData,
                     ConvertionUtils.asciiStringToArray(TEST_PRIVATE_KEY_PEM));
 
             var verified:Boolean = signer_.verify(plainDataData, sign,
                     ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM));
             assertThat(verified, equalTo(true));
-
-            sign.destroy();
         }
-
-        [Test(description="Test VirgilSigner.signObject() and VirgilSigner.verifyObject().")]
-        public function test_signer_signTicket_verifyTicket():void {
-            var ticket:VirgilInfoTicket = VirgilInfoTicket.create(VirgilInfoTicketType.FirstName,
-                    ConvertionUtils.asciiStringToArray("Jon"));
-            assertThat(ticket.type(), equalTo(VirgilInfoTicketType.FirstName));
-            // i.e. client side - create sign
-            var sign:VirgilSign = signer_.signObject(ticket,
-                    ConvertionUtils.asciiStringToArray(TEST_SIGNER_CERTIFICATE_ID),
-                    ConvertionUtils.asciiStringToArray(TEST_PRIVATE_KEY_PEM));
-
-            var verified:Boolean = signer_.verifyObject(ticket, sign,
-                    ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM));
-            assertThat(verified, equalTo(true));
-
-            ticket.destroy();
-            sign.destroy();
-        }
-
     }
 }

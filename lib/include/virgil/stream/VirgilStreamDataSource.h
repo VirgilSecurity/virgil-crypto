@@ -37,8 +37,8 @@
 #ifndef VIRGIL_STREAM_VIRGIL_STREAM_DATA_SOURCE_H
 #define VIRGIL_STREAM_VIRGIL_STREAM_DATA_SOURCE_H
 
-#include <virgil/service/VirgilDataSource.h>
-using virgil::service::VirgilDataSource;
+#include <virgil/VirgilDataSource.h>
+using virgil::VirgilDataSource;
 
 #include <istream>
 

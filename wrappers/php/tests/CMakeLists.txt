@@ -48,9 +48,6 @@ set (TEST_FILES
     VirgilSigner_Test.php
     VirgilVersion_Test.php
     VirgilCustomParams_Test.php
-    VirgilId_Test.php
-    VirgilAsn1Compatible_Test.php
-    VirgilJsonCompatible_Test.php
 
     StringSource.php
     StringSink.php

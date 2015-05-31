@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_DATA_SOURCE_BRIDGE_HPP
 #define AS3_VIRGIL_DATA_SOURCE_BRIDGE_HPP
 
-#include <virgil/service/VirgilDataSource.h>
-using virgil::service::VirgilDataSource;
+#include <virgil/VirgilDataSource.h>
+using virgil::VirgilDataSource;
 
 #include "as3_utils.hpp"
 

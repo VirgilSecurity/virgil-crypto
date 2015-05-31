@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/VirgilStreamCipher.h>
-using virgil::service::VirgilStreamCipher;
+#include <virgil/VirgilStreamCipher.h>
+using virgil::VirgilStreamCipher;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -75,11 +75,11 @@ void VirgilStreamCipher::encrypt(VirgilDataSource& source, VirgilDataSink& sink,
 }
 
 void VirgilStreamCipher::decryptWithKey(VirgilDataSource& source, VirgilDataSink& sink,
-        const VirgilByteArray& certificateId, const VirgilByteArray& privateKey,
+        const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
 
     VirgilByteArray firstChunk = tryReadContentInfo(source);
-    VirgilSymmetricCipher& cipher = initDecryptionWithKey(certificateId, privateKey, privateKeyPassword);
+    VirgilSymmetricCipher& cipher = initDecryptionWithKey(recipientId, privateKey, privateKeyPassword);
     decrypt(source, sink, cipher, firstChunk);
 }
 

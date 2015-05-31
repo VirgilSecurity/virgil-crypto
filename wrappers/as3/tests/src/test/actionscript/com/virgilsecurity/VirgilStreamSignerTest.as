@@ -52,7 +52,6 @@ package com.virgilsecurity {
     public class VirgilStreamSignerTest {
         private var signer_:VirgilStreamSigner;
 
-        private static const TEST_SIGNER_CERTIFICATE_ID : String = "b31c921e-ee1f-4bd1-9c1d-c145e17dac0d";
         private static const TEST_PUBLIC_KEY_PEM : String =
                 "-----BEGIN PUBLIC KEY-----\n" +
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEa+CTMPBSOFoeZQIPiUOc84r2\n" +
@@ -95,8 +94,7 @@ package com.virgilsecurity {
             var plainData:ByteArray = ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA);
             var plainDataSource:IVirgilDataSource = new VirgilDataSource(plainData);
             // Sign
-            var sign:VirgilSign = signer_.sign(plainDataSource,
-                    ConvertionUtils.asciiStringToArray(TEST_SIGNER_CERTIFICATE_ID),
+            var sign:ByteArray = signer_.sign(plainDataSource,
                     ConvertionUtils.asciiStringToArray(TEST_PRIVATE_KEY_PEM));
             // Reset data source
             plainData.position = 0;
@@ -104,8 +102,6 @@ package com.virgilsecurity {
             var verified:Boolean = signer_.verify(plainDataSource, sign,
                     ConvertionUtils.asciiStringToArray(TEST_PUBLIC_KEY_PEM));
             assertThat(verified, equalTo(true));
-            // Dispose resources
-            sign.destroy();
         }
     }
 }

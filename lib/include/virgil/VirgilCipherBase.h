@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SERVICE_VIRGIL_CIPHER_BASE_H
-#define VIRGIL_SERVICE_VIRGIL_CIPHER_BASE_H
+#ifndef VIRGIL_CIPHER_BASE_H
+#define VIRGIL_CIPHER_BASE_H
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -51,9 +51,7 @@ using virgil::crypto::VirgilCustomParams;
  */
 /// @{
 namespace virgil {
-    namespace service {
-        class VirgilCipherBaseImpl;
-    }
+    class VirgilCipherBaseImpl;
     namespace crypto {
         class VirgilSymmetricCipher;
     }
@@ -61,7 +59,7 @@ namespace virgil {
 using virgil::crypto::VirgilSymmetricCipher;
 /// @}
 
-namespace virgil { namespace service {
+namespace virgil {
 
 /**
  * @brief This class provides configuration methods to all Virgil*Cipher classes.
@@ -82,14 +80,14 @@ public:
      */
     ///@{
     /**
-     * @brief Add recipient defined with certficate id and public key.
+     * @brief Add recipient defined with id and public key.
      */
-    void addKeyRecipient(const VirgilByteArray& certificateId, const VirgilByteArray& publicKey);
+    void addKeyRecipient(const VirgilByteArray& recipientId, const VirgilByteArray& publicKey);
     /**
-     * @brief Remove recipient with given certificate id.
-     * @note If recipient with given certificate id is absent - do nothing.
+     * @brief Remove recipient with given id.
+     * @note If recipient with given id is absent - do nothing.
      */
-    void removeKeyRecipient(const VirgilByteArray& certificateId);
+    void removeKeyRecipient(const VirgilByteArray& recipientId);
     /**
      * @brief Add recipient defined with password.
      */
@@ -156,13 +154,13 @@ protected:
     /**
      * @brief Configures symmetric cipher for decryption.
      * @param encryptedDataInfo - serialized encrypted data info.
-     * @param certificateId - certificate id that corresponds to the user's private key.
+     * @param recipientId - id that corresponds to the user's private key.
      * @param privateKey - user's private key.
      * @param privateKeyPassword - user's private key password.
      * @return Configured cipher.
      */
     VirgilSymmetricCipher& initDecryption(const VirgilByteArray& encryptedDataInfo,
-            const VirgilByteArray& certificateId, const VirgilByteArray& privateKey,
+            const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
             const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
      * @brief Configures symmetric cipher for decryption based on the recipient's password.
@@ -171,13 +169,13 @@ protected:
      */
     VirgilSymmetricCipher& initDecryptionWithPassword(const VirgilByteArray& pwd);
     /**
-     * @brief Configures symmetric cipher for decryption based on the recipient's certificate id and private key.
-     * @param certificateId - recipient's certificate id.
+     * @brief Configures symmetric cipher for decryption based on the recipient's id and private key.
+     * @param recipientId - recipient's id.
      * @param privateKey - recipient's private key.
      * @param privateKeyPassword - recipient's private key password.
      * @return Configured cipher.
      */
-    VirgilSymmetricCipher& initDecryptionWithKey(const VirgilByteArray& certificateId,
+    VirgilSymmetricCipher& initDecryptionWithKey(const VirgilByteArray& recipientId,
             const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword);
     /**
      * @brief Return symmetric cipher configure by one of the methods:
@@ -207,6 +205,6 @@ private:
     VirgilCipherBaseImpl *impl_;
 };
 
-}}
+}
 
-#endif /* VIRGIL_SERVICE_VIRGIL_CIPHER_BASE_H */
+#endif /* VIRGIL_CIPHER_BASE_H */

@@ -36,21 +36,6 @@
 
 #include "VirgilVersion.wrapper.hpp"
 
-#include "VirgilSerializable.wrapper.hpp"
-
-#include "VirgilId.wrapper.hpp"
-#include "VirgilAccountId.wrapper.hpp"
-#include "VirgilCertificateId.wrapper.hpp"
-#include "VirgilTicketId.wrapper.hpp"
-#include "VirgilSigntId.wrapper.hpp"
-
-#include "VirgilAccount.wrapper.hpp"
-#include "VirgilCertificate.wrapper.hpp"
-#include "VirgilTicket.wrapper.hpp"
-#include "VirgilUniqueTicket.wrapper.hpp"
-#include "VirgilInfoTicket.wrapper.hpp"
-#include "VirgilSign.wrapper.hpp"
-
 #include "VirgilRandom.wrapper.hpp"
 #include "VirgilKeyPair.wrapper.hpp"
 

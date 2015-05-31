@@ -46,30 +46,30 @@
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/service/VirgilCipher.h>
-using virgil::service::VirgilCipher;
+#include <virgil/VirgilCipher.h>
+using virgil::VirgilCipher;
 
-#include <virgil/service/data/VirgilKeyPair.h>
-using virgil::service::data::VirgilKeyPair;
+#include <virgil/VirgilKeyPair.h>
+using virgil::VirgilKeyPair;
 
 
 TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
     VirgilByteArray password = virgil::str2bytes("password");
     VirgilByteArray testData = virgil::str2bytes("this string will be encrypted");
-    VirgilByteArray certificateId = virgil::str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
+    VirgilByteArray recipientId = virgil::str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
     VirgilKeyPair keyPair(password);
 
     VirgilCipher cipher;
-    cipher.addKeyRecipient(certificateId, keyPair.publicKey());
+    cipher.addKeyRecipient(recipientId, keyPair.publicKey());
 
     SECTION("and embedded content info") {
         VirgilByteArray encryptedData = cipher.encrypt(testData, true);
         VirgilByteArray decryptedData;
         REQUIRE_THROWS(
-            decryptedData = cipher.decryptWithKey(encryptedData, certificateId, keyPair.privateKey())
+            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey())
         );
         REQUIRE_NOTHROW(
-            decryptedData = cipher.decryptWithKey(encryptedData, certificateId, keyPair.privateKey(), password)
+            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
         );
         REQUIRE(testData == decryptedData);
     }
@@ -92,7 +92,7 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
 
         VirgilByteArray decryptedData;
         REQUIRE_NOTHROW(
-            decryptedData = cipher.decryptWithKey(encryptedData, certificateId, keyPair.privateKey(), password)
+            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
         );
         REQUIRE(testData == decryptedData);
 
@@ -112,10 +112,10 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
 
         VirgilByteArray decryptedData;
         REQUIRE_THROWS(
-            decryptedData = cipher.decryptWithKey(encryptedData, certificateId, keyPair.privateKey())
+            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey())
         );
         REQUIRE_NOTHROW(
-            decryptedData = cipher.decryptWithKey(encryptedData, certificateId, keyPair.privateKey(), password)
+            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
         );
         REQUIRE(testData == decryptedData);
     }
@@ -142,7 +142,7 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
 
         VirgilByteArray decryptedData;
         REQUIRE_NOTHROW(
-            decryptedData = cipher.decryptWithKey(encryptedData, certificateId, keyPair.privateKey(), password)
+            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
         );
         REQUIRE(testData == decryptedData);
 

@@ -34,47 +34,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_DATA_VIRGIL_ID_PROVIDER_H
-#define VIRGIL_DATA_VIRGIL_ID_PROVIDER_H
+#ifndef VIRGIL_KEY_PAIR_H
+#define VIRGIL_KEY_PAIR_H
 
-#include <virgil/service/data/VirgilJsonCompatible.h>
-using virgil::service::data::VirgilJsonCompatible;
+#include <virgil/VirgilByteArray.h>
+using virgil::VirgilByteArray;
 
-namespace virgil { namespace service { namespace data {
+namespace virgil {
 
 /**
- * @brief This class provides template with identifier accessors.
+ * @brief This class handles information about Virgil Security key pair.
  */
-template <typename ID>
-class VirgilIdProvider : public VirgilJsonCompatible {
-public:
-    typedef ID value_type;
+class VirgilKeyPair {
 public:
     /**
-     * @name Accessors
+     * @brief Generate new key pair.
      */
-    ///@{
+    explicit VirgilKeyPair(const VirgilByteArray& pwd = VirgilByteArray());
     /**
-     * @brief Return immutable Virgil Service identifier.
+     * @brief Initialize key pair with given public and private key.
      */
-    virtual const ID& id() const { return id_; }
+    VirgilKeyPair(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey);
     /**
-     * @brief Return mutable Virgil Service identifier.
+     * @brief Provide access to the public key.
      */
-    virtual ID& id() { return id_; }
+    VirgilByteArray publicKey() const;
     /**
-     * @brief Set Virgil Service identifier.
+     * @brief Provide access to the private key.
      */
-    virtual void setId(const ID& id) { id_ = id; }
-    ///@}
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilIdProvider() throw() {}
+    VirgilByteArray privateKey() const;
 private:
-    ID id_;
+    VirgilByteArray publicKey_;
+    VirgilByteArray privateKey_;
 };
 
-}}}
+}
 
-#endif /* VIRGIL_DATA_VIRGIL_ID_PROVIDER_H */
+#endif /* VIRGIL_KEY_PAIR_H */

@@ -34,31 +34,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SERVICE_DATA_VIRGIL_UNIQUE_TICKET_TYPE_H
-#define VIRGIL_SERVICE_DATA_VIRGIL_UNIQUE_TICKET_TYPE_H
+#ifndef VIRGIL_DATA_VIRGIL_DATA_SOURCE_H
+#define VIRGIL_DATA_VIRGIL_DATA_SOURCE_H
 
-#include <string>
+#include <virgil/VirgilByteArray.h>
+using virgil::VirgilByteArray;
 
-/**
- * @brief VirgilUniqueTicket types
- */
-typedef enum {
-    VirgilUniqueTicketType_None = 0,
-    VirgilUniqueTicketType_Email,
-    VirgilUniqueTicketType_Phone,
-    VirgilUniqueTicketType_Fax,
-    VirgilUniqueTicketType_Domain,
-    VirgilUniqueTicketType_MacAddress,
-    VirgilUniqueTicketType_Application
-} VirgilUniqueTicketType;
+
+namespace virgil {
 
 /**
- * @brief Convert VirgilUniqueTicketType to it string representation.
+ * @brief This is base class for input streams.
+ *
+ * Defines interface that allows read data from the input stream.
  */
-std::string virgil_unique_ticket_type_to_string(VirgilUniqueTicketType type);
-/**
- * @brief Convert VirgilUniqueTicketType string representation to the type.
- */
-VirgilUniqueTicketType virgil_unique_ticket_type_from_string(const std::string type);
+class VirgilDataSource {
+public:
+    /**
+     * @brief Return true if target source still contains unread data.
+     */
+    virtual bool hasData() = 0;
+    /**
+     * @brief Return next portion of read data from target source.
+     */
+    virtual VirgilByteArray read() = 0;
+    virtual ~VirgilDataSource() throw() {}
+};
 
-#endif /* VIRGIL_SERVICE_DATA_VIRGIL_UNIQUE_TICKET_TYPE_H */
+}
+
+#endif /* VIRGIL_DATA_VIRGIL_DATA_SOURCE_H */

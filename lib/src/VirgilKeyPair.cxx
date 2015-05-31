@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/data/VirgilKeyPair.h>
-using virgil::service::data::VirgilKeyPair;
+#include <virgil/VirgilKeyPair.h>
+using virgil::VirgilKeyPair;
 
 #include <virgil/crypto/VirgilRandom.h>
 using virgil::crypto::VirgilRandom;

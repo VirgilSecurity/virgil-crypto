@@ -37,8 +37,8 @@
 #ifndef VIRGIL_STREAM_VIRGIL_STREAM_DATA_SINK_H
 #define VIRGIL_STREAM_VIRGIL_STREAM_DATA_SINK_H
 
-#include <virgil/service/VirgilDataSink.h>
-using virgil::service::VirgilDataSink;
+#include <virgil/VirgilDataSink.h>
+using virgil::VirgilDataSink;
 
 #include <ostream>
 

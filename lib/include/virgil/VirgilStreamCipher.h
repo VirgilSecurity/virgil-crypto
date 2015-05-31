@@ -34,22 +34,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SERVICE_VIRGIL_STREAM_CIPHER_H
-#define VIRGIL_SERVICE_VIRGIL_STREAM_CIPHER_H
+#ifndef VIRGIL_STREAM_CIPHER_H
+#define VIRGIL_STREAM_CIPHER_H
 
-#include <virgil/service/VirgilCipherBase.h>
-using virgil::service::VirgilCipherBase;
+#include <virgil/VirgilCipherBase.h>
+using virgil::VirgilCipherBase;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/service/VirgilDataSource.h>
-using virgil::service::VirgilDataSource;
+#include <virgil/VirgilDataSource.h>
+using virgil::VirgilDataSource;
 
-#include <virgil/service/VirgilDataSink.h>
-using virgil::service::VirgilDataSink;
+#include <virgil/VirgilDataSink.h>
+using virgil::VirgilDataSink;
 
-namespace virgil { namespace service {
+namespace virgil {
 
 /**
  * @brief This class provides high-level interface to encrypt / decrypt streaming data using Virgil Security keys.
@@ -72,12 +72,12 @@ public:
      */
     void encrypt(VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo = false);
     /**
-     * @brief Decrypt data read from given source for recipient defined by certificate id and private key,
+     * @brief Decrypt data read from given source for recipient defined by id and private key,
      *     and write it to the sink.
      * @note Content info MUST be defined, if it was not embedded to the encrypted data.
      * @see method setContentInfo().
      */
-    void decryptWithKey(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& certificateId,
+    void decryptWithKey(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& recipientId,
             const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
      * @brief Decrypt data read from given source for recipient defined by password,
@@ -100,6 +100,6 @@ private:
             const VirgilByteArray& firstChunk);
 };
 
-}}
+}
 
-#endif /* VIRGIL_SERVICE_VIRGIL_STREAM_CIPHER_H */
+#endif /* VIRGIL_STREAM_CIPHER_H */

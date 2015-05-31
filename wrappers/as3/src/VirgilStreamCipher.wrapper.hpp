@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_STREAM_CIPHER_HPP
 #define AS3_VIRGIL_STREAM_CIPHER_HPP
 
-#include <virgil/service/VirgilStreamCipher.h>
-using virgil::service::VirgilStreamCipher;
+#include <virgil/VirgilStreamCipher.h>
+using virgil::VirgilStreamCipher;
 
 #include "as3_utils.hpp"
 #include "VirgilDataSourceBridge.hpp"

@@ -51,7 +51,7 @@ class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
      */
     public function test_encryption() {
         $initialText = "This is very long string will be encoded. And some more.";
-        $certificateId = "CERT-1234";
+        $recipientId = "842602ff-9713-4184-8176-f54ac7efe14e";
         $publicKeyPem512 =
                 "-----BEGIN PUBLIC KEY-----\n".
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
@@ -63,7 +63,7 @@ class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
         // Create cipher
         $cipher = new VirgilChunkCipher();
         // Add recipients
-        $cipher->addKeyRecipient($certificateId, $publicKeyPem512);
+        $cipher->addKeyRecipient($recipientId, $publicKeyPem512);
         $cipher->addPasswordRecipient($password);
         // Init encryption.
         $preferredChunkSize = 7;
@@ -90,7 +90,7 @@ class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
      * @depends test_encryption
      */
     public function test_decryption_with_key(array $encryptionDatagram) {
-        $certificateId = "CERT-1234";
+        $recipientId = "842602ff-9713-4184-8176-f54ac7efe14e";
         $privateKeyPem512 =
                 "-----BEGIN EC PRIVATE KEY-----\n".
                 "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
@@ -109,7 +109,7 @@ class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
         // Set content info
         $cipher->setContentInfo($contentInfo);
         // Init decryption.
-        $actualChunkSize = $cipher->startDecryptionWithKey($certificateId, $privateKeyPem512);
+        $actualChunkSize = $cipher->startDecryptionWithKey($recipientId, $privateKeyPem512);
         // Split string to chunks.
         $chunks = str_split($encryptedData, $actualChunkSize);
         // Decode.

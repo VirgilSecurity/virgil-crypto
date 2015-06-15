@@ -34,27 +34,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-Module['postRun'] = function() {
+Module['VirgilByteArray']['fromUTF8'] = function(string) {
+    var ba = new Module.VirgilByteArray();
+    ba.fromUTF8(string);
+    return ba;
+};
 
-    Module['VirgilByteArray']['fromUTF8'] = function(string) {
-        var ba = new Module.VirgilByteArray();
-        ba.fromUTF8(string);
-        return ba;
-    };
+Module['VirgilByteArray']['prototype']['fromUTF8'] = function(string) {
+    var s = unescape(encodeURIComponent(string));
+    var charList = s.split('');
+    var uintArray = [];
+    for (var i = 0; i < charList.length; i++) {
+        uintArray.push(charList[i].charCodeAt(0));
+    }
+    this.assign(new Uint8Array(uintArray));
+};
 
-    Module['VirgilByteArray']['prototype']['fromUTF8'] = function(string) {
-        var s = unescape(encodeURIComponent(string));
-        var charList = s.split('');
-        var uintArray = [];
-        for (var i = 0; i < charList.length; i++) {
-            uintArray.push(charList[i].charCodeAt(0));
-        }
-        this.assign(new Uint8Array(uintArray));
-    };
-
-    Module['VirgilByteArray']['prototype']['toUTF8'] = function() {
-        var encodedString = String.fromCharCode.apply(null, this.data());
-        return decodeURIComponent(escape(encodedString));
-    };
-
+Module['VirgilByteArray']['prototype']['toUTF8'] = function() {
+    var encodedString = String.fromCharCode.apply(null, this.data());
+    return decodeURIComponent(escape(encodedString));
 };

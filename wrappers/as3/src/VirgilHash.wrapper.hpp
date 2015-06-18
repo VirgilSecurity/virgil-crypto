@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_HASH_HPP
 #define AS3_VIRGIL_HASH_HPP
 
-#include <virgil/crypto/VirgilHash.h>
-using virgil::crypto::VirgilHash;
+#include <virgil/crypto/base/VirgilHash.h>
+using virgil::crypto::base::VirgilHash;
 
 #include "as3_utils.hpp"
 

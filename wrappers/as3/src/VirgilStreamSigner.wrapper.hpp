@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_STREAM_SIGNER_HPP
 #define AS3_VIRGIL_STREAM_SIGNER_HPP
 
-#include <virgil/VirgilStreamSigner.h>
-using virgil::VirgilStreamSigner;
+#include <virgil/crypto/VirgilStreamSigner.h>
+using virgil::crypto::VirgilStreamSigner;
 
 #include "as3_utils.hpp"
 #include "VirgilDataSourceBridge.hpp"

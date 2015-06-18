@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_KEY_PAIR_HPP
 #define AS3_VIRGIL_KEY_PAIR_HPP
 
-#include <virgil/VirgilKeyPair.h>
-using virgil::VirgilKeyPair;
+#include <virgil/crypto/VirgilKeyPair.h>
+using virgil::crypto::VirgilKeyPair;
 
 #include "as3_utils.hpp"
 

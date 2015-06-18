@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/PolarsslException.h>
-using virgil::crypto::PolarsslException;
+#include <virgil/crypto/base/PolarsslException.h>
+using virgil::crypto::base::PolarsslException;
 
 #include <cstring>
 #include <string>

@@ -45,7 +45,7 @@ using virgil::VirgilByteArray;
 #include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
 using virgil::crypto::asn1::VirgilAsn1Compatible;
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace base {
 
 /**
  * @name Forward declarations
@@ -238,6 +238,6 @@ private:
     VirgilSymmetricCipherImpl *impl_;
 };
 
-}}
+}}}
 
 #endif /* VIRGIL_CRYPTO_SYMMETRIC_SIPHER_H */

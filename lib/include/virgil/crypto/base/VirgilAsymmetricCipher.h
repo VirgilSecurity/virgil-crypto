@@ -45,7 +45,7 @@ using virgil::crypto::asn1::VirgilAsn1Compatible;
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace base {
 
 /**
  * @name Forward declarations
@@ -234,6 +234,6 @@ private:
     VirgilAsymmetricCipherImpl *impl_;
 };
 
-}}
+}}}
 
 #endif /* VIRGIL_CRYPTO_ASYMMETRIC_CIPHER_H */

@@ -34,9 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilHash.h>
-using virgil::crypto::VirgilHash;
-using virgil::crypto::VirgilHashImpl;
+#include <virgil/crypto/base/VirgilHash.h>
+using virgil::crypto::base::VirgilHash;
+using virgil::crypto::base::VirgilHashImpl;
 
 #include <polarssl/md.h>
 #include <polarssl/oid.h>
@@ -45,8 +45,8 @@ using virgil::crypto::VirgilHashImpl;
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/crypto/PolarsslException.h>
-using virgil::crypto::PolarsslException;
+#include <virgil/crypto/base/PolarsslException.h>
+using virgil::crypto::base::PolarsslException;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
@@ -62,7 +62,7 @@ using virgil::crypto::asn1::VirgilAsn1Writer;
 
 #include <string>
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace base {
 
 class VirgilHashImpl {
 public:
@@ -145,7 +145,7 @@ public:
     md_context_t *hmacCtx; // pointer to the hmac hash context, is used for chaining hash
 };
 
-}}
+}}}
 
 VirgilHash VirgilHash::md5() {
     return VirgilHash(POLARSSL_MD_MD5);

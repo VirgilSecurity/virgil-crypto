@@ -34,9 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilSymmetricCipher.h>
-using virgil::crypto::VirgilSymmetricCipher;
-using virgil::crypto::VirgilSymmetricCipherImpl;
+#include <virgil/crypto/base/VirgilSymmetricCipher.h>
+using virgil::crypto::base::VirgilSymmetricCipher;
+using virgil::crypto::base::VirgilSymmetricCipherImpl;
 
 #include <polarssl/cipher.h>
 #include <polarssl/oid.h>
@@ -44,8 +44,8 @@ using virgil::crypto::VirgilSymmetricCipherImpl;
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/crypto/PolarsslException.h>
-using virgil::crypto::PolarsslException;
+#include <virgil/crypto/base/PolarsslException.h>
+using virgil::crypto::base::PolarsslException;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
@@ -59,7 +59,7 @@ using virgil::crypto::asn1::VirgilAsn1Reader;
 #include <virgil/crypto/asn1/VirgilAsn1Writer.h>
 using virgil::crypto::asn1::VirgilAsn1Writer;
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace base {
 
 class VirgilSymmetricCipherImpl {
 public:
@@ -114,7 +114,7 @@ public:
     VirgilByteArray iv;
 };
 
-}}
+}}}
 
 VirgilSymmetricCipher::VirgilSymmetricCipher()
         : impl_(new VirgilSymmetricCipherImpl(POLARSSL_CIPHER_NONE)) {

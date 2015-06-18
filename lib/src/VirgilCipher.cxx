@@ -34,14 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/VirgilCipher.h>
-using virgil::VirgilCipher;
+#include <virgil/crypto/VirgilCipher.h>
+using virgil::crypto::VirgilCipher;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/crypto/VirgilSymmetricCipher.h>
-using virgil::crypto::VirgilSymmetricCipher;
+#include <virgil/crypto/base/VirgilSymmetricCipher.h>
+using virgil::crypto::base::VirgilSymmetricCipher;
 
 VirgilCipher::~VirgilCipher() throw() {
 }

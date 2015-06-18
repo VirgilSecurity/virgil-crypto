@@ -34,9 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilKDF.h>
-using virgil::crypto::VirgilKDF;
-using virgil::crypto::VirgilKDFImpl;
+#include <virgil/crypto/base/VirgilKDF.h>
+using virgil::crypto::base::VirgilKDF;
+using virgil::crypto::base::VirgilKDFImpl;
 
 #include <polarssl/kdf.h>
 #include <polarssl/oid.h>
@@ -45,8 +45,8 @@ using virgil::crypto::VirgilKDFImpl;
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/crypto/PolarsslException.h>
-using virgil::crypto::PolarsslException;
+#include <virgil/crypto/base/PolarsslException.h>
+using virgil::crypto::base::PolarsslException;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
@@ -69,7 +69,7 @@ using virgil::crypto::asn1::VirgilAsn1Writer;
 static const md_type_t kHashType_Default = POLARSSL_MD_SHA256;
 ///@}
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace base {
 
 class VirgilKDFImpl {
 public:
@@ -85,7 +85,7 @@ public:
     md_info_t const *  mdInfo; // hash algorithm type info
 };
 
-}}
+}}}
 
 VirgilKDF VirgilKDF::kdf1() {
     return VirgilKDF(POLARSSL_KDF_KDF1, kHashType_Default);

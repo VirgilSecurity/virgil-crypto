@@ -50,16 +50,16 @@ using virgil::crypto::VirgilCustomParams;
  * @name Forward declaration
  */
 /// @{
-namespace virgil {
+namespace virgil { namespace crypto {
     class VirgilCipherBaseImpl;
-    namespace crypto {
+    namespace base {
         class VirgilSymmetricCipher;
     }
-}
-using virgil::crypto::VirgilSymmetricCipher;
+}}
+using virgil::crypto::base::VirgilSymmetricCipher;
 /// @}
 
-namespace virgil {
+namespace virgil { namespace crypto {
 
 /**
  * @brief This class provides configuration methods to all Virgil*Cipher classes.
@@ -205,6 +205,6 @@ private:
     VirgilCipherBaseImpl *impl_;
 };
 
-}
+}}
 
 #endif /* VIRGIL_CIPHER_BASE_H */

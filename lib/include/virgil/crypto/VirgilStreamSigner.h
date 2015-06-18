@@ -34,31 +34,47 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_BASE64_H
-#define VIRGIL_CRYPTO_BASE64_H
-
-#include <string>
+#ifndef VIRGIL_STREAM_SIGNER_H
+#define VIRGIL_STREAM_SIGNER_H
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
+#include <virgil/crypto/base/VirgilHash.h>
+using virgil::crypto::base::VirgilHash;
+
+#include <virgil/VirgilDataSource.h>
+using virgil::VirgilDataSource;
+
 namespace virgil { namespace crypto {
 
 /**
- * @brief Provides base64 encoding / decoding.
+ * @brief This class provides high-level interface to sign and verify data using Virgil Security keys.
+ *
+ * This module can sign / verify data provided by stream.
  */
-class VirgilBase64 {
+class VirgilStreamSigner {
 public:
     /**
-     * @brief Transform given bytes to the base64 string.
+     * @brief Create signer with predefined hash function.
+     * @note Specified hash function algorithm is used only during signing.
      */
-    static std::string encode(const VirgilByteArray& data);
+    explicit VirgilStreamSigner(const VirgilHash& hash = VirgilHash::sha384());
     /**
-     * @brief Transform given base64 string to the bytes.
+     * @brief Sign data provided by the source with given private key.
+     * @return Virgil Security sign.
      */
-    static VirgilByteArray decode(const std::string& base64str);
+    VirgilByteArray sign(VirgilDataSource& source, const VirgilByteArray& privateKey,
+            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    /**
+     * @brief Verify sign and data provided by the source to be conformed to the given public key.
+     * @return true if sign is valid and data was not malformed.
+     */
+    bool verify(VirgilDataSource& source, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
+private:
+    VirgilHash hash_;
 };
 
 }}
 
-#endif /* VIRGIL_CRYPTO_BASE64_H */
+#endif /* VIRGIL_STREAM_SIGNER_H */

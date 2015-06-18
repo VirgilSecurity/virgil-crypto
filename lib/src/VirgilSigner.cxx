@@ -34,17 +34,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/VirgilSigner.h>
-using virgil::VirgilSigner;
+#include <virgil/crypto/VirgilSigner.h>
+using virgil::crypto::VirgilSigner;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/crypto/VirgilHash.h>
-using virgil::crypto::VirgilHash;
+#include <virgil/crypto/base/VirgilHash.h>
+using virgil::crypto::base::VirgilHash;
 
-#include <virgil/crypto/VirgilAsymmetricCipher.h>
-using virgil::crypto::VirgilAsymmetricCipher;
+#include <virgil/crypto/base/VirgilAsymmetricCipher.h>
+using virgil::crypto::base::VirgilAsymmetricCipher;
 
 #include <virgil/crypto/asn1/VirgilAsn1Reader.h>
 using virgil::crypto::asn1::VirgilAsn1Reader;

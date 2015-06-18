@@ -37,8 +37,8 @@
 #ifndef VIRGIL_STREAM_CIPHER_H
 #define VIRGIL_STREAM_CIPHER_H
 
-#include <virgil/VirgilCipherBase.h>
-using virgil::VirgilCipherBase;
+#include <virgil/crypto/VirgilCipherBase.h>
+using virgil::crypto::VirgilCipherBase;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -49,7 +49,7 @@ using virgil::VirgilDataSource;
 #include <virgil/VirgilDataSink.h>
 using virgil::VirgilDataSink;
 
-namespace virgil {
+namespace virgil { namespace crypto {
 
 /**
  * @brief This class provides high-level interface to encrypt / decrypt streaming data using Virgil Security keys.
@@ -100,6 +100,6 @@ private:
             const VirgilByteArray& firstChunk);
 };
 
-}
+}}
 
 #endif /* VIRGIL_STREAM_CIPHER_H */

@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_RANDOM_HPP
 #define AS3_VIRGIL_RANDOM_HPP
 
-#include <virgil/crypto/VirgilRandom.h>
-using virgil::crypto::VirgilRandom;
+#include <virgil/crypto/base/VirgilRandom.h>
+using virgil::crypto::base::VirgilRandom;
 
 #include "as3_utils.hpp"
 

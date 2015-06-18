@@ -37,8 +37,8 @@
 #ifndef VIRGIL_CIPHER_H
 #define VIRGIL_CIPHER_H
 
-#include <virgil/VirgilCipherBase.h>
-using virgil::VirgilCipherBase;
+#include <virgil/crypto/VirgilCipherBase.h>
+using virgil::crypto::VirgilCipherBase;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
@@ -46,7 +46,7 @@ using virgil::VirgilByteArray;
 #include <vector>
 #include <vector>
 
-namespace virgil {
+namespace virgil { namespace crypto {
 
 /**
  * @brief This class provides high-level interface to encrypt / decrypt data using Virgil Security keys.
@@ -91,6 +91,6 @@ private:
     VirgilByteArray decrypt(const VirgilByteArray& encryptedData, VirgilSymmetricCipher& cipher);
 };
 
-}
+}}
 
 #endif /* VIRGIL_CIPHER_H */

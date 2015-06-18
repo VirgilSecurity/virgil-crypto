@@ -34,40 +34,64 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_KEY_PAIR_H
-#define VIRGIL_KEY_PAIR_H
+#ifndef VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H
+#define VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilCryptoException.h>
+using virgil::crypto::VirgilCryptoException;
 
-namespace virgil {
+#define POLARSSL_ERROR_HANDLER(invocation) POLARSSL_ERROR_HANDLER_DISPOSE(invocation, {})
+
+#define POLARSSL_ERROR_HANDLER_DISPOSE(invocation, dispose) \
+do { \
+    int errCode = invocation; \
+    if (errCode < 0) { \
+        do { dispose; } while (0); \
+        throw PolarsslException(errCode); \
+    } \
+} while (0)
+
+
+namespace virgil { namespace crypto { namespace base {
 
 /**
- * @brief This class handles information about Virgil Security key pair.
+ * @brief Encapsulates low-level domain error of the PolarSSL framework.
  */
-class VirgilKeyPair {
+class PolarsslException : public VirgilCryptoException {
 public:
     /**
-     * @brief Generate new key pair.
+     * @name Constructor
      */
-    explicit VirgilKeyPair(const VirgilByteArray& pwd = VirgilByteArray());
+    ///@{
     /**
-     * @brief Initialize key pair with given public and private key.
+     * @brief Creates PolarsslException class object for a given error code.
+     *
+     * Human-readable error description can be found in @link what() @endlink method.
+     * @param errCode - error code returned by one of the underlying PolarSSL framework functions.
      */
-    VirgilKeyPair(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey);
+    explicit PolarsslException(int errCode);
+    ///@}
     /**
-     * @brief Provide access to the public key.
+     * @name Destructor
      */
-    VirgilByteArray publicKey() const;
+    ///@{
+    virtual ~PolarsslException() throw();
+    ///@}
     /**
-     * @brief Provide access to the private key.
+     * @name Info
      */
-    VirgilByteArray privateKey() const;
+    ///@{
+    /**
+     * @brief Provide low-level PolarSSL fremowork error code.
+     * @return Low-level PolarSSL fremowork error code.
+     */
+    int errCode() const throw();
+    ///@}
 private:
-    VirgilByteArray publicKey_;
-    VirgilByteArray privateKey_;
+    int errCode_;
 };
 
-}
+}}}
 
-#endif /* VIRGIL_KEY_PAIR_H */
+#endif /* VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H */
+

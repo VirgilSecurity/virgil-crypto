@@ -45,7 +45,7 @@ using virgil::VirgilByteArray;
 #include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
 using virgil::crypto::asn1::VirgilAsn1Compatible;
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace base {
 
 /**
  * @name Forward declarations
@@ -160,6 +160,6 @@ private:
     VirgilKDFImpl *impl_;
 };
 
-}}
+}}}
 
 #endif /* VIRGIL_CRYPTO_KDF_H */

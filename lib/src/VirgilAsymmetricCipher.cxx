@@ -34,9 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilAsymmetricCipher.h>
-using virgil::crypto::VirgilAsymmetricCipher;
-using virgil::crypto::VirgilAsymmetricCipherImpl;
+#include <virgil/crypto/base/VirgilAsymmetricCipher.h>
+using virgil::crypto::base::VirgilAsymmetricCipher;
+using virgil::crypto::base::VirgilAsymmetricCipherImpl;
 
 #include <cstring>
 
@@ -52,8 +52,8 @@ using virgil::crypto::VirgilAsymmetricCipherImpl;
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/crypto/VirgilKeyPairGenerator.h>
-using virgil::crypto::VirgilKeyPairGenerator;
+#include <virgil/crypto/base/VirgilKeyPairGenerator.h>
+using virgil::crypto::base::VirgilKeyPairGenerator;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
@@ -64,10 +64,11 @@ using virgil::crypto::asn1::VirgilAsn1Writer;
 #include <virgil/crypto/asn1/VirgilAsn1Reader.h>
 using virgil::crypto::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/PolarsslException.h>
+#include <virgil/crypto/base/PolarsslException.h>
+using virgil::crypto::base::PolarsslException;
 
 /// @name Private section
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace base {
 
 class VirgilAsymmetricCipherImpl {
 public:
@@ -124,7 +125,7 @@ public:
     pk_context * ctx;
 };
 
-}}
+}}}
 
 VirgilAsymmetricCipher::VirgilAsymmetricCipher(int type)
         : impl_(new VirgilAsymmetricCipherImpl(static_cast<pk_type_t>(type))) {

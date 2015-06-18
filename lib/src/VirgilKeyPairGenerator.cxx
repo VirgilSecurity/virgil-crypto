@@ -34,50 +34,51 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilKeyPairGenerator.h>
-using virgil::crypto::VirgilKeyPairGenerator;
+#include <virgil/crypto/base/VirgilKeyPairGenerator.h>
+using virgil::crypto::base::VirgilKeyPairGenerator;
 
 #include <polarssl/pk.h>
 #include <polarssl/ecp.h>
 #include "polarssl/entropy.h"
 #include "polarssl/ctr_drbg.h"
 
-#include <virgil/crypto/PolarsslException.h>
+#include <virgil/crypto/base/PolarsslException.h>
+using virgil::crypto::base::PolarsslException;
 
 /// @name Private functions
 static ecp_group_id _ecKeyGroupToEcpGroupId(VirgilKeyPairGenerator::ECKeyGroup ecKey) {
     switch (ecKey) {
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_SECP192R1:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_SECP192R1:
             return POLARSSL_ECP_DP_SECP192R1;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_SECP224R1:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_SECP224R1:
             return POLARSSL_ECP_DP_SECP224R1;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_SECP256R1:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_SECP256R1:
             return POLARSSL_ECP_DP_SECP256R1;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_SECP384R1:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_SECP384R1:
             return POLARSSL_ECP_DP_SECP384R1;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_SECP521R1:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_SECP521R1:
             return POLARSSL_ECP_DP_SECP521R1;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_BP256R1:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_BP256R1:
             return POLARSSL_ECP_DP_BP256R1;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_BP384R1:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_BP384R1:
             return POLARSSL_ECP_DP_BP384R1;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_BP512R1:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_BP512R1:
             return POLARSSL_ECP_DP_BP512R1;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_M221:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_M221:
             return POLARSSL_ECP_DP_M221;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_M255:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_M255:
             return POLARSSL_ECP_DP_M255;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_M383:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_M383:
             return POLARSSL_ECP_DP_M383;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_M511:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_M511:
             return POLARSSL_ECP_DP_M511;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_SECP192K1:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_SECP192K1:
             return POLARSSL_ECP_DP_SECP192K1;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_SECP224K1:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_SECP224K1:
             return POLARSSL_ECP_DP_SECP224K1;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_SECP256K1:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_SECP256K1:
             return POLARSSL_ECP_DP_SECP256K1;
-        case virgil::crypto::VirgilKeyPairGenerator::ECKeyGroup_DP_NONE:
+        case VirgilKeyPairGenerator::ECKeyGroup_DP_NONE:
         default:
             return POLARSSL_ECP_DP_NONE;
     }

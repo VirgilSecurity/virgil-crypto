@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilPBE.h>
-using virgil::crypto::VirgilPBE;
+#include <virgil/crypto/base/VirgilPBE.h>
+using virgil::crypto::base::VirgilPBE;
 
 #include <polarssl/asn1.h>
 #include <polarssl/oid.h>
@@ -53,7 +53,8 @@ using virgil::crypto::VirgilPBE;
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/crypto/PolarsslException.h>
+#include <virgil/crypto/base/PolarsslException.h>
+using virgil::crypto::base::PolarsslException;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
@@ -67,8 +68,8 @@ using virgil::crypto::asn1::VirgilAsn1Reader;
 #include <virgil/crypto/asn1/VirgilAsn1Writer.h>
 using virgil::crypto::asn1::VirgilAsn1Writer;
 
-#include <virgil/crypto/VirgilRandom.h>
-using virgil::crypto::VirgilRandom;
+#include <virgil/crypto/base/VirgilRandom.h>
+using virgil::crypto::base::VirgilRandom;
 
 typedef enum {
     VIRGIL_PBE_NONE = 0,
@@ -77,7 +78,7 @@ typedef enum {
     VIRGIL_PBE_PKCS12_SHA1_RC4_128
 } VirgilPBEType;
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace base {
 
 class VirgilPBEImpl {
 public:
@@ -231,7 +232,7 @@ private:
     }
 };
 
-}}
+}}}
 
 VirgilPBE VirgilPBE::pkcs5(const VirgilByteArray& salt, size_t iterationCount) {
     return VirgilPBE(VIRGIL_PBE_PKCS5, salt, iterationCount);

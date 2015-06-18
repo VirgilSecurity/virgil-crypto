@@ -44,15 +44,15 @@ using namespace emscripten;
 #include <virgil/VirgilException.h>
 #include <virgil/VirgilByteArray.h>
 
-#include <virgil/crypto/VirgilHash.h>
-#include <virgil/crypto/VirgilBase64.h>
+#include <virgil/crypto/base/VirgilHash.h>
+#include <virgil/crypto/base/VirgilBase64.h>
 #include <virgil/crypto/VirgilCustomParams.h>
 
-#include <virgil/VirgilKeyPair.h>
+#include <virgil/crypto/VirgilKeyPair.h>
 
-#include <virgil/VirgilCipherBase.h>
-#include <virgil/VirgilCipher.h>
-#include <virgil/VirgilSigner.h>
+#include <virgil/crypto/VirgilCipherBase.h>
+#include <virgil/crypto/VirgilCipher.h>
+#include <virgil/crypto/VirgilSigner.h>
 
 namespace virgil {
 

@@ -39,8 +39,8 @@
 
 #include "as3_utils.hpp"
 
-#include <virgil/VirgilSigner.h>
-using virgil::VirgilSigner;
+#include <virgil/crypto/VirgilSigner.h>
+using virgil::crypto::VirgilSigner;
 
 #include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
 using virgil::crypto::asn1::VirgilAsn1Compatible;

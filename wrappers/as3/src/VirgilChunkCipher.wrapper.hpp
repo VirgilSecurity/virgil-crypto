@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_CHUNK_CIPHER_HPP
 #define AS3_VIRGIL_CHUNK_CIPHER_HPP
 
-#include <virgil/VirgilChunkCipher.h>
-using virgil::VirgilChunkCipher;
+#include <virgil/crypto/VirgilChunkCipher.h>
+using virgil::crypto::VirgilChunkCipher;
 
 #include "as3_utils.hpp"
 

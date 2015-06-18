@@ -39,7 +39,7 @@
 
 #include <cstddef>
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace base {
 
 /**
  * @brief Encapsulates specific keypair information and way to create it.
@@ -134,6 +134,6 @@ private:
     size_t value_;
 };
 
-}}
+}}}
 
 #endif /* VIRGIL_CRYPTO_KEY_PAIR_GENERATOR_H */

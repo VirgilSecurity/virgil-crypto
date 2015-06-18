@@ -34,20 +34,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/VirgilStreamCipher.h>
-using virgil::VirgilStreamCipher;
+#include <virgil/crypto/VirgilStreamCipher.h>
+using virgil::crypto::VirgilStreamCipher;
 
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/crypto/VirgilKDF.h>
-using virgil::crypto::VirgilKDF;
+#include <virgil/crypto/base/VirgilKDF.h>
+using virgil::crypto::base::VirgilKDF;
 
-#include <virgil/crypto/VirgilSymmetricCipher.h>
-using virgil::crypto::VirgilSymmetricCipher;
+#include <virgil/crypto/base/VirgilSymmetricCipher.h>
+using virgil::crypto::base::VirgilSymmetricCipher;
 
-#include <virgil/crypto/VirgilAsymmetricCipher.h>
-using virgil::crypto::VirgilAsymmetricCipher;
+#include <virgil/crypto/base/VirgilAsymmetricCipher.h>
+using virgil::crypto::base::VirgilAsymmetricCipher;
 
 #include <virgil/crypto/VirgilContentInfo.h>
 using virgil::crypto::VirgilContentInfo;

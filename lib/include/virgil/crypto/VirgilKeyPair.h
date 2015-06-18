@@ -34,61 +34,40 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_VIRGIL_RANDOM_H
-#define VIRGIL_CRYPTO_VIRGIL_RANDOM_H
+#ifndef VIRGIL_KEY_PAIR_H
+#define VIRGIL_KEY_PAIR_H
 
-#include <cstddef>
 #include <virgil/VirgilByteArray.h>
+using virgil::VirgilByteArray;
 
 namespace virgil { namespace crypto {
 
 /**
- * @name Forward declarations
+ * @brief This class handles information about Virgil Security key pair.
  */
-///@{
-class VirgilRandomImpl;
-///@}
-
-/**
- * @brief Provides randomization algorithm.
- */
-class VirgilRandom {
+class VirgilKeyPair {
 public:
     /**
-     * @name Creation / Destruction methods
+     * @brief Generate new key pair.
      */
-    ///@{
+    explicit VirgilKeyPair(const VirgilByteArray& pwd = VirgilByteArray());
     /**
-     * @brief Initialize randomization module with personalization data.
-     *
-     * @param personalInfo (@see section 8.7.1 of NIST Special Publication 800-90A).
-     * @return Random bytes.
+     * @brief Initialize key pair with given public and private key.
      */
-    explicit VirgilRandom(const VirgilByteArray& personalInfo);
-    ///@}
-
+    VirgilKeyPair(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey);
     /**
-     * @name Randomization
+     * @brief Provide access to the public key.
      */
-    ///@{
+    VirgilByteArray publicKey() const;
     /**
-     * @brief Produce random byte sequence.
-     *
-     * @param bytesNum number of bytes to be generated.
-     * @return Random byte sequence.
+     * @brief Provide access to the private key.
      */
-    VirgilByteArray randomize(size_t bytesNum);
-    ///@}
-
+    VirgilByteArray privateKey() const;
 private:
-    VirgilRandom(const VirgilRandom& other);
-    VirgilRandom& operator=(const VirgilRandom& other);
-public:
-    virtual ~VirgilRandom() throw();
-private:
-    VirgilRandomImpl * impl_;
+    VirgilByteArray publicKey_;
+    VirgilByteArray privateKey_;
 };
 
 }}
 
-#endif /* VIRGIL_CRYPTO_VIRGIL_RANDOM_H */
+#endif /* VIRGIL_KEY_PAIR_H */

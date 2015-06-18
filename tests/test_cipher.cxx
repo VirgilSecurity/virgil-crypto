@@ -46,11 +46,11 @@
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/VirgilCipher.h>
-using virgil::VirgilCipher;
+#include <virgil/crypto/VirgilCipher.h>
+using virgil::crypto::VirgilCipher;
 
-#include <virgil/VirgilKeyPair.h>
-using virgil::VirgilKeyPair;
+#include <virgil/crypto/VirgilKeyPair.h>
+using virgil::crypto::VirgilKeyPair;
 
 
 TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {

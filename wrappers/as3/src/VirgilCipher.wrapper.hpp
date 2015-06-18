@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_CIPHER_HPP
 #define AS3_VIRGIL_CIPHER_HPP
 
-#include <virgil/VirgilCipher.h>
-using virgil::VirgilCipher;
+#include <virgil/crypto/VirgilCipher.h>
+using virgil::crypto::VirgilCipher;
 
 #include "as3_utils.hpp"
 

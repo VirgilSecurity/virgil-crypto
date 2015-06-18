@@ -34,17 +34,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/VirgilKeyPair.h>
-using virgil::VirgilKeyPair;
+#include <virgil/crypto/VirgilKeyPair.h>
+using virgil::crypto::VirgilKeyPair;
 
-#include <virgil/crypto/VirgilRandom.h>
-using virgil::crypto::VirgilRandom;
+#include <virgil/crypto/base/VirgilRandom.h>
+using virgil::crypto::base::VirgilRandom;
 
-#include <virgil/crypto/VirgilKeyPairGenerator.h>
-using virgil::crypto::VirgilKeyPairGenerator;
+#include <virgil/crypto/base/VirgilKeyPairGenerator.h>
+using virgil::crypto::base::VirgilKeyPairGenerator;
 
-#include <virgil/crypto/VirgilAsymmetricCipher.h>
-using virgil::crypto::VirgilAsymmetricCipher;
+#include <virgil/crypto/base/VirgilAsymmetricCipher.h>
+using virgil::crypto::base::VirgilAsymmetricCipher;
 
 #include <string>
 

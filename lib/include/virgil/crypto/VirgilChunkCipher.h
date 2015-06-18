@@ -42,10 +42,10 @@
 #include <virgil/VirgilByteArray.h>
 using virgil::VirgilByteArray;
 
-#include <virgil/VirgilCipherBase.h>
-using virgil::VirgilCipherBase;
+#include <virgil/crypto/VirgilCipherBase.h>
+using virgil::crypto::VirgilCipherBase;
 
-namespace virgil {
+namespace virgil { namespace crypto {
 
 /**
  * @brief This class provides high-level interface to encrypt / decrypt data splitted to chunks.
@@ -104,6 +104,6 @@ private:
     size_t retrieveChunkSize() const;
 };
 
-}
+}}
 
 #endif /* VIRGIL_CHUNK_CIPHER_H */

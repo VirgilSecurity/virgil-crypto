@@ -34,44 +34,61 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SIGNER_H
-#define VIRGIL_SIGNER_H
+#ifndef VIRGIL_CRYPTO_VIRGIL_RANDOM_H
+#define VIRGIL_CRYPTO_VIRGIL_RANDOM_H
 
+#include <cstddef>
 #include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
 
-#include <virgil/crypto/VirgilHash.h>
-using virgil::crypto::VirgilHash;
-
-namespace virgil {
+namespace virgil { namespace crypto { namespace base {
 
 /**
- * @brief This class provides high-level interface to sign and verify data using Virgil Security keys.
- *
- * This module can sign / verify as raw data and Virgil Security tickets.
+ * @name Forward declarations
  */
-class VirgilSigner {
+///@{
+class VirgilRandomImpl;
+///@}
+
+/**
+ * @brief Provides randomization algorithm.
+ */
+class VirgilRandom {
 public:
     /**
-     * @brief Create signer with predefined hash function.
-     * @note Specified hash function algorithm is used only during signing.
+     * @name Creation / Destruction methods
      */
-    explicit VirgilSigner(const VirgilHash& hash = VirgilHash::sha384());
+    ///@{
     /**
-     * @brief Sign data with given private key.
-     * @return Virgil Security sign.
+     * @brief Initialize randomization module with personalization data.
+     *
+     * @param personalInfo (@see section 8.7.1 of NIST Special Publication 800-90A).
+     * @return Random bytes.
      */
-    VirgilByteArray sign(const VirgilByteArray& data, const VirgilByteArray& privateKey,
-            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    explicit VirgilRandom(const VirgilByteArray& personalInfo);
+    ///@}
+
     /**
-     * @brief Verify sign and data to be conformed to the given public key.
-     * @return true if sign is valid and data was not malformed.
+     * @name Randomization
      */
-    bool verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
+    ///@{
+    /**
+     * @brief Produce random byte sequence.
+     *
+     * @param bytesNum number of bytes to be generated.
+     * @return Random byte sequence.
+     */
+    VirgilByteArray randomize(size_t bytesNum);
+    ///@}
+
 private:
-    VirgilHash hash_;
+    VirgilRandom(const VirgilRandom& other);
+    VirgilRandom& operator=(const VirgilRandom& other);
+public:
+    virtual ~VirgilRandom() throw();
+private:
+    VirgilRandomImpl * impl_;
 };
 
-}
+}}}
 
-#endif /* VIRGIL_SIGNER_H */
+#endif /* VIRGIL_CRYPTO_VIRGIL_RANDOM_H */

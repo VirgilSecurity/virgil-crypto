@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/VirgilChunkCipher.h>
-using virgil::VirgilChunkCipher;
+#include <virgil/crypto/VirgilChunkCipher.h>
+using virgil::crypto::VirgilChunkCipher;
 
 #include <cstring>
 #include <cmath>
@@ -52,11 +52,11 @@ using virgil::VirgilByteArray;
 #include <virgil/VirgilException.h>
 using virgil::VirgilException;
 
-#include <virgil/crypto/VirgilSymmetricCipher.h>
-using virgil::crypto::VirgilSymmetricCipher;
+#include <virgil/crypto/base/VirgilSymmetricCipher.h>
+using virgil::crypto::base::VirgilSymmetricCipher;
 
-#include <virgil/crypto/VirgilAsymmetricCipher.h>
-using virgil::crypto::VirgilAsymmetricCipher;
+#include <virgil/crypto/base/VirgilAsymmetricCipher.h>
+using virgil::crypto::base::VirgilAsymmetricCipher;
 
 /**
  * @name Contsants

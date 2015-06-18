@@ -34,9 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/VirgilCipherBase.h>
-using virgil::VirgilCipherBase;
-using virgil::VirgilCipherBaseImpl;
+#include <virgil/crypto/VirgilCipherBase.h>
+using virgil::crypto::VirgilCipherBase;
+using virgil::crypto::VirgilCipherBaseImpl;
 
 #include <cstring>
 #include <string>
@@ -48,17 +48,17 @@ using virgil::VirgilByteArray;
 #include <virgil/VirgilException.h>
 using virgil::VirgilException;
 
-#include <virgil/crypto/VirgilRandom.h>
-using virgil::crypto::VirgilRandom;
+#include <virgil/crypto/base/VirgilRandom.h>
+using virgil::crypto::base::VirgilRandom;
 
-#include <virgil/crypto/VirgilSymmetricCipher.h>
-using virgil::crypto::VirgilSymmetricCipher;
+#include <virgil/crypto/base/VirgilSymmetricCipher.h>
+using virgil::crypto::base::VirgilSymmetricCipher;
 
-#include <virgil/crypto/VirgilAsymmetricCipher.h>
-using virgil::crypto::VirgilAsymmetricCipher;
+#include <virgil/crypto/base/VirgilAsymmetricCipher.h>
+using virgil::crypto::base::VirgilAsymmetricCipher;
 
-#include <virgil/crypto/VirgilPBE.h>
-using virgil::crypto::VirgilPBE;
+#include <virgil/crypto/base/VirgilPBE.h>
+using virgil::crypto::base::VirgilPBE;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
@@ -78,7 +78,7 @@ using virgil::crypto::cms::VirgilCMSKeyTransRecipient;
 #include <virgil/crypto/cms/VirgilCMSPasswordRecipient.h>
 using virgil::crypto::cms::VirgilCMSPasswordRecipient;
 
-namespace virgil {
+namespace virgil { namespace crypto {
 
 /**
  * @brief Handle class fields.
@@ -99,7 +99,7 @@ public:
     std::set<VirgilByteArray> passwordRecipients; /**< passwords */
 };
 
-}
+}}
 
 /**
  * @name Configuration constants.

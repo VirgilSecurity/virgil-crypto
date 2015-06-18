@@ -34,64 +34,44 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H
-#define VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H
+#ifndef VIRGIL_SIGNER_H
+#define VIRGIL_SIGNER_H
 
-#include <virgil/crypto/VirgilCryptoException.h>
-using virgil::crypto::VirgilCryptoException;
+#include <virgil/VirgilByteArray.h>
+using virgil::VirgilByteArray;
 
-#define POLARSSL_ERROR_HANDLER(invocation) POLARSSL_ERROR_HANDLER_DISPOSE(invocation, {})
-
-#define POLARSSL_ERROR_HANDLER_DISPOSE(invocation, dispose) \
-do { \
-    int errCode = invocation; \
-    if (errCode < 0) { \
-        do { dispose; } while (0); \
-        throw virgil::crypto::PolarsslException(errCode); \
-    } \
-} while (0)
-
+#include <virgil/crypto/base/VirgilHash.h>
+using virgil::crypto::base::VirgilHash;
 
 namespace virgil { namespace crypto {
 
 /**
- * @brief Encapsulates low-level domain error of the PolarSSL framework.
+ * @brief This class provides high-level interface to sign and verify data using Virgil Security keys.
+ *
+ * This module can sign / verify as raw data and Virgil Security tickets.
  */
-class PolarsslException : public VirgilCryptoException {
+class VirgilSigner {
 public:
     /**
-     * @name Constructor
+     * @brief Create signer with predefined hash function.
+     * @note Specified hash function algorithm is used only during signing.
      */
-    ///@{
+    explicit VirgilSigner(const VirgilHash& hash = VirgilHash::sha384());
     /**
-     * @brief Creates PolarsslException class object for a given error code.
-     *
-     * Human-readable error description can be found in @link what() @endlink method.
-     * @param errCode - error code returned by one of the underlying PolarSSL framework functions.
+     * @brief Sign data with given private key.
+     * @return Virgil Security sign.
      */
-    explicit PolarsslException(int errCode);
-    ///@}
+    VirgilByteArray sign(const VirgilByteArray& data, const VirgilByteArray& privateKey,
+            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
-     * @name Destructor
+     * @brief Verify sign and data to be conformed to the given public key.
+     * @return true if sign is valid and data was not malformed.
      */
-    ///@{
-    virtual ~PolarsslException() throw();
-    ///@}
-    /**
-     * @name Info
-     */
-    ///@{
-    /**
-     * @brief Provide low-level PolarSSL fremowork error code.
-     * @return Low-level PolarSSL fremowork error code.
-     */
-    int errCode() const throw();
-    ///@}
+    bool verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
 private:
-    int errCode_;
+    VirgilHash hash_;
 };
 
 }}
 
-#endif /* VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H */
-
+#endif /* VIRGIL_SIGNER_H */

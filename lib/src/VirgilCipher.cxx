@@ -40,8 +40,8 @@ using virgil::crypto::VirgilCipher;
 #include <virgil/crypto/VirgilByteArray.h>
 using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/base/VirgilSymmetricCipher.h>
-using virgil::crypto::base::VirgilSymmetricCipher;
+#include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
+using virgil::crypto::foundation::VirgilSymmetricCipher;
 
 VirgilCipher::~VirgilCipher() throw() {
 }

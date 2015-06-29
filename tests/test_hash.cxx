@@ -48,8 +48,8 @@ using virgil::crypto::VirgilByteArray;
 using virgil::crypto::str2bytes;
 using virgil::crypto::hex2bytes;
 
-#include <virgil/crypto/base/VirgilHash.h>
-using virgil::crypto::base::VirgilHash;
+#include <virgil/crypto/foundation/VirgilHash.h>
+using virgil::crypto::foundation::VirgilHash;
 
 TEST_CASE("MD5", "[hash]") {
     VirgilHash hash = VirgilHash::md5();

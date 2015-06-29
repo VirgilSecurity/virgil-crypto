@@ -34,16 +34,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/base/VirgilKeyPairGenerator.h>
-using virgil::crypto::base::VirgilKeyPairGenerator;
+#include <virgil/crypto/foundation/VirgilKeyPairGenerator.h>
+using virgil::crypto::foundation::VirgilKeyPairGenerator;
 
 #include <polarssl/pk.h>
 #include <polarssl/ecp.h>
 #include "polarssl/entropy.h"
 #include "polarssl/ctr_drbg.h"
 
-#include <virgil/crypto/base/PolarsslException.h>
-using virgil::crypto::base::PolarsslException;
+#include <virgil/crypto/foundation/PolarsslException.h>
+using virgil::crypto::foundation::PolarsslException;
 
 /// @name Private functions
 static ecp_group_id _ecKeyGroupToEcpGroupId(VirgilKeyPairGenerator::ECKeyGroup ecKey) {

@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/base/VirgilPBE.h>
-using virgil::crypto::base::VirgilPBE;
+#include <virgil/crypto/foundation/VirgilPBE.h>
+using virgil::crypto::foundation::VirgilPBE;
 
 #include <polarssl/asn1.h>
 #include <polarssl/oid.h>
@@ -54,8 +54,8 @@ using virgil::crypto::base::VirgilPBE;
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::str2bytes;
 
-#include <virgil/crypto/base/PolarsslException.h>
-using virgil::crypto::base::PolarsslException;
+#include <virgil/crypto/foundation/PolarsslException.h>
+using virgil::crypto::foundation::PolarsslException;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
@@ -69,8 +69,8 @@ using virgil::crypto::asn1::VirgilAsn1Reader;
 #include <virgil/crypto/asn1/VirgilAsn1Writer.h>
 using virgil::crypto::asn1::VirgilAsn1Writer;
 
-#include <virgil/crypto/base/VirgilRandom.h>
-using virgil::crypto::base::VirgilRandom;
+#include <virgil/crypto/foundation/VirgilRandom.h>
+using virgil::crypto::foundation::VirgilRandom;
 
 typedef enum {
     VIRGIL_PBE_NONE = 0,
@@ -79,7 +79,7 @@ typedef enum {
     VIRGIL_PBE_PKCS12_SHA1_RC4_128
 } VirgilPBEType;
 
-namespace virgil { namespace crypto { namespace base {
+namespace virgil { namespace crypto { namespace foundation {
 
 class VirgilPBEImpl {
 public:

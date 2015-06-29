@@ -44,8 +44,8 @@ using namespace emscripten;
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/VirgilByteArray.h>
 
-#include <virgil/crypto/base/VirgilHash.h>
-#include <virgil/crypto/base/VirgilBase64.h>
+#include <virgil/crypto/foundation/VirgilHash.h>
+#include <virgil/crypto/foundation/VirgilBase64.h>
 #include <virgil/crypto/VirgilCustomParams.h>
 
 #include <virgil/crypto/VirgilKeyPair.h>
@@ -136,7 +136,7 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
 
     class_<virgil::crypto::VirgilSigner>("VirgilSigner")
         .constructor<>()
-        .constructor<const virgil::crypto::base::VirgilHash&>()
+        .constructor<const virgil::crypto::foundation::VirgilHash&>()
         .function("sign", &virgil::crypto::VirgilSigner_sign_1)
         .function("sign", &virgil::crypto::VirgilSigner_sign_2)
         .function("verify", &virgil::crypto::VirgilSigner_verify)
@@ -159,26 +159,26 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
 }
 
 EMSCRIPTEN_BINDINGS(virgil_crypto_base) {
-    class_<virgil::crypto::base::VirgilHash>("VirgilHash")
+    class_<virgil::crypto::foundation::VirgilHash>("VirgilHash")
         .constructor<>()
-        .class_function("md5", &virgil::crypto::base::VirgilHash::md5)
-        .class_function("sha256", &virgil::crypto::base::VirgilHash::sha256)
-        .class_function("sha383", &virgil::crypto::base::VirgilHash::sha384)
-        .class_function("sha512", &virgil::crypto::base::VirgilHash::sha512)
-        .function("name", &virgil::crypto::base::VirgilHash::name)
-        .function("hash", &virgil::crypto::base::VirgilHash::hash)
-        .function("start", &virgil::crypto::base::VirgilHash::start)
-        .function("update", &virgil::crypto::base::VirgilHash::update)
-        .function("finish", &virgil::crypto::base::VirgilHash::finish)
-        .function("hmac", &virgil::crypto::base::VirgilHash::hmac)
-        .function("hmacStart", &virgil::crypto::base::VirgilHash::hmacStart)
-        .function("hmacReset", &virgil::crypto::base::VirgilHash::hmacReset)
-        .function("hmacUpdate", &virgil::crypto::base::VirgilHash::hmacUpdate)
-        .function("hmacFinish", &virgil::crypto::base::VirgilHash::hmacFinish)
+        .class_function("md5", &virgil::crypto::foundation::VirgilHash::md5)
+        .class_function("sha256", &virgil::crypto::foundation::VirgilHash::sha256)
+        .class_function("sha383", &virgil::crypto::foundation::VirgilHash::sha384)
+        .class_function("sha512", &virgil::crypto::foundation::VirgilHash::sha512)
+        .function("name", &virgil::crypto::foundation::VirgilHash::name)
+        .function("hash", &virgil::crypto::foundation::VirgilHash::hash)
+        .function("start", &virgil::crypto::foundation::VirgilHash::start)
+        .function("update", &virgil::crypto::foundation::VirgilHash::update)
+        .function("finish", &virgil::crypto::foundation::VirgilHash::finish)
+        .function("hmac", &virgil::crypto::foundation::VirgilHash::hmac)
+        .function("hmacStart", &virgil::crypto::foundation::VirgilHash::hmacStart)
+        .function("hmacReset", &virgil::crypto::foundation::VirgilHash::hmacReset)
+        .function("hmacUpdate", &virgil::crypto::foundation::VirgilHash::hmacUpdate)
+        .function("hmacFinish", &virgil::crypto::foundation::VirgilHash::hmacFinish)
     ;
 
-    class_<virgil::crypto::base::VirgilBase64>("VirgilBase64")
-        .class_function("encode", &virgil::crypto::base::VirgilBase64::encode)
-        .class_function("decode", &virgil::crypto::base::VirgilBase64::decode)
+    class_<virgil::crypto::foundation::VirgilBase64>("VirgilBase64")
+        .class_function("encode", &virgil::crypto::foundation::VirgilBase64::encode)
+        .class_function("decode", &virgil::crypto::foundation::VirgilBase64::decode)
     ;
 }

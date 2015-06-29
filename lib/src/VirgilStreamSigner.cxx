@@ -43,11 +43,11 @@ using virgil::crypto::VirgilDataSource;
 #include <virgil/crypto/VirgilByteArray.h>
 using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/base/VirgilHash.h>
-using virgil::crypto::base::VirgilHash;
+#include <virgil/crypto/foundation/VirgilHash.h>
+using virgil::crypto::foundation::VirgilHash;
 
-#include <virgil/crypto/base/VirgilAsymmetricCipher.h>
-using virgil::crypto::base::VirgilAsymmetricCipher;
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
 #include <virgil/crypto/asn1/VirgilAsn1Reader.h>
 using virgil::crypto::asn1::VirgilAsn1Reader;

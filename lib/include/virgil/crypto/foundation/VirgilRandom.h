@@ -40,7 +40,7 @@
 #include <cstddef>
 #include <virgil/crypto/VirgilByteArray.h>
 
-namespace virgil { namespace crypto { namespace base {
+namespace virgil { namespace crypto { namespace foundation {
 
 /**
  * @name Forward declarations

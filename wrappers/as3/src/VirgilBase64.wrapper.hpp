@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_BASE64_HPP
 #define AS3_VIRGIL_BASE64_HPP
 
-#include <virgil/crypto/base/VirgilBase64.h>
-using virgil::crypto::base::VirgilBase64;
+#include <virgil/crypto/foundation/VirgilBase64.h>
+using virgil::crypto::foundation::VirgilBase64;
 
 #include "as3_utils.hpp"
 

@@ -44,7 +44,7 @@ import flash.utils.IDataOutput;
 
 import com.virgilsecurity.wrapper.*;
 import com.virgilsecurity.extension.*;
-import com.virgilsecurity.crypto.base.*;
+import com.virgilsecurity.crypto.foundation.*;
 
 public class VirgilVersion {
     public static function asString():String {

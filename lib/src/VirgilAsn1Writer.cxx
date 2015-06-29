@@ -40,8 +40,8 @@ using virgil::crypto::asn1::VirgilAsn1Writer;
 #include <virgil/crypto/VirgilByteArray.h>
 using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/base/PolarsslException.h>
-using virgil::crypto::base::PolarsslException;
+#include <virgil/crypto/foundation/PolarsslException.h>
+using virgil::crypto::foundation::PolarsslException;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;

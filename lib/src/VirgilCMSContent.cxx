@@ -47,7 +47,7 @@ using virgil::crypto::asn1::VirgilAsn1Writer;
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/base/VirgilOID.h>
+#include <virgil/crypto/foundation/VirgilOID.h>
 
 #include <cstddef>
 #include <cstring>

@@ -34,9 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/base/VirgilAsymmetricCipher.h>
-using virgil::crypto::base::VirgilAsymmetricCipher;
-using virgil::crypto::base::VirgilAsymmetricCipherImpl;
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+using virgil::crypto::foundation::VirgilAsymmetricCipher;
+using virgil::crypto::foundation::VirgilAsymmetricCipherImpl;
 
 #include <cstring>
 
@@ -52,8 +52,8 @@ using virgil::crypto::base::VirgilAsymmetricCipherImpl;
 #include <virgil/crypto/VirgilByteArray.h>
 using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/base/VirgilKeyPairGenerator.h>
-using virgil::crypto::base::VirgilKeyPairGenerator;
+#include <virgil/crypto/foundation/VirgilKeyPairGenerator.h>
+using virgil::crypto::foundation::VirgilKeyPairGenerator;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
@@ -64,11 +64,11 @@ using virgil::crypto::asn1::VirgilAsn1Writer;
 #include <virgil/crypto/asn1/VirgilAsn1Reader.h>
 using virgil::crypto::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/base/PolarsslException.h>
-using virgil::crypto::base::PolarsslException;
+#include <virgil/crypto/foundation/PolarsslException.h>
+using virgil::crypto::foundation::PolarsslException;
 
 /// @name Private section
-namespace virgil { namespace crypto { namespace base {
+namespace virgil { namespace crypto { namespace foundation {
 
 class VirgilAsymmetricCipherImpl {
 public:

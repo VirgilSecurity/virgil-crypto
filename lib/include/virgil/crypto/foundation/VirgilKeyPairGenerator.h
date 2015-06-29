@@ -39,7 +39,7 @@
 
 #include <cstddef>
 
-namespace virgil { namespace crypto { namespace base {
+namespace virgil { namespace crypto { namespace foundation {
 
 /**
  * @brief Encapsulates specific keypair information and way to create it.

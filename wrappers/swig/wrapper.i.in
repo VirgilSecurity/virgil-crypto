@@ -110,21 +110,21 @@ INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::asn1, virgil/crypto/asn1)
     %ignore VirgilCMSContent;
 #endif /* LIB_LOW_LEVEL_API */
 
-// Package: virgil::crypto::base
+// Package: virgil::crypto::foundation
 #if defined(LIB_LOW_LEVEL_API)
-    DEFINE_NAMESPACE(VirgilSymmetricCipherPadding, virgil::crypto::base)
-    DEFINE_NAMESPACE(ECKeyGroup, virgil::crypto::base)
-    DEFINE_NAMESPACE(VirgilKeyPairType, virgil::crypto::base)
+    DEFINE_NAMESPACE(VirgilSymmetricCipherPadding, virgil::crypto::foundation)
+    DEFINE_NAMESPACE(ECKeyGroup, virgil::crypto::foundation)
+    DEFINE_NAMESPACE(VirgilKeyPairType, virgil::crypto::foundation)
 
-    INCLUDE_CLASS(VirgilKDF, virgil::crypto::base, virgil/crypto/base)
-    INCLUDE_CLASS(VirgilKeyPairGenerator, virgil::crypto::base, virgil/crypto/base)
-    INCLUDE_CLASS(VirgilSymmetricCipher, virgil::crypto::base, virgil/crypto/base)
-    INCLUDE_CLASS(VirgilAsymmetricCipher, virgil::crypto::base, virgil/crypto/base)
-    INCLUDE_CLASS(VirgilRandom, virgil::crypto::base, virgil/crypto/base)
-    INCLUDE_CLASS(VirgilPBE, virgil::crypto::base, virgil/crypto/base)
+    INCLUDE_CLASS(VirgilKDF, virgil::crypto::foundation, virgil/crypto/foundation)
+    INCLUDE_CLASS(VirgilKeyPairGenerator, virgil::crypto::foundation, virgil/crypto/foundation)
+    INCLUDE_CLASS(VirgilSymmetricCipher, virgil::crypto::foundation, virgil/crypto/foundation)
+    INCLUDE_CLASS(VirgilAsymmetricCipher, virgil::crypto::foundation, virgil/crypto/foundation)
+    INCLUDE_CLASS(VirgilRandom, virgil::crypto::foundation, virgil/crypto/foundation)
+    INCLUDE_CLASS(VirgilPBE, virgil::crypto::foundation, virgil/crypto/foundation)
 #endif /* defined(LIB_LOW_LEVEL_API) */
-INCLUDE_CLASS(VirgilHash, virgil::crypto::base, virgil/crypto/base)
-INCLUDE_CLASS(VirgilBase64, virgil::crypto::base, virgil/crypto/base)
+INCLUDE_CLASS(VirgilHash, virgil::crypto::foundation, virgil/crypto/foundation)
+INCLUDE_CLASS(VirgilBase64, virgil::crypto::foundation, virgil/crypto/foundation)
 
 // Package: virgil::crypto
 INCLUDE_CLASS(VirgilCustomParams, virgil::crypto, virgil/crypto)

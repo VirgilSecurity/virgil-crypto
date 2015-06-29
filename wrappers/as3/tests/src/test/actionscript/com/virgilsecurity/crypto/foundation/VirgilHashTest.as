@@ -34,7 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity.crypto.base {
+package com.virgilsecurity.crypto.foundation {
 
     import flash.utils.ByteArray;
 

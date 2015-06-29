@@ -34,31 +34,39 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_BASE64_H
-#define VIRGIL_CRYPTO_BASE64_H
+package com.virgilsecurity.crypto.foundation {
 
-#include <string>
+    import flash.utils.ByteArray;
 
-#include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
+    import org.hamcrest.*;
+    import org.hamcrest.core.*;
+    import org.hamcrest.object.*;
+    import org.hamcrest.collection.*;
 
-namespace virgil { namespace crypto { namespace base {
+    import com.hurlant.util.Hex;
 
-/**
- * @brief Provides base64 encoding / decoding.
- */
-class VirgilBase64 {
-public:
-    /**
-     * @brief Transform given bytes to the base64 string.
-     */
-    static std::string encode(const VirgilByteArray& data);
-    /**
-     * @brief Transform given base64 string to the bytes.
-     */
-    static VirgilByteArray decode(const std::string& base64str);
-};
+    import com.virgilsecurity.utils.*;
+    import com.virgilsecurity.extension.*;
+    import com.virgilsecurity.wrapper.CModule;
 
-}}}
+    public class VirgilBase64Test {
+        [BeforeClass(description = "Init library")]
+        public static function setup():void {
+            CModule.startAsync();
+        }
 
-#endif /* VIRGIL_CRYPTO_BASE64_H */
+        [Test(description="VirgilBase64.encode()")]
+        public function test_encode():void {
+            assertThat(VirgilBase64.encode(Hex.toArray("")), equalTo(""));
+            assertThat(VirgilBase64.encode(Hex.toArray("01")), equalTo("AQ=="));
+            assertThat(VirgilBase64.encode(Hex.toArray("010203")), equalTo("AQID"));
+        }
+
+        [Test(description="VirgilBase64.decode()")]
+        public function test_decode():void {
+            assertThat(Hex.fromArray(VirgilBase64.decode("")), equalTo(""));
+            assertThat(Hex.fromArray(VirgilBase64.decode("AQ==")), equalTo("01"));
+            assertThat(Hex.fromArray(VirgilBase64.decode("AQID")), equalTo("010203"));
+        }
+    }
+}

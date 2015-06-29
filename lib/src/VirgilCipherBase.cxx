@@ -51,17 +51,17 @@ using virgil::crypto::bytes_zeroize;
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/base/VirgilRandom.h>
-using virgil::crypto::base::VirgilRandom;
+#include <virgil/crypto/foundation/VirgilRandom.h>
+using virgil::crypto::foundation::VirgilRandom;
 
-#include <virgil/crypto/base/VirgilSymmetricCipher.h>
-using virgil::crypto::base::VirgilSymmetricCipher;
+#include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
+using virgil::crypto::foundation::VirgilSymmetricCipher;
 
-#include <virgil/crypto/base/VirgilAsymmetricCipher.h>
-using virgil::crypto::base::VirgilAsymmetricCipher;
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
-#include <virgil/crypto/base/VirgilPBE.h>
-using virgil::crypto::base::VirgilPBE;
+#include <virgil/crypto/foundation/VirgilPBE.h>
+using virgil::crypto::foundation::VirgilPBE;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;

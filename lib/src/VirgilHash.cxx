@@ -34,9 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/base/VirgilHash.h>
-using virgil::crypto::base::VirgilHash;
-using virgil::crypto::base::VirgilHashImpl;
+#include <virgil/crypto/foundation/VirgilHash.h>
+using virgil::crypto::foundation::VirgilHash;
+using virgil::crypto::foundation::VirgilHashImpl;
 
 #include <polarssl/md.h>
 #include <polarssl/oid.h>
@@ -46,8 +46,8 @@ using virgil::crypto::base::VirgilHashImpl;
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::bytes2str;
 
-#include <virgil/crypto/base/PolarsslException.h>
-using virgil::crypto::base::PolarsslException;
+#include <virgil/crypto/foundation/PolarsslException.h>
+using virgil::crypto::foundation::PolarsslException;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
@@ -63,7 +63,7 @@ using virgil::crypto::asn1::VirgilAsn1Writer;
 
 #include <string>
 
-namespace virgil { namespace crypto { namespace base {
+namespace virgil { namespace crypto { namespace foundation {
 
 class VirgilHashImpl {
 public:

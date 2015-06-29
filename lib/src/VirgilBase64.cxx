@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/base/VirgilBase64.h>
-using virgil::crypto::base::VirgilBase64;
+#include <virgil/crypto/foundation/VirgilBase64.h>
+using virgil::crypto::foundation::VirgilBase64;
 
 #include <string>
 using std::string;
@@ -43,8 +43,8 @@ using std::string;
 #include <virgil/crypto/VirgilByteArray.h>
 using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/base/PolarsslException.h>
-using virgil::crypto::base::PolarsslException;
+#include <virgil/crypto/foundation/PolarsslException.h>
+using virgil::crypto::foundation::PolarsslException;
 
 #include <polarssl/base64.h>
 

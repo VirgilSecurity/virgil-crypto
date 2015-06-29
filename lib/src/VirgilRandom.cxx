@@ -34,9 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/base/VirgilRandom.h>
-using virgil::crypto::base::VirgilRandom;
-using virgil::crypto::base::VirgilRandomImpl;
+#include <virgil/crypto/foundation/VirgilRandom.h>
+using virgil::crypto::foundation::VirgilRandom;
+using virgil::crypto::foundation::VirgilRandomImpl;
 
 #include <polarssl/entropy.h>
 #include <polarssl/ctr_drbg.h>
@@ -44,10 +44,10 @@ using virgil::crypto::base::VirgilRandomImpl;
 #include <virgil/crypto/VirgilByteArray.h>
 using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/base/PolarsslException.h>
-using virgil::crypto::base::PolarsslException;
+#include <virgil/crypto/foundation/PolarsslException.h>
+using virgil::crypto::foundation::PolarsslException;
 
-namespace virgil { namespace crypto { namespace base {
+namespace virgil { namespace crypto { namespace foundation {
 
 class VirgilRandomImpl {
 public:

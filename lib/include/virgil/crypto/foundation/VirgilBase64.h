@@ -34,64 +34,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H
-#define VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H
+#ifndef VIRGIL_CRYPTO_BASE64_H
+#define VIRGIL_CRYPTO_BASE64_H
 
-#include <virgil/crypto/VirgilCryptoException.h>
-using virgil::crypto::VirgilCryptoException;
+#include <string>
 
-#define POLARSSL_ERROR_HANDLER(invocation) POLARSSL_ERROR_HANDLER_DISPOSE(invocation, {})
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
-#define POLARSSL_ERROR_HANDLER_DISPOSE(invocation, dispose) \
-do { \
-    int errCode = invocation; \
-    if (errCode < 0) { \
-        do { dispose; } while (0); \
-        throw PolarsslException(errCode); \
-    } \
-} while (0)
-
-
-namespace virgil { namespace crypto { namespace base {
+namespace virgil { namespace crypto { namespace foundation {
 
 /**
- * @brief Encapsulates low-level domain error of the PolarSSL framework.
+ * @brief Provides base64 encoding / decoding.
  */
-class PolarsslException : public VirgilCryptoException {
+class VirgilBase64 {
 public:
     /**
-     * @name Constructor
+     * @brief Transform given bytes to the base64 string.
      */
-    ///@{
+    static std::string encode(const VirgilByteArray& data);
     /**
-     * @brief Creates PolarsslException class object for a given error code.
-     *
-     * Human-readable error description can be found in @link what() @endlink method.
-     * @param errCode - error code returned by one of the underlying PolarSSL framework functions.
+     * @brief Transform given base64 string to the bytes.
      */
-    explicit PolarsslException(int errCode);
-    ///@}
-    /**
-     * @name Destructor
-     */
-    ///@{
-    virtual ~PolarsslException() throw();
-    ///@}
-    /**
-     * @name Info
-     */
-    ///@{
-    /**
-     * @brief Provide low-level PolarSSL fremowork error code.
-     * @return Low-level PolarSSL fremowork error code.
-     */
-    int errCode() const throw();
-    ///@}
-private:
-    int errCode_;
+    static VirgilByteArray decode(const std::string& base64str);
 };
 
 }}}
 
-#endif /* VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H */
-
+#endif /* VIRGIL_CRYPTO_BASE64_H */

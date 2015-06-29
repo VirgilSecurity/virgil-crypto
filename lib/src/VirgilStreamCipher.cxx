@@ -40,14 +40,14 @@ using virgil::crypto::VirgilStreamCipher;
 #include <virgil/crypto/VirgilByteArray.h>
 using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/base/VirgilKDF.h>
-using virgil::crypto::base::VirgilKDF;
+#include <virgil/crypto/foundation/VirgilKDF.h>
+using virgil::crypto::foundation::VirgilKDF;
 
-#include <virgil/crypto/base/VirgilSymmetricCipher.h>
-using virgil::crypto::base::VirgilSymmetricCipher;
+#include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
+using virgil::crypto::foundation::VirgilSymmetricCipher;
 
-#include <virgil/crypto/base/VirgilAsymmetricCipher.h>
-using virgil::crypto::base::VirgilAsymmetricCipher;
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
 #include <virgil/crypto/VirgilContentInfo.h>
 using virgil::crypto::VirgilContentInfo;

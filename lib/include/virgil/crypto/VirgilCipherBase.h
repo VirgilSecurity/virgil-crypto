@@ -52,11 +52,11 @@ using virgil::crypto::VirgilCustomParams;
 /// @{
 namespace virgil { namespace crypto {
     class VirgilCipherBaseImpl;
-    namespace base {
+    namespace foundation {
         class VirgilSymmetricCipher;
     }
 }}
-using virgil::crypto::base::VirgilSymmetricCipher;
+using virgil::crypto::foundation::VirgilSymmetricCipher;
 /// @}
 
 namespace virgil { namespace crypto {

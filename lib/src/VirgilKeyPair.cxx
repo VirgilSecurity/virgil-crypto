@@ -37,14 +37,14 @@
 #include <virgil/crypto/VirgilKeyPair.h>
 using virgil::crypto::VirgilKeyPair;
 
-#include <virgil/crypto/base/VirgilRandom.h>
-using virgil::crypto::base::VirgilRandom;
+#include <virgil/crypto/foundation/VirgilRandom.h>
+using virgil::crypto::foundation::VirgilRandom;
 
-#include <virgil/crypto/base/VirgilKeyPairGenerator.h>
-using virgil::crypto::base::VirgilKeyPairGenerator;
+#include <virgil/crypto/foundation/VirgilKeyPairGenerator.h>
+using virgil::crypto::foundation::VirgilKeyPairGenerator;
 
-#include <virgil/crypto/base/VirgilAsymmetricCipher.h>
-using virgil::crypto::base::VirgilAsymmetricCipher;
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
 #include <string>
 

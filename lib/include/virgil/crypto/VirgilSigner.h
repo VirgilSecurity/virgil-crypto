@@ -40,8 +40,8 @@
 #include <virgil/crypto/VirgilByteArray.h>
 using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/base/VirgilHash.h>
-using virgil::crypto::base::VirgilHash;
+#include <virgil/crypto/foundation/VirgilHash.h>
+using virgil::crypto::foundation::VirgilHash;
 
 namespace virgil { namespace crypto {
 

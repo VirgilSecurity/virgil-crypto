@@ -53,11 +53,11 @@ using virgil::crypto::VirgilByteArray;
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/base/VirgilSymmetricCipher.h>
-using virgil::crypto::base::VirgilSymmetricCipher;
+#include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
+using virgil::crypto::foundation::VirgilSymmetricCipher;
 
-#include <virgil/crypto/base/VirgilAsymmetricCipher.h>
-using virgil::crypto::base::VirgilAsymmetricCipher;
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
 /**
  * @name Contsants

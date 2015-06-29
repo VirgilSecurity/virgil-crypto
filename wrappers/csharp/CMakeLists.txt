@@ -70,6 +70,7 @@ set (CMAKE_SWIG_OUTDIR ${CSHARP_SWIG_OUTPUT_DIRECTORY})
 set (CMAKE_SWIG_FLAGS "")
 
 set (SWIG_WRAP_COPY_CONSTRUCTOR YES)
+set (SWIG_WRAP_NAMESPACE YES)
 set (WRAPPER_INTERFACE_FILE "${CMAKE_CURRENT_BINARY_DIR}/wrapper.i")
 configure_file (
     "${wrappers_SOURCE_DIR}/swig/wrapper.i.in"
@@ -95,6 +96,12 @@ add_custom_command (TARGET ${CSHARP_MODULE_NAME} POST_BUILD
             -DGLOBBING_EXPRESSION:STRING="*.cs"
             -P ${CMAKE_SOURCE_DIR}/cmake/copy_all_files.cmake
         COMMENT "Copy generated source files from ${CSHARP_SWIG_OUTPUT_DIRECTORY} to ${CSHARP_SOURCE_DIRECTORY}."
+    )
+
+add_custom_command (TARGET ${CSHARP_MODULE_NAME} POST_BUILD
+        COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/patch/uppercase_namespaces.py"
+        ARGS ${CSHARP_SOURCE_DIRECTORY}
+        COMMENT "Uppercase C# namespaces for ${CSHARP_SOURCE_DIRECTORY}/*."
     )
 
 # Configure assembly

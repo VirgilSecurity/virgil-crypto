@@ -40,7 +40,6 @@
 #include <virgil/crypto/VirgilByteArray.h>
 using virgil::crypto::VirgilByteArray;
 
-
 namespace virgil { namespace crypto {
 
 /**

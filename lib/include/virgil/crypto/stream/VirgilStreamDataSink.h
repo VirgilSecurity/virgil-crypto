@@ -34,15 +34,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_STREAM_VIRGIL_STREAM_DATA_SINK_H
-#define VIRGIL_STREAM_VIRGIL_STREAM_DATA_SINK_H
+#ifndef VIRGIL_CRYPTO_VIRGIL_STREAM_DATA_SINK_H
+#define VIRGIL_CRYPTO_VIRGIL_STREAM_DATA_SINK_H
 
 #include <virgil/crypto/VirgilDataSink.h>
 using virgil::crypto::VirgilDataSink;
 
 #include <ostream>
 
-namespace virgil { namespace stream {
+namespace virgil { namespace crypto { namespace stream {
 
 /**
  * @brief C++ stream implementation of the VirgilDataSink class.
@@ -71,6 +71,6 @@ private:
     std::ostream& out_;
 };
 
-}}
+}}}
 
-#endif /* VIRGIL_STREAM_VIRGIL_STREAM_DATA_SINK_H */
+#endif /* VIRGIL_CRYPTO_VIRGIL_STREAM_DATA_SINK_H */

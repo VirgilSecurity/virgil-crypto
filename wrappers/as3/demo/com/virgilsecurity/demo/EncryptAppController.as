@@ -57,8 +57,8 @@
 
     import flash.utils.getTimer;
 
-    import com.virgilsecurity.*;
     import com.virgilsecurity.crypto.*;
+    import com.virgilsecurity.crypto.base.*;
     import com.virgilsecurity.wrapper.CModule;
 
     public class EncryptAppController extends Application {

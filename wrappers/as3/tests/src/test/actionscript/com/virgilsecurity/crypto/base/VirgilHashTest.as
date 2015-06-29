@@ -34,7 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity.crypto {
+package com.virgilsecurity.crypto.base {
 
     import flash.utils.ByteArray;
 
@@ -45,7 +45,7 @@ package com.virgilsecurity.crypto {
 
     import com.hurlant.util.Hex;
 
-    import com.virgilsecurity.*;
+    import com.virgilsecurity.utils.*;
     import com.virgilsecurity.extension.*;
     import com.virgilsecurity.wrapper.CModule;
 

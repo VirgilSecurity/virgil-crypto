@@ -1,5 +1,5 @@
-#include <virgil/VirgilVersion.h>
-using virgil::VirgilVersion;
+#include <virgil/crypto/VirgilVersion.h>
+using virgil::crypto::VirgilVersion;
 
 #include <cstddef>
 #include <string>

@@ -37,8 +37,8 @@
 #include <virgil/crypto/asn1/VirgilAsn1Writer.h>
 using virgil::crypto::asn1::VirgilAsn1Writer;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <virgil/crypto/base/PolarsslException.h>
 using virgil::crypto::base::PolarsslException;

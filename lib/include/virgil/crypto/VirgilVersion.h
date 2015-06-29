@@ -34,9 +34,42 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/VirgilException.h>
-using virgil::VirgilException;
+#ifndef VIRGIL_VERSION_H
+#define VIRGIL_VERSION_H
 
+#include <cstddef>
+#include <string>
 
-VirgilException::VirgilException(const std::string& what) : std::logic_error(what) {
-}
+namespace virgil { namespace crypto {
+
+/**
+ * @brief Provides information about Virgil library version.
+ */
+class VirgilVersion {
+public:
+    /**
+     * Return version number in the format MMNNPP (Major, Minor, Patch).
+     *
+     */
+    static size_t asNumber();
+    /**
+     * Return the version number as string.
+     */
+    static std::string asString();
+    /**
+     * Return the major version number.
+     */
+    static size_t majorVersion();
+    /**
+     * Return the minor version number.
+     */
+    static size_t  minorVersion();
+    /**
+     * Return the minor version number.
+     */
+    static size_t patchVersion();
+};
+
+}}
+
+#endif /* VIRGIL_VERSION_H */

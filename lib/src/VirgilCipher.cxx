@@ -37,8 +37,8 @@
 #include <virgil/crypto/VirgilCipher.h>
 using virgil::crypto::VirgilCipher;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <virgil/crypto/base/VirgilSymmetricCipher.h>
 using virgil::crypto::base::VirgilSymmetricCipher;

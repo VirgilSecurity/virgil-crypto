@@ -40,9 +40,9 @@ using namespace emscripten;
 #include <string>
 #include <memory>
 
-#include <virgil/VirgilVersion.h>
-#include <virgil/VirgilException.h>
-#include <virgil/VirgilByteArray.h>
+#include <virgil/crypto/VirgilVersion.h>
+#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/VirgilByteArray.h>
 
 #include <virgil/crypto/base/VirgilHash.h>
 #include <virgil/crypto/base/VirgilBase64.h>
@@ -54,9 +54,9 @@ using namespace emscripten;
 #include <virgil/crypto/VirgilCipher.h>
 #include <virgil/crypto/VirgilSigner.h>
 
-namespace virgil {
+namespace virgil { namespace crypto {
 
-static std::string VirgilException_what(const virgil::VirgilException& exception) {
+static std::string VirgilCryptoException_what(const VirgilCryptoException& exception) {
     return std::string(exception.what());
 }
 
@@ -68,8 +68,8 @@ static void VirgilByteArray_assign(VirgilByteArray& byteArray, val data) {
     byteArray = vecFromJSArray<VirgilByteArray::value_type>(data);
 }
 
-static std::shared_ptr<crypto::VirgilCustomParams> VirgilCipherBase_customParams(VirgilCipherBase& cipher) {
-    return std::shared_ptr<crypto::VirgilCustomParams>(&cipher.customParams());
+static std::shared_ptr<VirgilCustomParams> VirgilCipherBase_customParams(VirgilCipherBase& cipher) {
+    return std::shared_ptr<VirgilCustomParams>(&cipher.customParams());
 }
 
 static VirgilByteArray VirgilSigner_sign_1(VirgilSigner& signer, const VirgilByteArray& data,
@@ -87,84 +87,59 @@ static bool VirgilSigner_verify(VirgilSigner& signer, const VirgilByteArray& dat
     return signer.verify(data, sign, publicKey);
 }
 
-}
+}}
 
-EMSCRIPTEN_BINDINGS(virgil) {
-    class_<virgil::VirgilVersion>("VirgilVersion")
-        .class_function("asNumber", &virgil::VirgilVersion::asNumber)
-        .class_function("asString", &virgil::VirgilVersion::asString)
-        .class_function("majorVersion", &virgil::VirgilVersion::majorVersion)
-        .class_function("minorVersion", &virgil::VirgilVersion::minorVersion)
-        .class_function("patchVersion", &virgil::VirgilVersion::patchVersion)
+EMSCRIPTEN_BINDINGS(virgil_crypto) {
+    class_<virgil::crypto::VirgilVersion>("VirgilVersion")
+        .class_function("asNumber", &virgil::crypto::VirgilVersion::asNumber)
+        .class_function("asString", &virgil::crypto::VirgilVersion::asString)
+        .class_function("majorVersion", &virgil::crypto::VirgilVersion::majorVersion)
+        .class_function("minorVersion", &virgil::crypto::VirgilVersion::minorVersion)
+        .class_function("patchVersion", &virgil::crypto::VirgilVersion::patchVersion)
     ;
 
     register_vector<unsigned char>("VirgilByteArray")
-        .function("data", virgil::VirgilByteArray_data)
-        .function("assign", virgil::VirgilByteArray_assign)
+        .function("data", virgil::crypto::VirgilByteArray_data)
+        .function("assign", virgil::crypto::VirgilByteArray_assign)
     ;
 
-    class_<virgil::VirgilException>("VirgilException")
+    class_<virgil::crypto::VirgilCryptoException>("VirgilException")
         .constructor<const std::string&>()
-        .function("message", &virgil::VirgilException_what)
+        .function("message", &virgil::crypto::VirgilCryptoException_what)
     ;
 
-    class_<virgil::VirgilKeyPair>("VirgilKeyPair")
+    class_<virgil::crypto::VirgilKeyPair>("VirgilKeyPair")
         .constructor<>()
         .constructor<const VirgilByteArray&>()
         .constructor<const VirgilByteArray&, const VirgilByteArray&>()
-        .function("publicKey", &virgil::VirgilKeyPair::publicKey)
-        .function("privateKey", &virgil::VirgilKeyPair::privateKey)
+        .function("publicKey", &virgil::crypto::VirgilKeyPair::publicKey)
+        .function("privateKey", &virgil::crypto::VirgilKeyPair::privateKey)
     ;
 
-    class_<virgil::VirgilCipherBase>("VirgilCipherBase")
-        .function("addKeyRecipient", &virgil::VirgilCipherBase::addKeyRecipient)
-        .function("removeKeyRecipient", &virgil::VirgilCipherBase::removeKeyRecipient)
-        .function("addPasswordRecipient", &virgil::VirgilCipherBase::addPasswordRecipient)
-        .function("removePasswordRecipient", &virgil::VirgilCipherBase::removePasswordRecipient)
-        .function("removeAllRecipients", &virgil::VirgilCipherBase::removeAllRecipients)
-        .function("getContentInfo", &virgil::VirgilCipherBase::getContentInfo)
-        .function("setContentInfo", &virgil::VirgilCipherBase::setContentInfo)
-        .function("customParams", &virgil::VirgilCipherBase_customParams)
+    class_<virgil::crypto::VirgilCipherBase>("VirgilCipherBase")
+        .function("addKeyRecipient", &virgil::crypto::VirgilCipherBase::addKeyRecipient)
+        .function("removeKeyRecipient", &virgil::crypto::VirgilCipherBase::removeKeyRecipient)
+        .function("addPasswordRecipient", &virgil::crypto::VirgilCipherBase::addPasswordRecipient)
+        .function("removePasswordRecipient", &virgil::crypto::VirgilCipherBase::removePasswordRecipient)
+        .function("removeAllRecipients", &virgil::crypto::VirgilCipherBase::removeAllRecipients)
+        .function("getContentInfo", &virgil::crypto::VirgilCipherBase::getContentInfo)
+        .function("setContentInfo", &virgil::crypto::VirgilCipherBase::setContentInfo)
+        .function("customParams", &virgil::crypto::VirgilCipherBase_customParams)
     ;
 
-    class_<virgil::VirgilCipher, base<virgil::VirgilCipherBase>>("VirgilCipher")
+    class_<virgil::crypto::VirgilCipher, base<virgil::crypto::VirgilCipherBase>>("VirgilCipher")
         .constructor<>()
-        .function("encrypt", &virgil::VirgilCipher::encrypt)
-        .function("decryptWithKey", &virgil::VirgilCipher::decryptWithKey)
-        .function("decryptWithPassword", &virgil::VirgilCipher::decryptWithPassword)
+        .function("encrypt", &virgil::crypto::VirgilCipher::encrypt)
+        .function("decryptWithKey", &virgil::crypto::VirgilCipher::decryptWithKey)
+        .function("decryptWithPassword", &virgil::crypto::VirgilCipher::decryptWithPassword)
     ;
 
-    class_<virgil::VirgilSigner>("VirgilSigner")
+    class_<virgil::crypto::VirgilSigner>("VirgilSigner")
         .constructor<>()
-        .constructor<const virgil::crypto::VirgilHash&>()
-        .function("sign", &virgil::VirgilSigner_sign_1)
-        .function("sign", &virgil::VirgilSigner_sign_2)
-        .function("verify", &virgil::VirgilSigner_verify)
-    ;
-}
-
-EMSCRIPTEN_BINDINGS(virgil_crypto) {
-    class_<virgil::crypto::VirgilHash>("VirgilHash")
-        .constructor<>()
-        .class_function("md5", &virgil::crypto::VirgilHash::md5)
-        .class_function("sha256", &virgil::crypto::VirgilHash::sha256)
-        .class_function("sha383", &virgil::crypto::VirgilHash::sha384)
-        .class_function("sha512", &virgil::crypto::VirgilHash::sha512)
-        .function("name", &virgil::crypto::VirgilHash::name)
-        .function("hash", &virgil::crypto::VirgilHash::hash)
-        .function("start", &virgil::crypto::VirgilHash::start)
-        .function("update", &virgil::crypto::VirgilHash::update)
-        .function("finish", &virgil::crypto::VirgilHash::finish)
-        .function("hmac", &virgil::crypto::VirgilHash::hmac)
-        .function("hmacStart", &virgil::crypto::VirgilHash::hmacStart)
-        .function("hmacReset", &virgil::crypto::VirgilHash::hmacReset)
-        .function("hmacUpdate", &virgil::crypto::VirgilHash::hmacUpdate)
-        .function("hmacFinish", &virgil::crypto::VirgilHash::hmacFinish)
-    ;
-
-    class_<virgil::crypto::VirgilBase64>("VirgilBase64")
-        .class_function("encode", &virgil::crypto::VirgilBase64::encode)
-        .class_function("decode", &virgil::crypto::VirgilBase64::decode)
+        .constructor<const virgil::crypto::base::VirgilHash&>()
+        .function("sign", &virgil::crypto::VirgilSigner_sign_1)
+        .function("sign", &virgil::crypto::VirgilSigner_sign_2)
+        .function("verify", &virgil::crypto::VirgilSigner_verify)
     ;
 
     class_<virgil::crypto::VirgilCustomParams>("VirgilCustomParams")
@@ -180,5 +155,30 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .function("getData", &virgil::crypto::VirgilCustomParams::getData)
         .function("removeData", &virgil::crypto::VirgilCustomParams::removeData)
         .function("clear", &virgil::crypto::VirgilCustomParams::clear)
+    ;
+}
+
+EMSCRIPTEN_BINDINGS(virgil_crypto_base) {
+    class_<virgil::crypto::base::VirgilHash>("VirgilHash")
+        .constructor<>()
+        .class_function("md5", &virgil::crypto::base::VirgilHash::md5)
+        .class_function("sha256", &virgil::crypto::base::VirgilHash::sha256)
+        .class_function("sha383", &virgil::crypto::base::VirgilHash::sha384)
+        .class_function("sha512", &virgil::crypto::base::VirgilHash::sha512)
+        .function("name", &virgil::crypto::base::VirgilHash::name)
+        .function("hash", &virgil::crypto::base::VirgilHash::hash)
+        .function("start", &virgil::crypto::base::VirgilHash::start)
+        .function("update", &virgil::crypto::base::VirgilHash::update)
+        .function("finish", &virgil::crypto::base::VirgilHash::finish)
+        .function("hmac", &virgil::crypto::base::VirgilHash::hmac)
+        .function("hmacStart", &virgil::crypto::base::VirgilHash::hmacStart)
+        .function("hmacReset", &virgil::crypto::base::VirgilHash::hmacReset)
+        .function("hmacUpdate", &virgil::crypto::base::VirgilHash::hmacUpdate)
+        .function("hmacFinish", &virgil::crypto::base::VirgilHash::hmacFinish)
+    ;
+
+    class_<virgil::crypto::base::VirgilBase64>("VirgilBase64")
+        .class_function("encode", &virgil::crypto::base::VirgilBase64::encode)
+        .class_function("decode", &virgil::crypto::base::VirgilBase64::decode)
     ;
 }

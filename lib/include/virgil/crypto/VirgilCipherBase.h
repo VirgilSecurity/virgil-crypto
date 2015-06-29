@@ -37,8 +37,8 @@
 #ifndef VIRGIL_CIPHER_BASE_H
 #define VIRGIL_CIPHER_BASE_H
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <virgil/crypto/VirgilCustomParams.h>
 using virgil::crypto::VirgilCustomParams;

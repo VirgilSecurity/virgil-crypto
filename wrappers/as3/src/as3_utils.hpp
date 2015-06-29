@@ -45,8 +45,8 @@
 #include <string>
 #include <stdexcept>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #define kPackage "com.virgilsecurity.wrapper"
 

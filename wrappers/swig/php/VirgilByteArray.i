@@ -35,15 +35,15 @@
  */
 
 /**
- * Typemap virgil::VirgilByteArray to PHP strings.
+ * Typemap virgil::crypto::VirgilByteArray to PHP strings.
  */
 
 %{
-#define CAST_BYTE_ARRAY_PTR(T) reinterpret_cast<virgil::VirgilByteArray::const_pointer>(T)
+#define CAST_BYTE_ARRAY_PTR(T) reinterpret_cast<virgil::crypto::VirgilByteArray::const_pointer>(T)
 #define CAST_CSTR_PTR(T) reinterpret_cast<const char *>(T)
 %}
 
-namespace virgil {
+namespace virgil { namespace crypto {
 
 
     %naturalvar VirgilByteArray;
@@ -82,7 +82,7 @@ namespace virgil {
     %}
 
     /* These next two handle a function which takes a non-const reference to
-     * a virgil::VirgilByteArray and modifies the VirgilByteArray. */
+     * a virgil::crypto::VirgilByteArray and modifies the VirgilByteArray. */
     %typemap(in) VirgilByteArray & ($*1_ltype temp) %{
         convert_to_string_ex($input);
         temp.assign(CAST_BYTE_ARRAY_PTR(Z_STRVAL_PP($input)), CAST_BYTE_ARRAY_PTR(Z_STRVAL_PP($input) + Z_STRLEN_PP($input)));
@@ -104,4 +104,4 @@ namespace virgil {
      * this more specific typemap. */
     %typemap(argout) const VirgilByteArray & "";
 
-}
+}}

@@ -37,8 +37,5 @@
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/VirgilException.h>
-using virgil::VirgilException;
-
-VirgilCryptoException::VirgilCryptoException(const std::string& what) : VirgilException(what) {
+VirgilCryptoException::VirgilCryptoException(const std::string& what) : std::logic_error(what) {
 }

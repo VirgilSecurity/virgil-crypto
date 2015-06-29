@@ -37,14 +37,14 @@
 #include <virgil/crypto/asn1/VirgilAsn1Reader.h>
 using virgil::crypto::asn1::VirgilAsn1Reader;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <virgil/crypto/base/PolarsslException.h>
 using virgil::crypto::base::PolarsslException;
 
-#include <virgil/VirgilException.h>
-using virgil::VirgilException;
+#include <virgil/crypto/VirgilCryptoException.h>
+using virgil::crypto::VirgilCryptoException;
 
 #include <cstddef>
 #include <string>
@@ -168,11 +168,11 @@ size_t VirgilAsn1Reader::readSet() {
 
 void VirgilAsn1Reader::checkState() {
     if (p_ == 0 || end_ == 0) {
-        throw VirgilException(std::string("VirgilAsn1Reader: ") +
+        throw VirgilCryptoException(std::string("VirgilAsn1Reader: ") +
                 "Reader was not initialized - 'reset' method was not called.");
     }
     if (p_ >= end_) {
-        throw VirgilException(std::string("VirgilAsn1Reader: ") +
+        throw VirgilCryptoException(std::string("VirgilAsn1Reader: ") +
             "ASN.1 structure was totally read, so no data left to be processed.");
     }
 }

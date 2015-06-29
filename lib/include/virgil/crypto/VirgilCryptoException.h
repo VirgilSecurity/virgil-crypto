@@ -37,9 +37,7 @@
 #ifndef VIRGIL_CRYPTO_EXCEPTION_H
 #define VIRGIL_CRYPTO_EXCEPTION_H
 
-#include <virgil/VirgilException.h>
-using virgil::VirgilException;
-
+#include <stdexcept>
 #include <string>
 
 namespace virgil { namespace crypto {
@@ -47,7 +45,7 @@ namespace virgil { namespace crypto {
 /**
  * @brief Encapsulates logic errors of module 'crypto'
  */
-class VirgilCryptoException : public VirgilException {
+class VirgilCryptoException : public std::logic_error {
 public:
     explicit VirgilCryptoException(const std::string& what);
 };

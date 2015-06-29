@@ -34,7 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity {
+package com.virgilsecurity.crypto {
 
     import flash.utils.ByteArray;
 
@@ -45,12 +45,12 @@ package com.virgilsecurity {
 
     import com.hurlant.util.Hex;
 
-    import com.virgilsecurity.*;
+    import com.virgilsecurity.utils.*;
     import com.virgilsecurity.extension.*;
     import com.virgilsecurity.wrapper.CModule;
 
-    public class VirgilCipherTest {
-        private var cipher_:VirgilCipher;
+    public class VirgilStreamCipherTest {
+        private var cipher_:VirgilStreamCipher;
 
         private static const TEST_GEN_CERTIFICATE_ID : String = "899e2c59-8e55-498e-92bb-6c44048ad876";
         private static const TEST_EC_CERTIFICATE_ID : String = "33c39175-accd-48d6-a071-da7cd9a84ff9";
@@ -95,13 +95,13 @@ package com.virgilsecurity {
             CModule.startAsync();
         }
 
-        [Before(description="Creates VirgilCipher object and stores it in the 'cipher_' variable.")]
+        [Before(description="Creates VirgilStreamCipher object and stores it in the 'cipher_' variable.")]
         public function create_cipher() : void {
-            cipher_ = VirgilCipher.create();
+            cipher_ = VirgilStreamCipher.create();
             assertThat(cipher_.cPtr, not(equalTo(0)));
         }
 
-        [After(description="Destroy VirgilCipher object stored it in the 'cipher_' variable.")]
+        [After(description="Destroy VirgilStreamCipher object stored it in the 'cipher_' variable.")]
         public function destroy_cipher() : void {
             cipher_.destroy();
             cipher_ = null;
@@ -111,72 +111,123 @@ package com.virgilsecurity {
         public function test_cipher_encrypt_decrypt_with_generated_keys():void {
             // Generate key pair
             var keyPair:VirgilKeyPair = VirgilKeyPair.generate();
-            // Encrypt
+            // Prepare source with plain text
+            var plainDataSource:IVirgilDataSource =
+                    new VirgilDataSource(ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA));
+            // Prepare sink for encrypted data
+            var encryptedData:ByteArray = new ByteArray();
+            var encryptedDataSink:IVirgilDataSink = new VirgilDataSink(encryptedData);
+            // Add recipients
             cipher_.addKeyRecipient(
                     ConvertionUtils.asciiStringToArray(TEST_GEN_CERTIFICATE_ID), keyPair.publicKey());
-            var encryptedData:ByteArray = cipher_.encrypt(
-                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA), false);
+            // Encrypt
+            cipher_.encrypt(plainDataSource, encryptedDataSink);
+            // Store content info
             var contentInfo:ByteArray = cipher_.getContentInfo();
             // Clear cipher (optional)
             cipher_.removeAllRecipients();
-            // Decrypt
+            // Configure decryption with content info
             cipher_.setContentInfo(contentInfo);
-            var plainData:ByteArray = cipher_.decryptWithKey(encryptedData,
+            // Prepare source with encrypted data
+            encryptedData.position = 0;
+            var encryptedDataSource:IVirgilDataSource = new VirgilDataSource(encryptedData);
+            // Prepare sink for decrypted data
+            var decryptedData:ByteArray = new ByteArray();
+            var decryptedDataSink:IVirgilDataSink = new VirgilDataSink(decryptedData);
+            // Decrypt
+            cipher_.decryptWithKey(encryptedDataSource, decryptedDataSink,
                     ConvertionUtils.asciiStringToArray(TEST_GEN_CERTIFICATE_ID), keyPair.privateKey());
-
-            assertThat(ConvertionUtils.arrayToAsciiString(plainData), equalTo(TEST_PLAIN_DATA));
+            // Dispose resources
             keyPair.destroy();
+            // Check results
+            assertThat(ConvertionUtils.arrayToAsciiString(decryptedData), equalTo(TEST_PLAIN_DATA));
         }
 
         [Test(description="Test cipher encrypt and decrypt with known EC keys and embedded content info.")]
         public function test_cipher_encrypt_decrypt_with_known_EC_keys_and_embedded_content_info():void {
-            // Encrypt
+            // Prepare source with plain text
+            var plainDataSource:IVirgilDataSource =
+                    new VirgilDataSource(ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA));
+            // Prepare sink for encrypted data
+            var encryptedData:ByteArray = new ByteArray();
+            var encryptedDataSink:IVirgilDataSink = new VirgilDataSink(encryptedData);
+            // Add recipients
             cipher_.addKeyRecipient(
                     ConvertionUtils.asciiStringToArray(TEST_EC_CERTIFICATE_ID),
                     ConvertionUtils.asciiStringToArray(TEST_EC_PUBLIC_KEY));
-            var encryptedData:ByteArray = cipher_.encrypt(
-                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA), true);
+            // Encrypt
+            cipher_.encrypt(plainDataSource, encryptedDataSink, true);
             // Clear cipher (optional)
             cipher_.removeAllRecipients();
+            // Prepare source with encrypted data
+            encryptedData.position = 0;
+            var encryptedDataSource:IVirgilDataSource = new VirgilDataSource(encryptedData);
+            // Prepare sink for decrypted data
+            var decryptedData:ByteArray = new ByteArray();
+            var decryptedDataSink:IVirgilDataSink = new VirgilDataSink(decryptedData);
             // Decrypt
-            var plainData:ByteArray = cipher_.decryptWithKey(encryptedData,
+            cipher_.decryptWithKey(encryptedDataSource, decryptedDataSink,
                     ConvertionUtils.asciiStringToArray(TEST_EC_CERTIFICATE_ID),
                     ConvertionUtils.asciiStringToArray(TEST_EC_PRIVATE_KEY));
-
-            assertThat(ConvertionUtils.arrayToAsciiString(plainData), equalTo(TEST_PLAIN_DATA));
+            // Check results
+            assertThat(ConvertionUtils.arrayToAsciiString(decryptedData), equalTo(TEST_PLAIN_DATA));
         }
 
         [Test(description="Test cipher encrypt and decrypt with known RSA keys and embedded content info.")]
         public function test_cipher_encrypt_decrypt_with_known_RSA_keys_and_embedded_content_info():void {
-            // Encrypt
+            // Prepare source with plain text
+            var plainDataSource:IVirgilDataSource =
+                    new VirgilDataSource(ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA));
+            // Prepare sink for encrypted data
+            var encryptedData:ByteArray = new ByteArray();
+            var encryptedDataSink:IVirgilDataSink = new VirgilDataSink(encryptedData);
+            // Add recipients
             cipher_.addKeyRecipient(
                     ConvertionUtils.asciiStringToArray(TEST_RSA_CERTIFICATE_ID),
                     ConvertionUtils.asciiStringToArray(TEST_RSA_PUBLIC_KEY));
-            var encryptedData:ByteArray = cipher_.encrypt(
-                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA), true);
+            // Encrypt
+            cipher_.encrypt(plainDataSource, encryptedDataSink, true);
             // Clear cipher (optional)
             cipher_.removeAllRecipients();
+            // Prepare source with encrypted data
+            encryptedData.position = 0;
+            var encryptedDataSource:IVirgilDataSource = new VirgilDataSource(encryptedData);
+            // Prepare sink for decrypted data
+            var decryptedData:ByteArray = new ByteArray();
+            var decryptedDataSink:IVirgilDataSink = new VirgilDataSink(decryptedData);
             // Decrypt
-            var plainData:ByteArray = cipher_.decryptWithKey(encryptedData,
+            cipher_.decryptWithKey(encryptedDataSource, decryptedDataSink,
                     ConvertionUtils.asciiStringToArray(TEST_RSA_CERTIFICATE_ID),
                     ConvertionUtils.asciiStringToArray(TEST_RSA_PRIVATE_KEY));
-
-            assertThat(ConvertionUtils.arrayToAsciiString(plainData), equalTo(TEST_PLAIN_DATA));
+            // Check results
+            assertThat(ConvertionUtils.arrayToAsciiString(decryptedData), equalTo(TEST_PLAIN_DATA));
         }
 
         [Test(description="Test cipher encrypt and decrypt with password and embedded content info.")]
         public function test_cipher_encrypt_decrypt_with_password_and_embedded_content_info():void {
-            // Encrypt
+            // Prepare source with plain text
+            var plainDataSource:IVirgilDataSource =
+                    new VirgilDataSource(ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA));
+            // Prepare sink for encrypted data
+            var encryptedData:ByteArray = new ByteArray();
+            var encryptedDataSink:IVirgilDataSink = new VirgilDataSink(encryptedData);
+            // Add recipients
             cipher_.addPasswordRecipient(ConvertionUtils.asciiStringToArray(TEST_PASSWORD));
-            var encryptedData:ByteArray = cipher_.encrypt(
-                    ConvertionUtils.asciiStringToArray(TEST_PLAIN_DATA), true);
+            // Encrypt
+            cipher_.encrypt(plainDataSource, encryptedDataSink, true);
             // Clear cipher (optional)
             cipher_.removeAllRecipients();
+            // Prepare source with encrypted data
+            encryptedData.position = 0;
+            var encryptedDataSource:IVirgilDataSource = new VirgilDataSource(encryptedData);
+            // Prepare sink for decrypted data
+            var decryptedData:ByteArray = new ByteArray();
+            var decryptedDataSink:IVirgilDataSink = new VirgilDataSink(decryptedData);
             // Decrypt
-            var plainData:ByteArray = cipher_.decryptWithPassword(encryptedData,
+            cipher_.decryptWithPassword(encryptedDataSource, decryptedDataSink,
                     ConvertionUtils.asciiStringToArray(TEST_PASSWORD));
-
-            assertThat(ConvertionUtils.arrayToAsciiString(plainData), equalTo(TEST_PLAIN_DATA));
+            // Check results
+            assertThat(ConvertionUtils.arrayToAsciiString(decryptedData), equalTo(TEST_PLAIN_DATA));
         }
     }
 }

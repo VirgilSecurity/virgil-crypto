@@ -44,7 +44,7 @@
 #include <vector>
 #include <algorithm>
 
-namespace virgil {
+namespace virgil { namespace crypto {
 
 /**
  * @typedef VirgilByteArray
@@ -52,7 +52,7 @@ namespace virgil {
  */
 typedef std::vector<unsigned char> VirgilByteArray;
 
-}
+}}
 
 /**
  * @name ByteArray convertion utilities
@@ -61,11 +61,11 @@ typedef std::vector<unsigned char> VirgilByteArray;
 #define VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(array) reinterpret_cast<const unsigned char *>(array.data()), array.size()
 
 #define VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(ptr, len)\
-        virgil::VirgilByteArray(reinterpret_cast<virgil::VirgilByteArray::const_pointer>(ptr), \
-        reinterpret_cast<virgil::VirgilByteArray::const_pointer>((ptr) + (len)))
+        virgil::crypto::VirgilByteArray(reinterpret_cast<virgil::crypto::VirgilByteArray::const_pointer >(ptr), \
+        reinterpret_cast<virgil::crypto::VirgilByteArray::const_pointer >((ptr) + (len)))
 ///@}
 
-namespace virgil {
+namespace virgil { namespace crypto {
 
 /**
  * @brief Represents given string as byte array.
@@ -125,5 +125,5 @@ inline void bytes_zeroize(VirgilByteArray& array) {
 }
 ///@}
 
-}
+}}
 #endif /* VIRGIL_BYTE_ARRAY_H */

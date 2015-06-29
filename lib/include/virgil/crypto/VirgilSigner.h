@@ -37,8 +37,8 @@
 #ifndef VIRGIL_SIGNER_H
 #define VIRGIL_SIGNER_H
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <virgil/crypto/base/VirgilHash.h>
 using virgil::crypto::base::VirgilHash;

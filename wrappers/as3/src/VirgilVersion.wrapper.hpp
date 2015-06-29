@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_VERSION_HPP
 #define AS3_VIRGIL_VERSION_HPP
 
-#include <virgil/VirgilVersion.h>
-using virgil::VirgilVersion;
+#include <virgil/crypto/VirgilVersion.h>
+using virgil::crypto::VirgilVersion;
 
 #include "as3_utils.hpp"
 #include <string>

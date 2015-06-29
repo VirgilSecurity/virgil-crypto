@@ -40,14 +40,14 @@
 #include <virgil/crypto/VirgilCipherBase.h>
 using virgil::crypto::VirgilCipherBase;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
-#include <virgil/VirgilDataSource.h>
-using virgil::VirgilDataSource;
+#include <virgil/crypto/VirgilDataSource.h>
+using virgil::crypto::VirgilDataSource;
 
-#include <virgil/VirgilDataSink.h>
-using virgil::VirgilDataSink;
+#include <virgil/crypto/VirgilDataSink.h>
+using virgil::crypto::VirgilDataSink;
 
 namespace virgil { namespace crypto {
 

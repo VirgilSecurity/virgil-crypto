@@ -37,11 +37,11 @@
 #include <virgil/crypto/VirgilStreamSigner.h>
 using virgil::crypto::VirgilStreamSigner;
 
-#include <virgil/VirgilDataSource.h>
-using virgil::VirgilDataSource;
+#include <virgil/crypto/VirgilDataSource.h>
+using virgil::crypto::VirgilDataSource;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <virgil/crypto/base/VirgilHash.h>
 using virgil::crypto::base::VirgilHash;

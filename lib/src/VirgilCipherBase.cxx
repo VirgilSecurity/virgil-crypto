@@ -42,11 +42,14 @@ using virgil::crypto::VirgilCipherBaseImpl;
 #include <string>
 using std::string;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::str2bytes;
+using virgil::crypto::bytes2str;
+using virgil::crypto::bytes_zeroize;
 
-#include <virgil/VirgilException.h>
-using virgil::VirgilException;
+#include <virgil/crypto/VirgilCryptoException.h>
+using virgil::crypto::VirgilCryptoException;
 
 #include <virgil/crypto/base/VirgilRandom.h>
 using virgil::crypto::base::VirgilRandom;
@@ -86,7 +89,7 @@ namespace virgil { namespace crypto {
 class VirgilCipherBaseImpl {
 public:
     VirgilCipherBaseImpl() :
-        random(virgil::str2bytes(std::string("virgil::VirgilCipherBase"))),
+        random(str2bytes(std::string("virgil::VirgilCipherBase"))),
         symmetricCipher(), symmetricCipherKey(), contentInfo(), envelopedData(),
         keyRecipients(), passwordRecipients() {}
 public:
@@ -118,7 +121,7 @@ VirgilCipherBase::~VirgilCipherBase() throw() {
 
 void VirgilCipherBase::addKeyRecipient(const VirgilByteArray& recipientId, const VirgilByteArray& publicKey) {
     if (recipientId.empty() || publicKey.empty()) {
-        throw VirgilException("VirgilCipherBase: Parameters 'recipientId' or 'publicKey' are not specified.");
+        throw VirgilCryptoException("VirgilCipherBase: Parameters 'recipientId' or 'publicKey' are not specified.");
     }
     impl_->keyRecipients[recipientId] = publicKey;
 }
@@ -129,7 +132,7 @@ void VirgilCipherBase::removeKeyRecipient(const VirgilByteArray& recipientId) {
 
 void VirgilCipherBase::addPasswordRecipient(const VirgilByteArray& pwd) {
     if (pwd.empty()) {
-        throw VirgilException("VirgilCipherBase: Parameter 'pwd' is not specified.");
+        throw VirgilCryptoException("VirgilCipherBase: Parameter 'pwd' is not specified.");
     }
     impl_->passwordRecipients.insert(pwd);
 }
@@ -152,7 +155,7 @@ void VirgilCipherBase::setContentInfo(const VirgilByteArray& contentInfo) {
     if (impl_->contentInfo.cmsContent.contentType == crypto::cms::VirgilCMSContentType_EnvelopedData) {
         impl_->envelopedData.fromAsn1(impl_->contentInfo.cmsContent.content);
     } else {
-        throw VirgilException("VirgilCipherBase: Unsupported content info type was given.");
+        throw VirgilCryptoException("VirgilCipherBase: Unsupported content info type was given.");
     }
 }
 
@@ -199,7 +202,7 @@ static VirgilByteArray decryptContentEncryptionKey(
             // Possible wrong password, so try next one.
         }
     }
-    throw VirgilException("VirgilCipherBase: Recipient with given password not found.");
+    throw VirgilCryptoException("VirgilCipherBase: Recipient with given password not found.");
 }
 
 static VirgilByteArray decryptContentEncryptionKey(
@@ -213,8 +216,8 @@ static VirgilByteArray decryptContentEncryptionKey(
             return asymmetricCipher.decrypt(recipientIt->encryptedKey);
         }
     }
-    throw VirgilException(std::string("VirgilCipherBase: ") + "Recipient with given id (" +
-            virgil::bytes2str(recipientId) + ") is not found.");
+    throw VirgilCryptoException(std::string("VirgilCipherBase: ") + "Recipient with given id (" +
+            bytes2str(recipientId) + ") is not found.");
 }
 
 VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithPassword(const VirgilByteArray& pwd) {
@@ -286,7 +289,7 @@ void VirgilCipherBase::buildContentInfo() {
 
 void VirgilCipherBase::clearCipherInfo() {
     impl_->symmetricCipher.clear();
-    virgil::bytes_zeroize(impl_->symmetricCipherKey);
+    bytes_zeroize(impl_->symmetricCipherKey);
 }
 
 VirgilSymmetricCipher& VirgilCipherBase::getSymmetricCipher() {

@@ -34,45 +34,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity {
-    import flash.utils.ByteArray;
+#ifndef VIRGIL_CRYPTO_VIRGIL_DATA_SINK_H
+#define VIRGIL_CRYPTO_VIRGIL_DATA_SINK_H
 
-    public class ConvertionUtils {
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
-        static public function asciiStringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeMultiByte(string, "iso-8859-1");
-            result.position = 0;
-            return result;
-        }
 
-        static public function arrayToAsciiString(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readMultiByte(array.length, "iso-8859-1");
-            } finally {
-                array.position = pos;
-            }
-            return  result;
-        }
+namespace virgil { namespace crypto {
 
-        static public function utf8StringToArray(string : String) : ByteArray {
-            var result : ByteArray = new ByteArray ();
-            result.writeUTFBytes(string);
-            result.position = 0;
-            return result;
-        }
+/**
+ * @brief This is base class for output streams.
+ *
+ * Defines interface that allows write data to the output stream.
+ */
+class VirgilDataSink {
+public:
+    /**
+     * @brief Return true if target object is able to write data.
+     */
+    virtual bool isGood() = 0;
+    /**
+     * @brief Write data to the target object.
+     */
+    virtual void write(const VirgilByteArray& data) = 0;
+    virtual ~VirgilDataSink() throw() {}
+};
 
-        static public function arrayToUTF8String(array : ByteArray) : String {
-            var pos : int = array.position;
-            array.position = 0;
-            try {
-                var result : String = array.readUTFBytes(array.length);
-            } finally {
-                array.position = pos;
-            }
-            return result;;
-        }
-    }
-}
+}}
+
+#endif /* VIRGIL_CRYPTO_VIRGIL_DATA_SINK_H */

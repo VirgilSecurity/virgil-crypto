@@ -37,6 +37,10 @@
 #include <virgil/crypto/VirgilCustomParams.h>
 using virgil::crypto::VirgilCustomParams;
 
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::bytes2str;
+
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
@@ -75,7 +79,7 @@ int VirgilCustomParams::getInteger(const VirgilByteArray& key) const {
         return keyValue->second;
     } else {
         throw VirgilCryptoException(std::string("VirgilCustomParams") +
-                "Key '" + virgil::bytes2str(key) + "' is not found.");
+                "Key '" + bytes2str(key) + "' is not found.");
     }
 }
 
@@ -93,7 +97,7 @@ VirgilByteArray VirgilCustomParams::getString(const VirgilByteArray& key) const 
         return keyValue->second;
     } else {
         throw VirgilCryptoException(std::string("VirgilCustomParams") +
-                "Key '" + virgil::bytes2str(key) + "' is not found.");
+                "Key '" + bytes2str(key) + "' is not found.");
     }
 }
 
@@ -111,7 +115,7 @@ VirgilByteArray VirgilCustomParams::getData(const VirgilByteArray& key) const {
         return keyValue->second;
     } else {
         throw VirgilCryptoException(std::string("VirgilCustomParams") +
-                "Key '" + virgil::bytes2str(key) + "' is not found.");
+                "Key '" + bytes2str(key) + "' is not found.");
     }
 }
 

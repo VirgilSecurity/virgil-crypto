@@ -37,8 +37,8 @@
 #ifndef VIRGIL_KEY_PAIR_H
 #define VIRGIL_KEY_PAIR_H
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 namespace virgil { namespace crypto {
 

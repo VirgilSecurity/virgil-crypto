@@ -42,8 +42,8 @@ using virgil::crypto::base::VirgilKDFImpl;
 #include <polarssl/oid.h>
 #include <polarssl/kdf.h>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <virgil/crypto/base/PolarsslException.h>
 using virgil::crypto::base::PolarsslException;

@@ -34,48 +34,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_STREAM_VIRGIL_STREAM_DATA_SOURCE_H
-#define VIRGIL_STREAM_VIRGIL_STREAM_DATA_SOURCE_H
+package com.virgilsecurity.crypto {
 
-#include <virgil/VirgilDataSource.h>
-using virgil::VirgilDataSource;
+    import flash.utils.ByteArray;
 
-#include <istream>
+    import org.hamcrest.*;
+    import org.hamcrest.core.*;
+    import org.hamcrest.object.*;
+    import org.hamcrest.collection.*;
 
-namespace virgil { namespace stream {
+    import com.hurlant.util.Hex;
 
-/**
- * @brief C++ stream implementation of the VirgilDataSource class.
- *
- * @note This class CAN not be used in wrappers.
- */
-class VirgilStreamDataSource : public VirgilDataSource {
-public:
-    /**
-     * @brief Creates data sink based on std::istream object.
-     * @param in - input stream.
-     * @param chunkSize - size of the data that will be returned by @link read() @endlink method.
-     *                    Note, the real value may be different from the given value, it is only recommendation.
-     */
-    explicit VirgilStreamDataSource(std::istream& in, size_t chunkSize = 4096);
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilStreamDataSource() throw();
-    /**
-     * @brief Overriding of @link VirgilDataSource::hasData() @endlink method.
-     */
-    virtual bool hasData();
-    /**
-     * @brief Overriding of @link VirgilDataSource::read() @endlink method.
-     */
-    virtual VirgilByteArray read();
-private:
-    std::istream& in_;
-    size_t chunkSize_;
-};
+    import com.virgilsecurity.utils.*;
+    import com.virgilsecurity.extension.*;
+    import com.virgilsecurity.wrapper.CModule;
 
-}}
+    public class VirgilVersionTest {
+        [BeforeClass(description = "Init library")]
+        public static function setup():void {
+            CModule.startAsync();
+        }
 
-
-#endif /* VIRGIL_STREAM_VIRGIL_STREAM_DATA_SOURCE_H */
+        [Test(description="Test VirgilVersion 'id' accessors.")]
+        public function test_version():void {
+            assertThat(VirgilVersion.majorVersion(), equalTo(@VIRGIL_VERSION_MAJOR@));
+            assertThat(VirgilVersion.minorVersion(), equalTo(@VIRGIL_VERSION_MINOR@));
+            assertThat(VirgilVersion.patchVersion(), equalTo(@VIRGIL_VERSION_PATCH@));
+            assertThat(VirgilVersion.asNumber(),
+                    equalTo(@VIRGIL_VERSION_MAJOR@ << 16 | @VIRGIL_VERSION_MINOR@ << 8 | @VIRGIL_VERSION_PATCH@));
+            assertThat(VirgilVersion.asString(), equalTo("@VIRGIL_VERSION@"));
+        }
+    }
+}

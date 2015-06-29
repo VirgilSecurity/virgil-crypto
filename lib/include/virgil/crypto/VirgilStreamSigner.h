@@ -37,14 +37,14 @@
 #ifndef VIRGIL_STREAM_SIGNER_H
 #define VIRGIL_STREAM_SIGNER_H
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <virgil/crypto/base/VirgilHash.h>
 using virgil::crypto::base::VirgilHash;
 
-#include <virgil/VirgilDataSource.h>
-using virgil::VirgilDataSource;
+#include <virgil/crypto/VirgilDataSource.h>
+using virgil::crypto::VirgilDataSource;
 
 namespace virgil { namespace crypto {
 

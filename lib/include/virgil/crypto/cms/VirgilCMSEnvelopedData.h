@@ -49,8 +49,8 @@ using virgil::crypto::cms::VirgilCMSPasswordRecipient;
 #include <virgil/crypto/cms/VirgilCMSEncryptedContent.h>
 using virgil::crypto::cms::VirgilCMSEncryptedContent;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <vector>
 

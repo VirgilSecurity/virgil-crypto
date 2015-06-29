@@ -34,11 +34,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/stream/VirgilStreamDataSource.h>
-using virgil::stream::VirgilStreamDataSource;
+#include <virgil/crypto/stream/VirgilStreamDataSource.h>
+using virgil::crypto::stream::VirgilStreamDataSource;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <algorithm>
 

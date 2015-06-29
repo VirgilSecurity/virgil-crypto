@@ -37,8 +37,8 @@
 #include <virgil/crypto/VirgilStreamCipher.h>
 using virgil::crypto::VirgilStreamCipher;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <virgil/crypto/base/VirgilKDF.h>
 using virgil::crypto::base::VirgilKDF;

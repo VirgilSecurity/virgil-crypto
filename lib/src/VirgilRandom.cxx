@@ -41,8 +41,8 @@ using virgil::crypto::base::VirgilRandomImpl;
 #include <polarssl/entropy.h>
 #include <polarssl/ctr_drbg.h>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <virgil/crypto/base/PolarsslException.h>
 using virgil::crypto::base::PolarsslException;

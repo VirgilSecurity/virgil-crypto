@@ -37,8 +37,8 @@
 #include <virgil/crypto/VirgilSigner.h>
 using virgil::crypto::VirgilSigner;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <virgil/crypto/base/VirgilHash.h>
 using virgil::crypto::base::VirgilHash;

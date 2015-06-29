@@ -50,8 +50,9 @@ using virgil::crypto::base::VirgilPBE;
 
 #include <cstring>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::str2bytes;
 
 #include <virgil/crypto/base/PolarsslException.h>
 using virgil::crypto::base::PolarsslException;
@@ -90,12 +91,12 @@ public:
     md_type_t mdType;
     cipher_type_t cipherType;
 public:
-    VirgilPBEImpl() : type(VIRGIL_PBE_NONE), random(virgil::str2bytes(std::string("com.virgilsecurity.VirgilPBE"))),
+    VirgilPBEImpl() : type(VIRGIL_PBE_NONE), random(str2bytes(std::string("com.virgilsecurity.VirgilPBE"))),
             algId(), pbeAlgOID(), pbeParams(), mdType(POLARSSL_MD_NONE), cipherType(POLARSSL_CIPHER_NONE) {
     }
 
     explicit VirgilPBEImpl(VirgilPBEType pbeType, const VirgilByteArray& salt, size_t iterationCount) : type(pbeType),
-            random(virgil::str2bytes(std::string("com.virgilsecurity.VirgilPBE"))) {
+            random(str2bytes(std::string("com.virgilsecurity.VirgilPBE"))) {
         const size_t adjustedIterationCount =
                 iterationCount < VirgilPBE::kIterationCountMin ? VirgilPBE::kIterationCountMin : iterationCount;
         switch (pbeType) {
@@ -111,7 +112,7 @@ public:
 
     }
     explicit VirgilPBEImpl(const VirgilByteArray& pbeAlgId) : type(VIRGIL_PBE_NONE),
-            random(virgil::str2bytes(std::string("com.virgilsecurity.VirgilPBE"))) {
+            random(str2bytes(std::string("com.virgilsecurity.VirgilPBE"))) {
         init_(pbeAlgId);
     }
 private:

@@ -42,8 +42,9 @@ using virgil::crypto::base::VirgilHashImpl;
 #include <polarssl/oid.h>
 #include <polarssl/asn1.h>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::bytes2str;
 
 #include <virgil/crypto/base/PolarsslException.h>
 using virgil::crypto::base::PolarsslException;
@@ -164,7 +165,7 @@ VirgilHash VirgilHash::sha512() {
 }
 
 VirgilHash VirgilHash::withName(const VirgilByteArray& name) {
-    return VirgilHash(virgil::bytes2str(name).c_str());
+    return VirgilHash(bytes2str(name).c_str());
 }
 
 VirgilHash::VirgilHash() : impl_(new VirgilHashImpl(POLARSSL_MD_NONE)) {

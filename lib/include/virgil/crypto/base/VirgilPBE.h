@@ -39,8 +39,8 @@
 
 #include <cstddef>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
 using virgil::crypto::asn1::VirgilAsn1Compatible;

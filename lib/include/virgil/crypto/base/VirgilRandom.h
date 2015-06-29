@@ -38,7 +38,7 @@
 #define VIRGIL_CRYPTO_VIRGIL_RANDOM_H
 
 #include <cstddef>
-#include <virgil/VirgilByteArray.h>
+#include <virgil/crypto/VirgilByteArray.h>
 
 namespace virgil { namespace crypto { namespace base {
 

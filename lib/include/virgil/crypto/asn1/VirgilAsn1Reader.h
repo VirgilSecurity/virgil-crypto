@@ -40,8 +40,8 @@
 #include <cstddef>
 #include <string>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 namespace virgil { namespace crypto { namespace asn1 {
 
@@ -129,7 +129,7 @@ public:
 private:
     /**
      * @brief Check internal state before methods call.
-     * @exception VirgilException - if internal state is not consistent.
+     * @throw VirgilCryptoException - if internal state is not consistent.
      */
     void checkState();
     /**

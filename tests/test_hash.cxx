@@ -43,10 +43,10 @@
 
 #include <string>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
-using virgil::hex2bytes;
-using virgil::str2bytes;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::str2bytes;
+using virgil::crypto::hex2bytes;
 
 #include <virgil/crypto/base/VirgilHash.h>
 using virgil::crypto::base::VirgilHash;

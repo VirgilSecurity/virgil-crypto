@@ -34,42 +34,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_VERSION_H
-#define VIRGIL_VERSION_H
+#ifndef VIRGIL_STREAM_VIRGIL_STREAM_DATA_SINK_H
+#define VIRGIL_STREAM_VIRGIL_STREAM_DATA_SINK_H
 
-#include <cstddef>
-#include <string>
+#include <virgil/crypto/VirgilDataSink.h>
+using virgil::crypto::VirgilDataSink;
 
-namespace virgil {
+#include <ostream>
+
+namespace virgil { namespace stream {
 
 /**
- * @brief Provides information about Virgil library version.
+ * @brief C++ stream implementation of the VirgilDataSink class.
+ *
+ * @note This class CAN not be used in wrappers.
  */
-class VirgilVersion {
+class VirgilStreamDataSink : public VirgilDataSink {
 public:
     /**
-     * Return version number in the format MMNNPP (Major, Minor, Patch).
-     *
+     * @brief Creates data sink based on std::ostream object.
      */
-    static size_t asNumber();
+    explicit VirgilStreamDataSink(std::ostream& out);
     /**
-     * Return the version number as string.
+     * @brief Polymorphic destructor.
      */
-    static std::string asString();
+    virtual ~VirgilStreamDataSink() throw();
     /**
-     * Return the major version number.
+     * @brief Overriding of @link VirgilDataSink::isGood() @endlink method.
      */
-    static size_t majorVersion();
+    virtual bool isGood();
     /**
-     * Return the minor version number.
+     * @brief Overriding of @link VirgilDataSink::write() @endlink method.
      */
-    static size_t  minorVersion();
-    /**
-     * Return the minor version number.
-     */
-    static size_t patchVersion();
+    virtual void write(const VirgilByteArray& data);
+private:
+    std::ostream& out_;
 };
 
-}
+}}
 
-#endif /* VIRGIL_VERSION_H */
+#endif /* VIRGIL_STREAM_VIRGIL_STREAM_DATA_SINK_H */

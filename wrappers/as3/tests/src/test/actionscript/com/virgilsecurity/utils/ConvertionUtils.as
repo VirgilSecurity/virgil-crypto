@@ -34,35 +34,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.virgilsecurity {
-
+package com.virgilsecurity.utils {
     import flash.utils.ByteArray;
 
-    import org.hamcrest.*;
-    import org.hamcrest.core.*;
-    import org.hamcrest.object.*;
-    import org.hamcrest.collection.*;
+    public class ConvertionUtils {
 
-    import com.hurlant.util.Hex;
-
-    import com.virgilsecurity.*;
-    import com.virgilsecurity.extension.*;
-    import com.virgilsecurity.wrapper.CModule;
-
-    public class VirgilVersionTest {
-        [BeforeClass(description = "Init library")]
-        public static function setup():void {
-            CModule.startAsync();
+        static public function asciiStringToArray(string : String) : ByteArray {
+            var result : ByteArray = new ByteArray ();
+            result.writeMultiByte(string, "iso-8859-1");
+            result.position = 0;
+            return result;
         }
 
-        [Test(description="Test VirgilVersion 'id' accessors.")]
-        public function test_version():void {
-            assertThat(VirgilVersion.majorVersion(), equalTo(@VIRGIL_VERSION_MAJOR@));
-            assertThat(VirgilVersion.minorVersion(), equalTo(@VIRGIL_VERSION_MINOR@));
-            assertThat(VirgilVersion.patchVersion(), equalTo(@VIRGIL_VERSION_PATCH@));
-            assertThat(VirgilVersion.asNumber(),
-                    equalTo(@VIRGIL_VERSION_MAJOR@ << 16 | @VIRGIL_VERSION_MINOR@ << 8 | @VIRGIL_VERSION_PATCH@));
-            assertThat(VirgilVersion.asString(), equalTo("@VIRGIL_VERSION@"));
+        static public function arrayToAsciiString(array : ByteArray) : String {
+            var pos : int = array.position;
+            array.position = 0;
+            try {
+                var result : String = array.readMultiByte(array.length, "iso-8859-1");
+            } finally {
+                array.position = pos;
+            }
+            return  result;
+        }
+
+        static public function utf8StringToArray(string : String) : ByteArray {
+            var result : ByteArray = new ByteArray ();
+            result.writeUTFBytes(string);
+            result.position = 0;
+            return result;
+        }
+
+        static public function arrayToUTF8String(array : ByteArray) : String {
+            var pos : int = array.position;
+            array.position = 0;
+            try {
+                var result : String = array.readUTFBytes(array.length);
+            } finally {
+                array.position = pos;
+            }
+            return result;;
         }
     }
 }

@@ -34,11 +34,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/stream/VirgilStreamDataSink.h>
-using virgil::stream::VirgilStreamDataSink;
+#include <virgil/crypto/stream/VirgilStreamDataSink.h>
+using virgil::crypto::stream::VirgilStreamDataSink;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 VirgilStreamDataSink::VirgilStreamDataSink(std::ostream& out) : out_(out) {
 }

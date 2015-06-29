@@ -63,25 +63,22 @@
 %include "common.i"
 %include "util.i"
 
-// Package: virgil
-%ignore virgil::str2bytes;
-%ignore virgil::bytes2str;
-%ignore virgil::hex2bytes;
-%ignore virgil::bytes2hex;
-%ignore virgil::bytes_zeroize;
-INCLUDE_CLASS(VirgilByteArray, virgil, virgil)
+// Package: virgil::crypto
+%ignore virgil::crypto::str2bytes;
+%ignore virgil::crypto::bytes2str;
+%ignore virgil::crypto::hex2bytes;
+%ignore virgil::crypto::bytes2hex;
+%ignore virgil::crypto::bytes_zeroize;
+INCLUDE_CLASS(VirgilByteArray, virgil::crypto, virgil/crypto)
 
 %ignore VIRGIL_VERSION;
 %ignore VIRGIL_VERSION_MAJOR;
 %ignore VIRGIL_VERSION_MINOR;
 %ignore VIRGIL_VERSION_PATCH;
-INCLUDE_CLASS(VirgilVersion, virgil, virgil)
+INCLUDE_CLASS(VirgilVersion, virgil::crypto, virgil/crypto)
 
-INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil, virgil)
-INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil, virgil)
-
-// Exceptions
-INCLUDE_CLASS(VirgilException, virgil, virgil)
+INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilCryptoException, virgil::crypto, virgil/crypto)
 
 // Package: virgil::crypto::asn1
@@ -112,7 +109,6 @@ INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::asn1, virgil/crypto/asn1)
     %ignore VirgilCMSEnvelopedData;
     %ignore VirgilCMSContent;
 #endif /* LIB_LOW_LEVEL_API */
-
 
 // Package: virgil::crypto::base
 #if defined(LIB_LOW_LEVEL_API)

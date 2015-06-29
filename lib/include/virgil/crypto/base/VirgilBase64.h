@@ -39,8 +39,8 @@
 
 #include <string>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 namespace virgil { namespace crypto { namespace base {
 

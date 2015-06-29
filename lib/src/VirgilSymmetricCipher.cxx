@@ -41,8 +41,8 @@ using virgil::crypto::base::VirgilSymmetricCipherImpl;
 #include <polarssl/cipher.h>
 #include <polarssl/oid.h>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <virgil/crypto/base/PolarsslException.h>
 using virgil::crypto::base::PolarsslException;

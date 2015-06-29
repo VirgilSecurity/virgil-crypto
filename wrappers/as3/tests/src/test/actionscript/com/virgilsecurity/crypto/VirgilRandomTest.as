@@ -34,33 +34,46 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_DATA_VIRGIL_DATA_SOURCE_H
-#define VIRGIL_DATA_VIRGIL_DATA_SOURCE_H
+package com.virgilsecurity.crypto {
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+    import flash.utils.ByteArray;
 
+    import org.hamcrest.*;
+    import org.hamcrest.core.*;
+    import org.hamcrest.object.*;
+    import org.hamcrest.collection.*;
 
-namespace virgil {
+    import com.hurlant.util.Hex;
 
-/**
- * @brief This is base class for input streams.
- *
- * Defines interface that allows read data from the input stream.
- */
-class VirgilDataSource {
-public:
-    /**
-     * @brief Return true if target source still contains unread data.
-     */
-    virtual bool hasData() = 0;
-    /**
-     * @brief Return next portion of read data from target source.
-     */
-    virtual VirgilByteArray read() = 0;
-    virtual ~VirgilDataSource() throw() {}
-};
+    import com.virgilsecurity.utils.*;
+    import com.virgilsecurity.extension.*;
+    import com.virgilsecurity.wrapper.CModule;
 
+    public class VirgilRandomTest {
+        private var random_:VirgilRandom;
+
+        [BeforeClass(description = "Init library")]
+        public static function setup():void {
+            CModule.startAsync();
+        }
+
+        [Before(description="Creates VirgilRandom object and stores it in the 'random_' variable.")]
+        public function create_random() : void {
+            random_ = VirgilRandom.create(ConvertionUtils.asciiStringToArray("com.virgilsecurity.tests"));
+            assertThat(random_.cPtr, not(equalTo(0)));
+        }
+
+        [After(description="Destroy VirgilRandom object stored it in the 'random_' variable.")]
+        public function destroy_random() : void {
+            random_.destroy();
+            random_ = null;
+        }
+
+        [Test(description="Test VirgilRandom.sign() and VirgilRandom.verify().")]
+        public function test_random():void {
+            const bytesNum:uint = 1024;
+            var randomData:ByteArray = random_.randomize(bytesNum);
+            assertThat(randomData.length, equalTo(bytesNum));
+        }
+    }
 }
-
-#endif /* VIRGIL_DATA_VIRGIL_DATA_SOURCE_H */

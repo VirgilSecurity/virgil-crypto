@@ -34,23 +34,48 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_EXCEPTION_H
-#define VIRGIL_EXCEPTION_H
+#ifndef VIRGIL_STREAM_VIRGIL_STREAM_DATA_SOURCE_H
+#define VIRGIL_STREAM_VIRGIL_STREAM_DATA_SOURCE_H
 
-#include <stdexcept>
-#include <string>
+#include <virgil/crypto/VirgilDataSource.h>
+using virgil::crypto::VirgilDataSource;
 
-namespace virgil {
+#include <istream>
+
+namespace virgil { namespace stream {
 
 /**
- * @brief Encapsulates logic errors of module 'virgil'
+ * @brief C++ stream implementation of the VirgilDataSource class.
+ *
+ * @note This class CAN not be used in wrappers.
  */
-class VirgilException : public std::logic_error {
+class VirgilStreamDataSource : public VirgilDataSource {
 public:
-    explicit VirgilException(const std::string& what);
+    /**
+     * @brief Creates data sink based on std::istream object.
+     * @param in - input stream.
+     * @param chunkSize - size of the data that will be returned by @link read() @endlink method.
+     *                    Note, the real value may be different from the given value, it is only recommendation.
+     */
+    explicit VirgilStreamDataSource(std::istream& in, size_t chunkSize = 4096);
+    /**
+     * @brief Polymorphic destructor.
+     */
+    virtual ~VirgilStreamDataSource() throw();
+    /**
+     * @brief Overriding of @link VirgilDataSource::hasData() @endlink method.
+     */
+    virtual bool hasData();
+    /**
+     * @brief Overriding of @link VirgilDataSource::read() @endlink method.
+     */
+    virtual VirgilByteArray read();
+private:
+    std::istream& in_;
+    size_t chunkSize_;
 };
 
-}
+}}
 
-#endif /* VIRGIL_EXCEPTION_H */
 
+#endif /* VIRGIL_STREAM_VIRGIL_STREAM_DATA_SOURCE_H */

@@ -36,6 +36,7 @@
 
 #include <virgil/crypto/VirgilChunkCipher.h>
 using virgil::crypto::VirgilChunkCipher;
+using virgil::crypto::str2bytes;
 
 #include <cstring>
 #include <cmath>
@@ -46,11 +47,11 @@ using std::string;
 #include <sstream>
 using std::ostringstream;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
-#include <virgil/VirgilException.h>
-using virgil::VirgilException;
+#include <virgil/crypto/VirgilCryptoException.h>
+using virgil::crypto::VirgilCryptoException;
 
 #include <virgil/crypto/base/VirgilSymmetricCipher.h>
 using virgil::crypto::base::VirgilSymmetricCipher;
@@ -106,7 +107,7 @@ VirgilByteArray VirgilChunkCipher::process(const VirgilByteArray& data) {
         ostringstream message;
         message << "In the decryption mode data size MUST be multiple of ";
         message << symmetricCipher.blockSize() << " bytes.";
-        throw VirgilException(message.str());
+        throw VirgilCryptoException(message.str());
     }
 
     symmetricCipher.reset();
@@ -125,11 +126,11 @@ void VirgilChunkCipher::finish() {
 }
 
 void VirgilChunkCipher::storeChunkSize(size_t chunkSize) {
-    customParams().setInteger(virgil::str2bytes(kCustomParameterKey_ChunkSize), chunkSize);
+    customParams().setInteger(str2bytes(kCustomParameterKey_ChunkSize), chunkSize);
 }
 
 size_t VirgilChunkCipher::retrieveChunkSize() const {
-    return customParams().getInteger(virgil::str2bytes(kCustomParameterKey_ChunkSize));
+    return customParams().getInteger(str2bytes(kCustomParameterKey_ChunkSize));
 }
 
 

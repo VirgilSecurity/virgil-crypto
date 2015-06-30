@@ -49,9 +49,6 @@ using virgil::crypto::foundation::VirgilSymmetricCipher;
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
-#include <virgil/crypto/VirgilContentInfo.h>
-using virgil::crypto::VirgilContentInfo;
-
 VirgilStreamCipher::~VirgilStreamCipher() throw() {
 }
 
@@ -99,7 +96,7 @@ VirgilByteArray VirgilStreamCipher::tryReadContentInfo(VirgilDataSource& source)
         VirgilByteArray nextData = source.read();
         data.insert(data.end(), nextData.begin(), nextData.end());
     }
-    size_t contentInfoSize = VirgilContentInfo::defineSize(data);
+    size_t contentInfoSize = defineContentInfoSize(data);
     if (contentInfoSize > 0) {
         while (data.size() < contentInfoSize  && source.hasData()) {
             VirgilByteArray nextData = source.read();

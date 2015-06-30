@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_VIRGIL_CONTENT_INFO_H
-#define VIRGIL_CRYPTO_VIRGIL_CONTENT_INFO_H
+#ifndef VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_INFO_H
+#define VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_INFO_H
 
 #include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
 using virgil::crypto::asn1::VirgilAsn1Compatible;
@@ -52,12 +52,12 @@ using virgil::crypto::cms::VirgilCMSContent;
 #include <map>
 #include <string>
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace cms {
 
 /**
- * @brief Data object that represent ASN.1 structure: VirgilContentInfo.
+ * @brief Data object that represent ASN.1 structure: VirgilCMSContentInfo.
  */
-class VirgilContentInfo : public VirgilAsn1Compatible {
+class VirgilCMSContentInfo : public VirgilAsn1Compatible {
 public:
     VirgilCMSContent cmsContent;
     VirgilCustomParams customParams;
@@ -71,7 +71,7 @@ public:
      * @name VirgilAsn1Compatible implementation
      *
      * Marshalling format:
-     *     VirgilContentInfo ::= SEQUENCE {
+     *     VirgilCMSContentInfo ::= SEQUENCE {
      *         version ::= INTEGER { v0(0) },
      *         cmsContent ContentInfo, -- Imports from RFC 5652
      *         customParams [0] IMPLICIT VirgilCustomParams OPTIONAL
@@ -85,9 +85,9 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilContentInfo() throw();
+    virtual ~VirgilCMSContentInfo() throw();
 };
 
-}}
+}}}
 
-#endif /* VIRGIL_CRYPTO_VIRGIL_CONTENT_INFO_H */
+#endif /* VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_INFO_H */

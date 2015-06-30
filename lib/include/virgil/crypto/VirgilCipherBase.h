@@ -104,26 +104,43 @@ public:
     ///@}
     /**
      * @name Content Info Access / Management
+     *
+     * Content info is a structure that contains all necessary information
+     *     for future decription in secure form.
      */
     ///@{
     /**
      * @brief Returns encrypted data info.
      */
     /**
-     * @brief Get VirgilContentInfo object as ASN.1 structure.
+     * @brief Return content info.
      * @note Call this method after encryption process.
      */
     VirgilByteArray getContentInfo() const;
     /**
-     * @brief Create VirgilContentInfo object from ASN.1 structure.
+     * @brief Create content info object from ASN.1 structure.
      * @note Call this method before decryption process.
      */
     void setContentInfo(const VirgilByteArray& contentInfo);
+    /**
+     * @brief Read content info size as part of the data.
+     * @return Size of the content info if it is exist as part of the data, 0 - otherwise.
+     */
+    static size_t defineContentInfoSize(const VirgilByteArray& data);
     /**
      * @brief Provide access to the object that handles custom parameters.
      * @note Use this method to add custom parameters to the content info object.
      * @note Use this method before encryption process.
      */
+    ///@}
+    /**
+     * @name Custom parameters Access / Management
+     *
+     * Custom parameters is a structure that contains additional user defined information
+     *     about encrypted data.
+     * @note This information is stored as part of the content info in unencrypted format.
+     */
+    ///@{
     VirgilCustomParams& customParams();
     /**
      * @brief Provide readonly access to the object that handles custom parameters.

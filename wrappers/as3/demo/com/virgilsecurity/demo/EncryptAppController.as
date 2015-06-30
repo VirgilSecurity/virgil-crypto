@@ -264,7 +264,7 @@
                 const contentInfoInitialDataSize:uint = 16;
                 var contentInfo:ByteArray = new ByteArray();
                 inFileStream.readBytes(contentInfo, 0, contentInfoInitialDataSize);
-                const contentInfoSize:uint = VirgilContentInfo.defineSize(contentInfo);
+                const contentInfoSize:uint = VirgilCipherBase.defineContentInfoSize(contentInfo);
                 if (contentInfoSize == 0 || contentInfoSize < contentInfoInitialDataSize) {
                     throw new Error("Encrypted file does not contain embedded content info.");
                 }

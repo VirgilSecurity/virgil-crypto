@@ -110,12 +110,6 @@ public class VirgilHash extends CObject {
     }
 }
 
-public class VirgilContentInfo {
-    public static function defineSize(contentInfo:ByteArray):uint {
-        return _wrap_VirgilContentInfo_defineSize(contentInfo);
-    }
-}
-
 public class VirgilBase64 {
     public static function encode(data:ByteArray):String {
         return _wrap_VirgilBase64_encode(data);

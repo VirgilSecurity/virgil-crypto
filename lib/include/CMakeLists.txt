@@ -61,7 +61,6 @@ else ()
         PATTERN "VirgilAsymmetricCipher.h" EXCLUDE
         PATTERN "VirgilRandom.h" EXCLUDE
         PATTERN "VirgilPBE.h" EXCLUDE
-        PATTERN "VirgilContentInfo.h" EXCLUDE
         PATTERN ${EXCLUDE_FILE_IO_PATTERN} EXCLUDE
     )
 endif ()

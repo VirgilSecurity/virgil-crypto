@@ -124,6 +124,7 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .function("removeAllRecipients", &virgil::crypto::VirgilCipherBase::removeAllRecipients)
         .function("getContentInfo", &virgil::crypto::VirgilCipherBase::getContentInfo)
         .function("setContentInfo", &virgil::crypto::VirgilCipherBase::setContentInfo)
+        .class_function("defineContentInfoSize", &virgil::crypto::VirgilCipherBase::defineContentInfoSize)
         .function("customParams", &virgil::crypto::VirgilCipherBase_customParams)
     ;
 

@@ -47,6 +47,9 @@ namespace virgil { namespace crypto {
  */
 class VirgilCryptoException : public std::logic_error {
 public:
+    /**
+     * @brief Construct exception with detailed information about it.
+     */
     explicit VirgilCryptoException(const std::string& what);
 };
 

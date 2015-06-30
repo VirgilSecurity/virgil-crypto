@@ -51,16 +51,25 @@ namespace virgil { namespace crypto { namespace cms {
  */
 class VirgilCMSKeyTransRecipient : public VirgilAsn1Compatible {
 public:
-    /**<! Recipient's identifier. */
+    /**
+     * @property recipientIdentifier
+     * @brief Recipient's identifier.
+     */
     VirgilByteArray recipientIdentifier;
-    /**<! Identifies the encryption algorithm, and any associated parameters. */
+    /**
+     * @property keyEncryptionAlgorithm
+     * @brief Identifies the encryption algorithm, and any associated parameters.
+     */
     VirgilByteArray keyEncryptionAlgorithm;
-    /**<! The result of encrypting the content-encryption key with the key-encryption key. */
+    /**
+     * @property encryptedKey
+     * @brief The result of encrypting the content-encryption key with the key-encryption key.
+     */
     VirgilByteArray encryptedKey;
 public:
     /**
      * @name VirgilAsn1Compatible implementation
-     *
+     * @code
      * Marshalling format:
      *     KeyTransRecipientInfo ::= SEQUENCE {
      *         version CMSVersion,  -- always set to 0 or 2 (currently only version 2 is supported)
@@ -81,6 +90,7 @@ public:
      *     EncryptedKey ::= OCTET STRING
      *
      *     SubjectKeyIdentifier ::= OCTET STRING
+     * @endcode
      */
     ///@{
     virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;

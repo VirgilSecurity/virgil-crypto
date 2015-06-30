@@ -59,7 +59,15 @@ namespace virgil { namespace crypto { namespace cms {
  */
 class VirgilCMSContentInfo : public VirgilAsn1Compatible {
 public:
+    /**
+     * @property cmsContent
+     * @brief CMS content.
+     */
     VirgilCMSContent cmsContent;
+    /**
+     * @property customParams
+     * @brief User defiend custom parameters.
+     */
     VirgilCustomParams customParams;
 public:
     /**
@@ -69,13 +77,14 @@ public:
     static size_t defineSize(const VirgilByteArray& data);
     /**
      * @name VirgilAsn1Compatible implementation
-     *
+     * @code
      * Marshalling format:
      *     VirgilCMSContentInfo ::= SEQUENCE {
      *         version ::= INTEGER { v0(0) },
      *         cmsContent ContentInfo, -- Imports from RFC 5652
      *         customParams [0] IMPLICIT VirgilCustomParams OPTIONAL
      *     }
+     * @endcode
      */
     ///@{
     virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;

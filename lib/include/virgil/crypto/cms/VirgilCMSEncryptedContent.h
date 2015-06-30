@@ -51,14 +51,20 @@ namespace virgil { namespace crypto { namespace cms {
  */
 class VirgilCMSEncryptedContent : public VirgilAsn1Compatible {
 public:
-    /**<! Content encryption algorithm identifier (ASN.1 AlgorithmIdentifier structure). */
+    /**
+     * @property contentEncryptionAlgorithm
+     * @brief Content encryption algorithm identifier (ASN.1 AlgorithmIdentifier structure).
+     */
     VirgilByteArray contentEncryptionAlgorithm;
-    /**<! Content encrypted by algorithm defined in property'contentEncryptionAlgorithm'. */
+    /**
+     * @property encryptedContent
+     * @brief Content encrypted by algorithm defined in property @link contentEncryptionAlgorithm @endlink.
+     */
     VirgilByteArray encryptedContent;
 public:
     /**
      * @name VirgilAsn1Compatible implementation
-     *
+     * @code
      * Marshalling format:
      *     EncryptedContentInfo ::= SEQUENCE {
      *         contentType ContentType, -- always PKCS#7 data format with OID: 1.2.840.113549.1.7.1
@@ -71,6 +77,7 @@ public:
      *     ContentEncryptionAlgorithmIdentifier ::= AlgorithmIdentifier
      *
      *     EncryptedContent ::= OCTET STRING
+     * @endcode
      */
     ///@{
     virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;

@@ -66,7 +66,7 @@ public:
     /**
      * @brief Creates PolarsslException class object for a given error code.
      *
-     * Human-readable error description can be found in @link what() @endlink method.
+     * Human-readable error description can be found in the inherited what() method.
      * @param errCode - error code returned by one of the underlying PolarSSL framework functions.
      */
     explicit PolarsslException(int errCode);

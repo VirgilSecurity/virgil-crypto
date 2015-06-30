@@ -62,13 +62,25 @@ namespace virgil { namespace crypto { namespace cms {
  */
 class VirgilCMSEnvelopedData : public VirgilAsn1Compatible {
 public:
+    /**
+     * @property keyTransRecipients
+     * @brief Set of recipients identified by key.
+     */
     std::vector<VirgilCMSKeyTransRecipient> keyTransRecipients;
+    /**
+     * @property passwordRecipients
+     * @brief Set of recipients identified by password.
+     */
     std::vector<VirgilCMSPasswordRecipient> passwordRecipients;
+    /**
+     * @property encryptedContent
+     * @brief Encrypted content and/or meta information about it.
+     */
     VirgilCMSEncryptedContent encryptedContent;
 public:
     /**
      * @name VirgilAsn1Compatible implementation
-     *
+     * @code
      * Marshalling format:
      *     EnvelopedData ::= SEQUENCE {
      *         version CMSVersion,
@@ -96,6 +108,7 @@ public:
      *         pwri [3] PasswordRecipientInfo,
      *         ori [4] OtherRecipientInfo -- not supported
      *     }
+     * @endcode
      */
     ///@{
     virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;

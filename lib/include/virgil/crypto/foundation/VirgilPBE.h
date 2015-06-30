@@ -130,13 +130,14 @@ public:
     ///@}
     /**
      * @name VirgilAsn1Compatible implementation
-     *
+     * @code
      * Marshalling format:
      *     PBE ::= AlgorithmIdentifier {{ PBEAlgorithms }}
      *     PBEAlgorithms AlgorithmIdentifier ::= {
      *         { OID id-PBES2 PARMS PBES2-params }  |
      *         { OID pkcs-12PbeId PARMS pkcs-12PbeParams }
      *     }
+     * @endcode
      */
     ///@{
     virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;

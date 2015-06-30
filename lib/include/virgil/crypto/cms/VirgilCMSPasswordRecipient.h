@@ -51,16 +51,25 @@ namespace virgil { namespace crypto { namespace cms {
  */
 class VirgilCMSPasswordRecipient : public VirgilAsn1Compatible {
 public:
-    /**<! Identifies the key-derivation algorithm, and any associated parameters. */
+    /**
+     * @property keyDerivationAlgorithm
+     * @brief Identifies the key-derivation algorithm, and any associated parameters.
+     */
     VirgilByteArray keyDerivationAlgorithm;
-    /**<! Identifies the encryption algorithm, and any associated parameters. */
+    /**
+     * @property keyEncryptionAlgorithm
+     * @brief Identifies the encryption algorithm, and any associated parameters.
+     */
     VirgilByteArray keyEncryptionAlgorithm;
-    /**<! The result of encrypting the content-encryption key with the key-encryption key. */
+    /**
+     * @property encryptedKey
+     * @brief The result of encrypting the content-encryption key with the key-encryption key.
+     */
     VirgilByteArray encryptedKey;
 public:
     /**
      * @name VirgilAsn1Compatible implementation
-     *
+     * @code
      * Marshalling format:
      *     PasswordRecipientInfo ::= SEQUENCE {
      *         version CMSVersion,   -- Always set to 0
@@ -76,6 +85,7 @@ public:
      *     KeyEncryptionAlgorithmIdentifier ::= AlgorithmIdentifier
      *
      *     EncryptedKey ::= OCTET STRING
+     * @endcode
      */
     ///@{
     virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;

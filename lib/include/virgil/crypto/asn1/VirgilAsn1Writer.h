@@ -137,7 +137,7 @@ public:
     size_t writeSequence(size_t len);
     /**
      * @brief Write ASN.1 type: SET OF ANY.
-     * @param len - sequence length in bytes.
+     * @param set - set of any data represented as byte sequence.
      * @return Written bytes.
      */
     size_t writeSet(const std::vector<VirgilByteArray>& set);

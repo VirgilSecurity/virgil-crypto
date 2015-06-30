@@ -55,7 +55,7 @@ class VirgilCustomParams : public VirgilAsn1Compatible {
 public:
     /**
      * @name VirgilAsn1Compatible implementation
-     *
+     * @code
      * Marshalling format:
      *     VirgilCustomParams ::= SET SIZE (1..MAX) OF KeyValue
      *
@@ -71,6 +71,7 @@ public:
      *         str  [1] EXPLICIT UTF8String,
      *         data [2] EXPLICIT OCTET STRING
      *     }
+     * @endcode
      */
     ///@{
     virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;

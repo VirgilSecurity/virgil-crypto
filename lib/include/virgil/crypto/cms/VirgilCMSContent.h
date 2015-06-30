@@ -66,14 +66,20 @@ typedef enum {
  */
 class VirgilCMSContent : public VirgilAsn1Compatible {
 public:
-    /**<! Indicates the type of the associated content. */
+    /**
+     * @property contentType
+     * @brief Indicates the type of the associated content.
+     */
     VirgilCMSContentType contentType;
-    /**<! Associated content. */
+    /**
+     * @property content
+     * @brief Associated data.
+     */
     VirgilByteArray content;
 public:
     /**
      * @name VirgilAsn1Compatible implementation
-     *
+     * @code
      * Marshalling format:
      *     ContentInfo ::= SEQUENCE {
      *         contentType ContentType,
@@ -81,6 +87,7 @@ public:
      *     }
      *
      *     ContentType ::= OBJECT IDENTIFIER
+     * @endcode
      */
     ///@{
     virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;

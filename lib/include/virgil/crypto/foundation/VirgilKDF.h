@@ -127,7 +127,7 @@ public:
     ///@}
     /**
      * @name VirgilAsn1Compatible implementation
-     *
+     * @code
      * Marshalling format:
      *     KeyDerivationFunction ::= AlgorithmIdentifier {{ KDFAlgorithms }}
      *     KDFAlgorithms AlgorithmIdentifier ::= {
@@ -145,6 +145,7 @@ public:
      *         { OID id-sha512 PARMS NULL } ,
      *         ... -- additional algorithms ---
      *     }
+     * @endcode
      */
     ///@{
     virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;

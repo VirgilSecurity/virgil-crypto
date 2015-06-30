@@ -104,3 +104,22 @@ endif ()
 if (INSTALL_EXT_HEADERS)
     install (DIRECTORY ${MBEDTLS_INCLUDE_DIR}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
 endif ()
+
+# add a target to generate API documentation with Doxygen
+find_package(Doxygen)
+
+find_program(dot DOT_PROGRAM)
+if (DOT_PROGRAM)
+    set (DOT_FOUND "YES")
+else ()
+    set (DOT_FOUND "NO")
+endif (DOT_PROGRAM)
+
+if(DOXYGEN_FOUND)
+    configure_file (${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+    add_custom_target (doc
+        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Docs
+        COMMENT "Generating API documentation with Doxygen" VERBATIM
+    )
+endif (DOXYGEN_FOUND)

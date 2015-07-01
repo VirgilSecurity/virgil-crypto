@@ -46,7 +46,9 @@ def get_known_namespaces():
     """
     return {
         "virgil.crypto" : "Virgil.Crypto",
-        "virgil.crypto.foundation" : "Virgil.Crypto.Foundation"
+        "virgil.crypto.foundation" : "Virgil.Crypto.Foundation",
+        "virgil.crypto.foundation.asn1" : "Virgil.Crypto.Foundation.Asn1",
+        "virgil.crypto.foundation.cms" : "Virgil.Crypto.Foundation.Cms"
     }
 
 def uppercase_namespaces(files, namespaces):

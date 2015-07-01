@@ -34,69 +34,64 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_INFO_H
-#define VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_INFO_H
-
-#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::asn1::VirgilAsn1Compatible;
+#ifndef VIRGIL_CRYPTO_VIRGIL_ASN1_COMPATIBLE_H
+#define VIRGIL_CRYPTO_VIRGIL_ASN1_COMPATIBLE_H
 
 #include <virgil/crypto/VirgilByteArray.h>
 using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/VirgilCustomParams.h>
-using virgil::crypto::VirgilCustomParams;
+/**
+ * @name Forward declaration
+ */
+/// @{
+namespace virgil { namespace crypto { namespace foundation { namespace asn1 {
+    class VirgilAsn1Reader;
+    class VirgilAsn1Writer;
+}}}}
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
+/// @}
 
-#include <virgil/crypto/cms/VirgilCMSContent.h>
-using virgil::crypto::cms::VirgilCMSContent;
 
-#include <map>
-#include <string>
-
-namespace virgil { namespace crypto { namespace cms {
+namespace virgil { namespace crypto { namespace foundation { namespace asn1 {
 
 /**
- * @brief Data object that represent ASN.1 structure: VirgilCMSContentInfo.
+ * @brief This class provides interface that allow to save and restore object state in the ASN.1 structure.
  */
-class VirgilCMSContentInfo : public VirgilAsn1Compatible {
+class VirgilAsn1Compatible {
 public:
     /**
-     * @property cmsContent
-     * @brief CMS content.
+     * @brief Save object state to the ASN.1 structure.
      */
-    VirgilCMSContent cmsContent;
+    VirgilByteArray toAsn1() const;
     /**
-     * @property customParams
-     * @brief User defiend custom parameters.
+     * @brief Restore object state from the ASN.1 structure.
      */
-    VirgilCustomParams customParams;
-public:
-    /**
-     * @brief Read content info size as part of the data.
-     * @return Size of the content info if it is exist as part of the data, 0 - otherwise.
-     */
-    static size_t defineSize(const VirgilByteArray& data);
-    /**
-     * @name VirgilAsn1Compatible implementation
-     * @code
-     * Marshalling format:
-     *     VirgilCMSContentInfo ::= SEQUENCE {
-     *         version ::= INTEGER { v0(0) },
-     *         cmsContent ContentInfo, -- Imports from RFC 5652
-     *         customParams [0] IMPLICIT VirgilCustomParams OPTIONAL
-     *     }
-     * @endcode
-     */
-    ///@{
-    virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
-    virtual void asn1Read(VirgilAsn1Reader& asn1Reader);
-    ///@}
-public:
+    void fromAsn1(const VirgilByteArray& asn1);
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilCMSContentInfo() throw();
+    virtual ~VirgilAsn1Compatible() throw() {}
+    /**
+     * @brief Write object state to the writer.
+     * @param asn1Writer writer that should be payloaded by subclasses.
+     * @param childWrittenBytes count of bytes that was written by subclasses.
+     * @return Writen bytes count.
+     */
+    virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const = 0;
+    /**
+     * @brief Read object state from the reader.
+     * @param asn1Reader reader payloaded with ASN.1 to be read.
+     */
+    virtual void asn1Read(VirgilAsn1Reader& asn1Reader) = 0;
+protected:
+    /**
+     * @brief If given parameter is empty exception will be thrown.
+     * @throw virgil::crypto::VirgilCryptoException.
+     */
+    virtual void checkAsn1ParamNotEmpty(const VirgilByteArray& param, const char *paramName = 0) const;
 };
 
-}}}
+}}}}
 
-#endif /* VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_INFO_H */
+#endif /* VIRGIL_CRYPTO_VIRGIL_ASN1_COMPATIBLE_H */

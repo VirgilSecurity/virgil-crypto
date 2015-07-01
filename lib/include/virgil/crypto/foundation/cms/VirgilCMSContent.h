@@ -34,49 +34,59 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_CMS_VIRGIL_CMS_ENCRYPTED_CONTENT_H
-#define VIRGIL_CRYPTO_CMS_VIRGIL_CMS_ENCRYPTED_CONTENT_H
+#ifndef VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_H
+#define VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_H
 
-#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::asn1::VirgilAsn1Compatible;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 
 #include <virgil/crypto/VirgilByteArray.h>
 using virgil::crypto::VirgilByteArray;
 
-namespace virgil { namespace crypto { namespace cms {
+#include <string>
+
+namespace virgil { namespace crypto { namespace foundation { namespace cms {
 
 /**
- * @brief Data object that represent CMS structure: EncryptedContentInfo.
- * @see RFC 5652 section 6.1.
+ * @brief Enumeration of possible CMS Content Types
+ * @see RFC 5652 section 3.
  */
-class VirgilCMSEncryptedContent : public VirgilAsn1Compatible {
+typedef enum {
+    VirgilCMSContentType_Data = 0,
+    VirgilCMSContentType_SignedData,
+    VirgilCMSContentType_EnvelopedData,
+    VirgilCMSContentType_DigestedData,
+    VirgilCMSContentType_EncryptedData,
+    VirgilCMSContentType_AuthenticatedData
+} VirgilCMSContentType;
+
+/**
+ * @brief Data object that represent CMS structure: ContentInfo.
+ * @see RFC 5652 section 3.
+ */
+class VirgilCMSContent : public VirgilAsn1Compatible {
 public:
     /**
-     * @property contentEncryptionAlgorithm
-     * @brief Content encryption algorithm identifier (ASN.1 AlgorithmIdentifier structure).
+     * @property contentType
+     * @brief Indicates the type of the associated content.
      */
-    VirgilByteArray contentEncryptionAlgorithm;
+    VirgilCMSContentType contentType;
     /**
-     * @property encryptedContent
-     * @brief Content encrypted by algorithm defined in property @link contentEncryptionAlgorithm @endlink.
+     * @property content
+     * @brief Associated data.
      */
-    VirgilByteArray encryptedContent;
+    VirgilByteArray content;
 public:
     /**
      * @name VirgilAsn1Compatible implementation
      * @code
      * Marshalling format:
-     *     EncryptedContentInfo ::= SEQUENCE {
-     *         contentType ContentType, -- always PKCS#7 data format with OID: 1.2.840.113549.1.7.1
-     *         contentEncryptionAlgorithm ContentEncryptionAlgorithmIdentifier,
-     *         encryptedContent [0] IMPLICIT EncryptedContent OPTIONAL
+     *     ContentInfo ::= SEQUENCE {
+     *         contentType ContentType,
+     *         content [0] EXPLICIT ANY DEFINED BY contentType
      *     }
      *
      *     ContentType ::= OBJECT IDENTIFIER
-     *
-     *     ContentEncryptionAlgorithmIdentifier ::= AlgorithmIdentifier
-     *
-     *     EncryptedContent ::= OCTET STRING
      * @endcode
      */
     ///@{
@@ -87,9 +97,18 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilCMSEncryptedContent() throw();
+    virtual ~VirgilCMSContent() throw();
+private:
+    /**
+     * @brief Convert given content type to the appropriate OID.
+     */
+    static std::string contentTypeToOID(VirgilCMSContentType contentType);
+    /**
+     * @brief Convert given OID to the appropriate content type.
+     */
+    static VirgilCMSContentType oidToContentType(const std::string& oid);
 };
 
-}}}
+}}}}
 
-#endif /* VIRGIL_CRYPTO_CMS_VIRGIL_CMS_ENCRYPTED_CONTENT_H */
+#endif /* VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_H */

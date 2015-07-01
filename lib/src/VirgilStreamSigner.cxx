@@ -49,11 +49,11 @@ using virgil::crypto::foundation::VirgilHash;
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
-#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::asn1::VirgilAsn1Reader;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::asn1::VirgilAsn1Writer;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 VirgilStreamSigner::VirgilStreamSigner(const VirgilHash& hash) : hash_(hash) {
 }

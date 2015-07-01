@@ -42,8 +42,8 @@
 #include <virgil/crypto/VirgilSigner.h>
 using virgil::crypto::VirgilSigner;
 
-#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::asn1::VirgilAsn1Compatible;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 
 AS3_IMPL_CONSTRUCTOR(VirgilSigner)
 AS3_IMPL_DESTRUCTOR(VirgilSigner)

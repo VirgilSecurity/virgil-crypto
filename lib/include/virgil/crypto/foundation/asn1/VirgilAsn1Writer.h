@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_ASN1_VIRGIL_ASN1_WRITER_H
-#define VIRGIL_CRYPTO_ASN1_VIRGIL_ASN1_WRITER_H
+#ifndef VIRGIL_CRYPTO_VIRGIL_ASN1_WRITER_H
+#define VIRGIL_CRYPTO_VIRGIL_ASN1_WRITER_H
 
 #include <cstddef>
 #include <string>
@@ -44,7 +44,7 @@
 #include <virgil/crypto/VirgilByteArray.h>
 using virgil::crypto::VirgilByteArray;
 
-namespace virgil { namespace crypto { namespace asn1 {
+namespace virgil { namespace crypto { namespace foundation { namespace asn1 {
 
 /**
  * @brief This class provides methods for writing ASN.1 data structure.
@@ -196,6 +196,6 @@ private:
     size_t bufLen_;
 };
 
-}}}
+}}}}
 
-#endif /* VIRGIL_CRYPTO_ASN1_VIRGIL_ASN1_WRITER_H */
+#endif /* VIRGIL_CRYPTO_VIRGIL_ASN1_WRITER_H */

@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_ASN1_COMPATIBLE_HPP
 #define AS3_VIRGIL_ASN1_COMPATIBLE_HPP
 
-#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::asn1::VirgilAsn1Compatible;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 
 #include "as3_utils.hpp"
 

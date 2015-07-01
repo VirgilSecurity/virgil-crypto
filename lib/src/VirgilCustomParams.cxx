@@ -44,11 +44,11 @@ using virgil::crypto::bytes2str;
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::asn1::VirgilAsn1Reader;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::asn1::VirgilAsn1Writer;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 #include <cstddef>
 #include <vector>

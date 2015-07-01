@@ -68,26 +68,26 @@ using virgil::crypto::foundation::VirgilPBE;
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/cms/VirgilCMSContent.h>
-using virgil::crypto::cms::VirgilCMSContent;
+#include <virgil/crypto/foundation/cms/VirgilCMSContent.h>
+using virgil::crypto::foundation::cms::VirgilCMSContent;
 
-#include <virgil/crypto/cms/VirgilCMSContentInfo.h>
-using virgil::crypto::cms::VirgilCMSContentInfo;
+#include <virgil/crypto/foundation/cms/VirgilCMSContentInfo.h>
+using virgil::crypto::foundation::cms::VirgilCMSContentInfo;
 
-#include <virgil/crypto/cms/VirgilCMSEnvelopedData.h>
-using virgil::crypto::cms::VirgilCMSEnvelopedData;
+#include <virgil/crypto/foundation/cms/VirgilCMSEnvelopedData.h>
+using virgil::crypto::foundation::cms::VirgilCMSEnvelopedData;
 
-#include <virgil/crypto/cms/VirgilCMSKeyTransRecipient.h>
-using virgil::crypto::cms::VirgilCMSKeyTransRecipient;
+#include <virgil/crypto/foundation/cms/VirgilCMSKeyTransRecipient.h>
+using virgil::crypto::foundation::cms::VirgilCMSKeyTransRecipient;
 
-#include <virgil/crypto/cms/VirgilCMSPasswordRecipient.h>
-using virgil::crypto::cms::VirgilCMSPasswordRecipient;
+#include <virgil/crypto/foundation/cms/VirgilCMSPasswordRecipient.h>
+using virgil::crypto::foundation::cms::VirgilCMSPasswordRecipient;
 
-#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::asn1::VirgilAsn1Reader;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::asn1::VirgilAsn1Writer;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 namespace virgil { namespace crypto {
 
@@ -160,7 +160,7 @@ VirgilByteArray VirgilCipherBase::getContentInfo() const {
 
 void VirgilCipherBase::setContentInfo(const VirgilByteArray& contentInfo) {
     impl_->contentInfo.fromAsn1(contentInfo);
-    if (impl_->contentInfo.cmsContent.contentType == crypto::cms::VirgilCMSContentType_EnvelopedData) {
+    if (impl_->contentInfo.cmsContent.contentType == foundation::cms::VirgilCMSContentType_EnvelopedData) {
         impl_->envelopedData.fromAsn1(impl_->contentInfo.cmsContent.content);
     } else {
         throw VirgilCryptoException("VirgilCipherBase: Unsupported content info type was given.");
@@ -295,7 +295,7 @@ void VirgilCipherBase::buildContentInfo() {
     impl_->envelopedData.encryptedContent.contentEncryptionAlgorithm = impl_->symmetricCipher.toAsn1();
     impl_->envelopedData.encryptedContent.encryptedContent.clear();
     // Define content info
-    impl_->contentInfo.cmsContent.contentType = crypto::cms::VirgilCMSContentType_EnvelopedData;
+    impl_->contentInfo.cmsContent.contentType = foundation::cms::VirgilCMSContentType_EnvelopedData;
     impl_->contentInfo.cmsContent.content = impl_->envelopedData.toAsn1();
 }
 

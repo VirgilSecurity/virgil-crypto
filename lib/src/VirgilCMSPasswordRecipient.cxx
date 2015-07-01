@@ -34,14 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/cms/VirgilCMSPasswordRecipient.h>
-using virgil::crypto::cms::VirgilCMSPasswordRecipient;
+#include <virgil/crypto/foundation/cms/VirgilCMSPasswordRecipient.h>
+using virgil::crypto::foundation::cms::VirgilCMSPasswordRecipient;
 
-#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::asn1::VirgilAsn1Reader;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::asn1::VirgilAsn1Writer;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;

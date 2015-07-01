@@ -34,27 +34,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_CMS_VIRGIL_CMS_ENVELOPED_DATA_H
-#define VIRGIL_CRYPTO_CMS_VIRGIL_CMS_ENVELOPED_DATA_H
+#ifndef VIRGIL_CRYPTO_VIRGIL_CMS_ENVELOPED_DATA_H
+#define VIRGIL_CRYPTO_VIRGIL_CMS_ENVELOPED_DATA_H
 
-#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::asn1::VirgilAsn1Compatible;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 
-#include <virgil/crypto/cms/VirgilCMSKeyTransRecipient.h>
-using virgil::crypto::cms::VirgilCMSKeyTransRecipient;
+#include <virgil/crypto/foundation/cms/VirgilCMSKeyTransRecipient.h>
+using virgil::crypto::foundation::cms::VirgilCMSKeyTransRecipient;
 
-#include <virgil/crypto/cms/VirgilCMSPasswordRecipient.h>
-using virgil::crypto::cms::VirgilCMSPasswordRecipient;
+#include <virgil/crypto/foundation/cms/VirgilCMSPasswordRecipient.h>
+using virgil::crypto::foundation::cms::VirgilCMSPasswordRecipient;
 
-#include <virgil/crypto/cms/VirgilCMSEncryptedContent.h>
-using virgil::crypto::cms::VirgilCMSEncryptedContent;
+#include <virgil/crypto/foundation/cms/VirgilCMSEncryptedContent.h>
+using virgil::crypto::foundation::cms::VirgilCMSEncryptedContent;
 
 #include <virgil/crypto/VirgilByteArray.h>
 using virgil::crypto::VirgilByteArray;
 
 #include <vector>
 
-namespace virgil { namespace crypto { namespace cms {
+namespace virgil { namespace crypto { namespace foundation { namespace cms {
 
 /**
  * @brief Data object that represent CMS structure: EnvelopedData.
@@ -123,6 +123,6 @@ private:
     int defineVersion() const;
 };
 
-}}}
+}}}}
 
-#endif /* VIRGIL_CRYPTO_CMS_VIRGIL_CMS_ENVELOPED_DATA_H */
+#endif /* VIRGIL_CRYPTO_VIRGIL_CMS_ENVELOPED_DATA_H */

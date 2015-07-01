@@ -34,28 +34,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_CMS_VIRGIL_CMS_PASSWORD_RECIPIENT_H
-#define VIRGIL_CRYPTO_CMS_VIRGIL_CMS_PASSWORD_RECIPIENT_H
+#ifndef VIRGIL_CRYPTO_VIRGIL_CMS_KEY_TRANS_RECIPIENT_H
+#define VIRGIL_CRYPTO_VIRGIL_CMS_KEY_TRANS_RECIPIENT_H
 
-#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::asn1::VirgilAsn1Compatible;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 
 #include <virgil/crypto/VirgilByteArray.h>
 using virgil::crypto::VirgilByteArray;
 
-namespace virgil { namespace crypto { namespace cms {
+namespace virgil { namespace crypto { namespace foundation { namespace cms {
 
 /**
- * @brief Data object that represent CMS structure: PasswordRecipientInfo.
- * @see RFC 5652 section 6.2.4.
+ * @brief Data object that represent CMS structure: KeyTransRecipientInfo.
+ * @see RFC 5652 section 6.2.1.
  */
-class VirgilCMSPasswordRecipient : public VirgilAsn1Compatible {
+class VirgilCMSKeyTransRecipient : public VirgilAsn1Compatible {
 public:
     /**
-     * @property keyDerivationAlgorithm
-     * @brief Identifies the key-derivation algorithm, and any associated parameters.
+     * @property recipientIdentifier
+     * @brief Recipient's identifier.
      */
-    VirgilByteArray keyDerivationAlgorithm;
+    VirgilByteArray recipientIdentifier;
     /**
      * @property keyEncryptionAlgorithm
      * @brief Identifies the encryption algorithm, and any associated parameters.
@@ -71,20 +71,25 @@ public:
      * @name VirgilAsn1Compatible implementation
      * @code
      * Marshalling format:
-     *     PasswordRecipientInfo ::= SEQUENCE {
-     *         version CMSVersion,   -- Always set to 0
-     *         keyDerivationAlgorithm [0] KeyDerivationAlgorithmIdentifier OPTIONAL,
+     *     KeyTransRecipientInfo ::= SEQUENCE {
+     *         version CMSVersion,  -- always set to 0 or 2 (currently only version 2 is supported)
+     *         rid RecipientIdentifier,
      *         keyEncryptionAlgorithm KeyEncryptionAlgorithmIdentifier,
      *         encryptedKey EncryptedKey
      *     }
      *
      *     CMSVersion ::= INTEGER { v0(0), v1(1), v2(2), v3(3), v4(4), v5(5) }
      *
-     *     KeyDerivationAlgorithmIdentifier ::= AlgorithmIdentifier
+     *     RecipientIdentifier ::= CHOICE {
+     *         issuerAndSerialNumber IssuerAndSerialNumber, -- not supported
+     *         subjectKeyIdentifier [0] SubjectKeyIdentifier
+     *     }
      *
      *     KeyEncryptionAlgorithmIdentifier ::= AlgorithmIdentifier
      *
      *     EncryptedKey ::= OCTET STRING
+     *
+     *     SubjectKeyIdentifier ::= OCTET STRING
      * @endcode
      */
     ///@{
@@ -95,9 +100,9 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilCMSPasswordRecipient() throw();
+    virtual ~VirgilCMSKeyTransRecipient() throw();
 };
 
-}}}
+}}}}
 
-#endif /* VIRGIL_CRYPTO_CMS_VIRGIL_CMS_PASSWORD_RECIPIENT_H */
+#endif /* VIRGIL_CRYPTO_VIRGIL_CMS_KEY_TRANS_RECIPIENT_H */

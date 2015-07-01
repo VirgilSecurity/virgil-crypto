@@ -34,15 +34,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/cms/VirgilCMSContent.h>
-using virgil::crypto::cms::VirgilCMSContent;
-using virgil::crypto::cms::VirgilCMSContentType;
+#include <virgil/crypto/foundation/cms/VirgilCMSContent.h>
+using virgil::crypto::foundation::cms::VirgilCMSContent;
+using virgil::crypto::foundation::cms::VirgilCMSContentType;
 
-#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::asn1::VirgilAsn1Reader;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::asn1::VirgilAsn1Writer;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;

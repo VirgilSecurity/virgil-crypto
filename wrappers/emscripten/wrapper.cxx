@@ -159,7 +159,7 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
     ;
 }
 
-EMSCRIPTEN_BINDINGS(virgil_crypto_base) {
+EMSCRIPTEN_BINDINGS(virgil_crypto_foundation) {
     class_<virgil::crypto::foundation::VirgilHash>("VirgilHash")
         .constructor<>()
         .class_function("md5", &virgil::crypto::foundation::VirgilHash::md5)

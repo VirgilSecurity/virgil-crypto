@@ -88,7 +88,11 @@ set_property (
 
 swig_add_module (${CSHARP_MODULE_NAME} csharp ${WRAPPER_INTERFACE_FILE})
 swig_link_libraries (${CSHARP_MODULE_NAME} ${WRAPPED_LIB_NAME})
-add_custom_command (TARGET ${CSHARP_MODULE_NAME} POST_BUILD
+
+set (CSHARP_SWIG_TARGET_NAME ${SWIG_MODULE_${CSHARP_MODULE_NAME}_REAL_NAME})
+message (STATUS "${CSHARP_SWIG_TARGET_NAME}")
+
+add_custom_command (TARGET ${CSHARP_SWIG_TARGET_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND}
         ARGS
             -DSRC_DIR:PATH=${CSHARP_SWIG_OUTPUT_DIRECTORY}
@@ -98,17 +102,16 @@ add_custom_command (TARGET ${CSHARP_MODULE_NAME} POST_BUILD
         COMMENT "Copy generated source files from ${CSHARP_SWIG_OUTPUT_DIRECTORY} to ${CSHARP_SOURCE_DIRECTORY}."
     )
 
-add_custom_command (TARGET ${CSHARP_MODULE_NAME} POST_BUILD
+add_custom_command (TARGET ${CSHARP_SWIG_TARGET_NAME} POST_BUILD
         COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/patch/uppercase_namespaces.py"
         ARGS ${CSHARP_SOURCE_DIRECTORY}
         COMMENT "Uppercase C# namespaces for ${CSHARP_SOURCE_DIRECTORY}/*."
     )
 
 # Configure assembly
-set (VIRGILCRYPTO_SWIG_TARGET_NAME ${SWIG_MODULE_${CSHARP_MODULE_NAME}_REAL_NAME})
-set_target_properties (${VIRGILCRYPTO_SWIG_TARGET_NAME}
+set_target_properties (${CSHARP_SWIG_TARGET_NAME}
         PROPERTIES OUTPUT_NAME ${CSHARP_MODULE_NAME})
-set_target_properties (${VIRGILCRYPTO_SWIG_TARGET_NAME}
+set_target_properties (${CSHARP_SWIG_TARGET_NAME}
         PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CSHARP_BINARY_DIRECTORY})
 
 file (GLOB_RECURSE ASSEMBLY_SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cs")
@@ -123,7 +126,7 @@ endforeach (CS_FILE)
 
 # Add assembly dependencies
 csharp_add_library (${CSHARP_ASSEMBLY_NAME} "${CSHARP_SOURCE_DIRECTORY}/*.cs")
-add_dependencies (${CSHARP_ASSEMBLY_NAME} ${VIRGILCRYPTO_SWIG_TARGET_NAME})
+add_dependencies (${CSHARP_ASSEMBLY_NAME} ${CSHARP_SWIG_TARGET_NAME})
 
 # Install
 set (INSTALL_ARCH_DIR_NAME "")
@@ -135,7 +138,7 @@ if (WIN32 AND NOT CYGWIN)
     endif ()
 endif ()
 
-install (TARGETS ${CSHARP_MODULE_NAME}
+install (TARGETS ${CSHARP_SWIG_TARGET_NAME}
         DESTINATION "${INSTALL_LIB_DIR_NAME}/${INSTALL_ARCH_DIR_NAME}")
 
 install (FILES "${CSHARP_BINARY_DIRECTORY}/${CSHARP_ASSEMBLY_NAME}.dll"

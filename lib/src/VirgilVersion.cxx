@@ -5,7 +5,7 @@ using virgil::crypto::VirgilVersion;
 #include <string>
 
 size_t VirgilVersion::asNumber() {
-    return (majorVersion() << 24) | (minorVersion() << 8) | patchVersion();
+    return (majorVersion() << 16) | (minorVersion() << 8) | patchVersion();
 }
 
 std::string VirgilVersion::asString() {

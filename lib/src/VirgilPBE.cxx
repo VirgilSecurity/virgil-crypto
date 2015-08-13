@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilPBE.h>
-using virgil::crypto::VirgilPBE;
+#include <virgil/crypto/foundation/VirgilPBE.h>
+using virgil::crypto::foundation::VirgilPBE;
 
 #include <polarssl/asn1.h>
 #include <polarssl/oid.h>
@@ -50,25 +50,27 @@ using virgil::crypto::VirgilPBE;
 
 #include <cstring>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::str2bytes;
 
-#include <virgil/crypto/PolarsslException.h>
+#include <virgil/crypto/foundation/PolarsslException.h>
+using virgil::crypto::foundation::PolarsslException;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::asn1::VirgilAsn1Compatible;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 
-#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::asn1::VirgilAsn1Reader;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::asn1::VirgilAsn1Writer;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
-#include <virgil/crypto/VirgilRandom.h>
-using virgil::crypto::VirgilRandom;
+#include <virgil/crypto/foundation/VirgilRandom.h>
+using virgil::crypto::foundation::VirgilRandom;
 
 typedef enum {
     VIRGIL_PBE_NONE = 0,
@@ -77,7 +79,7 @@ typedef enum {
     VIRGIL_PBE_PKCS12_SHA1_RC4_128
 } VirgilPBEType;
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace foundation {
 
 class VirgilPBEImpl {
 public:
@@ -89,12 +91,12 @@ public:
     md_type_t mdType;
     cipher_type_t cipherType;
 public:
-    VirgilPBEImpl() : type(VIRGIL_PBE_NONE), random(virgil::str2bytes(std::string("com.virgilsecurity.VirgilPBE"))),
+    VirgilPBEImpl() : type(VIRGIL_PBE_NONE), random(str2bytes(std::string("com.virgilsecurity.VirgilPBE"))),
             algId(), pbeAlgOID(), pbeParams(), mdType(POLARSSL_MD_NONE), cipherType(POLARSSL_CIPHER_NONE) {
     }
 
     explicit VirgilPBEImpl(VirgilPBEType pbeType, const VirgilByteArray& salt, size_t iterationCount) : type(pbeType),
-            random(virgil::str2bytes(std::string("com.virgilsecurity.VirgilPBE"))) {
+            random(str2bytes(std::string("com.virgilsecurity.VirgilPBE"))) {
         const size_t adjustedIterationCount =
                 iterationCount < VirgilPBE::kIterationCountMin ? VirgilPBE::kIterationCountMin : iterationCount;
         switch (pbeType) {
@@ -110,7 +112,7 @@ public:
 
     }
     explicit VirgilPBEImpl(const VirgilByteArray& pbeAlgId) : type(VIRGIL_PBE_NONE),
-            random(virgil::str2bytes(std::string("com.virgilsecurity.VirgilPBE"))) {
+            random(str2bytes(std::string("com.virgilsecurity.VirgilPBE"))) {
         init_(pbeAlgId);
     }
 private:
@@ -231,7 +233,7 @@ private:
     }
 };
 
-}}
+}}}
 
 VirgilPBE VirgilPBE::pkcs5(const VirgilByteArray& salt, size_t iterationCount) {
     return VirgilPBE(VIRGIL_PBE_PKCS5, salt, iterationCount);

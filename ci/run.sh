@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2014 Virgil Security Inc.
+# Copyright (C) 2015 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -38,7 +38,7 @@
 set -ev
 
 cd "${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}"
-make
+make VERBOSE=1
 
 if [ "${PLATFORM_NAME}" == "PHP" ] || [ "${PLATFORM_NAME}" == "CPP" ]; then
     ctest --verbose

@@ -39,8 +39,6 @@
 #     - PLATFORM_NAME       - name of target platform and/or language.
 #     - LIB_LOW_LEVEL_API   - boolean value that defines whether to include low-level API or not.
 #     - LIB_FILE_IO         - boolean value that defines whether to include module depends on file IO or not.
-#     - CPP_BUILD_CLI       - boolean value that defines whether build C++ CLI or not.
-#     - CPP_SPLIT_CLI       - boolean value that defines whether split C++ CLI to separate utilities or not.
 #                             or separate utilities.
 #     - INSTALL_CORE_LIB    - boolean value that defines whether install core library and it's dependencies or not,
 #                             if this value is NO or undefined - only wrapped library will be installed.
@@ -64,11 +62,6 @@
 #     - VIRGIL_VERSION_PATCH - library patch number.
 #     - VIRGIL_SOVERSION     - library ABI version.
 #
-#     - CPP_CLI_VERSION       - C++ CLI full version.
-#     - CPP_CLI_VERSION_MAJOR - C++ CLI major version number.
-#     - CPP_CLI_VERSION_MINOR - C++ CLI minor version number.
-#     - CPP_CLI_VERSION_PATCH - C++ CLI patch number.
-#
 
 cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 
@@ -88,8 +81,8 @@ else ()
 endif ()
 
 # Set library version
-set (VIRGIL_VERSION_MAJOR 0)
-set (VIRGIL_VERSION_MINOR 9)
+set (VIRGIL_VERSION_MAJOR 1)
+set (VIRGIL_VERSION_MINOR 0)
 set (VIRGIL_VERSION_PATCH 0)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 1)
@@ -108,8 +101,6 @@ message (STATUS "Selected platform and/or language is: " ${PLATFORM_NAME})
 
 set (LIB_LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API or not")
 set (LIB_FILE_IO OFF CACHE BOOL "Defines whether to include module depends on file IO or not")
-set (CPP_BUILD_CLI OFF CACHE BOOL "Defines whether build C++ CLI or not")
-set (CPP_SPLIT_CLI OFF CACHE BOOL "Defines whether split C++ CLI to separate utilities or not")
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
 
 # Platform dependent configuration
@@ -158,20 +149,5 @@ if (PLATFORM_NAME_LOWER STREQUAL "cpp")
     if (ENABLE_TESTING)
         add_subdirectory (tests)
     endif (ENABLE_TESTING)
-    if (CPP_BUILD_CLI)
-        if (NOT LIB_FILE_IO)
-            message (FATAL_ERROR "C++ CLI prerequisite failed: LIB_FILE_IO is OFF")
-        endif (NOT LIB_FILE_IO)
-        message (STATUS "C++ CLI status: ENABLED")
-        # Set C++ CLI version
-        set (CPP_CLI_VERSION_MAJOR 0)
-        set (CPP_CLI_VERSION_MINOR 2)
-        set (CPP_CLI_VERSION_PATCH 0)
-        set (CPP_CLI_VERSION ${CPP_CLI_VERSION_MAJOR}.${CPP_CLI_VERSION_MINOR}.${CPP_CLI_VERSION_PATCH})
-        message (STATUS "C++ CLI version: " ${CPP_CLI_VERSION})
-        add_subdirectory (cli)
-    else (CPP_BUILD_CLI)
-        message (STATUS "C++ CLI status: DISABLED")
-    endif(CPP_BUILD_CLI)
 endif ()
 add_subdirectory (wrappers)

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2014 Virgil Security Inc.
+# Copyright (C) 2015 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -38,15 +38,22 @@ cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 
 project (virgil)
 
+# Configure compiler flags
+if (CMAKE_MAJOR_VERSION LESS 3 AND NOT CMAKE_CROSSCOMPILING)
+    include(CheckCCompilerFlag)
+    check_c_compiler_flag (-fPIC COMPILER_SUPPORT_PIC)
+    if (COMPILER_SUPPORT_PIC)
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    endif()
+endif ()
+
 # Include and build external libraries
 include (ExternalProject)
 include (${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/mbedtls_ext.cmake)
-include (${CMAKE_CURRENT_SOURCE_DIR}/jsoncpp/jsoncpp_ext.cmake)
 
 set (VIRGIL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories (${VIRGIL_INCLUDE_DIR})
 include_directories (${MBEDTLS_INCLUDE_DIR})
-include_directories (${JSONCPP_INCLUDE_DIR})
 
 # Define sources list
 aux_source_directory ("src" src)
@@ -73,7 +80,7 @@ set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${VIRGIL_INCLUDE_DIR})
 
-target_link_libraries (${PROJECT_NAME} mbedtls jsoncpp)
+target_link_libraries (${PROJECT_NAME} mbedtls)
 add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy_if_different
@@ -90,13 +97,29 @@ if (INSTALL_CORE_LIB)
             DESTINATION "${INSTALL_LIB_DIR_NAME}")
     install (FILES ${MBEDTLS_LIBRARY}
             DESTINATION "${INSTALL_LIB_DIR_NAME}")
-    install (FILES ${JSONCPP_LIBRARY}
-            DESTINATION "${INSTALL_LIB_DIR_NAME}")
 
     add_subdirectory (include)
 endif ()
 
 if (INSTALL_EXT_HEADERS)
-    install (DIRECTORY ${JSONCPP_INCLUDE_DIR}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
     install (DIRECTORY ${MBEDTLS_INCLUDE_DIR}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
 endif ()
+
+# add a target to generate API documentation with Doxygen
+find_package(Doxygen)
+
+find_program(dot DOT_PROGRAM)
+if (DOT_PROGRAM)
+    set (DOT_FOUND "YES")
+else ()
+    set (DOT_FOUND "NO")
+endif (DOT_PROGRAM)
+
+if(DOXYGEN_FOUND)
+    configure_file (${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+    add_custom_target (doc
+        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/docs
+        COMMENT "Generating API documentation with Doxygen" VERBATIM
+    )
+endif (DOXYGEN_FOUND)

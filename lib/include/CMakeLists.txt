@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2014 Virgil Security Inc.
+# Copyright (C) 2015 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -54,7 +54,6 @@ else ()
         PATTERN "VirgilOID.h" EXCLUDE
         PATTERN "VirgilAsn1Reader.h" EXCLUDE
         PATTERN "VirgilAsn1Writer.h" EXCLUDE
-        PATTERN "VirgilAsn1Writer.h" EXCLUDE
         PATTERN "VirgilKDF.h" EXCLUDE
         PATTERN "PolarsslException.h" EXCLUDE
         PATTERN "VirgilKeyPairGenerator.h" EXCLUDE
@@ -62,7 +61,6 @@ else ()
         PATTERN "VirgilAsymmetricCipher.h" EXCLUDE
         PATTERN "VirgilRandom.h" EXCLUDE
         PATTERN "VirgilPBE.h" EXCLUDE
-        PATTERN "VirgilContentInfo.h" EXCLUDE
         PATTERN ${EXCLUDE_FILE_IO_PATTERN} EXCLUDE
     )
 endif ()

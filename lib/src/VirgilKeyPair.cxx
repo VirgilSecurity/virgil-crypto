@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,17 +34,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/data/VirgilKeyPair.h>
-using virgil::service::data::VirgilKeyPair;
+#include <virgil/crypto/VirgilKeyPair.h>
+using virgil::crypto::VirgilKeyPair;
 
-#include <virgil/crypto/VirgilRandom.h>
-using virgil::crypto::VirgilRandom;
+#include <virgil/crypto/foundation/VirgilRandom.h>
+using virgil::crypto::foundation::VirgilRandom;
 
-#include <virgil/crypto/VirgilKeyPairGenerator.h>
-using virgil::crypto::VirgilKeyPairGenerator;
+#include <virgil/crypto/foundation/VirgilKeyPairGenerator.h>
+using virgil::crypto::foundation::VirgilKeyPairGenerator;
 
-#include <virgil/crypto/VirgilAsymmetricCipher.h>
-using virgil::crypto::VirgilAsymmetricCipher;
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
 #include <string>
 

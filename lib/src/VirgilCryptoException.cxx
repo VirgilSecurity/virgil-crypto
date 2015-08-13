@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,8 +37,5 @@
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/VirgilException.h>
-using virgil::VirgilException;
-
-VirgilCryptoException::VirgilCryptoException(const std::string& what) : VirgilException(what) {
+VirgilCryptoException::VirgilCryptoException(const std::string& what) : std::logic_error(what) {
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,32 +34,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilSymmetricCipher.h>
-using virgil::crypto::VirgilSymmetricCipher;
-using virgil::crypto::VirgilSymmetricCipherImpl;
+#include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
+using virgil::crypto::foundation::VirgilSymmetricCipher;
+using virgil::crypto::foundation::VirgilSymmetricCipherImpl;
 
 #include <polarssl/cipher.h>
 #include <polarssl/oid.h>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/PolarsslException.h>
-using virgil::crypto::PolarsslException;
+#include <virgil/crypto/foundation/PolarsslException.h>
+using virgil::crypto::foundation::PolarsslException;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::asn1::VirgilAsn1Compatible;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 
-#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::asn1::VirgilAsn1Reader;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::asn1::VirgilAsn1Writer;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace foundation {
 
 class VirgilSymmetricCipherImpl {
 public:
@@ -114,7 +114,7 @@ public:
     VirgilByteArray iv;
 };
 
-}}
+}}}
 
 VirgilSymmetricCipher::VirgilSymmetricCipher()
         : impl_(new VirgilSymmetricCipherImpl(POLARSSL_CIPHER_NONE)) {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,31 +34,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilKDF.h>
-using virgil::crypto::VirgilKDF;
-using virgil::crypto::VirgilKDFImpl;
+#include <virgil/crypto/foundation/VirgilKDF.h>
+using virgil::crypto::foundation::VirgilKDF;
+using virgil::crypto::foundation::VirgilKDFImpl;
 
 #include <polarssl/kdf.h>
 #include <polarssl/oid.h>
 #include <polarssl/kdf.h>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/PolarsslException.h>
-using virgil::crypto::PolarsslException;
+#include <virgil/crypto/foundation/PolarsslException.h>
+using virgil::crypto::foundation::PolarsslException;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::asn1::VirgilAsn1Compatible;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 
-#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::asn1::VirgilAsn1Reader;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::asn1::VirgilAsn1Writer;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 #include <string>
 
@@ -69,7 +69,7 @@ using virgil::crypto::asn1::VirgilAsn1Writer;
 static const md_type_t kHashType_Default = POLARSSL_MD_SHA256;
 ///@}
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace foundation {
 
 class VirgilKDFImpl {
 public:
@@ -85,7 +85,7 @@ public:
     md_info_t const *  mdInfo; // hash algorithm type info
 };
 
-}}
+}}}
 
 VirgilKDF VirgilKDF::kdf1() {
     return VirgilKDF(POLARSSL_KDF_KDF1, kHashType_Default);

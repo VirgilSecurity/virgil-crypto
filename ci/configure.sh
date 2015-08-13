@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2014 Virgil Security Inc.
+# Copyright (C) 2015 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -54,4 +54,5 @@ if [ -d "${BUILD_DIR_NAME}" ]; then
 fi
 mkdir "${BUILD_DIR_NAME}"
 cd "${BUILD_DIR_NAME}"
+cmake --version
 cmake ${CMAKE_ARGS} ..

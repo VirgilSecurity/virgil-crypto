@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -38,7 +38,7 @@
 %pragma(php) phpinfo="
   php_info_print_table_start();
   php_info_print_table_header(2, \"Directive\", \"Value\");
-  php_info_print_table_row(2, \"Version\", virgil::VirgilVersion::asString().c_str());
+  php_info_print_table_row(2, \"Version\", virgil::crypto::VirgilVersion::asString().c_str());
 #if defined(LIB_LOW_LEVEL_API)
   php_info_print_table_row(2, \"Low-level API support\", \"enabled\");
 #else

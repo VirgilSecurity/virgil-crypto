@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,14 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/VirgilCipher.h>
-using virgil::service::VirgilCipher;
+#include <virgil/crypto/VirgilCipher.h>
+using virgil::crypto::VirgilCipher;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/VirgilSymmetricCipher.h>
-using virgil::crypto::VirgilSymmetricCipher;
+#include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
+using virgil::crypto::foundation::VirgilSymmetricCipher;
 
 VirgilCipher::~VirgilCipher() throw() {
 }
@@ -67,11 +67,11 @@ VirgilByteArray VirgilCipher::encrypt(const VirgilByteArray& data, bool embedCon
 }
 
 VirgilByteArray VirgilCipher::decryptWithKey(const VirgilByteArray& encryptedData,
-        const VirgilByteArray& certificateId, const VirgilByteArray& privateKey,
+        const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
 
     VirgilByteArray payload = tryReadContentInfo(encryptedData);
-    VirgilSymmetricCipher& cipher = initDecryptionWithKey(certificateId, privateKey, privateKeyPassword);
+    VirgilSymmetricCipher& cipher = initDecryptionWithKey(recipientId, privateKey, privateKeyPassword);
     return decrypt(payload, cipher);
 }
 

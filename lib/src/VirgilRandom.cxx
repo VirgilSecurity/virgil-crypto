@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,19 +34,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilRandom.h>
-using virgil::crypto::VirgilRandom;
+#include <virgil/crypto/foundation/VirgilRandom.h>
+using virgil::crypto::foundation::VirgilRandom;
+using virgil::crypto::foundation::VirgilRandomImpl;
 
 #include <polarssl/entropy.h>
 #include <polarssl/ctr_drbg.h>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/PolarsslException.h>
-using virgil::crypto::PolarsslException;
+#include <virgil/crypto/foundation/PolarsslException.h>
+using virgil::crypto::foundation::PolarsslException;
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace foundation {
 
 class VirgilRandomImpl {
 public:
@@ -54,7 +55,7 @@ public:
     entropy_context entropy;
 };
 
-}}
+}}}
 
 VirgilRandom::VirgilRandom(const VirgilByteArray& personalInfo) : impl_(new VirgilRandomImpl()) {
     entropy_init(&impl_->entropy);

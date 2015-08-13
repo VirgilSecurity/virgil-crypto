@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_DATA_SOURCE_BRIDGE_HPP
 #define AS3_VIRGIL_DATA_SOURCE_BRIDGE_HPP
 
-#include <virgil/service/VirgilDataSource.h>
-using virgil::service::VirgilDataSource;
+#include <virgil/crypto/VirgilDataSource.h>
+using virgil::crypto::VirgilDataSource;
 
 #include "as3_utils.hpp"
 

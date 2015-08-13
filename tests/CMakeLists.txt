@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2014 Virgil Security Inc.
+# Copyright (C) 2015 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -42,7 +42,6 @@ set (TEST_RUNNER test_runner)
 
 # Add include directory of wrapped module
 include_directories (${VIRGIL_INCLUDE_DIR})
-include_directories (${JSONCPP_INCLUDE_DIR})
 
 aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR} SRC_LIST)
 add_executable(${TEST_RUNNER} ${SRC_LIST})

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -36,21 +36,6 @@
 
 #include "VirgilVersion.wrapper.hpp"
 
-#include "VirgilSerializable.wrapper.hpp"
-
-#include "VirgilId.wrapper.hpp"
-#include "VirgilAccountId.wrapper.hpp"
-#include "VirgilCertificateId.wrapper.hpp"
-#include "VirgilTicketId.wrapper.hpp"
-#include "VirgilSigntId.wrapper.hpp"
-
-#include "VirgilAccount.wrapper.hpp"
-#include "VirgilCertificate.wrapper.hpp"
-#include "VirgilTicket.wrapper.hpp"
-#include "VirgilUniqueTicket.wrapper.hpp"
-#include "VirgilInfoTicket.wrapper.hpp"
-#include "VirgilSign.wrapper.hpp"
-
 #include "VirgilRandom.wrapper.hpp"
 #include "VirgilKeyPair.wrapper.hpp"
 
@@ -61,7 +46,6 @@
 #include "VirgilSigner.wrapper.hpp"
 #include "VirgilStreamSigner.wrapper.hpp"
 
-#include "VirgilContentInfo.wrapper.hpp"
 #include "VirgilCustomParams.wrapper.hpp"
 #include "VirgilHash.wrapper.hpp"
 #include "VirgilBase64.wrapper.hpp"

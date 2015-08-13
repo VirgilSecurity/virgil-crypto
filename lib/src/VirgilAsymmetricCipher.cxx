@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,9 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilAsymmetricCipher.h>
-using virgil::crypto::VirgilAsymmetricCipher;
-using virgil::crypto::VirgilAsymmetricCipherImpl;
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+using virgil::crypto::foundation::VirgilAsymmetricCipher;
+using virgil::crypto::foundation::VirgilAsymmetricCipherImpl;
 
 #include <cstring>
 
@@ -49,25 +49,26 @@ using virgil::crypto::VirgilAsymmetricCipherImpl;
 #include <polarssl/entropy.h>
 #include <polarssl/ctr_drbg.h>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/VirgilKeyPairGenerator.h>
-using virgil::crypto::VirgilKeyPairGenerator;
+#include <virgil/crypto/foundation/VirgilKeyPairGenerator.h>
+using virgil::crypto::foundation::VirgilKeyPairGenerator;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::asn1::VirgilAsn1Writer;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
-#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::asn1::VirgilAsn1Reader;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/PolarsslException.h>
+#include <virgil/crypto/foundation/PolarsslException.h>
+using virgil::crypto::foundation::PolarsslException;
 
 /// @name Private section
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace foundation {
 
 class VirgilAsymmetricCipherImpl {
 public:
@@ -124,7 +125,7 @@ public:
     pk_context * ctx;
 };
 
-}}
+}}}
 
 VirgilAsymmetricCipher::VirgilAsymmetricCipher(int type)
         : impl_(new VirgilAsymmetricCipherImpl(static_cast<pk_type_t>(type))) {

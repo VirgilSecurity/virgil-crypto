@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -57,8 +57,8 @@
 
     import flash.utils.getTimer;
 
-    import com.virgilsecurity.*;
     import com.virgilsecurity.crypto.*;
+    import com.virgilsecurity.crypto.foundation.*;
     import com.virgilsecurity.wrapper.CModule;
 
     public class EncryptAppController extends Application {
@@ -264,7 +264,7 @@
                 const contentInfoInitialDataSize:uint = 16;
                 var contentInfo:ByteArray = new ByteArray();
                 inFileStream.readBytes(contentInfo, 0, contentInfoInitialDataSize);
-                const contentInfoSize:uint = VirgilContentInfo.defineSize(contentInfo);
+                const contentInfoSize:uint = VirgilCipherBase.defineContentInfoSize(contentInfo);
                 if (contentInfoSize == 0 || contentInfoSize < contentInfoInitialDataSize) {
                     throw new Error("Encrypted file does not contain embedded content info.");
                 }

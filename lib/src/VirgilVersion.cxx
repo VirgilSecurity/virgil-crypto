@@ -1,11 +1,11 @@
-#include <virgil/VirgilVersion.h>
-using virgil::VirgilVersion;
+#include <virgil/crypto/VirgilVersion.h>
+using virgil::crypto::VirgilVersion;
 
 #include <cstddef>
 #include <string>
 
 size_t VirgilVersion::asNumber() {
-    return (majorVersion() << 24) | (minorVersion() << 8) | patchVersion();
+    return (majorVersion() << 16) | (minorVersion() << 8) | patchVersion();
 }
 
 std::string VirgilVersion::asString() {

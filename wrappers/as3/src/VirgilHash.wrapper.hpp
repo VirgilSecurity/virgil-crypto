@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_HASH_HPP
 #define AS3_VIRGIL_HASH_HPP
 
-#include <virgil/crypto/VirgilHash.h>
-using virgil::crypto::VirgilHash;
+#include <virgil/crypto/foundation/VirgilHash.h>
+using virgil::crypto::foundation::VirgilHash;
 
 #include "as3_utils.hpp"
 

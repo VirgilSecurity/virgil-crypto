@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,9 +37,7 @@
 #ifndef VIRGIL_CRYPTO_EXCEPTION_H
 #define VIRGIL_CRYPTO_EXCEPTION_H
 
-#include <virgil/VirgilException.h>
-using virgil::VirgilException;
-
+#include <stdexcept>
 #include <string>
 
 namespace virgil { namespace crypto {
@@ -47,8 +45,11 @@ namespace virgil { namespace crypto {
 /**
  * @brief Encapsulates logic errors of module 'crypto'
  */
-class VirgilCryptoException : public VirgilException {
+class VirgilCryptoException : public std::logic_error {
 public:
+    /**
+     * @brief Construct exception with detailed information about it.
+     */
     explicit VirgilCryptoException(const std::string& what);
 };
 

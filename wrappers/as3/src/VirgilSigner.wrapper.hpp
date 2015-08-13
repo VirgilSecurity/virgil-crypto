@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -39,70 +39,39 @@
 
 #include "as3_utils.hpp"
 
-#include <virgil/service/VirgilSigner.h>
-using virgil::service::VirgilSigner;
+#include <virgil/crypto/VirgilSigner.h>
+using virgil::crypto::VirgilSigner;
 
-#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::asn1::VirgilAsn1Compatible;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 
 AS3_IMPL_CONSTRUCTOR(VirgilSigner)
 AS3_IMPL_DESTRUCTOR(VirgilSigner)
 
 AS3_DECL_FUNC(_wrap_VirgilSigner_sign,
-    "(asSelf:int, asData:ByteArray, asSignerCertificateId:ByteArray,"
-    "asPrivateKey:ByteArray, asPrivateKeyPassword:ByteArray = null):int") {
+    "(asSelf:int, asData:ByteArray, asPrivateKey:ByteArray, asPrivateKeyPassword:ByteArray = null):ByteArray") {
 AS3_THROWABLE_SECTION_START
     AS3_TO_C_PTR(VirgilSigner, asSelf, cSelf);
     AS3_TO_C_BYTE_ARRAY(asData, cData);
-    AS3_TO_C_BYTE_ARRAY(asSignerCertificateId, cSignerCertificateId);
     AS3_TO_C_BYTE_ARRAY(asPrivateKey, cPrivateKey);
     AS3_TO_C_BYTE_ARRAY_OPT(asPrivateKeyPassword, cPrivateKeyPassword);
 
-    VirgilSign *cSign = new VirgilSign(
-            cSelf->sign(cData, cSignerCertificateId, cPrivateKey, cPrivateKeyPassword));
+    VirgilByteArray cSign = cSelf->sign(cData, cPrivateKey, cPrivateKeyPassword);
 
-    AS3_RETURN_C_PTR(cSign);
+    AS3_RETURN_C_BYTE_ARRAY(cSign);
 AS3_THROWABLE_SECTION_END
 }
 
 AS3_DECL_FUNC(_wrap_VirgilSigner_verify,
-        "(asSelf:int, asData:ByteArray, asSign:int, asPublicKey:ByteArray):Boolean") {
+        "(asSelf:int, asData:ByteArray, asSign:ByteArray, asPublicKey:ByteArray):Boolean") {
 AS3_THROWABLE_SECTION_START
     AS3_TO_C_PTR(VirgilSigner, asSelf, cSelf);
     AS3_TO_C_BYTE_ARRAY(asData, cData);
-    AS3_TO_C_PTR(VirgilSign, asSign, cSign);
+    AS3_TO_C_BYTE_ARRAY(asSign, cSign);
     AS3_TO_C_BYTE_ARRAY(asPublicKey, cPublicKey);
 
-    bool cVerified = cSelf->verify(cData, *cSign, cPublicKey);
+    bool cVerified = cSelf->verify(cData, cSign, cPublicKey);
 
-    AS3_RETURN_C_BOOL(cVerified);
-AS3_THROWABLE_SECTION_END
-}
-
-AS3_DECL_FUNC(_wrap_VirgilSigner_signObject,
-    "(asSelf:int, asObject:int, asSignerCertificateId:ByteArray,"
-    "asPrivateKey:ByteArray, asPrivateKeyPassword:ByteArray = null):int") {
-    AS3_TO_C_PTR(VirgilSigner, asSelf, cSelf);
-    AS3_TO_C_PTR(VirgilAsn1Compatible, asObject, cObject);
-    AS3_TO_C_BYTE_ARRAY(asSignerCertificateId, cSignerCertificateId);
-    AS3_TO_C_BYTE_ARRAY(asPrivateKey, cPrivateKey);
-    AS3_TO_C_BYTE_ARRAY_OPT(asPrivateKeyPassword, cPrivateKeyPassword);
-AS3_THROWABLE_SECTION_START
-    VirgilSign *cSign = new VirgilSign(
-            cSelf->sign(*cObject, cSignerCertificateId, cPrivateKey, cPrivateKeyPassword));
-
-    AS3_RETURN_C_PTR(cSign);
-AS3_THROWABLE_SECTION_END
-}
-
-AS3_DECL_FUNC(_wrap_VirgilSigner_verifyObject,
-        "(asSelf:int, asObject:int, asSign:int, asPublicKey:ByteArray):Boolean") {
-    AS3_TO_C_PTR(VirgilSigner, asSelf, cSelf);
-    AS3_TO_C_PTR(VirgilAsn1Compatible, asObject, cObject);
-    AS3_TO_C_PTR(VirgilSign, asSign, cSign);
-    AS3_TO_C_BYTE_ARRAY(asPublicKey, cPublicKey);
-AS3_THROWABLE_SECTION_START
-    bool cVerified = cSelf->verify(*cObject, *cSign, cPublicKey);
     AS3_RETURN_C_BOOL(cVerified);
 AS3_THROWABLE_SECTION_END
 }

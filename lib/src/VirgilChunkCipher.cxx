@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,8 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/VirgilChunkCipher.h>
-using virgil::service::VirgilChunkCipher;
+#include <virgil/crypto/VirgilChunkCipher.h>
+using virgil::crypto::VirgilChunkCipher;
+using virgil::crypto::str2bytes;
 
 #include <cstring>
 #include <cmath>
@@ -46,17 +47,17 @@ using std::string;
 #include <sstream>
 using std::ostringstream;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
-#include <virgil/VirgilException.h>
-using virgil::VirgilException;
+#include <virgil/crypto/VirgilCryptoException.h>
+using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/VirgilSymmetricCipher.h>
-using virgil::crypto::VirgilSymmetricCipher;
+#include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
+using virgil::crypto::foundation::VirgilSymmetricCipher;
 
-#include <virgil/crypto/VirgilAsymmetricCipher.h>
-using virgil::crypto::VirgilAsymmetricCipher;
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
 /**
  * @name Contsants
@@ -88,9 +89,9 @@ size_t VirgilChunkCipher::startEncryption(size_t preferredChunkSize) {
     return actualChunkSize;
 }
 
-size_t VirgilChunkCipher::startDecryptionWithKey(const VirgilByteArray& certificateId,
+size_t VirgilChunkCipher::startDecryptionWithKey(const VirgilByteArray& recipientId,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
-    VirgilSymmetricCipher& symmetricCipher = initDecryptionWithKey(certificateId, privateKey, privateKeyPassword);
+    VirgilSymmetricCipher& symmetricCipher = initDecryptionWithKey(recipientId, privateKey, privateKeyPassword);
     return adjustDecryptionChunkSize(retrieveChunkSize(), symmetricCipher.blockSize());
 }
 
@@ -106,7 +107,7 @@ VirgilByteArray VirgilChunkCipher::process(const VirgilByteArray& data) {
         ostringstream message;
         message << "In the decryption mode data size MUST be multiple of ";
         message << symmetricCipher.blockSize() << " bytes.";
-        throw VirgilException(message.str());
+        throw VirgilCryptoException(message.str());
     }
 
     symmetricCipher.reset();
@@ -125,11 +126,11 @@ void VirgilChunkCipher::finish() {
 }
 
 void VirgilChunkCipher::storeChunkSize(size_t chunkSize) {
-    customParams().setInteger(virgil::str2bytes(kCustomParameterKey_ChunkSize), chunkSize);
+    customParams().setInteger(str2bytes(kCustomParameterKey_ChunkSize), chunkSize);
 }
 
 size_t VirgilChunkCipher::retrieveChunkSize() const {
-    return customParams().getInteger(virgil::str2bytes(kCustomParameterKey_ChunkSize));
+    return customParams().getInteger(str2bytes(kCustomParameterKey_ChunkSize));
 }
 
 

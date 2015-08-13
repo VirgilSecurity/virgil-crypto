@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_RANDOM_HPP
 #define AS3_VIRGIL_RANDOM_HPP
 
-#include <virgil/crypto/VirgilRandom.h>
-using virgil::crypto::VirgilRandom;
+#include <virgil/crypto/foundation/VirgilRandom.h>
+using virgil::crypto::foundation::VirgilRandom;
 
 #include "as3_utils.hpp"
 

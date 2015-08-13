@@ -25,7 +25,7 @@
             var certId = Module.VirgilByteArray.fromUTF8("17648c7e-9ca3-4707-bdc6-a5c57b7a18fc");
             var data = Module.VirgilByteArray.fromUTF8("data to be signed");
             var signer = new Module.VirgilSigner();
-            var sign = signer.sign(data, certId, keys.privateKey(), pwd);
+            var sign = signer.sign(data, keys.privateKey(), pwd);
             var verified = signer.verify(data, sign, keys.publicKey());
             console.log("Data verification " + (verified ? "passed" : "failed"));
             pwd.delete();

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,15 +34,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::asn1::VirgilAsn1Reader;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/PolarsslException.h>
-#include <virgil/VirgilException.h>
-using virgil::VirgilException;
+#include <virgil/crypto/foundation/PolarsslException.h>
+using virgil::crypto::foundation::PolarsslException;
+
+#include <virgil/crypto/VirgilCryptoException.h>
+using virgil::crypto::VirgilCryptoException;
 
 #include <cstddef>
 #include <string>
@@ -166,11 +168,11 @@ size_t VirgilAsn1Reader::readSet() {
 
 void VirgilAsn1Reader::checkState() {
     if (p_ == 0 || end_ == 0) {
-        throw VirgilException(std::string("VirgilAsn1Reader: ") +
+        throw VirgilCryptoException(std::string("VirgilAsn1Reader: ") +
                 "Reader was not initialized - 'reset' method was not called.");
     }
     if (p_ >= end_) {
-        throw VirgilException(std::string("VirgilAsn1Reader: ") +
+        throw VirgilCryptoException(std::string("VirgilAsn1Reader: ") +
             "ASN.1 structure was totally read, so no data left to be processed.");
     }
 }

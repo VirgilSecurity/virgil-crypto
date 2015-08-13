@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -59,14 +59,10 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
      */
     public function test_data_sign_verify_with_generated_keys() {
         $initialString = "very long string to be signed";
-        $signerCertificateId = "CERT-1234";
-
-        $signer = new VirgilSigner();
-
         $key = new VirgilKeyPair();
 
-        $sign = $signer->sign($initialString, $signerCertificateId, $key->privateKey());
-
+        $signer = new VirgilSigner();
+        $sign = $signer->sign($initialString, $key->privateKey());
         $verifyResult = $signer->verify($initialString, $sign, $key->publicKey());
 
         $this->assertEquals($verifyResult, True);
@@ -79,13 +75,10 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
     public function test_data_sign_verify_with_generated_keys_with_password() {
         $initialString = "very long string to be signed";
         $privateKeyPassword = "password";
-        $signerCertificateId = "CERT-1234";
-
         $key = new VirgilKeyPair($privateKeyPassword);
+
         $signer = new VirgilSigner();
-
-        $sign = $signer->sign($initialString, $signerCertificateId, $key->privateKey(), $privateKeyPassword);
-
+        $sign = $signer->sign($initialString, $key->privateKey(), $privateKeyPassword);
         $verifyResult = $signer->verify($initialString, $sign, $key->publicKey());
 
         $this->assertEquals($verifyResult, True);
@@ -100,15 +93,10 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
     public function test_data_sign_verify_with_generated_keys_and_wrong_password() {
         $initialString = "very long string to be signed";
         $privateKeyPassword = "password";
-        $signerCertificateId = "CERT-1234";
-
         $key = new VirgilKeyPair($privateKeyPassword);
 
         $signer = new VirgilSigner();
-
-        $sign = $signer->sign($initialString, $signerCertificateId, $key->privateKey(),
-                $privateKeyPassword . "Wrong password");
-
+        $sign = $signer->sign($initialString, $key->privateKey(), $privateKeyPassword . "Wrong password");
         $verifyResult = $signer->verify($initialString, $sign, $key->publicKey());
 
         $this->assertEquals($verifyResult, True);
@@ -135,12 +123,9 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
                 "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
                 "-----END EC PRIVATE KEY-----\n";
         $initialString = "very long string to be signed";
-        $signerCertificateId = "CERT-1234";
 
         $signer = new VirgilSigner();
-
-        $sign = $signer->sign($initialString, $signerCertificateId, $privateKeyPem512);
-
+        $sign = $signer->sign($initialString, $privateKeyPem512);
         $verifyResult = $signer->verify($initialString, $sign, $publicKeyPem512);
 
         $this->assertEquals($verifyResult, True);
@@ -165,12 +150,9 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
                 "-----END RSA PRIVATE KEY-----\n";
 
         $initialString = "string to be signed";
-        $signerCertificateId = "CERT-1234";
 
         $signer = new VirgilSigner();
-
-        $sign = $signer->sign($initialString, $signerCertificateId, $privateKeyPem128);
-
+        $sign = $signer->sign($initialString, $privateKeyPem128);
         $verifyResult = $signer->verify($initialString, $sign, $publicKeyPem128);
 
         $this->assertEquals($verifyResult, True);
@@ -204,55 +186,14 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
                 "1a7lKNR7ZwFS4vJaV+spAkAXHzK0j2mcWVVGwfbjtTNZMcJXFFMwwChXqrJSmJuf\n".
                 "9n6CqsAWIqytPE/eccgCSqU1XGR5gvrsx7NnPvvqilFs\n".
                 "-----END RSA PRIVATE KEY-----\n".
-
         $initialString = "very long string to be signed";
-        $signerCertificateId = "CERT-1234";
 
         $signer = new VirgilSigner();
-
-        $sign = $signer->sign($initialString, $signerCertificateId, $privateKeyPem1024);
-
+        $sign = $signer->sign($initialString, $privateKeyPem1024);
         $verifyResult = $signer->verify($initialString, $sign, $publicKeyPem1024);
 
         $this->assertEquals($verifyResult, True);
     }
-
-    /**
-     * @covers VirgilSigner::sign
-     * @covers VirgilSigner::verify
-     */
-    public function test_unique_ticket_sign_verify_with_generated_keys() {
-        $ticket = new VirgilUniqueTicket(virgil_php::VirgilUniqueTicketType_Email, "user@domain.com");
-        $signerCertificateId = "CERT-1234";
-
-        $key = new VirgilKeyPair();
-
-        $signer = new VirgilSigner();
-        $sign = $signer->sign($ticket, $signerCertificateId, $key->privateKey());
-
-        $verifyResult = $signer->verify($ticket, $sign, $key->publicKey());
-
-        $this->assertEquals($verifyResult, True);
-    }
-
-    /**
-     * @covers VirgilSigner::sign
-     * @covers VirgilSigner::verify
-     */
-    public function test_info_ticket_first_name_sign_verify_with_generated_keys() {
-        $ticket = new VirgilInfoTicket(virgil_php::VirgilInfoTicketType_FirstName, "Jon");
-        $signerCertificateId = "CERT-1234";
-
-        $key = new VirgilKeyPair();
-
-        $signer = new VirgilSigner();
-        $sign = $signer->sign($ticket, $signerCertificateId, $key->privateKey());
-
-        $verifyResult = $signer->verify($ticket, $sign, $key->publicKey());
-
-        $this->assertEquals($verifyResult, True);
-    }
-
 }
 
 ?>

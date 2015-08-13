@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_STREAM_SIGNER_HPP
 #define AS3_VIRGIL_STREAM_SIGNER_HPP
 
-#include <virgil/service/VirgilStreamSigner.h>
-using virgil::service::VirgilStreamSigner;
+#include <virgil/crypto/VirgilStreamSigner.h>
+using virgil::crypto::VirgilStreamSigner;
 
 #include "as3_utils.hpp"
 #include "VirgilDataSourceBridge.hpp"
@@ -47,31 +47,28 @@ AS3_DECL_THROWABLE_CONSTRUCTOR(VirgilStreamSigner)
 AS3_IMPL_DESTRUCTOR(VirgilStreamSigner)
 
 AS3_DECL_FUNC(_wrap_VirgilStreamSigner_sign,
-        "(asSelf:int, asDataSource:*, asSignerCertificateId:ByteArray, "
-        "asPrivateKey:ByteArray, asPrivateKeyPassword:ByteArray = null):int") {
+        "(asSelf:int, asDataSource:*, asPrivateKey:ByteArray, asPrivateKeyPassword:ByteArray = null):ByteArray") {
     AS3_TO_C_PTR(VirgilStreamSigner, asSelf, cSelf);
     AS3_TO_C_VAR(asDataSource, cDataSource);
-    AS3_TO_C_BYTE_ARRAY(asSignerCertificateId, cSignerCertificateId);
     AS3_TO_C_BYTE_ARRAY(asPrivateKey, cPrivateKey);
     AS3_TO_C_BYTE_ARRAY_OPT(asPrivateKeyPassword, cPrivateKeyPassword);
     VirgilDataSourceBridge cDataSourceBridge(cDataSource);
 AS3_THROWABLE_SECTION_START
-    VirgilSign *cSign = new VirgilSign(
-            cSelf->sign(cDataSourceBridge, cSignerCertificateId, cPrivateKey, cPrivateKeyPassword));
-    AS3_RETURN_C_PTR(cSign);
+    VirgilByteArray cSign = cSelf->sign(cDataSourceBridge, cPrivateKey, cPrivateKeyPassword);
+    AS3_RETURN_C_BYTE_ARRAY(cSign);
 AS3_THROWABLE_SECTION_END
 
 }
 
 AS3_DECL_FUNC(_wrap_VirgilStreamSigner_verify,
-        "(asSelf:int, asDataSource:*, asSign:int, asPublicKey:ByteArray):Boolean") {
+        "(asSelf:int, asDataSource:*, asSign:ByteArray, asPublicKey:ByteArray):Boolean") {
     AS3_TO_C_PTR(VirgilStreamSigner, asSelf, cSelf);
     AS3_TO_C_VAR(asDataSource, cDataSource);
-    AS3_TO_C_PTR(VirgilSign, asSign, cSign);
+    AS3_TO_C_BYTE_ARRAY(asSign, cSign);
     AS3_TO_C_BYTE_ARRAY(asPublicKey, cPublicKey);
     VirgilDataSourceBridge cDataSourceBridge(cDataSource);
 AS3_THROWABLE_SECTION_START
-    bool cVerified = cSelf->verify(cDataSourceBridge, *cSign, cPublicKey);
+    bool cVerified = cSelf->verify(cDataSourceBridge, cSign, cPublicKey);
     AS3_RETURN_C_BOOL(cVerified);
 AS3_THROWABLE_SECTION_END
 

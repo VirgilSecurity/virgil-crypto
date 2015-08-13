@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,13 +37,17 @@
 #ifndef AS3_VIRGIL_CIPHER_BASE_HPP
 #define AS3_VIRGIL_CIPHER_BASE_HPP
 
-#include <virgil/service/VirgilCipherBase.h>
-using virgil::service::VirgilCipherBase;
+#include <virgil/crypto/VirgilCipherBase.h>
+using virgil::crypto::VirgilCipherBase;
 
 #include <virgil/crypto/VirgilCustomParams.h>
 using virgil::crypto::VirgilCustomParams;
 
 #include "as3_utils.hpp"
+
+enum {
+    kContentInfoHeaderMinLength = 16
+};
 
 AS3_DECL_FUNC(_wrap_VirgilCipherBase_addKeyRecipient,
         "(asSelf:int, asCertificateId:ByteArray, asPublicKey:ByteArray):void") {
@@ -100,6 +104,16 @@ AS3_THROWABLE_SECTION_START
     cSelf->setContentInfo(cContentInfo);
     AS3_RETURN_VOID();
 AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilCipherBase_defineContentInfoSize, "(asContentInfo:ByteArray):uint") {
+    AS3_TO_C_BYTE_ARRAY(asContentInfo, cContentInfo);
+    if (cContentInfo.size() < kContentInfoHeaderMinLength) {
+        AS3_THROW_EXCEPTION("VirgilCipherBase: Not enough data to determine content info length.");
+        return;
+    }
+    size_t cContentInfoSize = VirgilCipherBase::defineContentInfoSize(cContentInfo);
+    AS3_RETURN_C_UINT(cContentInfoSize);
 }
 
 AS3_DECL_FUNC(_wrap_VirgilCipherBase_customParams, "(asSelf:int):int") {

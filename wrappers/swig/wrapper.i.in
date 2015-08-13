@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -63,43 +63,72 @@
 %include "common.i"
 %include "util.i"
 
-// Package: virgil
-%ignore virgil::str2bytes;
-%ignore virgil::bytes2str;
-%ignore virgil::hex2bytes;
-%ignore virgil::bytes2hex;
-%ignore virgil::bytes_zeroize;
-INCLUDE_CLASS(VirgilByteArray, virgil, virgil)
-
-INCLUDE_CLASS(VirgilException, virgil, virgil)
+// Package: virgil::crypto
+%ignore virgil::crypto::str2bytes;
+%ignore virgil::crypto::bytes2str;
+%ignore virgil::crypto::hex2bytes;
+%ignore virgil::crypto::bytes2hex;
+%ignore virgil::crypto::bytes_zeroize;
+INCLUDE_CLASS(VirgilByteArray, virgil::crypto, virgil/crypto)
 
 %ignore VIRGIL_VERSION;
 %ignore VIRGIL_VERSION_MAJOR;
 %ignore VIRGIL_VERSION_MINOR;
 %ignore VIRGIL_VERSION_PATCH;
-INCLUDE_CLASS(VirgilVersion, virgil, virgil)
+INCLUDE_CLASS(VirgilVersion, virgil::crypto, virgil/crypto)
 
-// Package: virgil::crypto::asn1
+INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilCryptoException, virgil::crypto, virgil/crypto)
+
+// Package: virgil::crypto::foundation::asn1
 %ignore *::asn1Write;
 %ignore *::asn1Read;
 %ignore *::jsonWrite;
 %ignore *::jsonRead;
 #if defined(LIB_LOW_LEVEL_API)
-    INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto::asn1, virgil/crypto/asn1)
-    INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto::asn1, virgil/crypto/asn1)
+    INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto::foundation::asn1, virgil/crypto/foundation/asn1)
+    INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto::foundation::asn1, virgil/crypto/foundation/asn1)
 #else
     %ignore VirgilAsn1Reader;
     %ignore VirgilAsn1Writer;
 #endif /* LIB_LOW_LEVEL_API */
-INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::asn1, virgil/crypto/asn1)
+INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::foundation::asn1, virgil/crypto/foundation/asn1)
 
-// Package: virgil::crypto::cms
+// Package: virgil::crypto::foundation
 #if defined(LIB_LOW_LEVEL_API)
-    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSKeyTransRecipient, virgil::crypto::cms, virgil/crypto/cms)
-    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSPasswordRecipient, virgil::crypto::cms, virgil/crypto/cms)
-    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEncryptedContent, virgil::crypto::cms, virgil/crypto/cms)
-    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEnvelopedData, virgil::crypto::cms, virgil/crypto/cms)
-    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSContent, virgil::crypto::cms, virgil/crypto/cms)
+    DEFINE_NAMESPACE(VirgilSymmetricCipherPadding, virgil::crypto::foundation)
+    DEFINE_NAMESPACE(ECKeyGroup, virgil::crypto::foundation)
+    DEFINE_NAMESPACE(VirgilKeyPairType, virgil::crypto::foundation)
+
+    INCLUDE_CLASS(VirgilKDF, virgil::crypto::foundation, virgil/crypto/foundation)
+    INCLUDE_CLASS(VirgilKeyPairGenerator, virgil::crypto::foundation, virgil/crypto/foundation)
+    INCLUDE_CLASS(VirgilSymmetricCipher, virgil::crypto::foundation, virgil/crypto/foundation)
+    INCLUDE_CLASS(VirgilAsymmetricCipher, virgil::crypto::foundation, virgil/crypto/foundation)
+    INCLUDE_CLASS(VirgilRandom, virgil::crypto::foundation, virgil/crypto/foundation)
+    INCLUDE_CLASS(VirgilPBE, virgil::crypto::foundation, virgil/crypto/foundation)
+#endif /* defined(LIB_LOW_LEVEL_API) */
+INCLUDE_CLASS(VirgilHash, virgil::crypto::foundation, virgil/crypto/foundation)
+INCLUDE_CLASS(VirgilBase64, virgil::crypto::foundation, virgil/crypto/foundation)
+
+// Package: virgil::crypto
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCustomParams, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilKeyPair, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilCipherBase, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilCipher, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilChunkCipher, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilSigner, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilStreamSigner, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilStreamCipher, virgil::crypto, virgil/crypto)
+
+// Package: virgil::crypto::foundation::cms
+#if defined(LIB_LOW_LEVEL_API)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSKeyTransRecipient, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSPasswordRecipient, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEncryptedContent, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEnvelopedData, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSContent, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSContentInfo, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
 #else
     %ignore VirgilCMSKeyTransRecipient;
     %ignore VirgilCMSPasswordRecipient;
@@ -107,61 +136,3 @@ INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::asn1, virgil/crypto/asn1)
     %ignore VirgilCMSEnvelopedData;
     %ignore VirgilCMSContent;
 #endif /* LIB_LOW_LEVEL_API */
-
-
-// Package: virgil::crypto
-#if defined(LIB_LOW_LEVEL_API)
-    DEFINE_NAMESPACE(VirgilSymmetricCipherPadding, virgil::crypto)
-    DEFINE_NAMESPACE(ECKeyGroup, virgil::crypto)
-    DEFINE_NAMESPACE(VirgilKeyPairType, virgil::crypto)
-
-    INCLUDE_CLASS(VirgilKDF, virgil::crypto, virgil/crypto)
-    INCLUDE_CLASS(VirgilKeyPairGenerator, virgil::crypto, virgil/crypto)
-    INCLUDE_CLASS(VirgilSymmetricCipher, virgil::crypto, virgil/crypto)
-    INCLUDE_CLASS(VirgilAsymmetricCipher, virgil::crypto, virgil/crypto)
-    INCLUDE_CLASS(VirgilRandom, virgil::crypto, virgil/crypto)
-    INCLUDE_CLASS(VirgilPBE, virgil::crypto, virgil/crypto)
-    INCLUDE_CLASS(VirgilContentInfo, virgil::crypto, virgil/crypto)
-#endif /* defined(LIB_LOW_LEVEL_API) */
-INCLUDE_CLASS(VirgilCryptoException, virgil::crypto, virgil/crypto)
-INCLUDE_CLASS(VirgilHash, virgil::crypto, virgil/crypto)
-INCLUDE_CLASS(VirgilBase64, virgil::crypto, virgil/crypto)
-INCLUDE_CLASS(VirgilCustomParams, virgil::crypto, virgil/crypto)
-
-// Package: virgil::service::data
-INCLUDE_CLASS(VirgilJsonCompatible, virgil::service::data, virgil/service/data)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilKeyPair, virgil::service::data, virgil/service/data)
-
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilId, virgil::service::data, virgil/service/data)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilAccountId, virgil::service::data, virgil/service/data)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCertificateId, virgil::service::data, virgil/service/data)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilTicketId, virgil::service::data, virgil/service/data)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilSignId, virgil::service::data, virgil/service/data)
-
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilIdProvider, virgil::service::data, virgil/service/data)
-%template(VirgilAccountIdProvider) virgil::service::data::VirgilIdProvider<VirgilAccountId>;
-%template(VirgilCertificateIdProvider) virgil::service::data::VirgilIdProvider<VirgilCertificateId>;
-%template(VirgilTicketIdProvider) virgil::service::data::VirgilIdProvider<VirgilTicketId>;
-%template(VirgilSignIdProvider) virgil::service::data::VirgilIdProvider<VirgilSignId>;
-
-%newobject *::createFromAsn1;
-%newobject *::createFromJson;
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilAccount, virgil::service::data, virgil/service/data)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCertificate, virgil::service::data, virgil/service/data)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilTicket, virgil::service::data, virgil/service/data)
-INCLUDE_TYPE(VirgilUniqueTicketType, virgil/service/data)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilUniqueTicket, virgil::service::data, virgil/service/data)
-INCLUDE_TYPE(VirgilInfoTicketType, virgil/service/data)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilInfoTicket, virgil::service::data, virgil/service/data)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilSign, virgil::service::data, virgil/service/data)
-
-// Package: virgil::service
-INCLUDE_CLASS(VirgilCipherBase, virgil::service, virgil/service)
-INCLUDE_CLASS(VirgilCipher, virgil::service, virgil/service)
-INCLUDE_CLASS(VirgilChunkCipher, virgil::service, virgil/service)
-INCLUDE_CLASS(VirgilSigner, virgil::service, virgil/service)
-
-INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::service, virgil/service)
-INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::service, virgil/service)
-INCLUDE_CLASS(VirgilStreamSigner, virgil::service, virgil/service)
-INCLUDE_CLASS(VirgilStreamCipher, virgil::service, virgil/service)

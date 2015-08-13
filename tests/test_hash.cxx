@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -43,13 +43,13 @@
 
 #include <string>
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
-using virgil::hex2bytes;
-using virgil::str2bytes;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::str2bytes;
+using virgil::crypto::hex2bytes;
 
-#include <virgil/crypto/VirgilHash.h>
-using virgil::crypto::VirgilHash;
+#include <virgil/crypto/foundation/VirgilHash.h>
+using virgil::crypto::foundation::VirgilHash;
 
 TEST_CASE("MD5", "[hash]") {
     VirgilHash hash = VirgilHash::md5();

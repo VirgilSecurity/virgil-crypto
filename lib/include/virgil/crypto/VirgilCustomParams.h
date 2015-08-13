@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,11 +37,11 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_CUSTOM_PARAMS_H
 #define VIRGIL_CRYPTO_VIRGIL_CUSTOM_PARAMS_H
 
-#include <virgil/crypto/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::asn1::VirgilAsn1Compatible;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
 #include <map>
 #include <string>
@@ -55,7 +55,7 @@ class VirgilCustomParams : public VirgilAsn1Compatible {
 public:
     /**
      * @name VirgilAsn1Compatible implementation
-     *
+     * @code
      * Marshalling format:
      *     VirgilCustomParams ::= SET SIZE (1..MAX) OF KeyValue
      *
@@ -71,6 +71,7 @@ public:
      *         str  [1] EXPLICIT UTF8String,
      *         data [2] EXPLICIT OCTET STRING
      *     }
+     * @endcode
      */
     ///@{
     virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;

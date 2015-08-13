@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,8 +37,8 @@
 #ifndef AS3_VIRGIL_BASE64_HPP
 #define AS3_VIRGIL_BASE64_HPP
 
-#include <virgil/crypto/VirgilBase64.h>
-using virgil::crypto::VirgilBase64;
+#include <virgil/crypto/foundation/VirgilBase64.h>
+using virgil::crypto::foundation::VirgilBase64;
 
 #include "as3_utils.hpp"
 

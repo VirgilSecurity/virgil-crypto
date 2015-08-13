@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,14 +37,18 @@
 #include <virgil/crypto/VirgilCustomParams.h>
 using virgil::crypto::VirgilCustomParams;
 
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::bytes2str;
+
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::asn1::VirgilAsn1Reader;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::asn1::VirgilAsn1Writer;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 #include <cstddef>
 #include <vector>
@@ -75,7 +79,7 @@ int VirgilCustomParams::getInteger(const VirgilByteArray& key) const {
         return keyValue->second;
     } else {
         throw VirgilCryptoException(std::string("VirgilCustomParams") +
-                "Key '" + virgil::bytes2str(key) + "' is not found.");
+                "Key '" + bytes2str(key) + "' is not found.");
     }
 }
 
@@ -93,7 +97,7 @@ VirgilByteArray VirgilCustomParams::getString(const VirgilByteArray& key) const 
         return keyValue->second;
     } else {
         throw VirgilCryptoException(std::string("VirgilCustomParams") +
-                "Key '" + virgil::bytes2str(key) + "' is not found.");
+                "Key '" + bytes2str(key) + "' is not found.");
     }
 }
 
@@ -111,7 +115,7 @@ VirgilByteArray VirgilCustomParams::getData(const VirgilByteArray& key) const {
         return keyValue->second;
     } else {
         throw VirgilCryptoException(std::string("VirgilCustomParams") +
-                "Key '" + virgil::bytes2str(key) + "' is not found.");
+                "Key '" + bytes2str(key) + "' is not found.");
     }
 }
 

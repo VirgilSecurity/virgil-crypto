@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2014 Virgil Security Inc.
+# Copyright (C) 2015 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -41,6 +41,7 @@ project (${WRAPPED_LIB_NAME}_emscripten)
 # Configure
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 set (WRAPPER_TARGET ${PROJECT_NAME}_${VIRGIL_VERSION})
+set (EMIT_MEM_FILE OFF)
 
 set (EMSCRIPTEN $ENV{EMSCRIPTEN})
 if (NOT EMSCRIPTEN)
@@ -63,9 +64,12 @@ configure_file (
 # Build
 add_executable (${WRAPPER_TARGET} ${WRAPPER_SRC})
 target_link_libraries (${WRAPPER_TARGET} ${WRAPPED_LIB_NAME})
-em_link_post_js (${WRAPPER_TARGET} ${CMAKE_CURRENT_SOURCE_DIR}/helpers.js)
-set_property (TARGET ${WRAPPER_TARGET} APPEND_STRING PROPERTY COMPILE_FLAGS "-std=c++11")
+set_property (TARGET ${WRAPPER_TARGET} APPEND_STRING PROPERTY COMPILE_FLAGS " -std=c++11")
 set_property (TARGET ${WRAPPER_TARGET} APPEND_STRING PROPERTY LINK_FLAGS " --bind")
+if (NOT EMIT_MEM_FILE)
+    set_property (TARGET ${WRAPPER_TARGET} APPEND_STRING PROPERTY LINK_FLAGS " --memory-init-file 0")
+endif ()
+em_link_post_js (${WRAPPER_TARGET} ${CMAKE_CURRENT_SOURCE_DIR}/helpers.js)
 
 # Install
 install (TARGETS ${WRAPPER_TARGET} DESTINATION "${INSTALL_LIB_DIR_NAME}")
@@ -75,7 +79,7 @@ if (CMAKE_BUILD_TYPE)
     set (CMAKE_CXX_FLAGS_ALL "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}")
 endif ()
 string (REGEX MATCH "-O2|-O3" OPTIMIZED_BUILD "${CMAKE_CXX_FLAGS_ALL}")
-if (OPTIMIZED_BUILD)
+if (OPTIMIZED_BUILD AND EMIT_MEM_FILE)
     install (FILES $<TARGET_FILE:${WRAPPER_TARGET}>.mem DESTINATION "${INSTALL_LIB_DIR_NAME}")
 endif ()
 

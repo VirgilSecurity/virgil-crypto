@@ -1,5 +1,35 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.0.0-rc1 released 2015-07-01
+
+Bugfix:
+  * Fix version number calculation.
+  * Fix doxygen warnings.
+
+Features:
+  * Add ability to generate documentation as part of the building process.
+
+Improvements:
+  * Add Idea IDE files to .gitignore.
+  * CI: Make build output verbose.
+  * CI: Print CMake version.
+
+Changes:
+  * Change license copyright date to 2015.
+  * Move namespaces "asn1" and "cms" to the "foundation".
+  * Move class "VirgilContentInfo" to the "cms" namespace.
+  * Add uppercase namespaces to the .NET assembly.
+  * Change name for .Net Crypto library to Virgil.Crypto.dll.
+  * Make namespace 'virgil' clean.
+  * Add default C# implementation for VirgilDataSource and VirgilDataSink.
+  * Emscripten: Switch off memory optimization.
+  * Emscripten: Change example to conform new library interface.
+  * PHP Tests: Remove expected exception message from the test requirement, as several valid messages are exist.
+  * CMake: Add -fPIC compiler flag to the library.
+  * CI: Install latest CMake.
+  * Remove dependency from Virgil Public Keys Service.
+  * Move CLI to the separate repository.
+
 = Version 0.9.0 released 2015-05-18
 
 Bugfix:

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,20 +34,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/cms/VirgilCMSContent.h>
-using virgil::crypto::cms::VirgilCMSContent;
-using virgil::crypto::cms::VirgilCMSContentType;
+#include <virgil/crypto/foundation/cms/VirgilCMSContent.h>
+using virgil::crypto::foundation::cms::VirgilCMSContent;
+using virgil::crypto::foundation::cms::VirgilCMSContentType;
 
-#include <virgil/crypto/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::asn1::VirgilAsn1Reader;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
-#include <virgil/crypto/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::asn1::VirgilAsn1Writer;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 #include <virgil/crypto/VirgilCryptoException.h>
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/VirgilOID.h>
+#include <virgil/crypto/foundation/VirgilOID.h>
 
 #include <cstddef>
 #include <cstring>

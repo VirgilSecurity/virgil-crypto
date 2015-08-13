@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2014 Virgil Security Inc.
+ * Copyright (C) 2015 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,23 +34,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/service/VirgilStreamCipher.h>
-using virgil::service::VirgilStreamCipher;
+#include <virgil/crypto/VirgilStreamCipher.h>
+using virgil::crypto::VirgilStreamCipher;
 
-#include <virgil/VirgilByteArray.h>
-using virgil::VirgilByteArray;
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/VirgilKDF.h>
-using virgil::crypto::VirgilKDF;
+#include <virgil/crypto/foundation/VirgilKDF.h>
+using virgil::crypto::foundation::VirgilKDF;
 
-#include <virgil/crypto/VirgilSymmetricCipher.h>
-using virgil::crypto::VirgilSymmetricCipher;
+#include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
+using virgil::crypto::foundation::VirgilSymmetricCipher;
 
-#include <virgil/crypto/VirgilAsymmetricCipher.h>
-using virgil::crypto::VirgilAsymmetricCipher;
-
-#include <virgil/crypto/VirgilContentInfo.h>
-using virgil::crypto::VirgilContentInfo;
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
 VirgilStreamCipher::~VirgilStreamCipher() throw() {
 }
@@ -75,11 +72,11 @@ void VirgilStreamCipher::encrypt(VirgilDataSource& source, VirgilDataSink& sink,
 }
 
 void VirgilStreamCipher::decryptWithKey(VirgilDataSource& source, VirgilDataSink& sink,
-        const VirgilByteArray& certificateId, const VirgilByteArray& privateKey,
+        const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
 
     VirgilByteArray firstChunk = tryReadContentInfo(source);
-    VirgilSymmetricCipher& cipher = initDecryptionWithKey(certificateId, privateKey, privateKeyPassword);
+    VirgilSymmetricCipher& cipher = initDecryptionWithKey(recipientId, privateKey, privateKeyPassword);
     decrypt(source, sink, cipher, firstChunk);
 }
 
@@ -99,7 +96,7 @@ VirgilByteArray VirgilStreamCipher::tryReadContentInfo(VirgilDataSource& source)
         VirgilByteArray nextData = source.read();
         data.insert(data.end(), nextData.begin(), nextData.end());
     }
-    size_t contentInfoSize = VirgilContentInfo::defineSize(data);
+    size_t contentInfoSize = defineContentInfoSize(data);
     if (contentInfoSize > 0) {
         while (data.size() < contentInfoSize  && source.hasData()) {
             VirgilByteArray nextData = source.read();

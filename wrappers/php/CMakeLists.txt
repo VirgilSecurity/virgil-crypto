@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2014 Virgil Security Inc.
+# Copyright (C) 2015 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -63,25 +63,36 @@ set_property (
 )
 
 swig_add_module (${PHP_MODULE_NAME} php5 "${WRAPPER_INTERFACE_FILE}")
-set_target_properties(${SWIG_MODULE_${PHP_MODULE_NAME}_REAL_NAME} PROPERTIES PREFIX "")
+set (PHP_SWIG_TARGET_NAME ${SWIG_MODULE_${PHP_MODULE_NAME}_REAL_NAME})
 
 # Conform to http://www.php-cpp.com/documentation/install
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set_property (TARGET ${PHP_MODULE_NAME} APPEND_STRING PROPERTY LINK_FLAGS "-undefined dynamic_lookup")
+    set_property (TARGET ${PHP_SWIG_TARGET_NAME} APPEND_STRING PROPERTY LINK_FLAGS "-undefined dynamic_lookup")
 else()
-    set_target_properties(${PHP_MODULE_NAME} PROPERTIES VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
+    set_target_properties(${PHP_SWIG_TARGET_NAME} PROPERTIES VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
 endif ()
 swig_link_libraries (${PHP_MODULE_NAME} ${WRAPPED_LIB_NAME})
 
-install (TARGETS ${PHP_MODULE_NAME}
+set_target_properties(${PHP_SWIG_TARGET_NAME} PROPERTIES PREFIX "")
+
+add_custom_target (${PHP_SWIG_TARGET_NAME}_patch_version
+    COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/patch/add_version.py"
+        --input "${swig_generated_file_fullname}"
+        --lib-version "${VIRGIL_VERSION}"
+    DEPENDS "${swig_generated_file_fullname}"
+    COMMENT "Add version to the SWIG generated wrapper."
+)
+add_dependencies (${PHP_SWIG_TARGET_NAME} ${PHP_SWIG_TARGET_NAME}_patch_version)
+
+install (TARGETS ${PHP_SWIG_TARGET_NAME}
         RUNTIME DESTINATION "${INSTALL_BIN_DIR_NAME}"
         LIBRARY DESTINATION "${INSTALL_LIB_DIR_NAME}")
 
-install (PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/${SWIG_MODULE_${PHP_MODULE_NAME}_REAL_NAME}.php"
+install (PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/${PHP_SWIG_TARGET_NAME}.php"
         DESTINATION ${INSTALL_API_DIR_NAME})
 
 # Unit tests
 if (ENABLE_TESTING)
-    set (PHP_MODULE_FILE_NAME "${SWIG_MODULE_${PHP_MODULE_NAME}_REAL_NAME}.php")
+    set (PHP_MODULE_FILE_NAME "${PHP_SWIG_TARGET_NAME}.php")
     add_subdirectory (tests)
 endif (ENABLE_TESTING)

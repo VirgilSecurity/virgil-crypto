@@ -862,7 +862,7 @@ namespace Internal {
     // This level of indirection allows us to specialise for integer types
     // to avoid signed/ unsigned warnings
 
-    // "base" overload
+    // "foundation" overload
     template<Operator Op, typename T1, typename T2>
     bool compare( T1 const& lhs, T2 const& rhs ) {
         return Evaluator<T1, T2, Op>::evaluate( lhs, rhs );

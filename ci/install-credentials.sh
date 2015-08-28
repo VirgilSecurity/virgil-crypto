@@ -36,11 +36,10 @@
 #
 
 set -ev
-if [ ! -d "$HOME/swig/bin" ]; then
-    wget http://downloads.sourceforge.net/swig/swig-3.0.5.tar.gz
-    tar -xzf swig-3.0.5.tar.gz
-    cd swig-3.0.5 && ./configure --prefix=$HOME/swig && make && make install
-else
-    echo "Using SWIG cached directory."
-fi
 
+if [ "${PUBLISH_DOCS}" == "ON" ]; then
+    openssl aes-256-cbc -K $encrypted_f0ca52e75c0f_key -iv $encrypted_f0ca52e75c0f_iv \
+        -in "${TRAVIS_BUILD_DIR}/ci/travis_ci_rsa.enc" -out "${TRAVIS_BUILD_DIR}/ci/travis_ci_rsa" -d
+    chmod 0600 "${TRAVIS_BUILD_DIR}/ci/travis_ci_rsa"
+    cp "${TRAVIS_BUILD_DIR}/ci/travis_ci_rsa" "$HOME/.ssh/id_rsa"
+fi

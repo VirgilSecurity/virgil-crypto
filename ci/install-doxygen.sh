@@ -36,11 +36,13 @@
 #
 
 set -ev
-if [ ! -d "$HOME/swig/bin" ]; then
-    wget http://downloads.sourceforge.net/swig/swig-3.0.5.tar.gz
-    tar -xzf swig-3.0.5.tar.gz
-    cd swig-3.0.5 && ./configure --prefix=$HOME/swig && make && make install
-else
-    echo "Using SWIG cached directory."
-fi
 
+if [ "${PUBLISH_DOCS}" == "ON" ]; then
+    if [ ! -d "$HOME/doxygen/bin" ]; then
+        wget http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.10.linux.bin.tar.gz
+        tar -xzf doxygen-1.8.10.linux.bin.tar.gz
+        cp -fa doxygen-1.8.10/. $HOME/doxygen/
+    else
+        echo "Using Doxygen cached directory."
+    fi
+fi

@@ -65,4 +65,9 @@ swig -version
 export PATH=$HOME/phpunit/bin:$PATH
 phpunit --version
 
+if [ "${PUBLISH_DOCS}" == "ON" ]; then
+    export PATH=$HOME/doxygen/bin:$PATH
+    doxygen --version
+fi
+
 cmake ${CMAKE_ARGS} ..

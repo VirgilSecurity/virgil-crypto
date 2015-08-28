@@ -37,10 +37,12 @@
 #include <virgil/crypto/foundation/VirgilKeyPairGenerator.h>
 using virgil::crypto::foundation::VirgilKeyPairGenerator;
 
+#include <cstring>
+
 #include <polarssl/pk.h>
 #include <polarssl/ecp.h>
-#include "polarssl/entropy.h"
-#include "polarssl/ctr_drbg.h"
+#include <polarssl/entropy.h>
+#include <polarssl/ctr_drbg.h>
 
 #include <virgil/crypto/foundation/PolarsslException.h>
 using virgil::crypto::foundation::PolarsslException;

@@ -1,0 +1,5 @@
+/**
+ * \mainpage Virgil Security Crypto library
+ *
+ * The Virgil Security Crypto library offers set of methods that allow encrypt, decrypt, sign and verify data.
+ */

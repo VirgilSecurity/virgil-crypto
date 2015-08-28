@@ -36,28 +36,11 @@
 #
 
 set -ev
-
-sudo apt-get update -qq
-sudo apt-get install -y python-yaml
-
-if [ "${PLATFORM_NAME}" == "CPP" ]; then
-    sudo apt-get install -y libcurl4-openssl-dev
+if [ ! -d "$HOME/swig/bin" ]; then
+    wget http://downloads.sourceforge.net/swig/swig-3.0.5.tar.gz
+    tar -xzf swig-3.0.5.tar.gz
+    cd swig-3.0.5 && ./configure --prefix=$HOME/swig && make && make install
+else
+    echo "Using SWIG cached directory."
 fi
 
-if [ "${PLATFORM_NAME}" != "CPP" ] && [ "${PLATFORM_EMBEDDED}" != "ON" ]; then
-    # Install SWIG
-    wget http://downloads.sourceforge.net/swig/swig-3.0.5.tar.gz -O /tmp/swig-3.0.5.tar.gz
-    tar -xvf /tmp/swig-3.0.5.tar.gz --directory /tmp > /dev/null
-    cd /tmp/swig-3.0.5 && ./configure --prefix=/usr && make && sudo make install
-fi
-
-if [ "${PLATFORM_NAME}" == "PHP" ]; then
-    # Install PHP runtime
-    sudo apt-get install -y php5
-    # Install PHP developer libs
-    sudo apt-get install -y php5-dev
-    # Install PHPUnit
-    wget https://phar.phpunit.de/phpunit.phar -O /tmp/phpunit.phar
-    sudo chmod +x /tmp/phpunit.phar
-    sudo mv -f /tmp/phpunit.phar /usr/bin/phpunit
-fi

@@ -36,11 +36,11 @@
 #
 
 set -ev
-
-cd "${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}"
-make -j2 VERBOSE=1
-make install
-
-if [ "${PLATFORM_NAME}" == "PHP" ] || [ "${PLATFORM_NAME}" == "CPP" ]; then
-    ctest --verbose
+if [ ! -d "$HOME/cmake/bin" ]; then
+    wget http://www.cmake.org/files/v3.2/cmake-3.2.2-Linux-x86_64.tar.gz
+    tar -xzf cmake-3.2.2-Linux-x86_64.tar.gz
+    cp -fa cmake-3.2.2-Linux-x86_64/. $HOME/cmake/
+else
+    echo "Using CMake cached directory."
 fi
+

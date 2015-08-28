@@ -37,10 +37,9 @@
 
 set -ev
 
-cd "${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}"
-make -j2 VERBOSE=1
-make install
-
-if [ "${PLATFORM_NAME}" == "PHP" ] || [ "${PLATFORM_NAME}" == "CPP" ]; then
-    ctest --verbose
+if [ "${PUBLISH_DOCS}" == "ON" ]; then
+    openssl aes-256-cbc -K $encrypted_f0ca52e75c0f_key -iv $encrypted_f0ca52e75c0f_iv \
+        -in "${TRAVIS_BUILD_DIR}/ci/travis_ci_rsa.enc" -out "${TRAVIS_BUILD_DIR}/ci/travis_ci_rsa" -d
+    chmod 0600 "${TRAVIS_BUILD_DIR}/ci/travis_ci_rsa"
+    cp "${TRAVIS_BUILD_DIR}/ci/travis_ci_rsa" "$HOME/.ssh/id_rsa"
 fi

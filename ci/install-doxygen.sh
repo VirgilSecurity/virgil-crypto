@@ -37,10 +37,12 @@
 
 set -ev
 
-cd "${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}"
-make -j2 VERBOSE=1
-make install
-
-if [ "${PLATFORM_NAME}" == "PHP" ] || [ "${PLATFORM_NAME}" == "CPP" ]; then
-    ctest --verbose
+if [ "${PUBLISH_DOCS}" == "ON" ]; then
+    if [ ! -d "$HOME/doxygen/bin" ]; then
+        wget http://ftp.stack.nl/pub/users/dimitri/doxygen-1.8.10.linux.bin.tar.gz
+        tar -xzf doxygen-1.8.10.linux.bin.tar.gz
+        cp -fa doxygen-1.8.10/. $HOME/doxygen/
+    else
+        echo "Using Doxygen cached directory."
+    fi
 fi

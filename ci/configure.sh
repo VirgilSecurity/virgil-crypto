@@ -38,7 +38,7 @@
 set -ev
 
 # Configure CMake arguments
-CMAKE_ARGS="-DLIB_LOW_LEVEL_API=${LIB_LOW_LEVEL_API}"
+CMAKE_ARGS="-DLIB_LOW_LEVEL_API=${LIB_LOW_LEVEL_API} -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install"
 if [ "${PLATFORM_NAME}" ]; then
     CMAKE_ARGS+=" -DPLATFORM_NAME=${PLATFORM_NAME}"
 fi
@@ -52,7 +52,22 @@ cd "${TRAVIS_BUILD_DIR}"
 if [ -d "${BUILD_DIR_NAME}" ]; then
     rm -fr "${BUILD_DIR_NAME}"
 fi
+
 mkdir "${BUILD_DIR_NAME}"
 cd "${BUILD_DIR_NAME}"
+
+export PATH=$HOME/cmake/bin:$PATH
 cmake --version
+
+export PATH=$HOME/swig/bin:$PATH
+swig -version
+
+export PATH=$HOME/phpunit/bin:$PATH
+phpunit --version
+
+if [ "${PUBLISH_DOCS}" == "ON" ]; then
+    export PATH=$HOME/doxygen/bin:$PATH
+    doxygen --version
+fi
+
 cmake ${CMAKE_ARGS} ..

@@ -36,11 +36,11 @@
 #
 
 set -ev
-
-cd "${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}"
-make -j2 VERBOSE=1
-make install
-
-if [ "${PLATFORM_NAME}" == "PHP" ] || [ "${PLATFORM_NAME}" == "CPP" ]; then
-    ctest --verbose
+if [ ! -d "$HOME/phpunit/bin" ]; then
+    mkdir -p "$HOME/phpunit/bin"
+    wget https://phar.phpunit.de/phpunit.phar
+    cp -f phpunit.phar $HOME/phpunit/bin/phpunit
+    chmod +x $HOME/phpunit/bin/phpunit
+else
+    echo "Using PHPUnit cached directory."
 fi

@@ -8,7 +8,7 @@ env:
   global:
     - BUILD_DIR_NAME=build
   matrix:
-    - PLATFORM_NAME=CPP LIB_LOW_LEVEL_API=ON
+    - PLATFORM_NAME=CPP LIB_LOW_LEVEL_API=ON PUBLISH_DOCS=ON
     - PLATFORM_NAME=CPP LIB_LOW_LEVEL_API=OFF
     - PLATFORM_NAME=PHP LIB_LOW_LEVEL_API=ON
     - PLATFORM_NAME=PHP LIB_LOW_LEVEL_API=OFF
@@ -17,6 +17,7 @@ cache:
     - $HOME/cmake
     - $HOME/swig
     - $HOME/phpunit
+    - $HOME/doxygen
 addons:
   apt:
     sources:
@@ -27,12 +28,17 @@ addons:
       - php5
       - php5-dev
       - php5-cli
+      - graphviz
 before_install:
   - bash ./ci/install-cmake.sh
   - bash ./ci/install-swig.sh
   - bash ./ci/install-phpunit.sh
+  - bash ./ci/install-credentials.sh
+  - bash ./ci/install-doxygen.sh
 before_script:
   - bash ./ci/configure.sh
 script:
   - bash ./ci/run.sh
+after_success:
+  - bash ./ci/publish-docs.sh
 sudo: false

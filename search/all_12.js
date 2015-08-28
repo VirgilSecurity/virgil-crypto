@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['virgil_20security_20crypto_20library',['Virgil Security Crypto library',['../index.html',1,'']]],
   ['verify',['verify',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a321c232ad0189bf32ce5b422c51c3b88',1,'virgil::crypto::foundation::VirgilAsymmetricCipher::verify()'],['../classvirgil_1_1crypto_1_1_virgil_signer.html#a10fa9b26670f584ad3c130c2691ffd81',1,'virgil::crypto::VirgilSigner::verify()'],['../classvirgil_1_1crypto_1_1_virgil_stream_signer.html#ad52b84357cbe89ccc454c232e7eaddc9',1,'virgil::crypto::VirgilStreamSigner::verify()']]],
   ['virgil',['virgil',['../namespacevirgil.html',1,'']]],
   ['virgilasn1compatible',['VirgilAsn1Compatible',['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible.html',1,'virgil::crypto::foundation::asn1']]],

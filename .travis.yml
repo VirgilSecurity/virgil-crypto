@@ -1,16 +1,38 @@
 language: cpp
 compiler:
-    - clang
-    - gcc
+  - gcc
+  - clang
+os:
+  - linux
 env:
-    global:
-        - BUILD_DIR_NAME=build
-    matrix:
-        - PLATFORM_NAME=CPP LIB_LOW_LEVEL_API=ON
-        - PLATFORM_NAME=CPP LIB_LOW_LEVEL_API=OFF
-        - PLATFORM_NAME=PHP LIB_LOW_LEVEL_API=ON
-        - PLATFORM_NAME=PHP LIB_LOW_LEVEL_API=OFF
-before_install: ./ci/install_deps.sh
-before_script: ./ci/configure.sh
-script: ./ci/run.sh
-sudo: required
+  global:
+    - BUILD_DIR_NAME=build
+  matrix:
+    - PLATFORM_NAME=CPP LIB_LOW_LEVEL_API=ON
+    - PLATFORM_NAME=CPP LIB_LOW_LEVEL_API=OFF
+    - PLATFORM_NAME=PHP LIB_LOW_LEVEL_API=ON
+    - PLATFORM_NAME=PHP LIB_LOW_LEVEL_API=OFF
+cache:
+  directories:
+    - $HOME/cmake
+    - $HOME/swig
+    - $HOME/phpunit
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - libcurl4-openssl-dev
+      - python-yaml
+      - php5
+      - php5-dev
+      - php5-cli
+before_install:
+  - bash ./ci/install-cmake.sh
+  - bash ./ci/install-swig.sh
+  - bash ./ci/install-phpunit.sh
+before_script:
+  - bash ./ci/configure.sh
+script:
+  - bash ./ci/run.sh
+sudo: false

@@ -62,6 +62,16 @@ if [ "${PUBLISH_DOCS}" == "ON" ]; then
     # Copy new documentation
     cp -af "${HTML_PATH_SRC}/." "${HTML_PATH_DST}/"
 
+    # Fix source file names
+    cd "${HTML_PATH_DST}"
+    for f in _*.html; do
+        old_name=$f
+        new_name=${f/${f:0:1}/}
+        mv $old_name $new_name
+        sed -i"" "s/$old_name/$new_name/g" *.html
+    done
+    cd -
+
     # Create and commit the documentation repo.
     cd ${HTML_PATH_DST}
     git add .

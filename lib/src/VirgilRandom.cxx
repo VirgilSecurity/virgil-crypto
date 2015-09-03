@@ -35,16 +35,17 @@
  */
 
 #include <virgil/crypto/foundation/VirgilRandom.h>
-using virgil::crypto::foundation::VirgilRandom;
-using virgil::crypto::foundation::VirgilRandomImpl;
 
 #include <polarssl/entropy.h>
 #include <polarssl/ctr_drbg.h>
 
 #include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/foundation/PolarsslException.h>
+
 using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/foundation/PolarsslException.h>
+using virgil::crypto::foundation::VirgilRandom;
+using virgil::crypto::foundation::VirgilRandomImpl;
 using virgil::crypto::foundation::PolarsslException;
 
 namespace virgil { namespace crypto { namespace foundation {

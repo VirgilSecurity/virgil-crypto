@@ -35,60 +35,47 @@
  */
 
 #include <virgil/crypto/VirgilCipherBase.h>
-using virgil::crypto::VirgilCipherBase;
-using virgil::crypto::VirgilCipherBaseImpl;
 
 #include <cstring>
 #include <string>
-using std::string;
 
 #include <polarssl/asn1.h>
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
+#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/VirgilCustomParams.h>
+#include <virgil/crypto/foundation/VirgilRandom.h>
+#include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+#include <virgil/crypto/foundation/VirgilPBE.h>
+#include <virgil/crypto/foundation/cms/VirgilCMSContent.h>
+#include <virgil/crypto/foundation/cms/VirgilCMSContentInfo.h>
+#include <virgil/crypto/foundation/cms/VirgilCMSEnvelopedData.h>
+#include <virgil/crypto/foundation/cms/VirgilCMSKeyTransRecipient.h>
+#include <virgil/crypto/foundation/cms/VirgilCMSPasswordRecipient.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+
 using virgil::crypto::str2bytes;
 using virgil::crypto::bytes2str;
 using virgil::crypto::bytes_zeroize;
-
-#include <virgil/crypto/VirgilCryptoException.h>
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilCipherBase;
+using virgil::crypto::VirgilCipherBaseImpl;
 using virgil::crypto::VirgilCryptoException;
+using virgil::crypto::VirgilCustomParams;
 
-#include <virgil/crypto/foundation/VirgilRandom.h>
 using virgil::crypto::foundation::VirgilRandom;
-
-#include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
 using virgil::crypto::foundation::VirgilSymmetricCipher;
-
-#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
-
-#include <virgil/crypto/foundation/VirgilPBE.h>
 using virgil::crypto::foundation::VirgilPBE;
-
-#include <virgil/crypto/VirgilCryptoException.h>
-using virgil::crypto::VirgilCryptoException;
-
-#include <virgil/crypto/foundation/cms/VirgilCMSContent.h>
 using virgil::crypto::foundation::cms::VirgilCMSContent;
-
-#include <virgil/crypto/foundation/cms/VirgilCMSContentInfo.h>
 using virgil::crypto::foundation::cms::VirgilCMSContentInfo;
-
-#include <virgil/crypto/foundation/cms/VirgilCMSEnvelopedData.h>
 using virgil::crypto::foundation::cms::VirgilCMSEnvelopedData;
-
-#include <virgil/crypto/foundation/cms/VirgilCMSKeyTransRecipient.h>
 using virgil::crypto::foundation::cms::VirgilCMSKeyTransRecipient;
-
-#include <virgil/crypto/foundation/cms/VirgilCMSPasswordRecipient.h>
 using virgil::crypto::foundation::cms::VirgilCMSPasswordRecipient;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
-
 namespace virgil { namespace crypto {
 
 /**

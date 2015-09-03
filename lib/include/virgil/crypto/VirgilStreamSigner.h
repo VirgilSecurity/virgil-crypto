@@ -38,13 +38,8 @@
 #define VIRGIL_STREAM_SIGNER_H
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
-#include <virgil/crypto/foundation/VirgilHash.h>
-using virgil::crypto::foundation::VirgilHash;
-
 #include <virgil/crypto/VirgilDataSource.h>
-using virgil::crypto::VirgilDataSource;
+#include <virgil/crypto/foundation/VirgilHash.h>
 
 namespace virgil { namespace crypto {
 
@@ -59,7 +54,8 @@ public:
      * @brief Create signer with predefined hash function.
      * @note Specified hash function algorithm is used only during signing.
      */
-    explicit VirgilStreamSigner(const VirgilHash& hash = VirgilHash::sha384());
+    explicit VirgilStreamSigner(const virgil::crypto::foundation::VirgilHash& hash =
+            virgil::crypto::foundation::VirgilHash::sha384());
     /**
      * @brief Sign data provided by the source with given private key.
      * @return Virgil Security sign.
@@ -72,7 +68,7 @@ public:
      */
     bool verify(VirgilDataSource& source, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
 private:
-    VirgilHash hash_;
+    virgil::crypto::foundation::VirgilHash hash_;
 };
 
 }}

@@ -35,23 +35,25 @@
  */
 
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
-
-#include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
-#include <virgil/crypto/foundation/PolarsslException.h>
-using virgil::crypto::foundation::PolarsslException;
-
-#include <virgil/crypto/VirgilCryptoException.h>
-using virgil::crypto::VirgilCryptoException;
 
 #include <cstddef>
 #include <climits>
 #include <cstring>
 #include <algorithm>
 #include <stdexcept>
+#include <polarssl/asn1.h>
 #include <polarssl/asn1write.h>
+
+#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/foundation/PolarsslException.h>
+
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilCryptoException;
+
+using virgil::crypto::foundation::PolarsslException;
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
+
 
 static const size_t kBufLenDefault = 2048;
 

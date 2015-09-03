@@ -35,18 +35,19 @@
  */
 
 #include <virgil/crypto/VirgilKeyPair.h>
-using virgil::crypto::VirgilKeyPair;
-
-#include <virgil/crypto/foundation/VirgilRandom.h>
-using virgil::crypto::foundation::VirgilRandom;
-
-#include <virgil/crypto/foundation/VirgilKeyPairGenerator.h>
-using virgil::crypto::foundation::VirgilKeyPairGenerator;
-
-#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
-using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
 #include <string>
+
+#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/foundation/VirgilRandom.h>
+#include <virgil/crypto/foundation/VirgilKeyPairGenerator.h>
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilKeyPair;
+using virgil::crypto::foundation::VirgilRandom;
+using virgil::crypto::foundation::VirgilKeyPairGenerator;
+using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
 /**
  * @name Configuration constants.

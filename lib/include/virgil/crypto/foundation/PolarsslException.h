@@ -38,7 +38,6 @@
 #define VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H
 
 #include <virgil/crypto/VirgilCryptoException.h>
-using virgil::crypto::VirgilCryptoException;
 
 #define POLARSSL_ERROR_HANDLER(invocation) POLARSSL_ERROR_HANDLER_DISPOSE(invocation, {})
 
@@ -57,7 +56,7 @@ namespace virgil { namespace crypto { namespace foundation {
 /**
  * @brief Encapsulates low-level domain error of the PolarSSL framework.
  */
-class PolarsslException : public VirgilCryptoException {
+class PolarsslException : public virgil::crypto::VirgilCryptoException {
 public:
     /**
      * @name Constructor

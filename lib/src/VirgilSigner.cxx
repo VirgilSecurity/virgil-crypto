@@ -35,21 +35,19 @@
  */
 
 #include <virgil/crypto/VirgilSigner.h>
-using virgil::crypto::VirgilSigner;
 
 #include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/foundation/VirgilHash.h>
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+
+using virgil::crypto::VirgilSigner;
 using virgil::crypto::VirgilByteArray;
 
-#include <virgil/crypto/foundation/VirgilHash.h>
 using virgil::crypto::foundation::VirgilHash;
-
-#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 VirgilSigner::VirgilSigner(const VirgilHash& hash) : hash_(hash) {

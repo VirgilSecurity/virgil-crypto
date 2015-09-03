@@ -42,7 +42,6 @@
 #include <vector>
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
 
 namespace virgil { namespace crypto { namespace foundation { namespace asn1 {
 
@@ -76,7 +75,7 @@ public:
      * @return ASN.1 structure that was written.
      * @warning After call this method all attempts to write more data will cause exceptions.
      */
-    VirgilByteArray finish();
+    virgil::crypto::VirgilByteArray finish();
     ///@}
     /**
      * @name Write Simple ASN.1 Types
@@ -98,13 +97,13 @@ public:
      * @param data - octet string to be written.
      * @return Written bytes.
      */
-    size_t writeOctetString(const VirgilByteArray& data);
+    size_t writeOctetString(const virgil::crypto::VirgilByteArray& data);
     /**
      * @brief Write ASN.1 type: UTF8String.
      * @param data - UTF8 string to be written.
      * @return Written bytes.
      */
-    size_t writeUTF8String(const VirgilByteArray& data);
+    size_t writeUTF8String(const virgil::crypto::VirgilByteArray& data);
     /**
      * @brief Write ASN.1 type: TAG.
      * @param tag - custom tag.
@@ -117,7 +116,7 @@ public:
      * @param data - ASN.1 structure.
      * @return Written bytes.
      */
-    size_t writeData(const VirgilByteArray& data);
+    size_t writeData(const virgil::crypto::VirgilByteArray& data);
     /**
      * @brief Write ASN.1 type: OID.
      * @param oid - the OID to write.
@@ -140,7 +139,7 @@ public:
      * @param set - set of any data represented as byte sequence.
      * @return Written bytes.
      */
-    size_t writeSet(const std::vector<VirgilByteArray>& set);
+    size_t writeSet(const std::vector<virgil::crypto::VirgilByteArray>& set);
      ///@}
 private:
     /**
@@ -149,15 +148,15 @@ private:
      * @param asn1 - ASN.1 structure that will be padded.
      * @param finalSize - ASN.1 structure size after padding.
      */
-    static VirgilByteArray makeComparePadding(const VirgilByteArray& asn1, size_t finalSize);
+    static virgil::crypto::VirgilByteArray makeComparePadding(const virgil::crypto::VirgilByteArray& asn1, size_t finalSize);
     /**
      * @brief Perform lexicographic ASN.1 comparison.
      */
-    static bool compare(const VirgilByteArray& first, const VirgilByteArray& second);
+    static bool compare(const virgil::crypto::VirgilByteArray& first, const virgil::crypto::VirgilByteArray& second);
     /**
      * @brief Perform ascending lexicographic order on the given set.
      */
-    static void makeOrderedSet(std::vector<VirgilByteArray>& set);
+    static void makeOrderedSet(std::vector<virgil::crypto::VirgilByteArray>& set);
 private:
     /**
      * @brief Check internal state before methods call.

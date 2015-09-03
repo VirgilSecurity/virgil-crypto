@@ -35,20 +35,20 @@
  */
 
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
-
-#include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
-#include <virgil/crypto/foundation/PolarsslException.h>
-using virgil::crypto::foundation::PolarsslException;
-
-#include <virgil/crypto/VirgilCryptoException.h>
-using virgil::crypto::VirgilCryptoException;
 
 #include <cstddef>
 #include <string>
 #include <polarssl/asn1.h>
+
+#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/foundation/PolarsslException.h>
+
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilCryptoException;
+
+using virgil::crypto::foundation::PolarsslException;
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
 VirgilAsn1Reader::VirgilAsn1Reader() : p_(0), end_(0), data_() {
 }

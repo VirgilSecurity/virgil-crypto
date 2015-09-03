@@ -35,18 +35,21 @@
  */
 
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
-
-#include <virgil/crypto/VirgilCryptoException.h>
-using virgil::crypto::VirgilCryptoException;
 
 #include <sstream>
+
+#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilCryptoException.h>
+
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilCryptoException;
+
+using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 VirgilByteArray VirgilAsn1Compatible::toAsn1() const {
     VirgilAsn1Writer asn1Writer;

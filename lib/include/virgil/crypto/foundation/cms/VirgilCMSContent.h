@@ -37,13 +37,10 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_H
 #define VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_H
 
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
+#include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
-#include <string>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 
 namespace virgil { namespace crypto { namespace foundation { namespace cms {
 
@@ -64,7 +61,7 @@ typedef enum {
  * @brief Data object that represent CMS structure: ContentInfo.
  * @see RFC 5652 section 3.
  */
-class VirgilCMSContent : public VirgilAsn1Compatible {
+class VirgilCMSContent : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
     /**
      * @property contentType
@@ -75,7 +72,7 @@ public:
      * @property content
      * @brief Associated data.
      */
-    VirgilByteArray content;
+    virgil::crypto::VirgilByteArray content;
 public:
     /**
      * @name VirgilAsn1Compatible implementation
@@ -90,8 +87,9 @@ public:
      * @endcode
      */
     ///@{
-    virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
-    virtual void asn1Read(VirgilAsn1Reader& asn1Reader);
+    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+            size_t childWrittenBytes = 0) const;
+    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
 public:
     /**

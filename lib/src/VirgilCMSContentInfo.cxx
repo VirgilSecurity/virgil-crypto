@@ -35,21 +35,20 @@
  */
 
 #include <virgil/crypto/foundation/cms/VirgilCMSContentInfo.h>
-using virgil::crypto::foundation::cms::VirgilCMSContentInfo;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
-
-#include <virgil/crypto/VirgilCryptoException.h>
-using virgil::crypto::VirgilCryptoException;
-
-#include <polarssl/asn1.h>
 
 #include <cstddef>
 #include <string>
+
+#include <polarssl/asn1.h>
+
+#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+
+using virgil::crypto::VirgilCryptoException;
+using virgil::crypto::foundation::cms::VirgilCMSContentInfo;
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 /**
  * @name ASN.1 Constants

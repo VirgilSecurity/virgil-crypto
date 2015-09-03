@@ -37,27 +37,20 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_INFO_H
 #define VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_INFO_H
 
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
-
-#include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
-#include <virgil/crypto/VirgilCustomParams.h>
-using virgil::crypto::VirgilCustomParams;
-
-#include <virgil/crypto/foundation/cms/VirgilCMSContent.h>
-using virgil::crypto::foundation::cms::VirgilCMSContent;
-
 #include <map>
 #include <string>
+
+#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilCustomParams.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+#include <virgil/crypto/foundation/cms/VirgilCMSContent.h>
 
 namespace virgil { namespace crypto { namespace foundation { namespace cms {
 
 /**
  * @brief Data object that represent ASN.1 structure: VirgilCMSContentInfo.
  */
-class VirgilCMSContentInfo : public VirgilAsn1Compatible {
+class VirgilCMSContentInfo : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
     /**
      * @property cmsContent
@@ -68,13 +61,13 @@ public:
      * @property customParams
      * @brief User defiend custom parameters.
      */
-    VirgilCustomParams customParams;
+    virgil::crypto::VirgilCustomParams customParams;
 public:
     /**
      * @brief Read content info size as part of the data.
      * @return Size of the content info if it is exist as part of the data, 0 - otherwise.
      */
-    static size_t defineSize(const VirgilByteArray& data);
+    static size_t defineSize(const virgil::crypto::VirgilByteArray& data);
     /**
      * @name VirgilAsn1Compatible implementation
      * @code
@@ -87,8 +80,9 @@ public:
      * @endcode
      */
     ///@{
-    virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
-    virtual void asn1Read(VirgilAsn1Reader& asn1Reader);
+    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+            size_t childWrittenBytes = 0) const;
+    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
 public:
     /**

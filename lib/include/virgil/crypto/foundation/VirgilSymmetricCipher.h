@@ -40,10 +40,7 @@
 #include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 
 namespace virgil { namespace crypto { namespace foundation {
 
@@ -57,7 +54,7 @@ class VirgilSymmetricCipherImpl;
 /**
  * @brief Provides symmetric ciphers algorithms.
  */
-class VirgilSymmetricCipher : public VirgilAsn1Compatible {
+class VirgilSymmetricCipher : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
     /**
      * @name Additional types
@@ -139,14 +136,14 @@ public:
      * Configures cipher to be used in encryption mode with given key.
      * @warning Only one key CAN be set.
      */
-    void setEncryptionKey(const VirgilByteArray& key);
+    void setEncryptionKey(const virgil::crypto::VirgilByteArray& key);
     /**
      * @brief Configures decryption key.
      *
      * Configures cipher to be used in decryption mode with given key.
      * @warning Only one key CAN be set.
      */
-    void setDecryptionKey(const VirgilByteArray& key);
+    void setDecryptionKey(const virgil::crypto::VirgilByteArray& key);
     /**
      * @brief Defines padding mode.
      *
@@ -157,7 +154,7 @@ public:
     /**
      * @brief Configures the initialization vector.
      */
-    void setIV(const VirgilByteArray& iv);
+    void setIV(const virgil::crypto::VirgilByteArray& iv);
     /**
      * @brief Finish preparation before encryption / decryption.
      */
@@ -181,7 +178,8 @@ public:
      * @param iv - initialization vector.
      * @return Encrypted or decrypted bytes (rely on the current mode).
      */
-    VirgilByteArray crypt(const VirgilByteArray& input, const VirgilByteArray& iv);
+    virgil::crypto::VirgilByteArray crypt(const virgil::crypto::VirgilByteArray& input,
+            const virgil::crypto::VirgilByteArray& iv);
     ///@}
     /**
      * @name Sequence Encryption / Decryption
@@ -196,7 +194,7 @@ public:
      *     or flushed when finish is called.
      * @return Encrypted or decrypted bytes (rely on the current mode).
      */
-    VirgilByteArray update(const VirgilByteArray& input);
+    virgil::crypto::VirgilByteArray update(const virgil::crypto::VirgilByteArray& input);
     /**
      * @brief Cipher finalization method.
      *
@@ -205,7 +203,7 @@ public:
      *     and will be returned.
      * @return Encrypted or decrypted bytes (rely on the current mode).
      */
-    VirgilByteArray finish();
+    virgil::crypto::VirgilByteArray finish();
     ///@}
     /**
      * @name Copy constructor / assignment operator
@@ -221,8 +219,9 @@ public:
      * @name VirgilAsn1Compatible implementation
      */
     ///@{
-    virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
-    virtual void asn1Read(VirgilAsn1Reader& asn1Reader);
+    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+            size_t childWrittenBytes = 0) const;
+    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
 private:
     /**

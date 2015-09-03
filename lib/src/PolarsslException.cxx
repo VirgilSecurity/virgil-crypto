@@ -35,13 +35,13 @@
  */
 
 #include <virgil/crypto/foundation/PolarsslException.h>
-using virgil::crypto::foundation::PolarsslException;
 
 #include <cstring>
 #include <string>
 
 #include <polarssl/error.h>
 
+using virgil::crypto::foundation::PolarsslException;
 
 // Private section constants
 enum {

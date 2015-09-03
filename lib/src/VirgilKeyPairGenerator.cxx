@@ -35,7 +35,6 @@
  */
 
 #include <virgil/crypto/foundation/VirgilKeyPairGenerator.h>
-using virgil::crypto::foundation::VirgilKeyPairGenerator;
 
 #include <cstring>
 
@@ -45,7 +44,9 @@ using virgil::crypto::foundation::VirgilKeyPairGenerator;
 #include <polarssl/ctr_drbg.h>
 
 #include <virgil/crypto/foundation/PolarsslException.h>
+
 using virgil::crypto::foundation::PolarsslException;
+using virgil::crypto::foundation::VirgilKeyPairGenerator;
 
 /// @name Private functions
 static ecp_group_id _ecKeyGroupToEcpGroupId(VirgilKeyPairGenerator::ECKeyGroup ecKey) {

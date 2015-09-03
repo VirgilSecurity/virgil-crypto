@@ -95,36 +95,37 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#define VIRGIL_CRYPTO_VIRGIL_RANDOM_H</span></div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#include &lt;cstddef&gt;</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#include &lt;virgil/crypto/VirgilByteArray.h&gt;</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacevirgil.html">virgil</a> { <span class="keyword">namespace </span>crypto { <span class="keyword">namespace </span>foundation {</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="keyword">class </span>VirgilRandomImpl;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html">   55</a></span>&#160;<span class="keyword">class </span><a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html">VirgilRandom</a> {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html#a50bf5b1cb20a0fcfcd7c68e3b3bd92f6">VirgilRandom</a>(<span class="keyword">const</span> VirgilByteArray&amp; personalInfo);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html#a2d31c7a380126d1fe9bfed558128bb4c">randomize</a>(<span class="keywordtype">size_t</span> bytesNum);</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html#a50bf5b1cb20a0fcfcd7c68e3b3bd92f6">VirgilRandom</a>(<span class="keyword">const</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html">VirgilRandom</a>&amp; other);</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html">VirgilRandom</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html">VirgilRandom</a>&amp; other);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html">VirgilRandom</a>() <span class="keywordflow">throw</span>();</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    VirgilRandomImpl * impl_;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;};</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;}}}</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_VIRGIL_RANDOM_H */</span><span class="preprocessor"></span></div>
-<div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html">virgil::crypto::foundation::VirgilRandom</a></div><div class="ttdoc">Provides randomization algorithm. </div><div class="ttdef"><b>Definition:</b> VirgilRandom.h:55</div></div>
-<div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random_html_a50bf5b1cb20a0fcfcd7c68e3b3bd92f6"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html#a50bf5b1cb20a0fcfcd7c68e3b3bd92f6">virgil::crypto::foundation::VirgilRandom::VirgilRandom</a></div><div class="ttdeci">VirgilRandom(const VirgilByteArray &amp;personalInfo)</div><div class="ttdoc">Initialize randomization module with personalization data. </div></div>
-<div class="ttc" id="namespacevirgil_html"><div class="ttname"><a href="namespacevirgil.html">virgil</a></div><div class="ttdef"><b>Definition:</b> VirgilAsn1Compatible.h:47</div></div>
-<div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random_html_a2d31c7a380126d1fe9bfed558128bb4c"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html#a2d31c7a380126d1fe9bfed558128bb4c">virgil::crypto::foundation::VirgilRandom::randomize</a></div><div class="ttdeci">VirgilByteArray randomize(size_t bytesNum)</div><div class="ttdoc">Produce random byte sequence. </div></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#include &lt;virgil/crypto/VirgilByteArray.h&gt;</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacevirgil.html">virgil</a> { <span class="keyword">namespace </span>crypto { <span class="keyword">namespace </span>foundation {</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword">class </span>VirgilRandomImpl;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html">   56</a></span>&#160;<span class="keyword">class </span><a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html">VirgilRandom</a> {</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html#abd3e27f89d1cf4884b75b9df077ae7a1">VirgilRandom</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; personalInfo);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html#aabf3729247e981b0222e018f732ad574">randomize</a>(<span class="keywordtype">size_t</span> bytesNum);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html#abd3e27f89d1cf4884b75b9df077ae7a1">VirgilRandom</a>(<span class="keyword">const</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html">VirgilRandom</a>&amp; other);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html">VirgilRandom</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html">VirgilRandom</a>&amp; other);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html">VirgilRandom</a>() <span class="keywordflow">throw</span>();</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    VirgilRandomImpl * impl_;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;};</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;}}}</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_VIRGIL_RANDOM_H */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html">virgil::crypto::foundation::VirgilRandom</a></div><div class="ttdoc">Provides randomization algorithm. </div><div class="ttdef"><b>Definition:</b> VirgilRandom.h:56</div></div>
+<div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random_html_abd3e27f89d1cf4884b75b9df077ae7a1"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html#abd3e27f89d1cf4884b75b9df077ae7a1">virgil::crypto::foundation::VirgilRandom::VirgilRandom</a></div><div class="ttdeci">VirgilRandom(const virgil::crypto::VirgilByteArray &amp;personalInfo)</div><div class="ttdoc">Initialize randomization module with personalization data. </div></div>
+<div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random_html_aabf3729247e981b0222e018f732ad574"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html#aabf3729247e981b0222e018f732ad574">virgil::crypto::foundation::VirgilRandom::randomize</a></div><div class="ttdeci">virgil::crypto::VirgilByteArray randomize(size_t bytesNum)</div><div class="ttdoc">Produce random byte sequence. </div></div>
+<div class="ttc" id="namespacevirgil_html"><div class="ttname"><a href="namespacevirgil.html">virgil</a></div><div class="ttdef"><b>Definition:</b> VirgilAsn1Compatible.h:46</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

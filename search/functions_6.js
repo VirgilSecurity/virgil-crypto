@@ -6,5 +6,5 @@ var searchData=
   ['getdata',['getData',['../classvirgil_1_1crypto_1_1_virgil_custom_params.html#a9d71a7141352148d90115f7dc8035069',1,'virgil::crypto::VirgilCustomParams']]],
   ['getinteger',['getInteger',['../classvirgil_1_1crypto_1_1_virgil_custom_params.html#a65381b76f236be5f38ea84273535ad8f',1,'virgil::crypto::VirgilCustomParams']]],
   ['getstring',['getString',['../classvirgil_1_1crypto_1_1_virgil_custom_params.html#af1fba3f7653829a20a7c4ef53f6a20aa',1,'virgil::crypto::VirgilCustomParams']]],
-  ['getsymmetriccipher',['getSymmetricCipher',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a4723bcc34f053815312531e322f9fa69',1,'virgil::crypto::VirgilCipherBase']]]
+  ['getsymmetriccipher',['getSymmetricCipher',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a46aa3a20e32b0e2859da368f71ad89e3',1,'virgil::crypto::VirgilCipherBase']]]
 ];

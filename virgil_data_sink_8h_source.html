@@ -95,23 +95,22 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#define VIRGIL_CRYPTO_VIRGIL_DATA_SINK_H</span></div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#include &lt;virgil/crypto/VirgilByteArray.h&gt;</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keyword">using</span> virgil::crypto::VirgilByteArray;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacevirgil.html">virgil</a> { <span class="keyword">namespace </span>crypto {</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="classvirgil_1_1crypto_1_1_virgil_data_sink.html">   50</a></span>&#160;<span class="keyword">class </span><a class="code" href="classvirgil_1_1crypto_1_1_virgil_data_sink.html">VirgilDataSink</a> {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_data_sink.html#aefb323aac3299b5d0fd4816cd18c066e">isGood</a>() = 0;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_data_sink.html#a94cd0d6ac4ffba0f4e4fe6e348a06441">write</a>(<span class="keyword">const</span> VirgilByteArray&amp; data) = 0;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="classvirgil_1_1crypto_1_1_virgil_data_sink.html">VirgilDataSink</a>() <span class="keywordflow">throw</span>() {}</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;};</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;}}</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_VIRGIL_DATA_SINK_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacevirgil.html">virgil</a> { <span class="keyword">namespace </span>crypto {</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classvirgil_1_1crypto_1_1_virgil_data_sink.html">   49</a></span>&#160;<span class="keyword">class </span><a class="code" href="classvirgil_1_1crypto_1_1_virgil_data_sink.html">VirgilDataSink</a> {</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_data_sink.html#aefb323aac3299b5d0fd4816cd18c066e">isGood</a>() = 0;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_data_sink.html#a94cd0d6ac4ffba0f4e4fe6e348a06441">write</a>(<span class="keyword">const</span> VirgilByteArray&amp; data) = 0;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="classvirgil_1_1crypto_1_1_virgil_data_sink.html">VirgilDataSink</a>() <span class="keywordflow">throw</span>() {}</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;};</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;}}</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_VIRGIL_DATA_SINK_H */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_data_sink_html_a94cd0d6ac4ffba0f4e4fe6e348a06441"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_data_sink.html#a94cd0d6ac4ffba0f4e4fe6e348a06441">virgil::crypto::VirgilDataSink::write</a></div><div class="ttdeci">virtual void write(const VirgilByteArray &amp;data)=0</div><div class="ttdoc">Write data to the target object. </div></div>
-<div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_data_sink_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_data_sink.html">virgil::crypto::VirgilDataSink</a></div><div class="ttdoc">This is base class for output streams. </div><div class="ttdef"><b>Definition:</b> VirgilDataSink.h:50</div></div>
-<div class="ttc" id="namespacevirgil_html"><div class="ttname"><a href="namespacevirgil.html">virgil</a></div><div class="ttdef"><b>Definition:</b> VirgilAsn1Compatible.h:47</div></div>
+<div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_data_sink_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_data_sink.html">virgil::crypto::VirgilDataSink</a></div><div class="ttdoc">This is base class for output streams. </div><div class="ttdef"><b>Definition:</b> VirgilDataSink.h:49</div></div>
+<div class="ttc" id="namespacevirgil_html"><div class="ttname"><a href="namespacevirgil.html">virgil</a></div><div class="ttdef"><b>Definition:</b> VirgilAsn1Compatible.h:46</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_data_sink_html_aefb323aac3299b5d0fd4816cd18c066e"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_data_sink.html#aefb323aac3299b5d0fd4816cd18c066e">virgil::crypto::VirgilDataSink::isGood</a></div><div class="ttdeci">virtual bool isGood()=0</div><div class="ttdoc">Return true if target object is able to write data. </div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

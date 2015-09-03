@@ -95,42 +95,41 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#define VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H</span></div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#include &lt;virgil/crypto/VirgilCryptoException.h&gt;</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keyword">using</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html">virgil::crypto::VirgilCryptoException</a>;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#define POLARSSL_ERROR_HANDLER(invocation) POLARSSL_ERROR_HANDLER_DISPOSE(invocation, {})</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#define POLARSSL_ERROR_HANDLER_DISPOSE(invocation, dispose) \</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">do { \</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">    int errCode = invocation; \</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">    if (errCode &lt; 0) { \</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">        do { dispose; } while (0); \</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">        throw PolarsslException(errCode); \</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor">    } \</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="preprocessor">} while (0)</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#define POLARSSL_ERROR_HANDLER(invocation) POLARSSL_ERROR_HANDLER_DISPOSE(invocation, {})</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#define POLARSSL_ERROR_HANDLER_DISPOSE(invocation, dispose) \</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">do { \</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">    int errCode = invocation; \</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">    if (errCode &lt; 0) { \</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">        do { dispose; } while (0); \</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">        throw PolarsslException(errCode); \</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">    } \</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor">} while (0)</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacevirgil.html">virgil</a> { <span class="keyword">namespace </span>crypto { <span class="keyword">namespace </span>foundation {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html">   60</a></span>&#160;<span class="keyword">class </span><a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html">PolarsslException</a> : <span class="keyword">public</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html">VirgilCryptoException</a> {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html#ae721fa269403bebf1edd75f6f5525a77">PolarsslException</a>(<span class="keywordtype">int</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html#adb70dc388071c416444b206a9be7b0b1">errCode</a>);</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html">PolarsslException</a>() <span class="keywordflow">throw</span>();</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html#adb70dc388071c416444b206a9be7b0b1">errCode</a>() <span class="keyword">const</span> <span class="keywordflow">throw</span>();</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">int</span> errCode_;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;};</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;}}}</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacevirgil.html">virgil</a> { <span class="keyword">namespace </span>crypto { <span class="keyword">namespace </span>foundation {</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html">   59</a></span>&#160;<span class="keyword">class </span><a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html">PolarsslException</a> : <span class="keyword">public</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html">virgil::crypto::VirgilCryptoException</a> {</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html#ae721fa269403bebf1edd75f6f5525a77">PolarsslException</a>(<span class="keywordtype">int</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html#adb70dc388071c416444b206a9be7b0b1">errCode</a>);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="keyword">virtual</span> ~<a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html">PolarsslException</a>() <span class="keywordflow">throw</span>();</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html#adb70dc388071c416444b206a9be7b0b1">errCode</a>() <span class="keyword">const</span> <span class="keywordflow">throw</span>();</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">int</span> errCode_;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;};</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;}}}</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception_html_adb70dc388071c416444b206a9be7b0b1"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html#adb70dc388071c416444b206a9be7b0b1">virgil::crypto::foundation::PolarsslException::errCode</a></div><div class="ttdeci">int errCode() const </div><div class="ttdoc">Provide low-level PolarSSL fremowork error code. </div></div>
-<div class="ttc" id="namespacevirgil_html"><div class="ttname"><a href="namespacevirgil.html">virgil</a></div><div class="ttdef"><b>Definition:</b> VirgilAsn1Compatible.h:47</div></div>
-<div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html">virgil::crypto::foundation::PolarsslException</a></div><div class="ttdoc">Encapsulates low-level domain error of the PolarSSL framework. </div><div class="ttdef"><b>Definition:</b> PolarsslException.h:60</div></div>
+<div class="ttc" id="namespacevirgil_html"><div class="ttname"><a href="namespacevirgil.html">virgil</a></div><div class="ttdef"><b>Definition:</b> VirgilAsn1Compatible.h:46</div></div>
+<div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html">virgil::crypto::foundation::PolarsslException</a></div><div class="ttdoc">Encapsulates low-level domain error of the PolarSSL framework. </div><div class="ttdef"><b>Definition:</b> PolarsslException.h:59</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception_html_ae721fa269403bebf1edd75f6f5525a77"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html#ae721fa269403bebf1edd75f6f5525a77">virgil::crypto::foundation::PolarsslException::PolarsslException</a></div><div class="ttdeci">PolarsslException(int errCode)</div><div class="ttdoc">Creates PolarsslException class object for a given error code. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_crypto_exception_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html">virgil::crypto::VirgilCryptoException</a></div><div class="ttdoc">Encapsulates logic errors of module &#39;crypto&#39;. </div><div class="ttdef"><b>Definition:</b> VirgilCryptoException.h:48</div></div>
 </div><!-- fragment --></div><!-- contents -->

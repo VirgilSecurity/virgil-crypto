@@ -19,20 +19,58 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef node_os_h
-#define node_os_h
+#ifndef SRC_NODE_CRYPTO_CLIENTHELLO_INL_H_
+#define SRC_NODE_CRYPTO_CLIENTHELLO_INL_H_
 
-#include "node.h"
-#include "v8.h"
+#include <assert.h>
 
 namespace node {
 
-class OS {
-public:
-  static void Initialize (v8::Handle<v8::Object> target);
-};
+inline void ClientHelloParser::Reset() {
+  frame_len_ = 0;
+  body_offset_ = 0;
+  extension_offset_ = 0;
+  session_size_ = 0;
+  session_id_ = NULL;
+  tls_ticket_size_ = -1;
+  tls_ticket_ = NULL;
+  servername_size_ = 0;
+  servername_ = NULL;
+}
 
+inline void ClientHelloParser::Start(ClientHelloParser::OnHelloCb onhello_cb,
+                                     ClientHelloParser::OnEndCb onend_cb,
+                                     void* onend_arg) {
+  if (!IsEnded())
+    return;
+  Reset();
+
+  assert(onhello_cb != NULL);
+
+  state_ = kWaiting;
+  onhello_cb_ = onhello_cb;
+  onend_cb_ = onend_cb;
+  cb_arg_ = onend_arg;
+}
+
+inline void ClientHelloParser::End() {
+  if (state_ == kEnded)
+    return;
+  state_ = kEnded;
+  if (onend_cb_ != NULL) {
+    onend_cb_(cb_arg_);
+    onend_cb_ = NULL;
+  }
+}
+
+inline bool ClientHelloParser::IsEnded() const {
+  return state_ == kEnded;
+}
+
+inline bool ClientHelloParser::IsPaused() const {
+  return state_ == kPaused;
+}
 
 }  // namespace node
 
-#endif  // node_os_h
+#endif  // SRC_NODE_CRYPTO_CLIENTHELLO_INL_H_

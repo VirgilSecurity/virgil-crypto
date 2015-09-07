@@ -30,6 +30,19 @@ typedef intptr_t ssize_t;
 #endif
 
 #include <winsock2.h>
+
+#if defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
+typedef struct pollfd {
+  SOCKET fd;
+  short  events;
+  short  revents;
+} WSAPOLLFD, *PWSAPOLLFD, *LPWSAPOLLFD;
+#endif
+
+#ifndef LOCALE_INVARIANT
+# define LOCALE_INVARIANT 0x007f
+#endif
+
 #include <mswsock.h>
 #include <ws2tcpip.h>
 #include <windows.h>
@@ -39,13 +52,13 @@ typedef intptr_t ssize_t;
 #include <sys/stat.h>
 
 #if defined(_MSC_VER) && _MSC_VER < 1600
-# include "uv-private/stdint-msvc2008.h"
+# include "stdint-msvc2008.h"
 #else
 # include <stdint.h>
 #endif
 
 #include "tree.h"
-#include "ngx-queue.h"
+#include "uv-threadpool.h"
 
 #define MAX_PIPENAME_LEN 256
 
@@ -206,10 +219,8 @@ typedef struct uv_buf_t {
 } uv_buf_t;
 
 typedef int uv_file;
-
-typedef struct _stati64 uv_statbuf_t;
-
 typedef SOCKET uv_os_sock_t;
+typedef HANDLE uv_os_fd_t;
 
 typedef HANDLE uv_thread_t;
 
@@ -253,6 +264,10 @@ typedef struct {
   uv_sem_t turnstile2;
 } uv_barrier_t;
 
+typedef struct {
+  DWORD tls_index;
+} uv_key_t;
+
 #define UV_ONCE_INIT { 0, NULL }
 
 typedef struct uv_once_s {
@@ -263,6 +278,20 @@ typedef struct uv_once_s {
 /* Platform-specific definitions for uv_spawn support. */
 typedef unsigned char uv_uid_t;
 typedef unsigned char uv_gid_t;
+
+typedef struct uv__dirent_s {
+  int d_type;
+  char d_name[1];
+} uv__dirent_t;
+
+#define HAVE_DIRENT_TYPES
+#define UV__DT_DIR     UV_DIRENT_DIR
+#define UV__DT_FILE    UV_DIRENT_FILE
+#define UV__DT_LINK    UV_DIRENT_LINK
+#define UV__DT_FIFO    UV_DIRENT_FIFO
+#define UV__DT_SOCKET  UV_DIRENT_SOCKET
+#define UV__DT_CHAR    UV_DIRENT_CHAR
+#define UV__DT_BLOCK   UV_DIRENT_BLOCK
 
 /* Platform-specific definitions for uv_dlopen support. */
 #define UV_DYNAMIC FAR WINAPI
@@ -304,7 +333,11 @@ RB_HEAD(uv_timer_tree_s, uv_timer_s);
   /* Counter to keep track of active udp streams */                           \
   unsigned int active_udp_streams;                                            \
   /* Counter to started timer */                                              \
-  uint64_t timer_counter;
+  uint64_t timer_counter;                                                     \
+  /* Threadpool */                                                            \
+  void* wq[2];                                                                \
+  uv_mutex_t wq_mutex;                                                        \
+  uv_async_t wq_async;
 
 #define UV_REQ_TYPE_PRIVATE                                                   \
   /* TODO: remove the req suffix */                                           \
@@ -323,8 +356,8 @@ RB_HEAD(uv_timer_tree_s, uv_timer_s);
     struct {                                                                  \
       OVERLAPPED overlapped;                                                  \
       size_t queued_bytes;                                                    \
-    };                                                                        \
-  };                                                                          \
+    } io;                                                                     \
+  } u;                                                                        \
   struct uv_req_s* next_req;
 
 #define UV_WRITE_PRIVATE_FIELDS                                               \
@@ -376,9 +409,9 @@ RB_HEAD(uv_timer_tree_s, uv_timer_s);
   int activecnt;                                                              \
   uv_read_t read_req;                                                         \
   union {                                                                     \
-    struct { uv_stream_connection_fields };                                   \
-    struct { uv_stream_server_fields     };                                   \
-  };
+    struct { uv_stream_connection_fields } conn;                              \
+    struct { uv_stream_server_fields     } serv;                              \
+  } stream;
 
 #define uv_tcp_server_fields                                                  \
   uv_tcp_accept_t* accept_reqs;                                               \
@@ -392,11 +425,11 @@ RB_HEAD(uv_timer_tree_s, uv_timer_s);
 
 #define UV_TCP_PRIVATE_FIELDS                                                 \
   SOCKET socket;                                                              \
-  int bind_error;                                                             \
+  int delayed_error;                                                          \
   union {                                                                     \
-    struct { uv_tcp_server_fields };                                          \
-    struct { uv_tcp_connection_fields };                                      \
-  };
+    struct { uv_tcp_server_fields } serv;                                     \
+    struct { uv_tcp_connection_fields } conn;                                 \
+  } tcp;
 
 #define UV_UDP_PRIVATE_FIELDS                                                 \
   SOCKET socket;                                                              \
@@ -421,20 +454,21 @@ RB_HEAD(uv_timer_tree_s, uv_timer_s);
   uv_write_t ipc_header_write_req;                                            \
   int ipc_pid;                                                                \
   uint64_t remaining_ipc_rawdata_bytes;                                       \
-  unsigned char reserved[sizeof(void*)];                                      \
   struct {                                                                    \
-    WSAPROTOCOL_INFOW* socket_info;                                           \
-    int tcp_connection;                                                       \
+    void* queue[2];                                                           \
+    int queue_len;                                                            \
   } pending_ipc_info;                                                         \
-  uv_write_t* non_overlapped_writes_tail;
+  uv_write_t* non_overlapped_writes_tail;                                     \
+  uv_mutex_t readfile_mutex;                                                  \
+  volatile HANDLE readfile_thread;
 
 #define UV_PIPE_PRIVATE_FIELDS                                                \
   HANDLE handle;                                                              \
   WCHAR* name;                                                                \
   union {                                                                     \
-    struct { uv_pipe_server_fields };                                         \
-    struct { uv_pipe_connection_fields };                                     \
-  };
+    struct { uv_pipe_server_fields } serv;                                    \
+    struct { uv_pipe_connection_fields } conn;                                \
+  } pipe;
 
 /* TODO: put the parser states in an union - TTY handles are always */
 /* half-duplex so read-state can safely overlap write-state. */
@@ -452,7 +486,7 @@ RB_HEAD(uv_timer_tree_s, uv_timer_s);
       unsigned char last_key_len;                                             \
       WCHAR last_utf16_high_surrogate;                                        \
       INPUT_RECORD last_input_record;                                         \
-    };                                                                        \
+    } rd;                                                                     \
     struct {                                                                  \
       /* Used for writable TTY handles */                                     \
       /* utf8-to-utf16 conversion state */                                    \
@@ -466,8 +500,8 @@ RB_HEAD(uv_timer_tree_s, uv_timer_s);
       unsigned short ansi_csi_argv[4];                                        \
       COORD saved_position;                                                   \
       WORD saved_attributes;                                                  \
-    };                                                                        \
-  };
+    } wr;                                                                     \
+  } tty;
 
 #define UV_POLL_PRIVATE_FIELDS                                                \
   SOCKET socket;                                                              \
@@ -517,12 +551,25 @@ RB_HEAD(uv_timer_tree_s, uv_timer_s);
   unsigned int flags;
 
 #define UV_GETADDRINFO_PRIVATE_FIELDS                                         \
+  struct uv__work work_req;                                                   \
   uv_getaddrinfo_cb getaddrinfo_cb;                                           \
   void* alloc;                                                                \
   WCHAR* node;                                                                \
   WCHAR* service;                                                             \
-  struct addrinfoW* hints;                                                    \
-  struct addrinfoW* res;                                                      \
+  /* The addrinfoW field is used to store a pointer to the hints, and    */   \
+  /* later on to store the result of GetAddrInfoW. The final result will */   \
+  /* be converted to struct addrinfo* and stored in the addrinfo field.  */   \
+  struct addrinfoW* addrinfow;                                                \
+  struct addrinfo* addrinfo;                                                  \
+  int retcode;
+
+#define UV_GETNAMEINFO_PRIVATE_FIELDS                                         \
+  struct uv__work work_req;                                                   \
+  uv_getnameinfo_cb getnameinfo_cb;                                           \
+  struct sockaddr_storage storage;                                            \
+  int flags;                                                                  \
+  char host[NI_MAXHOST];                                                      \
+  char service[NI_MAXSERV];                                                   \
   int retcode;
 
 #define UV_PROCESS_PRIVATE_FIELDS                                             \
@@ -530,37 +577,39 @@ RB_HEAD(uv_timer_tree_s, uv_timer_s);
     UV_REQ_FIELDS                                                             \
   } exit_req;                                                                 \
   BYTE* child_stdio_buffer;                                                   \
-  uv_err_t spawn_error;                                                       \
   int exit_signal;                                                            \
   HANDLE wait_handle;                                                         \
   HANDLE process_handle;                                                      \
   volatile char exit_cb_pending;
 
 #define UV_FS_PRIVATE_FIELDS                                                  \
+  struct uv__work work_req;                                                   \
   int flags;                                                                  \
   DWORD sys_errno_;                                                           \
   union {                                                                     \
     /* TODO: remove me in 0.9. */                                             \
     WCHAR* pathw;                                                             \
     int fd;                                                                   \
-  };                                                                          \
+  } file;                                                                     \
   union {                                                                     \
     struct {                                                                  \
       int mode;                                                               \
       WCHAR* new_pathw;                                                       \
       int file_flags;                                                         \
       int fd_out;                                                             \
-      void* buf;                                                              \
-      size_t length;                                                          \
+      unsigned int nbufs;                                                     \
+      uv_buf_t* bufs;                                                         \
       int64_t offset;                                                         \
-    };                                                                        \
+      uv_buf_t bufsml[4];                                                     \
+    } info;                                                                   \
     struct {                                                                  \
       double atime;                                                           \
       double mtime;                                                           \
-    };                                                                        \
-  };
+    } time;                                                                   \
+  } fs;
 
 #define UV_WORK_PRIVATE_FIELDS                                                \
+  struct uv__work work_req;
 
 #define UV_FS_EVENT_PRIVATE_FIELDS                                            \
   struct uv_fs_event_req_s {                                                  \
@@ -583,3 +632,16 @@ int uv_utf16_to_utf8(const WCHAR* utf16Buffer, size_t utf16Size,
     char* utf8Buffer, size_t utf8Size);
 int uv_utf8_to_utf16(const char* utf8Buffer, WCHAR* utf16Buffer,
     size_t utf16Size);
+
+#ifndef F_OK
+#define F_OK 0
+#endif
+#ifndef R_OK
+#define R_OK 4
+#endif
+#ifndef W_OK
+#define W_OK 2
+#endif
+#ifndef X_OK
+#define X_OK 1
+#endif

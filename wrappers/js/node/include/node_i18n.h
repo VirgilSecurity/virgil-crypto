@@ -19,28 +19,21 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#ifndef SRC_NODE_I18N_H_
+#define SRC_NODE_I18N_H_
 
-NODE_EXT_LIST_START
-NODE_EXT_LIST_ITEM(node_buffer)
-#if HAVE_OPENSSL
-NODE_EXT_LIST_ITEM(node_crypto)
-#endif
-NODE_EXT_LIST_ITEM(node_evals)
-NODE_EXT_LIST_ITEM(node_fs)
-NODE_EXT_LIST_ITEM(node_http_parser)
-NODE_EXT_LIST_ITEM(node_os)
-NODE_EXT_LIST_ITEM(node_zlib)
+#include "node.h"
 
-// libuv rewrite
-NODE_EXT_LIST_ITEM(node_timer_wrap)
-NODE_EXT_LIST_ITEM(node_tcp_wrap)
-NODE_EXT_LIST_ITEM(node_udp_wrap)
-NODE_EXT_LIST_ITEM(node_pipe_wrap)
-NODE_EXT_LIST_ITEM(node_cares_wrap)
-NODE_EXT_LIST_ITEM(node_tty_wrap)
-NODE_EXT_LIST_ITEM(node_process_wrap)
-NODE_EXT_LIST_ITEM(node_fs_event_wrap)
-NODE_EXT_LIST_ITEM(node_signal_wrap)
+#if defined(NODE_HAVE_I18N_SUPPORT)
 
-NODE_EXT_LIST_END
+namespace node {
+namespace i18n {
 
+NODE_EXTERN bool InitializeICUDirectory(const char* icu_data_path);
+
+}  // namespace i18n
+}  // namespace node
+
+#endif  // NODE_HAVE_I18N_SUPPORT
+
+#endif  // SRC_NODE_I18N_H_

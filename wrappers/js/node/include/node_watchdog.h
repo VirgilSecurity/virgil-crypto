@@ -19,18 +19,40 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#ifndef node_script_h
-#define node_script_h
+#ifndef SRC_NODE_WATCHDOG_H_
+#define SRC_NODE_WATCHDOG_H_
 
-#include "node.h"
-#include "node_object_wrap.h"
 #include "v8.h"
 #include "uv.h"
 
+#include "env.h"
+
 namespace node {
 
+class Watchdog {
+ public:
+  explicit Watchdog(Environment* env, uint64_t ms);
+  ~Watchdog();
 
-void InitEvals(v8::Handle<v8::Object> target);
+  void Dispose();
 
-} // namespace node
-#endif //  node_script_h
+  inline Environment* env() const { return env_; }
+
+ private:
+  void Destroy();
+
+  static void Run(void* arg);
+  static void Async(uv_async_t* async);
+  static void Timer(uv_timer_t* timer);
+
+  Environment* env_;
+  uv_thread_t thread_;
+  uv_loop_t* loop_;
+  uv_async_t async_;
+  uv_timer_t timer_;
+  bool destroyed_;
+};
+
+}  // namespace node
+
+#endif  // SRC_NODE_WATCHDOG_H_

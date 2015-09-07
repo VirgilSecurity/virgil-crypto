@@ -38,3 +38,10 @@ add_library (node INTERFACE)
 target_include_directories (node INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
+if (WIN32)
+    if (POINTER_SIZE EQUAL 8)
+        target_link_libraries (node INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/lib/win/x64/node.lib")
+    else ()
+        target_link_libraries (node INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/lib/win/x86/node.lib")
+    endif ()
+endif (WIN32)

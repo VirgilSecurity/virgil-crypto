@@ -60,7 +60,7 @@ configure_file (
 
 set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY CPLUSPLUS ON)
 set_property (
-    SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing" "-node"
+    SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing" "-node" "-DV8_VERSION=0x032873"
 )
 
 swig_add_module (${JS_MODULE_NAME} javascript "${WRAPPER_INTERFACE_FILE}")

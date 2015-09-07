@@ -120,7 +120,6 @@ private:
      * @throw VirgilCryptoException if algorithm identifier is not supported or ASN.1 structure is corrupted.
      */
     void init_(const VirgilByteArray& pbeAlgId) {
-        size_t len;
         unsigned char *p, *end;
 
         // Initial init
@@ -213,7 +212,6 @@ private:
     VirgilByteArray buildAlgIdPKCS12(const VirgilByteArray& salt, size_t iterationCount) {
         VirgilAsn1Writer asn1Writer;
         const char *oid = 0;
-        size_t oidLen;
         // Write PBE-params
         size_t pbesLen = 0;
         pbesLen += asn1Writer.writeInteger(iterationCount);

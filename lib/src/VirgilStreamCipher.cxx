@@ -37,12 +37,16 @@
 #include <virgil/crypto/VirgilStreamCipher.h>
 
 #include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilDataSource.h>
+#include <virgil/crypto/VirgilDataSink.h>
 #include <virgil/crypto/foundation/VirgilKDF.h>
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 
 using virgil::crypto::VirgilStreamCipher;
 using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilDataSource;
+using virgil::crypto::VirgilDataSink;
 
 using virgil::crypto::foundation::VirgilKDF;
 using virgil::crypto::foundation::VirgilSymmetricCipher;

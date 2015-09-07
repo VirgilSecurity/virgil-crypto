@@ -41,10 +41,12 @@
 
 #include <polarssl/asn1.h>
 
+#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
+using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
 using virgil::crypto::foundation::cms::VirgilCMSContentInfo;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;

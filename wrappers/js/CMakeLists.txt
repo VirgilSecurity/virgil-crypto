@@ -34,9 +34,13 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-cmake_minimum_required (VERSION 3.0 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
 project (${WRAPPED_LIB_NAME}_js)
+
+# Enable C++11
+set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory (node)
 add_subdirectory (v8)
@@ -60,7 +64,7 @@ configure_file (
 
 set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY CPLUSPLUS ON)
 set_property (
-    SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing" "-node" "-DV8_VERSION=0x032873"
+    SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing" "-node" "-DV8_VERSION=0x040599"
 )
 
 swig_add_module (${JS_MODULE_NAME} javascript "${WRAPPER_INTERFACE_FILE}")

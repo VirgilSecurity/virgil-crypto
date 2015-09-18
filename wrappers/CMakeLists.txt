@@ -61,3 +61,5 @@ if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${PLATFORM_DIR}")
 else ()
     message (STATUS "No special wrappers for the platform: " ${PLATFORM_NAME})
 endif ()
+
+set (PLATFORM_VERSION ${PLATFORM_VERSION} PARENT_SCOPE)

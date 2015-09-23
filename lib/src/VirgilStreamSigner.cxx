@@ -35,24 +35,21 @@
  */
 
 #include <virgil/crypto/VirgilStreamSigner.h>
-using virgil::crypto::VirgilStreamSigner;
-
-#include <virgil/crypto/VirgilDataSource.h>
-using virgil::crypto::VirgilDataSource;
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
+#include <virgil/crypto/VirgilDataSource.h>
 #include <virgil/crypto/foundation/VirgilHash.h>
-using virgil::crypto::foundation::VirgilHash;
-
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
-using virgil::crypto::foundation::VirgilAsymmetricCipher;
-
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
-
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilDataSource;
+using virgil::crypto::VirgilStreamSigner;
+
+using virgil::crypto::foundation::VirgilHash;
+using virgil::crypto::foundation::VirgilAsymmetricCipher;
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 VirgilStreamSigner::VirgilStreamSigner(const VirgilHash& hash) : hash_(hash) {

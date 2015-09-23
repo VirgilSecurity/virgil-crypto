@@ -41,7 +41,6 @@
 #include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
 
 namespace virgil { namespace crypto { namespace foundation { namespace asn1 {
 
@@ -61,7 +60,7 @@ public:
      * @brief Initialize internal state with given ASN.1 structure.
      * @note The same as sequence VirgilAsn1Reader() and reset().
      */
-    explicit VirgilAsn1Reader(const VirgilByteArray& data);
+    explicit VirgilAsn1Reader(const virgil::crypto::VirgilByteArray& data);
     /**
      * @brief Dispose internal resources.
      */
@@ -74,7 +73,7 @@ public:
      * @brief Reset all internal states and prepare to new ASN.1 reading operations.
      * @param data - ASN.1 structure to be read.
      */
-    void reset(const VirgilByteArray& data);
+    void reset(const virgil::crypto::VirgilByteArray& data);
     ///@}
     /**
      * @name Read Simple ASN.1 Types
@@ -91,15 +90,15 @@ public:
     /**
      * @brief Read ASN.1 type: OCTET STRING.
      */
-    VirgilByteArray readOctetString();
+    virgil::crypto::VirgilByteArray readOctetString();
     /**
      * @brief Read ASN.1 type: UTF8String.
      */
-    VirgilByteArray readUTF8String();
+    virgil::crypto::VirgilByteArray readUTF8String();
     /**
      * @brief Read preformatted ASN.1 structure.
      */
-    VirgilByteArray readData();
+    virgil::crypto::VirgilByteArray readData();
     /**
      * @brief Read ASN.1 type: TAG.
      * @return Tag length if given tag exist, 0 - otherwise.
@@ -143,7 +142,7 @@ private:
 private:
     unsigned char *p_;
     const unsigned char *end_;
-    VirgilByteArray data_;
+    virgil::crypto::VirgilByteArray data_;
 };
 
 }}}}

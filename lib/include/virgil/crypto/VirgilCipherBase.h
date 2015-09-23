@@ -37,14 +37,11 @@
 #ifndef VIRGIL_CIPHER_BASE_H
 #define VIRGIL_CIPHER_BASE_H
 
-#include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
-#include <virgil/crypto/VirgilCustomParams.h>
-using virgil::crypto::VirgilCustomParams;
-
 #include <map>
 #include <set>
+
+#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilCustomParams.h>
 
 /**
  * @name Forward declaration
@@ -56,7 +53,6 @@ namespace virgil { namespace crypto {
         class VirgilSymmetricCipher;
     }
 }}
-using virgil::crypto::foundation::VirgilSymmetricCipher;
 /// @}
 
 namespace virgil { namespace crypto {
@@ -164,7 +160,7 @@ protected:
      * @note cipher's key randomly generated.
      * @note cipher's input vector is randomly generated.
      */
-    VirgilSymmetricCipher& initEncryption();
+    virgil::crypto::foundation::VirgilSymmetricCipher& initEncryption();
     /**
      * @brief Configures symmetric cipher for encryption.
      */
@@ -176,7 +172,7 @@ protected:
      * @param privateKeyPassword - user's private key password.
      * @return Configured cipher.
      */
-    VirgilSymmetricCipher& initDecryption(const VirgilByteArray& encryptedDataInfo,
+    virgil::crypto::foundation::VirgilSymmetricCipher& initDecryption(const VirgilByteArray& encryptedDataInfo,
             const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
             const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     /**
@@ -184,7 +180,7 @@ protected:
      * @param pwd - recipient's password.
      * @return Configured cipher.
      */
-    VirgilSymmetricCipher& initDecryptionWithPassword(const VirgilByteArray& pwd);
+    virgil::crypto::foundation::VirgilSymmetricCipher& initDecryptionWithPassword(const VirgilByteArray& pwd);
     /**
      * @brief Configures symmetric cipher for decryption based on the recipient's id and private key.
      * @param recipientId - recipient's id.
@@ -192,13 +188,13 @@ protected:
      * @param privateKeyPassword - recipient's private key password.
      * @return Configured cipher.
      */
-    VirgilSymmetricCipher& initDecryptionWithKey(const VirgilByteArray& recipientId,
+    virgil::crypto::foundation::VirgilSymmetricCipher& initDecryptionWithKey(const VirgilByteArray& recipientId,
             const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword);
     /**
      * @brief Return symmetric cipher configure by one of the methods:
      *     initEncryption(), initDecryptionWithPassword(), initDecryptionWithKey.
      */
-    VirgilSymmetricCipher& getSymmetricCipher();
+    virgil::crypto::foundation::VirgilSymmetricCipher& getSymmetricCipher();
     /**
      * @brief Build VirgilContentInfo object.
      *

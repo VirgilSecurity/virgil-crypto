@@ -35,21 +35,19 @@
  */
 
 #include <virgil/crypto/foundation/cms/VirgilCMSPasswordRecipient.h>
-using virgil::crypto::foundation::cms::VirgilCMSPasswordRecipient;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
-
-#include <virgil/crypto/VirgilCryptoException.h>
-using virgil::crypto::VirgilCryptoException;
-
-#include <virgil/crypto/foundation/VirgilOID.h>
 
 #include <cstddef>
 #include <string>
+
+#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/foundation/VirgilOID.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+
+using virgil::crypto::VirgilCryptoException;
+using virgil::crypto::foundation::cms::VirgilCMSPasswordRecipient;
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 /**
  * @name ASN.1 Constants for CMS

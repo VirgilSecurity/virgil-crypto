@@ -35,13 +35,14 @@
  */
 
 #include <virgil/crypto/VirgilCipher.h>
-using virgil::crypto::VirgilCipher;
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
+
+using virgil::crypto::VirgilCipher;
+using virgil::crypto::VirgilByteArray;
 using virgil::crypto::foundation::VirgilSymmetricCipher;
+
 
 VirgilCipher::~VirgilCipher() throw() {
 }

@@ -35,7 +35,11 @@
  */
 
 #include <virgil/crypto/foundation/VirgilPBE.h>
-using virgil::crypto::foundation::VirgilPBE;
+
+#include <cstring>
+#include <map>
+#include <string>
+#include <algorithm>
 
 #include <polarssl/asn1.h>
 #include <polarssl/oid.h>
@@ -44,33 +48,24 @@ using virgil::crypto::foundation::VirgilPBE;
 #include <polarssl/cipher.h>
 #include <polarssl/md.h>
 
-#include <map>
-#include <string>
-#include <algorithm>
-
-#include <cstring>
-
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-using virgil::crypto::str2bytes;
-
-#include <virgil/crypto/foundation/PolarsslException.h>
-using virgil::crypto::foundation::PolarsslException;
-
 #include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/foundation/PolarsslException.h>
+#include <virgil/crypto/foundation/VirgilRandom.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+
+using virgil::crypto::str2bytes;
+using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
-
-#include <virgil/crypto/foundation/VirgilRandom.h>
+using virgil::crypto::foundation::VirgilPBE;
 using virgil::crypto::foundation::VirgilRandom;
+using virgil::crypto::foundation::PolarsslException;
+using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 typedef enum {
     VIRGIL_PBE_NONE = 0,
@@ -125,7 +120,6 @@ private:
      * @throw VirgilCryptoException if algorithm identifier is not supported or ASN.1 structure is corrupted.
      */
     void init_(const VirgilByteArray& pbeAlgId) {
-        size_t len;
         unsigned char *p, *end;
 
         // Initial init
@@ -218,7 +212,6 @@ private:
     VirgilByteArray buildAlgIdPKCS12(const VirgilByteArray& salt, size_t iterationCount) {
         VirgilAsn1Writer asn1Writer;
         const char *oid = 0;
-        size_t oidLen;
         // Write PBE-params
         size_t pbesLen = 0;
         pbesLen += asn1Writer.writeInteger(iterationCount);

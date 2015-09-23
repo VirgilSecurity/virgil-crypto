@@ -35,18 +35,21 @@
  */
 
 #include <virgil/crypto/VirgilStreamCipher.h>
-using virgil::crypto::VirgilStreamCipher;
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
+#include <virgil/crypto/VirgilDataSource.h>
+#include <virgil/crypto/VirgilDataSink.h>
 #include <virgil/crypto/foundation/VirgilKDF.h>
-using virgil::crypto::foundation::VirgilKDF;
-
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
-using virgil::crypto::foundation::VirgilSymmetricCipher;
-
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+
+using virgil::crypto::VirgilStreamCipher;
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilDataSource;
+using virgil::crypto::VirgilDataSink;
+
+using virgil::crypto::foundation::VirgilKDF;
+using virgil::crypto::foundation::VirgilSymmetricCipher;
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
 VirgilStreamCipher::~VirgilStreamCipher() throw() {

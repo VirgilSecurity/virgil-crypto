@@ -35,8 +35,6 @@
  */
 
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
-using virgil::crypto::foundation::VirgilAsymmetricCipher;
-using virgil::crypto::foundation::VirgilAsymmetricCipherImpl;
 
 #include <cstring>
 
@@ -50,22 +48,21 @@ using virgil::crypto::foundation::VirgilAsymmetricCipherImpl;
 #include <polarssl/ctr_drbg.h>
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
-#include <virgil/crypto/foundation/VirgilKeyPairGenerator.h>
-using virgil::crypto::foundation::VirgilKeyPairGenerator;
-
 #include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/foundation/PolarsslException.h>
+#include <virgil/crypto/foundation/VirgilKeyPairGenerator.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+
+using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
-
-#include <virgil/crypto/foundation/PolarsslException.h>
 using virgil::crypto::foundation::PolarsslException;
+using virgil::crypto::foundation::VirgilAsymmetricCipher;
+using virgil::crypto::foundation::VirgilAsymmetricCipherImpl;
+using virgil::crypto::foundation::VirgilKeyPairGenerator;
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
 /// @name Private section
 namespace virgil { namespace crypto { namespace foundation {

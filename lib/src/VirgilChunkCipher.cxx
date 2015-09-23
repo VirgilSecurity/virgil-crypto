@@ -35,29 +35,23 @@
  */
 
 #include <virgil/crypto/VirgilChunkCipher.h>
-using virgil::crypto::VirgilChunkCipher;
-using virgil::crypto::str2bytes;
 
 #include <cstring>
 #include <cmath>
-
 #include <string>
-using std::string;
-
 #include <sstream>
-using std::ostringstream;
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
 #include <virgil/crypto/VirgilCryptoException.h>
-using virgil::crypto::VirgilCryptoException;
-
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
-using virgil::crypto::foundation::VirgilSymmetricCipher;
-
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+
+using virgil::crypto::str2bytes;
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilChunkCipher;
+using virgil::crypto::VirgilCryptoException;
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
+using virgil::crypto::foundation::VirgilSymmetricCipher;
 
 /**
  * @name Contsants
@@ -104,7 +98,7 @@ VirgilByteArray VirgilChunkCipher::process(const VirgilByteArray& data) {
     VirgilSymmetricCipher& symmetricCipher = getSymmetricCipher();
     bool isDataAlignedToBlockSize = (data.size() % symmetricCipher.blockSize()) == 0;
     if (symmetricCipher.isDecryptionMode() && !isDataAlignedToBlockSize) {
-        ostringstream message;
+        std::ostringstream message;
         message << "In the decryption mode data size MUST be multiple of ";
         message << symmetricCipher.blockSize() << " bytes.";
         throw VirgilCryptoException(message.str());

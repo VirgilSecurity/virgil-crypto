@@ -40,10 +40,7 @@
 #include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 
 namespace virgil { namespace crypto { namespace foundation {
 
@@ -57,7 +54,7 @@ class VirgilKDFImpl;
 /**
  * @brief Provides key derivation function algorithms.
  */
-class VirgilKDF : public VirgilAsn1Compatible {
+class VirgilKDF : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
     /**
      * @name Creation methods
@@ -113,7 +110,7 @@ public:
      * @param outSize - size of the output sequence.
      * @return Output sequence.
      */
-    VirgilByteArray derive(const VirgilByteArray& in, size_t outSize);
+    virgil::crypto::VirgilByteArray derive(const virgil::crypto::VirgilByteArray& in, size_t outSize);
     ///@}
     /**
      * @name Copy constructor / assignment operator
@@ -148,8 +145,9 @@ public:
      * @endcode
      */
     ///@{
-    virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
-    virtual void asn1Read(VirgilAsn1Reader& asn1Reader);
+    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+            size_t childWrittenBytes = 0) const;
+    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
 private:
     explicit VirgilKDF(int kdfType, int mdType);

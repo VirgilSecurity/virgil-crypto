@@ -38,7 +38,6 @@
 #define VIRGIL_CRYPTO_VIRGIL_ASN1_COMPATIBLE_H
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
 
 /**
  * @name Forward declaration
@@ -48,8 +47,6 @@ namespace virgil { namespace crypto { namespace foundation { namespace asn1 {
     class VirgilAsn1Reader;
     class VirgilAsn1Writer;
 }}}}
-using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
-using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 /// @}
 
 
@@ -63,11 +60,11 @@ public:
     /**
      * @brief Save object state to the ASN.1 structure.
      */
-    VirgilByteArray toAsn1() const;
+    virgil::crypto::VirgilByteArray toAsn1() const;
     /**
      * @brief Restore object state from the ASN.1 structure.
      */
-    void fromAsn1(const VirgilByteArray& asn1);
+    void fromAsn1(const virgil::crypto::VirgilByteArray& asn1);
     /**
      * @brief Polymorphic destructor.
      */
@@ -89,7 +86,7 @@ protected:
      * @brief If given parameter is empty exception will be thrown.
      * @throw virgil::crypto::VirgilCryptoException.
      */
-    virtual void checkAsn1ParamNotEmpty(const VirgilByteArray& param, const char *paramName = 0) const;
+    virtual void checkAsn1ParamNotEmpty(const virgil::crypto::VirgilByteArray& param, const char *paramName = 0) const;
 };
 
 }}}}

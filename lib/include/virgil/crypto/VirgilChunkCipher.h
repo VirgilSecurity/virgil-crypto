@@ -39,11 +39,8 @@
 
 #include <cstddef>
 
-#include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
 #include <virgil/crypto/VirgilCipherBase.h>
-using virgil::crypto::VirgilCipherBase;
+#include <virgil/crypto/VirgilByteArray.h>
 
 namespace virgil { namespace crypto {
 

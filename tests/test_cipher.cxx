@@ -44,15 +44,13 @@
 #include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-using virgil::crypto::str2bytes;
-
 #include <virgil/crypto/VirgilCipher.h>
-using virgil::crypto::VirgilCipher;
-
 #include <virgil/crypto/VirgilKeyPair.h>
-using virgil::crypto::VirgilKeyPair;
 
+using virgil::crypto::str2bytes;
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilCipher;
+using virgil::crypto::VirgilKeyPair;
 
 TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
     VirgilByteArray password = str2bytes("password");

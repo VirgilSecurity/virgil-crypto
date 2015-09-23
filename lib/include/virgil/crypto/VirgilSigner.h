@@ -38,10 +38,7 @@
 #define VIRGIL_SIGNER_H
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
 #include <virgil/crypto/foundation/VirgilHash.h>
-using virgil::crypto::foundation::VirgilHash;
 
 namespace virgil { namespace crypto {
 
@@ -56,7 +53,8 @@ public:
      * @brief Create signer with predefined hash function.
      * @note Specified hash function algorithm is used only during signing.
      */
-    explicit VirgilSigner(const VirgilHash& hash = VirgilHash::sha384());
+    explicit VirgilSigner(const virgil::crypto::foundation::VirgilHash& hash =
+            virgil::crypto::foundation::VirgilHash::sha384());
     /**
      * @brief Sign data with given private key.
      * @return Virgil Security sign.
@@ -69,7 +67,7 @@ public:
      */
     bool verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
 private:
-    VirgilHash hash_;
+    virgil::crypto::foundation::VirgilHash hash_;
 };
 
 }}

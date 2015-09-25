@@ -120,6 +120,7 @@ INCLUDE_CLASS(VirgilChunkCipher, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilSigner, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilStreamSigner, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilStreamCipher, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilByteArrayUtils, virgil::crypto, virgil/crypto)
 
 // Package: virgil::crypto::foundation::cms
 #if defined(LIB_LOW_LEVEL_API)

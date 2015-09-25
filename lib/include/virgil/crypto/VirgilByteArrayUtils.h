@@ -87,6 +87,11 @@ public:
      * This method SHOULD be used to securely delete sensitive data.
      */
     static void zeroize(VirgilByteArray& array);
+private:
+    /**
+     * @brief Deny object creation.
+     */
+    VirgilByteArrayUtils();
 };
 
 }}

@@ -84,6 +84,10 @@ public:
      */
     int readInteger();
     /**
+     * @brief Read ASN.1 type: BOOLEAN.
+     */
+    bool readBool();
+    /**
      * @brief Read ASN.1 type: NULL.
      */
     void readNull();

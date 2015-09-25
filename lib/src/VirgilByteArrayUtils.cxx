@@ -91,6 +91,42 @@ VirgilByteArray VirgilByteArrayUtils::json2bytes(const std::string& jsonString) 
     }
 }
 
+VirgilByteArray VirgilByteArrayUtils::str2bytes(const std::string& str) {
+    return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(str.data(), str.size());
+}
+
+std::string VirgilByteArrayUtils::bytes2str(const VirgilByteArray& array) {
+    return std::string(reinterpret_cast<const char *>(array.data()), array.size());
+}
+
+VirgilByteArray VirgilByteArrayUtils::hex2bytes(const std::string& hexStr) {
+    VirgilByteArray result;
+    std::istringstream istr(hexStr);
+    char hexChars[3] = {0x00};
+    while (istr.read(hexChars, 2)) {
+        int byte = 0;
+        std::istringstream(hexChars) >> std::hex >> byte;
+        result.push_back((unsigned char)byte);
+    }
+    return result;
+}
+
+std::string VirgilByteArrayUtils::bytes2hex(const VirgilByteArray& array, bool formatted) {
+    std::ostringstream hexStream;
+    hexStream << std::setfill('0');
+    for(size_t i = 0; i < array.size(); ++i) {
+        hexStream << std::hex << std::setw(2) << (int)array[i];
+        if (formatted) {
+            hexStream << (((i + 1) % 16 == 0) ? "\n" : " ");
+        }
+    }
+    return hexStream.str();
+}
+
+void VirgilByteArrayUtils::zeroize(VirgilByteArray& array) {
+    std::fill(array.begin(), array.end(), 0);
+}
+
 size_t asn1_write_json_value(VirgilAsn1Writer& asn1Writer, const json& json, const std::string& key) {
     if (json.is_object()) {
         return asn1_write_json_object(asn1Writer, json, key);

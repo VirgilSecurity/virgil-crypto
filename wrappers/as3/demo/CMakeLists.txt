@@ -37,7 +37,7 @@
 # Input:
 #     WRAPPER_SWC - AS3 SWC file name.
 
-cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
 if (DEFINED ENV{FLEX_HOME})
 

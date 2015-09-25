@@ -38,18 +38,14 @@ cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
 project (virgil)
 
-# Configure compiler flags
-if (CMAKE_MAJOR_VERSION LESS 3 AND NOT CMAKE_CROSSCOMPILING)
-    include(CheckCCompilerFlag)
-    check_c_compiler_flag (-fPIC COMPILER_SUPPORT_PIC)
-    if (COMPILER_SUPPORT_PIC)
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-    endif()
-endif ()
+# Enable C++11
+set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include and build external libraries
 include (ExternalProject)
 include (${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/mbedtls_ext.cmake)
+include (${CMAKE_CURRENT_SOURCE_DIR}/cmake/json.cmake)
 
 set (VIRGIL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories (${VIRGIL_INCLUDE_DIR})
@@ -80,7 +76,7 @@ set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${VIRGIL_INCLUDE_DIR})
 
-target_link_libraries (${PROJECT_NAME} mbedtls)
+target_link_libraries (${PROJECT_NAME} mbedtls json)
 add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy_if_different

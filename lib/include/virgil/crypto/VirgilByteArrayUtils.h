@@ -58,21 +58,21 @@ public:
      *
      * @note Underlying canonical representation is ASN.1, but it can be changed in future.
      */
-    static VirgilByteArray json2bytes(const std::string& json);
+    static VirgilByteArray jsonToBytes(const std::string& json);
     /**
      * @brief Represents given string as byte array.
      */
-    static VirgilByteArray str2bytes(const std::string& str);
+    static VirgilByteArray stringToBytes(const std::string& str);
     /**
      * @brief Represent given byte array as string.
      */
-    static std::string bytes2str(const VirgilByteArray& array);
+    static std::string bytesToString(const VirgilByteArray& array);
     /**
      * @brief Translate given HEX string to the byte array.
      * @param hexStr - HEX string.
      * @return Byte array.
      */
-    static VirgilByteArray hex2bytes(const std::string& hexStr);
+    static VirgilByteArray hexToBytes(const std::string& hexStr);
     /**
      * @brief Translate given byte array to the HEX string.
      * @param array - byte array.
@@ -80,7 +80,7 @@ public:
      *                    and all bytes will be separated with whitespaces.
      * @return HEX string.
      */
-    static std::string bytes2hex(const VirgilByteArray& array, bool formatted = false);
+    static std::string bytesToHex(const VirgilByteArray& array, bool formatted = false);
     /**
      * @brief Make all bytes zero.
      *

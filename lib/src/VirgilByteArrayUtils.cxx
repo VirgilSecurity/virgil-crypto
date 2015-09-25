@@ -80,7 +80,7 @@ static size_t asn1_write_json_primitive(VirgilAsn1Writer& asn1Writer, const json
 /**
  * @brief JSON to ASN.1 mapping
  */
-VirgilByteArray VirgilByteArrayUtils::json2bytes(const std::string& jsonString) {
+VirgilByteArray VirgilByteArrayUtils::jsonToBytes(const std::string& jsonString) {
     try {
         json jsonObj = json::parse(jsonString);
         VirgilAsn1Writer asn1Writer;
@@ -91,15 +91,15 @@ VirgilByteArray VirgilByteArrayUtils::json2bytes(const std::string& jsonString) 
     }
 }
 
-VirgilByteArray VirgilByteArrayUtils::str2bytes(const std::string& str) {
+VirgilByteArray VirgilByteArrayUtils::stringToBytes(const std::string& str) {
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(str.data(), str.size());
 }
 
-std::string VirgilByteArrayUtils::bytes2str(const VirgilByteArray& array) {
+std::string VirgilByteArrayUtils::bytesToString(const VirgilByteArray& array) {
     return std::string(reinterpret_cast<const char *>(array.data()), array.size());
 }
 
-VirgilByteArray VirgilByteArrayUtils::hex2bytes(const std::string& hexStr) {
+VirgilByteArray VirgilByteArrayUtils::hexToBytes(const std::string& hexStr) {
     VirgilByteArray result;
     std::istringstream istr(hexStr);
     char hexChars[3] = {0x00};
@@ -111,7 +111,7 @@ VirgilByteArray VirgilByteArrayUtils::hex2bytes(const std::string& hexStr) {
     return result;
 }
 
-std::string VirgilByteArrayUtils::bytes2hex(const VirgilByteArray& array, bool formatted) {
+std::string VirgilByteArrayUtils::bytesToHex(const VirgilByteArray& array, bool formatted) {
     std::ostringstream hexStream;
     hexStream << std::setfill('0');
     for(size_t i = 0; i < array.size(); ++i) {
@@ -151,7 +151,7 @@ size_t asn1_write_json_object(VirgilAsn1Writer& asn1Writer, const json& json, co
     }
     len += asn1Writer.writeSequence(len);
     if (!key.empty()) {
-        len += asn1Writer.writeUTF8String(virgil::crypto::str2bytes(key));
+        len += asn1Writer.writeUTF8String(VirgilByteArrayUtils::stringToBytes(key));
         len += asn1Writer.writeSequence(len);
     }
     return len;
@@ -167,7 +167,7 @@ size_t asn1_write_json_array(VirgilAsn1Writer& asn1Writer, const json& json, con
     }
     len += asn1Writer.writeSequence(len);
     if (!key.empty()) {
-        len += asn1Writer.writeUTF8String(virgil::crypto::str2bytes(key));
+        len += asn1Writer.writeUTF8String(VirgilByteArrayUtils::stringToBytes(key));
         len += asn1Writer.writeSequence(len);
     }
     return len;
@@ -185,12 +185,12 @@ size_t asn1_write_json_primitive(VirgilAsn1Writer& asn1Writer, const json& json,
     } else if (json.is_boolean()) {
         len += asn1Writer.writeBool(json);
     } else if (json.is_string()) {
-        len += asn1Writer.writeUTF8String(virgil::crypto::str2bytes(json));
+        len += asn1Writer.writeUTF8String(VirgilByteArrayUtils::stringToBytes(json));
     } else if (json.is_null()) {
         len += asn1Writer.writeNull();
     }
     if (!key.empty()) {
-        len += asn1Writer.writeUTF8String(virgil::crypto::str2bytes(key));
+        len += asn1Writer.writeUTF8String(VirgilByteArrayUtils::stringToBytes(key));
         len += asn1Writer.writeSequence(len);
     }
     return len;

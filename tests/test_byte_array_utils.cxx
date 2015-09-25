@@ -49,8 +49,6 @@
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
 
-using virgil::crypto::bytes2hex;
-
 TEST_CASE("Json -> bytes", "[byte-array]") {
     std::string pretty_json =
         "{"
@@ -90,10 +88,12 @@ TEST_CASE("Json -> bytes", "[byte-array]") {
         "}";
 
     SECTION("Test JSON to bytes convertion") {
-        VirgilByteArray pretty_json_bytes = VirgilByteArrayUtils::json2bytes(pretty_json);
-        VirgilByteArray minified_json_bytes = VirgilByteArrayUtils::json2bytes(minified_json);
-        VirgilByteArray rearranged_json_bytes = VirgilByteArrayUtils::json2bytes(rearranged_json);
-        REQUIRE(bytes2hex(pretty_json_bytes) == bytes2hex(minified_json_bytes));
-        REQUIRE(bytes2hex(pretty_json_bytes) == bytes2hex(rearranged_json_bytes));
+        VirgilByteArray pretty_json_bytes = VirgilByteArrayUtils::jsonToBytes(pretty_json);
+        VirgilByteArray minified_json_bytes = VirgilByteArrayUtils::jsonToBytes(minified_json);
+        VirgilByteArray rearranged_json_bytes = VirgilByteArrayUtils::jsonToBytes(rearranged_json);
+        REQUIRE(VirgilByteArrayUtils::bytesToHex(pretty_json_bytes) ==
+                VirgilByteArrayUtils::bytesToHex(minified_json_bytes));
+        REQUIRE(VirgilByteArrayUtils::bytesToHex(pretty_json_bytes) ==
+                VirgilByteArrayUtils::bytesToHex(rearranged_json_bytes));
     }
 }

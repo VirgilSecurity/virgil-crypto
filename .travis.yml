@@ -24,8 +24,8 @@ addons:
       - ubuntu-toolchain-r-test
       - llvm-toolchain-precise-3.6
     packages:
-      - g++-4.8
-      - clang++-3.6
+      - g++-4.9
+      - clang-3.6
       - libcurl4-openssl-dev
       - python-yaml
       - php5
@@ -39,7 +39,7 @@ before_install:
   - bash ./ci/install-credentials.sh
   - bash ./ci/install-doxygen.sh
 install:
-- if [ "$CXX" = "g++" ]; then export CXX="g++-4.8"; fi
+- if [ "$CXX" = "g++" ]; then export CXX="g++-4.9"; fi
 - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.6"; fi
 before_script:
   - bash ./ci/configure.sh

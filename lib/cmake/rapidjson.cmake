@@ -34,40 +34,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-# Input:
-#     WRAPPER_SWC - AS3 SWC file name.
+# Dependecy to https://github.com/miloyip/rapidjson
 
-cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
+# Configure external project
+if (NOT TARGET rapidproject_json)
+    ExternalProject_Add (rapidproject_json
+        GIT_REPOSITORY "https://github.com/miloyip/rapidjson.git"
+        GIT_TAG "v1.0.2"
+        PREFIX "${CMAKE_CURRENT_BINARY_DIR}/ext/rapidjson"
+        CMAKE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+        TEST_COMMAND ""
+    )
+endif ()
 
-if (DEFINED ENV{FLEX_HOME})
+# Configure output
+ExternalProject_Get_Property (rapidproject_json PREFIX)
+set (RAPIDJSON_INCLUDE_DIRS "${PREFIX}/src/rapidproject_json/include")
 
-    find_program (FLEX_COMPILER NAMES amxmlc PATHS $ENV{FLEX_HOME}/bin )
-    find_program (FLEX_RUNNER NAMES adl PATHS $ENV{FLEX_HOME}/bin )
-    if (FLEX_COMPILER)
-        configure_file (
-            ${CMAKE_CURRENT_SOURCE_DIR}/EncryptApp-AIR.xml
-            ${CMAKE_CURRENT_BINARY_DIR}/
-            COPYONLY
-        )
-        add_custom_target (demo
-            COMMAND ${FLEX_COMPILER}
-                    --static-link-runtime-shared-libraries -compiler.omit-trace-statements=false -debug=true
-                    -library-path+=${WRAPPER_SWC} ${CMAKE_CURRENT_SOURCE_DIR}/EncryptApp.mxml -o EncryptApp.swf
-            DEPENDS ${WRAPPER_SWC}
-        )
-    else (FLEX_COMPILER)
-        message (WARNING "Flex compiler amxmlc was not found at:" $ENV{FLEX_HOME}/bin)
-    endif (FLEX_COMPILER)
+# Workaround of http://public.kitware.com/Bug/view.php?id=14495
+file (MAKE_DIRECTORY ${RAPIDJSON_INCLUDE_DIRS})
 
-    if (FLEX_RUNNER)
-        add_custom_target (demo_run
-            COMMAND ${FLEX_RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/EncryptApp-AIR.xml
-        )
-        add_dependencies (demo_run demo)
-    else (FLEX_RUNNER)
-        message (WARNING "Flex adl was not found at:" $ENV{FLEX_HOME}/bin)
-    endif (FLEX_RUNNER)
-
-else ()
-    message (WARNING "FLEX_HOME is not defined, target 'demo' is OFF.")
+# Make target
+if (NOT TARGET rapidjson)
+    add_library (rapidjson STATIC IMPORTED)
+    set_target_properties (rapidjson PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES ${RAPIDJSON_INCLUDE_DIRS}
+    )
+    add_dependencies (rapidjson rapidproject_json)
 endif ()

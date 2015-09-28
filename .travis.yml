@@ -7,6 +7,7 @@ os:
 env:
   global:
     - BUILD_DIR_NAME=build
+    - DOC_BRANCH=release
   matrix:
     - PLATFORM_NAME=CPP LIB_LOW_LEVEL_API=ON PUBLISH_DOCS=ON
     - PLATFORM_NAME=CPP LIB_LOW_LEVEL_API=OFF
@@ -22,6 +23,7 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
+      - llvm-toolchain-precise-3.6
     packages:
       - libcurl4-openssl-dev
       - python-yaml

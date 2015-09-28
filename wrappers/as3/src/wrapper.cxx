@@ -49,6 +49,7 @@
 #include "VirgilCustomParams.wrapper.hpp"
 #include "VirgilHash.wrapper.hpp"
 #include "VirgilBase64.wrapper.hpp"
+#include "VirgilByteArrayUtils.wrapper.hpp"
 
 int main() {
     AS3_GoAsync();

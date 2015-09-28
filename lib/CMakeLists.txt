@@ -50,6 +50,7 @@ include (${CMAKE_CURRENT_SOURCE_DIR}/cmake/json.cmake)
 set (VIRGIL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories (${VIRGIL_INCLUDE_DIR})
 include_directories (${MBEDTLS_INCLUDE_DIR})
+include_directories (${JSON_INCLUDE_DIRS})
 
 # Define sources list
 aux_source_directory ("src" src)
@@ -82,7 +83,8 @@ if (EMSCRIPTEN)
     )
 endif (EMSCRIPTEN)
 
-target_link_libraries (${PROJECT_NAME} mbedtls json)
+target_link_libraries (${PROJECT_NAME} mbedtls)
+add_dependencies (${PROJECT_NAME} json)
 add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy_if_different

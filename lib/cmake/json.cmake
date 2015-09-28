@@ -57,7 +57,7 @@ file (MAKE_DIRECTORY ${JSON_INCLUDE_DIRS})
 
 # Make target
 if (NOT TARGET json)
-    add_library (json INTERFACE IMPORTED)
+    add_library (json STATIC IMPORTED)
     set_target_properties (json PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES ${JSON_INCLUDE_DIRS}
     )

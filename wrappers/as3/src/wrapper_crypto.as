@@ -64,6 +64,24 @@ public class VirgilVersion {
     }
 }
 
+public class VirgilByteArrayUtils {
+    public static function jsonToBytes(json:String):ByteArray {
+        return _wrap_VirgilByteArrayUtils_jsonToBytes(json);
+    }
+    public static function stringToBytes(str:String):ByteArray {
+        return _wrap_VirgilByteArrayUtils_stringToBytes(str);
+    }
+    public static function bytesToString(bytes:ByteArray):String {
+        return _wrap_VirgilByteArrayUtils_bytesToString(bytes);
+    }
+    public static function hexToBytes(hexStr:String):ByteArray {
+        return _wrap_VirgilByteArrayUtils_hexToBytes(hexStr);
+    }
+    public static function bytesToHex(bytes:ByteArray, formatted:Boolean = false):String {
+        return _wrap_VirgilByteArrayUtils_bytesToHex(bytes, formatted);
+    }
+}
+
 public class VirgilRandom extends CObject {
     public static function create(personalInfo:ByteArray):VirgilRandom {
         var obj = new VirgilRandom();

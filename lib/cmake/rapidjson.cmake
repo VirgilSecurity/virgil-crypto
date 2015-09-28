@@ -34,13 +34,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-# Dependecy to https://github.com/nlohmann/json
+# Dependecy to https://github.com/miloyip/rapidjson
 
 # Configure external project
-if (NOT TARGET project_json)
-    ExternalProject_Add (project_json
-        GIT_REPOSITORY "https://github.com/nlohmann/json.git"
-        PREFIX "${CMAKE_CURRENT_BINARY_DIR}/ext/json"
+if (NOT TARGET rapidproject_json)
+    ExternalProject_Add (rapidproject_json
+        GIT_REPOSITORY "https://github.com/miloyip/rapidjson.git"
+        GIT_TAG "v1.0.2"
+        PREFIX "${CMAKE_CURRENT_BINARY_DIR}/ext/rapidjson"
         CMAKE_COMMAND ""
         BUILD_COMMAND ""
         INSTALL_COMMAND ""
@@ -49,17 +50,17 @@ if (NOT TARGET project_json)
 endif ()
 
 # Configure output
-ExternalProject_Get_Property (project_json PREFIX)
-set (JSON_INCLUDE_DIRS "${PREFIX}/src/project_json/src")
+ExternalProject_Get_Property (rapidproject_json PREFIX)
+set (RAPIDJSON_INCLUDE_DIRS "${PREFIX}/src/rapidproject_json/include")
 
 # Workaround of http://public.kitware.com/Bug/view.php?id=14495
-file (MAKE_DIRECTORY ${JSON_INCLUDE_DIRS})
+file (MAKE_DIRECTORY ${RAPIDJSON_INCLUDE_DIRS})
 
 # Make target
-if (NOT TARGET json)
-    add_library (json STATIC IMPORTED)
-    set_target_properties (json PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES ${JSON_INCLUDE_DIRS}
+if (NOT TARGET rapidjson)
+    add_library (rapidjson STATIC IMPORTED)
+    set_target_properties (rapidjson PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES ${RAPIDJSON_INCLUDE_DIRS}
     )
-    add_dependencies (json project_json)
+    add_dependencies (rapidjson rapidproject_json)
 endif ()

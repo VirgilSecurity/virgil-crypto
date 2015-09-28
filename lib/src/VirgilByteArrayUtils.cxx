@@ -37,13 +37,15 @@
 #include <virgil/crypto/VirgilByteArrayUtils.h>
 
 #include <string>
+#include <vector>
 #include <algorithm>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
-#include <json.hpp>
+#include <rapidjson/document.h>
+#include <rapidjson/reader.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
@@ -51,7 +53,8 @@ using virgil::crypto::VirgilByteArrayUtils;
 
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
-using json = nlohmann::json;
+
+typedef rapidjson::Value json;
 
 /**
  * @brief Write json value as ASN.1 structure.
@@ -82,7 +85,8 @@ static size_t asn1_write_json_primitive(VirgilAsn1Writer& asn1Writer, const json
  */
 VirgilByteArray VirgilByteArrayUtils::jsonToBytes(const std::string& jsonString) {
     try {
-        json jsonObj = json::parse(jsonString);
+        rapidjson::Document jsonObj;
+        jsonObj.Parse(jsonString.c_str());
         VirgilAsn1Writer asn1Writer;
         (void)asn1_write_json_value(asn1Writer, jsonObj);
         return asn1Writer.finish();
@@ -128,26 +132,34 @@ void VirgilByteArrayUtils::zeroize(VirgilByteArray& array) {
 }
 
 size_t asn1_write_json_value(VirgilAsn1Writer& asn1Writer, const json& json, const std::string& key) {
-    if (json.is_object()) {
+    if (json.IsObject()) {
         return asn1_write_json_object(asn1Writer, json, key);
     }
-    if (json.is_array()) {
+    if (json.IsArray()) {
         return asn1_write_json_array(asn1Writer, json, key);
     }
-    if (json.is_primitive()) {
-        return asn1_write_json_primitive(asn1Writer, json, key);
-    }
-    throw std::logic_error("Json: Unknown object type.");
+    return asn1_write_json_primitive(asn1Writer, json, key);
+}
+
+static bool compare_c_str(const char * a, const char * b) {
+    return std::strcmp(a, b) < 0;
 }
 
 size_t asn1_write_json_object(VirgilAsn1Writer& asn1Writer, const json& json, const std::string& key) {
-    if (!json.is_object()) {
+    if (!json.IsObject()) {
         throw std::logic_error("Json: Expected object type.");
     }
     size_t len = 0;
-    json::object_t jsonMap = json;
-    for (json::object_t::const_reverse_iterator it = jsonMap.rbegin(); it != jsonMap.rend(); ++it) {
-        len += asn1_write_json_value(asn1Writer, it->second, it->first);
+    // Get object keys
+    std::vector<const char *> keys;
+    for (json::ConstMemberIterator it = json.MemberBegin(); it != json.MemberEnd(); ++it) {
+        keys.push_back(it->name.GetString());
+    }
+    // Sort object keys
+    std::sort(keys.begin(), keys.end(), compare_c_str);
+    // Process object values
+    for (std::vector<const char *>::const_reverse_iterator it = keys.rbegin(); it != keys.rend(); ++it) {
+        len += asn1_write_json_value(asn1Writer, json[*it], *it);
     }
     len += asn1Writer.writeSequence(len);
     if (!key.empty()) {
@@ -158,12 +170,14 @@ size_t asn1_write_json_object(VirgilAsn1Writer& asn1Writer, const json& json, co
 }
 
 size_t asn1_write_json_array(VirgilAsn1Writer& asn1Writer, const json& json, const std::string& key) {
-    if (!json.is_array()) {
+    if (!json.IsArray()) {
         throw std::logic_error("Json: Expected array type.");
     }
     size_t len = 0;
-    for (json::const_reverse_iterator it = json.rbegin(); it != json.rend(); ++it) {
-        len += asn1_write_json_value(asn1Writer, *it);
+    std::reverse_iterator<json::ConstValueIterator> jsonCurr(json.End());
+    std::reverse_iterator<json::ConstValueIterator> jsonEnd(json.Begin());
+    for (; jsonCurr != jsonEnd; ++jsonCurr) {
+        len += asn1_write_json_value(asn1Writer, *jsonCurr);
     }
     len += asn1Writer.writeSequence(len);
     if (!key.empty()) {
@@ -174,20 +188,22 @@ size_t asn1_write_json_array(VirgilAsn1Writer& asn1Writer, const json& json, con
 }
 
 size_t asn1_write_json_primitive(VirgilAsn1Writer& asn1Writer, const json& json, const std::string& key) {
-    if (!json.is_primitive()) {
+    if (json.IsObject() || json.IsArray()) {
         throw std::logic_error("Json: Expected primitive type.");
     }
     size_t len = 0;
-    if (json.is_number_integer()) {
-        len += asn1Writer.writeInteger(json);
-    } else if (json.is_number_float()) {
+    if (json.IsInt()) {
+        len += asn1Writer.writeInteger(json.GetInt());
+    } else if (json.IsDouble()) {
         throw VirgilCryptoException("VirgilByteArrayUtils: not supported float values in JSON.");
-    } else if (json.is_boolean()) {
-        len += asn1Writer.writeBool(json);
-    } else if (json.is_string()) {
-        len += asn1Writer.writeUTF8String(VirgilByteArrayUtils::stringToBytes(json));
-    } else if (json.is_null()) {
+    } else if (json.IsBool()) {
+        len += asn1Writer.writeBool(json.GetBool());
+    } else if (json.IsString()) {
+        len += asn1Writer.writeUTF8String(VirgilByteArrayUtils::stringToBytes(json.GetString()));
+    } else if (json.IsNull()) {
         len += asn1Writer.writeNull();
+    } else {
+        throw std::logic_error("Json: Unknown object type.");
     }
     if (!key.empty()) {
         len += asn1Writer.writeUTF8String(VirgilByteArrayUtils::stringToBytes(key));

@@ -42,6 +42,7 @@
 #include "catch.hpp"
 
 #include <string>
+#include <iostream>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilByteArrayUtils.h>
@@ -62,6 +63,7 @@ TEST_CASE("Json -> bytes", "[byte-array]") {
         "        1, true, false, \"test string\""
         "    ],"
         "    \"bool_true\" : true,"
+        "    \"null\" : null,"
         "    \"bool_false\" : false,"
         "    \"number_integer\" : 123,"
         "    \"string\" : \"test_string\""
@@ -69,10 +71,12 @@ TEST_CASE("Json -> bytes", "[byte-array]") {
     std::string minified_json =
             "{\"object\":{\"number_integer\":123,\"bool_true\":true,\"bool_false\":false,\""
             "string\":\"test string\"},\"array\":[1,true,false,\"test string\"],\"bool_true"
-            "\":true,\"bool_false\":false,\"number_integer\":123,\"string\":\"test_string\"}";
+            "\":true,\"bool_false\":false,\"number_integer\":123,\"string\":\"test_string\","
+            "\"null\" : null}";
     std::string rearranged_json =
         "{"
         "    \"bool_false\" : false,"
+        "    \"null\" : null,"
         "    \"number_integer\" : 123,"
         "    \"array\" : ["
         "        1, true, false, \"test string\""
@@ -95,5 +99,6 @@ TEST_CASE("Json -> bytes", "[byte-array]") {
                 VirgilByteArrayUtils::bytesToHex(minified_json_bytes));
         REQUIRE(VirgilByteArrayUtils::bytesToHex(pretty_json_bytes) ==
                 VirgilByteArrayUtils::bytesToHex(rearranged_json_bytes));
+        std::cout << VirgilByteArrayUtils::bytesToHex(minified_json_bytes) << std::endl;
     }
 }

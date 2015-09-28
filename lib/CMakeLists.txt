@@ -38,19 +38,15 @@ cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
 project (virgil)
 
-# Enable C++11
-set (CMAKE_CXX_STANDARD 11)
-set (CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # Include and build external libraries
 include (ExternalProject)
 include (${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/mbedtls_ext.cmake)
-include (${CMAKE_CURRENT_SOURCE_DIR}/cmake/json.cmake)
+include (${CMAKE_CURRENT_SOURCE_DIR}/cmake/rapidjson.cmake)
 
 set (VIRGIL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories (${VIRGIL_INCLUDE_DIR})
 include_directories (${MBEDTLS_INCLUDE_DIR})
-include_directories (${JSON_INCLUDE_DIRS})
+include_directories (${RAPIDJSON_INCLUDE_DIRS})
 
 # Define sources list
 aux_source_directory ("src" src)
@@ -77,14 +73,8 @@ set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${VIRGIL_INCLUDE_DIR})
 
-if (EMSCRIPTEN)
-    set_source_files_properties (
-        "${CMAKE_CURRENT_BINARY_DIR}/src/VirgilByteArrayUtils.cxx" PROPERTIES COMPILE_FLAGS -std=c++11
-    )
-endif (EMSCRIPTEN)
-
 target_link_libraries (${PROJECT_NAME} mbedtls)
-add_dependencies (${PROJECT_NAME} json)
+add_dependencies (${PROJECT_NAME} rapidjson)
 add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy_if_different

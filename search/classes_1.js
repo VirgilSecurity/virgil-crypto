@@ -5,6 +5,7 @@ var searchData=
   ['virgilasn1writer',['VirgilAsn1Writer',['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html',1,'virgil::crypto::foundation::asn1']]],
   ['virgilasymmetriccipher',['VirgilAsymmetricCipher',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html',1,'virgil::crypto::foundation']]],
   ['virgilbase64',['VirgilBase64',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_base64.html',1,'virgil::crypto::foundation']]],
+  ['virgilbytearrayutils',['VirgilByteArrayUtils',['../classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html',1,'virgil::crypto']]],
   ['virgilchunkcipher',['VirgilChunkCipher',['../classvirgil_1_1crypto_1_1_virgil_chunk_cipher.html',1,'virgil::crypto']]],
   ['virgilcipher',['VirgilCipher',['../classvirgil_1_1crypto_1_1_virgil_cipher.html',1,'virgil::crypto']]],
   ['virgilcipherbase',['VirgilCipherBase',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html',1,'virgil::crypto']]],

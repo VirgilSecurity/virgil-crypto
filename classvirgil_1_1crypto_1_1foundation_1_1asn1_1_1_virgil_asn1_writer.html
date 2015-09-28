@@ -122,6 +122,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a07d626942a59de3981c92c0cc81a29cc"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#a07d626942a59de3981c92c0cc81a29cc">writeInteger</a> (int value)</td></tr>
 <tr class="memdesc:a07d626942a59de3981c92c0cc81a29cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write ASN.1 type: INTEGER.  <a href="#a07d626942a59de3981c92c0cc81a29cc">More...</a><br /></td></tr>
 <tr class="separator:a07d626942a59de3981c92c0cc81a29cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fae4ce0b532b25c6682372ae0272653"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#a0fae4ce0b532b25c6682372ae0272653">writeBool</a> (bool value)</td></tr>
+<tr class="memdesc:a0fae4ce0b532b25c6682372ae0272653"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write ASN.1 type: BOOLEAN.  <a href="#a0fae4ce0b532b25c6682372ae0272653">More...</a><br /></td></tr>
+<tr class="separator:a0fae4ce0b532b25c6682372ae0272653"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ffcd85502cc4a37ae67bdcaf31c51e7"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#a1ffcd85502cc4a37ae67bdcaf31c51e7">writeNull</a> ()</td></tr>
 <tr class="memdesc:a1ffcd85502cc4a37ae67bdcaf31c51e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write ASN.1 type: NULL.  <a href="#a1ffcd85502cc4a37ae67bdcaf31c51e7">More...</a><br /></td></tr>
 <tr class="separator:a1ffcd85502cc4a37ae67bdcaf31c51e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -189,6 +192,31 @@ Implementation is not complete yet, only minimum set of operations are supported
 <p>Returns the result ASN.1 structure. </p>
 <dl class="section return"><dt>Returns</dt><dd>ASN.1 structure that was written. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>After call this method all attempts to write more data will cause exceptions. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a0fae4ce0b532b25c6682372ae0272653"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t virgil::crypto::foundation::asn1::VirgilAsn1Writer::writeBool </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Write ASN.1 type: BOOLEAN. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>- boolean value to be written. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Written bytes. </dd></dl>
 
 </div>
 </div>

@@ -1,10 +1,5 @@
 var searchData=
 [
-  ['patchversion',['patchVersion',['../classvirgil_1_1crypto_1_1_virgil_version.html#ab72a775ff89f80f90381ecec3c577b87',1,'virgil::crypto::VirgilVersion']]],
-  ['pkcs12',['pkcs12',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_e.html#a21aec2e9215c11342221bd972c79bb5d',1,'virgil::crypto::foundation::VirgilPBE']]],
-  ['pkcs5',['pkcs5',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_e.html#aba39a34f303387a6d04d74db90955892',1,'virgil::crypto::foundation::VirgilPBE']]],
-  ['polarsslexception',['PolarsslException',['../classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html#ae721fa269403bebf1edd75f6f5525a77',1,'virgil::crypto::foundation::PolarsslException']]],
-  ['privatekey',['privateKey',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a843d20a09b4d3ce3d607695f33956d64',1,'virgil::crypto::VirgilKeyPair']]],
-  ['process',['process',['../classvirgil_1_1crypto_1_1_virgil_chunk_cipher.html#ad1acabd520561b7632586c7def8a3a1c',1,'virgil::crypto::VirgilChunkCipher']]],
-  ['publickey',['publicKey',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a381634ff4ab3f89dfb8eaf052a37e6b1',1,'virgil::crypto::VirgilKeyPair']]]
+  ['name',['name',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a28ad1c93961338f0929088ebc52297e8',1,'virgil::crypto::foundation::VirgilHash::name()'],['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#ab2b0850a41b787b997db121dc5e2f42b',1,'virgil::crypto::foundation::VirgilKDF::name()'],['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a4ad3a3355b049bda1d9061d20da1333d',1,'virgil::crypto::foundation::VirgilSymmetricCipher::name()']]],
+  ['none',['none',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#ab68e1ece77607c75512924a3063afe47',1,'virgil::crypto::foundation::VirgilAsymmetricCipher']]]
 ];

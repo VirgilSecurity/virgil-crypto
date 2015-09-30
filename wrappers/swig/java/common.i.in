@@ -34,62 +34,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Ignore C++ operators
-%ignore operator=;
-%ignore operator==;
-
-// Language specific includes
-#if defined(SWIGPHP)
-    %include "php/common.i"
-#endif
-
-#if defined(SWIGCSHARP)
-    %include "csharp/common.i"
-#endif
-
-#if defined(SWIGJAVA)
-    %include "java/common.i"
-#endif
-
-// Define VirgilByteArray typemap if was not defined yet
-#ifndef SWIG_VIRGIL_BYTE_ARRAY
-#define SWIG_VIRGIL_BYTE_ARRAY
-%include <std_vector.i>
-namespace std {
-    %template(VirgilByteArray) vector<unsigned char>;
-};
-#endif
-
-// Exception handling
-%insert("header") %{
-#include <virgil/crypto/VirgilCryptoException.h>
+// Insert static module initialization to dynamicaly library load
+%pragma(java) jniclasscode=%{
+  static {
+    try {
+        System.loadLibrary("@SWIG_MODULE_NAME@");
+    } catch (UnsatisfiedLinkError error) {
+      System.err.println("Native code library failed to load. \n" + error);
+      System.exit(1);
+    }
+  }
 %}
 
-#ifdef SWIGPHP
-%feature("director:except") {
-    if ($error == FAILURE) {
-        throw Swig::DirectorMethodException();
-    }
-}
-#endif
-%exception {
-    try {
-        $action
-    }
-#ifdef SWIGPHP
-    catch (Swig::DirectorException &e) {
-        SWIG_exception(SWIG_SystemError, e.what());
-    }
-#endif
-#ifdef SWIGJAVA
-    catch (virgil::crypto::VirgilCryptoException &e) {
-        jclass clazz = jenv->FindClass("java/lang/Exception");
-        jenv->ThrowNew(clazz, e.what());
-        return $null;
-    }
-#endif
-    SWIG_CATCH_STDEXCEPT
-    catch (...) {
-        SWIG_exception(SWIG_UnknownError, "Unknown exception");
-    }
-}
+%javaexception("java.io.IOException") virgil::crypto::VirgilDataSource::hasData {}
+%javaexception("java.io.IOException") virgil::crypto::VirgilDataSource::read {}
+%javaexception("java.io.IOException") virgil::crypto::VirgilDataSink::write {}
+%javaexception("java.io.IOException") virgil::crypto::VirgilDataSink::isGood {}
+
+%typemap(javainterfaces) SWIGTYPE "java.lang.AutoCloseable";
+%typemap(javacode) SWIGTYPE %{
+  @Override
+  public void close() {
+    delete();
+  }
+%}
+
+%typemap(javacode) virgil::crypto::VirgilDataSource %{
+  @Override
+  public void close() throws java.io.IOException {
+    delete();
+  }
+%}
+
+%typemap(javacode) virgil::crypto::VirgilDataSink %{
+  @Override
+  public void close() throws java.io.IOException {
+    delete();
+  }
+%}
+
+// VirgilByteArray typemap
+#define SWIG_VIRGIL_BYTE_ARRAY
+%include "java/VirgilByteArray.i"

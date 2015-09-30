@@ -79,7 +79,6 @@ INCLUDE_CLASS(VirgilVersion, virgil::crypto, virgil/crypto)
 
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::crypto, virgil/crypto)
-INCLUDE_CLASS(VirgilCryptoException, virgil::crypto, virgil/crypto)
 
 // Package: virgil::crypto::foundation::asn1
 %ignore *::asn1Write;

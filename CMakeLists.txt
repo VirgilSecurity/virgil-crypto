@@ -64,6 +64,10 @@
 #
 #     - CMAKE_ARGS           - list of CMake parameters in form -DVAR:TYPE=VAL
 #
+# Define platform specific variables (that are defined only if build for this platform):
+#     - ANDROID_INSTALL_JNI_DIR_NAME - name of the directory where JNI libraries will be installed
+#                                      for Android platform
+#
 
 cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
@@ -153,6 +157,11 @@ set (INSTALL_BIN_DIR_NAME bin CACHE STRING "Installation directory name for exec
 set (INSTALL_MAN_DIR_NAME "share/man" CACHE STRING "Installation directory name for man pages")
 set (INSTALL_DOC_DIR_NAME "share/doc" CACHE STRING "Installation directory name for doc pages")
 set (INSTALL_API_DIR_NAME api CACHE STRING "Installation directory name for interface files")
+
+# Configure platform specific path variables
+if (ANDROID)
+    set (ANDROID_INSTALL_JNI_DIR_NAME "lib/${ANDROID_NDK_ABI_NAME}")
+endif (ANDROID)
 
 # Configure internal path variables
 set (EXTERNAL_LIBS_DIR "${CMAKE_CURRENT_BINARY_DIR}/libs" CACHE INTERNAL

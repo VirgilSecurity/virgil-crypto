@@ -82,8 +82,8 @@ foreach (TEST_FILE ${TEST_FILES})
     list (APPEND PHP_ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/${TEST_FILE}")
 endforeach (TEST_FILE)
 
-find_program (PHP_MODULE php)
-find_program (PHPUNIT_MODULE phpunit)
+find_host_program (PHP_MODULE php)
+find_host_program (PHPUNIT_MODULE phpunit)
 
 if (PHP_MODULE AND PHPUNIT_MODULE)
     add_test (

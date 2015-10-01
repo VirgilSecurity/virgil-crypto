@@ -58,7 +58,7 @@ set (JAVA_JAR_TARGET_NAME ${JAVA_MODULE_NAME}_jar)
 set (SWIG_MODULE_NAME ${JAVA_MODULE_NAME})
 
 # Find Java
-find_package (Java REQUIRED)
+find_host_package (Java REQUIRED)
 if (Java_FOUND AND NOT Java_INCLUDE_DIRS)
     get_filename_component (Java_JAVA_EXECUTABLE_DIR "${Java_JAVA_EXECUTABLE}" DIRECTORY)
     get_filename_component (Java_HOME "${Java_JAVA_EXECUTABLE_DIR}" DIRECTORY)
@@ -79,7 +79,7 @@ file (MAKE_DIRECTORY ${JAVA_BINARY_DIRECTORY})
 file (MAKE_DIRECTORY ${JAVA_SWIG_OUTPUT_DIRECTORY})
 
 # Configure SWIG
-find_package (SWIG REQUIRED)
+find_host_package (SWIG REQUIRED)
 include (${SWIG_USE_FILE})
 
 set (CMAKE_SWIG_OUTDIR ${JAVA_SWIG_OUTPUT_DIRECTORY})
@@ -112,6 +112,12 @@ set_target_properties (${JAVA_SWIG_TARGET_NAME}
         PROPERTIES OUTPUT_NAME ${JAVA_MODULE_NAME})
 set_target_properties (${JAVA_SWIG_TARGET_NAME}
         PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${JAVA_BINARY_DIRECTORY})
+set_target_properties (${JAVA_SWIG_TARGET_NAME}
+        PROPERTIES POSITION_INDEPENDENT_CODE ON)
+if (UNIX)
+    set_target_properties (${JAVA_SWIG_TARGET_NAME}
+            PROPERTIES NO_SONAME OFF VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
+endif (UNIX)
 
 # Copy additional source files
 file (GLOB_RECURSE JAVA_SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.java")

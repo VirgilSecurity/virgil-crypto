@@ -63,6 +63,12 @@ endif ()
 # Confugure additional CMake parameters
 append_cmake_arg (CMAKE_ARGS NAME ENABLE_PROGRAMS TYPE BOOL VALUE OFF)
 append_cmake_arg (CMAKE_ARGS NAME ENABLE_TESTING TYPE BOOL VALUE OFF)
+if (NOT CMAKE_TOOLCHAIN_FILE)
+    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_COMPILER TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_FLAGS TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_FLAGS_RELEASE TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_FLAGS_DEBUG TYPE STRING)
+endif ()
 
 # Add external project build steps
 set (MBEDTLS_CONFIGURE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/configure")

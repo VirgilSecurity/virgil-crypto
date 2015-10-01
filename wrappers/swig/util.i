@@ -59,7 +59,6 @@ DEFINE_NAMESPACE(className, package)
 DEFINE_NAMESPACE(className, package)
 %insert("header") %{
 #include <includePath/className.h>
-using package::className;
 %}
 %feature("director") className;
 %include <includePath/className.h>
@@ -69,7 +68,6 @@ using package::className;
 DEFINE_NAMESPACE(className, package)
 %insert("header") %{
 #include <includePath/className.h>
-using package::className;
 %}
 #if defined(SWIG_WRAP_COPY_CONSTRUCTOR)
     %copyctor className;

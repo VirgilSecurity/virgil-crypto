@@ -133,10 +133,11 @@ class VirgilByteArray;
     jenv->SetByteArrayRegion($input, 0, $1.size(), (const jbyte *)&$1[0]);
 %}
 
-%typemap(out) const VirgilByteArray &
+%typemap(out) const VirgilByteArray & ($*1_ltype *temp)
 %{
-    $result = jenv->NewByteArray($1.size());
-    jenv->SetByteArrayRegion($result, 0, $1.size(), (const jbyte *)&$1[0]);
+    temp = $1;
+    $result = jenv->NewByteArray(temp->size());
+    jenv->SetByteArrayRegion($result, 0, temp->size(), (const jbyte *)(&(*temp)[0]));
 %}
 
 %typemap(javain) const VirgilByteArray & "$javainput"

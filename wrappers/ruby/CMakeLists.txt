@@ -42,10 +42,10 @@ set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 set (RUBY_MODULE_NAME ${PROJECT_NAME})
 set (SWIG_MODULE_NAME ${RUBY_MODULE_NAME})
 
-find_package (Ruby REQUIRED)
+find_host_package (Ruby REQUIRED)
 include_directories (${RUBY_INCLUDE_DIRS})
 
-find_package (SWIG REQUIRED)
+find_host_package (SWIG REQUIRED)
 include (${SWIG_USE_FILE})
 
 set (CMAKE_SWIG_FLAGS "")

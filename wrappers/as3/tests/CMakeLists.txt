@@ -37,7 +37,7 @@
 # Input:
 #     WRAPPER_SWC - AS3 SWC file name.
 
-find_program (GRADLE_MODULE gradle)
+find_host_program (GRADLE_MODULE gradle)
 
 if (GRADLE_MODULE AND DEFINED ENV{FLEX_HOME})
 

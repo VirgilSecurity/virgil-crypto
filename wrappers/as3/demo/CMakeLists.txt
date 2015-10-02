@@ -37,12 +37,12 @@
 # Input:
 #     WRAPPER_SWC - AS3 SWC file name.
 
-cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
 if (DEFINED ENV{FLEX_HOME})
 
-    find_program (FLEX_COMPILER NAMES amxmlc PATHS $ENV{FLEX_HOME}/bin )
-    find_program (FLEX_RUNNER NAMES adl PATHS $ENV{FLEX_HOME}/bin )
+    find_host_program (FLEX_COMPILER NAMES amxmlc PATHS $ENV{FLEX_HOME}/bin )
+    find_host_program (FLEX_RUNNER NAMES adl PATHS $ENV{FLEX_HOME}/bin )
     if (FLEX_COMPILER)
         configure_file (
             ${CMAKE_CURRENT_SOURCE_DIR}/EncryptApp-AIR.xml

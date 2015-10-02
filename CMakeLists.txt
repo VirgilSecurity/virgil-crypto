@@ -62,23 +62,17 @@
 #     - VIRGIL_VERSION_PATCH - library patch number.
 #     - VIRGIL_SOVERSION     - library ABI version.
 #
+#     - CMAKE_ARGS           - list of CMake parameters in form -DVAR:TYPE=VAL
+#
+# Define platform specific variables (that are defined only if build for this platform):
+#     - ANDROID_INSTALL_JNI_DIR_NAME - name of the directory where JNI libraries will be installed
+#                                      for Android platform
+#
 
-cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
 # Set project name
 project (VirgilSecurity)
-
-# Configure path to custom modules
-set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-
-# Define enviroment parameters
-include (check_pointer_size)
-check_pointer_size (POINTER_SIZE)
-if (POINTER_SIZE)
-    message (STATUS "Compiler pointer size: " ${POINTER_SIZE} " bytes")
-else ()
-    message (STATUS "Compiler pointer size: UNDEFINED")
-endif ()
 
 # Set library version
 set (VIRGIL_VERSION_MAJOR 1)
@@ -88,6 +82,56 @@ set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VER
 set (VIRGIL_SOVERSION 1)
 message (STATUS "Virgil version: " ${VIRGIL_VERSION})
 message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
+
+# Configure path to custom modules
+set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
+# Add find_host_* utilities
+include (find_host_utils)
+
+# Define possible cmake_args
+include (cmake_args)
+set (CMAKE_ARGS
+    -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+)
+append_cmake_arg (CMAKE_ARGS NAME CMAKE_TOOLCHAIN_FILE TYPE PATH)
+append_cmake_arg (CMAKE_ARGS NAME CMAKE_BUILD_TYPE TYPE STRING)
+if (NOT CMAKE_TOOLCHAIN_FILE)
+    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_COMPILER TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_FLAGS TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_FLAGS_RELEASE TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_FLAGS_DEBUG TYPE STRING)
+
+    append_cmake_arg (CMAKE_ARGS NAME CMAKE_CXX_COMPILER TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME CMAKE_CXX_FLAGS TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME CMAKE_CXX_FLAGS_RELEASE TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME CMAKE_CXX_FLAGS_DEBUG TYPE STRING)
+endif ()
+if (ANDROID)
+    append_cmake_arg (CMAKE_ARGS NAME ANDROID_NDK TYPE PATH)
+    append_cmake_arg (CMAKE_ARGS NAME ANDROID_ABI TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME ANDROID_NATIVE_API_LEVEL TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME ANDROID_TOOLCHAIN_NAME TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME ANDROID_FORCE_ARM_BUILD TYPE BOOL)
+    append_cmake_arg (CMAKE_ARGS NAME ANDROID_NO_UNDEFINED TYPE BOOL)
+    append_cmake_arg (CMAKE_ARGS NAME ANDROID_SO_UNDEFINED TYPE BOOL)
+    append_cmake_arg (CMAKE_ARGS NAME ANDROID_STL TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME ANDROID_STL_FORCE_FEATURES TYPE BOOL)
+endif (ANDROID)
+if (IOS)
+    append_cmake_arg (CMAKE_ARGS NAME IOS_PLATFORM TYPE PATH)
+endif ()
+
+# Define enviroment parameters
+if (NOT DEFINED POINTER_SIZE)
+    include (check_pointer_size)
+    check_pointer_size (POINTER_SIZE)
+    if (POINTER_SIZE)
+        message (STATUS "Compiler pointer size: " ${POINTER_SIZE} " bytes")
+    else ()
+        message (STATUS "Compiler pointer size: UNDEFINED")
+    endif ()
+endif ()
 
 # Configure platform
 if (CMAKE_CROSSCOMPILING AND NOT PLATFORM_NAME)
@@ -103,13 +147,8 @@ set (LIB_LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API 
 set (LIB_FILE_IO OFF CACHE BOOL "Defines whether to include module depends on file IO or not")
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
 
-# Platform dependent configuration
-if (NOT CMAKE_CROSSCOMPILING AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    if (NOT CMAKE_OSX_ARCHITECTURES)
-        set (CMAKE_OSX_ARCHITECTURES "x86_64;i386" CACHE STRING "" FORCE)
-    endif ()
-    message (STATUS "OS X architectures: ${CMAKE_OSX_ARCHITECTURES}")
-endif ()
+# Configure
+find_host_package (Git)
 
 # Configure path variables
 set (INSTALL_INC_DIR_NAME include CACHE STRING "Installation directory name for includes")
@@ -118,6 +157,11 @@ set (INSTALL_BIN_DIR_NAME bin CACHE STRING "Installation directory name for exec
 set (INSTALL_MAN_DIR_NAME "share/man" CACHE STRING "Installation directory name for man pages")
 set (INSTALL_DOC_DIR_NAME "share/doc" CACHE STRING "Installation directory name for doc pages")
 set (INSTALL_API_DIR_NAME api CACHE STRING "Installation directory name for interface files")
+
+# Configure platform specific path variables
+if (ANDROID)
+    set (ANDROID_INSTALL_JNI_DIR_NAME "lib/${ANDROID_NDK_ABI_NAME}")
+endif (ANDROID)
 
 # Configure internal path variables
 set (EXTERNAL_LIBS_DIR "${CMAKE_CURRENT_BINARY_DIR}/libs" CACHE INTERNAL

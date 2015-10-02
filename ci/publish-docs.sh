@@ -37,47 +37,47 @@
 
 set -ev
 
-if [ "${PUBLISH_DOCS}" == "ON" ]; then
-    # Settings
-    REPO_PATH=git@github.com:VirgilSecurity/virgil.git
-    HTML_PATH_SRC="${TRAVIS_BUILD_DIR}/docs/html"
-    HTML_PATH_DST="${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}/docs/html"
-    COMMIT_USER="Travis CI documentation builder."
-    COMMIT_EMAIL="sergey.seroshtan@gmail.com"
-    CHANGESET=$(git rev-parse --verify HEAD)
+if [ "${PUBLISH_DOCS}" != "ON" ] || [ "${TRAVIS_BRANCH}" != "${DOC_BRANCH}" ]; then exit; fi
 
-    # Get a clean version of the HTML documentation repo.
-    rm -rf ${HTML_PATH_DST}
-    mkdir -p ${HTML_PATH_DST}
-    git clone -b gh-pages "${REPO_PATH}" --single-branch ${HTML_PATH_DST}
+# Settings
+REPO_PATH=git@github.com:VirgilSecurity/virgil.git
+HTML_PATH_SRC="${TRAVIS_BUILD_DIR}/docs/html"
+HTML_PATH_DST="${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}/docs/html"
+COMMIT_USER="Travis CI documentation builder."
+COMMIT_EMAIL="sergey.seroshtan@gmail.com"
+CHANGESET=$(git rev-parse --verify HEAD)
 
-    # rm all the files through git to prevent stale files.
-    cd ${HTML_PATH_DST} && git rm -rf ./*
-    cd -
+# Get a clean version of the HTML documentation repo.
+rm -rf ${HTML_PATH_DST}
+mkdir -p ${HTML_PATH_DST}
+git clone -b gh-pages "${REPO_PATH}" --single-branch ${HTML_PATH_DST}
 
-    # Generate the HTML documentation.
-    cd "${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}" && make doc
-    cd -
+# rm all the files through git to prevent stale files.
+cd ${HTML_PATH_DST} && git rm -rf ./*
+cd -
 
-    # Copy new documentation
-    cp -af "${HTML_PATH_SRC}/." "${HTML_PATH_DST}/"
+# Generate the HTML documentation.
+cd "${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}" && make doc
+cd -
 
-    # Fix source file names
-    cd "${HTML_PATH_DST}"
-    for f in _*.html; do
-        old_name=$f
-        new_name=${f/${f:0:1}/}
-        mv $old_name $new_name
-        sed -i"" "s/$old_name/$new_name/g" *.html
-    done
-    cd -
+# Copy new documentation
+cp -af "${HTML_PATH_SRC}/." "${HTML_PATH_DST}/"
 
-    # Create and commit the documentation repo.
-    cd ${HTML_PATH_DST}
-    git add .
-    git config user.name "${COMMIT_USER}"
-    git config user.email "${COMMIT_EMAIL}"
-    git commit -m "Automated documentation build for changeset ${CHANGESET}."
-    git push origin gh-pages
-    cd -
-fi
+# Fix source file names
+cd "${HTML_PATH_DST}"
+for f in _*.html; do
+    old_name=$f
+    new_name=${f/${f:0:1}/}
+    mv $old_name $new_name
+    sed -i"" "s/$old_name/$new_name/g" *.html
+done
+cd -
+
+# Create and commit the documentation repo.
+cd ${HTML_PATH_DST}
+git add .
+git config user.name "${COMMIT_USER}"
+git config user.email "${COMMIT_EMAIL}"
+git commit -m "Automated documentation build for changeset ${CHANGESET}."
+git push origin gh-pages
+cd -

@@ -79,7 +79,6 @@ INCLUDE_CLASS(VirgilVersion, virgil::crypto, virgil/crypto)
 
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::crypto, virgil/crypto)
-INCLUDE_CLASS(VirgilCryptoException, virgil::crypto, virgil/crypto)
 
 // Package: virgil::crypto::foundation::asn1
 %ignore *::asn1Write;
@@ -120,6 +119,8 @@ INCLUDE_CLASS(VirgilChunkCipher, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilSigner, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilStreamSigner, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilStreamCipher, virgil::crypto, virgil/crypto)
+%ignore virgil::crypto::VirgilByteArrayUtils::zeroize;
+INCLUDE_CLASS(VirgilByteArrayUtils, virgil::crypto, virgil/crypto)
 
 // Package: virgil::crypto::foundation::cms
 #if defined(LIB_LOW_LEVEL_API)

@@ -34,45 +34,37 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
+#
+# Collects the names of all the source files in the specified directory and stores the list to the <file> provided
+#
+# @example:
+#     add_custom_command (TARGET ${tgt} POST_BUILD
+#              COMMAND ${CMAKE_COMMAND}
+#              ARGS
+#                      -DSRC_DIR:PATH=${PATH_TO_SOURCE_DIR}
+#                      -DDST_FILE:PATH=${PATH_TO_SOURCE_DESTINATION_FILE}
+#                      -DGLOBBING_EXPRESSION:STRING="*.cxx"
+#                      -P "${FULL_PATH_TO_THIS_FILE}"
+#          )
+#
 
-project (${WRAPPED_LIB_NAME}_python)
-
-set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-set (PYTHON_MODULE_NAME ${PROJECT_NAME})
-set (SWIG_MODULE_NAME ${PYTHON_MODULE_NAME})
-
-find_host_package (PythonLibs REQUIRED)
-include_directories (${PYTHON_INCLUDE_DIRS})
-
-find_host_package (SWIG REQUIRED)
-include (${SWIG_USE_FILE})
-
-set (CMAKE_SWIG_FLAGS "")
-
-set (SWIG_WRAP_COPY_CONSTRUCTOR YES)
-set (WRAPPER_INTERFACE_FILE "${CMAKE_CURRENT_BINARY_DIR}/wrapper.i")
-configure_file (
-    "${wrappers_SOURCE_DIR}/swig/wrapper.i.in"
-    "${WRAPPER_INTERFACE_FILE}"
-)
-
-set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY CPLUSPLUS ON)
-set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing")
-
-swig_add_module (${PYTHON_MODULE_NAME} python "${WRAPPER_INTERFACE_FILE}")
-set (SWIG_TARGET ${SWIG_MODULE_${PYTHON_MODULE_NAME}_REAL_NAME})
-
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set_property (TARGET ${SWIG_TARGET} APPEND_STRING PROPERTY LINK_FLAGS "-undefined dynamic_lookup")
-else()
-    set_target_properties(${SWIG_TARGET} PROPERTIES VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
+if (NOT SRC_DIR)
+    message (FATAL_ERROR "Source directory is not defined. Please define variable SRC_DIR.")
 endif ()
-swig_link_libraries (${PYTHON_MODULE_NAME} ${WRAPPED_LIB_NAME})
 
-install (TARGETS ${SWIG_TARGET}
-        RUNTIME DESTINATION "${INSTALL_BIN_DIR_NAME}"
-        LIBRARY DESTINATION "${INSTALL_LIB_DIR_NAME}")
+if (NOT IS_DIRECTORY ${SRC_DIR})
+    message (FATAL_ERROR "Given source directory does not exists: " ${SRC_DIR})
+endif ()
 
-install (PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/${PYTHON_MODULE_NAME}.py"
-        DESTINATION ${INSTALL_API_DIR_NAME})
+if (NOT DST_FILE)
+    message (FATAL_ERROR "Destination file is not defined. Please define variable DST_FILE.")
+endif ()
+
+if (NOT GLOBBING_EXPRESSION)
+    message (FATAL_ERROR "Globbing expression is not defined. "
+            "Please define variable GLOBBING_EXPRESSION to be used as template for coping process.")
+endif ()
+
+file (GLOB_RECURSE sources ${SRC_DIR} ${GLOBBING_EXPRESSION})
+string (REPLACE ";" "\n" sources "${sources}")
+file (WRITE ${DST_FILE} ${sources})

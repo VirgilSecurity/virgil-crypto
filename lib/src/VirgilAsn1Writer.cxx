@@ -60,6 +60,7 @@ static const size_t kBufLenDefault = 2048;
 static const size_t kAsn1TagValueSize = 1;
 static const size_t kAsn1LengthValueSize = 3;
 static const size_t kAsn1IntegerValueSize = kAsn1TagValueSize + kAsn1LengthValueSize + 8;
+static const size_t kAsn1BoolValueSize = 3;
 
 #define RETURN_POINTER_DIFF_AFTER_INVOCATION(pointer,invocation) \
 do { \
@@ -95,6 +96,16 @@ size_t VirgilAsn1Writer::writeInteger(int value) {
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
         POLARSSL_ERROR_HANDLER(
             ::asn1_write_int(&p_, start_, value)
+        )
+    );
+}
+
+size_t VirgilAsn1Writer::writeBool(bool value) {
+    checkState();
+    ensureBufferEnough(kAsn1BoolValueSize);
+    RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
+        POLARSSL_ERROR_HANDLER(
+            ::asn1_write_bool(&p_, start_, value)
         )
     );
 }

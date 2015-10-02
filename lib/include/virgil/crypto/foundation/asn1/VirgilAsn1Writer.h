@@ -88,6 +88,12 @@ public:
      */
     size_t writeInteger(int value);
     /**
+     * @brief Write ASN.1 type: BOOLEAN.
+     * @param value - boolean value to be written.
+     * @return Written bytes.
+     */
+    size_t writeBool(bool value);
+    /**
      * @brief Write ASN.1 type: NULL.
      * @return Written bytes.
      */

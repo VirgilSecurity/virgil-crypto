@@ -36,10 +36,11 @@
 #
 
 set -ev
-if [ ! -d "$HOME/swig/bin" ]; then
-    wget http://downloads.sourceforge.net/swig/swig-3.0.5.tar.gz
-    tar -xzf swig-3.0.5.tar.gz
-    cd swig-3.0.5 && ./configure --prefix=$HOME/swig && make && make install
+SWIG_VERSION=3.0.7
+if [ -d "$HOME/swig/bin" ] || [[ "`$HOME/swig/bin/swig -version`" != *"${SWIG_VERSION}"* ]]; then
+    wget http://downloads.sourceforge.net/swig/swig-${SWIG_VERSION}.tar.gz
+    tar -xzf swig-${SWIG_VERSION}.tar.gz
+    cd swig-${SWIG_VERSION} && ./configure --prefix=$HOME/swig && make && make install
 else
     echo "Using SWIG cached directory."
 fi

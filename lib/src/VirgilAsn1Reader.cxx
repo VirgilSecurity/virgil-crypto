@@ -77,6 +77,15 @@ int VirgilAsn1Reader::readInteger() {
     return result;
 }
 
+bool VirgilAsn1Reader::readBool() {
+    checkState();
+    int result;
+    POLARSSL_ERROR_HANDLER(
+        ::asn1_get_bool(&p_, end_, &result);
+    );
+    return (bool)result;
+}
+
 void VirgilAsn1Reader::readNull() {
     checkState();
     size_t len;

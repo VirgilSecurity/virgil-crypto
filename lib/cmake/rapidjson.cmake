@@ -34,45 +34,33 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
+# Dependecy to https://github.com/miloyip/rapidjson
 
-project (${WRAPPED_LIB_NAME}_python)
-
-set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-set (PYTHON_MODULE_NAME ${PROJECT_NAME})
-set (SWIG_MODULE_NAME ${PYTHON_MODULE_NAME})
-
-find_host_package (PythonLibs REQUIRED)
-include_directories (${PYTHON_INCLUDE_DIRS})
-
-find_host_package (SWIG REQUIRED)
-include (${SWIG_USE_FILE})
-
-set (CMAKE_SWIG_FLAGS "")
-
-set (SWIG_WRAP_COPY_CONSTRUCTOR YES)
-set (WRAPPER_INTERFACE_FILE "${CMAKE_CURRENT_BINARY_DIR}/wrapper.i")
-configure_file (
-    "${wrappers_SOURCE_DIR}/swig/wrapper.i.in"
-    "${WRAPPER_INTERFACE_FILE}"
-)
-
-set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY CPLUSPLUS ON)
-set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing")
-
-swig_add_module (${PYTHON_MODULE_NAME} python "${WRAPPER_INTERFACE_FILE}")
-set (SWIG_TARGET ${SWIG_MODULE_${PYTHON_MODULE_NAME}_REAL_NAME})
-
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set_property (TARGET ${SWIG_TARGET} APPEND_STRING PROPERTY LINK_FLAGS "-undefined dynamic_lookup")
-else()
-    set_target_properties(${SWIG_TARGET} PROPERTIES VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
+# Configure external project
+if (NOT TARGET rapidproject_json)
+    ExternalProject_Add (rapidproject_json
+        GIT_REPOSITORY "https://github.com/miloyip/rapidjson.git"
+        GIT_TAG "v1.0.2"
+        PREFIX "${CMAKE_CURRENT_BINARY_DIR}/ext/rapidjson"
+        CMAKE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_COMMAND ""
+        TEST_COMMAND ""
+    )
 endif ()
-swig_link_libraries (${PYTHON_MODULE_NAME} ${WRAPPED_LIB_NAME})
 
-install (TARGETS ${SWIG_TARGET}
-        RUNTIME DESTINATION "${INSTALL_BIN_DIR_NAME}"
-        LIBRARY DESTINATION "${INSTALL_LIB_DIR_NAME}")
+# Configure output
+ExternalProject_Get_Property (rapidproject_json PREFIX)
+set (RAPIDJSON_INCLUDE_DIRS "${PREFIX}/src/rapidproject_json/include")
 
-install (PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/${PYTHON_MODULE_NAME}.py"
-        DESTINATION ${INSTALL_API_DIR_NAME})
+# Workaround of http://public.kitware.com/Bug/view.php?id=14495
+file (MAKE_DIRECTORY ${RAPIDJSON_INCLUDE_DIRS})
+
+# Make target
+if (NOT TARGET rapidjson)
+    add_library (rapidjson STATIC IMPORTED)
+    set_target_properties (rapidjson PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES ${RAPIDJSON_INCLUDE_DIRS}
+    )
+    add_dependencies (rapidjson rapidproject_json)
+endif ()

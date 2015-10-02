@@ -43,6 +43,7 @@ using namespace emscripten;
 #include <virgil/crypto/VirgilVersion.h>
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilByteArrayUtils.h>
 
 #include <virgil/crypto/foundation/VirgilHash.h>
 #include <virgil/crypto/foundation/VirgilBase64.h>
@@ -53,6 +54,8 @@ using namespace emscripten;
 #include <virgil/crypto/VirgilCipherBase.h>
 #include <virgil/crypto/VirgilCipher.h>
 #include <virgil/crypto/VirgilSigner.h>
+
+using virgil::crypto::VirgilByteArray;
 
 namespace virgil { namespace crypto {
 
@@ -156,6 +159,15 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .function("getData", &virgil::crypto::VirgilCustomParams::getData)
         .function("removeData", &virgil::crypto::VirgilCustomParams::removeData)
         .function("clear", &virgil::crypto::VirgilCustomParams::clear)
+    ;
+
+    class_<virgil::crypto::VirgilByteArrayUtils>("VirgilByteArrayUtils")
+        .class_function("jsonToBytes", &virgil::crypto::VirgilByteArrayUtils::jsonToBytes)
+        .class_function("bytesToString", &virgil::crypto::VirgilByteArrayUtils::bytesToString)
+        .class_function("stringToBytes", &virgil::crypto::VirgilByteArrayUtils::stringToBytes)
+        .class_function("hexToBytes", &virgil::crypto::VirgilByteArrayUtils::hexToBytes)
+        .class_function("bytesToHex", &virgil::crypto::VirgilByteArrayUtils::bytesToHex)
+        .class_function("zeroize", &virgil::crypto::VirgilByteArrayUtils::zeroize)
     ;
 }
 

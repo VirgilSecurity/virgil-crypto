@@ -23,7 +23,6 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise-3.6
     packages:
       - libcurl4-openssl-dev
       - python-yaml

@@ -1,5 +1,32 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.1.0 released 2015-10-02
+
+Bugfix:
+  * Fix some warnings by remove unused local variables.
+
+Changes:
+  * Publish docs only from branch: 'release'.
+  * Update SWIG and CMake versions on the travis-ci.
+  * Change CMake minimum required version to 3.2.
+  * Remove 'using' statements from header files.
+
+Features:
+  * Add support of node.js version 0.12 and higher.
+  * Add support of node.js version v4.0.1 and higher.
+  * Add support of switch node.js versions between v0.12 and v4.1.0 during compilation.
+  * Publish documentation to the GitHub Pages.
+  * Add ability to create package from the library installed components.
+  * Add ability to read and write ASN.1 boolean value.
+  * Add module to convert any Json object to the ASN.1 structure.
+  * Duplicate VirgilByteArray utility functions to the VirgilByteArrayUtils.
+  * Add Java platform.
+  * Add Android NDK toolchain.
+
+Improvements:
+  * Travis CI - Migrating from legacy to container-based infrastructure.
+  * Remove redundant 'using' statements from generated wrapper's code.
+
 = Version 1.0.1 released 2015-08-27
 
 Bugfix:

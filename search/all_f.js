@@ -21,5 +21,10 @@ var searchData=
   ['removestring',['removeString',['../classvirgil_1_1crypto_1_1_virgil_custom_params.html#ad5b092702ec386c783f89a06dee391d3',1,'virgil::crypto::VirgilCustomParams']]],
   ['reset',['reset',['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html#aef1dae65b8d5b6ca2d21a2105f8ac39d',1,'virgil::crypto::foundation::asn1::VirgilAsn1Reader::reset()'],['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#a5fc06e0eb15968f222b6606438a80907',1,'virgil::crypto::foundation::asn1::VirgilAsn1Writer::reset()'],['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#adc5f1a7f525530503fc1beebb0d5bd7a',1,'virgil::crypto::foundation::VirgilSymmetricCipher::reset()']]],
   ['rsa',['rsa',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a7f327babe204064e58df096ac5ce981a',1,'virgil::crypto::foundation::VirgilAsymmetricCipher']]],
+  ['rsa1024',['rsa1024',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#ae5c1f68a047cfcb290dcce3262d099ae',1,'virgil::crypto::VirgilKeyPair']]],
+  ['rsa2048',['rsa2048',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a621bb8d885dd4336205a509562d1f8e3',1,'virgil::crypto::VirgilKeyPair']]],
+  ['rsa256',['rsa256',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a0eb15671ae28cc3518c48286f31f8ac7',1,'virgil::crypto::VirgilKeyPair']]],
+  ['rsa4096',['rsa4096',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a585e65fbb56bc140905ebde7625e29ac',1,'virgil::crypto::VirgilKeyPair']]],
+  ['rsa512',['rsa512',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#ae1c1e86efca0b0508ae28788ca46512c',1,'virgil::crypto::VirgilKeyPair']]],
   ['rsakeysize',['rsaKeySize',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_key_pair_generator.html#ae764c02574c9ea2e40840af237ca8704',1,'virgil::crypto::foundation::VirgilKeyPairGenerator']]]
 ];

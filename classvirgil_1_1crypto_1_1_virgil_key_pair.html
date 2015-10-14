@@ -90,6 +90,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classvirgil_1_1crypto_1_1_virgil_key_pair-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">virgil::crypto::VirgilKeyPair Class Reference</div>  </div>
@@ -105,7 +106,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a7a566b9a1c69371970f149e93c990561"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a566b9a1c69371970f149e93c990561"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a7a566b9a1c69371970f149e93c990561">VirgilKeyPair</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
-<tr class="memdesc:a7a566b9a1c69371970f149e93c990561"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair. <br /></td></tr>
+<tr class="memdesc:a7a566b9a1c69371970f149e93c990561"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with default settings. <br /></td></tr>
 <tr class="separator:a7a566b9a1c69371970f149e93c990561"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d0b4ba8ce4619bf21327367d35cd03c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3d0b4ba8ce4619bf21327367d35cd03c"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a3d0b4ba8ce4619bf21327367d35cd03c">VirgilKeyPair</a> (const VirgilByteArray &amp;<a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a381634ff4ab3f89dfb8eaf052a37e6b1">publicKey</a>, const VirgilByteArray &amp;<a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a843d20a09b4d3ce3d607695f33956d64">privateKey</a>)</td></tr>
@@ -119,6 +120,73 @@ VirgilByteArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el"
 VirgilByteArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a843d20a09b4d3ce3d607695f33956d64">privateKey</a> () const </td></tr>
 <tr class="memdesc:a843d20a09b4d3ce3d607695f33956d64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provide access to the private key. <br /></td></tr>
 <tr class="separator:a843d20a09b4d3ce3d607695f33956d64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a25f20d5b777ff7a4d70fb1ae99bb6dac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a25f20d5b777ff7a4d70fb1ae99bb6dac"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a25f20d5b777ff7a4d70fb1ae99bb6dac">ecNist192</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:a25f20d5b777ff7a4d70fb1ae99bb6dac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with 192-bits NIST curve. <br /></td></tr>
+<tr class="separator:a25f20d5b777ff7a4d70fb1ae99bb6dac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e6d329c8c970198f929a7d86cd5a143"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e6d329c8c970198f929a7d86cd5a143"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a2e6d329c8c970198f929a7d86cd5a143">ecNist224</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:a2e6d329c8c970198f929a7d86cd5a143"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with 224-bits NIST curve. <br /></td></tr>
+<tr class="separator:a2e6d329c8c970198f929a7d86cd5a143"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf9be9ab4419ce9c4784730616ccd5fe"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaf9be9ab4419ce9c4784730616ccd5fe"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#aaf9be9ab4419ce9c4784730616ccd5fe">ecNist256</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:aaf9be9ab4419ce9c4784730616ccd5fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with 256-bits NIST curve. <br /></td></tr>
+<tr class="separator:aaf9be9ab4419ce9c4784730616ccd5fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae94705931529fbedf75d4eb1a7962c92"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae94705931529fbedf75d4eb1a7962c92"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#ae94705931529fbedf75d4eb1a7962c92">ecNist384</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:ae94705931529fbedf75d4eb1a7962c92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with 384-bits NIST curve. <br /></td></tr>
+<tr class="separator:ae94705931529fbedf75d4eb1a7962c92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c1ca14972bd400da0001e82beec4dee"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2c1ca14972bd400da0001e82beec4dee"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a2c1ca14972bd400da0001e82beec4dee">ecNist521</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:a2c1ca14972bd400da0001e82beec4dee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with 521-bits NIST curve. <br /></td></tr>
+<tr class="separator:a2c1ca14972bd400da0001e82beec4dee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b5936d5afed87943754ee6a7b7c4be3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0b5936d5afed87943754ee6a7b7c4be3"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a0b5936d5afed87943754ee6a7b7c4be3">ecBrainpool256</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:a0b5936d5afed87943754ee6a7b7c4be3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with 256-bits Brainpool curve. <br /></td></tr>
+<tr class="separator:a0b5936d5afed87943754ee6a7b7c4be3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa860c96fe9262640f0f6dbc20df25dba"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa860c96fe9262640f0f6dbc20df25dba"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#aa860c96fe9262640f0f6dbc20df25dba">ecBrainpool384</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:aa860c96fe9262640f0f6dbc20df25dba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with 384-bits Brainpool curve. <br /></td></tr>
+<tr class="separator:aa860c96fe9262640f0f6dbc20df25dba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb061171ff38018d16a9b80d3c47f303"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb061171ff38018d16a9b80d3c47f303"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#acb061171ff38018d16a9b80d3c47f303">ecBrainpool512</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:acb061171ff38018d16a9b80d3c47f303"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with 512-bits Brainpool curve. <br /></td></tr>
+<tr class="separator:acb061171ff38018d16a9b80d3c47f303"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5058afed276504c15bddbee84e18af2d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5058afed276504c15bddbee84e18af2d"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a5058afed276504c15bddbee84e18af2d">ecKoblitz192</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:a5058afed276504c15bddbee84e18af2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with 192-bits "Koblitz" curve. <br /></td></tr>
+<tr class="separator:a5058afed276504c15bddbee84e18af2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d146511158bbedc6f62a481e899e277"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8d146511158bbedc6f62a481e899e277"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a8d146511158bbedc6f62a481e899e277">ecKoblitz224</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:a8d146511158bbedc6f62a481e899e277"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with 224-bits "Koblitz" curve. <br /></td></tr>
+<tr class="separator:a8d146511158bbedc6f62a481e899e277"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b23000a2f861ddab9d3da42830e3bbf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8b23000a2f861ddab9d3da42830e3bbf"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a8b23000a2f861ddab9d3da42830e3bbf">ecKoblitz256</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:a8b23000a2f861ddab9d3da42830e3bbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with 256-bits "Koblitz" curve. <br /></td></tr>
+<tr class="separator:a8b23000a2f861ddab9d3da42830e3bbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0eb15671ae28cc3518c48286f31f8ac7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0eb15671ae28cc3518c48286f31f8ac7"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a0eb15671ae28cc3518c48286f31f8ac7">rsa256</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:a0eb15671ae28cc3518c48286f31f8ac7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with RSA 256-bits. <br /></td></tr>
+<tr class="separator:a0eb15671ae28cc3518c48286f31f8ac7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae1c1e86efca0b0508ae28788ca46512c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae1c1e86efca0b0508ae28788ca46512c"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#ae1c1e86efca0b0508ae28788ca46512c">rsa512</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:ae1c1e86efca0b0508ae28788ca46512c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with RSA 512-bits. <br /></td></tr>
+<tr class="separator:ae1c1e86efca0b0508ae28788ca46512c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5c1f68a047cfcb290dcce3262d099ae"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae5c1f68a047cfcb290dcce3262d099ae"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#ae5c1f68a047cfcb290dcce3262d099ae">rsa1024</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:ae5c1f68a047cfcb290dcce3262d099ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with RSA 1024-bits. <br /></td></tr>
+<tr class="separator:ae5c1f68a047cfcb290dcce3262d099ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a621bb8d885dd4336205a509562d1f8e3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a621bb8d885dd4336205a509562d1f8e3"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a621bb8d885dd4336205a509562d1f8e3">rsa2048</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:a621bb8d885dd4336205a509562d1f8e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with RSA 2048-bits. <br /></td></tr>
+<tr class="separator:a621bb8d885dd4336205a509562d1f8e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a585e65fbb56bc140905ebde7625e29ac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a585e65fbb56bc140905ebde7625e29ac"></a>
+static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a585e65fbb56bc140905ebde7625e29ac">rsa4096</a> (const VirgilByteArray &amp;pwd=VirgilByteArray())</td></tr>
+<tr class="memdesc:a585e65fbb56bc140905ebde7625e29ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with RSA 4096-bits. <br /></td></tr>
+<tr class="separator:a585e65fbb56bc140905ebde7625e29ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class handles information about Virgil Security key pair. </p>

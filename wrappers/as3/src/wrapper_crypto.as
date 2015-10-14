@@ -116,6 +116,86 @@ public class VirgilKeyPair extends CObject {
     public function privateKey():ByteArray {
         return _wrap_VirgilKeyPair_privateKey(this.cPtr);
     }
+    public static function ecNist192(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_ecNist192(password);
+        return obj;
+    }
+    public static function ecNist224(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_ecNist224(password);
+        return obj;
+    }
+    public static function ecNist256(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_ecNist256(password);
+        return obj;
+    }
+    public static function ecNist384(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_ecNist384(password);
+        return obj;
+    }
+    public static function ecNist521(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_ecNist521(password);
+        return obj;
+    }
+    public static function ecBrainpool256(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_ecBrainpool256(password);
+        return obj;
+    }
+    public static function ecBrainpool384(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_ecBrainpool384(password);
+        return obj;
+    }
+    public static function ecBrainpool512(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_ecBrainpool512(password);
+        return obj;
+    }
+    public static function ecKoblitz192(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_ecKoblitz192(password);
+        return obj;
+    }
+    public static function ecKoblitz224(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_ecKoblitz224(password);
+        return obj;
+    }
+    public static function ecKoblitz256(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_ecKoblitz256(password);
+        return obj;
+    }
+    public static function rsa256(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_rsa256(password);
+        return obj;
+    }
+    public static function rsa512(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_rsa512(password);
+        return obj;
+    }
+    public static function rsa1024(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_rsa1024(password);
+        return obj;
+    }
+    public static function rsa2048(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_rsa2048(password);
+        return obj;
+    }
+    public static function rsa4096(password:ByteArray = null):VirgilKeyPair {
+        var obj = new VirgilKeyPair();
+        obj.cPtr = _wrap_VirgilKeyPair_rsa4096(password);
+        return obj;
+    }
 }
 
 public class VirgilCustomParams extends CObject {

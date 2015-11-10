@@ -39,7 +39,7 @@ set -ev
 CMAKE_VERSION_MAJOR=3.3
 CMAKE_VERSION="${CMAKE_VERSION_MAJOR}.0"
 if [ ! -d "$HOME/cmake/bin" ] || [[ "`$HOME/cmake/bin/cmake --version`" != *"${CMAKE_VERSION}"* ]]; then
-    wget http://www.cmake.org/files/v${CMAKE_VERSION_MAJOR}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
+    curl -L -O http://www.cmake.org/files/v${CMAKE_VERSION_MAJOR}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
     tar -xzf cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
     cp -fa cmake-${CMAKE_VERSION}-Linux-x86_64/. $HOME/cmake/
 else

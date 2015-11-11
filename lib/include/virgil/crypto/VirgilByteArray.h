@@ -121,7 +121,17 @@ inline std::string bytes2hex(const VirgilByteArray& array, bool formatted = fals
  * @brief Make all bytes zero.
  */
 inline void bytes_zeroize(VirgilByteArray& array) {
-    std::fill(array.begin(), array.end(), 0);
+    size_t n = array.size();
+    volatile unsigned char *p = const_cast<unsigned char *>(array.data());
+    while (n--) *p++ = 0;
+}
+/**
+ * @brief Make all chars zero.
+ */
+inline void string_zeroize(std::string& str) {
+    size_t n = str.size();
+    volatile char *p = const_cast<char *>(str.c_str());
+    while (n--) *p++ = '\0';
 }
 ///@}
 

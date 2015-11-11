@@ -128,7 +128,7 @@ std::string VirgilByteArrayUtils::bytesToHex(const VirgilByteArray& array, bool 
 }
 
 void VirgilByteArrayUtils::zeroize(VirgilByteArray& array) {
-    std::fill(array.begin(), array.end(), 0);
+    virgil::crypto::bytes_zeroize(array);
 }
 
 size_t asn1_write_json_value(VirgilAsn1Writer& asn1Writer, const json& json, const std::string& key) {

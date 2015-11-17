@@ -99,6 +99,5 @@ TEST_CASE("Json -> bytes", "[byte-array]") {
                 VirgilByteArrayUtils::bytesToHex(minified_json_bytes));
         REQUIRE(VirgilByteArrayUtils::bytesToHex(pretty_json_bytes) ==
                 VirgilByteArrayUtils::bytesToHex(rearranged_json_bytes));
-        std::cout << VirgilByteArrayUtils::bytesToHex(minified_json_bytes) << std::endl;
     }
 }

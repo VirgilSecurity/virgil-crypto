@@ -36,10 +36,11 @@
 #
 
 set -ev
-if [ ! -d "$HOME/phpunit/bin" ]; then
+PHPUNIT_VERSION=4.8.9
+if [ ! -d "$HOME/phpunit/bin" ] || [[ "`$HOME/cmake/bin/cmake --version`" != *"${PHPUNIT_VERSION}"* ]]; then
     mkdir -p "$HOME/phpunit/bin"
-    wget https://phar.phpunit.de/phpunit.phar
-    cp -f phpunit.phar $HOME/phpunit/bin/phpunit
+    curl -L -O https://phar.phpunit.de/phpunit-${PHPUNIT_VERSION}.phar
+    cp -f phpunit-${PHPUNIT_VERSION}.phar $HOME/phpunit/bin/phpunit
     chmod +x $HOME/phpunit/bin/phpunit
 else
     echo "Using PHPUnit cached directory."

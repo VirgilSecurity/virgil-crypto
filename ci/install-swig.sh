@@ -38,7 +38,7 @@
 set -ev
 SWIG_VERSION=3.0.7
 if [ -d "$HOME/swig/bin" ] || [[ "`$HOME/swig/bin/swig -version`" != *"${SWIG_VERSION}"* ]]; then
-    wget http://downloads.sourceforge.net/swig/swig-${SWIG_VERSION}.tar.gz
+    curl -L -O http://downloads.sourceforge.net/swig/swig-${SWIG_VERSION}.tar.gz
     tar -xzf swig-${SWIG_VERSION}.tar.gz
     cd swig-${SWIG_VERSION} && ./configure --prefix=$HOME/swig && make && make install
 else

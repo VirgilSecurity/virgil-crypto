@@ -88,7 +88,7 @@ endif ()
 
 ExternalProject_Add (${MBEDTLS_PROJECT_NAME}
     GIT_REPOSITORY "https://github.com/VirgilSecurity/mbedtls.git"
-    GIT_TAG "463a61bf234d68f6409ee0b02959bde7da6f6f7a"
+    GIT_TAG "811e25e56c6a58f60420ad6e3213542d7fa296b4"
     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbedtls"
     CMAKE_ARGS ${CMAKE_ARGS}
     UPDATE_COMMAND python "${MBEDTLS_CONFIGURE_DIR}/configure.py" ${CONFIGURE_COMMAND_ARGS}

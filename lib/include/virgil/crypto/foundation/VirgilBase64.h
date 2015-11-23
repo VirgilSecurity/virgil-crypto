@@ -40,7 +40,6 @@
 #include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
 
 namespace virgil { namespace crypto { namespace foundation {
 
@@ -52,11 +51,11 @@ public:
     /**
      * @brief Transform given bytes to the base64 string.
      */
-    static std::string encode(const VirgilByteArray& data);
+    static std::string encode(const virgil::crypto::VirgilByteArray& data);
     /**
      * @brief Transform given base64 string to the bytes.
      */
-    static VirgilByteArray decode(const std::string& base64str);
+    static virgil::crypto::VirgilByteArray decode(const std::string& base64str);
 };
 
 }}}

@@ -47,6 +47,10 @@
     %include "csharp/common.i"
 #endif
 
+#if defined(SWIGJAVA)
+    %include "java/common.i"
+#endif
+
 // Define VirgilByteArray typemap if was not defined yet
 #ifndef SWIG_VIRGIL_BYTE_ARRAY
 #define SWIG_VIRGIL_BYTE_ARRAY
@@ -57,6 +61,10 @@ namespace std {
 #endif
 
 // Exception handling
+%insert("header") %{
+#include <virgil/crypto/VirgilCryptoException.h>
+%}
+
 #ifdef SWIGPHP
 %feature("director:except") {
     if ($error == FAILURE) {
@@ -71,6 +79,13 @@ namespace std {
 #ifdef SWIGPHP
     catch (Swig::DirectorException &e) {
         SWIG_exception(SWIG_SystemError, e.what());
+    }
+#endif
+#ifdef SWIGJAVA
+    catch (virgil::crypto::VirgilCryptoException &e) {
+        jclass clazz = jenv->FindClass("java/lang/Exception");
+        jenv->ThrowNew(clazz, e.what());
+        return $null;
     }
 #endif
     SWIG_CATCH_STDEXCEPT

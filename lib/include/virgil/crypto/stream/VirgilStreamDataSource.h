@@ -37,10 +37,10 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_STREAM_DATA_SOURCE_H
 #define VIRGIL_CRYPTO_VIRGIL_STREAM_DATA_SOURCE_H
 
-#include <virgil/crypto/VirgilDataSource.h>
-using virgil::crypto::VirgilDataSource;
-
 #include <istream>
+
+#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilDataSource.h>
 
 namespace virgil { namespace crypto { namespace stream {
 
@@ -49,7 +49,7 @@ namespace virgil { namespace crypto { namespace stream {
  *
  * @note This class CAN not be used in wrappers.
  */
-class VirgilStreamDataSource : public VirgilDataSource {
+class VirgilStreamDataSource : public virgil::crypto::VirgilDataSource {
 public:
     /**
      * @brief Creates data sink based on std::istream object.
@@ -69,7 +69,7 @@ public:
     /**
      * @brief Overriding of @link VirgilDataSource::read() @endlink method.
      */
-    virtual VirgilByteArray read();
+    virtual virgil::crypto::VirgilByteArray read();
 private:
     std::istream& in_;
     size_t chunkSize_;

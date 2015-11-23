@@ -35,23 +35,22 @@
  */
 
 #include <virgil/crypto/VirgilCustomParams.h>
-using virgil::crypto::VirgilCustomParams;
-
-#include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-using virgil::crypto::bytes2str;
-
-#include <virgil/crypto/VirgilCryptoException.h>
-using virgil::crypto::VirgilCryptoException;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 #include <cstddef>
 #include <vector>
+
+#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+
+using virgil::crypto::bytes2str;
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilCustomParams;
+using virgil::crypto::VirgilCryptoException;
+
+using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
+using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 /**
  * @name ASN.1 Constants

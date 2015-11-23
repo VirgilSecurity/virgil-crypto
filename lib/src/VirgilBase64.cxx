@@ -35,22 +35,21 @@
  */
 
 #include <virgil/crypto/foundation/VirgilBase64.h>
-using virgil::crypto::foundation::VirgilBase64;
 
 #include <string>
-using std::string;
-
-#include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
-#include <virgil/crypto/foundation/PolarsslException.h>
-using virgil::crypto::foundation::PolarsslException;
 
 #include <polarssl/base64.h>
 
-string VirgilBase64::encode(const VirgilByteArray& data) {
+#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/foundation/PolarsslException.h>
+
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::foundation::VirgilBase64;
+using virgil::crypto::foundation::PolarsslException;
+
+std::string VirgilBase64::encode(const VirgilByteArray& data) {
     if (data.empty()) {
-        return string();
+        return std::string();
     }
     // Define output length
     size_t bufLen = 0;
@@ -59,12 +58,12 @@ string VirgilBase64::encode(const VirgilByteArray& data) {
     unsigned char *buf = new unsigned char[bufLen];
     ::base64_encode(buf, &bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data));
     // Return result
-    string result(reinterpret_cast<const char *>(buf), bufLen);
+    std::string result(reinterpret_cast<const char *>(buf), bufLen);
     delete[] buf;
     return result;
 }
 
-VirgilByteArray VirgilBase64::decode(const string& base64str) {
+VirgilByteArray VirgilBase64::decode(const std::string& base64str) {
     if (base64str.empty()) {
         return VirgilByteArray();
     }

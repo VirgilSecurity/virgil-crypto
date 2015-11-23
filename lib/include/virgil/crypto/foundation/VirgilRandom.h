@@ -38,6 +38,7 @@
 #define VIRGIL_CRYPTO_VIRGIL_RANDOM_H
 
 #include <cstddef>
+
 #include <virgil/crypto/VirgilByteArray.h>
 
 namespace virgil { namespace crypto { namespace foundation {
@@ -64,7 +65,7 @@ public:
      * @param personalInfo (@see section 8.7.1 of NIST Special Publication 800-90A).
      * @return Random bytes.
      */
-    explicit VirgilRandom(const VirgilByteArray& personalInfo);
+    explicit VirgilRandom(const virgil::crypto::VirgilByteArray& personalInfo);
     ///@}
 
     /**
@@ -77,7 +78,7 @@ public:
      * @param bytesNum number of bytes to be generated.
      * @return Random byte sequence.
      */
-    VirgilByteArray randomize(size_t bytesNum);
+    virgil::crypto::VirgilByteArray randomize(size_t bytesNum);
     ///@}
 
 private:

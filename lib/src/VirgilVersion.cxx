@@ -1,8 +1,9 @@
 #include <virgil/crypto/VirgilVersion.h>
-using virgil::crypto::VirgilVersion;
 
 #include <cstddef>
 #include <string>
+
+using virgil::crypto::VirgilVersion;
 
 size_t VirgilVersion::asNumber() {
     return (majorVersion() << 16) | (minorVersion() << 8) | patchVersion();

@@ -40,10 +40,7 @@
 #include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 
 namespace virgil { namespace crypto { namespace foundation {
 
@@ -57,7 +54,7 @@ class VirgilHashImpl;
 /**
  * @brief Provides hashing (message digest) algorithms.
  */
-class VirgilHash : public VirgilAsn1Compatible {
+class VirgilHash : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
     /**
      * @name Creation methods
@@ -68,7 +65,7 @@ public:
     static VirgilHash sha256();
     static VirgilHash sha384();
     static VirgilHash sha512();
-    static VirgilHash withName(const VirgilByteArray& name);
+    static VirgilHash withName(const virgil::crypto::VirgilByteArray& name);
     ///@}
     /**
      * @name Constructor / Destructor
@@ -113,7 +110,7 @@ public:
      * @param bytes - message to be hashed.
      * @return Hash of the given message.
      */
-    VirgilByteArray hash(const VirgilByteArray& bytes) const;
+    virgil::crypto::VirgilByteArray hash(const virgil::crypto::VirgilByteArray& bytes) const;
     ///@}
 
     /**
@@ -136,14 +133,14 @@ public:
      * @param bytes - message to be hashed.
      * @see @link start() @endlink
      */
-    void update(const VirgilByteArray& bytes);
+    void update(const virgil::crypto::VirgilByteArray& bytes);
     /**
      * @brief Return final message hash.
      * @return Message hash processed by series of @link update() @endlink method.
      * @see @link start() @endlink
      * @see @link update() @endlink
      */
-    VirgilByteArray finish();
+    virgil::crypto::VirgilByteArray finish();
     ///@}
 
     /**
@@ -160,7 +157,8 @@ public:
      * @param bytes - message to be hashed.
      * @return HMAC hash of the given message.
      */
-    VirgilByteArray hmac(const VirgilByteArray& key, const VirgilByteArray& bytes) const;
+    virgil::crypto::VirgilByteArray hmac(const virgil::crypto::VirgilByteArray& key,
+            const virgil::crypto::VirgilByteArray& bytes) const;
     ///@}
 
     /**
@@ -174,7 +172,7 @@ public:
      * @brief Initialize HMAC hashing for the new message hash.
      * @param key - secret key.
      */
-    void hmacStart(const VirgilByteArray& key);
+    void hmacStart(const virgil::crypto::VirgilByteArray& key);
     /**
      * @brief Reset HMAC hashing for the new message hash.
      */
@@ -189,7 +187,7 @@ public:
      * @see @link hmacStart() @endlink
      * @see @link hmacReset() @endlink
      */
-    void hmacUpdate(const VirgilByteArray& bytes);
+    void hmacUpdate(const virgil::crypto::VirgilByteArray& bytes);
     /**
      * @brief Return final message HMAC hash.
      * @return Message HMAC hash processed by series of @link hmacUpdate() @endlink method.
@@ -197,7 +195,7 @@ public:
      * @see @link hmacReset() @endlink
      * @see @link hmacUpdate() @endlink
      */
-    VirgilByteArray hmacFinish();
+    virgil::crypto::VirgilByteArray hmacFinish();
     ///@}
     /**
      * @name Copy constructor / assignment operator
@@ -213,8 +211,9 @@ public:
      * @name VirgilAsn1Compatible implementation
      */
     ///@{
-    virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
-    virtual void asn1Read(VirgilAsn1Reader& asn1Reader);
+    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+            size_t childWrittenBytes = 0) const;
+    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
 private:
     explicit VirgilHash(int type);

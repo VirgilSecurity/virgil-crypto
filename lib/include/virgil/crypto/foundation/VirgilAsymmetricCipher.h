@@ -39,11 +39,8 @@
 
 #include <cstddef>
 
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
-
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 
 namespace virgil { namespace crypto { namespace foundation {
 
@@ -58,7 +55,7 @@ class VirgilAsymmetricCipherImpl;
 /**
  * @brief Provides asymmetric ciphers algorithms (PK).
  */
-class VirgilAsymmetricCipher : public VirgilAsn1Compatible {
+class VirgilAsymmetricCipher : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
     /**
      * @name Creation methods
@@ -106,14 +103,15 @@ public:
      * @param key - private key in DER or PEM format.
      * @param pwd - private key password if exists.
      */
-    void setPrivateKey(const VirgilByteArray& key, const VirgilByteArray& pwd = VirgilByteArray());
+    void setPrivateKey(const virgil::crypto::VirgilByteArray& key,
+            const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Configures public key.
      *
      * Parse given public key and set it to the current context.
      * @param key - public key in DER or PEM format.
      */
-    void setPublicKey(const VirgilByteArray& key);
+    void setPublicKey(const virgil::crypto::VirgilByteArray& key);
     /**
      * @brief Generates private and public keys.
      *
@@ -131,22 +129,24 @@ public:
      * @brief Provides private key.
      * @return Private key in a PKCS#1, SEC1 DER or PKCS#8 structure format.
      */
-    VirgilByteArray exportPrivateKeyToDER(const VirgilByteArray& pwd = VirgilByteArray()) const;
+    virgil::crypto::VirgilByteArray exportPrivateKeyToDER(
+            const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray()) const;
     /**
      * @brief Provides public key.
      * @return Public key in the SubjectPublicKeyInfo DER structure format.
      */
-    VirgilByteArray exportPublicKeyToDER() const;
+    virgil::crypto::VirgilByteArray exportPublicKeyToDER() const;
     /**
      * @brief Provides private key.
      * @return Private key in a PKCS#1, SEC1 PEM or PKCS#8 structure format.
      */
-    VirgilByteArray exportPrivateKeyToPEM(const VirgilByteArray& pwd = VirgilByteArray()) const;
+    virgil::crypto::VirgilByteArray exportPrivateKeyToPEM(
+            const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray()) const;
     /**
      * @brief Provides public key.
      * @return Public key in a SubjectPublicKeyInfo PEM structure format.
      */
-    VirgilByteArray exportPublicKeyToPEM() const;
+    virgil::crypto::VirgilByteArray exportPublicKeyToPEM() const;
     ///@}
 
     /**
@@ -162,7 +162,7 @@ public:
      * @param in - message to be encrypted.
      * @return Encrypted message.
      */
-    VirgilByteArray encrypt(const VirgilByteArray& in) const;
+    virgil::crypto::VirgilByteArray encrypt(const virgil::crypto::VirgilByteArray& in) const;
     /**
      * @brief Decrypts given message.
      *
@@ -172,7 +172,7 @@ public:
      * @param in - message to be decrypted.
      * @return Decrypted message.
      */
-    VirgilByteArray decrypt(const VirgilByteArray& in) const;
+    virgil::crypto::VirgilByteArray decrypt(const virgil::crypto::VirgilByteArray& in) const;
      ///@}
 
     /**
@@ -188,7 +188,7 @@ public:
      * @param hash - digest to be signed.
      * @return Signed digest.
      */
-    VirgilByteArray sign(const VirgilByteArray& hash) const;
+    virgil::crypto::VirgilByteArray sign(const virgil::crypto::VirgilByteArray& hash) const;
     /**
      * @brief Verify given hash with given sign.
      *
@@ -199,7 +199,7 @@ public:
      * @param sign - signed digest to be used during vefification.
      * @return true if given hash corresponds to the given signed digest, otherwise - false.
      */
-    bool verify(const VirgilByteArray& hash, const VirgilByteArray& sign) const;
+    bool verify(const virgil::crypto::VirgilByteArray& hash, const virgil::crypto::VirgilByteArray& sign) const;
     ///@}
     /**
      * @name Copy constructor / assignment operator
@@ -215,8 +215,9 @@ public:
      * @name VirgilAsn1Compatible implementation
      */
     ///@{
-    virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
-    virtual void asn1Read(VirgilAsn1Reader& asn1Reader);
+    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+            size_t childWrittenBytes = 0) const;
+    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
 private:
     /**

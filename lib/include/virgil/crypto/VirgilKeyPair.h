@@ -38,7 +38,6 @@
 #define VIRGIL_KEY_PAIR_H
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
 
 namespace virgil { namespace crypto {
 
@@ -48,7 +47,71 @@ namespace virgil { namespace crypto {
 class VirgilKeyPair {
 public:
     /**
-     * @brief Generate new key pair.
+     * @brief Generate new key pair with 192-bits NIST curve.
+     */
+    static VirgilKeyPair ecNist192(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with 224-bits NIST curve.
+     */
+    static VirgilKeyPair ecNist224(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with 256-bits NIST curve.
+     */
+    static VirgilKeyPair ecNist256(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with 384-bits NIST curve.
+     */
+    static VirgilKeyPair ecNist384(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with 521-bits NIST curve.
+     */
+    static VirgilKeyPair ecNist521(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with 256-bits Brainpool curve.
+     */
+    static VirgilKeyPair ecBrainpool256(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with 384-bits Brainpool curve.
+     */
+    static VirgilKeyPair ecBrainpool384(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with 512-bits Brainpool curve.
+     */
+    static VirgilKeyPair ecBrainpool512(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with 192-bits "Koblitz" curve.
+     */
+    static VirgilKeyPair ecKoblitz192(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with 224-bits "Koblitz" curve.
+     */
+    static VirgilKeyPair ecKoblitz224(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with 256-bits "Koblitz" curve.
+     */
+    static VirgilKeyPair ecKoblitz256(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with RSA 256-bits.
+     */
+    static VirgilKeyPair rsa256(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with RSA 512-bits.
+     */
+    static VirgilKeyPair rsa512(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with RSA 1024-bits.
+     */
+    static VirgilKeyPair rsa1024(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with RSA 2048-bits.
+     */
+    static VirgilKeyPair rsa2048(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with RSA 4096-bits.
+     */
+    static VirgilKeyPair rsa4096(const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generate new key pair with default settings.
      */
     explicit VirgilKeyPair(const VirgilByteArray& pwd = VirgilByteArray());
     /**

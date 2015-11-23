@@ -38,16 +38,10 @@
 #define VIRGIL_STREAM_CIPHER_H
 
 #include <virgil/crypto/VirgilCipherBase.h>
-using virgil::crypto::VirgilCipherBase;
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
 #include <virgil/crypto/VirgilDataSource.h>
-using virgil::crypto::VirgilDataSource;
-
 #include <virgil/crypto/VirgilDataSink.h>
-using virgil::crypto::VirgilDataSink;
 
 namespace virgil { namespace crypto {
 
@@ -96,8 +90,8 @@ private:
     /**
      * @brief Decrypt data read from given source, and write it to the sink.
      */
-    void decrypt(VirgilDataSource& source, VirgilDataSink& sink, VirgilSymmetricCipher& cipher,
-            const VirgilByteArray& firstChunk);
+    void decrypt(VirgilDataSource& source, VirgilDataSink& sink,
+            virgil::crypto::foundation::VirgilSymmetricCipher& cipher, const VirgilByteArray& firstChunk);
 };
 
 }}

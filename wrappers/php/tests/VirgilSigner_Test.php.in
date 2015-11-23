@@ -194,6 +194,36 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals($verifyResult, True);
     }
+
+    /**
+     * @covers VirgilSigner::sign
+     * @covers VirgilSigner::verify
+     * @covers VirgilByteArrayUtils::jsonToBytes
+     */
+    public function test_data_sign_verify_json_with_generated_keys() {
+        $prettyJson =
+            "{".
+            "    \"class\": \"user_id\",".
+            "    \"type\": \"email\",".
+            "    \"value\": \"test@test.com\"".
+            "}";
+        $rearrangedJson =
+            "{".
+            "    \"value\": \"test@test.com\",".
+            "    \"class\": \"user_id\",".
+            "    \"type\": \"email\"".
+            "}";
+
+        $key = new VirgilKeyPair();
+
+        $signer = new VirgilSigner();
+        $sign = $signer->sign(VirgilByteArrayUtils::jsonToBytes($prettyJson),
+                $key->privateKey());
+        $verifyResult = $signer->verify(VirgilByteArrayUtils::jsonToBytes($rearrangedJson),
+                $sign, $key->publicKey());
+
+        $this->assertEquals($verifyResult, True);
+    }
 }
 
 ?>

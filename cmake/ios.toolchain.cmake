@@ -138,6 +138,15 @@ elseif (${IOS_PLATFORM} STREQUAL "SIMULATOR")
 endif (${IOS_PLATFORM} STREQUAL "OS")
 set (INSTALL_LIB_DIR_NAME ${INSTALL_LIB_DIR_NAME} CACHE STRING  "Installation directory name for all components")
 
+# Set IOS Min Version
+set (IOS_VERSION_MIN "7.0" CACHE STRING "Minimum supported iOS version.")
+
+if (${IOS_PLATFORM} STREQUAL "OS")
+    set (IOS_VERSION_FLAG "-miphoneos-version-min=${IOS_VERSION_MIN}")
+elseif (${IOS_PLATFORM} STREQUAL "SIMULATOR")
+    set (IOS_VERSION_FLAG "-mios-simulator-version-min=${IOS_VERSION_MIN}")
+endif (${IOS_PLATFORM} STREQUAL "OS")
+
 # Set the find root to the iOS developer roots and to user defined paths
 set (CMAKE_FIND_ROOT_PATH
     ${CMAKE_IOS_PLATFORM_DEVELOPER_ROOT}
@@ -181,9 +190,9 @@ set (CMAKE_CXX_COMPILER_WORKS TRUE)
 set (CMAKE_C_COMPILER_WORKS TRUE)
 
 # Hidden visibilty is required for cxx on iOS
-set (CMAKE_C_FLAGS "-isysroot ${CMAKE_OSX_SYSROOT}" CACHE STRING "")
+set (CMAKE_C_FLAGS "${IOS_VERSION_FLAG} -isysroot ${CMAKE_OSX_SYSROOT}" CACHE STRING "")
 set (CMAKE_CXX_FLAGS
-    "-fvisibility=hidden -fvisibility-inlines-hidden -std=gnu++11 -isysroot ${CMAKE_OSX_SYSROOT}"
+    "${IOS_VERSION_FLAG} -fvisibility=hidden -fvisibility-inlines-hidden -std=gnu++11 -isysroot ${CMAKE_OSX_SYSROOT}"
     CACHE STRING ""
 )
 

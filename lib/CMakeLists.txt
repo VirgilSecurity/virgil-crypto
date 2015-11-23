@@ -34,26 +34,19 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
 project (virgil)
-
-# Configure compiler flags
-if (CMAKE_MAJOR_VERSION LESS 3 AND NOT CMAKE_CROSSCOMPILING)
-    include(CheckCCompilerFlag)
-    check_c_compiler_flag (-fPIC COMPILER_SUPPORT_PIC)
-    if (COMPILER_SUPPORT_PIC)
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-    endif()
-endif ()
 
 # Include and build external libraries
 include (ExternalProject)
 include (${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/mbedtls_ext.cmake)
+include (${CMAKE_CURRENT_SOURCE_DIR}/cmake/rapidjson.cmake)
 
 set (VIRGIL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories (${VIRGIL_INCLUDE_DIR})
 include_directories (${MBEDTLS_INCLUDE_DIR})
+include_directories (${RAPIDJSON_INCLUDE_DIRS})
 
 # Define sources list
 aux_source_directory ("src" src)
@@ -81,6 +74,7 @@ set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_COD
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${VIRGIL_INCLUDE_DIR})
 
 target_link_libraries (${PROJECT_NAME} mbedtls)
+add_dependencies (${PROJECT_NAME} rapidjson)
 add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy_if_different
@@ -105,17 +99,17 @@ if (INSTALL_EXT_HEADERS)
     install (DIRECTORY ${MBEDTLS_INCLUDE_DIR}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
 endif ()
 
-# add a target to generate API documentation with Doxygen
-find_package(Doxygen)
 
-find_program(dot DOT_PROGRAM)
+# add a target to generate API documentation with Doxygen
+find_host_program (dot DOT_PROGRAM)
 if (DOT_PROGRAM)
     set (DOT_FOUND "YES")
 else ()
     set (DOT_FOUND "NO")
 endif (DOT_PROGRAM)
 
-if(DOXYGEN_FOUND)
+find_host_package (Doxygen)
+if (DOXYGEN_FOUND)
     configure_file (${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
     add_custom_target (doc
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile

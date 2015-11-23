@@ -37,10 +37,9 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_STREAM_DATA_SINK_H
 #define VIRGIL_CRYPTO_VIRGIL_STREAM_DATA_SINK_H
 
-#include <virgil/crypto/VirgilDataSink.h>
-using virgil::crypto::VirgilDataSink;
-
 #include <ostream>
+
+#include <virgil/crypto/VirgilDataSink.h>
 
 namespace virgil { namespace crypto { namespace stream {
 
@@ -49,7 +48,7 @@ namespace virgil { namespace crypto { namespace stream {
  *
  * @note This class CAN not be used in wrappers.
  */
-class VirgilStreamDataSink : public VirgilDataSink {
+class VirgilStreamDataSink : public virgil::crypto::VirgilDataSink {
 public:
     /**
      * @brief Creates data sink based on std::ostream object.
@@ -66,7 +65,7 @@ public:
     /**
      * @brief Overriding of @link VirgilDataSink::write() @endlink method.
      */
-    virtual void write(const VirgilByteArray& data);
+    virtual void write(const virgil::crypto::VirgilByteArray& data);
 private:
     std::ostream& out_;
 };

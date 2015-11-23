@@ -63,3 +63,6 @@ set (CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
 include_directories (SYSTEM ${PLATFORM_PREFIX}/usr/include)
 link_directories (${PLATFORM_PREFIX}/usr/lib)
+
+# Tell RapidJson library that as3 has Little-endian bytes order
+add_definitions (-DRAPIDJSON_ENDIAN=0)

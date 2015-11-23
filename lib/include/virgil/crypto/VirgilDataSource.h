@@ -38,8 +38,6 @@
 #define VIRGIL_CRYPTO_VIRGIL_DATA_SOURCE_H
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
 
 namespace virgil { namespace crypto {
 

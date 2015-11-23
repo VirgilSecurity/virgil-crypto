@@ -35,28 +35,25 @@
  */
 
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
-using virgil::crypto::foundation::VirgilSymmetricCipher;
-using virgil::crypto::foundation::VirgilSymmetricCipherImpl;
 
 #include <polarssl/cipher.h>
 #include <polarssl/oid.h>
 
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
-#include <virgil/crypto/foundation/PolarsslException.h>
-using virgil::crypto::foundation::PolarsslException;
-
 #include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/foundation/PolarsslException.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+
+using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
 
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+using virgil::crypto::foundation::PolarsslException;
+using virgil::crypto::foundation::VirgilSymmetricCipher;
+using virgil::crypto::foundation::VirgilSymmetricCipherImpl;
 using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
-
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 namespace virgil { namespace crypto { namespace foundation {

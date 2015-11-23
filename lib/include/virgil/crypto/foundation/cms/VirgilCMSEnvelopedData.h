@@ -37,22 +37,12 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_CMS_ENVELOPED_DATA_H
 #define VIRGIL_CRYPTO_VIRGIL_CMS_ENVELOPED_DATA_H
 
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
-using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
-
-#include <virgil/crypto/foundation/cms/VirgilCMSKeyTransRecipient.h>
-using virgil::crypto::foundation::cms::VirgilCMSKeyTransRecipient;
-
-#include <virgil/crypto/foundation/cms/VirgilCMSPasswordRecipient.h>
-using virgil::crypto::foundation::cms::VirgilCMSPasswordRecipient;
-
-#include <virgil/crypto/foundation/cms/VirgilCMSEncryptedContent.h>
-using virgil::crypto::foundation::cms::VirgilCMSEncryptedContent;
-
-#include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
 #include <vector>
+
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+#include <virgil/crypto/foundation/cms/VirgilCMSKeyTransRecipient.h>
+#include <virgil/crypto/foundation/cms/VirgilCMSPasswordRecipient.h>
+#include <virgil/crypto/foundation/cms/VirgilCMSEncryptedContent.h>
 
 namespace virgil { namespace crypto { namespace foundation { namespace cms {
 
@@ -60,7 +50,7 @@ namespace virgil { namespace crypto { namespace foundation { namespace cms {
  * @brief Data object that represent CMS structure: EnvelopedData.
  * @see RFC 5652 section 6.1.
  */
-class VirgilCMSEnvelopedData : public VirgilAsn1Compatible {
+class VirgilCMSEnvelopedData : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
     /**
      * @property keyTransRecipients
@@ -111,8 +101,9 @@ public:
      * @endcode
      */
     ///@{
-    virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const;
-    virtual void asn1Read(VirgilAsn1Reader& asn1Reader);
+    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+            size_t childWrittenBytes = 0) const;
+    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
 public:
     /**

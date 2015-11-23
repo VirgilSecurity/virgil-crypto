@@ -69,4 +69,133 @@ AS3_DECL_FUNC(_wrap_VirgilKeyPair_privateKey, "(asSelf:int):ByteArray") {
     AS3_RETURN_C_BYTE_ARRAY(cPrivateKey);
 }
 
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_ecNist192, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::ecNist192(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_ecNist224, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::ecNist224(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_ecNist256, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::ecNist256(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_ecNist384, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::ecNist384(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_ecNist521, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::ecNist521(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_ecBrainpool256, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::ecBrainpool256(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_ecBrainpool384, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::ecBrainpool384(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_ecBrainpool512, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::ecBrainpool512(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_ecKoblitz192, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::ecKoblitz192(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_ecKoblitz224, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::ecKoblitz224(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_ecKoblitz256, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::ecKoblitz256(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_rsa256, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::rsa256(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_rsa512, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::rsa512(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_rsa1024, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::rsa1024(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_rsa2048, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::rsa2048(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_rsa4096, "(asPassword:ByteArray = null):int") {
+    AS3_TO_C_BYTE_ARRAY_OPT(asPassword, cPassword);
+AS3_THROWABLE_SECTION_START
+   VirgilKeyPair *cSelf = new VirgilKeyPair(VirgilKeyPair::rsa4096(cPassword));
+    AS3_RETURN_C_PTR(cSelf);
+AS3_THROWABLE_SECTION_END
+}
+
+
 #endif /* AS3_VIRGIL_KEY_PAIR_HPP */

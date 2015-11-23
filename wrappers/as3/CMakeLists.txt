@@ -34,7 +34,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
 include (CMakeFindBinUtils)
 
@@ -55,7 +55,7 @@ macro (find_as3_resource resource resource_name)
     endif ()
 endmacro (find_as3_resource)
 
-find_package (Java REQUIRED)
+find_host_package (Java REQUIRED)
 
 find_as3_resource (AS3_COMPILER asc2.jar)
 find_as3_resource (BUILTIN_ABC builtin.abc)

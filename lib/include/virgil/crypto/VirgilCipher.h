@@ -37,14 +37,10 @@
 #ifndef VIRGIL_CIPHER_H
 #define VIRGIL_CIPHER_H
 
+#include <vector>
+
 #include <virgil/crypto/VirgilCipherBase.h>
-using virgil::crypto::VirgilCipherBase;
-
 #include <virgil/crypto/VirgilByteArray.h>
-using virgil::crypto::VirgilByteArray;
-
-#include <vector>
-#include <vector>
 
 namespace virgil { namespace crypto {
 
@@ -88,7 +84,8 @@ private:
      * @brief Decrypt given data.
      * @return Decrypted data.
      */
-    VirgilByteArray decrypt(const VirgilByteArray& encryptedData, VirgilSymmetricCipher& cipher);
+    VirgilByteArray decrypt(const VirgilByteArray& encryptedData,
+            virgil::crypto::foundation::VirgilSymmetricCipher& cipher);
 };
 
 }}

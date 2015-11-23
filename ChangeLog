@@ -4,12 +4,14 @@ virgil ChangeLog (Sorted per date)
 
 Bugfix:
   * Fix some warnings by remove unused local variables.
+  * Fix build on Travis-CI: replace 'wget' command with 'curl -L -O' command.
 
 Changes:
   * Publish docs only from branch: 'release'.
   * Update SWIG and CMake versions on the travis-ci.
   * Change CMake minimum required version to 3.2.
   * Remove 'using' statements from header files.
+  * Update underlying 'mbedtls' library to version 1.3.14.
 
 Features:
   * Add support of node.js version 0.12 and higher.
@@ -22,10 +24,14 @@ Features:
   * Duplicate VirgilByteArray utility functions to the VirgilByteArrayUtils.
   * Add Java platform.
   * Add Android NDK toolchain.
+  * Publish Coverity Scan build with Travis-CI.
+  * Add support of Xcode 7.
+  * Add ability to generate keys with different parameters.
 
 Improvements:
   * Travis CI - Migrating from legacy to container-based infrastructure.
   * Remove redundant 'using' statements from generated wrapper's code.
+  * Improve 'zeroize' function to prevent compiler optimization.
 
 = Version 1.0.1 released 2015-08-27
 

@@ -40,7 +40,7 @@ set -ev
 cd "${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}"
 
 if [ "${PUBLISH_COVERITY_SCAN}" == "ON" ] && [ "${CC}" == "gcc" ]; then
-    export COVERITY_SCAN_PROJECT_NAME="VirgilSecurity/virgil"
+    export COVERITY_SCAN_PROJECT_NAME="VirgilSecurity/virgil-crypto"
     export COVERITY_SCAN_BRANCH_PATTERN="release"
     export COVERITY_SCAN_NOTIFICATION_EMAIL="sergey.seroshtan@gmail.com"
     export COVERITY_SCAN_BUILD_COMMAND="make -j4"

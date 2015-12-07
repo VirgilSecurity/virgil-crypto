@@ -59,18 +59,10 @@ set (SWIG_MODULE_NAME ${JAVA_MODULE_NAME})
 
 # Find Java
 find_host_package (Java REQUIRED)
-if (Java_FOUND AND NOT Java_INCLUDE_DIRS)
-    get_filename_component (Java_JAVA_EXECUTABLE_DIR "${Java_JAVA_EXECUTABLE}" DIRECTORY)
-    get_filename_component (Java_HOME "${Java_JAVA_EXECUTABLE_DIR}" DIRECTORY)
-    set (Java_INCLUDE_DIR "${Java_HOME}/include")
-    if (NOT IS_DIRECTORY "${Java_INCLUDE_DIR}")
-        message (FATAL_ERROR "Java includes not found at path: ${Java_INCLUDE_DIR}")
-    endif ()
-    subdirlist (Java_INCLUDE_DIRS "${Java_INCLUDE_DIR}")
-    list (APPEND Java_INCLUDE_DIRS "${Java_INCLUDE_DIR}")
-endif ()
-include_directories (${Java_INCLUDE_DIRS})
 include (UseJava)
+
+find_host_package (JNI REQUIRED)
+include_directories (${JNI_INCLUDE_DIRS})
 
 # Make sure the nested directory structure exists
 set (JAVA_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin CACHE INTERNAL "")

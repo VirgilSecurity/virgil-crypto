@@ -39,9 +39,9 @@ set -ev
 
 cd "${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}"
 
-if [ "${PUBLISH_COVERITY_SCAN}" == "ON" ] && [ "${CC}" == "gcc" ]; then
-    export COVERITY_SCAN_PROJECT_NAME="VirgilSecurity/virgil"
-    export COVERITY_SCAN_BRANCH_PATTERN="release"
+if [ "${PUBLISH_COVERITY_SCAN}" == "ON" ] && [ "${TRAVIS_BRANCH}" == "coverity_scan" ] && [ "${CC}" == "gcc" ]; then
+    export COVERITY_SCAN_PROJECT_NAME="VirgilSecurity/virgil-crypto"
+    export COVERITY_SCAN_BRANCH_PATTERN="coverity_scan"
     export COVERITY_SCAN_NOTIFICATION_EMAIL="sergey.seroshtan@gmail.com"
     export COVERITY_SCAN_BUILD_COMMAND="make -j4"
     curl -s "https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh" | bash || true

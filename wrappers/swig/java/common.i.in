@@ -73,22 +73,6 @@
   }
 %}
 
-%insert("begin") %{
-// Fix for error: invalid conversion from 'JNIEnv** {aka JNIEnv_**}' to 'void**' [-fpermissive]
-#if defined(__ANDROID__)
-#undef __ANDROID__
-#define __ANDROID__BACKUP__
-#endif
-%}
-
-%insert("header") %{
-// Fix for error: invalid conversion from 'JNIEnv** {aka JNIEnv_**}' to 'void**' [-fpermissive]
-// Restore it back before any 'include' statement
-#if defined(__ANDROID__BACKUP__)
-#define __ANDROID__
-#endif
-%}
-
 // VirgilByteArray typemap
 #define SWIG_VIRGIL_BYTE_ARRAY
 %include "java/VirgilByteArray.i"

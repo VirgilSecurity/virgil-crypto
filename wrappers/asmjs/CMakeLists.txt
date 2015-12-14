@@ -85,3 +85,11 @@ endif ()
 
 install (FILES ${CMAKE_CURRENT_BINARY_DIR}/example.html DESTINATION
         "${INSTALL_DOC_DIR_NAME}/${PROJECT_NAME}/${VIRGIL_VERSION}/example")
+
+set (LANG "asmjs" CACHE STRING "Language is asmjs" FORCE)
+set (LANG_VERSION "" CACHE STRING "No version for asmjs" FORCE)
+
+set (PLATFORM "" CACHE STRING "No platform name for asmjs, because it's crossplatform" FORCE)
+set (PLATFORM_VERSION "" CACHE STRING "No platform version for asmjs, because it's crossplatform" FORCE)
+
+

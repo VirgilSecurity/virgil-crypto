@@ -73,7 +73,7 @@ endif ()
 # Add external project build steps
 set (MBEDTLS_CONFIGURE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/configure")
 set (MBEDTLS_CONFIG_DEFINES "${MBEDTLS_CONFIGURE_DIR}/settings/defines.yml")
-set (MBEDTLS_CONFIG_PLATFORM_DEFINES "${MBEDTLS_CONFIGURE_DIR}/settings/defines_${PLATFORM_NAME_LOWER}.yml")
+set (MBEDTLS_CONFIG_PLATFORM_DEFINES "${MBEDTLS_CONFIGURE_DIR}/settings/defines_${PLATFORM}.yml")
 
 set (CONFIGURE_COMMAND_ARGS
     --input-dir=<SOURCE_DIR>

@@ -38,12 +38,10 @@
 set -ev
 
 # Configure CMake arguments
-CMAKE_ARGS="-DLIB_LOW_LEVEL_API=${LIB_LOW_LEVEL_API} -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install"
-if [ "${LANG}" ]; then
-    CMAKE_ARGS+=" -DLANG=${LANG}"
-fi
-
-if [ "${LANG}" = "CPP" ] && [ -z ${PLATFORM} ]; then
+CMAKE_ARGS="-DLANG=${LANG} -DPLATFORM_ARCH=`uname -m`"
+CMAKE_ARGS+=" -DLIB_LOW_LEVEL_API=${LIB_LOW_LEVEL_API}"
+CMAKE_ARGS+=" -DCMAKE_INSTALL_PREFIX=${TRAVIS_BUILD_DIR}/install"
+if [ "${LANG}" = "cpp" ]; then
     CMAKE_ARGS+=" -DLIB_FILE_IO=ON"
 fi
 

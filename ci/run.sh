@@ -50,6 +50,6 @@ else
 fi
 
 make install
-if [ "${PLATFORM}" == "PHP" ] || [ "${PLATFORM}" == "CPP" ]; then
+if [ "${LANG}" == "PHP" ] || [ "${LANG}" == "CPP" ]; then
     ctest --verbose
 fi

@@ -36,7 +36,7 @@
 
 #
 # Dependent on variables:
-#     - PLATFORM_NAME - name of target platform and/or target language.
+#     - LANG - target language.
 #
 # Define variables:
 #     - WRAPPED_LIB_NAME - name of the wrapped library.
@@ -55,11 +55,9 @@ include_directories (${${WRAPPED_LIB_NAME}_BINARY_DIR}/include)
 include_directories (swig)
 
 # Add wrappers
-set (PLATFORM_DIR ${PLATFORM_NAME_LOWER})
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${PLATFORM_DIR}")
-    add_subdirectory (${PLATFORM_DIR})
+set (LANG_DIR ${LANG})
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${LANG_DIR}")
+    add_subdirectory (${LANG_DIR})
 else ()
-    message (STATUS "No special wrappers for the platform: " ${PLATFORM_NAME})
+    message (STATUS "No special wrappers for the language: " ${LANG})
 endif ()
-
-set (PLATFORM_VERSION ${PLATFORM_VERSION} PARENT_SCOPE)

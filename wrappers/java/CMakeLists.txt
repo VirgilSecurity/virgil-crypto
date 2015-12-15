@@ -61,7 +61,13 @@ set (SWIG_MODULE_NAME ${JAVA_MODULE_NAME})
 find_host_package (Java REQUIRED)
 include (UseJava)
 
-find_host_package (JNI REQUIRED)
+# Find Java JNI
+if (ANDROID)
+    find_path (JAVA_INCLUDE_PATH jni.h)
+    set (JNI_INCLUDE_DIRS ${JAVA_INCLUDE_PATH})
+else (ANDROID)
+    find_host_package (JNI REQUIRED)
+endif (ANDROID)
 include_directories (${JNI_INCLUDE_DIRS})
 
 # Make sure the nested directory structure exists

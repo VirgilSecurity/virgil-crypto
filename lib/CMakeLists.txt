@@ -86,19 +86,17 @@ add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
 set (VIRGIL_INCLUDE_DIR ${VIRGIL_INCLUDE_DIR} PARENT_SCOPE)
 
 # Install
-if (INSTALL_CORE_LIB)
+if (INSTALL_CORE_LIBS)
     install (TARGETS ${PROJECT_NAME}
             DESTINATION "${INSTALL_LIB_DIR_NAME}")
     install (FILES ${MBEDTLS_LIBRARY}
             DESTINATION "${INSTALL_LIB_DIR_NAME}")
-
     add_subdirectory (include)
 endif ()
 
 if (INSTALL_EXT_HEADERS)
     install (DIRECTORY ${MBEDTLS_INCLUDE_DIR}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
 endif ()
-
 
 # add a target to generate API documentation with Doxygen
 find_host_program (dot DOT_PROGRAM)

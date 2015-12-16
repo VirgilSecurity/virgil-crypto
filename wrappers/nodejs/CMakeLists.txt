@@ -36,7 +36,7 @@
 
 cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
-project (${WRAPPED_LIB_NAME}_js)
+project (${WRAPPED_LIB_NAME}_nodejs)
 
 # Enable C++11
 set (CMAKE_CXX_STANDARD 11)

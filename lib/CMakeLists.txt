@@ -36,7 +36,7 @@
 
 cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
-project (virgil)
+project (virgil_crypto)
 
 # Include and build external libraries
 include (ExternalProject)

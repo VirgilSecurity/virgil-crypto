@@ -47,7 +47,7 @@ cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 project (wrappers)
 
 # Define variables
-set (WRAPPED_LIB_NAME virgil)
+set (WRAPPED_LIB_NAME virgil_crypto)
 
 # Add include directory of wrapped module
 include_directories (${${WRAPPED_LIB_NAME}_SOURCE_DIR}/include)

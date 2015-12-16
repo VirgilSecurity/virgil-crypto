@@ -36,7 +36,7 @@
 
 cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
-project (${WRAPPED_LIB_NAME}_csharp)
+project (${WRAPPED_LIB_NAME}_net)
 
 # Capitalize first character in the wrapped library name
 include (uppercase_first_char)
@@ -46,7 +46,7 @@ uppercase_first_char (${WRAPPED_LIB_NAME} WRAPPED_LIB_NAME_CAP)
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 # Configure C#
-set (CSHARP_ASSEMBLY_NAME ${WRAPPED_LIB_NAME_CAP}.Crypto)
+set (CSHARP_ASSEMBLY_NAME Virgil.Crypto)
 set (CSHARP_MODULE_NAME ${PROJECT_NAME})
 set (SWIG_MODULE_NAME ${CSHARP_MODULE_NAME})
 

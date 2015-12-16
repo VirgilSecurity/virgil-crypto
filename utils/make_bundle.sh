@@ -78,7 +78,7 @@ fi
 HEADERS_DIR="$INDIR/include"
 
 LIBMBEDTLS="libmbedtls.a"
-LIBVIRGIL="libvirgil.a"
+LIBVIRGIL="libvirgil_crypto.a"
 
 # Create working dir
 mkdir -p "$OUTDIR"
@@ -112,4 +112,4 @@ rm -f "$OUTDIR/$LIBMBEDTLS"
 rm -f "$OUTDIR/$LIBVIRGIL"
 rm -f "$OUTDIR/$FRAMEWORK_NAME"
 
-cd "$OUTDIR" && tar -czvf "$FRAMEWORK_FULL_NAME.tar.gz" "$FRAMEWORK_FULL_NAME/"
+# cd "$OUTDIR" && tar -czvf "$FRAMEWORK_FULL_NAME.tar.gz" "$FRAMEWORK_FULL_NAME/"

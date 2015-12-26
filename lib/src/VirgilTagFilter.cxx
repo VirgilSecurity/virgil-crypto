@@ -53,8 +53,8 @@ void VirgilTagFilter::process(const VirgilByteArray& data) {
 
     ptrdiff_t tagSurplusLen = tag_.size() - tagLen_;
     if (tagSurplusLen > 0) {
-        VirgilByteArray::const_iterator tagSurplusBegin = tag_.begin();
-        VirgilByteArray::const_iterator tagSurplusEnd = tagSurplusBegin + tagSurplusLen;
+        VirgilByteArray::iterator tagSurplusBegin = tag_.begin();
+        VirgilByteArray::iterator tagSurplusEnd = tagSurplusBegin + tagSurplusLen;
         data_.insert(data_.end(), tagSurplusBegin, tagSurplusEnd);
         tag_.erase(tagSurplusBegin, tagSurplusEnd);
     }

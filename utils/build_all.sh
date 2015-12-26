@@ -40,19 +40,23 @@
 
 pushd `dirname $0` > /dev/null
 
+# Native
 ./build.sh cpp .. ../build/cpp ../install/cpp &
 ./build.sh php .. ../build/php ../install/php &
 ./build.sh python .. ../build/python ../install/python &
 ./build.sh ruby .. ../build/ruby ../install/ruby &
 ./build.sh java .. ../build/java ../install/java &
-./build.sh java_android .. ../build/java_android ../install/java_android &
 ./build.sh net .. ../build/net ../install/net &
-./build.sh net_android .. ../build/net_android ../install/net_android &
-./build.sh asmjs .. ../build/asmjs ../install/asmjs &
 ./build.sh nodejs .. ../build/nodejs ../install/nodejs &
+
+# Crossplatform
+./build.sh asmjs .. ../build/asmjs ../install/asmjs &
+./build.sh java_android .. ../build/java_android ../install/java_android &
+./build.sh net_android .. ../build/net_android ../install/net_android &
 ./build.sh as3 .. ../build/as3 ../install/as3 &
 ./build.sh pnacl .. ../build/pnacl ../install/pnacl &
 
+# Apple
 if [ "`uname -s`" == "Darwin" ];then
     ./build.sh osx .. ../build/osx ../install/osx &
     ./build.sh ios .. ../build/ios ../install/ios &

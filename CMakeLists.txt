@@ -204,11 +204,11 @@ add_subdirectory (lib)
 add_subdirectory (wrappers)
 
 # Enable C++ tests only for native platforms
-if (LANG STREQUAL "cpp" AND NOT DEFINED PLATFORM)
+if (LANG STREQUAL "cpp")
     if (ENABLE_TESTING)
         add_subdirectory (tests)
     endif (ENABLE_TESTING)
-endif ()
+endif (LANG STREQUAL "cpp")
 
 # Configure platform after submodules configuration
 string (TOLOWER ${CMAKE_SYSTEM_NAME} PLATFORM_LOWER)

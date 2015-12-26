@@ -183,7 +183,9 @@ VirgilSymmetricCipher& VirgilCipherBase::initEncryption() {
     VirgilByteArray symmetricCipherIV = impl_->random.randomize(impl_->symmetricCipher.ivSize());
     impl_->symmetricCipher.setEncryptionKey(impl_->symmetricCipherKey);
     impl_->symmetricCipher.setIV(symmetricCipherIV);
-    impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    if (impl_->symmetricCipher.isSupportPadding()) {
+        impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    }
     impl_->symmetricCipher.reset();
 
     return impl_->symmetricCipher;
@@ -225,7 +227,9 @@ VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithPassword(const Virgil
     impl_->symmetricCipher = VirgilSymmetricCipher();
     impl_->symmetricCipher.fromAsn1(impl_->envelopedData.encryptedContent.contentEncryptionAlgorithm);
     impl_->symmetricCipher.setDecryptionKey(contentEncryptionKey);
-    impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    if (impl_->symmetricCipher.isSupportPadding()) {
+        impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    }
     impl_->symmetricCipher.reset();
     return impl_->symmetricCipher;
 }
@@ -238,7 +242,9 @@ VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithKey(const VirgilByteA
     impl_->symmetricCipher = VirgilSymmetricCipher();
     impl_->symmetricCipher.fromAsn1(impl_->envelopedData.encryptedContent.contentEncryptionAlgorithm);
     impl_->symmetricCipher.setDecryptionKey(contentEncryptionKey);
-    impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    if (impl_->symmetricCipher.isSupportPadding()) {
+        impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    }
     impl_->symmetricCipher.reset();
     return impl_->symmetricCipher;
 }

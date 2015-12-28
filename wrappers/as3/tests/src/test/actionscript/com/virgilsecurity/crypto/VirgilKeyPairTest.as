@@ -105,10 +105,9 @@ package com.virgilsecurity.crypto {
 
         [Test(description="Test KeyPair validation.")]
         public function test_keypair_validation():void {
-            var keyPair1:VirgilKeyPair = VirgilKeyPair.generate(
+            var keyPair1:VirgilKeyPair = VirgilKeyPair.generate();
+            var keyPair2:VirgilKeyPair = VirgilKeyPair.generate(
                     ConvertionUtils.asciiStringToArray("password"));
-            var keyPair2:VirgilKeyPair = VirgilKeyPair.generate();
-
 
             assertThat(VirgilKeyPair.isKeyPairMatch(keyPair1.publicKey(), keyPair1.privateKey()), equalTo(true));
             assertThat(VirgilKeyPair.isKeyPairMatch(keyPair2.publicKey(), keyPair1.privateKey()), equalTo(false));

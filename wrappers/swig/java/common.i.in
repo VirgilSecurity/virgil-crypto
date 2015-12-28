@@ -34,18 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Insert static module initialization to dynamicaly library load
-%pragma(java) jniclasscode=%{
-  static {
-    try {
-        System.loadLibrary("@SWIG_MODULE_NAME@");
-    } catch (UnsatisfiedLinkError error) {
-      System.err.println("Native code library failed to load. \n" + error);
-      System.exit(1);
-    }
-  }
-%}
-
 %javaexception("java.io.IOException") virgil::crypto::VirgilDataSource::hasData {}
 %javaexception("java.io.IOException") virgil::crypto::VirgilDataSource::read {}
 %javaexception("java.io.IOException") virgil::crypto::VirgilDataSink::write {}

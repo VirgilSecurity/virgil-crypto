@@ -133,6 +133,9 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .class_function("rsa1024", &virgil::crypto::VirgilKeyPair::rsa1024)
         .class_function("rsa2048", &virgil::crypto::VirgilKeyPair::rsa2048)
         .class_function("rsa4096", &virgil::crypto::VirgilKeyPair::rsa4096)
+        .class_function("isKeyPairMatch", &virgil::crypto::VirgilKeyPair::isKeyPairMatch)
+        .class_function("checkPrivateKeyPassword", &virgil::crypto::VirgilKeyPair::checkPrivateKeyPassword)
+        .class_function("isPrivateKeyEncrypted", &virgil::crypto::VirgilKeyPair::isPrivateKeyEncrypted)
     ;
 
     class_<virgil::crypto::VirgilCipherBase>("VirgilCipherBase")

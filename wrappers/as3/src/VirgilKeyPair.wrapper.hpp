@@ -57,6 +57,29 @@ AS3_DECL_FUNC(_wrap_new_VirgilKeyPair_generate, "(asPassword:ByteArray):int") {
     AS3_RETURN_C_PTR(cSelf);
 }
 
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_isKeyPairMatch,
+        "(asPublicKey:ByteArray, asPrivateKey:ByteArray, asPrivateKeyPassword:ByteArray = null):Boolean") {
+    AS3_TO_C_BYTE_ARRAY(asPublicKey, cPublicKey);
+    AS3_TO_C_BYTE_ARRAY(asPrivateKey, cPrivateKey);
+    AS3_TO_C_BYTE_ARRAY_OPT(asPrivateKeyPassword, cPrivateKeyPassword);
+    bool cResult = VirgilKeyPair::isKeyPairMatch(cPublicKey, cPrivateKey, cPrivateKeyPassword);
+    AS3_RETURN_C_BOOL(cResult);
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_checkPrivateKeyPassword,
+        "(asPrivateKey:ByteArray, asPrivateKeyPassword:ByteArray):Boolean") {
+    AS3_TO_C_BYTE_ARRAY(asPrivateKey, cPrivateKey);
+    AS3_TO_C_BYTE_ARRAY(asPrivateKeyPassword, cPrivateKeyPassword);
+    bool cResult = VirgilKeyPair::checkPrivateKeyPassword(cPrivateKey, cPrivateKeyPassword);
+    AS3_RETURN_C_BOOL(cResult);
+}
+
+AS3_DECL_FUNC(_wrap_VirgilKeyPair_isPrivateKeyEncrypted, "(asPrivateKey:ByteArray):Boolean") {
+    AS3_TO_C_BYTE_ARRAY(asPrivateKey, cPrivateKey);
+    bool cResult = VirgilKeyPair::isPrivateKeyEncrypted(cPrivateKey);
+    AS3_RETURN_C_BOOL(cResult);
+}
+
 AS3_DECL_FUNC(_wrap_VirgilKeyPair_publicKey, "(asSelf:int):ByteArray") {
     AS3_TO_C_PTR(VirgilKeyPair, asSelf, cSelf);
     VirgilByteArray cPublicKey = cSelf->publicKey();

@@ -93,7 +93,7 @@ package com.virgilsecurity.crypto {
             keyPair.destroy();
         }
 
-        [Test(description="Test generate VirgilKeyPair.")]
+        [Test(description="Test generate VirgilKeyPair with password.")]
         public function test_keypair_generate_with_password():void {
             var keyPair:VirgilKeyPair = VirgilKeyPair.generate(
                     ConvertionUtils.asciiStringToArray("password"));
@@ -101,6 +101,28 @@ package com.virgilsecurity.crypto {
             assertThat(keyPair.publicKey().length, not(equalTo(0)));
             assertThat(keyPair.privateKey().length, not(equalTo(0)));
             keyPair.destroy();
+        }
+
+        [Test(description="Test KeyPair validation.")]
+        public function test_keypair_validation():void {
+            var keyPair1:VirgilKeyPair = VirgilKeyPair.generate(
+                    ConvertionUtils.asciiStringToArray("password"));
+            var keyPair2:VirgilKeyPair = VirgilKeyPair.generate();
+
+
+            assertThat(VirgilKeyPair.isKeyPairMatch(keyPair1.publicKey(), keyPair1.privateKey()), equalTo(true));
+            assertThat(VirgilKeyPair.isKeyPairMatch(keyPair2.publicKey(), keyPair1.privateKey()), equalTo(false));
+
+            assertThat(VirgilKeyPair.checkPrivateKeyPassword(keyPair2.privateKey(),
+                    ConvertionUtils.asciiStringToArray("password")), equalTo(true));
+            assertThat(VirgilKeyPair.checkPrivateKeyPassword(keyPair2.privateKey(),
+                    ConvertionUtils.asciiStringToArray("wrong_password")), equalTo(false));
+
+            assertThat(VirgilKeyPair.isPrivateKeyEncrypted(keyPair1.privateKey()), equalTo(false));
+            assertThat(VirgilKeyPair.isPrivateKeyEncrypted(keyPair2.privateKey()), equalTo(true));
+
+            keyPair1.destroy();
+            keyPair2.destroy();
         }
     }
 }

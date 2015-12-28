@@ -152,6 +152,19 @@ VirgilKeyPair VirgilKeyPair::rsa4096(const VirgilByteArray& pwd) {
     return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
 }
 
+bool VirgilKeyPair::isKeyPairMatch(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey,
+        const VirgilByteArray& privateKeyPassword) {
+    return VirgilAsymmetricCipher::isKeyPairMatch(publicKey, privateKey, privateKeyPassword);
+}
+
+bool VirgilKeyPair::checkPrivateKeyPassword(const VirgilByteArray& key,
+        const VirgilByteArray& pwd) {
+    return VirgilAsymmetricCipher::checkPrivateKeyPassword(key, pwd);
+}
+
+bool VirgilKeyPair::isPrivateKeyEncrypted(const VirgilByteArray& privateKey) {
+    return VirgilAsymmetricCipher::isPrivateKeyEncrypted(privateKey);
+}
 
 VirgilKeyPair::VirgilKeyPair(const VirgilByteArray& pwd) {
     VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::ec();

@@ -93,11 +93,47 @@ public:
     ///@}
 
     /**
+     * @name Keys validation
+     */
+    ///@{
+    /**
+     * @brief Check if a public-private pair of keys matches.
+     *
+     * @param publicKey - public key in DER or PEM format.
+     * @param privateKey - private key in DER or PEM format.
+     * @param privateKeyPassword - private key password if exists.
+     *
+     * @return true - if public-private pair of keys matches.
+     */
+    static bool isKeyPairMatch(const virgil::crypto::VirgilByteArray& publicKey,
+            const virgil::crypto::VirgilByteArray& privateKey,
+            const virgil::crypto::VirgilByteArray& privateKeyPassword = virgil::crypto::VirgilByteArray());
+    /**
+     * @brief Check if given private key and it's password matches.
+     *
+     * @param key - private key in DER or PEM format.
+     * @param pwd - private key password.
+     *
+     * @return true - if private key and it's password matches.
+     */
+    static bool checkPrivateKeyPassword(const virgil::crypto::VirgilByteArray& key,
+            const virgil::crypto::VirgilByteArray& pwd);
+    /**
+     * @brief Check if given private key is encrypted.
+     *
+     * @param privateKey - private key in DER or PEM format.
+     *
+     * @return true - if private key is encrypted.
+     */
+    static bool isPrivateKeyEncrypted(const virgil::crypto::VirgilByteArray& privateKey);
+    ///@}
+
+    /**
      * @name Keys management
      */
     ///@{
     /**
-     * @brief Configures privte key.
+     * @brief Configures private key.
      *
      * Parse given private key and set it to the current context.
      * @param key - private key in DER or PEM format.

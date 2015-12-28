@@ -285,6 +285,46 @@ size_t VirgilAsymmetricCipher::keyLength() const {
     return ::pk_get_len(impl_->ctx);
 }
 
+bool VirgilAsymmetricCipher::isKeyPairMatch(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey,
+        const VirgilByteArray& privateKeyPassword) {
+
+    pk_context public_ctx;
+    pk_init(&public_ctx);
+    POLARSSL_ERROR_HANDLER(
+        ::pk_parse_public_key(&public_ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(publicKey))
+    );
+
+    pk_context private_ctx;
+    pk_init(&private_ctx);
+    POLARSSL_ERROR_HANDLER_DISPOSE(
+        ::pk_parse_key(&private_ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(privateKey),
+                VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(privateKeyPassword)),
+        ::pk_free(&public_ctx);
+    );
+
+    int result = ::pk_check_pair(&public_ctx, &private_ctx);
+
+    ::pk_free(&public_ctx);
+    ::pk_free(&private_ctx);
+
+    return  result == 0;
+}
+
+bool VirgilAsymmetricCipher::checkPrivateKeyPassword(const VirgilByteArray& key,
+        const VirgilByteArray& pwd) {
+
+    pk_context private_ctx;
+    pk_init(&private_ctx);
+    int result = ::pk_parse_key(&private_ctx,
+            VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key), VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd));
+    ::pk_free(&private_ctx);
+    return result == 0;
+}
+
+bool VirgilAsymmetricCipher::isPrivateKeyEncrypted(const VirgilByteArray& privateKey) {
+    return !checkPrivateKeyPassword(privateKey, VirgilByteArray());
+}
+
 void VirgilAsymmetricCipher::setPrivateKey(const VirgilByteArray& key, const VirgilByteArray& pwd) {
     POLARSSL_ERROR_HANDLER(
         ::pk_parse_key(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key), VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd));

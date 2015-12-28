@@ -69,6 +69,7 @@
 %ignore virgil::crypto::hex2bytes;
 %ignore virgil::crypto::bytes2hex;
 %ignore virgil::crypto::bytes_zeroize;
+%ignore virgil::crypto::string_zeroize;
 INCLUDE_CLASS(VirgilByteArray, virgil::crypto, virgil/crypto)
 
 %ignore VIRGIL_VERSION;

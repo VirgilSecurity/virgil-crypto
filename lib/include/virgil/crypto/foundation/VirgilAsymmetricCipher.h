@@ -40,6 +40,7 @@
 #include <cstddef>
 
 #include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilKeyPair.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 
 namespace virgil { namespace crypto { namespace foundation {
@@ -63,17 +64,12 @@ public:
     ///@{
     /**
      * @brief Create object that is not initialzed with specific algorithm yet.
-     * @see @link genKeyPair @endlink method to initialize it.
+     * @see fromAsn1() method to initialize it.
+     * @see genKeyPair() method to initialize it.
+     * @see setPublicKey() method to initialize it.
+     * @see setPrivateKey() method to initialize it.
      */
-    static VirgilAsymmetricCipher none();
-    /**
-     * @brief Creates object that handles RSA Private-Key algorithms.
-     */
-    static VirgilAsymmetricCipher rsa();
-    /**
-     * @brief Creates object that handles Elliptic Curve Private-Key algorithms.
-     */
-    static VirgilAsymmetricCipher ec();
+    VirgilAsymmetricCipher();
     ///@}
 
     /**
@@ -152,9 +148,9 @@ public:
      * @brief Generates private and public keys.
      *
      * Generate private and public keys in the current context.
-     * @param keyPairGenerator - keypair generator that handles appropriate information about generated keys.
+     * @param type - keypair type.
      */
-    void genKeyPair(const VirgilKeyPairGenerator& keyPairGenerator);
+    void genKeyPair(VirgilKeyPair::Type type);
     ///@}
 
     /**

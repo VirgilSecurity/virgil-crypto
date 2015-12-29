@@ -54,3 +54,5 @@ Module['VirgilByteArray']['prototype']['toUTF8'] = function() {
     var encodedString = String.fromCharCode.apply(null, this.data());
     return decodeURIComponent(escape(encodedString));
 };
+
+Module['VirgilKeyPair']['Type'] = Module['VirgilKeyPairType']

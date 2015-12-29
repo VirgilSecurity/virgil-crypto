@@ -212,7 +212,7 @@ static VirgilByteArray decryptContentEncryptionKey(
     std::vector<VirgilCMSKeyTransRecipient>::const_iterator recipientIt = keyTransRecipients.begin();
     for (; recipientIt != keyTransRecipients.end(); ++recipientIt) {
         if (recipientIt->recipientIdentifier == recipientId) {
-            VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::none();
+            VirgilAsymmetricCipher asymmetricCipher;
             asymmetricCipher.setPrivateKey(privateKey, privateKeyPassword);
             return asymmetricCipher.decrypt(recipientIt->encryptedKey);
         }
@@ -259,7 +259,7 @@ void VirgilCipherBase::buildContentInfo() {
         const VirgilByteArray& recipientId = it->first;
         const VirgilByteArray& publicKey = it->second;
 
-        VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::none();
+        VirgilAsymmetricCipher asymmetricCipher;
         asymmetricCipher.setPublicKey(publicKey);
 
         VirgilCMSKeyTransRecipient recipient;

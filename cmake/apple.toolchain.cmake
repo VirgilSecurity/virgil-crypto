@@ -42,6 +42,7 @@ set (UNIX True)
 set (APPLE True)
 
 set (LANG "cpp" CACHE STRING "Target language")
+set (PLATFORM_EMBEDDED YES CACHE BOOL "Mark target platform as embedded")
 
 if (PLATFORM STREQUAL "ios")
     set (APPLE_IOS True)

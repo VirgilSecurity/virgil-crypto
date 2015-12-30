@@ -203,17 +203,20 @@ endif (ENABLE_TESTING)
 add_subdirectory (lib)
 add_subdirectory (wrappers)
 
-# Enable C++ tests only for native platforms
-if (LANG STREQUAL "cpp")
-    if (ENABLE_TESTING)
-        add_subdirectory (tests)
-    endif (ENABLE_TESTING)
-endif (LANG STREQUAL "cpp")
-
 # Configure platform after submodules configuration
 string (TOLOWER ${CMAKE_SYSTEM_NAME} PLATFORM_LOWER)
 set (PLATFORM "${PLATFORM_LOWER}" CACHE STRING "Target platform")
 set (PLATFORM_VERSION "${CMAKE_SYSTEM_VERSION}" CACHE STRING "Target platform")
+set (PLATFORM_EMBEDDED NO CACHE BOOL "Mark target platform as embedded")
+mark_as_advanced (PLATFORM_EMBEDDED PLATFORM_VERSION)
+
+# Enable C++ tests only for native platforms
+if (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
+    if (ENABLE_TESTING)
+        add_subdirectory (tests)
+    endif (ENABLE_TESTING)
+endif (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
+
 
 # Define full platform name
 set (LIB_NAME_FULL "virgil-crypto-${VIRGIL_VERSION}-${LANG}")

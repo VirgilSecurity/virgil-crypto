@@ -38,6 +38,7 @@ include (CMakeForceCompiler)
 
 set (LANG                        "as3" CACHE STRING "Language name")
 set (PLATFORM                    "" CACHE STRING "Platform name")
+set (PLATFORM_EMBEDDED           YES CACHE BOOL "Mark target platform as embedded")
 set (PLATFORM_PREFIX             "$ENV{CROSSBRIDGE_HOME}/sdk")
 
 set (CMAKE_SYSTEM_NAME           "Generic" CACHE STRING "Target system.")

@@ -187,6 +187,13 @@ elseif (APPLE_TV)
 endif ()
 set (PLATFORM_VERSION ${APPLE_PLATFORM_VERSION_MIN} CACHE STRING "Minimum version of the target platform")
 
+# Define XCode ENABLE_BITCODE option
+if (SIMULATOR)
+    set (ENABLE_BITCODE_FLAG "-fembed-bitcode-marker")
+else (SIMULATOR)
+    set (ENABLE_BITCODE_FLAG "-fembed-bitcode")
+endif (SIMULATOR)
+
 # Set the find root to the Apple *OS developer roots and to user defined paths
 set (CMAKE_FIND_ROOT_PATH
     ${CMAKE_APPLE_PLATFORM_DEVELOPER_ROOT}
@@ -229,11 +236,8 @@ set (CMAKE_CXX_COMPILER_WORKS TRUE)
 set (CMAKE_C_COMPILER_WORKS TRUE)
 
 # Hidden visibilty is required for cxx on Apple *OS
-set (CMAKE_C_FLAGS "${APPLE_VERSION_FLAG} -isysroot ${CMAKE_OSX_SYSROOT}" CACHE STRING "")
-set (CMAKE_CXX_FLAGS
-    "${APPLE_VERSION_FLAG} -fvisibility=hidden -fvisibility-inlines-hidden -std=gnu++11 -isysroot ${CMAKE_OSX_SYSROOT}"
-    CACHE STRING ""
-)
+set (CMAKE_C_FLAGS "${APPLE_VERSION_FLAG} ${ENABLE_BITCODE_FLAG} -isysroot ${CMAKE_OSX_SYSROOT}" CACHE STRING "")
+set (CMAKE_CXX_FLAGS "${APPLE_VERSION_FLAG} ${ENABLE_BITCODE_FLAG} -fvisibility=hidden -fvisibility-inlines-hidden -std=gnu++11 -isysroot ${CMAKE_OSX_SYSROOT}" CACHE STRING "")
 
 set (CMAKE_C_LINK_FLAGS "-Wl,-search_paths_first ${CMAKE_C_LINK_FLAGS}")
 set (CMAKE_CXX_LINK_FLAGS "-Wl,-search_paths_first ${CMAKE_CXX_LINK_FLAGS}")

@@ -1,3 +1,4 @@
+#region "Copyright (C) 2015 Virgil Security Inc."
 /**
  * Copyright (C) 2015 Virgil Security Inc.
  *
@@ -33,24 +34,41 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#endregion
 
-Module['VirgilByteArray']['fromUTF8'] = function(string) {
-    var ba = new Module.VirgilByteArray();
-    ba.fromUTF8(string);
-    return ba;
-};
+using virgil.crypto;
 
-Module['VirgilByteArray']['prototype']['fromUTF8'] = function(string) {
-    var s = unescape(encodeURIComponent(string));
-    var charList = s.split('');
-    var uintArray = [];
-    for (var i = 0; i < charList.length; i++) {
-        uintArray.push(charList[i].charCodeAt(0));
+namespace virgil.crypto {
+
+public class VirgilStreamDataSource : VirgilDataSource
+{
+    private readonly System.IO.Stream stream;
+    private readonly byte[] buffer;
+
+    public VirgilStreamDataSource(System.IO.Stream source)
+    {
+        this.stream = source;
+        this.buffer = new byte[1024];
     }
-    this.assign(new Uint8Array(uintArray));
-};
 
-Module['VirgilByteArray']['prototype']['toUTF8'] = function() {
-    var encodedString = String.fromCharCode.apply(null, this.data());
-    return decodeURIComponent(escape(encodedString));
-};
+    public override bool HasData()
+    {
+        return this.stream.CanRead && this.stream.Position < this.stream.Length;
+    }
+
+    public override byte[] Read()
+    {
+        int bytesRead = this.stream.Read(buffer, 0, buffer.Length);
+
+        if (bytesRead == buffer.Length)
+        {
+            return buffer;
+        }
+
+        byte[] result = new byte[bytesRead];
+        System.Array.Copy(buffer, result, bytesRead);
+        return result;
+    }
+}
+
+}

@@ -61,7 +61,13 @@ set (SWIG_MODULE_NAME ${JAVA_MODULE_NAME})
 find_host_package (Java REQUIRED)
 include (UseJava)
 
-find_host_package (JNI REQUIRED)
+# Find Java JNI
+if (ANDROID)
+    find_path (JAVA_INCLUDE_PATH jni.h)
+    set (JNI_INCLUDE_DIRS ${JAVA_INCLUDE_PATH})
+else (ANDROID)
+    find_host_package (JNI REQUIRED)
+endif (ANDROID)
 include_directories (${JNI_INCLUDE_DIRS})
 
 # Make sure the nested directory structure exists
@@ -83,10 +89,6 @@ set (WRAPPER_INTERFACE_FILE "${CMAKE_CURRENT_BINARY_DIR}/wrapper.i")
 configure_file (
     "${wrappers_SOURCE_DIR}/swig/wrapper.i.in"
     "${WRAPPER_INTERFACE_FILE}"
-)
-configure_file (
-    "${wrappers_SOURCE_DIR}/swig/java/common.i.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/java/common.i"
 )
 
 set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY CPLUSPLUS ON)

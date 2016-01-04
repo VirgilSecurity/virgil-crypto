@@ -34,61 +34,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Insert static module initialization to dynamicaly library load
-%pragma(java) jniclasscode=%{
-  static {
-    try {
-        System.loadLibrary("@SWIG_MODULE_NAME@");
-    } catch (UnsatisfiedLinkError error) {
-      System.err.println("Native code library failed to load. \n" + error);
-      System.exit(1);
+Module['VirgilByteArray']['fromUTF8'] = function(string) {
+    var ba = new Module.VirgilByteArray();
+    ba.fromUTF8(string);
+    return ba;
+};
+
+Module['VirgilByteArray']['prototype']['fromUTF8'] = function(string) {
+    var s = unescape(encodeURIComponent(string));
+    var charList = s.split('');
+    var uintArray = [];
+    for (var i = 0; i < charList.length; i++) {
+        uintArray.push(charList[i].charCodeAt(0));
     }
-  }
-%}
+    this.assign(new Uint8Array(uintArray));
+};
 
-%javaexception("java.io.IOException") virgil::crypto::VirgilDataSource::hasData {}
-%javaexception("java.io.IOException") virgil::crypto::VirgilDataSource::read {}
-%javaexception("java.io.IOException") virgil::crypto::VirgilDataSink::write {}
-%javaexception("java.io.IOException") virgil::crypto::VirgilDataSink::isGood {}
+Module['VirgilByteArray']['prototype']['toUTF8'] = function() {
+    var encodedString = String.fromCharCode.apply(null, this.data());
+    return decodeURIComponent(escape(encodedString));
+};
 
-%typemap(javainterfaces) SWIGTYPE "java.lang.AutoCloseable";
-%typemap(javacode) SWIGTYPE %{
-  @Override
-  public void close() {
-    delete();
-  }
-%}
-
-%typemap(javacode) virgil::crypto::VirgilDataSource %{
-  @Override
-  public void close() throws java.io.IOException {
-    delete();
-  }
-%}
-
-%typemap(javacode) virgil::crypto::VirgilDataSink %{
-  @Override
-  public void close() throws java.io.IOException {
-    delete();
-  }
-%}
-
-%insert("begin") %{
-// Fix for error: invalid conversion from 'JNIEnv** {aka JNIEnv_**}' to 'void**' [-fpermissive]
-#if defined(__ANDROID__)
-#undef __ANDROID__
-#define __ANDROID__BACKUP__
-#endif
-%}
-
-%insert("header") %{
-// Fix for error: invalid conversion from 'JNIEnv** {aka JNIEnv_**}' to 'void**' [-fpermissive]
-// Restore it back before any 'include' statement
-#if defined(__ANDROID__BACKUP__)
-#define __ANDROID__
-#endif
-%}
-
-// VirgilByteArray typemap
-#define SWIG_VIRGIL_BYTE_ARRAY
-%include "java/VirgilByteArray.i"
+Module['VirgilKeyPair']['Type'] = Module['VirgilKeyPairType']

@@ -55,7 +55,7 @@ set (TEST_FILES
 
 if (LIB_LOW_LEVEL_API)
     list (APPEND TEST_FILES
-        VirgilSymmetricCipher_AES256_CBC_Test.php
+        VirgilSymmetricCipher_Test.php
         VirgilAsymmetricCipher_EC_Test.php
         VirgilAsymmetricCipher_RSA_Test.php
         VirgilAsn1Reader_Test.php

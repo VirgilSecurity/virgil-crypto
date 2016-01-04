@@ -36,11 +36,11 @@
 
 cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
-project (${WRAPPED_LIB_NAME}_emscripten)
+project (${WRAPPED_LIB_NAME}_asmjs)
 
 # Configure
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-set (WRAPPER_TARGET ${PROJECT_NAME}_${VIRGIL_VERSION})
+set (WRAPPER_TARGET ${PROJECT_NAME})
 set (EMIT_MEM_FILE OFF)
 
 set (EMSCRIPTEN $ENV{EMSCRIPTEN})
@@ -85,3 +85,13 @@ endif ()
 
 install (FILES ${CMAKE_CURRENT_BINARY_DIR}/example.html DESTINATION
         "${INSTALL_DOC_DIR_NAME}/${PROJECT_NAME}/${VIRGIL_VERSION}/example")
+install (TARGETS ${WRAPPER_TARGET} DESTINATION
+        "${INSTALL_DOC_DIR_NAME}/${PROJECT_NAME}/${VIRGIL_VERSION}/example")
+
+set (LANG "asmjs" CACHE STRING "Language is asmjs" FORCE)
+set (LANG_VERSION "" CACHE STRING "No version for asmjs" FORCE)
+
+set (PLATFORM "" CACHE STRING "No platform name for asmjs, because it's crossplatform" FORCE)
+set (PLATFORM_VERSION "" CACHE STRING "No platform version for asmjs, because it's crossplatform" FORCE)
+
+

@@ -40,124 +40,101 @@
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/VirgilRandom.h>
-#include <virgil/crypto/foundation/VirgilKeyPairGenerator.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilKeyPair;
 using virgil::crypto::foundation::VirgilRandom;
-using virgil::crypto::foundation::VirgilKeyPairGenerator;
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
-/**
- * @name Configuration constants.
- */
-///@{
-static const VirgilKeyPairGenerator::ECKeyGroup kKeyPair_ECKeyGroup = VirgilKeyPairGenerator::ECKeyGroup_DP_BP512R1;
-///@}
+VirgilKeyPair VirgilKeyPair::generate(VirgilKeyPair::Type type, const VirgilByteArray& pwd) {
+    VirgilAsymmetricCipher cipher;
+    cipher.genKeyPair(type);
+    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+}
 
 VirgilKeyPair VirgilKeyPair::ecNist192(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::ec();
-    cipher.genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_SECP192R1));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_EC_SECP192R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecNist224(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::ec();
-    cipher.genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_SECP224R1));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_EC_SECP224R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecNist256(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::ec();
-    cipher.genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_SECP256R1));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_EC_SECP256R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecNist384(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::ec();
-    cipher.genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_SECP384R1));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_EC_SECP384R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecNist521(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::ec();
-    cipher.genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_SECP521R1));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_EC_SECP521R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecBrainpool256(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::ec();
-    cipher.genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_BP256R1));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_EC_BP256R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecBrainpool384(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::ec();
-    cipher.genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_BP384R1));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_EC_BP384R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecBrainpool512(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::ec();
-    cipher.genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_BP512R1));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_EC_BP512R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecKoblitz192(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::ec();
-    cipher.genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_SECP192K1));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_EC_SECP192K1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecKoblitz224(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::ec();
-    cipher.genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_SECP224K1));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_EC_SECP224K1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecKoblitz256(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::ec();
-    cipher.genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_SECP256K1));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_EC_SECP256K1);
 }
 
 VirgilKeyPair VirgilKeyPair::rsa256(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::rsa();
-    cipher.genKeyPair(VirgilKeyPairGenerator::rsa(256));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_RSA_256);
 }
 
 VirgilKeyPair VirgilKeyPair::rsa512(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::rsa();
-    cipher.genKeyPair(VirgilKeyPairGenerator::rsa(512));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_RSA_512);
 }
 
 VirgilKeyPair VirgilKeyPair::rsa1024(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::rsa();
-    cipher.genKeyPair(VirgilKeyPairGenerator::rsa(1024));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_RSA_1024);
 }
 
 VirgilKeyPair VirgilKeyPair::rsa2048(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::rsa();
-    cipher.genKeyPair(VirgilKeyPairGenerator::rsa(2048));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_RSA_2048);
 }
 
 VirgilKeyPair VirgilKeyPair::rsa4096(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::rsa();
-    cipher.genKeyPair(VirgilKeyPairGenerator::rsa(4096));
-    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+    return generate(VirgilKeyPair::Type_RSA_4096);
 }
 
+bool VirgilKeyPair::isKeyPairMatch(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey,
+        const VirgilByteArray& privateKeyPassword) {
+    return VirgilAsymmetricCipher::isKeyPairMatch(publicKey, privateKey, privateKeyPassword);
+}
+
+bool VirgilKeyPair::checkPrivateKeyPassword(const VirgilByteArray& key,
+        const VirgilByteArray& pwd) {
+    return VirgilAsymmetricCipher::checkPrivateKeyPassword(key, pwd);
+}
+
+bool VirgilKeyPair::isPrivateKeyEncrypted(const VirgilByteArray& privateKey) {
+    return VirgilAsymmetricCipher::isPrivateKeyEncrypted(privateKey);
+}
 
 VirgilKeyPair::VirgilKeyPair(const VirgilByteArray& pwd) {
-    VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::ec();
-    asymmetricCipher.genKeyPair(VirgilKeyPairGenerator::ec(kKeyPair_ECKeyGroup));
-    publicKey_ = asymmetricCipher.exportPublicKeyToPEM();
-    privateKey_ = asymmetricCipher.exportPrivateKeyToPEM(pwd);
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_Default, pwd);
+    this->publicKey_ = keyPair.publicKey();
+    this->privateKey_ = keyPair.privateKey();
 }
 
 VirgilKeyPair::VirgilKeyPair(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey)

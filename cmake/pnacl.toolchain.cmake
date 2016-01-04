@@ -1,6 +1,8 @@
 include(CMakeForceCompiler)
 
-set(PLATFORM_NAME               "PNaCl" CACHE STRING "Platform name")
+set(LANG                        "cpp" CACHE STRING "Language name")
+set(PLATFORM                    "pnacl" CACHE STRING "Platform name")
+set(PLATFORM_EMBEDDED           YES CACHE BOOL "Mark target platform as embedded")
 set(PLATFORM_TRIPLET            "pnacl")
 set(PLATFORM_PREFIX             "$ENV{NACL_SDK_ROOT}/toolchain/mac_pnacl")
 set(PLATFORM_PORTS_PREFIX       "${CMAKE_SOURCE_DIR}/ports/PNaCl")

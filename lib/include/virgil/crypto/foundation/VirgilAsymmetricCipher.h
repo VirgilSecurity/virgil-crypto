@@ -40,6 +40,7 @@
 #include <cstddef>
 
 #include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilKeyPair.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 
 namespace virgil { namespace crypto { namespace foundation {
@@ -63,17 +64,12 @@ public:
     ///@{
     /**
      * @brief Create object that is not initialzed with specific algorithm yet.
-     * @see @link genKeyPair @endlink method to initialize it.
+     * @see fromAsn1() method to initialize it.
+     * @see genKeyPair() method to initialize it.
+     * @see setPublicKey() method to initialize it.
+     * @see setPrivateKey() method to initialize it.
      */
-    static VirgilAsymmetricCipher none();
-    /**
-     * @brief Creates object that handles RSA Private-Key algorithms.
-     */
-    static VirgilAsymmetricCipher rsa();
-    /**
-     * @brief Creates object that handles Elliptic Curve Private-Key algorithms.
-     */
-    static VirgilAsymmetricCipher ec();
+    VirgilAsymmetricCipher();
     ///@}
 
     /**
@@ -93,11 +89,47 @@ public:
     ///@}
 
     /**
+     * @name Keys validation
+     */
+    ///@{
+    /**
+     * @brief Check if a public-private pair of keys matches.
+     *
+     * @param publicKey - public key in DER or PEM format.
+     * @param privateKey - private key in DER or PEM format.
+     * @param privateKeyPassword - private key password if exists.
+     *
+     * @return true - if public-private pair of keys matches.
+     */
+    static bool isKeyPairMatch(const virgil::crypto::VirgilByteArray& publicKey,
+            const virgil::crypto::VirgilByteArray& privateKey,
+            const virgil::crypto::VirgilByteArray& privateKeyPassword = virgil::crypto::VirgilByteArray());
+    /**
+     * @brief Check if given private key and it's password matches.
+     *
+     * @param key - private key in DER or PEM format.
+     * @param pwd - private key password.
+     *
+     * @return true - if private key and it's password matches.
+     */
+    static bool checkPrivateKeyPassword(const virgil::crypto::VirgilByteArray& key,
+            const virgil::crypto::VirgilByteArray& pwd);
+    /**
+     * @brief Check if given private key is encrypted.
+     *
+     * @param privateKey - private key in DER or PEM format.
+     *
+     * @return true - if private key is encrypted.
+     */
+    static bool isPrivateKeyEncrypted(const virgil::crypto::VirgilByteArray& privateKey);
+    ///@}
+
+    /**
      * @name Keys management
      */
     ///@{
     /**
-     * @brief Configures privte key.
+     * @brief Configures private key.
      *
      * Parse given private key and set it to the current context.
      * @param key - private key in DER or PEM format.
@@ -116,9 +148,9 @@ public:
      * @brief Generates private and public keys.
      *
      * Generate private and public keys in the current context.
-     * @param keyPairGenerator - keypair generator that handles appropriate information about generated keys.
+     * @param type - keypair type.
      */
-    void genKeyPair(const VirgilKeyPairGenerator& keyPairGenerator);
+    void genKeyPair(VirgilKeyPair::Type type);
     ///@}
 
     /**

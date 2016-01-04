@@ -34,15 +34,42 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <virgil/crypto/foundation/priv/VirgilTagFilter.h>
 
-// Renames functions and properties to the CamelCase notation.
-%rename("%(camelcase)s", %$isfunction) "";
-%rename("%(camelcase)s", %$isvariable) "";
+#include <virgil/crypto/VirgilByteArray.h>
 
-// Apply a rule for renaming the enum elements to avoid the common prefixes
-// which are redundant in C#
-%rename("%(regex:/^([A-Z][a-z]+)+_(.*)/\\2/)s", %$isenumitem) "";
+using virgil::crypto::foundation::priv::VirgilTagFilter;
 
-// VirgilByteArray typemap
-#define SWIG_VIRGIL_BYTE_ARRAY
-%include "VirgilByteArray.i"
+using virgil::crypto::VirgilByteArray;
+
+void VirgilTagFilter::reset(size_t tagLen) {
+    tagLen_ = tagLen;
+    data_.clear();
+    tag_.clear();
+}
+
+void VirgilTagFilter::process(const VirgilByteArray& data) {
+    tag_.insert(tag_.end(), data.begin(), data.end());
+
+    ptrdiff_t tagSurplusLen = tag_.size() - tagLen_;
+    if (tagSurplusLen > 0) {
+        VirgilByteArray::iterator tagSurplusBegin = tag_.begin();
+        VirgilByteArray::iterator tagSurplusEnd = tagSurplusBegin + tagSurplusLen;
+        data_.insert(data_.end(), tagSurplusBegin, tagSurplusEnd);
+        tag_.erase(tagSurplusBegin, tagSurplusEnd);
+    }
+}
+
+bool VirgilTagFilter::hasData() const {
+    return !data_.empty();
+}
+
+VirgilByteArray VirgilTagFilter::popData() {
+    VirgilByteArray result;
+    result.swap(data_);
+    return result;
+}
+
+VirgilByteArray VirgilTagFilter::tag() const {
+    return tag_;
+}

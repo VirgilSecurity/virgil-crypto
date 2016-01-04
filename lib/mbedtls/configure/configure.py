@@ -51,7 +51,7 @@ def parseArguments():
     parser.add_argument("-i", "--input-dir", dest="inputDir", help="library directoty", required=True)
     parser.add_argument("-d", "--config-defines", dest="configDefines",
             help="configuration file full name for defines", required=True)
-    parser.add_argument("-p", "--config-platform-defines", dest="configPlatformDefines",
+    parser.add_argument("-p", "--config-platform-defines", dest="configPlatformDefines", action='append',
             help="configuration file full name for platfrom dependent defines", required=False)
     return parser.parse_args()
 
@@ -116,13 +116,14 @@ def main(argv=None):
             regexForEnabledDefine("POLARSSL_CHECK_CONFIG_H"));
     # Apply platform specific defines
     if args.configPlatformDefines:
-        configPlatformDefines = yaml.load(open(args.configPlatformDefines));
-        disableDefines(configPlatformDefines.get("disable", []), configFilePath);
-        enableDefines(configPlatformDefines.get("enable", []), configFilePath);
-        addDefines(configPlatformDefines.get("new", []), configFilePath,
-                regexForEnabledDefine("POLARSSL_CONFIG_H"));
-        addDefines(configPlatformDefines.get("check", []), checkConfigFilePath,
-                regexForEnabledDefine("POLARSSL_CHECK_CONFIG_H"));
+        for configPlatformDefineFile in args.configPlatformDefines:
+            configPlatformDefines = yaml.load(open(configPlatformDefineFile));
+            disableDefines(configPlatformDefines.get("disable", []), configFilePath);
+            enableDefines(configPlatformDefines.get("enable", []), configFilePath);
+            addDefines(configPlatformDefines.get("new", []), configFilePath,
+                    regexForEnabledDefine("POLARSSL_CONFIG_H"));
+            addDefines(configPlatformDefines.get("check", []), checkConfigFilePath,
+                    regexForEnabledDefine("POLARSSL_CHECK_CONFIG_H"));
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))

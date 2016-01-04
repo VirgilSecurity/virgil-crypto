@@ -22,7 +22,6 @@ var searchData=
   ['virgilhash',['VirgilHash',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html',1,'virgil::crypto::foundation']]],
   ['virgilkdf',['VirgilKDF',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html',1,'virgil::crypto::foundation']]],
   ['virgilkeypair',['VirgilKeyPair',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html',1,'virgil::crypto']]],
-  ['virgilkeypairgenerator',['VirgilKeyPairGenerator',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_key_pair_generator.html',1,'virgil::crypto::foundation']]],
   ['virgilpbe',['VirgilPBE',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_e.html',1,'virgil::crypto::foundation']]],
   ['virgilrandom',['VirgilRandom',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html',1,'virgil::crypto::foundation']]],
   ['virgilsigner',['VirgilSigner',['../classvirgil_1_1crypto_1_1_virgil_signer.html',1,'virgil::crypto']]],
@@ -31,5 +30,6 @@ var searchData=
   ['virgilstreamdatasource',['VirgilStreamDataSource',['../classvirgil_1_1crypto_1_1stream_1_1_virgil_stream_data_source.html',1,'virgil::crypto::stream']]],
   ['virgilstreamsigner',['VirgilStreamSigner',['../classvirgil_1_1crypto_1_1_virgil_stream_signer.html',1,'virgil::crypto']]],
   ['virgilsymmetriccipher',['VirgilSymmetricCipher',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html',1,'virgil::crypto::foundation']]],
+  ['virgiltagfilter',['VirgilTagFilter',['../classvirgil_1_1crypto_1_1foundation_1_1priv_1_1_virgil_tag_filter.html',1,'virgil::crypto::foundation::priv']]],
   ['virgilversion',['VirgilVersion',['../classvirgil_1_1crypto_1_1_virgil_version.html',1,'virgil::crypto']]]
 ];

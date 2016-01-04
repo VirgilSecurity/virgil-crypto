@@ -6,5 +6,6 @@ var searchData=
   ['decryptwithpassword',['decryptWithPassword',['../classvirgil_1_1crypto_1_1_virgil_cipher.html#a003597a54a5622a4f87efde11b0eed6b',1,'virgil::crypto::VirgilCipher::decryptWithPassword()'],['../classvirgil_1_1crypto_1_1_virgil_stream_cipher.html#a678fe98b0434674a821604f7c1d79e1e',1,'virgil::crypto::VirgilStreamCipher::decryptWithPassword()']]],
   ['definecontentinfosize',['defineContentInfoSize',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a5601c2244003e341e091d61dbdab35a1',1,'virgil::crypto::VirgilCipherBase']]],
   ['definesize',['defineSize',['../classvirgil_1_1crypto_1_1foundation_1_1cms_1_1_virgil_c_m_s_content_info.html#a9718d7ce4c4b412dbf98b1b3b9ac0520',1,'virgil::crypto::foundation::cms::VirgilCMSContentInfo']]],
+  ['deprecated_20list',['Deprecated List',['../deprecated.html',1,'']]],
   ['derive',['derive',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a2fa3c381b16bff812319b4fa5400e062',1,'virgil::crypto::foundation::VirgilKDF']]]
 ];

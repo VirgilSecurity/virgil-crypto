@@ -1,10 +1,8 @@
 var searchData=
 [
-  ['ec',['ec',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#aaf24e6cef2e09a8b80dcb7e75a79610f',1,'virgil::crypto::foundation::VirgilAsymmetricCipher']]],
   ['ecbrainpool256',['ecBrainpool256',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a0b5936d5afed87943754ee6a7b7c4be3',1,'virgil::crypto::VirgilKeyPair']]],
   ['ecbrainpool384',['ecBrainpool384',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#aa860c96fe9262640f0f6dbc20df25dba',1,'virgil::crypto::VirgilKeyPair']]],
   ['ecbrainpool512',['ecBrainpool512',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#acb061171ff38018d16a9b80d3c47f303',1,'virgil::crypto::VirgilKeyPair']]],
-  ['eckeygroup',['ecKeyGroup',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_key_pair_generator.html#afa11f5af0fee4b3d0d37f68233b98282',1,'virgil::crypto::foundation::VirgilKeyPairGenerator']]],
   ['eckoblitz192',['ecKoblitz192',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a5058afed276504c15bddbee84e18af2d',1,'virgil::crypto::VirgilKeyPair']]],
   ['eckoblitz224',['ecKoblitz224',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a8d146511158bbedc6f62a481e899e277',1,'virgil::crypto::VirgilKeyPair']]],
   ['eckoblitz256',['ecKoblitz256',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a8b23000a2f861ddab9d3da42830e3bbf',1,'virgil::crypto::VirgilKeyPair']]],

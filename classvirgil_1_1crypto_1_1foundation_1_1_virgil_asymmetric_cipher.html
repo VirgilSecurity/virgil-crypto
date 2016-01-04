@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">1.1.0</span>
+   &#160;<span id="projectnumber">1.2.0</span>
    </div>
   </td>
  </tr>
@@ -39,6 +39,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -111,6 +112,10 @@ Inheritance diagram for virgil::crypto::foundation::VirgilAsymmetricCipher:</div
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr><td colspan="2"><div class="groupHeader">Creation methods</div></td></tr>
+<tr class="memitem:a171f45c52b82d68800831d66f1bead77"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a171f45c52b82d68800831d66f1bead77">VirgilAsymmetricCipher</a> ()</td></tr>
+<tr class="memdesc:a171f45c52b82d68800831d66f1bead77"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create object that is not initialzed with specific algorithm yet.  <a href="#a171f45c52b82d68800831d66f1bead77">More...</a><br /></td></tr>
+<tr class="separator:a171f45c52b82d68800831d66f1bead77"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Info</div></td></tr>
 <tr class="memitem:a2a8a9a936ac4e89925c1eddd0b81eb2d"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2a8a9a936ac4e89925c1eddd0b81eb2d">keySize</a> () const </td></tr>
 <tr class="memdesc:a2a8a9a936ac4e89925c1eddd0b81eb2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides size in bits of the underlying key.  <a href="#a2a8a9a936ac4e89925c1eddd0b81eb2d">More...</a><br /></td></tr>
@@ -120,14 +125,14 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:abd17ff015d6885794c607579d07551b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Keys management</div></td></tr>
 <tr class="memitem:a21d09a28ac9cd2dc8726c960d562aa3e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a21d09a28ac9cd2dc8726c960d562aa3e">setPrivateKey</a> (const virgil::crypto::VirgilByteArray &amp;key, const virgil::crypto::VirgilByteArray &amp;pwd=virgil::crypto::VirgilByteArray())</td></tr>
-<tr class="memdesc:a21d09a28ac9cd2dc8726c960d562aa3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configures privte key.  <a href="#a21d09a28ac9cd2dc8726c960d562aa3e">More...</a><br /></td></tr>
+<tr class="memdesc:a21d09a28ac9cd2dc8726c960d562aa3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configures private key.  <a href="#a21d09a28ac9cd2dc8726c960d562aa3e">More...</a><br /></td></tr>
 <tr class="separator:a21d09a28ac9cd2dc8726c960d562aa3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9949d1dc247fea06e9171db363a07018"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a9949d1dc247fea06e9171db363a07018">setPublicKey</a> (const virgil::crypto::VirgilByteArray &amp;key)</td></tr>
 <tr class="memdesc:a9949d1dc247fea06e9171db363a07018"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configures public key.  <a href="#a9949d1dc247fea06e9171db363a07018">More...</a><br /></td></tr>
 <tr class="separator:a9949d1dc247fea06e9171db363a07018"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2dfa28b7b26b60cef83aba92040b2e2b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2dfa28b7b26b60cef83aba92040b2e2b">genKeyPair</a> (const <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_key_pair_generator.html">VirgilKeyPairGenerator</a> &amp;keyPairGenerator)</td></tr>
-<tr class="memdesc:a2dfa28b7b26b60cef83aba92040b2e2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates private and public keys.  <a href="#a2dfa28b7b26b60cef83aba92040b2e2b">More...</a><br /></td></tr>
-<tr class="separator:a2dfa28b7b26b60cef83aba92040b2e2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f1f0843a8c7e4ffa46dcc28732fc583"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2f1f0843a8c7e4ffa46dcc28732fc583">genKeyPair</a> (<a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907">VirgilKeyPair::Type</a> type)</td></tr>
+<tr class="memdesc:a2f1f0843a8c7e4ffa46dcc28732fc583"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates private and public keys.  <a href="#a2f1f0843a8c7e4ffa46dcc28732fc583">More...</a><br /></td></tr>
+<tr class="separator:a2f1f0843a8c7e4ffa46dcc28732fc583"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Keys export</div></td></tr>
 <tr class="memitem:a058f8ddb9a5aad91a6b69bc18c20e93b"><td class="memItemLeft" align="right" valign="top">virgil::crypto::VirgilByteArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a058f8ddb9a5aad91a6b69bc18c20e93b">exportPrivateKeyToDER</a> (const virgil::crypto::VirgilByteArray &amp;pwd=virgil::crypto::VirgilByteArray()) const </td></tr>
 <tr class="memdesc:a058f8ddb9a5aad91a6b69bc18c20e93b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides private key.  <a href="#a058f8ddb9a5aad91a6b69bc18c20e93b">More...</a><br /></td></tr>
@@ -187,18 +192,16 @@ virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr><td colspan="2"><div class="groupHeader">Creation methods</div></td></tr>
-<tr class="memitem:ab68e1ece77607c75512924a3063afe47"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html">VirgilAsymmetricCipher</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#ab68e1ece77607c75512924a3063afe47">none</a> ()</td></tr>
-<tr class="memdesc:ab68e1ece77607c75512924a3063afe47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create object that is not initialzed with specific algorithm yet.  <a href="#ab68e1ece77607c75512924a3063afe47">More...</a><br /></td></tr>
-<tr class="separator:ab68e1ece77607c75512924a3063afe47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f327babe204064e58df096ac5ce981a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f327babe204064e58df096ac5ce981a"></a>
-static <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html">VirgilAsymmetricCipher</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a7f327babe204064e58df096ac5ce981a">rsa</a> ()</td></tr>
-<tr class="memdesc:a7f327babe204064e58df096ac5ce981a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates object that handles RSA Private-Key algorithms. <br /></td></tr>
-<tr class="separator:a7f327babe204064e58df096ac5ce981a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf24e6cef2e09a8b80dcb7e75a79610f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaf24e6cef2e09a8b80dcb7e75a79610f"></a>
-static <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html">VirgilAsymmetricCipher</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#aaf24e6cef2e09a8b80dcb7e75a79610f">ec</a> ()</td></tr>
-<tr class="memdesc:aaf24e6cef2e09a8b80dcb7e75a79610f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates object that handles Elliptic Curve Private-Key algorithms. <br /></td></tr>
-<tr class="separator:aaf24e6cef2e09a8b80dcb7e75a79610f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr><td colspan="2"><div class="groupHeader">Keys validation</div></td></tr>
+<tr class="memitem:a0fe2bb8da18f3ae064a9299df7441e3e"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a0fe2bb8da18f3ae064a9299df7441e3e">isKeyPairMatch</a> (const virgil::crypto::VirgilByteArray &amp;publicKey, const virgil::crypto::VirgilByteArray &amp;privateKey, const virgil::crypto::VirgilByteArray &amp;privateKeyPassword=virgil::crypto::VirgilByteArray())</td></tr>
+<tr class="memdesc:a0fe2bb8da18f3ae064a9299df7441e3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if a public-private pair of keys matches.  <a href="#a0fe2bb8da18f3ae064a9299df7441e3e">More...</a><br /></td></tr>
+<tr class="separator:a0fe2bb8da18f3ae064a9299df7441e3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae05af4b0dae085420cb4cca6236587b0"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#ae05af4b0dae085420cb4cca6236587b0">checkPrivateKeyPassword</a> (const virgil::crypto::VirgilByteArray &amp;key, const virgil::crypto::VirgilByteArray &amp;pwd)</td></tr>
+<tr class="memdesc:ae05af4b0dae085420cb4cca6236587b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if given private key and it's password matches.  <a href="#ae05af4b0dae085420cb4cca6236587b0">More...</a><br /></td></tr>
+<tr class="separator:ae05af4b0dae085420cb4cca6236587b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab77b33af55c9d31256908cabdcae94a3"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#ab77b33af55c9d31256908cabdcae94a3">isPrivateKeyEncrypted</a> (const virgil::crypto::VirgilByteArray &amp;privateKey)</td></tr>
+<tr class="memdesc:ab77b33af55c9d31256908cabdcae94a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if given private key is encrypted.  <a href="#ab77b33af55c9d31256908cabdcae94a3">More...</a><br /></td></tr>
+<tr class="separator:ab77b33af55c9d31256908cabdcae94a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -209,7 +212,32 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Provides asymmetric ciphers algorithms (PK). </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a171f45c52b82d68800831d66f1bead77"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virgil::crypto::foundation::VirgilAsymmetricCipher::VirgilAsymmetricCipher </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create object that is not initialzed with specific algorithm yet. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible.html#a5aa0a6b4260e80637a9096f17a9191e6" title="Restore object state from the ASN.1 structure. ">fromAsn1()</a> method to initialize it. </dd>
+<dd>
+<a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2f1f0843a8c7e4ffa46dcc28732fc583" title="Generates private and public keys. ">genKeyPair()</a> method to initialize it. </dd>
+<dd>
+<a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a9949d1dc247fea06e9171db363a07018" title="Configures public key. ">setPublicKey()</a> method to initialize it. </dd>
+<dd>
+<a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a21d09a28ac9cd2dc8726c960d562aa3e" title="Configures private key. ">setPrivateKey()</a> method to initialize it. </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="a14df95c21b33090fbb428ed0686994b4"></a>
 <div class="memitem">
 <div class="memproto">
@@ -290,6 +318,50 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ae05af4b0dae085420cb4cca6236587b0"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool virgil::crypto::foundation::VirgilAsymmetricCipher::checkPrivateKeyPassword </td>
+          <td>(</td>
+          <td class="paramtype">const virgil::crypto::VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const virgil::crypto::VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>pwd</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if given private key and it's password matches. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>- private key in DER or PEM format. </td></tr>
+    <tr><td class="paramname">pwd</td><td>- private key password.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true - if private key and it's password matches. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a0d21a5548a569de2e649acd48cbce903"></a>
 <div class="memitem">
 <div class="memproto">
@@ -305,7 +377,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Decrypts given message. </p>
-<p>Decrypt given message with known private key, configured with <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a21d09a28ac9cd2dc8726c960d562aa3e">setPrivateKey</a> method, or <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2dfa28b7b26b60cef83aba92040b2e2b">genKeyPair</a> method.</p>
+<p>Decrypt given message with known private key, configured with <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a21d09a28ac9cd2dc8726c960d562aa3e">setPrivateKey</a> method, or <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2f1f0843a8c7e4ffa46dcc28732fc583">genKeyPair</a> method.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">in</td><td>- message to be decrypted. </td></tr>
@@ -331,7 +403,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Encrypts given message. </p>
-<p>Encrypt given message with known public key, configured with <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a9949d1dc247fea06e9171db363a07018">setPublicKey</a> method, or <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2dfa28b7b26b60cef83aba92040b2e2b">genKeyPair</a> method.</p>
+<p>Encrypt given message with known public key, configured with <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a9949d1dc247fea06e9171db363a07018">setPublicKey</a> method, or <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2f1f0843a8c7e4ffa46dcc28732fc583">genKeyPair</a> method.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">in</td><td>- message to be encrypted. </td></tr>
@@ -416,15 +488,15 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a2dfa28b7b26b60cef83aba92040b2e2b"></a>
+<a class="anchor" id="a2f1f0843a8c7e4ffa46dcc28732fc583"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void virgil::crypto::foundation::VirgilAsymmetricCipher::genKeyPair </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_key_pair_generator.html">VirgilKeyPairGenerator</a> &amp;&#160;</td>
-          <td class="paramname"><em>keyPairGenerator</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907">VirgilKeyPair::Type</a>&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -433,10 +505,94 @@ Additional Inherited Members</h2></td></tr>
 <p>Generates private and public keys. </p>
 <p>Generate private and public keys in the current context. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">keyPairGenerator</td><td>- keypair generator that handles appropriate information about generated keys. </td></tr>
+    <tr><td class="paramname">type</td><td>- keypair type. </td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="a0fe2bb8da18f3ae064a9299df7441e3e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool virgil::crypto::foundation::VirgilAsymmetricCipher::isKeyPairMatch </td>
+          <td>(</td>
+          <td class="paramtype">const virgil::crypto::VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>publicKey</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const virgil::crypto::VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>privateKey</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const virgil::crypto::VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>privateKeyPassword</em> = <code>virgil::crypto::VirgilByteArray()</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if a public-private pair of keys matches. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">publicKey</td><td>- public key in DER or PEM format. </td></tr>
+    <tr><td class="paramname">privateKey</td><td>- private key in DER or PEM format. </td></tr>
+    <tr><td class="paramname">privateKeyPassword</td><td>- private key password if exists.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true - if public-private pair of keys matches. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ab77b33af55c9d31256908cabdcae94a3"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static bool virgil::crypto::foundation::VirgilAsymmetricCipher::isPrivateKeyEncrypted </td>
+          <td>(</td>
+          <td class="paramtype">const virgil::crypto::VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>privateKey</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if given private key is encrypted. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">privateKey</td><td>- private key in DER or PEM format.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true - if private key is encrypted. </dd></dl>
 
 </div>
 </div>
@@ -476,32 +632,6 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ab68e1ece77607c75512924a3063afe47"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html">VirgilAsymmetricCipher</a> virgil::crypto::foundation::VirgilAsymmetricCipher::none </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Create object that is not initialzed with specific algorithm yet. </p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2dfa28b7b26b60cef83aba92040b2e2b">genKeyPair</a> method to initialize it. </dd></dl>
-
-</div>
-</div>
 <a class="anchor" id="a21d09a28ac9cd2dc8726c960d562aa3e"></a>
 <div class="memitem">
 <div class="memproto">
@@ -526,7 +656,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Configures privte key. </p>
+<p>Configures private key. </p>
 <p>Parse given private key and set it to the current context. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>- private key in DER or PEM format. </td></tr>
@@ -576,7 +706,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Sign given hash. </p>
-<p>Sign given hash with known private key, configured with <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a21d09a28ac9cd2dc8726c960d562aa3e">setPrivateKey</a> method, or <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2dfa28b7b26b60cef83aba92040b2e2b">genKeyPair</a> method.</p>
+<p>Sign given hash with known private key, configured with <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a21d09a28ac9cd2dc8726c960d562aa3e">setPrivateKey</a> method, or <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2f1f0843a8c7e4ffa46dcc28732fc583">genKeyPair</a> method.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">hash</td><td>- digest to be signed. </td></tr>
@@ -612,7 +742,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Verify given hash with given sign. </p>
-<p>Verify given hash with known public key, configured with <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a21d09a28ac9cd2dc8726c960d562aa3e">setPrivateKey</a> method, or <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2dfa28b7b26b60cef83aba92040b2e2b">genKeyPair</a> method, and with given sign.</p>
+<p>Verify given hash with known public key, configured with <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a21d09a28ac9cd2dc8726c960d562aa3e">setPrivateKey</a> method, or <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2f1f0843a8c7e4ffa46dcc28732fc583">genKeyPair</a> method, and with given sign.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">hash</td><td>- digest to be verified. </td></tr>

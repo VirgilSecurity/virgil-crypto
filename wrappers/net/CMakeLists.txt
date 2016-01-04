@@ -36,7 +36,7 @@
 
 cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
-project (${WRAPPED_LIB_NAME}_csharp)
+project (${WRAPPED_LIB_NAME}_net)
 
 # Capitalize first character in the wrapped library name
 include (uppercase_first_char)
@@ -46,7 +46,7 @@ uppercase_first_char (${WRAPPED_LIB_NAME} WRAPPED_LIB_NAME_CAP)
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 # Configure C#
-set (CSHARP_ASSEMBLY_NAME ${WRAPPED_LIB_NAME_CAP}.Crypto)
+set (CSHARP_ASSEMBLY_NAME Virgil.Crypto)
 set (CSHARP_MODULE_NAME ${PROJECT_NAME})
 set (SWIG_MODULE_NAME ${CSHARP_MODULE_NAME})
 
@@ -114,10 +114,10 @@ set_target_properties (${CSHARP_SWIG_TARGET_NAME}
         PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CSHARP_BINARY_DIRECTORY})
 set_target_properties (${CSHARP_SWIG_TARGET_NAME}
         PROPERTIES POSITION_INDEPENDENT_CODE ON)
-if (UNIX AND NOT IOS)
+if (UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     set_target_properties (${CSHARP_SWIG_TARGET_NAME}
             PROPERTIES NO_SONAME OFF VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
-endif (UNIX AND NOT IOS)
+endif (UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
 file (GLOB_RECURSE ASSEMBLY_SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cs")
 foreach (CS_FILE ${ASSEMBLY_SRC})
@@ -154,3 +154,8 @@ endif (ANDROID)
 install (FILES "${CSHARP_BINARY_DIRECTORY}/${CSHARP_ASSEMBLY_NAME}.dll"
         DESTINATION "${INSTALL_LIB_DIR_NAME}")
 
+if (WIN32)
+    set (LANG "net" CACHE STRING "For Windows platform this value is forced" FORCE)
+else ()
+    set (LANG "mono" CACHE STRING "For *nix platforms this value is forced" FORCE)
+endif ()

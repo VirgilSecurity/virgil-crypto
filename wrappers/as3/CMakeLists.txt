@@ -113,7 +113,7 @@ add_custom_command (OUTPUT ${WRAPPER_EXPORT_FILE}
 )
 
 # Link wrapper with target library
-set (WRAPPER_SWC_NAME ${SWIG_MODULE_NAME}-${VIRGIL_VERSION}.swc)
+set (WRAPPER_SWC_NAME ${SWIG_MODULE_NAME}.swc)
 set (WRAPPER_SWC ${CMAKE_CURRENT_BINARY_DIR}/${WRAPPER_SWC_NAME})
 add_custom_command (OUTPUT ${WRAPPER_SWC}
     COMMENT "Building ${WRAPPER_SWC_NAME}"

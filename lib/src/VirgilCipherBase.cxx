@@ -183,7 +183,9 @@ VirgilSymmetricCipher& VirgilCipherBase::initEncryption() {
     VirgilByteArray symmetricCipherIV = impl_->random.randomize(impl_->symmetricCipher.ivSize());
     impl_->symmetricCipher.setEncryptionKey(impl_->symmetricCipherKey);
     impl_->symmetricCipher.setIV(symmetricCipherIV);
-    impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    if (impl_->symmetricCipher.isSupportPadding()) {
+        impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    }
     impl_->symmetricCipher.reset();
 
     return impl_->symmetricCipher;
@@ -210,7 +212,7 @@ static VirgilByteArray decryptContentEncryptionKey(
     std::vector<VirgilCMSKeyTransRecipient>::const_iterator recipientIt = keyTransRecipients.begin();
     for (; recipientIt != keyTransRecipients.end(); ++recipientIt) {
         if (recipientIt->recipientIdentifier == recipientId) {
-            VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::none();
+            VirgilAsymmetricCipher asymmetricCipher;
             asymmetricCipher.setPrivateKey(privateKey, privateKeyPassword);
             return asymmetricCipher.decrypt(recipientIt->encryptedKey);
         }
@@ -225,7 +227,9 @@ VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithPassword(const Virgil
     impl_->symmetricCipher = VirgilSymmetricCipher();
     impl_->symmetricCipher.fromAsn1(impl_->envelopedData.encryptedContent.contentEncryptionAlgorithm);
     impl_->symmetricCipher.setDecryptionKey(contentEncryptionKey);
-    impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    if (impl_->symmetricCipher.isSupportPadding()) {
+        impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    }
     impl_->symmetricCipher.reset();
     return impl_->symmetricCipher;
 }
@@ -238,7 +242,9 @@ VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithKey(const VirgilByteA
     impl_->symmetricCipher = VirgilSymmetricCipher();
     impl_->symmetricCipher.fromAsn1(impl_->envelopedData.encryptedContent.contentEncryptionAlgorithm);
     impl_->symmetricCipher.setDecryptionKey(contentEncryptionKey);
-    impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    if (impl_->symmetricCipher.isSupportPadding()) {
+        impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+    }
     impl_->symmetricCipher.reset();
     return impl_->symmetricCipher;
 }
@@ -253,7 +259,7 @@ void VirgilCipherBase::buildContentInfo() {
         const VirgilByteArray& recipientId = it->first;
         const VirgilByteArray& publicKey = it->second;
 
-        VirgilAsymmetricCipher asymmetricCipher = VirgilAsymmetricCipher::none();
+        VirgilAsymmetricCipher asymmetricCipher;
         asymmetricCipher.setPublicKey(publicKey);
 
         VirgilCMSKeyTransRecipient recipient;

@@ -196,6 +196,16 @@ public class VirgilKeyPair extends CObject {
         obj.cPtr = _wrap_VirgilKeyPair_rsa4096(password);
         return obj;
     }
+    public static function isKeyPairMatch(publicKey:ByteArray, privateKey:ByteArray,
+            privateKeyPassword:ByteArray = null):Boolean {
+        return _wrap_VirgilKeyPair_isKeyPairMatch(publicKey, privateKey, privateKeyPassword);
+    }
+    public static function checkPrivateKeyPassword(privateKey:ByteArray, privateKeyPassword:ByteArray):Boolean {
+        return _wrap_VirgilKeyPair_checkPrivateKeyPassword(privateKey, privateKeyPassword);
+    }
+    public static function isPrivateKeyEncrypted(privateKey:ByteArray):Boolean {
+        return _wrap_VirgilKeyPair_isPrivateKeyEncrypted(privateKey);
+    }
 }
 
 public class VirgilCustomParams extends CObject {

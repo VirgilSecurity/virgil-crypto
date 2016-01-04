@@ -63,21 +63,31 @@ static const char * const kCustomParameterKey_ChunkSize = "chunkSize";
 VirgilChunkCipher::~VirgilChunkCipher() throw() {
 }
 
-static size_t adjustEncryptionChunkSize(size_t preferredChunkSize, size_t cipherBlockSize) {
-    if (preferredChunkSize < cipherBlockSize) {
-        return cipherBlockSize - 1;
+static size_t adjustEncryptionChunkSize(size_t preferredChunkSize, size_t cipherBlockSize, bool isSupportPadding) {
+    if (isSupportPadding) {
+        if (preferredChunkSize < cipherBlockSize) {
+            return cipherBlockSize - 1;
+        } else {
+            return (size_t)(preferredChunkSize / cipherBlockSize) * cipherBlockSize - 1;
+        }
     } else {
-        return (size_t)(preferredChunkSize / cipherBlockSize) * cipherBlockSize - 1;
+        return preferredChunkSize;
     }
 }
 
-static size_t adjustDecryptionChunkSize(size_t encryptionChunkSize, size_t cipherBlockSize) {
-    return (size_t)ceil((double)encryptionChunkSize / cipherBlockSize) * cipherBlockSize;
+static size_t adjustDecryptionChunkSize(size_t encryptionChunkSize, size_t cipherBlockSize, bool isSupportPadding,
+        size_t authTagLength) {
+    if (isSupportPadding) {
+        return (size_t)ceil((double)encryptionChunkSize / cipherBlockSize) * cipherBlockSize + authTagLength;
+    } else {
+        return encryptionChunkSize + authTagLength;
+    }
 }
 
 size_t VirgilChunkCipher::startEncryption(size_t preferredChunkSize) {
     VirgilSymmetricCipher& symmetricCipher = initEncryption();
-    size_t actualChunkSize = adjustEncryptionChunkSize(preferredChunkSize, symmetricCipher.blockSize());
+    size_t actualChunkSize = adjustEncryptionChunkSize(preferredChunkSize,
+            symmetricCipher.blockSize(), symmetricCipher.isSupportPadding());
     storeChunkSize(actualChunkSize);
     buildContentInfo();
     return actualChunkSize;
@@ -86,22 +96,26 @@ size_t VirgilChunkCipher::startEncryption(size_t preferredChunkSize) {
 size_t VirgilChunkCipher::startDecryptionWithKey(const VirgilByteArray& recipientId,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
     VirgilSymmetricCipher& symmetricCipher = initDecryptionWithKey(recipientId, privateKey, privateKeyPassword);
-    return adjustDecryptionChunkSize(retrieveChunkSize(), symmetricCipher.blockSize());
+    return adjustDecryptionChunkSize(retrieveChunkSize(),
+            symmetricCipher.blockSize(), symmetricCipher.isSupportPadding(), symmetricCipher.authTagLength());
 }
 
 size_t VirgilChunkCipher::startDecryptionWithPassword(const VirgilByteArray& pwd) {
     VirgilSymmetricCipher& symmetricCipher = initDecryptionWithPassword(pwd);
-    return adjustDecryptionChunkSize(retrieveChunkSize(), symmetricCipher.blockSize());
+    return adjustDecryptionChunkSize(retrieveChunkSize(),
+            symmetricCipher.blockSize(), symmetricCipher.isSupportPadding(), symmetricCipher.authTagLength());
 }
 
 VirgilByteArray VirgilChunkCipher::process(const VirgilByteArray& data) {
     VirgilSymmetricCipher& symmetricCipher = getSymmetricCipher();
-    bool isDataAlignedToBlockSize = (data.size() % symmetricCipher.blockSize()) == 0;
-    if (symmetricCipher.isDecryptionMode() && !isDataAlignedToBlockSize) {
-        std::ostringstream message;
-        message << "In the decryption mode data size MUST be multiple of ";
-        message << symmetricCipher.blockSize() << " bytes.";
-        throw VirgilCryptoException(message.str());
+    if (symmetricCipher.isDecryptionMode() && symmetricCipher.isSupportPadding()) {
+        bool isDataAlignedToBlockSize = (data.size() % symmetricCipher.blockSize()) == 0;
+        if (!isDataAlignedToBlockSize) {
+            std::ostringstream message;
+            message << "In the decryption support padding mode data size MUST be multiple of ";
+            message << symmetricCipher.blockSize() << " bytes.";
+            throw VirgilCryptoException(message.str());
+        }
     }
 
     symmetricCipher.reset();

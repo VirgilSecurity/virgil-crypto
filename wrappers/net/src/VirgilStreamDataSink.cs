@@ -1,3 +1,4 @@
+#region "Copyright (C) 2015 Virgil Security Inc."
 /**
  * Copyright (C) 2015 Virgil Security Inc.
  *
@@ -33,16 +34,30 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#endregion
 
+using virgil.crypto;
 
-// Renames functions and properties to the CamelCase notation.
-%rename("%(camelcase)s", %$isfunction) "";
-%rename("%(camelcase)s", %$isvariable) "";
+namespace virgil.crypto {
 
-// Apply a rule for renaming the enum elements to avoid the common prefixes
-// which are redundant in C#
-%rename("%(regex:/^([A-Z][a-z]+)+_(.*)/\\2/)s", %$isenumitem) "";
+public class VirgilStreamDataSink : VirgilDataSink
+{
+    private readonly System.IO.Stream stream;
 
-// VirgilByteArray typemap
-#define SWIG_VIRGIL_BYTE_ARRAY
-%include "VirgilByteArray.i"
+    public VirgilStreamDataSink(System.IO.Stream target)
+    {
+        this.stream = target;
+    }
+
+    public override bool IsGood()
+    {
+        return this.stream.CanWrite;
+    }
+
+    public override void Write(byte[] data)
+    {
+        this.stream.Write(data, 0, data.Length);
+    }
+}
+
+}

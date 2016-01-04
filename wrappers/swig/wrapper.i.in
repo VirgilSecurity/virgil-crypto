@@ -34,6 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 // Module name
 %module(directors="1") @SWIG_MODULE_NAME@
 
@@ -69,6 +70,7 @@
 %ignore virgil::crypto::hex2bytes;
 %ignore virgil::crypto::bytes2hex;
 %ignore virgil::crypto::bytes_zeroize;
+%ignore virgil::crypto::string_zeroize;
 INCLUDE_CLASS(VirgilByteArray, virgil::crypto, virgil/crypto)
 
 %ignore VIRGIL_VERSION;
@@ -101,7 +103,6 @@ INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::foundation::asn1, virgil/cry
     DEFINE_NAMESPACE(VirgilKeyPairType, virgil::crypto::foundation)
 
     INCLUDE_CLASS(VirgilKDF, virgil::crypto::foundation, virgil/crypto/foundation)
-    INCLUDE_CLASS(VirgilKeyPairGenerator, virgil::crypto::foundation, virgil/crypto/foundation)
     INCLUDE_CLASS(VirgilSymmetricCipher, virgil::crypto::foundation, virgil/crypto/foundation)
     INCLUDE_CLASS(VirgilAsymmetricCipher, virgil::crypto::foundation, virgil/crypto/foundation)
     INCLUDE_CLASS(VirgilRandom, virgil::crypto::foundation, virgil/crypto/foundation)
@@ -137,3 +138,6 @@ INCLUDE_CLASS(VirgilByteArrayUtils, virgil::crypto, virgil/crypto)
     %ignore VirgilCMSEnvelopedData;
     %ignore VirgilCMSContent;
 #endif /* LIB_LOW_LEVEL_API */
+
+// Add using statement for inner classes or enums
+DEFINE_USING(VirgilKeyPair, virgil::crypto)

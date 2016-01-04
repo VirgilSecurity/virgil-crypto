@@ -1,5 +1,36 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.2.0-rc1 released 2016-01-04
+
+Bugfix:
+  * [Lib] Fix crypto module name in ASM.JS example.
+  * [Build] Find mbedtls configuration file for target platfrom and language.
+
+Changes:
+  * [Lib] Replace AES-CBC with AES-GCM as default symmetric algortihm.
+  * [Lib] Remove function virgil::crypto::string_zeroize() from the wrappers.
+  * [Lib] Remove action of dynamic loading JNI module from Java wrapper.
+  * [Build] Exclude c++ tests from embedded platforms.
+  * [Build] Rename wrapper 'csharp' to 'net'.
+  * [Build] Rename interanl CMake variable 'PLATFORM_FULL_NAME' to 'LIB_FULL_NAME'.
+  * [Build] Change library name 'virgil' to 'virgil-crypto'.
+  * [CI] Change ${PLATFORM} to ${LANG}.
+  * [CI] Lowercase value of the 'LANG' parameter.
+
+Features:
+  * [Lib] Add methods to check and validate KeyPair.
+  * [Lib] Add CryptoHelper class for .NET wrapper.
+  * [Lib] Add parametrized method for KeyPair generation.
+  * [Build] Add Bitcode section to all iOS, Apple WatchOS, Apple TVOS targets.
+  * [Build] Unify LANG / PLATFROM configuration during build.
+  * [Build] Add frameworks for all available Apple platforms (Mac OS, iOS, watchOS, tvOS).
+  * [Build] Add library build scripts for unix-like OS.
+
+Improvements:
+  * [Lib] Fix misspelling in header guard statement.
+  * [Lib] Add License header to the Java source files.
+  * [Lib] Add License header to the .NET source files.
+
 = Version 1.1.0 released 2015-10-02
 
 Bugfix:

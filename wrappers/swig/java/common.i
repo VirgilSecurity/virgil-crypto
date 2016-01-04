@@ -34,15 +34,37 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+%javaexception("java.io.IOException") virgil::crypto::VirgilDataSource::hasData {}
+%javaexception("java.io.IOException") virgil::crypto::VirgilDataSource::read {}
+%javaexception("java.io.IOException") virgil::crypto::VirgilDataSink::write {}
+%javaexception("java.io.IOException") virgil::crypto::VirgilDataSink::isGood {}
 
-// Renames functions and properties to the CamelCase notation.
-%rename("%(camelcase)s", %$isfunction) "";
-%rename("%(camelcase)s", %$isvariable) "";
+%typemap(javainterfaces) SWIGTYPE "java.lang.AutoCloseable";
+%typemap(javacode) SWIGTYPE %{
+  @Override
+  public void close() {
+    delete();
+  }
+%}
+
+%typemap(javacode) virgil::crypto::VirgilDataSource %{
+  @Override
+  public void close() throws java.io.IOException {
+    delete();
+  }
+%}
+
+%typemap(javacode) virgil::crypto::VirgilDataSink %{
+  @Override
+  public void close() throws java.io.IOException {
+    delete();
+  }
+%}
+
+// VirgilByteArray typemap
+#define SWIG_VIRGIL_BYTE_ARRAY
+%include "java/VirgilByteArray.i"
 
 // Apply a rule for renaming the enum elements to avoid the common prefixes
 // which are redundant in C#
 %rename("%(regex:/^([A-Z][a-z]+)+_(.*)/\\2/)s", %$isenumitem) "";
-
-// VirgilByteArray typemap
-#define SWIG_VIRGIL_BYTE_ARRAY
-%include "VirgilByteArray.i"

@@ -34,15 +34,51 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_TAG_FILTER_H
+#define VIRGIL_CRYPTO_TAG_FILTER_H
 
-// Renames functions and properties to the CamelCase notation.
-%rename("%(camelcase)s", %$isfunction) "";
-%rename("%(camelcase)s", %$isvariable) "";
+#include <cstddef>
 
-// Apply a rule for renaming the enum elements to avoid the common prefixes
-// which are redundant in C#
-%rename("%(regex:/^([A-Z][a-z]+)+_(.*)/\\2/)s", %$isenumitem) "";
+#include <virgil/crypto/VirgilByteArray.h>
 
-// VirgilByteArray typemap
-#define SWIG_VIRGIL_BYTE_ARRAY
-%include "VirgilByteArray.i"
+namespace virgil { namespace crypto { namespace foundation { namespace priv {
+
+/**
+ * @brief This class analize incoming data stream to filter Virgil TAG.
+ * @note Virgil TAG MUST be at the end of the data stream.
+ */
+class VirgilTagFilter {
+public:
+    /**
+     * @brief Get ready for data filtration.
+     * @param tagLen - length of the expected Virgil TAG.
+     * @note This method MUST be called before any data will be processed.
+     */
+    void reset(size_t tagLen);
+    /**
+     * @brief Filter given data.
+     */
+    void process(const virgil::crypto::VirgilByteArray& data);
+    /**
+     * @brief Return if data exist after filtration.
+     */
+    bool hasData() const;
+    /**
+     * @brief Return filtrated data.
+     */
+    virgil::crypto::VirgilByteArray popData();
+    /**
+     * @brief Return tag that was extracted from processed data.
+     * @note MUST be called after method finish().
+     * @return Tag or empty byte array.
+     */
+    virgil::crypto::VirgilByteArray tag() const;
+private:
+    size_t tagLen_;
+    virgil::crypto::VirgilByteArray data_;
+    virgil::crypto::VirgilByteArray tag_;
+};
+
+}}}}
+
+#endif /* VIRGIL_CRYPTO_TAG_FILTER_H */

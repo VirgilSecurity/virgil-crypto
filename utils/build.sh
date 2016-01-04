@@ -199,7 +199,7 @@ fi
 
 if [[ ${TARGET} =~ ^net_(ios|appletvos|applewatchos)$ ]]; then
     echo "cmake ${CMAKE_ARGS} -DLANG=net -DPLATFORM=${TARGET/net_/} -DCMAKE_TOOLCHAIN_FILE=${SRC_DIR}/cmake/apple.toolchain.cmake \"${SRC_DIR}\""
-    cmake ${CMAKE_ARGS} -DLANG=net -DPLATFORM=${TARGET/net_/} -DCMAKE_TOOLCHAIN_FILE=${SRC_DIR}/cmake/apple.toolchain.cmake "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DLANG=net -DENABLE_BITCODE=NO -DPLATFORM=${TARGET/net_/} -DCMAKE_TOOLCHAIN_FILE=${SRC_DIR}/cmake/apple.toolchain.cmake "${SRC_DIR}"
     make -j4 install
 fi
 

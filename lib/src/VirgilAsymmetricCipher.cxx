@@ -49,12 +49,14 @@
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/VirgilKeyPair.h>
 #include <virgil/crypto/foundation/PolarsslException.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
+using virgil::crypto::VirgilKeyPair;
 
 using virgil::crypto::foundation::PolarsslException;
 using virgil::crypto::foundation::VirgilAsymmetricCipher;

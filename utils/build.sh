@@ -34,6 +34,9 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+# Abort if something went wrong
+set -e
+
 # Color constants
 COLOR_RED='\033[0;31m'
 COLOR_GREEN='\033[0;32m'
@@ -97,6 +100,66 @@ function abspath() {
         echo "$(cd "$(dirname "$1")" && pwd -P)/$(basename "$1")"
     fi
   )
+}
+
+function make_bundle {
+    # Define name of the framework
+    if [ ! -z "$1" ]; then
+        FRAMEWORK_NAME="$1"
+    else
+        show_error "Error. Bundle name is not defined."
+    fi
+
+    # Define install directory for framework
+    if [ ! -z "$2" ]; then
+        INDIR="$2"
+    else
+        show_error "Error. Input directory is not defined."
+    fi
+
+    # Define working directory for framework
+    if [ ! -z "$3" ]; then
+        OUTDIR="$3"
+    else
+        show_error "Error. Output directory is not defined."
+    fi
+
+    HEADERS_DIR="$INDIR/include"
+
+    LIBMBEDTLS="libmbedtls.a"
+    LIBVIRGIL="libvirgil_crypto.a"
+
+    # Create working dir
+    mkdir -p "$OUTDIR"
+
+    # Find all archs of library ARM mbedTLS
+    LIBMBEDTLS_LIBS=$(find "${INDIR}" -name "${LIBMBEDTLS}" | tr '\n' ' ')
+
+    # Find all archs of library Virgil Crypto
+    LIBVIRGIL_LIBS=$(find "${INDIR}" -name "${LIBVIRGIL}" | tr '\n' ' ')
+
+    xcrun lipo -create ${LIBMBEDTLS_LIBS} -output "$OUTDIR/$LIBMBEDTLS"
+    xcrun lipo -create ${LIBVIRGIL_LIBS} -output "$OUTDIR/$LIBVIRGIL"
+    # Merge several static libraries in one static library which will actually be framework
+    xcrun libtool -static -o "$OUTDIR/$FRAMEWORK_NAME" "$OUTDIR/$LIBMBEDTLS" "$OUTDIR/$LIBVIRGIL"
+
+    FRAMEWORK_FULL_NAME="$FRAMEWORK_NAME.framework"
+    # Compose framework directory structure
+    mkdir -p "$OUTDIR/$FRAMEWORK_FULL_NAME/Versions/A"
+    mkdir -p "$OUTDIR/$FRAMEWORK_FULL_NAME/Versions/A/Headers"
+
+    # Link the "Current" version to "A"
+    ln -sf A "$OUTDIR/$FRAMEWORK_FULL_NAME/Versions/Current"
+    ln -sf Versions/Current/Headers "$OUTDIR/$FRAMEWORK_FULL_NAME/Headers"
+    ln -sf "Versions/Current/$FRAMEWORK_NAME" "$OUTDIR/$FRAMEWORK_FULL_NAME/$FRAMEWORK_NAME"
+
+    # Locate all files to correspondent places
+    cp -f "$OUTDIR/$FRAMEWORK_NAME" "$OUTDIR/$FRAMEWORK_FULL_NAME/Versions/A/"
+    cp -Rf "$HEADERS_DIR/" "$OUTDIR/$FRAMEWORK_FULL_NAME/Versions/A/Headers/"
+
+    rm -f "$OUTDIR/$LIBMBEDTLS"
+    rm -f "$OUTDIR/$LIBVIRGIL"
+    rm -f "$OUTDIR/$FRAMEWORK_NAME"
 }
 
 # Check arguments
@@ -172,8 +235,7 @@ if [ "${TARGET}" == "osx" ]; then
     cmake ${CMAKE_ARGS} -DLANG=cpp "${SRC_DIR}"
     make -j4 install
     # Create framework
-    MAKE_BUNDLE="$(dirname "${SCRIPT_DIR}")/make_bundle.sh"
-    ${MAKE_BUNDLE} VirgilCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
+    make_bundle VirgilCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
     rm -fr "${INSTALL_DIR:?}/include"
     rm -fr "${INSTALL_DIR:?}/lib"
 fi
@@ -189,8 +251,7 @@ if [ "${TARGET}" == "ios" ] || [ "${TARGET}" == "appletvos" ] || [ "${TARGET}" =
     cmake ${CMAKE_ARGS} -DLANG=cpp -DINSTALL_LIB_DIR_NAME=lib/sim -DSIMULATOR=ON -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
     make -j4 install
     # Create framework
-    MAKE_BUNDLE="$(dirname "${SCRIPT_DIR}")/make_bundle.sh"
-    ${MAKE_BUNDLE} VirgilCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
+    make_bundle VirgilCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
     rm -fr "${INSTALL_DIR:?}/include"
     rm -fr "${INSTALL_DIR:?}/lib"
 fi

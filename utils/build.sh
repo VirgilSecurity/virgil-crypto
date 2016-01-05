@@ -103,8 +103,6 @@ function abspath() {
 SCRIPT_DIR=$(abspath "${BASH_SOURCE[0]}")
 CURRENT_DIR=$(abspath .)
 
-echo "CURRENT_DIR=${CURRENT_DIR}"
-
 if [ ! -z "$1" ]; then
     if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
         show_usage

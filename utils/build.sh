@@ -48,12 +48,12 @@ COLOR_RESET='\033[0m'
 # Util functions
 function show_usage {
     if [ ! -z "$1" ]; then
-        echo -e "${COLOR_RED}$1${COLOR_RESET}"
+        echo -e "${COLOR_RED}[ERROR] $1${COLOR_RESET}"
     fi
     echo -e "This script helps to build crypto library for variety of languages and platforms."
     echo -e "Common reuirements: CMake 3.0.5, Python, PyYaml, SWIG 3.0.7."
-    echo -e "${COLOR_BLUE}Usage: ${BASH_SOURCE[0]} <target> <src_dir> <build_dir> [<install_dir>]${COLOR_RESET}"
-    echo -e "  - <target> - one of the next values:"
+    echo -e "${COLOR_BLUE}Usage: ${BASH_SOURCE[0]} [<target>] [<src_dir>] [<build_dir>] [<install_dir>]${COLOR_RESET}"
+    echo -e "  - <target> - (default = cpp) one of the next values:"
     echo -e "    * cpp              - build C++ library;"
     echo -e "    * osx              - build framework for Apple OS X, requirements: OS X, Xcode;"
     echo -e "    * ios              - build framework for Apple iOS, requirements: OS X, Xcode;"
@@ -73,55 +73,86 @@ function show_usage {
     echo -e "    * nodejs           - build NodeJS module, requirements: run 'source /path/to/emsdk_env.sh';"
     echo -e "    * as3              - build ActionScript library, requirements: \$CROSSBRIDGE_HOME, \$FLEX_HOME;"
     echo -e "    * pnacl            - build Portable Native library for Google Chrome, requirements: \$NACL_SDK_ROOT."
-    echo -e "  - <src_dir>     - path to the directory where root CMakeLists.txt file is located"
-    echo -e "  - <build_dir>   - path to the directory where temp files will be stored"
-    echo -e "  - <install_dir> - path to the directory where library files will be installed".
+    echo -e "  - <src_dir>     - (default = .) path to the directory where root CMakeLists.txt file is located"
+    echo -e "  - <build_dir>   - (default = build/<target>) path to the directory where temp files will be stored"
+    echo -e "  - <install_dir> - (default = install/<target>) path to the directory where library files will be installed".
+
+    exit ${2:0}
+}
+
+function show_info {
+    echo -e "${COLOR_GREEN}[INFO]${COLOR_RESET} $1"
+}
+
+function show_error {
+    echo -e "${COLOR_RED}[ERROR] $1${COLOR_RESET}"
     exit 1
 }
 
 function abspath() {
   (
-    echo "$(cd "$(dirname "$1")"; pwd -P)/$(basename "$1")"
+    if [ -d "$1" ]; then
+        cd "$1" && pwd -P
+    else
+        echo "$(cd "$(dirname "$1")" && pwd -P)/$(basename "$1")"
+    fi
   )
 }
 
 # Check arguments
-SCRIPT_DIR=`abspath ${BASH_SOURCE[0]}`
+SCRIPT_DIR=$(abspath "${BASH_SOURCE[0]}")
+CURRENT_DIR=$(abspath .)
 
-if [ -z "$1" ]; then
-    show_usage "Target is not specified!"
+echo "CURRENT_DIR=${CURRENT_DIR}"
+
+if [ ! -z "$1" ]; then
+    if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+        show_usage
+    else
+        TARGET="$1"
+    fi
 else
-    TARGET="$1"
+    TARGET="cpp"
+fi
+show_info "<target> : ${TARGET}"
+
+if [ ! -z "$2" ]; then
+    SRC_DIR=$(abspath "$2")
+else
+    SRC_DIR="${CURRENT_DIR}"
+fi
+show_info "<src_dir>: ${SRC_DIR}"
+
+if [ ! -f "${SRC_DIR}/CMakeLists.txt" ]; then
+    show_usage "Source directory does not contain root CMakeLists.txt file!" 1
 fi
 
-if [ -z "$2" ]; then
-    show_usage "Source directory is not specified!"
-elif [ ! -f "${2}/CMakeLists.txt" ]; then
-    show_usage "Source directory does not contain root CMakeLists.txt file!"
-else
-    SRC_DIR=`abspath $2`
-fi
-
-if [ -z "$3" ]; then
-    show_usage "Build directory is not specified!"
-else
+if [ ! -z "$3" ]; then
     mkdir -p "$3"
-    BUILD_DIR=`abspath $3`
+    BUILD_DIR=$(abspath "$3")
+else
+    BUILD_DIR="${CURRENT_DIR}/build/${TARGET}"
+    mkdir -p "${BUILD_DIR}"
 fi
+show_info "<build_dir>: ${BUILD_DIR}"
 
 if [ ! -z "$4" ]; then
     mkdir -p "$4"
-    INSTALL_DIR=`abspath $4`
+    INSTALL_DIR=$(abspath "$4")
+else
+    INSTALL_DIR="${CURRENT_DIR}/install/${TARGET}"
+    mkdir -p "${INSTALL_DIR}"
 fi
+show_info "<install_dir>: ${INSTALL_DIR}"
 
 # Define common build parameters
 CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
 
 if [[ ${TARGET} =~ ^(cpp|osx|java|net|php|python|ruby|nodejs)$ ]]; then
-    if [ "`uname -s | tr '[:upper:]' '[:lower:]'`" == "darwin" ]; then
+    if [ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]; then
         CMAKE_ARGS+=" -DPLATFORM_ARCH=universal -DCMAKE_OSX_ARCHITECTURES=i386;x86_64"
     else
-        CMAKE_ARGS+=" -DPLATFORM_ARCH=`uname -m`"
+        CMAKE_ARGS+=" -DPLATFORM_ARCH=$(uname -m)"
     fi
 fi
 
@@ -130,7 +161,7 @@ if [ ! -z "${INSTALL_DIR}" ]; then
 fi
 
 # Go to the build directory
-cd ${BUILD_DIR} && rm -fr *
+cd "${BUILD_DIR}" && rm -fr ./*
 
 # Build for native platforms
 if [[ ${TARGET} =~ ^(cpp|java|net|php|python|ruby|nodejs)$ ]]; then
@@ -143,27 +174,27 @@ if [ "${TARGET}" == "osx" ]; then
     cmake ${CMAKE_ARGS} -DLANG=cpp "${SRC_DIR}"
     make -j4 install
     # Create framework
-    MAKE_BUNDLE="`dirname ${SCRIPT_DIR}`/make_bundle.sh"
+    MAKE_BUNDLE="$(dirname "${SCRIPT_DIR}")/make_bundle.sh"
     ${MAKE_BUNDLE} VirgilCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
-    rm -fr "${INSTALL_DIR}/include"
-    rm -fr "${INSTALL_DIR}/lib"
+    rm -fr "${INSTALL_DIR:?}/include"
+    rm -fr "${INSTALL_DIR:?}/lib"
 fi
 
 # Build for embedded plaforms
 if [ "${TARGET}" == "ios" ] || [ "${TARGET}" == "appletvos" ] || [ "${TARGET}" == "applewatchos" ]; then
     CMAKE_ARGS+=" -DPLATFORM=${TARGET}"
     # Build for device
-    cmake ${CMAKE_ARGS} -DLANG=cpp -DINSTALL_LIB_DIR_NAME=lib/dev -DCMAKE_TOOLCHAIN_FILE=${SRC_DIR}/cmake/apple.toolchain.cmake "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DLANG=cpp -DINSTALL_LIB_DIR_NAME=lib/dev -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
     make -j4 install
     # Build for simulator
-    rm -fr *
-    cmake ${CMAKE_ARGS} -DLANG=cpp -DINSTALL_LIB_DIR_NAME=lib/sim -DSIMULATOR=ON -DCMAKE_TOOLCHAIN_FILE=${SRC_DIR}/cmake/apple.toolchain.cmake "${SRC_DIR}"
+    rm -fr ./*
+    cmake ${CMAKE_ARGS} -DLANG=cpp -DINSTALL_LIB_DIR_NAME=lib/sim -DSIMULATOR=ON -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
     make -j4 install
     # Create framework
-    MAKE_BUNDLE="`dirname ${SCRIPT_DIR}`/make_bundle.sh"
+    MAKE_BUNDLE="$(dirname "${SCRIPT_DIR}")/make_bundle.sh"
     ${MAKE_BUNDLE} VirgilCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
-    rm -fr "${INSTALL_DIR}/include"
-    rm -fr "${INSTALL_DIR}/lib"
+    rm -fr "${INSTALL_DIR:?}/include"
+    rm -fr "${INSTALL_DIR:?}/lib"
 fi
 
 if [[ "${TARGET}" == *"android"* ]]; then
@@ -179,8 +210,8 @@ if [[ "${TARGET}" == *"android"* ]]; then
     fi
     function build_android() {
         # Build architecture: $1
-        rm -fr *
-        cmake ${CMAKE_ARGS} -DANDROID_ABI=$1 -DCMAKE_TOOLCHAIN_FILE=${SRC_DIR}/cmake/android.toolchain.cmake "${SRC_DIR}"
+        rm -fr ./*
+        cmake ${CMAKE_ARGS} -DANDROID_ABI="$1" -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/android.toolchain.cmake" "${SRC_DIR}"
         make -j4 install
     }
     build_android x86
@@ -191,15 +222,14 @@ if [[ "${TARGET}" == *"android"* ]]; then
     build_android armeabi-v7a
     build_android arm64-v8a
     # Pack all JNI libs to jar
-    cd "${INSTALL_DIR}/lib"
+    cd "${INSTALL_DIR}/lib" || show_error "Fail to pack JNI libs to JAR due to missed folder: ${INSTALL_DIR}/lib"
     zip -r virgil_crypto_java_jni.jar lib
     rm -fr lib
-    cd -
+    cd - || show_error "Failed to cd -"
 fi
 
 if [[ ${TARGET} =~ ^net_(ios|appletvos|applewatchos)$ ]]; then
-    echo "cmake ${CMAKE_ARGS} -DLANG=net -DPLATFORM=${TARGET/net_/} -DCMAKE_TOOLCHAIN_FILE=${SRC_DIR}/cmake/apple.toolchain.cmake \"${SRC_DIR}\""
-    cmake ${CMAKE_ARGS} -DLANG=net -DENABLE_BITCODE=NO -DPLATFORM=${TARGET/net_/} -DCMAKE_TOOLCHAIN_FILE=${SRC_DIR}/cmake/apple.toolchain.cmake "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DLANG=net -DENABLE_BITCODE=NO -DPLATFORM=${TARGET/net_/} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
     make -j4 install
 fi
 
@@ -208,7 +238,7 @@ if [ "${TARGET}" == "asmjs" ]; then
         show_usage "Enviroment \$EMSDK_HOME is not defined!"
     fi
     source "${EMSDK_HOME}/emsdk_env.sh"
-    cmake ${CMAKE_ARGS} -DLANG=asmjs -DCMAKE_TOOLCHAIN_FILE=$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DLANG=asmjs -DCMAKE_TOOLCHAIN_FILE="$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake" "${SRC_DIR}"
     make -j4 install
 fi
 
@@ -219,7 +249,7 @@ if [ "${TARGET}" == "as3" ]; then
     if [ ! -d "$FLEX_HOME" ]; then
         show_usage "Enviroment \$FLEX_HOME is not defined!"
     fi
-    cmake ${CMAKE_ARGS} -DCMAKE_TOOLCHAIN_FILE=${SRC_DIR}/cmake/as3.toolchain.cmake "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/as3.toolchain.cmake" "${SRC_DIR}"
     make -j4 install
 fi
 
@@ -227,16 +257,16 @@ if [ "${TARGET}" == "pnacl" ]; then
     if [ ! -d "$NACL_SDK_ROOT" ]; then
         show_usage "Enviroment \$NACL_SDK_ROOT is not defined!"
     fi
-    cmake ${CMAKE_ARGS} -DCMAKE_TOOLCHAIN_FILE=${SRC_DIR}/cmake/pnacl.toolchain.cmake "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/pnacl.toolchain.cmake" "${SRC_DIR}"
     make -j4 install
 fi
 
 if [[ ${TARGET} =~ (ios|appletvos|applewatchos|android) ]]; then
-    ARCH_NAME=`cat ${BUILD_DIR}/lib_name.txt`
+    ARCH_NAME=$(cat "${BUILD_DIR}/lib_name.txt")
 else
-    ARCH_NAME=`cat ${BUILD_DIR}/lib_name_full.txt`
+    ARCH_NAME=$(cat "${BUILD_DIR}/lib_name_full.txt")
 fi
 
 # Archive installed libraries and remove all except archive
-cd "${INSTALL_DIR}" && tar -czvf "${ARCH_NAME}.tar.gz" *
+cd "${INSTALL_DIR}" && tar -czvf "${ARCH_NAME}.tar.gz" -- *
 find . ! -path . -type d -exec rm -fr {} +

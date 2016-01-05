@@ -45,7 +45,7 @@
 
 function show_usage {
     if [ ! -z "$1" ]; then
-        echo $1
+        echo "$1"
     fi
     echo "Usage: ${BASH_SOURCE[0]} <bundle_name> <in_dir> <out_dir>"
     echo "     bundle_name - name of the target bundle;"
@@ -84,10 +84,10 @@ LIBVIRGIL="libvirgil_crypto.a"
 mkdir -p "$OUTDIR"
 
 # Find all archs of library ARM mbedTLS
-LIBMBEDTLS_LIBS=`find $INDIR -name $LIBMBEDTLS | tr '\n' ' '`
+LIBMBEDTLS_LIBS=$(find "${INDIR}" -name "${LIBMBEDTLS}" | tr '\n' ' ')
 
 # Find all archs of library Virgil Crypto
-LIBVIRGIL_LIBS=`find $INDIR -name $LIBVIRGIL | tr '\n' ' '`
+LIBVIRGIL_LIBS=$(find "${INDIR}" -name "${LIBVIRGIL}" | tr '\n' ' ')
 
 xcrun lipo -create ${LIBMBEDTLS_LIBS} -output "$OUTDIR/$LIBMBEDTLS"
 xcrun lipo -create ${LIBVIRGIL_LIBS} -output "$OUTDIR/$LIBVIRGIL"
@@ -111,5 +111,3 @@ cp -Rf "$HEADERS_DIR/" "$OUTDIR/$FRAMEWORK_FULL_NAME/Versions/A/Headers/"
 rm -f "$OUTDIR/$LIBMBEDTLS"
 rm -f "$OUTDIR/$LIBVIRGIL"
 rm -f "$OUTDIR/$FRAMEWORK_NAME"
-
-# cd "$OUTDIR" && tar -czvf "$FRAMEWORK_FULL_NAME.tar.gz" "$FRAMEWORK_FULL_NAME/"

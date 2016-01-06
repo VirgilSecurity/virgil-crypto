@@ -56,7 +56,7 @@ function show_usage {
     echo -e "This script helps to build crypto library for variety of languages and platforms."
     echo -e "Common reuirements: CMake 3.0.5, Python, PyYaml, SWIG 3.0.7."
     echo -e "${COLOR_BLUE}Usage: ${BASH_SOURCE[0]} [<target>] [<src_dir>] [<build_dir>] [<install_dir>]${COLOR_RESET}"
-    echo -e "  - <target> - (default = cpp) one of the next values:"
+    echo -e "  - <target> - (default = cpp) target to build wich contains two parts <lang>[-<version>], where <lang>:"
     echo -e "    * cpp              - build C++ library;"
     echo -e "    * osx              - build framework for Apple OS X, requirements: OS X, Xcode;"
     echo -e "    * ios              - build framework for Apple iOS, requirements: OS X, Xcode;"
@@ -177,6 +177,15 @@ else
 fi
 show_info "<target> : ${TARGET}"
 
+target_arr=(${1//-/ })
+LANG="${target_arr[0]}"
+LANG_VERSION="${target_arr[1]}"
+
+show_info "<lang> : ${LANG}"
+if [ ! -z "${LANG_VERSION}" ]; then
+    show_info "<lang_version> : ${LANG_VERSION}"
+fi
+
 if [ ! -z "$2" ]; then
     SRC_DIR=$(abspath "$2")
 else
@@ -209,12 +218,16 @@ show_info "<install_dir>: ${INSTALL_DIR}"
 # Define common build parameters
 CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
 
-if [[ ${TARGET} =~ ^(cpp|osx|java|net|php|python|ruby|nodejs)$ ]]; then
+if [[ ${LANG} =~ ^(cpp|osx|java|net|php|python|ruby|nodejs)$ ]]; then
     if [ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]; then
         CMAKE_ARGS+=" -DPLATFORM_ARCH=universal -DCMAKE_OSX_ARCHITECTURES=i386;x86_64"
     else
         CMAKE_ARGS+=" -DPLATFORM_ARCH=$(uname -m)"
     fi
+fi
+
+if [ ! -z "${LANG_VERSION}" ]; then
+    CMAKE_ARGS+=" -DLANG_VERSION=${LANG_VERSION}"
 fi
 
 if [ ! -z "${INSTALL_DIR}" ]; then
@@ -225,12 +238,12 @@ fi
 cd "${BUILD_DIR}" && rm -fr ./*
 
 # Build for native platforms
-if [[ ${TARGET} =~ ^(cpp|java|net|php|python|ruby|nodejs)$ ]]; then
-    cmake ${CMAKE_ARGS} -DLANG=${TARGET} "${SRC_DIR}"
+if [[ ${LANG} =~ ^(cpp|java|net|php|python|ruby|nodejs)$ ]]; then
+    cmake ${CMAKE_ARGS} -DLANG=${LANG} "${SRC_DIR}"
     make -j4 install
 fi
 
-if [ "${TARGET}" == "osx" ]; then
+if [ "${LANG}" == "osx" ]; then
     # Build
     cmake ${CMAKE_ARGS} -DLANG=cpp "${SRC_DIR}"
     make -j4 install
@@ -241,8 +254,8 @@ if [ "${TARGET}" == "osx" ]; then
 fi
 
 # Build for embedded plaforms
-if [ "${TARGET}" == "ios" ] || [ "${TARGET}" == "appletvos" ] || [ "${TARGET}" == "applewatchos" ]; then
-    CMAKE_ARGS+=" -DPLATFORM=${TARGET}"
+if [ "${LANG}" == "ios" ] || [ "${LANG}" == "appletvos" ] || [ "${LANG}" == "applewatchos" ]; then
+    CMAKE_ARGS+=" -DPLATFORM=${LANG}"
     # Build for device
     cmake ${CMAKE_ARGS} -DLANG=cpp -DINSTALL_LIB_DIR_NAME=lib/dev -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
     make -j4 install
@@ -256,16 +269,16 @@ if [ "${TARGET}" == "ios" ] || [ "${TARGET}" == "appletvos" ] || [ "${TARGET}" =
     rm -fr "${INSTALL_DIR:?}/lib"
 fi
 
-if [[ "${TARGET}" == *"android"* ]]; then
+if [[ "${LANG}" == *"android"* ]]; then
     if [ ! -d "$ANDROID_NDK" ]; then
         show_usage "Enviroment \$ANDROID_NDK is not defined!"
     fi
-    if [ "${TARGET}" == "java_android" ]; then
+    if [ "${LANG}" == "java_android" ]; then
         CMAKE_ARGS+=" -DLANG=java"
-    elif [ "${TARGET}" == "net_android" ]; then
+    elif [ "${LANG}" == "net_android" ]; then
         CMAKE_ARGS+=" -DLANG=net"
     else
-        show_usage "Unsupported target: ${TARGET}!"
+        show_usage "Unsupported target: ${LANG}!"
     fi
     function build_android() {
         # Build architecture: $1
@@ -287,12 +300,12 @@ if [[ "${TARGET}" == *"android"* ]]; then
     cd - || show_error "Failed to cd -"
 fi
 
-if [[ ${TARGET} =~ ^net_(ios|appletvos|applewatchos)$ ]]; then
-    cmake ${CMAKE_ARGS} -DLANG=net -DENABLE_BITCODE=NO -DPLATFORM=${TARGET/net_/} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
+if [[ ${LANG} =~ ^net_(ios|appletvos|applewatchos)$ ]]; then
+    cmake ${CMAKE_ARGS} -DLANG=net -DENABLE_BITCODE=NO -DPLATFORM=${LANG/net_/} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
     make -j4 install
 fi
 
-if [ "${TARGET}" == "asmjs" ]; then
+if [ "${LANG}" == "asmjs" ]; then
     if [ ! -d "$EMSDK_HOME" ]; then
         show_usage "Enviroment \$EMSDK_HOME is not defined!"
     fi
@@ -301,7 +314,7 @@ if [ "${TARGET}" == "asmjs" ]; then
     make -j4 install
 fi
 
-if [ "${TARGET}" == "as3" ]; then
+if [ "${LANG}" == "as3" ]; then
     if [ ! -d "$CROSSBRIDGE_HOME" ]; then
         show_usage "Enviroment \$CROSSBRIDGE_HOME is not defined!"
     fi
@@ -312,7 +325,7 @@ if [ "${TARGET}" == "as3" ]; then
     make -j4 install
 fi
 
-if [ "${TARGET}" == "pnacl" ]; then
+if [ "${LANG}" == "pnacl" ]; then
     if [ ! -d "$NACL_SDK_ROOT" ]; then
         show_usage "Enviroment \$NACL_SDK_ROOT is not defined!"
     fi
@@ -320,7 +333,7 @@ if [ "${TARGET}" == "pnacl" ]; then
     make -j4 install
 fi
 
-if [[ ${TARGET} =~ (ios|appletvos|applewatchos|android) ]]; then
+if [[ ${LANG} =~ (ios|appletvos|applewatchos|android) ]]; then
     ARCH_NAME=$(cat "${BUILD_DIR}/lib_name.txt")
 else
     ARCH_NAME=$(cat "${BUILD_DIR}/lib_name_full.txt")

@@ -155,8 +155,6 @@ set_property (CACHE LANG PROPERTY STRINGS
     "python"
     "ruby"
 )
-set (LANG_VERSION "" CACHE STRING "Target language minimum supported version")
-
 set (LIB_LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API or not")
 set (LIB_FILE_IO OFF CACHE BOOL "Defines whether to include module depends on file IO or not")
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
@@ -205,6 +203,7 @@ add_subdirectory (wrappers)
 
 # Configure platform after submodules configuration
 string (TOLOWER ${CMAKE_SYSTEM_NAME} PLATFORM_LOWER)
+set (LANG_VERSION "" CACHE STRING "Target language minimum supported version")
 set (PLATFORM "${PLATFORM_LOWER}" CACHE STRING "Target platform")
 set (PLATFORM_VERSION "${CMAKE_SYSTEM_VERSION}" CACHE STRING "Target platform")
 set (PLATFORM_EMBEDDED NO CACHE BOOL "Mark target platform as embedded")

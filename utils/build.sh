@@ -72,8 +72,8 @@ function show_usage {
     echo -e "    * net_applewatchos - build .NET library under WatchOS platform, requirements: Mono, OS X, Xcode;"
     echo -e "    * net_appletvos    - build .NET library under TVOS platform, requirements: Mono, OS X, Xcode;"
     echo -e "    * net_android      - build .NET library under Android platform, requirements: Mono, \$ANDROID_NDK;"
-    echo -e "    * asmjs            - build AsmJS library;"
-    echo -e "    * nodejs           - build NodeJS module, requirements: run 'source /path/to/emsdk_env.sh';"
+    echo -e "    * asmjs            - build AsmJS library, requirements: \$EMSDK_HOME;"
+    echo -e "    * nodejs           - build NodeJS module;"
     echo -e "    * as3              - build ActionScript library, requirements: \$CROSSBRIDGE_HOME, \$FLEX_HOME;"
     echo -e "    * pnacl            - build Portable Native library for Google Chrome, requirements: \$NACL_SDK_ROOT."
     echo -e "  - <src_dir>     - (default = .) path to the directory where root CMakeLists.txt file is located"
@@ -271,7 +271,7 @@ fi
 
 if [[ "${LANG}" == *"android"* ]]; then
     if [ ! -d "$ANDROID_NDK" ]; then
-        show_usage "Enviroment \$ANDROID_NDK is not defined!"
+        show_usage "Enviroment \$ANDROID_NDK is not defined!" 1
     fi
     if [ "${LANG}" == "java_android" ]; then
         CMAKE_ARGS+=" -DLANG=java"
@@ -307,7 +307,7 @@ fi
 
 if [ "${LANG}" == "asmjs" ]; then
     if [ ! -d "$EMSDK_HOME" ]; then
-        show_usage "Enviroment \$EMSDK_HOME is not defined!"
+        show_usage "Enviroment \$EMSDK_HOME is not defined!" 1
     fi
     source "${EMSDK_HOME}/emsdk_env.sh"
     cmake ${CMAKE_ARGS} -DLANG=asmjs -DCMAKE_TOOLCHAIN_FILE="$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake" "${SRC_DIR}"
@@ -316,10 +316,10 @@ fi
 
 if [ "${LANG}" == "as3" ]; then
     if [ ! -d "$CROSSBRIDGE_HOME" ]; then
-        show_usage "Enviroment \$CROSSBRIDGE_HOME is not defined!"
+        show_usage "Enviroment \$CROSSBRIDGE_HOME is not defined!" 1
     fi
     if [ ! -d "$FLEX_HOME" ]; then
-        show_usage "Enviroment \$FLEX_HOME is not defined!"
+        show_usage "Enviroment \$FLEX_HOME is not defined!" 1
     fi
     cmake ${CMAKE_ARGS} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/as3.toolchain.cmake" "${SRC_DIR}"
     make -j4 install
@@ -327,7 +327,7 @@ fi
 
 if [ "${LANG}" == "pnacl" ]; then
     if [ ! -d "$NACL_SDK_ROOT" ]; then
-        show_usage "Enviroment \$NACL_SDK_ROOT is not defined!"
+        show_usage "Enviroment \$NACL_SDK_ROOT is not defined!" 1
     fi
     cmake ${CMAKE_ARGS} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/pnacl.toolchain.cmake" "${SRC_DIR}"
     make -j4 install

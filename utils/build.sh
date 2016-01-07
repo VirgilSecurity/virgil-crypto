@@ -349,5 +349,8 @@ else
 fi
 
 # Archive installed libraries and remove all except archive
-cd "${INSTALL_DIR}" && tar -czvf "${ARCH_NAME}.tar.gz" -- *
+mkdir -p "${INSTALL_DIR}/${ARCH_NAME}"
+cd "${INSTALL_DIR}"
+mv $(ls -A | grep -v ${ARCH_NAME}) "./${ARCH_NAME}"
+tar -czvf "${ARCH_NAME}.tar.gz" -- *
 find . ! -path . -type d -exec rm -fr {} +

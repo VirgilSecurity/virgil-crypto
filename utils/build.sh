@@ -170,6 +170,10 @@ SYSTEM_KERNEL_RELEASE="$(uname -r)"
 SYSTEM_KERNEL_RELEASE_PARTS=(${SYSTEM_KERNEL_RELEASE//-/ })
 SYSTEM_KERNEL_RELEASE_VERSION="${SYSTEM_KERNEL_RELEASE_PARTS[0]}"
 
+if [ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]; then
+    SYSTEM_KERNEL_RELEASE_VERSION=""
+fi
+
 if [ -f "${SCRIPT_DIR}/env.sh" ]; then
     source "${SCRIPT_DIR}/env.sh"
 fi

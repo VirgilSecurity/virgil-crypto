@@ -166,6 +166,10 @@ function make_bundle {
 SCRIPT_DIR=$(dirname "$(abspath "${BASH_SOURCE[0]}")")
 CURRENT_DIR=$(abspath .)
 
+SYSTEM_KERNEL_RELEASE="$(uname -r)"
+SYSTEM_KERNEL_RELEASE_PARTS=(${SYSTEM_KERNEL_RELEASE//-/ })
+SYSTEM_KERNEL_RELEASE_VERSION="${SYSTEM_KERNEL_RELEASE_PARTS[0]}"
+
 if [ -f "${SCRIPT_DIR}/env.sh" ]; then
     source "${SCRIPT_DIR}/env.sh"
 fi
@@ -244,13 +248,13 @@ cd "${BUILD_DIR}" && rm -fr ./*
 
 # Build for native platforms
 if [[ ${LANG} =~ ^(cpp|java|net|php|python|ruby|nodejs)$ ]]; then
-    cmake ${CMAKE_ARGS} -DLANG=${LANG} "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DLANG=${LANG} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
     make -j4 install
 fi
 
 if [ "${LANG}" == "osx" ]; then
     # Build
-    cmake ${CMAKE_ARGS} -DLANG=cpp "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DLANG=cpp -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
     make -j4 install
     # Create framework
     make_bundle VirgilCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"

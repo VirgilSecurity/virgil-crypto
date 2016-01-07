@@ -162,10 +162,15 @@ function make_bundle {
     rm -f "$OUTDIR/$FRAMEWORK_NAME"
 }
 
-# Check arguments
-SCRIPT_DIR=$(abspath "${BASH_SOURCE[0]}")
+# Define environment variables.
+SCRIPT_DIR=$(dirname "$(abspath "${BASH_SOURCE[0]}")")
 CURRENT_DIR=$(abspath .)
 
+if [ -f "${SCRIPT_DIR}/env.sh" ]; then
+    source "${SCRIPT_DIR}/env.sh"
+fi
+
+# Check arguments
 if [ ! -z "$1" ]; then
     if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
         show_usage

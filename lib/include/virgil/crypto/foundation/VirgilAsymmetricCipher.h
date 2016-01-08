@@ -159,6 +159,7 @@ public:
     ///@{
     /**
      * @brief Provides private key.
+     * @param pwd - private key password (max length is 31 byte).
      * @return Private key in a PKCS#1, SEC1 DER or PKCS#8 structure format.
      */
     virgil::crypto::VirgilByteArray exportPrivateKeyToDER(
@@ -170,6 +171,7 @@ public:
     virgil::crypto::VirgilByteArray exportPublicKeyToDER() const;
     /**
      * @brief Provides private key.
+     * @param pwd - private key password (max length is 31 byte).
      * @return Private key in a PKCS#1, SEC1 PEM or PKCS#8 structure format.
      */
     virgil::crypto::VirgilByteArray exportPrivateKeyToPEM(

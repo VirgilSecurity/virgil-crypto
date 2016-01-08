@@ -49,18 +49,33 @@
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/VirgilKeyPair.h>
 #include <virgil/crypto/foundation/PolarsslException.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
+using virgil::crypto::VirgilKeyPair;
 
 using virgil::crypto::foundation::PolarsslException;
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
 using virgil::crypto::foundation::VirgilAsymmetricCipherImpl;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
+
+/**
+ * @brief Throw exception if password is too long.
+ * @note MbedTLS PKCS#12 restriction.
+ */
+static void checkPasswordLen(size_t pwdLen) {
+    const size_t kPasswordLengthMax = 31;
+    if (pwdLen > kPasswordLengthMax) {
+        std::ostringstream errMsg;
+        errMsg << "Password is too long. Max length is " << kPasswordLengthMax << " bytes.";
+        throw VirgilCryptoException(errMsg.str());
+    }
+}
 
 /// @name Private section
 namespace virgil { namespace crypto { namespace foundation {
@@ -303,6 +318,7 @@ bool VirgilAsymmetricCipher::isKeyPairMatch(const VirgilByteArray& publicKey, co
 bool VirgilAsymmetricCipher::checkPrivateKeyPassword(const VirgilByteArray& key,
         const VirgilByteArray& pwd) {
 
+    checkPasswordLen(pwd.size());
     pk_context private_ctx;
     pk_init(&private_ctx);
     int result = ::pk_parse_key(&private_ctx,
@@ -316,6 +332,7 @@ bool VirgilAsymmetricCipher::isPrivateKeyEncrypted(const VirgilByteArray& privat
 }
 
 void VirgilAsymmetricCipher::setPrivateKey(const VirgilByteArray& key, const VirgilByteArray& pwd) {
+    checkPasswordLen(pwd.size());
     POLARSSL_ERROR_HANDLER(
         ::pk_parse_key(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key), VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd));
     );
@@ -435,6 +452,7 @@ void VirgilAsymmetricCipher::genKeyPair(VirgilKeyPair::Type type) {
 
 VirgilByteArray VirgilAsymmetricCipher::exportPrivateKeyToDER(const VirgilByteArray& pwd) const {
     checkState();
+    checkPasswordLen(pwd.size());
     PolarsslKeyExport polarsslKeyExport(impl_->ctx, PolarsslKeyExport::DER, PolarsslKeyExport::Private, pwd);
     return exportKey_(polarsslKeyExport);
 }
@@ -447,6 +465,7 @@ VirgilByteArray VirgilAsymmetricCipher::exportPublicKeyToDER() const {
 
 VirgilByteArray VirgilAsymmetricCipher::exportPrivateKeyToPEM(const VirgilByteArray& pwd) const {
     checkState();
+    checkPasswordLen(pwd.size());
     PolarsslKeyExport polarsslKeyExport(impl_->ctx, PolarsslKeyExport::PEM, PolarsslKeyExport::Private, pwd);
     return exportKey_(polarsslKeyExport);
 }

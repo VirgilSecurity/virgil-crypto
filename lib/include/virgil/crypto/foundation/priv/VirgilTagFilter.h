@@ -50,6 +50,11 @@ namespace virgil { namespace crypto { namespace foundation { namespace priv {
 class VirgilTagFilter {
 public:
     /**
+     * @brief Base initialization.
+     * @note Method reset() MUST be called anyway.
+     */
+    VirgilTagFilter();
+    /**
      * @brief Get ready for data filtration.
      * @param tagLen - length of the expected Virgil TAG.
      * @note This method MUST be called before any data will be processed.

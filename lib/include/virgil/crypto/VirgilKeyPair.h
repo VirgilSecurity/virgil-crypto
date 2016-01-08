@@ -77,6 +77,8 @@ public:
 public:
     /**
      * @brief Generate new key pair given type.
+     * @param type - private key type to be generated.
+     * @param pwd - private key password (max length is 31 byte).
      */
     static VirgilKeyPair generate(VirgilKeyPair::Type type = VirgilKeyPair::Type_Default,
             const VirgilByteArray& pwd = VirgilByteArray());

@@ -103,7 +103,7 @@ public:
     /**
      * @brief Encrypt data with given password.
      * @param data - data to encrypt.
-     * @param pwd - password to use when generating key.
+     * @param pwd - password to use for encryption (max length is 31 byte).
      * @return Encrypted data.
      */
     virgil::crypto::VirgilByteArray encrypt(const virgil::crypto::VirgilByteArray& data,
@@ -111,7 +111,7 @@ public:
     /**
      * @brief Decrypt data with given password.
      * @param data - data to decrypt.
-     * @param pwd - password to use when generating key.
+     * @param pwd - password to use for decryption (max length is 31 byte).
      * @return Decrypted data.
      */
     virgil::crypto::VirgilByteArray decrypt(const virgil::crypto::VirgilByteArray& data,

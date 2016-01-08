@@ -42,9 +42,9 @@ project (${WRAPPED_LIB_NAME}_nodejs)
 set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set (PLATFORM_VERSION "4.1.0" CACHE STRING "Node.js version.")
+set (LANG_VERSION "4.1.0" CACHE STRING "Node.js version")
 
-set (NODEJS_TARGET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/node-v${PLATFORM_VERSION}")
+set (NODEJS_TARGET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/node-v${LANG_VERSION}")
 
 if (EXISTS "${NODEJS_TARGET_DIR}/")
     # Make target for Node
@@ -93,7 +93,7 @@ if (EXISTS "${NODEJS_TARGET_DIR}/")
     message (STATUS "V8 version hex: ${V8_VERSION_HEX}")
 else ()
     message (FATAL_ERROR
-        "PLATFORM_VERSION contains invalid value - related folder is not found."
+        "LANG_VERSION contains invalid value - related folder is not found."
     )
 endif ()
 

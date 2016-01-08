@@ -258,7 +258,7 @@ fi
 
 if [ "${TARGET_NAME}" == "osx" ]; then
     # Build
-    cmake ${CMAKE_ARGS} -DLANG=cpp -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DLANG=cpp -DPLATFORM=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
     make -j4 install
     # Create framework
     make_bundle VirgilCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"

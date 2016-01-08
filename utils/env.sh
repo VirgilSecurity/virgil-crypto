@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright (C) 2015 Virgil Security Inc.
 #
@@ -32,37 +33,7 @@
 # STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+
 #
-
-if (LIB_FILE_IO)
-    set (EXCLUDE_FILE_IO_PATTERN "fake-stream")
-else ()
-    set (EXCLUDE_FILE_IO_PATTERN "stream")
-endif ()
-
-if (LIB_LOW_LEVEL_API)
-    install (DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/" DESTINATION "${INSTALL_INC_DIR_NAME}"
-        FILES_MATCHING
-        PATTERN "*.h"
-        PATTERN "priv" EXCLUDE
-        PATTERN ${EXCLUDE_FILE_IO_PATTERN} EXCLUDE
-    )
-else ()
-    install (DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/" DESTINATION "${INSTALL_INC_DIR_NAME}"
-        FILES_MATCHING
-        PATTERN "*.h"
-        PATTERN "cms" EXCLUDE
-        PATTERN "priv" EXCLUDE
-        PATTERN "VirgilOID.h" EXCLUDE
-        PATTERN "VirgilAsn1Reader.h" EXCLUDE
-        PATTERN "VirgilAsn1Writer.h" EXCLUDE
-        PATTERN "VirgilKDF.h" EXCLUDE
-        PATTERN "PolarsslException.h" EXCLUDE
-        PATTERN "VirgilKeyPairGenerator.h" EXCLUDE
-        PATTERN "VirgilSymmetricCipher.h" EXCLUDE
-        PATTERN "VirgilAsymmetricCipher.h" EXCLUDE
-        PATTERN "VirgilRandom.h" EXCLUDE
-        PATTERN "VirgilPBE.h" EXCLUDE
-        PATTERN ${EXCLUDE_FILE_IO_PATTERN} EXCLUDE
-    )
-endif ()
+# Modify this script to configure environment
+#

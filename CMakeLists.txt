@@ -36,11 +36,16 @@
 
 #
 # Configurable variables:
-#     - PLATFORM_NAME       - name of target platform and/or language.
+#     - LANG                - name of target language (optional).
+#     - LANG_VERSION        - minimum supported lang version (optional).
+#     - PLATFORM            - name of target platform (optional).
+#     - PLATFORM_VERSION    - minimum supported version of the target platform (optional).
+#     - PLATFORM_ARCH       - target platform processor architecture (optional).
+#
 #     - LIB_LOW_LEVEL_API   - boolean value that defines whether to include low-level API or not.
 #     - LIB_FILE_IO         - boolean value that defines whether to include module depends on file IO or not.
 #                             or separate utilities.
-#     - INSTALL_CORE_LIB    - boolean value that defines whether install core library and it's dependencies or not,
+#     - INSTALL_CORE_LIBS    - boolean value that defines whether install core library and it's dependencies or not,
 #                             if this value is NO or undefined - only wrapped library will be installed.
 #     - INSTALL_EXT_HEADERS - boolean value that defines whether install third-party library headers or not.
 #     - ENABLE_TESTING      - boolean value that defines whether include unit testing or not.
@@ -53,14 +58,13 @@
 #     - INSTALL_API_DIR_NAME  - name of the directory where API source files will be installed.
 #
 # Define variables:
-#     - PLATFORM_NAME_LOWER   - lowercase(PLATFORM_NAME).
-#     - POINTER_SIZE          - compiler pointer size.
-#
 #     - VIRGIL_VERSION       - library full version.
 #     - VIRGIL_VERSION_MAJOR - library major version number.
 #     - VIRGIL_VERSION_MINOR - library minor version number.
 #     - VIRGIL_VERSION_PATCH - library patch number.
 #     - VIRGIL_SOVERSION     - library ABI version.
+#
+#     - POINTER_SIZE         - compiler pointer size.
 #
 #     - CMAKE_ARGS           - list of CMake parameters in form -DVAR:TYPE=VAL
 #
@@ -76,7 +80,7 @@ project (VirgilSecurity)
 
 # Set library version
 set (VIRGIL_VERSION_MAJOR 1)
-set (VIRGIL_VERSION_MINOR 1)
+set (VIRGIL_VERSION_MINOR 2)
 set (VIRGIL_VERSION_PATCH 0)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 1)
@@ -96,6 +100,8 @@ set (CMAKE_ARGS
 )
 append_cmake_arg (CMAKE_ARGS NAME CMAKE_TOOLCHAIN_FILE TYPE PATH)
 append_cmake_arg (CMAKE_ARGS NAME CMAKE_BUILD_TYPE TYPE STRING)
+append_cmake_arg (CMAKE_ARGS NAME PLATFORM TYPE STRING)
+append_cmake_arg (CMAKE_ARGS NAME PLATFORM_VERSION TYPE STRING)
 if (NOT CMAKE_TOOLCHAIN_FILE)
     append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_COMPILER TYPE STRING)
     append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_FLAGS TYPE STRING)
@@ -118,8 +124,11 @@ if (ANDROID)
     append_cmake_arg (CMAKE_ARGS NAME ANDROID_STL TYPE STRING)
     append_cmake_arg (CMAKE_ARGS NAME ANDROID_STL_FORCE_FEATURES TYPE BOOL)
 endif (ANDROID)
-if (IOS)
-    append_cmake_arg (CMAKE_ARGS NAME IOS_PLATFORM TYPE PATH)
+
+if (CMAKE_TOOLCHAIN_FILE AND APPLE)
+    append_cmake_arg (CMAKE_ARGS NAME SIMULATOR TYPE BOOL)
+    append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_PLATFORM_DEVELOPER_ROOT TYPE PATH)
+    append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_SDK_ROOT TYPE PATH)
 endif ()
 
 # Define enviroment parameters
@@ -133,16 +142,19 @@ if (NOT DEFINED POINTER_SIZE)
     endif ()
 endif ()
 
-# Configure platform
-if (CMAKE_CROSSCOMPILING AND NOT PLATFORM_NAME)
-    set (PLATFORM_NAME ${CMAKE_SYSTEM_NAME} CACHE STRING "Target platform / language")
-else ()
-    set (PLATFORM_NAME "CPP" CACHE STRING "Target platform / language")
-    set_property (CACHE PLATFORM_NAME PROPERTY STRINGS "CPP" "CSHARP" "AS3" "JS" "PHP")
-endif ()
-string (TOLOWER "${PLATFORM_NAME}" PLATFORM_NAME_LOWER)
-message (STATUS "Selected platform and/or language is: " ${PLATFORM_NAME})
-
+# Configure language parameters
+set (LANG "cpp" CACHE STRING "Target language")
+set_property (CACHE LANG PROPERTY STRINGS
+    "cpp"
+    "csharp"
+    "as3"
+    "asmjs"
+    "nodejs"
+    "php"
+    "java"
+    "python"
+    "ruby"
+)
 set (LIB_LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API or not")
 set (LIB_FILE_IO OFF CACHE BOOL "Defines whether to include module depends on file IO or not")
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
@@ -168,16 +180,14 @@ set (EXTERNAL_LIBS_DIR "${CMAKE_CURRENT_BINARY_DIR}/libs" CACHE INTERNAL
         "Path to the folder where all libs MUST be located after build")
 
 # Configure submodules installation
-set (INSTALL_CORE_LIB_TMP OFF)
-if ((PLATFORM_NAME_LOWER STREQUAL "cpp") OR
-        (PLATFORM_NAME_LOWER STREQUAL "pnacl") OR
-        (PLATFORM_NAME_LOWER STREQUAL "ios"))
-    set (INSTALL_CORE_LIB_TMP ON)
+set (INSTALL_CORE_LIBS_TMP OFF)
+if (LANG STREQUAL "cpp")
+    set (INSTALL_CORE_LIBS_TMP ON)
 endif ()
-set (INSTALL_CORE_LIB ${INSTALL_CORE_LIB_TMP} CACHE BOOL
-        "defines whether install core library and it's dependencies or not")
+set (INSTALL_CORE_LIBS ${INSTALL_CORE_LIBS_TMP} CACHE BOOL
+        "Defines whether install core library and it's dependencies or not")
 set (INSTALL_EXT_HEADERS OFF CACHE BOOL
-        "defines whether install third-party library headers or not")
+        "Defines whether install third-party library headers or not")
 
 # Configure testing
 if (ENABLE_TESTING)
@@ -187,22 +197,50 @@ else (ENABLE_TESTING)
     message (STATUS "Unit tests status: DISABLED")
 endif (ENABLE_TESTING)
 
-# Build submodules
+# Configure submodules
 add_subdirectory (lib)
-if (PLATFORM_NAME_LOWER STREQUAL "cpp")
+add_subdirectory (wrappers)
+
+# Configure platform after submodules configuration
+string (TOLOWER ${CMAKE_SYSTEM_NAME} PLATFORM_LOWER)
+set (LANG_VERSION "" CACHE STRING "Target language minimum supported version")
+set (PLATFORM "${PLATFORM_LOWER}" CACHE STRING "Target platform")
+set (PLATFORM_VERSION "${CMAKE_SYSTEM_VERSION}" CACHE STRING "Target platform")
+set (PLATFORM_EMBEDDED NO CACHE BOOL "Mark target platform as embedded")
+mark_as_advanced (PLATFORM_EMBEDDED PLATFORM_VERSION)
+
+# Enable C++ tests only for native platforms
+if (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
     if (ENABLE_TESTING)
         add_subdirectory (tests)
     endif (ENABLE_TESTING)
-endif ()
-add_subdirectory (wrappers)
+endif (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
 
-if (PLATFORM_VERSION)
-    set (PLATFORM_FULL_NAME "${PLATFORM_NAME_LOWER}-${PLATFORM_VERSION}")
-else ()
-    set (PLATFORM_FULL_NAME "${PLATFORM_NAME_LOWER}")
-endif ()
 
-message (STATUS "Platform full name: ${PLATFORM_FULL_NAME}")
+# Define full platform name
+set (LIB_NAME_FULL "virgil-crypto-${VIRGIL_VERSION}-${LANG}")
+
+if (LANG AND LANG_VERSION)
+    set (LIB_NAME_FULL "${LIB_NAME_FULL}-${LANG_VERSION}")
+endif (LANG AND LANG_VERSION)
+
+if (PLATFORM)
+    set (LIB_NAME_FULL "${LIB_NAME_FULL}-${PLATFORM}")
+endif (PLATFORM)
+
+if (PLATFORM AND PLATFORM_VERSION)
+    set (LIB_NAME_FULL "${LIB_NAME_FULL}-${PLATFORM_VERSION}")
+endif (PLATFORM AND PLATFORM_VERSION)
+
+file (WRITE "${CMAKE_CURRENT_BINARY_DIR}/lib_name.txt" "${LIB_NAME_FULL}")
+
+if (PLATFORM_ARCH)
+    set (LIB_NAME_FULL "${LIB_NAME_FULL}-${PLATFORM_ARCH}")
+endif (PLATFORM_ARCH)
+
+message (STATUS "Library full name: ${LIB_NAME_FULL}")
+
+file (WRITE "${CMAKE_CURRENT_BINARY_DIR}/lib_name_full.txt" "${LIB_NAME_FULL}")
 
 # Configure CPack
 set (CPACK_GENERATOR STGZ TGZ ZIP)
@@ -213,6 +251,6 @@ set (CPACK_PACKAGE_VERSION_MINOR ${VIRGIL_VERSION_MINOR})
 set (CPACK_PACKAGE_VERSION_PATCH ${VIRGIL_VERSION_PATCH})
 set (CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 string (TOLOWER ${CMAKE_SYSTEM_NAME} CPACK_SYSTEM_NAME)
-set (CPACK_PACKAGE_FILE_NAME "virgil-crypto-${VIRGIL_VERSION}-${PLATFORM_FULL_NAME}-${CPACK_SYSTEM_NAME}")
+set (CPACK_PACKAGE_FILE_NAME "${LIB_NAME_FULL}")
 
 include (CPack)

@@ -58,7 +58,7 @@ VirgilByteArray VirgilSigner::sign(const VirgilByteArray& data, const VirgilByte
     // Calculate data digest
     VirgilByteArray digest = hash_.hash(data);
     // Prepare cipher
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
+    VirgilAsymmetricCipher cipher;
     cipher.setPrivateKey(privateKey, privateKeyPassword);
     // Sign digest
     VirgilByteArray signedDigest = cipher.sign(digest);
@@ -82,7 +82,7 @@ bool VirgilSigner::verify(const VirgilByteArray& data, const VirgilByteArray& si
     // Calculate data digest
     VirgilByteArray digest = hash.hash(data);
     // Prepare cipher
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
+    VirgilAsymmetricCipher cipher;
     cipher.setPublicKey(publicKey);
     // Verify
     return cipher.verify(digest, signedDigest);

@@ -56,3 +56,6 @@
 // VirgilByteArray typemap
 #define SWIG_VIRGIL_BYTE_ARRAY
 %include "VirgilByteArray.i"
+
+// Redefine typemap for enums
+%typemap(in) VirgilKeyPair::Type = int;

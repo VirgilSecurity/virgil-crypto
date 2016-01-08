@@ -49,20 +49,33 @@
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/VirgilKeyPair.h>
 #include <virgil/crypto/foundation/PolarsslException.h>
-#include <virgil/crypto/foundation/VirgilKeyPairGenerator.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
+using virgil::crypto::VirgilKeyPair;
 
 using virgil::crypto::foundation::PolarsslException;
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
 using virgil::crypto::foundation::VirgilAsymmetricCipherImpl;
-using virgil::crypto::foundation::VirgilKeyPairGenerator;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
+
+/**
+ * @brief Throw exception if password is too long.
+ * @note MbedTLS PKCS#12 restriction.
+ */
+static void checkPasswordLen(size_t pwdLen) {
+    const size_t kPasswordLengthMax = 31;
+    if (pwdLen > kPasswordLengthMax) {
+        std::ostringstream errMsg;
+        errMsg << "Password is too long. Max length is " << kPasswordLengthMax << " bytes.";
+        throw VirgilCryptoException(errMsg.str());
+    }
+}
 
 /// @name Private section
 namespace virgil { namespace crypto { namespace foundation {
@@ -123,6 +136,10 @@ public:
 };
 
 }}}
+
+VirgilAsymmetricCipher::VirgilAsymmetricCipher()
+        : impl_(new VirgilAsymmetricCipherImpl(POLARSSL_PK_NONE)) {
+}
 
 VirgilAsymmetricCipher::VirgilAsymmetricCipher(int type)
         : impl_(new VirgilAsymmetricCipherImpl(static_cast<pk_type_t>(type))) {
@@ -263,18 +280,6 @@ VirgilByteArray processEncryptionDecryption_(EncDecFunc processFunc, pk_context 
 
 /// @name Public section
 
-VirgilAsymmetricCipher VirgilAsymmetricCipher::none() {
-    return VirgilAsymmetricCipher(POLARSSL_PK_NONE);
-}
-
-VirgilAsymmetricCipher VirgilAsymmetricCipher::rsa() {
-    return VirgilAsymmetricCipher(POLARSSL_PK_RSA);
-}
-
-VirgilAsymmetricCipher VirgilAsymmetricCipher::ec() {
-    return VirgilAsymmetricCipher(POLARSSL_PK_ECKEY);
-}
-
 size_t VirgilAsymmetricCipher::keySize() const {
     checkState();
     return ::pk_get_size(impl_->ctx);
@@ -285,7 +290,49 @@ size_t VirgilAsymmetricCipher::keyLength() const {
     return ::pk_get_len(impl_->ctx);
 }
 
+bool VirgilAsymmetricCipher::isKeyPairMatch(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey,
+        const VirgilByteArray& privateKeyPassword) {
+
+    pk_context public_ctx;
+    pk_init(&public_ctx);
+    POLARSSL_ERROR_HANDLER(
+        ::pk_parse_public_key(&public_ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(publicKey))
+    );
+
+    pk_context private_ctx;
+    pk_init(&private_ctx);
+    POLARSSL_ERROR_HANDLER_DISPOSE(
+        ::pk_parse_key(&private_ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(privateKey),
+                VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(privateKeyPassword)),
+        ::pk_free(&public_ctx);
+    );
+
+    int result = ::pk_check_pair(&public_ctx, &private_ctx);
+
+    ::pk_free(&public_ctx);
+    ::pk_free(&private_ctx);
+
+    return  result == 0;
+}
+
+bool VirgilAsymmetricCipher::checkPrivateKeyPassword(const VirgilByteArray& key,
+        const VirgilByteArray& pwd) {
+
+    checkPasswordLen(pwd.size());
+    pk_context private_ctx;
+    pk_init(&private_ctx);
+    int result = ::pk_parse_key(&private_ctx,
+            VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key), VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd));
+    ::pk_free(&private_ctx);
+    return result == 0;
+}
+
+bool VirgilAsymmetricCipher::isPrivateKeyEncrypted(const VirgilByteArray& privateKey) {
+    return !checkPrivateKeyPassword(privateKey, VirgilByteArray());
+}
+
 void VirgilAsymmetricCipher::setPrivateKey(const VirgilByteArray& key, const VirgilByteArray& pwd) {
+    checkPasswordLen(pwd.size());
     POLARSSL_ERROR_HANDLER(
         ::pk_parse_key(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key), VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd));
     );
@@ -297,13 +344,115 @@ void VirgilAsymmetricCipher::setPublicKey(const VirgilByteArray& key) {
     );
 }
 
-void VirgilAsymmetricCipher::genKeyPair(const VirgilKeyPairGenerator& keyPairGenerator) {
-    checkState();
-    keyPairGenerator.generate(impl_->ctx);
+void VirgilAsymmetricCipher::genKeyPair(VirgilKeyPair::Type type) {
+    int rsaSize = 0;
+    ecp_group_id ecTypeId = POLARSSL_ECP_DP_NONE;
+    switch (type) {
+        case VirgilKeyPair::Type_RSA_256:
+            rsaSize = 256;
+            break;
+        case VirgilKeyPair::Type_RSA_512:
+            rsaSize = 512;
+            break;
+        case VirgilKeyPair::Type_RSA_1024:
+            rsaSize = 1024;
+            break;
+        case VirgilKeyPair::Type_RSA_2048:
+            rsaSize = 2048;
+            break;
+        case VirgilKeyPair::Type_RSA_3072:
+            rsaSize = 3072;
+            break;
+        case VirgilKeyPair::Type_RSA_4096:
+            rsaSize = 4096;
+            break;
+        case VirgilKeyPair::Type_RSA_8192:
+            rsaSize = 8192;
+            break;
+        case VirgilKeyPair::Type_EC_SECP192R1:
+            ecTypeId = POLARSSL_ECP_DP_SECP192R1;
+            break;
+        case VirgilKeyPair::Type_EC_SECP224R1:
+            ecTypeId = POLARSSL_ECP_DP_SECP224R1;
+            break;
+        case VirgilKeyPair::Type_EC_SECP256R1:
+            ecTypeId = POLARSSL_ECP_DP_SECP256R1;
+            break;
+        case VirgilKeyPair::Type_EC_SECP384R1:
+            ecTypeId = POLARSSL_ECP_DP_SECP384R1;
+            break;
+        case VirgilKeyPair::Type_EC_SECP521R1:
+            ecTypeId = POLARSSL_ECP_DP_SECP521R1;
+            break;
+        case VirgilKeyPair::Type_EC_BP256R1:
+            ecTypeId = POLARSSL_ECP_DP_BP256R1;
+            break;
+        case VirgilKeyPair::Type_EC_BP384R1:
+            ecTypeId = POLARSSL_ECP_DP_BP384R1;
+            break;
+        case VirgilKeyPair::Type_EC_BP512R1:
+            ecTypeId = POLARSSL_ECP_DP_BP512R1;
+            break;
+        case VirgilKeyPair::Type_EC_M221:
+            ecTypeId = POLARSSL_ECP_DP_M221;
+            break;
+        case VirgilKeyPair::Type_EC_M255:
+            ecTypeId = POLARSSL_ECP_DP_M255;
+            break;
+        case VirgilKeyPair::Type_EC_M383:
+            ecTypeId = POLARSSL_ECP_DP_M383;
+            break;
+        case VirgilKeyPair::Type_EC_M511:
+            ecTypeId = POLARSSL_ECP_DP_M511;
+            break;
+        case VirgilKeyPair::Type_EC_SECP192K1:
+            ecTypeId = POLARSSL_ECP_DP_SECP192K1;
+            break;
+        case VirgilKeyPair::Type_EC_SECP224K1:
+            ecTypeId = POLARSSL_ECP_DP_SECP224K1;
+            break;
+        case VirgilKeyPair::Type_EC_SECP256K1:
+            ecTypeId = POLARSSL_ECP_DP_SECP256K1;
+            break;
+        case VirgilKeyPair::Type_Default:
+        default:
+            ecTypeId = POLARSSL_ECP_DP_BP512R1;
+            break;
+    }
+
+    const char *pers = "virgil_gen_keypair";
+    entropy_context entropy;
+    ctr_drbg_context ctr_drbg;
+
+    ::entropy_init(&entropy);
+
+    POLARSSL_ERROR_HANDLER(
+        ::ctr_drbg_init(&ctr_drbg, entropy_func, &entropy, (const unsigned char *)pers, strlen(pers))
+    );
+
+    if (rsaSize > 0) {
+        *this = VirgilAsymmetricCipher(POLARSSL_PK_RSA);
+        POLARSSL_ERROR_HANDLER_DISPOSE(
+            ::rsa_gen_key(pk_rsa(*(impl_->ctx)), ctr_drbg_random, &ctr_drbg, rsaSize, 65537),
+            ::entropy_free(&entropy)
+        );
+    } else if (ecTypeId != POLARSSL_ECP_DP_NONE) {
+        *this = VirgilAsymmetricCipher(POLARSSL_PK_ECKEY);
+        POLARSSL_ERROR_HANDLER_DISPOSE(
+            ::ecp_gen_key(ecTypeId, pk_ec(*(impl_->ctx)), ctr_drbg_random, &ctr_drbg),
+            ::entropy_free(&entropy)
+        );
+    } else {
+        ::entropy_free(&entropy);
+        throw VirgilCryptoException("VirgilKeyPair: Unknown type of the generated Key Pair.");
+    }
+
+    ::entropy_free(&entropy);
 }
 
 VirgilByteArray VirgilAsymmetricCipher::exportPrivateKeyToDER(const VirgilByteArray& pwd) const {
     checkState();
+    checkPasswordLen(pwd.size());
     PolarsslKeyExport polarsslKeyExport(impl_->ctx, PolarsslKeyExport::DER, PolarsslKeyExport::Private, pwd);
     return exportKey_(polarsslKeyExport);
 }
@@ -316,6 +465,7 @@ VirgilByteArray VirgilAsymmetricCipher::exportPublicKeyToDER() const {
 
 VirgilByteArray VirgilAsymmetricCipher::exportPrivateKeyToPEM(const VirgilByteArray& pwd) const {
     checkState();
+    checkPasswordLen(pwd.size());
     PolarsslKeyExport polarsslKeyExport(impl_->ctx, PolarsslKeyExport::PEM, PolarsslKeyExport::Private, pwd);
     return exportKey_(polarsslKeyExport);
 }

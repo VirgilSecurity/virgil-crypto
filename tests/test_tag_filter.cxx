@@ -34,15 +34,42 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @file test_hash.cxx
+ * @brief Covers class VirgilByteArrayUtils
+ */
 
-// Renames functions and properties to the CamelCase notation.
-%rename("%(camelcase)s", %$isfunction) "";
-%rename("%(camelcase)s", %$isvariable) "";
+#include "catch.hpp"
 
-// Apply a rule for renaming the enum elements to avoid the common prefixes
-// which are redundant in C#
-%rename("%(regex:/^([A-Z][a-z]+)+_(.*)/\\2/)s", %$isenumitem) "";
+#include <string>
+#include <iostream>
 
-// VirgilByteArray typemap
-#define SWIG_VIRGIL_BYTE_ARRAY
-%include "VirgilByteArray.i"
+#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilByteArrayUtils.h>
+#include <virgil/crypto/foundation/priv/VirgilTagFilter.h>
+
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilByteArrayUtils;
+using virgil::crypto::foundation::priv::VirgilTagFilter;
+
+TEST_CASE("Get TAG", "[tag-filter]") {
+    VirgilTagFilter tagFilter;
+    size_t kTagLen = 16;
+
+    SECTION("Case 1") {
+        tagFilter.reset(kTagLen);
+        tagFilter.process(VirgilByteArrayUtils::hexToBytes(
+            "5eb9ee8ee83801858815e0fc301204102ccda65f87808b4dcdfebd970b881e95")
+        );
+        REQUIRE(kTagLen == tagFilter.tag().size());
+        REQUIRE(VirgilByteArrayUtils::bytesToHex(tagFilter.tag()) == "2ccda65f87808b4dcdfebd970b881e95");
+    }
+    SECTION("Case 2") {
+        tagFilter.reset(kTagLen);
+        tagFilter.process(VirgilByteArrayUtils::hexToBytes(
+            "11111111111111301204102ccda65f87808b4dcdfebd970b881e95")
+        );
+        REQUIRE(kTagLen == tagFilter.tag().size());
+        REQUIRE(VirgilByteArrayUtils::bytesToHex(tagFilter.tag()) == "2ccda65f87808b4dcdfebd970b881e95");
+    }
+}

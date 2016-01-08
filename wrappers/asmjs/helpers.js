@@ -34,15 +34,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+Module['VirgilByteArray']['fromUTF8'] = function(string) {
+    var ba = new Module.VirgilByteArray();
+    ba.fromUTF8(string);
+    return ba;
+};
 
-// Renames functions and properties to the CamelCase notation.
-%rename("%(camelcase)s", %$isfunction) "";
-%rename("%(camelcase)s", %$isvariable) "";
+Module['VirgilByteArray']['prototype']['fromUTF8'] = function(string) {
+    var s = unescape(encodeURIComponent(string));
+    var charList = s.split('');
+    var uintArray = [];
+    for (var i = 0; i < charList.length; i++) {
+        uintArray.push(charList[i].charCodeAt(0));
+    }
+    this.assign(new Uint8Array(uintArray));
+};
 
-// Apply a rule for renaming the enum elements to avoid the common prefixes
-// which are redundant in C#
-%rename("%(regex:/^([A-Z][a-z]+)+_(.*)/\\2/)s", %$isenumitem) "";
+Module['VirgilByteArray']['prototype']['toUTF8'] = function() {
+    var encodedString = String.fromCharCode.apply(null, this.data());
+    return decodeURIComponent(escape(encodedString));
+};
 
-// VirgilByteArray typemap
-#define SWIG_VIRGIL_BYTE_ARRAY
-%include "VirgilByteArray.i"
+Module['VirgilKeyPair']['Type'] = Module['VirgilKeyPairType']

@@ -39,6 +39,7 @@
 #include <cstring>
 #include <map>
 #include <string>
+#include <sstream>
 #include <algorithm>
 
 #include <polarssl/asn1.h>
@@ -73,6 +74,19 @@ typedef enum {
     VIRGIL_PBE_PKCS12,
     VIRGIL_PBE_PKCS12_SHA1_RC4_128
 } VirgilPBEType;
+
+/**
+ * @brief Throw exception if password is too long.
+ * @note MbedTLS PKCS#12 restriction.
+ */
+static void checkPasswordLen(size_t pwdLen) {
+    const size_t kPasswordLengthMax = 31;
+    if (pwdLen > kPasswordLengthMax) {
+        std::ostringstream errMsg;
+        errMsg << "Password is too long. Max length is " << kPasswordLengthMax << " bytes.";
+        throw VirgilCryptoException(errMsg.str());
+    }
+}
 
 namespace virgil { namespace crypto { namespace foundation {
 
@@ -277,6 +291,7 @@ VirgilByteArray VirgilPBE::decrypt(const VirgilByteArray& data, const VirgilByte
 
 VirgilByteArray VirgilPBE::process(const VirgilByteArray& data, const VirgilByteArray& pwd, int mode) const {
     checkState();
+    checkPasswordLen(pwd.size());
     VirgilByteArray output(data.size() + POLARSSL_MAX_BLOCK_LENGTH);
     asn1_buf pbeParams = impl_->pbeParams;
     size_t olen = data.size(); // For RC4: output lenght = input length

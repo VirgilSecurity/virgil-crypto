@@ -48,10 +48,10 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
     public function test_ec_object_creation_with_generated_keys() {
         $keySize = 512;
 
-        $cipher = VirgilAsymmetricCipher::ec();
+        $cipher = new VirgilAsymmetricCipher();
         $this->assertInstanceOf("VirgilAsymmetricCipher", $cipher);
 
-        $cipher->genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_BP512R1));
+        $cipher->genKeyPair(VirgilKeyPair::Type_EC_BP512R1);
         $this->assertEquals(512, $cipher->keySize());
         return $cipher;
     }
@@ -102,12 +102,12 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
                 "06c8787d3d32d983aa9fefaff2d250d8".
                 "5bf654900bcf2bf1935980a52c");
 
-        $cipherCoder = VirgilAsymmetricCipher::none();
+        $cipherCoder = new VirgilAsymmetricCipher();
         $this->assertInstanceOf("VirgilAsymmetricCipher", $cipherCoder);
         $cipherCoder->setPublicKey($publicKeyDer512);
         $this->assertEquals(512, $cipherCoder->keySize());
 
-        $cipherDecoder = VirgilAsymmetricCipher::none();
+        $cipherDecoder = new VirgilAsymmetricCipher();
         $this->assertInstanceOf("VirgilAsymmetricCipher", $cipherDecoder);
         $cipherDecoder->setPrivateKey($privateKeyDer512);
         $this->assertEquals(512, $cipherDecoder->keySize());
@@ -141,12 +141,12 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
                 "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
                 "-----END EC PRIVATE KEY-----\n";
 
-        $cipherCoder = VirgilAsymmetricCipher::none();
+        $cipherCoder = new VirgilAsymmetricCipher();
         $this->assertInstanceOf("VirgilAsymmetricCipher", $cipherCoder);
         $cipherCoder->setPublicKey($publicKeyPem512);
         $this->assertEquals(512, $cipherCoder->keySize());
 
-        $cipherDecoder = VirgilAsymmetricCipher::none();
+        $cipherDecoder = new VirgilAsymmetricCipher();
         $this->assertInstanceOf("VirgilAsymmetricCipher", $cipherDecoder);
         $cipherDecoder->setPrivateKey($privateKeyPem512);
         $this->assertEquals(512, $cipherDecoder->keySize());
@@ -191,11 +191,11 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
                 "06c8787d3d32d983aa9fefaff2d250d8".
                 "5bf654900bcf2bf1935980a52c");
 
-        $cipherCoder = VirgilAsymmetricCipher::none();
+        $cipherCoder = new VirgilAsymmetricCipher();
         $cipherCoder->setPublicKey($publicKeyDer512);
         $this->assertEquals($publicKeyDer512, $cipherCoder->exportPublicKeyToDER());
 
-        $cipherDecoder = VirgilAsymmetricCipher::none();
+        $cipherDecoder = new VirgilAsymmetricCipher();
         $cipherDecoder->setPrivateKey($privateKeyDer512);
         $this->assertEquals($privateKeyDer512, $cipherDecoder->exportPrivateKeyToDER());
     }
@@ -223,11 +223,11 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
                 "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
                 "-----END EC PRIVATE KEY-----\n";
 
-        $cipherCoder = VirgilAsymmetricCipher::none();
+        $cipherCoder = new VirgilAsymmetricCipher();
         $cipherCoder->setPublicKey($publicKeyPem512);
         $this->assertEquals($publicKeyPem512, $cipherCoder->exportPublicKeyToPEM());
 
-        $cipherDecoder = VirgilAsymmetricCipher::none();
+        $cipherDecoder = new VirgilAsymmetricCipher();
         $cipherDecoder->setPrivateKey($privateKeyPem512);
         $this->assertEquals($privateKeyPem512, $cipherDecoder->exportPrivateKeyToPEM());
     }
@@ -244,7 +244,7 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
         $keyPassword = "password";
 
         $encPrivateKey = $cipher->exportPrivateKeyToDER($keyPassword);
-        $restoredCipher = VirgilAsymmetricCipher::none();
+        $restoredCipher = new VirgilAsymmetricCipher();
         $restoredCipher->setPrivateKey($encPrivateKey, $keyPassword);
 
         $encodedString = $cipher->encrypt($input);
@@ -264,7 +264,7 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
         $keyPassword = "password";
 
         $encPrivateKey = $cipher->exportPrivateKeyToPEM($keyPassword);
-        $restoredCipher = VirgilAsymmetricCipher::none();
+        $restoredCipher = new VirgilAsymmetricCipher();
         $restoredCipher->setPrivateKey($encPrivateKey, $keyPassword);
 
         $encodedString = $cipher->encrypt($input);
@@ -297,10 +297,10 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
                 "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
                 "-----END EC PRIVATE KEY-----\n";
 
-        $signer = VirgilAsymmetricCipher::none();
+        $signer = new VirgilAsymmetricCipher();
         $signer->setPrivateKey($privateKeyPem512);
 
-        $verifier = VirgilAsymmetricCipher::none();
+        $verifier = new VirgilAsymmetricCipher();
         $verifier->setPublicKey($publicKeyPem512);
 
         $hash = VirgilHash::sha512();
@@ -317,8 +317,9 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
      * @covers VirgilAsymmetricCipher::toAsn1
      */
     public function test_cipher_state_save() {
-        $expectedAsn1 = pack("H*", "300B06072A8648CE3D02010500");
-        $cipher = VirgilAsymmetricCipher::ec();
+        $expectedAsn1 = pack("H*", "301406072a8648ce3d020106092b240303020801010d");
+        $cipher = new VirgilAsymmetricCipher();
+        $cipher->genKeyPair(VirgilKeyPair::Type_EC_BP512R1);
         $asn1 = $cipher->toAsn1();
         $this->assertEquals($expectedAsn1, $asn1);
     }
@@ -327,11 +328,9 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
      * @covers VirgilAsymmetricCipher::fromAsn1
      */
     public function test_cipher_state_restore() {
-        $asn1 = pack("H*", "300B06072A8648CE3D02010500");
-        $cipher = VirgilAsymmetricCipher::none();
+        $asn1 = pack("H*", "301406072a8648ce3d020106092b240303020801010d");
+        $cipher = new VirgilAsymmetricCipher();
         $cipher->fromAsn1($asn1);
-        $cipher->genKeyPair(VirgilKeyPairGenerator::ec(VirgilKeyPairGenerator::ECKeyGroup_DP_BP512R1));
-        $this->assertEquals(512, $cipher->keySize());
     }
 }
 

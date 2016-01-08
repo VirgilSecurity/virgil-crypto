@@ -1,7 +1,8 @@
-[![Build Status](https://travis-ci.org/VirgilSecurity/virgil.svg?branch=master)](https://travis-ci.org/VirgilSecurity/virgil)
-[![GitHub license](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](https://raw.githubusercontent.com/VirgilSecurity/virgil/master/LICENSE)
-[![Documentation Developers](https://img.shields.io/badge/docs-developers-green.svg)](https://virgilsecurity.com/documents/cpp/quickstart)
-[![Documentation Doxygen](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://VirgilSecurity.github.io/virgil)
+[![Build Status](https://travis-ci.org/VirgilSecurity/virgil-crypto.svg?branch=master)](https://travis-ci.org/VirgilSecurity/virgil-crypto)
+[![GitHub license](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](https://raw.githubusercontent.com/VirgilSecurity/virgil-crypto/master/LICENSE)
+[![Documentation Developers](https://img.shields.io/badge/docs-developers-green.svg)](https://virgilsecurity.com/developers)
+[![Documentation Doxygen](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://VirgilSecurity.github.io/virgil-crypto)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/4943/badge.svg)](https://scan.coverity.com/projects/virgilsecurity-virgil-crypto)
 
 # Library: virgil
 
@@ -39,7 +40,7 @@ Chrome,Firefox,Safari | Available by Request
 * on the server-side application.
 
 ## See Also
-[Virgil Security Service SDKs](https://github.com/VirgilSecurity/virgil-cpp)
+[Virgil Security Service SDKs](https://github.com/VirgilSecurity/virgil-sdk-cpp)
 
 ## Support
 Email to: <support@VirgilSecurity.com>

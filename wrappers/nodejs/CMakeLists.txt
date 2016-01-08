@@ -36,19 +36,15 @@
 
 cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
-project (${WRAPPED_LIB_NAME}_js)
+project (${WRAPPED_LIB_NAME}_nodejs)
 
 # Enable C++11
 set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set (NODEJS_VERSION "4.1.0" CACHE STRING "Default target Node.js version.")
+set (LANG_VERSION "4.1.0" CACHE STRING "Node.js version")
 
-if (NODEJS_VERSION)
-    set (NODEJS_TARGET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/node-v${NODEJS_VERSION}")
-else ()
-    message (FATAL_ERROR "node.js version is unknown, please define it in varibale NODEJS_VERSION.")
-endif ()
+set (NODEJS_TARGET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/node-v${LANG_VERSION}")
 
 if (EXISTS "${NODEJS_TARGET_DIR}/")
     # Make target for Node
@@ -97,7 +93,7 @@ if (EXISTS "${NODEJS_TARGET_DIR}/")
     message (STATUS "V8 version hex: ${V8_VERSION_HEX}")
 else ()
     message (FATAL_ERROR
-        "NODEJS_VERSION contains invalid value - related folder is not found."
+        "LANG_VERSION contains invalid value - related folder is not found."
     )
 endif ()
 
@@ -132,8 +128,6 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif ()
 target_link_libraries (${SWIG_MODULE_${JS_MODULE_NAME}_REAL_NAME} node)
 swig_link_libraries (${JS_MODULE_NAME} ${WRAPPED_LIB_NAME})
-
-set (PLATFORM_VERSION ${NODEJS_VERSION} PARENT_SCOPE)
 
 install (TARGETS ${JS_MODULE_NAME}
         RUNTIME DESTINATION "${INSTALL_BIN_DIR_NAME}"

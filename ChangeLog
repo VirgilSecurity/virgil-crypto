@@ -1,6 +1,6 @@
 virgil ChangeLog (Sorted per date)
 
-= Version 1.2.0-rc1 released 2016-01-04
+= Version 1.2.0 released 2016-01-08
 
 Bugfix:
   * [Lib] Fix crypto module name in ASM.JS example.
@@ -8,6 +8,7 @@ Bugfix:
 
 Changes:
   * [Lib] Replace AES-CBC with AES-GCM as default symmetric algortihm.
+  * [Lib] Add restriction to password length.
   * [Lib] Remove function virgil::crypto::string_zeroize() from the wrappers.
   * [Lib] Remove action of dynamic loading JNI module from Java wrapper.
   * [Build] Exclude c++ tests from embedded platforms.

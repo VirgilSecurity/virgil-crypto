@@ -36,7 +36,7 @@ def createNativeUnixBuild(slave) {
                 organizeFiles('*.tar.gz', 'install/php')
             }
             organizeFiles('*.tar.gz', 'install/nodejs')
-            step([$class: 'ArtifactArchiver', artifacts: 'install/**', fingerprint: true])
+            archiveArtifacts('install/**')
         }
     }
 }
@@ -56,7 +56,7 @@ def createCrossplatfromBuild(slave) {
             withEnv(['NACL_SDK_ROOT=/Users/virgil/Library/VirgilEnviroment/nacl_sdk/pepper_46']) {
                 sh './utils/build.sh pnacl . build/cpp install/cpp'
             }
-            step([$class: 'ArtifactArchiver', artifacts: 'install/**', fingerprint: true])
+            archiveArtifacts('install/**')
         }
     }
 }
@@ -75,7 +75,7 @@ def createDarwinBuild(slave) {
             sh './utils/build.sh net_appletvos . build/net/tvos install/net/tvos'
             organizeFiles('*.tar.gz', 'install/cpp')
             organizeFiles('*.tar.gz', 'install/net')
-            step([$class: 'ArtifactArchiver', artifacts: 'install/**', fingerprint: true])
+            archiveArtifacts('install/**')
         }
     }
 }
@@ -91,7 +91,7 @@ def createAndroidBuild(slave) {
             }
             organizeFiles('*.tar.gz', 'install/java')
             organizeFiles('*.tar.gz', 'install/net')
-            step([$class: 'ArtifactArchiver', artifacts: 'install/**', fingerprint: true])
+            archiveArtifacts('install/**')
         }
     }
 }
@@ -99,4 +99,8 @@ def createAndroidBuild(slave) {
 def organizeFiles(pattern, where) {
     sh "find ${where} -type f -mindepth 2 -name \"${pattern}\" -exec mv {} ${where} \\;"
     sh "find ${where} -type d -empty -delete"
+}
+
+def archiveArtifacts(pattern) {
+    step([$class: 'ArtifactArchiver', artifacts: pattern, fingerprint: true, onlyIfSuccessful: true])
 }

@@ -42,6 +42,9 @@ using virgil::crypto::foundation::priv::VirgilTagFilter;
 
 using virgil::crypto::VirgilByteArray;
 
+VirgilTagFilter::VirgilTagFilter() : tagLen_(0), data_(), tag_() {
+}
+
 void VirgilTagFilter::reset(size_t tagLen) {
     tagLen_ = tagLen;
     data_.clear();

@@ -73,22 +73,29 @@ endif ()
 # Add external project build steps
 set (MBEDTLS_CONFIGURE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/configure")
 set (MBEDTLS_CONFIG_DEFINES "${MBEDTLS_CONFIGURE_DIR}/settings/defines.yml")
-set (MBEDTLS_CONFIG_PLATFORM_DEFINES "${MBEDTLS_CONFIGURE_DIR}/settings/defines_${PLATFORM}.yml")
+set (MBEDTLS_CONFIG_PLATFORM_DEFINES_LANG "${MBEDTLS_CONFIGURE_DIR}/settings/defines_${LANG}.yml")
+set (MBEDTLS_CONFIG_PLATFORM_DEFINES_PLATFROM "${MBEDTLS_CONFIGURE_DIR}/settings/defines_${PLATFORM}.yml")
 
 set (CONFIGURE_COMMAND_ARGS
     --input-dir=<SOURCE_DIR>
     --config-defines=${MBEDTLS_CONFIG_DEFINES}
 )
 
-if (EXISTS ${MBEDTLS_CONFIG_PLATFORM_DEFINES})
+if (EXISTS ${MBEDTLS_CONFIG_PLATFORM_DEFINES_LANG})
     list (APPEND CONFIGURE_COMMAND_ARGS
-        --config-platform-defines=${MBEDTLS_CONFIG_PLATFORM_DEFINES}
+        --config-platform-defines=${MBEDTLS_CONFIG_PLATFORM_DEFINES_LANG}
+    )
+endif ()
+
+if (EXISTS ${MBEDTLS_CONFIG_PLATFORM_DEFINES_PLATFROM})
+    list (APPEND CONFIGURE_COMMAND_ARGS
+        --config-platform-defines=${MBEDTLS_CONFIG_PLATFORM_DEFINES_PLATFROM}
     )
 endif ()
 
 ExternalProject_Add (${MBEDTLS_PROJECT_NAME}
     GIT_REPOSITORY "https://github.com/VirgilSecurity/mbedtls.git"
-    GIT_TAG "811e25e56c6a58f60420ad6e3213542d7fa296b4"
+    GIT_TAG "f4112c60cbd6203f9b7cafec45faa761f82fe3be"
     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbedtls"
     CMAKE_ARGS ${CMAKE_ARGS}
     UPDATE_COMMAND python "${MBEDTLS_CONFIGURE_DIR}/configure.py" ${CONFIGURE_COMMAND_ARGS}

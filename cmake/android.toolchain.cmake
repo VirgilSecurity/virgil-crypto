@@ -1627,6 +1627,7 @@ endif()
 # Define target platform as Android
 set (PLATFORM_VERSION ${ANDROID_NATIVE_API_LEVEL} CACHE STRING "Android native API level")
 set (PLATFORM_ARCH ${ANDROID_ABI} CACHE STRING "Target processor architecture")
+set (PLATFORM_EMBEDDED YES CACHE BOOL "Mark target platform as embedded")
 
 # Variables controlling behavior or set by cmake toolchain:
 #   ANDROID_ABI : "armeabi-v7a" (default), "armeabi", "armeabi-v7a with NEON", "armeabi-v7a with VFPV3", "armeabi-v6 with VFP", "x86", "mips", "arm64-v8a", "x86_64", "mips64"

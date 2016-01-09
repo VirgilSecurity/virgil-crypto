@@ -1,4 +1,3 @@
-#region "Copyright (C) 2015 Virgil Security Inc."
 /**
  * Copyright (C) 2015 Virgil Security Inc.
  *
@@ -34,41 +33,43 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#endregion
 
-using virgil.crypto;
+/**
+ * @file test_hash.cxx
+ * @brief Covers class VirgilByteArrayUtils
+ */
 
-namespace virgil.crypto {
+#include "catch.hpp"
 
-public class VirgilStreamDataSource : VirgilDataSource
-{
-    private readonly System.IO.Stream stream;
-    private readonly byte[] buffer;
+#include <string>
+#include <iostream>
 
-    public VirgilStreamDataSource(System.IO.Stream source)
-    {
-        this.stream = source;
-        this.buffer = new byte[1024];
+#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilByteArrayUtils.h>
+#include <virgil/crypto/foundation/priv/VirgilTagFilter.h>
+
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilByteArrayUtils;
+using virgil::crypto::foundation::priv::VirgilTagFilter;
+
+TEST_CASE("Get TAG", "[tag-filter]") {
+    VirgilTagFilter tagFilter;
+    size_t kTagLen = 16;
+
+    SECTION("Case 1") {
+        tagFilter.reset(kTagLen);
+        tagFilter.process(VirgilByteArrayUtils::hexToBytes(
+            "5eb9ee8ee83801858815e0fc301204102ccda65f87808b4dcdfebd970b881e95")
+        );
+        REQUIRE(kTagLen == tagFilter.tag().size());
+        REQUIRE(VirgilByteArrayUtils::bytesToHex(tagFilter.tag()) == "2ccda65f87808b4dcdfebd970b881e95");
     }
-
-    public override bool HasData()
-    {
-        return this.stream.CanRead && this.stream.Position < this.stream.Length;
+    SECTION("Case 2") {
+        tagFilter.reset(kTagLen);
+        tagFilter.process(VirgilByteArrayUtils::hexToBytes(
+            "11111111111111301204102ccda65f87808b4dcdfebd970b881e95")
+        );
+        REQUIRE(kTagLen == tagFilter.tag().size());
+        REQUIRE(VirgilByteArrayUtils::bytesToHex(tagFilter.tag()) == "2ccda65f87808b4dcdfebd970b881e95");
     }
-
-    public override byte[] Read()
-    {
-        int bytesRead = this.stream.Read(buffer, 0, buffer.Length);
-
-        if (bytesRead == buffer.Length)
-        {
-            return buffer;
-        }
-
-        byte[] result = new byte[bytesRead];
-        System.Array.Copy(buffer, result, bytesRead);
-        return result;
-    }
-}
-
 }

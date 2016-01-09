@@ -80,7 +80,7 @@ project (VirgilSecurity)
 
 # Set library version
 set (VIRGIL_VERSION_MAJOR 1)
-set (VIRGIL_VERSION_MINOR 1)
+set (VIRGIL_VERSION_MINOR 2)
 set (VIRGIL_VERSION_PATCH 0)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 1)
@@ -155,8 +155,6 @@ set_property (CACHE LANG PROPERTY STRINGS
     "python"
     "ruby"
 )
-set (LANG_VERSION "" CACHE STRING "Target language minimum supported version")
-
 set (LIB_LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API or not")
 set (LIB_FILE_IO OFF CACHE BOOL "Defines whether to include module depends on file IO or not")
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
@@ -203,17 +201,21 @@ endif (ENABLE_TESTING)
 add_subdirectory (lib)
 add_subdirectory (wrappers)
 
+# Configure platform after submodules configuration
+string (TOLOWER ${CMAKE_SYSTEM_NAME} PLATFORM_LOWER)
+set (LANG_VERSION "" CACHE STRING "Target language minimum supported version")
+set (PLATFORM "${PLATFORM_LOWER}" CACHE STRING "Target platform")
+set (PLATFORM_VERSION "${CMAKE_SYSTEM_VERSION}" CACHE STRING "Target platform")
+set (PLATFORM_EMBEDDED NO CACHE BOOL "Mark target platform as embedded")
+mark_as_advanced (PLATFORM_EMBEDDED PLATFORM_VERSION)
+
 # Enable C++ tests only for native platforms
-if (LANG STREQUAL "cpp" AND NOT DEFINED PLATFORM)
+if (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
     if (ENABLE_TESTING)
         add_subdirectory (tests)
     endif (ENABLE_TESTING)
-endif ()
+endif (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
 
-# Configure platform after submodules configuration
-string (TOLOWER ${CMAKE_SYSTEM_NAME} PLATFORM_LOWER)
-set (PLATFORM "${PLATFORM_LOWER}" CACHE STRING "Target platform")
-set (PLATFORM_VERSION "${CMAKE_SYSTEM_VERSION}" CACHE STRING "Target platform")
 
 # Define full platform name
 set (LIB_NAME_FULL "virgil-crypto-${VIRGIL_VERSION}-${LANG}")

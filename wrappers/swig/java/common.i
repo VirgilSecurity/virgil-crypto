@@ -1,4 +1,3 @@
-#region "Copyright (C) 2015 Virgil Security Inc."
 /**
  * Copyright (C) 2015 Virgil Security Inc.
  *
@@ -34,41 +33,38 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#endregion
 
-using virgil.crypto;
+%javaexception("java.io.IOException") virgil::crypto::VirgilDataSource::hasData {}
+%javaexception("java.io.IOException") virgil::crypto::VirgilDataSource::read {}
+%javaexception("java.io.IOException") virgil::crypto::VirgilDataSink::write {}
+%javaexception("java.io.IOException") virgil::crypto::VirgilDataSink::isGood {}
 
-namespace virgil.crypto {
+%typemap(javainterfaces) SWIGTYPE "java.lang.AutoCloseable";
+%typemap(javacode) SWIGTYPE %{
+  @Override
+  public void close() {
+    delete();
+  }
+%}
 
-public class VirgilStreamDataSource : VirgilDataSource
-{
-    private readonly System.IO.Stream stream;
-    private readonly byte[] buffer;
+%typemap(javacode) virgil::crypto::VirgilDataSource %{
+  @Override
+  public void close() throws java.io.IOException {
+    delete();
+  }
+%}
 
-    public VirgilStreamDataSource(System.IO.Stream source)
-    {
-        this.stream = source;
-        this.buffer = new byte[1024];
-    }
+%typemap(javacode) virgil::crypto::VirgilDataSink %{
+  @Override
+  public void close() throws java.io.IOException {
+    delete();
+  }
+%}
 
-    public override bool HasData()
-    {
-        return this.stream.CanRead && this.stream.Position < this.stream.Length;
-    }
+// VirgilByteArray typemap
+#define SWIG_VIRGIL_BYTE_ARRAY
+%include "java/VirgilByteArray.i"
 
-    public override byte[] Read()
-    {
-        int bytesRead = this.stream.Read(buffer, 0, buffer.Length);
-
-        if (bytesRead == buffer.Length)
-        {
-            return buffer;
-        }
-
-        byte[] result = new byte[bytesRead];
-        System.Array.Copy(buffer, result, bytesRead);
-        return result;
-    }
-}
-
-}
+// Apply a rule for renaming the enum elements to avoid the common prefixes
+// which are redundant in C#
+%rename("%(regex:/^([A-Z][a-z]+)+_(.*)/\\2/)s", %$isenumitem) "";

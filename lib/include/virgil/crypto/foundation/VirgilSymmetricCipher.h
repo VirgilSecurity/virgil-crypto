@@ -103,7 +103,7 @@ public:
      */
     size_t blockSize() const;
     /**
-     * @brief Returns the size of the cipher's IV in bytes.
+     * @brief Returns the size of the cipher's IV in octets.
      */
     size_t ivSize() const;
     /**
@@ -117,6 +117,11 @@ public:
      */
     size_t keyLength() const;
     /**
+     * @brief Returns the authentication tag length of the cipher.
+     * @return tag length, in octets.
+     */
+    size_t authTagLength() const;
+    /**
      * @brief Returns true if cipher is in the encryption mode.
      */
     bool isEncryptionMode() const;
@@ -124,6 +129,14 @@ public:
      * @brief Returns true if cipher is in the decryption mode.
      */
     bool isDecryptionMode() const;
+    /**
+     * @brief Returns true if cipher is configured to support authenticated encryption and decryption.
+     */
+    bool isAuthMode() const;
+    /**
+     * @brief Returns true if cipher support padding.
+     */
+    bool isSupportPadding() const;
     ///@}
 
     /**
@@ -149,6 +162,7 @@ public:
      *
      * Default value is PKCS7.
      * @note This parameter is used only for cipher modes that use padding.
+     * @see isSupportPadding()
      */
     void setPadding(VirgilSymmetricCipherPadding padding);
     /**

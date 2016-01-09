@@ -34,45 +34,56 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Insert static module initialization to dynamicaly library load
-%pragma(java) jniclasscode=%{
-  static {
-    try {
-        System.loadLibrary("@SWIG_MODULE_NAME@");
-    } catch (UnsatisfiedLinkError error) {
-      System.err.println("Native code library failed to load. \n" + error);
-      System.exit(1);
-    }
-  }
-%}
+#ifndef VIRGIL_CRYPTO_TAG_FILTER_H
+#define VIRGIL_CRYPTO_TAG_FILTER_H
 
-%javaexception("java.io.IOException") virgil::crypto::VirgilDataSource::hasData {}
-%javaexception("java.io.IOException") virgil::crypto::VirgilDataSource::read {}
-%javaexception("java.io.IOException") virgil::crypto::VirgilDataSink::write {}
-%javaexception("java.io.IOException") virgil::crypto::VirgilDataSink::isGood {}
+#include <cstddef>
 
-%typemap(javainterfaces) SWIGTYPE "java.lang.AutoCloseable";
-%typemap(javacode) SWIGTYPE %{
-  @Override
-  public void close() {
-    delete();
-  }
-%}
+#include <virgil/crypto/VirgilByteArray.h>
 
-%typemap(javacode) virgil::crypto::VirgilDataSource %{
-  @Override
-  public void close() throws java.io.IOException {
-    delete();
-  }
-%}
+namespace virgil { namespace crypto { namespace foundation { namespace priv {
 
-%typemap(javacode) virgil::crypto::VirgilDataSink %{
-  @Override
-  public void close() throws java.io.IOException {
-    delete();
-  }
-%}
+/**
+ * @brief This class analize incoming data stream to filter Virgil TAG.
+ * @note Virgil TAG MUST be at the end of the data stream.
+ */
+class VirgilTagFilter {
+public:
+    /**
+     * @brief Base initialization.
+     * @note Method reset() MUST be called anyway.
+     */
+    VirgilTagFilter();
+    /**
+     * @brief Get ready for data filtration.
+     * @param tagLen - length of the expected Virgil TAG.
+     * @note This method MUST be called before any data will be processed.
+     */
+    void reset(size_t tagLen);
+    /**
+     * @brief Filter given data.
+     */
+    void process(const virgil::crypto::VirgilByteArray& data);
+    /**
+     * @brief Return if data exist after filtration.
+     */
+    bool hasData() const;
+    /**
+     * @brief Return filtrated data.
+     */
+    virgil::crypto::VirgilByteArray popData();
+    /**
+     * @brief Return tag that was extracted from processed data.
+     * @note MUST be called after method finish().
+     * @return Tag or empty byte array.
+     */
+    virgil::crypto::VirgilByteArray tag() const;
+private:
+    size_t tagLen_;
+    virgil::crypto::VirgilByteArray data_;
+    virgil::crypto::VirgilByteArray tag_;
+};
 
-// VirgilByteArray typemap
-#define SWIG_VIRGIL_BYTE_ARRAY
-%include "java/VirgilByteArray.i"
+}}}}
+
+#endif /* VIRGIL_CRYPTO_TAG_FILTER_H */

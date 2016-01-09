@@ -39,6 +39,10 @@
 %rename("%(camelcase)s", %$isfunction) "";
 %rename("%(camelcase)s", %$isvariable) "";
 
+// Apply a rule for renaming the enum elements to avoid the common prefixes
+// which are redundant in C#
+%rename("%(regex:/^([A-Z][a-z]+)+_(.*)/\\2/)s", %$isenumitem) "";
+
 // VirgilByteArray typemap
 #define SWIG_VIRGIL_BYTE_ARRAY
 %include "VirgilByteArray.i"

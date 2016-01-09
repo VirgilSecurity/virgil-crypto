@@ -64,7 +64,7 @@ VirgilByteArray VirgilStreamSigner::sign(VirgilDataSource& source, const VirgilB
     }
     VirgilByteArray digest = hash_.finish();
     // Prepare cipher
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
+    VirgilAsymmetricCipher cipher;
     cipher.setPrivateKey(privateKey, privateKeyPassword);
     // Sign digest
     VirgilByteArray signedDigest = cipher.sign(digest);
@@ -92,7 +92,7 @@ bool VirgilStreamSigner::verify(VirgilDataSource& source, const VirgilByteArray&
     }
     VirgilByteArray digest = hash.finish();
     // Prepare cipher
-    VirgilAsymmetricCipher cipher = VirgilAsymmetricCipher::none();
+    VirgilAsymmetricCipher cipher;
     cipher.setPublicKey(publicKey);
     // Verify
     return cipher.verify(digest, signedDigest);

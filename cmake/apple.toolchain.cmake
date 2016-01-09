@@ -15,6 +15,9 @@
 #   This forces SDKS will be selected from the <Platform>Simulator.platform folder,
 #   if omitted <Platform>OS.platform is used.
 #
+# ENABLE_BITCODE
+#   Same as XCode option, default is YES
+#
 # CMAKE_APPLE_PLATFORM_DEVELOPER_ROOT = automatic(default) or /path/to/platform/Developer folder
 #   By default this location is automatcially chosen based on the PLATFORM value above.
 #   If set manually, it will override the default location and force the user of a particular Developer Platform
@@ -42,6 +45,8 @@ set (UNIX True)
 set (APPLE True)
 
 set (LANG "cpp" CACHE STRING "Target language")
+set (PLATFORM_EMBEDDED YES CACHE BOOL "Mark target platform as embedded")
+set (ENABLE_BITCODE YES CACHE BOOL "Instruct compiler to insert Bitcode to the object files")
 
 if (PLATFORM STREQUAL "ios")
     set (APPLE_IOS True)
@@ -186,6 +191,19 @@ elseif (APPLE_TV)
 endif ()
 set (PLATFORM_VERSION ${APPLE_PLATFORM_VERSION_MIN} CACHE STRING "Minimum version of the target platform")
 
+# Define XCode ENABLE_BITCODE option
+if (ENABLE_BITCODE)
+    if (SIMULATOR)
+        set (BITCODE_FLAG "-fembed-bitcode-marker")
+    else (SIMULATOR)
+        set (BITCODE_FLAG "-fembed-bitcode")
+    endif (SIMULATOR)
+    message (STATUS "Bitcode: ENABLED")
+else (ENABLE_BITCODE)
+    set (BITCODE_FLAG "")
+    message (STATUS "Bitcode: DISABLED")
+endif (ENABLE_BITCODE)
+
 # Set the find root to the Apple *OS developer roots and to user defined paths
 set (CMAKE_FIND_ROOT_PATH
     ${CMAKE_APPLE_PLATFORM_DEVELOPER_ROOT}
@@ -228,11 +246,8 @@ set (CMAKE_CXX_COMPILER_WORKS TRUE)
 set (CMAKE_C_COMPILER_WORKS TRUE)
 
 # Hidden visibilty is required for cxx on Apple *OS
-set (CMAKE_C_FLAGS "${APPLE_VERSION_FLAG} -isysroot ${CMAKE_OSX_SYSROOT}" CACHE STRING "")
-set (CMAKE_CXX_FLAGS
-    "${APPLE_VERSION_FLAG} -fvisibility=hidden -fvisibility-inlines-hidden -std=gnu++11 -isysroot ${CMAKE_OSX_SYSROOT}"
-    CACHE STRING ""
-)
+set (CMAKE_C_FLAGS "${APPLE_VERSION_FLAG} ${BITCODE_FLAG} -isysroot ${CMAKE_OSX_SYSROOT}" CACHE STRING "")
+set (CMAKE_CXX_FLAGS "${APPLE_VERSION_FLAG} ${BITCODE_FLAG} -fvisibility=hidden -fvisibility-inlines-hidden -std=gnu++11 -isysroot ${CMAKE_OSX_SYSROOT}" CACHE STRING "")
 
 set (CMAKE_C_LINK_FLAGS "-Wl,-search_paths_first ${CMAKE_C_LINK_FLAGS}")
 set (CMAKE_CXX_LINK_FLAGS "-Wl,-search_paths_first ${CMAKE_CXX_LINK_FLAGS}")

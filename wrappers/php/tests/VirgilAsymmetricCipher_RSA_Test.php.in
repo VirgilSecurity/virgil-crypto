@@ -46,13 +46,11 @@ class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
      * @covers VirgilAsymmetricCipher::genKeyPair
      */
     public function test_rsa_object_creation_with_generated_keys() {
-        $keySize = 512;
-
-        $cipher = VirgilAsymmetricCipher::rsa();
+        $cipher = new VirgilAsymmetricCipher();
         $this->assertInstanceOf("VirgilAsymmetricCipher", $cipher);
 
-        $cipher->genKeyPair(VirgilKeyPairGenerator::rsa($keySize));
-        $this->assertEquals($keySize, $cipher->keySize());
+        $cipher->genKeyPair(VirgilKeyPair::Type_RSA_512);
+        $this->assertEquals(512, $cipher->keySize());
         return $cipher;
     }
 
@@ -104,12 +102,12 @@ class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
                 "8f8c13b701384386185fb82eda81afed".
                 "8ad38a22286a85467101172c30e6");
 
-        $cipherCoder = VirgilAsymmetricCipher::none();
+        $cipherCoder = new VirgilAsymmetricCipher();
         $this->assertInstanceOf("VirgilAsymmetricCipher", $cipherCoder);
         $cipherCoder->setPublicKey($publicKeyDer512);
         $this->assertEquals(512, $cipherCoder->keySize());
 
-        $cipherDecoder = VirgilAsymmetricCipher::none();
+        $cipherDecoder = new VirgilAsymmetricCipher();
         $this->assertInstanceOf("VirgilAsymmetricCipher", $cipherDecoder);
         $cipherDecoder->setPrivateKey($privateKeyDer512);
         $this->assertEquals(512, $cipherDecoder->keySize());
@@ -143,12 +141,12 @@ class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
                 "tFCwQZczpa/OtOqYKHHpFevnLEVWrlHvCRgJeJU=\n".
                 "-----END RSA PRIVATE KEY-----\n";
 
-        $cipherCoder = VirgilAsymmetricCipher::none();
+        $cipherCoder = new VirgilAsymmetricCipher();
         $this->assertInstanceOf("VirgilAsymmetricCipher", $cipherCoder);
         $cipherCoder->setPublicKey($publicKeyPem512);
         $this->assertEquals(512, $cipherCoder->keySize());
 
-        $cipherDecoder = VirgilAsymmetricCipher::none();
+        $cipherDecoder = new VirgilAsymmetricCipher();
         $this->assertInstanceOf("VirgilAsymmetricCipher", $cipherDecoder);
         $cipherDecoder->setPrivateKey($privateKeyPem512);
         $this->assertEquals(512, $cipherDecoder->keySize());
@@ -195,11 +193,11 @@ class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
                 "8f8c13b701384386185fb82eda81afed".
                 "8ad38a22286a85467101172c30e6");
 
-        $cipherCoder = VirgilAsymmetricCipher::none();
+        $cipherCoder = new VirgilAsymmetricCipher();
         $cipherCoder->setPublicKey($publicKeyDer512);
         $this->assertEquals($publicKeyDer512, $cipherCoder->exportPublicKeyToDER());
 
-        $cipherDecoder = VirgilAsymmetricCipher::none();
+        $cipherDecoder = new VirgilAsymmetricCipher();
         $cipherDecoder->setPrivateKey($privateKeyDer512);
         $this->assertEquals($privateKeyDer512, $cipherDecoder->exportPrivateKeyToDER());
     }
@@ -227,11 +225,11 @@ class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
                 "tFCwQZczpa/OtOqYKHHpFevnLEVWrlHvCRgJeJU=\n".
                 "-----END RSA PRIVATE KEY-----\n";
 
-        $cipherCoder = VirgilAsymmetricCipher::none();
+        $cipherCoder = new VirgilAsymmetricCipher();
         $cipherCoder->setPublicKey($publicKeyPem512);
         $this->assertEquals($publicKeyPem512, $cipherCoder->exportPublicKeyToPEM());
 
-        $cipherDecoder = VirgilAsymmetricCipher::none();
+        $cipherDecoder = new VirgilAsymmetricCipher();
         $cipherDecoder->setPrivateKey($privateKeyPem512);
         $this->assertEquals($privateKeyPem512, $cipherDecoder->exportPrivateKeyToPEM());
     }
@@ -248,7 +246,7 @@ class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
         $keyPassword = "password";
 
         $encPrivateKey = $cipher->exportPrivateKeyToDER($keyPassword);
-        $restoredCipher = VirgilAsymmetricCipher::none();
+        $restoredCipher = new VirgilAsymmetricCipher();
         $restoredCipher->setPrivateKey($encPrivateKey, $keyPassword);
 
         $encodedString = $cipher->encrypt($input);
@@ -268,7 +266,7 @@ class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
         $keyPassword = "password";
 
         $encPrivateKey = $cipher->exportPrivateKeyToPEM($keyPassword);
-        $restoredCipher = VirgilAsymmetricCipher::none();
+        $restoredCipher = new VirgilAsymmetricCipher();
         $restoredCipher->setPrivateKey($encPrivateKey, $keyPassword);
 
         $encodedString = $cipher->encrypt($input);
@@ -302,10 +300,10 @@ class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
                 "tFCwQZczpa/OtOqYKHHpFevnLEVWrlHvCRgJeJU=\n".
                 "-----END RSA PRIVATE KEY-----\n";
 
-        $signer = VirgilAsymmetricCipher::none();
+        $signer = new VirgilAsymmetricCipher();
         $signer->setPrivateKey($privateKeyPem512);
 
-        $verifier = VirgilAsymmetricCipher::none();
+        $verifier = new VirgilAsymmetricCipher();
         $verifier->setPublicKey($publicKeyPem512);
 
         $hash = VirgilHash::sha256();
@@ -323,7 +321,8 @@ class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
      */
     public function test_cipher_state_save() {
         $expectedAsn1 = pack("H*", "300d06092a864886f70d0101010500");
-        $cipher = VirgilAsymmetricCipher::rsa();
+        $cipher = new VirgilAsymmetricCipher();
+        $cipher->genKeyPair(VirgilKeyPair::Type_RSA_512);
         $asn1 = $cipher->toAsn1();
         $this->assertEquals($expectedAsn1, $asn1);
     }
@@ -333,10 +332,8 @@ class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
      */
     public function test_cipher_state_restore() {
         $asn1 = pack("H*", "300d06092a864886f70d0101010500");
-        $cipher = VirgilAsymmetricCipher::none();
+        $cipher = new VirgilAsymmetricCipher();
         $cipher->fromAsn1($asn1);
-        $cipher->genKeyPair(VirgilKeyPairGenerator::rsa(512));
-        $this->assertEquals(512, $cipher->keySize());
     }
 }
 

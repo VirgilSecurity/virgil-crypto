@@ -90,10 +90,6 @@ configure_file (
     "${wrappers_SOURCE_DIR}/swig/wrapper.i.in"
     "${WRAPPER_INTERFACE_FILE}"
 )
-configure_file (
-    "${wrappers_SOURCE_DIR}/swig/java/common.i.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/java/common.i"
-)
 
 set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY CPLUSPLUS ON)
 set_property (

@@ -1,4 +1,3 @@
-#region "Copyright (C) 2015 Virgil Security Inc."
 /**
  * Copyright (C) 2015 Virgil Security Inc.
  *
@@ -34,41 +33,46 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#endregion
 
-using virgil.crypto;
+#include <virgil/crypto/foundation/priv/VirgilTagFilter.h>
 
-namespace virgil.crypto {
+#include <virgil/crypto/VirgilByteArray.h>
 
-public class VirgilStreamDataSource : VirgilDataSource
-{
-    private readonly System.IO.Stream stream;
-    private readonly byte[] buffer;
+using virgil::crypto::foundation::priv::VirgilTagFilter;
 
-    public VirgilStreamDataSource(System.IO.Stream source)
-    {
-        this.stream = source;
-        this.buffer = new byte[1024];
-    }
+using virgil::crypto::VirgilByteArray;
 
-    public override bool HasData()
-    {
-        return this.stream.CanRead && this.stream.Position < this.stream.Length;
-    }
+VirgilTagFilter::VirgilTagFilter() : tagLen_(0), data_(), tag_() {
+}
 
-    public override byte[] Read()
-    {
-        int bytesRead = this.stream.Read(buffer, 0, buffer.Length);
+void VirgilTagFilter::reset(size_t tagLen) {
+    tagLen_ = tagLen;
+    data_.clear();
+    tag_.clear();
+}
 
-        if (bytesRead == buffer.Length)
-        {
-            return buffer;
-        }
+void VirgilTagFilter::process(const VirgilByteArray& data) {
+    tag_.insert(tag_.end(), data.begin(), data.end());
 
-        byte[] result = new byte[bytesRead];
-        System.Array.Copy(buffer, result, bytesRead);
-        return result;
+    ptrdiff_t tagSurplusLen = tag_.size() - tagLen_;
+    if (tagSurplusLen > 0) {
+        VirgilByteArray::iterator tagSurplusBegin = tag_.begin();
+        VirgilByteArray::iterator tagSurplusEnd = tagSurplusBegin + tagSurplusLen;
+        data_.insert(data_.end(), tagSurplusBegin, tagSurplusEnd);
+        tag_.erase(tagSurplusBegin, tagSurplusEnd);
     }
 }
 
+bool VirgilTagFilter::hasData() const {
+    return !data_.empty();
+}
+
+VirgilByteArray VirgilTagFilter::popData() {
+    VirgilByteArray result;
+    result.swap(data_);
+    return result;
+}
+
+VirgilByteArray VirgilTagFilter::tag() const {
+    return tag_;
 }

@@ -45,6 +45,7 @@
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+#include <virgil/crypto/foundation/priv/VirgilTagFilter.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
@@ -55,16 +56,19 @@ using virgil::crypto::foundation::VirgilSymmetricCipherImpl;
 using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
+using virgil::crypto::foundation::priv::VirgilTagFilter;
 
 namespace virgil { namespace crypto { namespace foundation {
 
 class VirgilSymmetricCipherImpl {
 public:
-    VirgilSymmetricCipherImpl(cipher_type_t cipherType) : type(POLARSSL_CIPHER_NONE), ctx(0), iv() {
+    VirgilSymmetricCipherImpl(cipher_type_t cipherType)
+            : type(POLARSSL_CIPHER_NONE), ctx(0), iv(), tagFilter() {
         init_(cipherType);
     }
 
-    VirgilSymmetricCipherImpl(const VirgilSymmetricCipherImpl& other) : type(POLARSSL_CIPHER_NONE), ctx(0), iv() {
+    VirgilSymmetricCipherImpl(const VirgilSymmetricCipherImpl& other)
+            : type(POLARSSL_CIPHER_NONE), ctx(0), iv(), tagFilter() {
         init_(other.type);
     }
 
@@ -83,13 +87,13 @@ public:
 
 private:
     void init_(cipher_type_t cipherType) {
+        ctx = new cipher_context_t();
+        ::cipher_init(ctx);
         type = cipherType;
         if (cipherType == POLARSSL_CIPHER_NONE) {
             return;
         }
         const cipher_info_t * info = cipher_info_from_type(cipherType);
-        ctx = new cipher_context_t();
-        ::cipher_init(ctx);
         POLARSSL_ERROR_HANDLER_DISPOSE(
             ::cipher_init_ctx(ctx, info),
             free_()
@@ -109,6 +113,7 @@ public:
     cipher_type_t type;
     cipher_context_t *ctx;
     VirgilByteArray iv;
+    VirgilTagFilter tagFilter;
 };
 
 }}}
@@ -145,7 +150,7 @@ VirgilSymmetricCipher::~VirgilSymmetricCipher() throw() {
 }
 
 VirgilSymmetricCipher VirgilSymmetricCipher::aes256() {
-    return VirgilSymmetricCipher(POLARSSL_CIPHER_AES_256_CBC);
+    return VirgilSymmetricCipher(POLARSSL_CIPHER_AES_256_GCM);
 }
 
 std::string VirgilSymmetricCipher::name() const {
@@ -172,6 +177,16 @@ size_t VirgilSymmetricCipher::keyLength() const {
     return size_t((keySize() + 7) / 8);
 }
 
+size_t VirgilSymmetricCipher::authTagLength() const {
+    checkState();
+    switch (::cipher_get_cipher_mode(impl_->ctx)) {
+        case POLARSSL_MODE_GCM:
+            return 16;
+        default:
+            return 0;
+    }
+}
+
 bool VirgilSymmetricCipher::isEncryptionMode() const {
     checkState();
     return ::cipher_get_operation(impl_->ctx) == POLARSSL_ENCRYPT;
@@ -180,6 +195,16 @@ bool VirgilSymmetricCipher::isEncryptionMode() const {
 bool VirgilSymmetricCipher::isDecryptionMode() const {
     checkState();
     return ::cipher_get_operation(impl_->ctx) == POLARSSL_DECRYPT;
+}
+
+bool VirgilSymmetricCipher::isAuthMode() const {
+    checkState();
+    return ::cipher_get_cipher_mode(impl_->ctx) == POLARSSL_MODE_GCM;
+}
+
+bool VirgilSymmetricCipher::isSupportPadding() const {
+    checkState();
+    return ::cipher_get_cipher_mode(impl_->ctx) == POLARSSL_MODE_CBC;
 }
 
 void VirgilSymmetricCipher::setEncryptionKey(const VirgilByteArray& key) {
@@ -227,6 +252,12 @@ void VirgilSymmetricCipher::setIV(const VirgilByteArray& iv) {
 void VirgilSymmetricCipher::reset() {
     checkState();
     POLARSSL_ERROR_HANDLER(::cipher_reset(impl_->ctx));
+    if (cipher_get_cipher_mode(impl_->ctx) == POLARSSL_MODE_GCM) {
+        POLARSSL_ERROR_HANDLER(::cipher_update_ad(impl_->ctx, NULL, 0));
+    }
+    if (isDecryptionMode()) {
+        impl_->tagFilter.reset(blockSize());
+    }
 }
 
 void VirgilSymmetricCipher::clear() {
@@ -239,14 +270,15 @@ void VirgilSymmetricCipher::clear() {
 
 VirgilByteArray VirgilSymmetricCipher::crypt(const VirgilByteArray& input, const VirgilByteArray& iv) {
     checkState();
-    size_t writtenBytes = 0;
-    size_t bufLen = input.size() + this->blockSize();
-    VirgilByteArray result(bufLen);
-    POLARSSL_ERROR_HANDLER(
-        ::cipher_crypt(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(iv), VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(input),
-                result.data(), &writtenBytes)
-    );
-    result.resize(writtenBytes);
+    setIV(iv);
+    reset();
+    VirgilByteArray firstChunk = update(input);
+    VirgilByteArray lastChunk = finish();
+
+    VirgilByteArray result;
+    result.insert(result.end(), firstChunk.begin(), firstChunk.end());
+    result.insert(result.end(), lastChunk.begin(), lastChunk.end());
+
     return result;
 }
 
@@ -255,9 +287,21 @@ VirgilByteArray VirgilSymmetricCipher::update(const VirgilByteArray& input) {
     size_t writtenBytes = 0;
     size_t bufLen = input.size() + this->blockSize();
     VirgilByteArray result(bufLen);
-    POLARSSL_ERROR_HANDLER(
-        ::cipher_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(input), result.data(), &writtenBytes)
-    );
+
+    if (isDecryptionMode() && isAuthMode()) {
+        impl_->tagFilter.process(input);
+        if (impl_->tagFilter.hasData()) {
+            VirgilByteArray data = impl_->tagFilter.popData();
+            POLARSSL_ERROR_HANDLER(
+                ::cipher_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data), result.data(), &writtenBytes)
+            );
+        }
+    } else {
+        POLARSSL_ERROR_HANDLER(
+            ::cipher_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(input), result.data(), &writtenBytes)
+        );
+    }
+
     result.resize(writtenBytes);
     return result;
 }
@@ -265,12 +309,25 @@ VirgilByteArray VirgilSymmetricCipher::update(const VirgilByteArray& input) {
 VirgilByteArray VirgilSymmetricCipher::finish() {
     checkState();
     size_t writtenBytes = 0;
-    size_t bufLen = this->blockSize();
-    VirgilByteArray result(bufLen);
+    VirgilByteArray result(blockSize());
     POLARSSL_ERROR_HANDLER(
         ::cipher_finish(impl_->ctx, result.data(), &writtenBytes)
     );
     result.resize(writtenBytes);
+    if (isAuthMode()) {
+        if (isEncryptionMode()) {
+            VirgilByteArray tag(authTagLength());
+            POLARSSL_ERROR_HANDLER(
+                ::cipher_write_tag(impl_->ctx, tag.data(), tag.size())
+            );
+            result.insert(result.end(), tag.begin(), tag.end());
+        } else if (isDecryptionMode()) {
+            VirgilByteArray tag = impl_->tagFilter.tag();
+            POLARSSL_ERROR_HANDLER(
+                ::cipher_check_tag(impl_->ctx, tag.data(), tag.size())
+            );
+        }
+    }
     return result;
 }
 
@@ -308,7 +365,6 @@ void VirgilSymmetricCipher::asn1Read(VirgilAsn1Reader& asn1Reader) {
         ::oid_get_cipher_alg(&oidAsn1Buf, &type)
     );
 
-    VirgilByteArray iv = asn1Reader.readOctetString();
     *this = VirgilSymmetricCipher(type);
-    setIV(iv);
+    setIV(asn1Reader.readOctetString());
 }

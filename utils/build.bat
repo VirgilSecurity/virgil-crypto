@@ -100,6 +100,7 @@ cd "%BUILD_DIR%"
 if "%TARGET_NAME%" == "cpp" goto cpp
 if "%TARGET_NAME%" == "java" goto java
 if "%TARGET_NAME%" == "net" goto net
+if "%TARGET_NAME%" == "nodejs" goto nodejs
 
 :: No supported target was found
 goto error_target_not_supported
@@ -110,6 +111,13 @@ goto :eof
 
 :java
 if "%JAVA_HOME%" == "" goto error_not_java_home
+goto native
+goto :eof
+
+:nodejs
+if not "%TARGET_VERSION%" == "" (
+    set CMAKE_ARGS=%CMAKE_ARGS% -DLANG_VERSION=%TARGET_VERSION%
+)
 goto native
 goto :eof
 

@@ -38,8 +38,8 @@
 setlocal
 
 :: Prepare environment variables
-call :remove_quotes MSVC_ROOT
-call :remove_quotes JAVA_HOME
+if defined MSVC_ROOT call :remove_quotes MSVC_ROOT
+if defined JAVA_HOME call :remove_quotes JAVA_HOME
 
 :: Check environment prerequisite
 if "%MSVC_ROOT%" == "" goto error_not_msvc_root
@@ -120,9 +120,8 @@ setlocal
     call :clean_dirs %BUILD_DIR%
     call :configure_%PLATFORM_ARCH%
     set CMAKE_ARGS=%CMAKE_ARGS% -DPLATFORM_ARCH=%PLATFORM_ARCH% -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%"
-    cmake %CMAKE_ARGS% -DLANG=%TARGET_NAME% "%SRC_DIR%"
-    nmake
-    nmake install
+    cmake %CMAKE_ARGS% -DLANG=%TARGET_NAME% "%SRC_DIR%" || goto end
+    nmake && nmake install || goto end
 endlocal
 :: Build x64 architecture
 setlocal
@@ -130,9 +129,8 @@ setlocal
     call :clean_dirs %BUILD_DIR%
     call :configure_%PLATFORM_ARCH%
     set CMAKE_ARGS=%CMAKE_ARGS% -DPLATFORM_ARCH=%PLATFORM_ARCH% -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%"
-    cmake %CMAKE_ARGS% -DLANG=%TARGET_NAME% "%SRC_DIR%"
-    nmake
-    nmake install
+    cmake %CMAKE_ARGS% -DLANG=%TARGET_NAME% "%SRC_DIR%" || goto end
+    nmake && nmake install || goto end
 endlocal
 :: Make .NET specific file organization
 xcopy /y/q "%SRC_DIR%\VERSION" "%INSTALL_DIR%" >nul
@@ -148,9 +146,8 @@ setlocal
     call :clean_dirs %BUILD_DIR%
     call :configure_%PLATFORM_ARCH%
     set CMAKE_ARGS=%CMAKE_ARGS% -DPLATFORM_ARCH=%PLATFORM_ARCH% -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%"
-    cmake %CMAKE_ARGS% -DLANG=%TARGET_NAME% "%SRC_DIR%"
-    nmake
-    nmake install
+    cmake %CMAKE_ARGS% -DLANG=%TARGET_NAME% "%SRC_DIR%" || goto end
+    nmake && nmake install || goto end
     xcopy /y/q "%SRC_DIR%\VERSION" "%INSTALL_DIR%" >nul
     set /p ARCHIVE_NAME=<lib_name_full.txt
     call :archive_artifacts %INSTALL_DIR% %ARCHIVE_NAME%
@@ -162,17 +159,12 @@ setlocal
     call :clean_dirs %BUILD_DIR%
     call :configure_%PLATFORM_ARCH%
     set CMAKE_ARGS=%CMAKE_ARGS% -DPLATFORM_ARCH=%PLATFORM_ARCH% -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%"
-    cmake %CMAKE_ARGS% -DLANG=%TARGET_NAME% "%SRC_DIR%"
-    nmake
-    nmake install
+    cmake %CMAKE_ARGS% -DLANG=%TARGET_NAME% "%SRC_DIR%" || goto end
+    nmake && nmake install || goto end
     xcopy /y/q "%SRC_DIR%\VERSION" "%INSTALL_DIR%" >nul
     set /p ARCHIVE_NAME=<lib_name_full.txt
     call :archive_artifacts %INSTALL_DIR% %ARCHIVE_NAME%
 endlocal
-goto :eof
-:organize_artifacts
-pushd %1
-popd
 goto :eof
 
 :: usage: call :archive_artifacts <src_dir> <archive_name>
@@ -255,4 +247,5 @@ call :show_error Target with name '%TARGET_NAME%' is not supported.
 goto :eof
 
 :end
+if %errorlevel% neq 0 exit /b %errorlevel%
 goto :eof

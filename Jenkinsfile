@@ -29,10 +29,14 @@ def createNativeUnixBuild(slave) {
             sh './utils/build.sh nodejs-4.1.0 . build/nodejs/4.1.0 install/nodejs/4.1.0'
             sh './utils/build.sh php'
             if (slave.contains('centos7')) {
-                writeFile file: './utils/env.sh', text: ['source /opt/rh/php55/enable', ''].join("\n")
-                sh './utils/build.sh php . build/php/php55 install/php/php55'
-                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-php56/enable', ''].join("\n")
-                sh './utils/build.sh php . build/php/php56 install/php/php56'
+                cryptoEnvScript = '/tmp/virgil_crypto_env.sh'
+                withEnv(["VIRGIL_CRYPTO_ENV_SCRIPT=\"${cryptoEnvScript}\""]) {
+                    writeFile file: cryptoEnvScript, text: ['source /opt/rh/php55/enable', ''].join("\n")
+                    sh './utils/build.sh php . build/php/php55 install/php/php55'
+                    writeFile file: cryptoEnvScript, text: ['source /opt/rh/rh-php56/enable', ''].join("\n")
+                    sh './utils/build.sh php . build/php/php56 install/php/php56'
+                }
+                sh "rm -f ${cryptoEnvScript}"
                 organizeFiles('*.tar.gz', 'install/php')
             }
             organizeFiles('*.tar.gz', 'install/nodejs')

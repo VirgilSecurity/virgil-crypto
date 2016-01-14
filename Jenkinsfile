@@ -128,7 +128,11 @@ def organizeFilesUnix(pattern, where) {
 
 def organizeFilesWindows(pattern, where) {
     bat "for /r \"${where}\" %%f in (${pattern}) do move /y \"%%f\" \"${where}\" >nul"
-    bat "for /f \"delims=\" %%d in ('dir /s /b /ad \"${where}\" ^| sort /r') do rmdir \"%%d\""
+    try {
+        bat "for /f \"delims=\" %%d in ('dir /s /b /a:d \"${where}\" ^^^| sort /r 2^>nul') do rmdir \"%%d\""
+    } catch(Exception exception) {
+        // Ignore, because 'sort' can exit with error if no empty folders was found.
+    }
 }
 
 def archiveArtifacts(pattern) {

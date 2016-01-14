@@ -188,7 +188,7 @@ popd
 goto :eof
 
 :remove_quotes
-for /f "delims=" %%A in ('echo %%%1%%') do set %1=%%~A
+for /f "delims=" %%A in ('echo %%%1%%') do set %1=%%~fA
 goto :eof
 
 :show_info

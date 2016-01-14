@@ -249,6 +249,7 @@ if [ ! -z "${INSTALL_DIR}" ]; then
 fi
 
 # Go to the build directory
+cd "${INSTALL_DIR}" && rm -fr ./*
 cd "${BUILD_DIR}" && rm -fr ./*
 
 # Build for native platforms

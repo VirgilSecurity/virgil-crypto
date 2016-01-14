@@ -239,20 +239,20 @@ goto :eof
 :error_not_msvc_root
 echo MSVC_ROOT environment variable is not defined
 echo Please set environment variable MSVC_ROOT to point 'Microsoft Visual Studio' install directory.
-goto :eof
+exit /b 1
 
 :error_not_java_home
 echo JAVA_HOME environment variable is not defined
 echo Please set environment variable JAVA_HOME to point JDK install directory.
-goto :eof
+exit /b 1
 
 :error_vcvarsall_not_found
 echo Can not found vcvarsall.bat under %MSVC_ROOT%\VC directory.
-goto :eof
+exit /b 1
 
 :error_target_not_supported
 call :show_error Target with name '%TARGET_NAME%' is not supported.
-goto :eof
+exit /b 1
 
 :end
 if %errorlevel% neq 0 exit /b %errorlevel%

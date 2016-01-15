@@ -34,9 +34,9 @@ def createNativeUnixBuild(slave) {
                 sh './utils/build.sh php . build/php/php55 install/php/php55'
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-php56/enable', ''].join("\n")
                 sh './utils/build.sh php . build/php/php56 install/php/php56'
-                organizeFilesUnix('*.tar.gz', 'install/php')
+                organizeFilesUnix('install/php')
             }
-            organizeFilesUnix('*.tar.gz', 'install/nodejs')
+            organizeFilesUnix('install/nodejs')
             archiveArtifacts('install/**')
         }
     }
@@ -54,10 +54,10 @@ def createNativeWindowsBuild(slave) {
                 bat 'utils\\build.bat nodejs-0.12.7 . build\\nodejs\\0.12.7 install\\nodejs\\0.12.7'
                 bat 'utils\\build.bat nodejs-4.1.0 . build\\nodejs\\4.1.0 install\\nodejs\\4.1.0'
             }
-            organizeFilesWindows('*.zip', 'install\\cpp')
-            organizeFilesWindows('*.zip', 'install\\net')
-            organizeFilesWindows('*.zip', 'install\\java')
-            organizeFilesWindows('*.zip', 'install\\nodejs')
+            organizeFilesWindows('install\\cpp')
+            organizeFilesWindows('install\\net')
+            organizeFilesWindows('install\\java')
+            organizeFilesWindows('install\\nodejs')
             archiveArtifacts('install/**')
         }
     }
@@ -94,8 +94,8 @@ def createDarwinBuild(slave) {
             sh './utils/build.sh net_ios . build/net/ios install/net/ios'
             sh './utils/build.sh net_applewatchos . build/net/watchos install/net/watchos'
             sh './utils/build.sh net_appletvos . build/net/tvos install/net/tvos'
-            organizeFilesUnix('*.tar.gz', 'install/cpp')
-            organizeFilesUnix('*.tar.gz', 'install/net')
+            organizeFilesUnix('install/cpp')
+            organizeFilesUnix('install/net')
             archiveArtifacts('install/**')
         }
     }
@@ -110,20 +110,20 @@ def createAndroidBuild(slave) {
                 sh './utils/build.sh java_android . build/java/android install/java/android'
                 sh './utils/build.sh net_android . build/net/android install/net/android'
             }
-            organizeFilesUnix('*.tar.gz', 'install/java')
-            organizeFilesUnix('*.tar.gz', 'install/net')
+            organizeFilesUnix('install/java')
+            organizeFilesUnix('install/net')
             archiveArtifacts('install/**')
         }
     }
 }
 
-def organizeFilesUnix(pattern, where) {
-    sh "find ${where} -type f -mindepth 2 -name \"${pattern}\" -exec mv {} ${where} \\;"
+def organizeFilesUnix(where) {
+    sh "find ${where} -type f -mindepth 2 -name \"*.tgz\" -exec mv {} ${where} \\;"
     sh "find ${where} -type d -empty -delete"
 }
 
-def organizeFilesWindows(pattern, where) {
-    bat "for /r \"${where}\" %%f in (${pattern}) do move /y \"%%f\" \"${where}\" >nul"
+def organizeFilesWindows(where) {
+    bat "for /r \"${where}\" %%f in (*.zip) do move /y \"%%f\" \"${where}\" >nul"
     try {
         bat "for /f \"delims=\" %%d in ('dir /s /b /a:d \"${where}\" ^^^| sort /r 2^>nul') do rmdir \"%%d\""
     } catch(Exception exception) {

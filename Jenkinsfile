@@ -3,6 +3,9 @@ stage 'Grab SCM'
 
 node('master') {
     checkout scm
+    sh 'mkdir -p install'
+    sh 'cp -f VERSION install/'
+    archiveArtifacts('install/VERSION')
     stash includes: '**', name: 'src'
 }
 

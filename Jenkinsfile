@@ -2,7 +2,11 @@
 stage 'Grab SCM'
 
 node('master') {
+    sh 'rm -fr -- *'
     checkout scm
+    sh 'mkdir -p install'
+    sh 'cp -f VERSION install/'
+    archiveArtifacts('install/VERSION')
     stash includes: '**', name: 'src'
 }
 
@@ -30,17 +34,13 @@ def createNativeUnixBuild(slave) {
             sh './utils/build.sh nodejs-4.1.0 . build/nodejs/4.1.0 install/nodejs/4.1.0'
             sh './utils/build.sh php'
             if (slave.contains('centos7')) {
-                cryptoEnvScript = '/tmp/virgil_crypto_env.sh'
-                withEnv(["VIRGIL_CRYPTO_ENV_SCRIPT=\"${cryptoEnvScript}\""]) {
-                    writeFile file: cryptoEnvScript, text: ['source /opt/rh/php55/enable', ''].join("\n")
-                    sh './utils/build.sh php . build/php/php55 install/php/php55'
-                    writeFile file: cryptoEnvScript, text: ['source /opt/rh/rh-php56/enable', ''].join("\n")
-                    sh './utils/build.sh php . build/php/php56 install/php/php56'
-                }
-                sh "rm -f ${cryptoEnvScript}"
-                organizeFilesUnix('*.tar.gz', 'install/php')
+                writeFile file: './utils/env.sh', text: ['source /opt/rh/php55/enable', ''].join("\n")
+                sh './utils/build.sh php . build/php/php55 install/php/php55'
+                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-php56/enable', ''].join("\n")
+                sh './utils/build.sh php . build/php/php56 install/php/php56'
+                organizeFilesUnix('install/php')
             }
-            organizeFilesUnix('*.tar.gz', 'install/nodejs')
+            organizeFilesUnix('install/nodejs')
             archiveArtifacts('install/**')
         }
     }
@@ -50,6 +50,8 @@ def createNativeWindowsBuild(slave) {
     return {
         node(slave) {
             unstash 'src'
+            bat 'if exist build rmdir /s/q build'
+            bat 'if exist install rmdir /s/q install'
             withEnv(['MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio 14.0',
                      'JAVA_HOME=C:\\Program Files\\Java\\jdk1.8.0_65']) {
                 bat 'utils\\build.bat cpp'
@@ -58,10 +60,10 @@ def createNativeWindowsBuild(slave) {
                 bat 'utils\\build.bat nodejs-0.12.7 . build\\nodejs\\0.12.7 install\\nodejs\\0.12.7'
                 bat 'utils\\build.bat nodejs-4.1.0 . build\\nodejs\\4.1.0 install\\nodejs\\4.1.0'
             }
-            organizeFilesWindows('*.zip', 'install\\cpp')
-            organizeFilesWindows('*.zip', 'install\\net')
-            organizeFilesWindows('*.zip', 'install\\java')
-            organizeFilesWindows('*.zip', 'install\\nodejs')
+            organizeFilesWindows('install\\cpp')
+            organizeFilesWindows('install\\net')
+            organizeFilesWindows('install\\java')
+            organizeFilesWindows('install\\nodejs')
             archiveArtifacts('install/**')
         }
     }
@@ -98,8 +100,8 @@ def createDarwinBuild(slave) {
             sh './utils/build.sh net_ios . build/net/ios install/net/ios'
             sh './utils/build.sh net_applewatchos . build/net/watchos install/net/watchos'
             sh './utils/build.sh net_appletvos . build/net/tvos install/net/tvos'
-            organizeFilesUnix('*.tar.gz', 'install/cpp')
-            organizeFilesUnix('*.tar.gz', 'install/net')
+            organizeFilesUnix('install/cpp')
+            organizeFilesUnix('install/net')
             archiveArtifacts('install/**')
         }
     }
@@ -114,20 +116,20 @@ def createAndroidBuild(slave) {
                 sh './utils/build.sh java_android . build/java/android install/java/android'
                 sh './utils/build.sh net_android . build/net/android install/net/android'
             }
-            organizeFilesUnix('*.tar.gz', 'install/java')
-            organizeFilesUnix('*.tar.gz', 'install/net')
+            organizeFilesUnix('install/java')
+            organizeFilesUnix('install/net')
             archiveArtifacts('install/**')
         }
     }
 }
 
-def organizeFilesUnix(pattern, where) {
-    sh "find ${where} -type f -mindepth 2 -name \"${pattern}\" -exec mv {} ${where} \\;"
+def organizeFilesUnix(where) {
+    sh "find ${where} -type f -mindepth 2 -name \"*.tgz\" -exec mv {} ${where} \\;"
     sh "find ${where} -type d -empty -delete"
 }
 
-def organizeFilesWindows(pattern, where) {
-    bat "for /r \"${where}\" %%f in (${pattern}) do move /y \"%%f\" \"${where}\" >nul"
+def organizeFilesWindows(where) {
+    bat "for /r \"${where}\" %%f in (*.zip) do move /y \"%%f\" \"${where}\" >nul"
     try {
         bat "for /f \"delims=\" %%d in ('dir /s /b /a:d \"${where}\" ^^^| sort /r 2^>nul') do rmdir \"%%d\""
     } catch(Exception exception) {

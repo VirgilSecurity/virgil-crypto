@@ -40,6 +40,6 @@ zipFile = fileSystemObject.GetAbsolutePathName(objArgs(1))
 fileSystemObject.CreateTextFile(ZipFile, True).Write "PK" & Chr(5) & Chr(6) & String(18, vbNullChar)
 
 Set objShell = CreateObject("Shell.Application")
-Set source = objShell.NameSpace(InputFolder).Items
+Set source = objShell.NameSpace(InputFolder)
 objShell.NameSpace(ZipFile).CopyHere(source)
 wScript.Sleep 2000

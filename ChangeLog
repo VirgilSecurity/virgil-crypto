@@ -1,5 +1,17 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.2.2 released 2016-01-15
+
+Bugfix:
+  * [Build] Fix build issue on Jenkins - php-5.5 and php-5.6 build on centos was lost.
+
+Changes:
+  * [Build] Archive target binaries to the folder with archive name (build.bat).
+  * [Build] Rename artifacts extensions from '.tar.gz' to 'tgz'.
+
+Features:
+  * [Build] Add VERSION file to Jenkins 'install' directory when build.
+
 = Version 1.2.1 released 2016-01-14
 
 Changes:

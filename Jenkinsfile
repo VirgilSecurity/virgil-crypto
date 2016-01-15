@@ -2,6 +2,7 @@
 stage 'Grab SCM'
 
 node('master') {
+    sh 'rm -fr -- *'
     checkout scm
     sh 'mkdir -p install'
     sh 'cp -f VERSION install/'

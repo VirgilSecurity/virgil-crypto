@@ -175,8 +175,8 @@ if [ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]; then
     SYSTEM_KERNEL_RELEASE_VERSION=""
 fi
 
-if [ -f "${VIRGIL_CRYPTO_ENV_SCRIPT}" ]; then
-    source "${VIRGIL_CRYPTO_ENV_SCRIPT}"
+if [ -f "${SCRIPT_DIR}/env.sh" ]; then
+    source "${SCRIPT_DIR}/env.sh"
 fi
 
 # Check arguments

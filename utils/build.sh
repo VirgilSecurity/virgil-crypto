@@ -359,5 +359,5 @@ mkdir -p "${INSTALL_DIR}/${ARCH_NAME}"
 cd "${INSTALL_DIR}"
 mv $(ls -A | grep -v ${ARCH_NAME}) "./${ARCH_NAME}"
 cp -f "${SRC_DIR}/VERSION" "./${ARCH_NAME}"
-tar -czvf "${ARCH_NAME}.tar.gz" -- *
+tar -czvf "${ARCH_NAME}.tgz" -- *
 find . ! -path . -type d -exec rm -fr {} +

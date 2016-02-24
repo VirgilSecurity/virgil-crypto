@@ -38,9 +38,9 @@
 
 #include <string>
 
-#include <polarssl/md.h>
-#include <polarssl/oid.h>
-#include <polarssl/asn1.h>
+#include <mbedtls/md.h>
+#include <mbedtls/oid.h>
+#include <mbedtls/asn1.h>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
@@ -64,15 +64,15 @@ namespace virgil { namespace crypto { namespace foundation {
 
 class VirgilHashImpl {
 public:
-    VirgilHashImpl(md_type_t mdType)
-            : type(POLARSSL_MD_NONE), info(0), digest(0), digestSize(0), ctx(0), hmacCtx(0) {
+    VirgilHashImpl(mbedtls_md_type_t mdType)
+            : type(MBEDTLS_MD_NONE), info(0), digest(0), digestSize(0), ctx(0), hmacCtx(0) {
         init_(mdType);
     }
 
     VirgilHashImpl(const char * mdName)
-            : type(POLARSSL_MD_NONE), info(0), digest(0), digestSize(0), ctx(0), hmacCtx(0) {
-        const md_info_t * mdInfo = md_info_from_string(mdName);
-        md_type_t mdType = mdInfo ? md_get_type(mdInfo) : POLARSSL_MD_NONE;
+            : type(MBEDTLS_MD_NONE), info(0), digest(0), digestSize(0), ctx(0), hmacCtx(0) {
+        const mbedtls_md_info_t * mdInfo = mbedtls_md_info_from_string(mdName);
+        mbedtls_md_type_t mdType = mdInfo ? mbedtls_md_get_type(mdInfo) : MBEDTLS_MD_NONE;
         init_(mdType);
     }
 
@@ -81,7 +81,7 @@ public:
     }
 
     VirgilHashImpl(const VirgilHashImpl& other)
-            : type(POLARSSL_MD_NONE), info(0), digest(0), digestSize(0), ctx(0), hmacCtx(0) {
+            : type(MBEDTLS_MD_NONE), info(0), digest(0), digestSize(0), ctx(0), hmacCtx(0) {
         init_(other.type);
     }
 
@@ -95,22 +95,22 @@ public:
     }
 
 private:
-    void init_(md_type_t mdType) {
+    void init_(mbedtls_md_type_t mdType) {
         type = mdType;
-        if (mdType == POLARSSL_MD_NONE) {
+        if (mdType == MBEDTLS_MD_NONE) {
             return;
         }
-        info = md_info_from_type(mdType);
-        digestSize = md_get_size(info);
+        info = mbedtls_md_info_from_type(mdType);
+        digestSize = mbedtls_md_get_size(info);
         digest = new unsigned char[digestSize];
-        ctx = new md_context_t();
-        POLARSSL_ERROR_HANDLER_DISPOSE(
-            ::md_init_ctx(ctx, info),
+        ctx = new mbedtls_md_context_t();
+        MBEDTLS_ERROR_HANDLER_DISPOSE(
+            ::mbedtls_md_setup(ctx, info, 0),
             free_()
         );
-        hmacCtx = new md_context_t();
-        POLARSSL_ERROR_HANDLER_DISPOSE(
-            ::md_init_ctx(hmacCtx, info),
+        hmacCtx = new mbedtls_md_context_t();
+        MBEDTLS_ERROR_HANDLER_DISPOSE(
+            ::mbedtls_md_setup(hmacCtx, info, 1),
             free_()
         );
     }
@@ -122,53 +122,53 @@ private:
             digestSize = 0;
         }
         if (ctx) {
-            ::md_free_ctx(ctx);
+            ::mbedtls_md_free(ctx);
             delete ctx;
             ctx = 0;
         }
         if (hmacCtx) {
-            ::md_free_ctx(hmacCtx);
+            ::mbedtls_md_free(hmacCtx);
             delete hmacCtx;
             hmacCtx = 0;
         }
-        type = POLARSSL_MD_NONE;
+        type = MBEDTLS_MD_NONE;
         info = 0;
     }
 public:
-    md_type_t type; // hash algorithm type
-    const md_info_t *info; // hash algorithm info
+    mbedtls_md_type_t type; // hash algorithm type
+    const mbedtls_md_info_t *info; // hash algorithm info
     unsigned char *digest; // pointer to the array that handles hash digest
     size_t digestSize; // size of hash digest
-    md_context_t *ctx; // pointer to the hash context, is used for chaining hash
-    md_context_t *hmacCtx; // pointer to the hmac hash context, is used for chaining hash
+    mbedtls_md_context_t *ctx; // pointer to the hash context, is used for chaining hash
+    mbedtls_md_context_t *hmacCtx; // pointer to the hmac hash context, is used for chaining hash
 };
 
 }}}
 
 VirgilHash VirgilHash::md5() {
-    return VirgilHash(POLARSSL_MD_MD5);
+    return VirgilHash(MBEDTLS_MD_MD5);
 }
 
 VirgilHash VirgilHash::sha256() {
-    return VirgilHash(POLARSSL_MD_SHA256);
+    return VirgilHash(MBEDTLS_MD_SHA256);
 }
 
 VirgilHash VirgilHash::sha384() {
-    return VirgilHash(POLARSSL_MD_SHA384);
+    return VirgilHash(MBEDTLS_MD_SHA384);
 }
 
 VirgilHash VirgilHash::sha512() {
-    return VirgilHash(POLARSSL_MD_SHA512);
+    return VirgilHash(MBEDTLS_MD_SHA512);
 }
 
 VirgilHash VirgilHash::withName(const VirgilByteArray& name) {
     return VirgilHash(bytes2str(name).c_str());
 }
 
-VirgilHash::VirgilHash() : impl_(new VirgilHashImpl(POLARSSL_MD_NONE)) {
+VirgilHash::VirgilHash() : impl_(new VirgilHashImpl(MBEDTLS_MD_NONE)) {
 }
 
-VirgilHash::VirgilHash(int type) : impl_(new VirgilHashImpl(static_cast<md_type_t>(type))) {
+VirgilHash::VirgilHash(int type) : impl_(new VirgilHashImpl(static_cast<mbedtls_md_type_t>(type))) {
 }
 
 VirgilHash::VirgilHash(const char * name) : impl_(new VirgilHashImpl(name)) {
@@ -198,71 +198,75 @@ VirgilHash& VirgilHash::operator=(const VirgilHash& rhs) {
 
 std::string VirgilHash::name() const {
     checkState();
-    return std::string(::md_get_name(impl_->info));
+    return std::string(::mbedtls_md_get_name(impl_->info));
+}
+
+int VirgilHash::type() const {
+    return static_cast<int>(impl_->type);
 }
 
 void VirgilHash::start() {
     checkState();
-    POLARSSL_ERROR_HANDLER(::md_starts(impl_->ctx));
+    MBEDTLS_ERROR_HANDLER(::mbedtls_md_starts(impl_->ctx));
 }
 
 void VirgilHash::update(const VirgilByteArray& bytes) {
     checkState();
-    POLARSSL_ERROR_HANDLER(
-        ::md_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes));
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_md_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes));
     );
 }
 
 VirgilByteArray VirgilHash::finish() {
     checkState();
-    POLARSSL_ERROR_HANDLER(::md_finish(impl_->ctx, impl_->digest));
+    MBEDTLS_ERROR_HANDLER(::mbedtls_md_finish(impl_->ctx, impl_->digest));
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
 }
 
 VirgilByteArray VirgilHash::hash(const VirgilByteArray& bytes) const {
     checkState();
-    POLARSSL_ERROR_HANDLER(
-        ::md(impl_->info, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes), impl_->digest)
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_md(impl_->info, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes), impl_->digest)
     );
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
 }
 
 void VirgilHash::hmacStart(const VirgilByteArray& key) {
     checkState();
-    POLARSSL_ERROR_HANDLER(
-        ::md_hmac_starts(impl_->hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key));
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_md_hmac_starts(impl_->hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key));
     );
 }
 
 void VirgilHash::hmacReset() {
     checkState();
-    POLARSSL_ERROR_HANDLER(::md_hmac_reset(impl_->hmacCtx));
+    MBEDTLS_ERROR_HANDLER(::mbedtls_md_hmac_reset(impl_->hmacCtx));
 }
 
 void VirgilHash::hmacUpdate(const VirgilByteArray& bytes) {
     checkState();
-    POLARSSL_ERROR_HANDLER(
-        ::md_hmac_update(impl_->hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes));
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_md_hmac_update(impl_->hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes));
     );
 }
 
 VirgilByteArray VirgilHash::hmacFinish() {
     checkState();
-    POLARSSL_ERROR_HANDLER(::md_hmac_finish(impl_->hmacCtx, impl_->digest));
+    MBEDTLS_ERROR_HANDLER(::mbedtls_md_hmac_finish(impl_->hmacCtx, impl_->digest));
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
 }
 
 VirgilByteArray VirgilHash::hmac(const VirgilByteArray& key, const VirgilByteArray& bytes) const {
     checkState();
-    POLARSSL_ERROR_HANDLER(
-        ::md_hmac(impl_->info, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key),
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_md_hmac(impl_->info, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key),
                 VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes), impl_->digest);
     );
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
 }
 
 void VirgilHash::checkState() const {
-    if (impl_->type == POLARSSL_MD_NONE || impl_->info == 0 || impl_->ctx == 0) {
+    if (impl_->type == MBEDTLS_MD_NONE || impl_->info == 0 || impl_->ctx == 0) {
         throw VirgilCryptoException(std::string("VirgilHash: object has undefined algorithm.") +
                 std::string(" Use one of the factory methods or method 'fromAsn1' to define hash algorithm."));
     }
@@ -272,8 +276,8 @@ size_t VirgilHash::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBy
     checkState();
     const char *oid = 0;
     size_t oidLen;
-    POLARSSL_ERROR_HANDLER(
-        ::oid_get_oid_by_md(impl_->type, &oid, &oidLen)
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_oid_get_oid_by_md(impl_->type, &oid, &oidLen)
     );
     size_t len = 0;
     len += asn1Writer.writeNull();
@@ -286,13 +290,13 @@ void VirgilHash::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
     std::string oid = asn1Reader.readOID();
 
-    asn1_buf oidAsn1Buf;
+    mbedtls_asn1_buf oidAsn1Buf;
     oidAsn1Buf.len = oid.size();
     oidAsn1Buf.p = reinterpret_cast<unsigned char *>(const_cast<std::string::pointer>(oid.c_str()));
 
-    md_type_t type = POLARSSL_MD_NONE;
-    POLARSSL_ERROR_HANDLER(
-        ::oid_get_md_alg(&oidAsn1Buf, &type)
+    mbedtls_md_type_t type = MBEDTLS_MD_NONE;
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_oid_get_md_alg(&oidAsn1Buf, &type)
     );
 
     asn1Reader.readNull();

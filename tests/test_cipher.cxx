@@ -41,6 +41,7 @@
 
 #include "catch.hpp"
 
+#include <iostream>
 #include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -48,6 +49,8 @@
 #include <virgil/crypto/VirgilKeyPair.h>
 
 using virgil::crypto::str2bytes;
+using virgil::crypto::bytes2hex;
+using virgil::crypto::bytes2str;
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCipher;
 using virgil::crypto::VirgilKeyPair;
@@ -57,6 +60,7 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
     VirgilByteArray testData = str2bytes("this string will be encrypted");
     VirgilByteArray recipientId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
     VirgilKeyPair keyPair(password);
+    std::cout << bytes2str(keyPair.privateKey()) << std::endl;
 
     VirgilCipher cipher;
     cipher.addKeyRecipient(recipientId, keyPair.publicKey());
@@ -148,6 +152,43 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
         REQUIRE(cipher.customParams().getInteger(intParamKey) == intParamValue);
         REQUIRE(cipher.customParams().getString(strParamKey) == strParamValue);
         REQUIRE(cipher.customParams().getData(hexParamKey) == hexParamValue);
+    }
+}
+
+TEST_CASE("generated keys", "[cipher]") {
+    VirgilByteArray testData = str2bytes("this string will be encrypted");
+    VirgilByteArray bobId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
+    VirgilByteArray johnId = str2bytes("968dc52d-2045-4abe-ab51-0b04737cac76");
+    VirgilKeyPair bobKeyPair;
+    VirgilKeyPair johnKeyPair;
+    VirgilByteArray alicePassword = str2bytes("alice secret");
+
+    SECTION("encrypt for multiple recipients") {
+        VirgilByteArray encryptedData;
+
+        VirgilCipher cipher;
+        cipher.addKeyRecipient(bobId, bobKeyPair.publicKey());
+        cipher.addKeyRecipient(johnId, johnKeyPair.publicKey());
+        cipher.addPasswordRecipient(alicePassword);
+        encryptedData = cipher.encrypt(testData, true);
+
+        SECTION("decrypt for Bob") {
+            VirgilCipher cipher;
+            VirgilByteArray decryptedData = cipher.decryptWithKey(encryptedData, bobId, bobKeyPair.privateKey());
+            REQUIRE(testData == decryptedData);
+        }
+
+        SECTION("decrypt for John") {
+            VirgilCipher cipher;
+            VirgilByteArray decryptedData = cipher.decryptWithKey(encryptedData, johnId, johnKeyPair.privateKey());
+            REQUIRE(testData == decryptedData);
+        }
+
+        SECTION("decrypt for Alice") {
+            VirgilCipher cipher;
+            VirgilByteArray decryptedData = cipher.decryptWithPassword(encryptedData, alicePassword);
+            REQUIRE(testData == decryptedData);
+        }
     }
 }
 

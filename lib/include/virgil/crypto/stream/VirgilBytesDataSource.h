@@ -34,39 +34,52 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/foundation/PolarsslException.h>
+#ifndef VIRGIL_CRYPTO_VIRGIL_BYTES_DATA_SOURCE_H
+#define VIRGIL_CRYPTO_VIRGIL_BYTES_DATA_SOURCE_H
 
-#include <cstring>
-#include <string>
+#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilDataSource.h>
 
-#include <mbedtls/error.h>
-
-using virgil::crypto::foundation::PolarsslException;
-
-// Private section constants
-enum {
-    gErrorBufferLen = 1024 // Max length of the generated error message
-};
+namespace virgil { namespace crypto { namespace stream {
 
 /**
- * Build error message related to the given error code.
+ * @brief C++ Byte Array implementation of the VirgilDataSource class.
+ *
+ * @note This class CAN not be used in wrappers.
  */
-static std::string buildErrorString(int errCode) {
-    static char errorBuffer[gErrorBufferLen + 1];
-    ::memset(errorBuffer, 0x0, gErrorBufferLen + 1);
-    ::mbedtls_strerror(errCode, errorBuffer, gErrorBufferLen);
-    return std::string(errorBuffer);
-}
+class VirgilBytesDataSource : public virgil::crypto::VirgilDataSource {
+public:
+    /**
+     * @brief Creates data sink based on byte array.
+     * @param in - byte array.
+     * @param chunkSize - size of the data that will be returned by @link read() @endlink method.
+     *                    Note, the real value may be different from the given value, it is only recommendation.
+     */
+    explicit VirgilBytesDataSource(const virgil::crypto::VirgilByteArray& in, size_t chunkSize = 5);
+    /**
+     * @brief Polymorphic destructor.
+     */
+    virtual ~VirgilBytesDataSource() throw();
+    /**
+     * @brief Overriding of @link VirgilDataSource::hasData() @endlink method.
+     */
+    virtual bool hasData();
+    /**
+     * @brief Overriding of @link VirgilDataSource::read() @endlink method.
+     */
+    virtual virgil::crypto::VirgilByteArray read();
+    /**
+     * @brief Reset internal state to initial.
+     *
+     * This method can used for secondary data reading.
+     */
+    virtual void reset();
+private:
+    const virgil::crypto::VirgilByteArray& in_;
+    const size_t chunkSize_;
+    size_t leftBytes_;
+};
 
+}}}
 
-// Public section
-PolarsslException::PolarsslException(int errCode)
-        : VirgilCryptoException(buildErrorString(errCode)), errCode_(errCode) {
-}
-
-PolarsslException::~PolarsslException() throw() {
-}
-
-int PolarsslException::errCode() const throw() {
-    return errCode_;
-}
+#endif /* VIRGIL_CRYPTO_VIRGIL_BYTES_DATA_SOURCE_H */

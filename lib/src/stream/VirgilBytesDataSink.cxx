@@ -34,39 +34,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/foundation/PolarsslException.h>
+#include <virgil/crypto/stream/VirgilBytesDataSink.h>
+using virgil::crypto::stream::VirgilBytesDataSink;
 
-#include <cstring>
-#include <string>
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
-#include <mbedtls/error.h>
-
-using virgil::crypto::foundation::PolarsslException;
-
-// Private section constants
-enum {
-    gErrorBufferLen = 1024 // Max length of the generated error message
-};
-
-/**
- * Build error message related to the given error code.
- */
-static std::string buildErrorString(int errCode) {
-    static char errorBuffer[gErrorBufferLen + 1];
-    ::memset(errorBuffer, 0x0, gErrorBufferLen + 1);
-    ::mbedtls_strerror(errCode, errorBuffer, gErrorBufferLen);
-    return std::string(errorBuffer);
+VirgilBytesDataSink::VirgilBytesDataSink(VirgilByteArray& out) : out_(out) {
 }
 
-
-// Public section
-PolarsslException::PolarsslException(int errCode)
-        : VirgilCryptoException(buildErrorString(errCode)), errCode_(errCode) {
+bool VirgilBytesDataSink::isGood() {
+    return true;
 }
 
-PolarsslException::~PolarsslException() throw() {
+void VirgilBytesDataSink::write(const VirgilByteArray& data) {
+    out_.insert(out_.end(), data.begin(), data.end());
 }
 
-int PolarsslException::errCode() const throw() {
-    return errCode_;
+void VirgilBytesDataSink::reset() {
+    out_.clear();
+}
+
+VirgilBytesDataSink::~VirgilBytesDataSink() throw() {
 }

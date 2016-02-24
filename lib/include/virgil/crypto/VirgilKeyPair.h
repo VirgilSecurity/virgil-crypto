@@ -66,10 +66,7 @@ public:
         Type_EC_BP256R1,        /**< 256-bits Brainpool curve */
         Type_EC_BP384R1,        /**< 384-bits Brainpool curve */
         Type_EC_BP512R1,        /**< 512-bits Brainpool curve */
-        Type_EC_M221,           /**< (not implemented yet)    */
-        Type_EC_M255,           /**< Curve25519               */
-        Type_EC_M383,           /**< (not implemented yet)    */
-        Type_EC_M511,           /**< (not implemented yet)    */
+        Type_EC_CURVE25519,     /**< Curve25519               */
         Type_EC_SECP192K1,      /**< 192-bits "Koblitz" curve */
         Type_EC_SECP224K1,      /**< 224-bits "Koblitz" curve */
         Type_EC_SECP256K1,      /**< 256-bits "Koblitz" curve */

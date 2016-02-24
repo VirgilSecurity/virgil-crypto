@@ -42,12 +42,12 @@
 #include <sstream>
 #include <algorithm>
 
-#include <polarssl/asn1.h>
-#include <polarssl/oid.h>
-#include <polarssl/pkcs5.h>
-#include <polarssl/pkcs12.h>
-#include <polarssl/cipher.h>
-#include <polarssl/md.h>
+#include <mbedtls/asn1.h>
+#include <mbedtls/oid.h>
+#include <mbedtls/pkcs5.h>
+#include <mbedtls/pkcs12.h>
+#include <mbedtls/cipher.h>
+#include <mbedtls/md.h>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
@@ -56,6 +56,7 @@
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+#include <virgil/crypto/foundation/asn1/VirgilAsn1Alg.h>
 
 using virgil::crypto::str2bytes;
 using virgil::crypto::VirgilByteArray;
@@ -67,6 +68,7 @@ using virgil::crypto::foundation::PolarsslException;
 using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
+using virgil::crypto::foundation::asn1::VirgilAsn1Alg;
 
 typedef enum {
     VIRGIL_PBE_NONE = 0,
@@ -95,13 +97,13 @@ public:
     VirgilPBEType type;
     VirgilRandom random;
     VirgilByteArray algId;
-    asn1_buf pbeAlgOID;
-    asn1_buf pbeParams;
-    md_type_t mdType;
-    cipher_type_t cipherType;
+    mbedtls_asn1_buf pbeAlgOID;
+    mbedtls_asn1_buf pbeParams;
+    mbedtls_md_type_t mdType;
+    mbedtls_cipher_type_t cipherType;
 public:
     VirgilPBEImpl() : type(VIRGIL_PBE_NONE), random(str2bytes(std::string("com.virgilsecurity.VirgilPBE"))),
-            algId(), pbeAlgOID(), pbeParams(), mdType(POLARSSL_MD_NONE), cipherType(POLARSSL_CIPHER_NONE) {
+            algId(), pbeAlgOID(), pbeParams(), mdType(MBEDTLS_MD_NONE), cipherType(MBEDTLS_CIPHER_NONE) {
     }
 
     explicit VirgilPBEImpl(VirgilPBEType pbeType, const VirgilByteArray& salt, size_t iterationCount) : type(pbeType),
@@ -110,10 +112,10 @@ public:
                 iterationCount < VirgilPBE::kIterationCountMin ? VirgilPBE::kIterationCountMin : iterationCount;
         switch (pbeType) {
             case VIRGIL_PBE_PKCS5:
-                init_(buildAlgIdPKCS5(salt, adjustedIterationCount));
+                init_(VirgilAsn1Alg::buildPKCS5(salt, adjustedIterationCount));
                 break;
             case VIRGIL_PBE_PKCS12:
-                init_(buildAlgIdPKCS12(salt, adjustedIterationCount));
+                init_(VirgilAsn1Alg::buildPKCS12(salt, adjustedIterationCount));
                 break;
             default:
                 throw VirgilCryptoException("VirgilPBE: Given algorithm is not supported.");
@@ -139,8 +141,8 @@ private:
         // Initial init
         type = VIRGIL_PBE_NONE;
         algId = pbeAlgId;
-        mdType = POLARSSL_MD_NONE;
-        cipherType = POLARSSL_CIPHER_NONE;
+        mdType = MBEDTLS_MD_NONE;
+        cipherType = MBEDTLS_CIPHER_NONE;
         memset (&pbeAlgOID, 0x00, sizeof(pbeAlgOID));
         memset (&pbeParams, 0x00, sizeof(pbeParams));
 
@@ -148,95 +150,19 @@ private:
         p = const_cast<unsigned char *>(algId.data());
         end = p + algId.size();
 
-        POLARSSL_ERROR_HANDLER(
-            ::asn1_get_alg(&p, end, &pbeAlgOID, &pbeParams)
+        MBEDTLS_ERROR_HANDLER(
+            ::mbedtls_asn1_get_alg(&p, end, &pbeAlgOID, &pbeParams)
         );
 
-        if (oid_get_pkcs12_pbe_alg(&pbeAlgOID, &mdType, &cipherType) == 0) {
+        if (mbedtls_oid_get_pkcs12_pbe_alg(&pbeAlgOID, &mdType, &cipherType) == 0) {
             type = VIRGIL_PBE_PKCS12;
-        } else if (OID_CMP(OID_PKCS12_PBE_SHA1_RC4_128, &pbeAlgOID)) {
+        } else if (MBEDTLS_OID_CMP(MBEDTLS_OID_PKCS12_PBE_SHA1_RC4_128, &pbeAlgOID) == 0) {
             type = VIRGIL_PBE_PKCS12_SHA1_RC4_128;
-        } else if (OID_CMP(OID_PKCS5_PBES2, &pbeAlgOID)) {
+        } else if (MBEDTLS_OID_CMP(MBEDTLS_OID_PKCS5_PBES2, &pbeAlgOID) == 0) {
             type = VIRGIL_PBE_PKCS5;
         } else {
             throw VirgilCryptoException("VirgilPBE: Given algorithm is not supported.");
         }
-    }
-
-    /**
-     * pbes2 ::= SEQUENCE {
-     *   id-PBES2 OBJECT IDENTIFIER ::= {pkcs-5 13},
-     *   PBES2-params ::= SEQUENCE {
-     *      keyDerivationFunc AlgorithmIdentifier {{PBES2-KDFs}},
-     *      encryptionScheme AlgorithmIdentifier {{PBES2-Encs}} }
-     * }
-     *
-     * PBES2-KDFs ALGORITHM-IDENTIFIER ::=
-     *    { {PBKDF2-params IDENTIFIED BY id-PBKDF2}, ... }
-     *
-     * PBES2-Encs ALGORITHM-IDENTIFIER ::= { ... }
-     */
-    VirgilByteArray buildAlgIdPKCS5(const VirgilByteArray& salt, size_t iterationCount) {
-        VirgilAsn1Writer asn1Writer;
-        const char *oid = 0;
-        size_t oidLen;
-        // Write PBES2-params
-        size_t pbesLen = 0;
-        {
-            // Write PBES2-Enc
-            cipherType = POLARSSL_CIPHER_DES_EDE3_CBC;
-            POLARSSL_ERROR_HANDLER(
-                ::oid_get_oid_by_cipher_alg(cipherType, &oid, &oidLen)
-            );
-            const cipher_info_t *cipherInfo = cipher_info_from_type(cipherType);
-            if (cipherInfo == 0) {
-                throw VirgilCryptoException("VirgilPBE: Given cipher is not supported.");
-            }
-            size_t encLen = 0;
-            encLen += asn1Writer.writeOctetString(random.randomize(cipherInfo->iv_size));
-            encLen += asn1Writer.writeOID(std::string(oid, oidLen));
-            encLen += asn1Writer.writeSequence(encLen);
-            // Write PBES2-KDF
-            size_t kdfLen = 0;
-            kdfLen += asn1Writer.writeInteger(iterationCount);
-            kdfLen += asn1Writer.writeOctetString(salt);
-            kdfLen += asn1Writer.writeSequence(kdfLen);
-            kdfLen += asn1Writer.writeOID(std::string(OID_PKCS5_PBKDF2, OID_SIZE(OID_PKCS5_PBKDF2)));
-            kdfLen += asn1Writer.writeSequence(kdfLen);
-
-            pbesLen += encLen + kdfLen;
-            pbesLen += asn1Writer.writeSequence(pbesLen);
-        }
-        // Write id-PBES2 OBJECT IDENTIFIER
-        pbesLen += asn1Writer.writeOID(std::string(OID_PKCS5_PBES2, OID_SIZE(OID_PKCS5_PBES2)));
-        asn1Writer.writeSequence(pbesLen);
-
-        return asn1Writer.finish();
-    }
-
-    /**
-     * pkcs-12Pbe ::= SEQUENCE {
-     *   pkcs-12PbeId OBJECT IDENTIFIER ::= {{pkcs-12PbeIds}},
-     *   pkcs-12PbeParams ::= SEQUENCE {
-     *       salt        OCTET STRING,
-     *       iterations  INTEGER
-     *   }
-     * }
-     */
-    VirgilByteArray buildAlgIdPKCS12(const VirgilByteArray& salt, size_t iterationCount) {
-        VirgilAsn1Writer asn1Writer;
-        const char *oid = 0;
-        // Write PBE-params
-        size_t pbesLen = 0;
-        pbesLen += asn1Writer.writeInteger(iterationCount);
-        pbesLen += asn1Writer.writeOctetString(salt);
-        pbesLen += asn1Writer.writeSequence(pbesLen);
-        // Write id-PBE OBJECT IDENTIFIER
-        pbesLen += asn1Writer.writeOID(
-                std::string(OID_PKCS12_PBE_SHA1_DES3_EDE_CBC, OID_SIZE(OID_PKCS12_PBE_SHA1_DES3_EDE_CBC)));
-        asn1Writer.writeSequence(pbesLen);
-
-        return asn1Writer.finish();
     }
 };
 
@@ -280,33 +206,33 @@ VirgilPBE& VirgilPBE::operator=(const VirgilPBE& rhs) {
 }
 
 VirgilByteArray VirgilPBE::encrypt(const VirgilByteArray& data, const VirgilByteArray& pwd) const {
-    int mode = (impl_->type == VIRGIL_PBE_PKCS5) ? PKCS5_ENCRYPT : PKCS12_PBE_ENCRYPT;
+    int mode = (impl_->type == VIRGIL_PBE_PKCS5) ? MBEDTLS_PKCS5_ENCRYPT : MBEDTLS_PKCS12_PBE_ENCRYPT;
     return process(data, pwd, mode);
 }
 
 VirgilByteArray VirgilPBE::decrypt(const VirgilByteArray& data, const VirgilByteArray& pwd) const {
-    int mode = (impl_->type == VIRGIL_PBE_PKCS5) ? PKCS5_DECRYPT : PKCS12_PBE_DECRYPT;
+    int mode = (impl_->type == VIRGIL_PBE_PKCS5) ? MBEDTLS_PKCS5_DECRYPT : MBEDTLS_PKCS12_PBE_DECRYPT;
     return process(data, pwd, mode);
 }
 
 VirgilByteArray VirgilPBE::process(const VirgilByteArray& data, const VirgilByteArray& pwd, int mode) const {
     checkState();
-    checkPasswordLen(pwd.size());
-    VirgilByteArray output(data.size() + POLARSSL_MAX_BLOCK_LENGTH);
-    asn1_buf pbeParams = impl_->pbeParams;
+    VirgilByteArray output(data.size() + MBEDTLS_MAX_BLOCK_LENGTH);
+    mbedtls_asn1_buf pbeParams = impl_->pbeParams;
     size_t olen = data.size(); // For RC4: output lenght = input length
     switch (impl_->type) {
         case VIRGIL_PBE_PKCS5:
-            POLARSSL_ERROR_HANDLER(
-                ::pkcs5_pbes2_ext(&pbeParams, mode,
+            MBEDTLS_ERROR_HANDLER(
+                ::mbedtls_pkcs5_pbes2_ext(&pbeParams, mode,
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
                         output.data(), &olen)
             );
             break;
         case VIRGIL_PBE_PKCS12:
-            POLARSSL_ERROR_HANDLER(
-                ::pkcs12_pbe_ext(&pbeParams, mode,
+            checkPasswordLen(pwd.size());
+            MBEDTLS_ERROR_HANDLER(
+                ::mbedtls_pkcs12_pbe_ext(&pbeParams, mode,
                         impl_->cipherType, impl_->mdType,
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
@@ -314,8 +240,9 @@ VirgilByteArray VirgilPBE::process(const VirgilByteArray& data, const VirgilByte
             );
             break;
         case VIRGIL_PBE_PKCS12_SHA1_RC4_128:
-            POLARSSL_ERROR_HANDLER(
-                ::pkcs12_pbe_sha1_rc4_128(&pbeParams, mode,
+            checkPasswordLen(pwd.size());
+            MBEDTLS_ERROR_HANDLER(
+                ::mbedtls_pkcs12_pbe_sha1_rc4_128(&pbeParams, mode,
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
                         output.data())

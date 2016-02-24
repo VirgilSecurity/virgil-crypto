@@ -2,6 +2,7 @@
 stage 'Grab SCM'
 
 node('master') {
+    sh 'rm -fr -- *'
     checkout scm
     sh 'mkdir -p install'
     sh 'cp -f VERSION install/'
@@ -49,6 +50,8 @@ def createNativeWindowsBuild(slave) {
     return {
         node(slave) {
             unstash 'src'
+            bat 'if exist build rmdir /s/q build'
+            bat 'if exist install rmdir /s/q install'
             withEnv(['MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio 14.0',
                      'JAVA_HOME=C:\\Program Files\\Java\\jdk1.8.0_65']) {
                 bat 'utils\\build.bat cpp'

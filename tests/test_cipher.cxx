@@ -41,7 +41,6 @@
 
 #include "catch.hpp"
 
-#include <iostream>
 #include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -60,7 +59,6 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
     VirgilByteArray testData = str2bytes("this string will be encrypted");
     VirgilByteArray recipientId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
     VirgilKeyPair keyPair(password);
-    std::cout << bytes2str(keyPair.privateKey()) << std::endl;
 
     VirgilCipher cipher;
     cipher.addKeyRecipient(recipientId, keyPair.publicKey());

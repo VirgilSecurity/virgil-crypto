@@ -71,15 +71,6 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Alg;
 
-// const char * const kPBES2_PBKDF2_3DES =
-//         "304006092A864886F70D01050D3033301B06092A864886F70D01050C300E0408E1"
-//         "6EC6D6C56A1C9302020800301406082A864886F70D03070408D7390FE41DBF4454";
-
-// const char * const kPBES2_PBKDF2_SHA384_AES_256 =
-//         "305506092A864886F70D01050D3048302706092A864886F70D01050C301A04082E"
-//         "D7F24A1D516DD702020800300A06082A864886F70D020A301D0609608648016503"
-//         "04012A0410447487959D3A83D5CE81CE0A21C28954";
-
 /**
  * @brief Throw exception if password is too long.
  * @note MbedTLS PKCS#12 restriction.

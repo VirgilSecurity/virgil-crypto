@@ -95,19 +95,17 @@ namespace virgil { namespace crypto { namespace foundation {
 class VirgilPBEImpl {
 public:
     VirgilPBEType type;
-    VirgilRandom random;
     VirgilByteArray algId;
     mbedtls_asn1_buf pbeAlgOID;
     mbedtls_asn1_buf pbeParams;
     mbedtls_md_type_t mdType;
     mbedtls_cipher_type_t cipherType;
 public:
-    VirgilPBEImpl() : type(VIRGIL_PBE_NONE), random(str2bytes(std::string("com.virgilsecurity.VirgilPBE"))),
+    VirgilPBEImpl() : type(VIRGIL_PBE_NONE),
             algId(), pbeAlgOID(), pbeParams(), mdType(MBEDTLS_MD_NONE), cipherType(MBEDTLS_CIPHER_NONE) {
     }
 
-    explicit VirgilPBEImpl(VirgilPBEType pbeType, const VirgilByteArray& salt, size_t iterationCount) : type(pbeType),
-            random(str2bytes(std::string("com.virgilsecurity.VirgilPBE"))) {
+    explicit VirgilPBEImpl(VirgilPBEType pbeType, const VirgilByteArray& salt, size_t iterationCount) : type(pbeType) {
         const size_t adjustedIterationCount =
                 iterationCount < VirgilPBE::kIterationCountMin ? VirgilPBE::kIterationCountMin : iterationCount;
         switch (pbeType) {
@@ -122,8 +120,7 @@ public:
         }
 
     }
-    explicit VirgilPBEImpl(const VirgilByteArray& pbeAlgId) : type(VIRGIL_PBE_NONE),
-            random(str2bytes(std::string("com.virgilsecurity.VirgilPBE"))) {
+    explicit VirgilPBEImpl(const VirgilByteArray& pbeAlgId) : type(VIRGIL_PBE_NONE) {
         init_(pbeAlgId);
     }
 private:

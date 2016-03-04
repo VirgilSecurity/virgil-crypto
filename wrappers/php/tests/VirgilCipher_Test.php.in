@@ -87,7 +87,6 @@ class VirgilCipher_Test extends PHPUnit_Framework_TestCase {
         $cipher->addPasswordRecipient($alicePassword);
         // Encrypt data
         $encryptedData = $cipher->encrypt($initialString, $embedContentInfo);
-        // print(bin2hex($cipher->getContentInfo()));
         if ($embedContentInfo == false) {
             $encryptedContentInfo = $cipher->getContentInfo();
         }

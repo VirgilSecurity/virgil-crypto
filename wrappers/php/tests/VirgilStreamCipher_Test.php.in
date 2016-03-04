@@ -93,7 +93,6 @@ class VirgilStreamCipher_Test extends PHPUnit_Framework_TestCase {
         $encryptSource = new StringSource($initialString);
         $encryptSink = new StringSink();
         $cipher->encrypt($encryptSource, $encryptSink, $embedContentInfo);
-        // print(bin2hex($cipher->getContentInfo()));
         if ($embedContentInfo == false) {
             $encryptedContentInfo = $cipher->getContentInfo();
         }

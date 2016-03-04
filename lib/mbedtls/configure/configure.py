@@ -56,10 +56,10 @@ def parseArguments():
     return parser.parse_args()
 
 def regexForEnabledDefine(define):
-    return r'^[\s]*(#define[\s]+' + define + ')'
+    return r'^[\s]*(#define[\s]+' + define + r')[\s]+'
 
 def regexForDisabledDefine(define):
-    return r'^[\s]*//[\s]*(#define[\s]+' + define + ')'
+    return r'^[\s]*//[\s]*(#define[\s]+' + define + r')[\s+]'
 
 def disableDefines(defines, filePath):
     if not defines:

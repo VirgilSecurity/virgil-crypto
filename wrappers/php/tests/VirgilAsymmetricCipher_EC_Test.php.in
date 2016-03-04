@@ -307,10 +307,10 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
         $dataToSignValidHash = $hash->hash($dataToSign);
         $dataToSignInvalidHash = $hash->hash($dataToSign."Alien Data");
 
-        $dataSign = $signer->sign($dataToSignValidHash);
+        $dataSign = $signer->sign($dataToSignValidHash, $hash->type());
 
-        $this->assertTrue($verifier->verify($dataToSignValidHash, $dataSign));
-        $this->assertFalse($verifier->verify($dataToSignInvalidHash, $dataSign));
+        $this->assertTrue($verifier->verify($dataToSignValidHash, $dataSign, $hash->type()));
+        $this->assertFalse($verifier->verify($dataToSignInvalidHash, $dataSign, $hash->type()));
     }
 
     /**

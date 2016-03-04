@@ -41,8 +41,8 @@
 #include <cstring>
 #include <algorithm>
 #include <stdexcept>
-#include <polarssl/asn1.h>
-#include <polarssl/asn1write.h>
+#include <mbedtls/asn1.h>
+#include <mbedtls/asn1write.h>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
@@ -94,8 +94,8 @@ size_t VirgilAsn1Writer::writeInteger(int value) {
     checkState();
     ensureBufferEnough(kAsn1IntegerValueSize);
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
-        POLARSSL_ERROR_HANDLER(
-            ::asn1_write_int(&p_, start_, value)
+        MBEDTLS_ERROR_HANDLER(
+            ::mbedtls_asn1_write_int(&p_, start_, value)
         )
     );
 }
@@ -104,8 +104,8 @@ size_t VirgilAsn1Writer::writeBool(bool value) {
     checkState();
     ensureBufferEnough(kAsn1BoolValueSize);
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
-        POLARSSL_ERROR_HANDLER(
-            ::asn1_write_bool(&p_, start_, value)
+        MBEDTLS_ERROR_HANDLER(
+            ::mbedtls_asn1_write_bool(&p_, start_, value)
         )
     );
 }
@@ -114,8 +114,8 @@ size_t VirgilAsn1Writer::writeNull() {
     checkState();
     ensureBufferEnough(kAsn1TagValueSize);
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
-        POLARSSL_ERROR_HANDLER(
-            ::asn1_write_null(&p_, start_)
+        MBEDTLS_ERROR_HANDLER(
+            ::mbedtls_asn1_write_null(&p_, start_)
         )
     );
 }
@@ -124,8 +124,8 @@ size_t VirgilAsn1Writer::writeOctetString(const VirgilByteArray& data) {
     checkState();
     ensureBufferEnough(kAsn1TagValueSize + kAsn1LengthValueSize + data.size());
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
-        POLARSSL_ERROR_HANDLER(
-            ::asn1_write_octet_string(&p_, start_, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data))
+        MBEDTLS_ERROR_HANDLER(
+            ::mbedtls_asn1_write_octet_string(&p_, start_, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data))
         )
     );
 }
@@ -135,14 +135,14 @@ size_t VirgilAsn1Writer::writeUTF8String(const VirgilByteArray& data) {
     ensureBufferEnough(kAsn1TagValueSize + kAsn1LengthValueSize + data.size());
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
         {
-            POLARSSL_ERROR_HANDLER(
-                ::asn1_write_raw_buffer(&p_, start_, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data))
+            MBEDTLS_ERROR_HANDLER(
+                ::mbedtls_asn1_write_raw_buffer(&p_, start_, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data))
             );
-            POLARSSL_ERROR_HANDLER(
-                ::asn1_write_len(&p_, start_, data.size())
+            MBEDTLS_ERROR_HANDLER(
+                ::mbedtls_asn1_write_len(&p_, start_, data.size())
             );
-            POLARSSL_ERROR_HANDLER(
-                ::asn1_write_tag(&p_, start_, ASN1_UTF8_STRING)
+            MBEDTLS_ERROR_HANDLER(
+                ::mbedtls_asn1_write_tag(&p_, start_, MBEDTLS_ASN1_UTF8_STRING)
             );
         }
     );
@@ -156,11 +156,11 @@ size_t VirgilAsn1Writer::writeContextTag(unsigned char tag, size_t len) {
     ensureBufferEnough(kAsn1TagValueSize);
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
         {
-            POLARSSL_ERROR_HANDLER(
-                ::asn1_write_len(&p_, start_, len)
+            MBEDTLS_ERROR_HANDLER(
+                ::mbedtls_asn1_write_len(&p_, start_, len)
             );
-            POLARSSL_ERROR_HANDLER(
-                ::asn1_write_tag(&p_, start_, ASN1_CONTEXT_SPECIFIC | ASN1_CONSTRUCTED | tag);
+            MBEDTLS_ERROR_HANDLER(
+                ::mbedtls_asn1_write_tag(&p_, start_, MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED | tag);
             );
         }
     );
@@ -171,8 +171,8 @@ size_t VirgilAsn1Writer::writeData(const VirgilByteArray& data) {
     ensureBufferEnough(data.size());
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
         {
-            POLARSSL_ERROR_HANDLER(
-                ::asn1_write_raw_buffer(&p_, start_, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data))
+            MBEDTLS_ERROR_HANDLER(
+                ::mbedtls_asn1_write_raw_buffer(&p_, start_, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data))
             );
         }
     );
@@ -184,8 +184,8 @@ size_t VirgilAsn1Writer::writeOID(const std::string& oid) {
     ensureBufferEnough(kAsn1TagValueSize + oid.size());
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
         {
-            POLARSSL_ERROR_HANDLER(
-                ::asn1_write_oid(&p_, start_, oid.c_str(), oid.size())
+            MBEDTLS_ERROR_HANDLER(
+                ::mbedtls_asn1_write_oid(&p_, start_, oid.c_str(), oid.size())
             );
         }
     );
@@ -196,11 +196,11 @@ size_t VirgilAsn1Writer::writeSequence(size_t len) {
     ensureBufferEnough(kAsn1TagValueSize + kAsn1LengthValueSize);
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
         {
-            POLARSSL_ERROR_HANDLER(
-                ::asn1_write_len(&p_, start_, len)
+            MBEDTLS_ERROR_HANDLER(
+                ::mbedtls_asn1_write_len(&p_, start_, len)
             );
-            POLARSSL_ERROR_HANDLER(
-                ::asn1_write_tag(&p_, start_, ASN1_CONSTRUCTED | ASN1_SEQUENCE)
+            MBEDTLS_ERROR_HANDLER(
+                ::mbedtls_asn1_write_tag(&p_, start_, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)
             );
         }
     );
@@ -216,16 +216,16 @@ size_t VirgilAsn1Writer::writeSet(const std::vector<VirgilByteArray>& set) {
                     it != orderedSet.rend(); ++it) {
                 len += it->size();
                 ensureBufferEnough(it->size());
-                POLARSSL_ERROR_HANDLER(
-                    ::asn1_write_raw_buffer(&p_, start_, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN((*it)))
+                MBEDTLS_ERROR_HANDLER(
+                    ::mbedtls_asn1_write_raw_buffer(&p_, start_, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN((*it)))
                 );
             }
             ensureBufferEnough(kAsn1LengthValueSize + kAsn1TagValueSize);
-            POLARSSL_ERROR_HANDLER(
-                ::asn1_write_len(&p_, start_, len)
+            MBEDTLS_ERROR_HANDLER(
+                ::mbedtls_asn1_write_len(&p_, start_, len)
             );
-            POLARSSL_ERROR_HANDLER(
-                ::asn1_write_tag(&p_, start_, ASN1_CONSTRUCTED | ASN1_SET)
+            MBEDTLS_ERROR_HANDLER(
+                ::mbedtls_asn1_write_tag(&p_, start_, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SET)
             );
         }
     );

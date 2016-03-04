@@ -36,11 +36,14 @@
 
 #include <virgil/crypto/foundation/VirgilRandom.h>
 
-#include <polarssl/entropy.h>
-#include <polarssl/ctr_drbg.h>
+#include <algorithm>
+
+#include <mbedtls/entropy.h>
+#include <mbedtls/ctr_drbg.h>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/PolarsslException.h>
+
 
 using virgil::crypto::VirgilByteArray;
 
@@ -52,43 +55,55 @@ namespace virgil { namespace crypto { namespace foundation {
 
 class VirgilRandomImpl {
 public:
-    ctr_drbg_context ctr_drbg;
-    entropy_context entropy;
+    mbedtls_ctr_drbg_context ctr_drbg;
+    mbedtls_entropy_context entropy;
 };
 
 }}}
 
 VirgilRandom::VirgilRandom(const VirgilByteArray& personalInfo) : impl_(new VirgilRandomImpl()) {
-    entropy_init(&impl_->entropy);
+    mbedtls_entropy_init(&impl_->entropy);
 
-    POLARSSL_ERROR_HANDLER_DISPOSE(
-        ::ctr_drbg_init(&impl_->ctr_drbg, entropy_func, &impl_->entropy,
+    ::mbedtls_ctr_drbg_init(&impl_->ctr_drbg);
+    MBEDTLS_ERROR_HANDLER_DISPOSE(
+        ::mbedtls_ctr_drbg_seed(&impl_->ctr_drbg, mbedtls_entropy_func, &impl_->entropy,
                 VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(personalInfo)),
         {
-            ::entropy_free(&impl_->entropy);
+            ::mbedtls_entropy_free(&impl_->entropy);
             delete impl_;
         }
     );
 }
 
 VirgilByteArray VirgilRandom::randomize(size_t bytesNum) {
-    unsigned char * buf = new unsigned char[bytesNum];
+    unsigned char buf[MBEDTLS_CTR_DRBG_MAX_REQUEST] = {0x0};
 
-    POLARSSL_ERROR_HANDLER_DISPOSE(
-        ::ctr_drbg_random(&impl_->ctr_drbg, buf, bytesNum),
-        {
-            delete[] buf;
-        }
-    );
-
-    VirgilByteArray randomBytes =  VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(buf, bytesNum);
-    delete[] buf;
+    VirgilByteArray randomBytes;
+    randomBytes.reserve(bytesNum);
+    while (randomBytes.size() < bytesNum) {
+        const size_t randomChunkSize = std::min(bytesNum, (size_t)MBEDTLS_CTR_DRBG_MAX_REQUEST);
+        MBEDTLS_ERROR_HANDLER(
+            ::mbedtls_ctr_drbg_random(&impl_->ctr_drbg, buf, randomChunkSize)
+        );
+        randomBytes.insert(randomBytes.end(), buf, buf + randomChunkSize);
+    }
     return randomBytes;
 }
 
-VirgilRandom::~VirgilRandom() throw() {
-    ::ctr_drbg_free(&impl_->ctr_drbg);
-    ::entropy_free(&impl_->entropy);
-    delete impl_;
+size_t VirgilRandom::randomize() {
+    VirgilByteArray randomBytes = randomize(sizeof(size_t));
+    return *((size_t *)&randomBytes[0]);
 }
 
+size_t VirgilRandom::randomize(size_t min, size_t max) {
+    if (min > max) {
+        throw std::logic_error("VirgilRandom: wrong range - min is greater than max");
+    }
+    return min + (randomize() % size_t(max - min));
+}
+
+VirgilRandom::~VirgilRandom() throw() {
+    ::mbedtls_ctr_drbg_free(&impl_->ctr_drbg);
+    ::mbedtls_entropy_free(&impl_->entropy);
+    delete impl_;
+}

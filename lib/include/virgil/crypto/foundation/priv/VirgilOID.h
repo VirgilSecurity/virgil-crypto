@@ -43,15 +43,15 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_OID_H
 #define VIRGIL_CRYPTO_VIRGIL_OID_H
 
-#include <polarssl/oid.h>
-#include <polarssl/asn1.h>
+#include <mbedtls/oid.h>
+#include <mbedtls/asn1.h>
 
 #include <string>
 
 /**
  * PKCS#7 OIDs
  */
-#define OID_PKCS7 OID_PKCS "\x07" /**< pkcs-7 OBJECT IDENTIFIER ::= { iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) 7 } */
+#define OID_PKCS7 MBEDTLS_OID_PKCS "\x07" /**< pkcs-7 OBJECT IDENTIFIER ::= { iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) 7 } */
 #define OID_PKCS7_DATA OID_PKCS7 "\x01" /**< data ::= { pkcs-7 1 } */
 #define OID_PKCS7_SIGNED_DATA OID_PKCS7 "\x02" /**< signedData ::= { pkcs-7 2 } */
 #define OID_PKCS7_ENVELOPED_DATA OID_PKCS7 "\x03" /**< envelopedData ::= { pkcs-7 3 } */
@@ -64,12 +64,12 @@
 /**
  * PKCS#9 OIDs
  */
-#define OID_PKCS9_AUTHENTICATED_DATA OID_PKCS9 "\x0F\x01\x02" /**< ct-authData ::= { pkcs-9 smime(16) ct(1) ct-authData(2) } */
+#define OID_PKCS9_AUTHENTICATED_DATA MBEDTLS_OID_PKCS9 "\x0F\x01\x02" /**< ct-authData ::= { pkcs-9 smime(16) ct(1) ct-authData(2) } */
 
 /**
  * @brief Translate low-level oid to std::string
  */
-#define OID_TO_STD_STRING(oid) std::string(oid, OID_SIZE(oid))
+#define OID_TO_STD_STRING(oid) std::string(oid, MBEDTLS_OID_SIZE(oid))
 
 /**
  * @brief Compares OIDs

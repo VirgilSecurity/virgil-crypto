@@ -159,6 +159,11 @@ set (LIB_LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API 
 set (LIB_FILE_IO OFF CACHE BOOL "Defines whether to include module depends on file IO or not")
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
 
+# Propogate some parameters as C/C++ defines
+if (LIB_FILE_IO)
+    add_definitions(-DLIB_FILE_IO)
+endif (LIB_FILE_IO)
+
 # Configure
 find_host_package (Git)
 

@@ -7,5 +7,6 @@ disable:
     - MBEDTLS_AESNI_C
     - MBEDTLS_PADLOCK_C
     - MBEDTLS_AESNI_C
+    - MBEDTLS_PLATFORM_C
 new:
     - '#define INTEGRITY'

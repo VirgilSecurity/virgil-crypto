@@ -126,7 +126,7 @@ function make_bundle {
 
     HEADERS_DIR="$INDIR/include"
 
-    LIBMBEDTLS="libmbedtls.a"
+    LIBMBEDTLS="libmbedcrypto.a"
     LIBVIRGIL="libvirgil_crypto.a"
 
     # Create working dir
@@ -168,7 +168,8 @@ CURRENT_DIR=$(abspath .)
 
 SYSTEM_KERNEL_RELEASE="$(uname -r)"
 SYSTEM_KERNEL_RELEASE_PARTS=(${SYSTEM_KERNEL_RELEASE//-/ })
-SYSTEM_KERNEL_RELEASE_VERSION="${SYSTEM_KERNEL_RELEASE_PARTS[0]}"
+SYSTEM_KERNEL_RELEASE_PARTS=(${SYSTEM_KERNEL_RELEASE_PARTS[0]//./ })
+SYSTEM_KERNEL_RELEASE_VERSION="${SYSTEM_KERNEL_RELEASE_PARTS[0]}.${SYSTEM_KERNEL_RELEASE_PARTS[1]}"
 
 if [ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]; then
     SYSTEM_KERNEL_RELEASE_VERSION=""
@@ -248,6 +249,7 @@ if [ ! -z "${INSTALL_DIR}" ]; then
 fi
 
 # Go to the build directory
+cd "${INSTALL_DIR}" && rm -fr ./*
 cd "${BUILD_DIR}" && rm -fr ./*
 
 # Build for native platforms
@@ -356,5 +358,6 @@ fi
 mkdir -p "${INSTALL_DIR}/${ARCH_NAME}"
 cd "${INSTALL_DIR}"
 mv $(ls -A | grep -v ${ARCH_NAME}) "./${ARCH_NAME}"
-tar -czvf "${ARCH_NAME}.tar.gz" -- *
+cp -f "${SRC_DIR}/VERSION" "./${ARCH_NAME}"
+tar -czvf "${ARCH_NAME}.tgz" -- *
 find . ! -path . -type d -exec rm -fr {} +

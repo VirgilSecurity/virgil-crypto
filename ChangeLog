@@ -1,6 +1,31 @@
 virgil ChangeLog (Sorted per date)
 
-= Version 1.2.0-rc1 released 2016-01-04
+= Version 1.2.2 released 2016-01-15
+
+Bugfix:
+  * [Build] Fix build issue on Jenkins - php-5.5 and php-5.6 build on centos was lost.
+
+Changes:
+  * [Build] Archive target binaries to the folder with archive name (build.bat).
+  * [Build] Rename artifacts extensions from '.tar.gz' to 'tgz'.
+
+Features:
+  * [Build] Add VERSION file to Jenkins 'install' directory when build.
+
+= Version 1.2.1 released 2016-01-14
+
+Changes:
+  * [Build] Make default value of platform version shorter - keep only major and minor versions.
+  * [Build] Replace env.sh script with VIRGIL_CRYPTO_ENV_SCRIPT environment variable.
+  * [Build] Add file with current version of CryptoLib to result directory.
+  * [Build] Clear 'install' directory before build (build.sh).
+  * [Build] Remove redundant 'build_all.sh' script file.
+
+Features:
+  * [Build] Add batch file to simplify build process on windows os.
+  * [Build] Add windows build to Jenkinsfile.
+
+= Version 1.2.0 released 2016-01-08
 
 Bugfix:
   * [Lib] Fix crypto module name in ASM.JS example.
@@ -8,6 +33,7 @@ Bugfix:
 
 Changes:
   * [Lib] Replace AES-CBC with AES-GCM as default symmetric algortihm.
+  * [Lib] Add restriction to password length.
   * [Lib] Remove function virgil::crypto::string_zeroize() from the wrappers.
   * [Lib] Remove action of dynamic loading JNI module from Java wrapper.
   * [Build] Exclude c++ tests from embedded platforms.

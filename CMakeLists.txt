@@ -81,7 +81,7 @@ project (VirgilSecurity)
 # Set library version
 set (VIRGIL_VERSION_MAJOR 1)
 set (VIRGIL_VERSION_MINOR 2)
-set (VIRGIL_VERSION_PATCH 0)
+set (VIRGIL_VERSION_PATCH 2)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 1)
 message (STATUS "Virgil version: " ${VIRGIL_VERSION})
@@ -159,6 +159,11 @@ set (LIB_LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API 
 set (LIB_FILE_IO OFF CACHE BOOL "Defines whether to include module depends on file IO or not")
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
 
+# Propogate some parameters as C/C++ defines
+if (LIB_FILE_IO)
+    add_definitions(-DLIB_FILE_IO)
+endif (LIB_FILE_IO)
+
 # Configure
 find_host_package (Git)
 
@@ -205,9 +210,23 @@ add_subdirectory (wrappers)
 string (TOLOWER ${CMAKE_SYSTEM_NAME} PLATFORM_LOWER)
 set (LANG_VERSION "" CACHE STRING "Target language minimum supported version")
 set (PLATFORM "${PLATFORM_LOWER}" CACHE STRING "Target platform")
-set (PLATFORM_VERSION "${CMAKE_SYSTEM_VERSION}" CACHE STRING "Target platform")
+set (PLATFORM_VERSION_LOCAL "")
+if (CMAKE_SYSTEM_VERSION)
+    string (REPLACE "." ";" SYSTEM_VERSION_LIST ${CMAKE_SYSTEM_VERSION})
+    list (LENGTH SYSTEM_VERSION_LIST SYSTEM_VERSION_LIST_LENGTH)
+    if (${SYSTEM_VERSION_LIST_LENGTH} GREATER 0)
+        list (GET SYSTEM_VERSION_LIST 0 SYSTEM_VERSION_MAJOR)
+        set (PLATFORM_VERSION_LOCAL "${SYSTEM_VERSION_MAJOR}")
+    endif (${SYSTEM_VERSION_LIST_LENGTH} GREATER 0)
+    if (${SYSTEM_VERSION_LIST_LENGTH} GREATER 1)
+        list (GET SYSTEM_VERSION_LIST 1 SYSTEM_VERSION_MINOR)
+        set (PLATFORM_VERSION_LOCAL "${PLATFORM_VERSION_LOCAL}.${SYSTEM_VERSION_MINOR}")
+    endif (${SYSTEM_VERSION_LIST_LENGTH} GREATER 1)
+endif (CMAKE_SYSTEM_VERSION)
+set (PLATFORM_VERSION "${PLATFORM_VERSION_LOCAL}" CACHE STRING "Target platform version")
 set (PLATFORM_EMBEDDED NO CACHE BOOL "Mark target platform as embedded")
 mark_as_advanced (PLATFORM_EMBEDDED PLATFORM_VERSION)
+unset (PLATFORM_VERSION_LOCAL)
 
 # Enable C++ tests only for native platforms
 if (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)

@@ -56,7 +56,7 @@
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Alg.h>
+#include <virgil/crypto/foundation/asn1/priv/VirgilAsn1Alg.h>
 
 using virgil::crypto::str2bytes;
 using virgil::crypto::VirgilByteArray;
@@ -68,7 +68,7 @@ using virgil::crypto::foundation::PolarsslException;
 using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
-using virgil::crypto::foundation::asn1::VirgilAsn1Alg;
+using virgil::crypto::foundation::asn1::priv::VirgilAsn1Alg;
 
 typedef enum {
     VIRGIL_PBE_NONE = 0,

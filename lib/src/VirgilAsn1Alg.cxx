@@ -34,7 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Alg.h>
+#include <virgil/crypto/foundation/asn1/priv/VirgilAsn1Alg.h>
 
 #include <mbedtls/oid.h>
 
@@ -50,7 +50,7 @@ using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::VirgilCryptoException;
 using virgil::crypto::foundation::VirgilRandom;
-using virgil::crypto::foundation::asn1::VirgilAsn1Alg;
+using virgil::crypto::foundation::asn1::priv::VirgilAsn1Alg;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 

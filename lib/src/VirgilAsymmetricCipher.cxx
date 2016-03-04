@@ -56,7 +56,7 @@
 #include <virgil/crypto/foundation/VirgilRandom.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Alg.h>
+#include <virgil/crypto/foundation/asn1/priv/VirgilAsn1Alg.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
@@ -69,7 +69,7 @@ using virgil::crypto::foundation::VirgilAsymmetricCipher;
 using virgil::crypto::foundation::VirgilAsymmetricCipherImpl;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
-using virgil::crypto::foundation::asn1::VirgilAsn1Alg;
+using virgil::crypto::foundation::asn1::priv::VirgilAsn1Alg;
 
 /**
  * @brief Throw exception if password is too long.
@@ -421,8 +421,17 @@ void VirgilAsymmetricCipher::genKeyPair(VirgilKeyPair::Type type) {
         case VirgilKeyPair::Type_EC_BP512R1:
             ecTypeId = MBEDTLS_ECP_DP_BP512R1;
             break;
-        case VirgilKeyPair::Type_EC_CURVE25519:
+        case VirgilKeyPair::Type_EC_M221:
+            throw VirgilCryptoException("VirgilKeyPair: Not implemented curve Type_EC_M221");
+            break;
+        case VirgilKeyPair::Type_EC_M255:
             ecTypeId = MBEDTLS_ECP_DP_CURVE25519;
+            break;
+        case VirgilKeyPair::Type_EC_M383:
+            throw VirgilCryptoException("VirgilKeyPair: Not implemented curve Type_EC_M383");
+            break;
+        case VirgilKeyPair::Type_EC_M511:
+            throw VirgilCryptoException("VirgilKeyPair: Not implemented curve Type_EC_M511");
             break;
         case VirgilKeyPair::Type_EC_SECP192K1:
             ecTypeId = MBEDTLS_ECP_DP_SECP192K1;

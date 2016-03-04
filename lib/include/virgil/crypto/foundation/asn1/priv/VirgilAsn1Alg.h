@@ -41,7 +41,7 @@
 
 #include <virgil/crypto/VirgilByteArray.h>
 
-namespace virgil { namespace crypto { namespace foundation { namespace asn1 {
+namespace virgil { namespace crypto { namespace foundation { namespace asn1 { namespace priv {
 
 /**
  * @brief This class provides methods to generate defined ASN.1 structure.
@@ -107,6 +107,6 @@ private:
     VirgilAsn1Alg();
 };
 
-}}}}
+}}}}}
 
 #endif /* VIRGIL_CRYPTO_VIRGIL_ASN1_ALG_H */

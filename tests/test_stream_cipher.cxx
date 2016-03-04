@@ -39,6 +39,8 @@
  * @brief Covers class VirgilStreamCipher
  */
 
+#if defined(LIB_FILE_IO)
+
 #include "catch.hpp"
 
 #include <string>
@@ -267,3 +269,7 @@ TEST_CASE("Stream Cipher: generated keys", "[stream-cipher]") {
         }
     }
 }
+
+#else
+    #warning "Tests for class VirgilStreamCipher are ignored, because LIB_FILE_IO build parameter is not defined"
+#endif /* LIB_FILE_IO */

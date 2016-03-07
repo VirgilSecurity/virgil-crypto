@@ -6,7 +6,7 @@ Bugfix:
   * [.NET] Fix decrypt and sign methods when passing null private key password
 
 Changes:
-  * Update underlying MbedTLS library to version 2.2.1, which includes critical security issues.
+  * Update underlying MbedTLS library to version 2.2.1, which includes fix of critical security issues.
   * Use modern PBE algorithm: PKCS#5 PBES2 with SHA-384 and AES-256-CBC.
   * Temporary disable SWIG feature: Exception unrolling. Impact classes: VirgilStreamSigner and VirgilStreamSigner.
 

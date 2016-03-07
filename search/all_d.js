@@ -1,14 +1,12 @@
 var searchData=
 [
-  ['oid_5fpkcs7',['OID_PKCS7',['../_virgil_o_i_d_8h.html#aa2b7a0cce0e25a78787a15896eff4556',1,'VirgilOID.h']]],
-  ['oid_5fpkcs7_5fdata',['OID_PKCS7_DATA',['../_virgil_o_i_d_8h.html#aea02013c7a21113f80bd31de962c28fb',1,'VirgilOID.h']]],
-  ['oid_5fpkcs7_5fdata_5fwith_5fattributes',['OID_PKCS7_DATA_WITH_ATTRIBUTES',['../_virgil_o_i_d_8h.html#a0e300ac9e1056e9c2ac3e0e3444ac823',1,'VirgilOID.h']]],
-  ['oid_5fpkcs7_5fdigested_5fdata',['OID_PKCS7_DIGESTED_DATA',['../_virgil_o_i_d_8h.html#ad3bb0da4330c71d4fe74223a4b841377',1,'VirgilOID.h']]],
-  ['oid_5fpkcs7_5fencrypted_5fdata',['OID_PKCS7_ENCRYPTED_DATA',['../_virgil_o_i_d_8h.html#a013ee91a6d0b5ed0946c2a9eda64f565',1,'VirgilOID.h']]],
-  ['oid_5fpkcs7_5fencrypted_5fprivate_5fkey_5finfo',['OID_PKCS7_ENCRYPTED_PRIVATE_KEY_INFO',['../_virgil_o_i_d_8h.html#a16313b2223b0b6fb914751640906a46b',1,'VirgilOID.h']]],
-  ['oid_5fpkcs7_5fenveloped_5fdata',['OID_PKCS7_ENVELOPED_DATA',['../_virgil_o_i_d_8h.html#aa651c6e492bcb25b683d74b1067d7a29',1,'VirgilOID.h']]],
-  ['oid_5fpkcs7_5fsigned_5fand_5fenveloped_5fdata',['OID_PKCS7_SIGNED_AND_ENVELOPED_DATA',['../_virgil_o_i_d_8h.html#ae8ec2801a8bda549d78d60aa46e6346c',1,'VirgilOID.h']]],
-  ['oid_5fpkcs7_5fsigned_5fdata',['OID_PKCS7_SIGNED_DATA',['../_virgil_o_i_d_8h.html#aaf7db40a7344659b019d0eae6e82e3bd',1,'VirgilOID.h']]],
-  ['oid_5fpkcs9_5fauthenticated_5fdata',['OID_PKCS9_AUTHENTICATED_DATA',['../_virgil_o_i_d_8h.html#ae73afda77ce91d7e06016a493b93d76f',1,'VirgilOID.h']]],
-  ['oid_5fto_5fstd_5fstring',['OID_TO_STD_STRING',['../_virgil_o_i_d_8h.html#a8767b33bbdcf95eefd3daa69de9606dd',1,'VirgilOID.h']]]
+  ['passwordrecipients',['passwordRecipients',['../classvirgil_1_1crypto_1_1foundation_1_1cms_1_1_virgil_c_m_s_enveloped_data.html#ad8cba5065b00a692f4ecaad481fde65f',1,'virgil::crypto::foundation::cms::VirgilCMSEnvelopedData']]],
+  ['patchversion',['patchVersion',['../classvirgil_1_1crypto_1_1_virgil_version.html#ab72a775ff89f80f90381ecec3c577b87',1,'virgil::crypto::VirgilVersion']]],
+  ['pkcs12',['pkcs12',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_e.html#a21aec2e9215c11342221bd972c79bb5d',1,'virgil::crypto::foundation::VirgilPBE']]],
+  ['pkcs5',['pkcs5',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_e.html#aba39a34f303387a6d04d74db90955892',1,'virgil::crypto::foundation::VirgilPBE']]],
+  ['polarsslexception',['PolarsslException',['../classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html',1,'virgil::crypto::foundation']]],
+  ['polarsslexception',['PolarsslException',['../classvirgil_1_1crypto_1_1foundation_1_1_polarssl_exception.html#ae721fa269403bebf1edd75f6f5525a77',1,'virgil::crypto::foundation::PolarsslException']]],
+  ['privatekey',['privateKey',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a843d20a09b4d3ce3d607695f33956d64',1,'virgil::crypto::VirgilKeyPair']]],
+  ['process',['process',['../classvirgil_1_1crypto_1_1_virgil_chunk_cipher.html#ad1acabd520561b7632586c7def8a3a1c',1,'virgil::crypto::VirgilChunkCipher']]],
+  ['publickey',['publicKey',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a381634ff4ab3f89dfb8eaf052a37e6b1',1,'virgil::crypto::VirgilKeyPair']]]
 ];

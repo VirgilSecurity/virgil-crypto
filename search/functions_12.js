@@ -17,6 +17,5 @@ var searchData=
   ['virgilstreamdatasink',['VirgilStreamDataSink',['../classvirgil_1_1crypto_1_1stream_1_1_virgil_stream_data_sink.html#a64f0765b5fec42bc67e5b29fe31379be',1,'virgil::crypto::stream::VirgilStreamDataSink']]],
   ['virgilstreamdatasource',['VirgilStreamDataSource',['../classvirgil_1_1crypto_1_1stream_1_1_virgil_stream_data_source.html#a7a72373691c1fd2793ec65aaad3137a8',1,'virgil::crypto::stream::VirgilStreamDataSource']]],
   ['virgilstreamsigner',['VirgilStreamSigner',['../classvirgil_1_1crypto_1_1_virgil_stream_signer.html#a058463d37a3e3551b8cab0ce5d904ff6',1,'virgil::crypto::VirgilStreamSigner']]],
-  ['virgilsymmetriccipher',['VirgilSymmetricCipher',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a5748382216977e9b202678e8b4a81737',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
-  ['virgiltagfilter',['VirgilTagFilter',['../classvirgil_1_1crypto_1_1foundation_1_1priv_1_1_virgil_tag_filter.html#a136308c99460c5ee56be04a0e889d64e',1,'virgil::crypto::foundation::priv::VirgilTagFilter']]]
+  ['virgilsymmetriccipher',['VirgilSymmetricCipher',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a5748382216977e9b202678e8b4a81737',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]]
 ];

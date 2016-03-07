@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['virgilasn1alg',['VirgilAsn1Alg',['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1priv_1_1_virgil_asn1_alg.html',1,'virgil::crypto::foundation::asn1::priv']]],
   ['virgilasn1compatible',['VirgilAsn1Compatible',['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible.html',1,'virgil::crypto::foundation::asn1']]],
   ['virgilasn1reader',['VirgilAsn1Reader',['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html',1,'virgil::crypto::foundation::asn1']]],
   ['virgilasn1writer',['VirgilAsn1Writer',['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html',1,'virgil::crypto::foundation::asn1']]],
@@ -33,6 +32,5 @@ var searchData=
   ['virgilstreamdatasource',['VirgilStreamDataSource',['../classvirgil_1_1crypto_1_1stream_1_1_virgil_stream_data_source.html',1,'virgil::crypto::stream']]],
   ['virgilstreamsigner',['VirgilStreamSigner',['../classvirgil_1_1crypto_1_1_virgil_stream_signer.html',1,'virgil::crypto']]],
   ['virgilsymmetriccipher',['VirgilSymmetricCipher',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html',1,'virgil::crypto::foundation']]],
-  ['virgiltagfilter',['VirgilTagFilter',['../classvirgil_1_1crypto_1_1foundation_1_1priv_1_1_virgil_tag_filter.html',1,'virgil::crypto::foundation::priv']]],
   ['virgilversion',['VirgilVersion',['../classvirgil_1_1crypto_1_1_virgil_version.html',1,'virgil::crypto']]]
 ];

@@ -126,7 +126,7 @@ function make_bundle {
 
     HEADERS_DIR="$INDIR/include"
 
-    LIBMBEDTLS="libmbedtls.a"
+    LIBMBEDTLS="libmbedcrypto.a"
     LIBVIRGIL="libvirgil_crypto.a"
 
     # Create working dir

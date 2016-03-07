@@ -95,6 +95,11 @@ public:
      * @return Name of the hash function.
      */
     std::string name() const;
+    /**
+     * @brief Return underlying hash type
+     * @note Used for internal purposes only
+     */
+    int type() const;
     ///@}
 
     /**

@@ -34,39 +34,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/foundation/PolarsslException.h>
+/**
+ * @file test_signer.cxx
+ * @brief Covers class VirgilSigner
+ */
 
-#include <cstring>
+#include "catch.hpp"
+
 #include <string>
 
-#include <mbedtls/error.h>
+#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilSigner.h>
+#include <virgil/crypto/VirgilKeyPair.h>
+#include <virgil/crypto/VirgilCryptoException.h>
 
-using virgil::crypto::foundation::PolarsslException;
+using virgil::crypto::str2bytes;
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilSigner;
+using virgil::crypto::VirgilKeyPair;
+using virgil::crypto::VirgilCryptoException;
 
-// Private section constants
-enum {
-    gErrorBufferLen = 1024 // Max length of the generated error message
-};
+TEST_CASE("sign", "[signer]") {
+    VirgilByteArray testData = str2bytes("this string will be signed");
+    VirgilByteArray malformedData = str2bytes("this string will is malformed");
+    VirgilByteArray malformedSign = str2bytes("I am malformed sign");
+    VirgilByteArray keyPassword = str2bytes("password");
+    VirgilKeyPair keyPair(keyPassword);
 
-/**
- * Build error message related to the given error code.
- */
-static std::string buildErrorString(int errCode) {
-    static char errorBuffer[gErrorBufferLen + 1];
-    ::memset(errorBuffer, 0x0, gErrorBufferLen + 1);
-    ::mbedtls_strerror(errCode, errorBuffer, gErrorBufferLen);
-    return std::string(errorBuffer);
-}
+    VirgilSigner signer;
+    VirgilByteArray sign = signer.sign(testData, keyPair.privateKey(), keyPassword);
 
+    SECTION("and verify with original data and correspond sign") {
+        REQUIRE(signer.verify(testData, sign, keyPair.publicKey()) == true);
+    }
 
-// Public section
-PolarsslException::PolarsslException(int errCode)
-        : VirgilCryptoException(buildErrorString(errCode)), errCode_(errCode) {
-}
+    SECTION("and verify with malformed data") {
+        REQUIRE(signer.verify(malformedData, sign, keyPair.publicKey()) == false);
+    }
 
-PolarsslException::~PolarsslException() throw() {
-}
-
-int PolarsslException::errCode() const throw() {
-    return errCode_;
+    SECTION("and verify with malformed sign") {
+        REQUIRE_THROWS_AS(signer.verify(testData, malformedSign, keyPair.publicKey()), VirgilCryptoException);
+    }
 }

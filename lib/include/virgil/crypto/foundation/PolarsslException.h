@@ -34,14 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H
-#define VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H
+#ifndef VIRGIL_CRYPTO_MBEDTLS_EXCEPTION_H
+#define VIRGIL_CRYPTO_MBEDTLS_EXCEPTION_H
 
 #include <virgil/crypto/VirgilCryptoException.h>
 
-#define POLARSSL_ERROR_HANDLER(invocation) POLARSSL_ERROR_HANDLER_DISPOSE(invocation, {})
+#define MBEDTLS_ERROR_HANDLER(invocation) MBEDTLS_ERROR_HANDLER_DISPOSE(invocation, {})
 
-#define POLARSSL_ERROR_HANDLER_DISPOSE(invocation, dispose) \
+#define MBEDTLS_ERROR_HANDLER_DISPOSE(invocation, dispose) \
 do { \
     int errCode = invocation; \
     if (errCode < 0) { \
@@ -92,5 +92,5 @@ private:
 
 }}}
 
-#endif /* VIRGIL_CRYPTO_POLARSSL_EXCEPTION_H */
+#endif /* VIRGIL_CRYPTO_MBEDTLS_EXCEPTION_H */
 

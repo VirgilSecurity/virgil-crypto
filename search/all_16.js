@@ -3,6 +3,8 @@ var searchData=
   ['_7evirgilasn1compatible',['~VirgilAsn1Compatible',['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible.html#a0320f256e7ed83f1781d44c9fa1a18ec',1,'virgil::crypto::foundation::asn1::VirgilAsn1Compatible']]],
   ['_7evirgilasn1reader',['~VirgilAsn1Reader',['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html#afcc97e34f7595bb4a32eafb9e4893c0b',1,'virgil::crypto::foundation::asn1::VirgilAsn1Reader']]],
   ['_7evirgilasn1writer',['~VirgilAsn1Writer',['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#a53e897b411b6180250a015d3dd909ee8',1,'virgil::crypto::foundation::asn1::VirgilAsn1Writer']]],
+  ['_7evirgilbytesdatasink',['~VirgilBytesDataSink',['../classvirgil_1_1crypto_1_1stream_1_1_virgil_bytes_data_sink.html#a9cbf0721a989ffa244d11fc76419e388',1,'virgil::crypto::stream::VirgilBytesDataSink']]],
+  ['_7evirgilbytesdatasource',['~VirgilBytesDataSource',['../classvirgil_1_1crypto_1_1stream_1_1_virgil_bytes_data_source.html#a290876df2cbce49d0e3bb0602928d4ee',1,'virgil::crypto::stream::VirgilBytesDataSource']]],
   ['_7evirgilchunkcipher',['~VirgilChunkCipher',['../classvirgil_1_1crypto_1_1_virgil_chunk_cipher.html#af6e4e7cf133361344fddd3f13bbefa7a',1,'virgil::crypto::VirgilChunkCipher']]],
   ['_7evirgilcipher',['~VirgilCipher',['../classvirgil_1_1crypto_1_1_virgil_cipher.html#a7141265abe67f1fd3d24106adde156de',1,'virgil::crypto::VirgilCipher']]],
   ['_7evirgilcipherbase',['~VirgilCipherBase',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#acfa11aa7526f1d94896a743d91af6428',1,'virgil::crypto::VirgilCipherBase']]],

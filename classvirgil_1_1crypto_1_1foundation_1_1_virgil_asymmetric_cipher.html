@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">1.2.2</span>
+   &#160;<span id="projectnumber">1.3.0</span>
    </div>
   </td>
  </tr>
@@ -154,12 +154,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a0d21a5548a569de2e649acd48cbce903"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decrypts given message.  <a href="#a0d21a5548a569de2e649acd48cbce903">More...</a><br /></td></tr>
 <tr class="separator:a0d21a5548a569de2e649acd48cbce903"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Sign / Verify</div></td></tr>
-<tr class="memitem:a86414d5ee589ddfe2c8f7e0bfb9202ad"><td class="memItemLeft" align="right" valign="top">virgil::crypto::VirgilByteArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a86414d5ee589ddfe2c8f7e0bfb9202ad">sign</a> (const virgil::crypto::VirgilByteArray &amp;hash) const </td></tr>
-<tr class="memdesc:a86414d5ee589ddfe2c8f7e0bfb9202ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sign given hash.  <a href="#a86414d5ee589ddfe2c8f7e0bfb9202ad">More...</a><br /></td></tr>
-<tr class="separator:a86414d5ee589ddfe2c8f7e0bfb9202ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adacecb345f0f84df44ee9ad71507d569"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#adacecb345f0f84df44ee9ad71507d569">verify</a> (const virgil::crypto::VirgilByteArray &amp;hash, const virgil::crypto::VirgilByteArray &amp;<a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a86414d5ee589ddfe2c8f7e0bfb9202ad">sign</a>) const </td></tr>
-<tr class="memdesc:adacecb345f0f84df44ee9ad71507d569"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verify given hash with given sign.  <a href="#adacecb345f0f84df44ee9ad71507d569">More...</a><br /></td></tr>
-<tr class="separator:adacecb345f0f84df44ee9ad71507d569"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b341dd9be7dbc40ad4bf49d2dafd66f"><td class="memItemLeft" align="right" valign="top">virgil::crypto::VirgilByteArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a4b341dd9be7dbc40ad4bf49d2dafd66f">sign</a> (const virgil::crypto::VirgilByteArray &amp;digest, int hashType) const </td></tr>
+<tr class="memdesc:a4b341dd9be7dbc40ad4bf49d2dafd66f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sign given hash.  <a href="#a4b341dd9be7dbc40ad4bf49d2dafd66f">More...</a><br /></td></tr>
+<tr class="separator:a4b341dd9be7dbc40ad4bf49d2dafd66f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a566a82d71559d9dd3ffef6b56d03b87e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a566a82d71559d9dd3ffef6b56d03b87e">verify</a> (const virgil::crypto::VirgilByteArray &amp;digest, const virgil::crypto::VirgilByteArray &amp;<a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a4b341dd9be7dbc40ad4bf49d2dafd66f">sign</a>, int hashType) const </td></tr>
+<tr class="memdesc:a566a82d71559d9dd3ffef6b56d03b87e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verify given hash with given sign.  <a href="#a566a82d71559d9dd3ffef6b56d03b87e">More...</a><br /></td></tr>
+<tr class="separator:a566a82d71559d9dd3ffef6b56d03b87e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr><td colspan="2"><div class="groupHeader">Copy constructor / assignment operator</div></td></tr>
 <tr><td colspan="2"><div class="groupText"><dl class="section warning"><dt>Warning</dt><dd>Copy constructor and assignment operator create copy of the object as it was created by on of the creation methods. All changes in the internal state, that was made after creation, are not copied! </dd></dl>
 </div></td></tr>
@@ -703,7 +703,7 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a86414d5ee589ddfe2c8f7e0bfb9202ad"></a>
+<a class="anchor" id="a4b341dd9be7dbc40ad4bf49d2dafd66f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -711,8 +711,18 @@ Additional Inherited Members</h2></td></tr>
           <td class="memname">virgil::crypto::VirgilByteArray virgil::crypto::foundation::VirgilAsymmetricCipher::sign </td>
           <td>(</td>
           <td class="paramtype">const virgil::crypto::VirgilByteArray &amp;&#160;</td>
-          <td class="paramname"><em>hash</em></td><td>)</td>
-          <td> const</td>
+          <td class="paramname"><em>digest</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>hashType</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -721,7 +731,8 @@ Additional Inherited Members</h2></td></tr>
 <p>Sign given hash with known private key, configured with <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a21d09a28ac9cd2dc8726c960d562aa3e">setPrivateKey</a> method, or <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2f1f0843a8c7e4ffa46dcc28732fc583">genKeyPair</a> method.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">hash</td><td>- digest to be signed. </td></tr>
+    <tr><td class="paramname">digest</td><td>- digest to be signed. </td></tr>
+    <tr><td class="paramname">hashType</td><td>- type of the hash algorithm that was used to get digest </td></tr>
   </table>
   </dd>
 </dl>
@@ -729,7 +740,7 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="adacecb345f0f84df44ee9ad71507d569"></a>
+<a class="anchor" id="a566a82d71559d9dd3ffef6b56d03b87e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -737,13 +748,19 @@ Additional Inherited Members</h2></td></tr>
           <td class="memname">bool virgil::crypto::foundation::VirgilAsymmetricCipher::verify </td>
           <td>(</td>
           <td class="paramtype">const virgil::crypto::VirgilByteArray &amp;&#160;</td>
-          <td class="paramname"><em>hash</em>, </td>
+          <td class="paramname"><em>digest</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const virgil::crypto::VirgilByteArray &amp;&#160;</td>
-          <td class="paramname"><em>sign</em>&#160;</td>
+          <td class="paramname"><em>sign</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>hashType</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -757,12 +774,13 @@ Additional Inherited Members</h2></td></tr>
 <p>Verify given hash with known public key, configured with <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a21d09a28ac9cd2dc8726c960d562aa3e">setPrivateKey</a> method, or <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a2f1f0843a8c7e4ffa46dcc28732fc583">genKeyPair</a> method, and with given sign.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">hash</td><td>- digest to be verified. </td></tr>
+    <tr><td class="paramname">digest</td><td>- digest to be verified. </td></tr>
     <tr><td class="paramname">sign</td><td>- signed digest to be used during vefification. </td></tr>
+    <tr><td class="paramname">hashType</td><td>- type of the hash algorithm that was used to get digest </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if given hash corresponds to the given signed digest, otherwise - false. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if given digest corresponds to the given digest sign, otherwise - false. </dd></dl>
 
 </div>
 </div>

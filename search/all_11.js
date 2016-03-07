@@ -3,7 +3,7 @@ var searchData=
   ['tag',['tag',['../classvirgil_1_1crypto_1_1foundation_1_1priv_1_1_virgil_tag_filter.html#a82b56f5190e3a5660bcc3f09c1011a77',1,'virgil::crypto::foundation::priv::VirgilTagFilter']]],
   ['toasn1',['toAsn1',['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible.html#ae175120c2ca5b2b500865d581cfb9334',1,'virgil::crypto::foundation::asn1::VirgilAsn1Compatible']]],
   ['tryreadcontentinfo',['tryReadContentInfo',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a507d8f760cd9cd0671f35fc343509b9f',1,'virgil::crypto::VirgilCipherBase']]],
-  ['type',['Type',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907',1,'virgil::crypto::VirgilKeyPair']]],
+  ['type',['Type',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907',1,'virgil::crypto::VirgilKeyPair::Type()'],['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#af86892c303525acc9b970aaf6b91f551',1,'virgil::crypto::foundation::VirgilHash::type()']]],
   ['type_5fdefault',['Type_Default',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907a0efd5c496f7e17b507709d33f5019211',1,'virgil::crypto::VirgilKeyPair']]],
   ['type_5fec_5fbp256r1',['Type_EC_BP256R1',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907ae4a976f98cc11749c87ade9fc0c5487b',1,'virgil::crypto::VirgilKeyPair']]],
   ['type_5fec_5fbp384r1',['Type_EC_BP384R1',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907a80f0c2b3b64b5797259a1933f1695d28',1,'virgil::crypto::VirgilKeyPair']]],

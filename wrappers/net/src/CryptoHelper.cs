@@ -157,7 +157,7 @@ namespace Virgil.Crypto
         public static string Decrypt(string cipherTextBase64, string recipientId, byte[] privateKey, string privateKeyPassword)
         {
             byte[] cipherData = System.Convert.FromBase64String(cipherTextBase64);
-            byte[] textData = Decrypt(cipherData, recipientId, privateKey);
+            byte[] textData = Decrypt(cipherData, recipientId, privateKey, privateKeyPassword);
             string text = System.Text.Encoding.UTF8.GetString(textData, 0, textData.Length);
             return text;
         }
@@ -190,7 +190,6 @@ namespace Virgil.Crypto
             using (VirgilCipher cipher = new VirgilCipher())
             {
                 byte[] recipientIdData = System.Text.Encoding.UTF8.GetBytes(recipientId);
-
                 byte[] textData;
 
                 if (privateKeyPassword == null)
@@ -297,6 +296,11 @@ namespace Virgil.Crypto
         {
             using (VirgilSigner signer = new VirgilSigner())
             {
+                if (privateKeyPassword == null)
+                {
+                    return signer.Sign(data, privateKey);
+                }
+
                 return signer.Sign(data, privateKey, System.Text.Encoding.UTF8.GetBytes(privateKeyPassword));
             }
         }

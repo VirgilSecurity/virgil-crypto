@@ -150,7 +150,7 @@ Table 2 - Supported languages and platforms
 ### Step 2 - Configure environment
 
 1. Open Terminal.
-1. Check that all tools which are listed in the [build prerequisite](#build-prerequisite) are available there.
+1. Check that all tools which are listed in the [build prerequisites](#build-prerequisites) are available there.
   * for Windows compiler should be MSVC;
   * for OS X build toolchain should be Xcode Toolchain.
 1. Check that all dependencies from the the [table above](#table2) are accessible.
@@ -169,7 +169,7 @@ Replace ```{{TARGET}}``` placeholder to the corresponding value from the the [ta
 Unix-like OS:
 
 ```shell
-> .\virgil-crypto\utils\build.sh {{TARGET}}
+> ./virgil-crypto/utils/build.sh {{TARGET}}
 > ls ./virgil-crypto/install/{{TARGET}}
 ```
 

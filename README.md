@@ -27,16 +27,16 @@ Virgil Security, Inc., guides software developers into the forthcoming security 
 
 ## Supported languages and platforms
 
-| Language | Supported OS               | Usage |
-|----------|----------------------------|-------|
-| C++      | ANY                        |[Tutorial](https://github.com/VirgilSecurity/virgil-sdk-cpp/blob/release/tutorial/virgil_crypto.md),  [Reference API](http://virgilsecurity.github.io/virgil-crypto/)|                       
-| PHP      | Unix, Linux, OS X          | |
-| Python   | Unix, Linux, OS X          |[Tutorial](https://github.com/VirgilSecurity/virgil-sdk-python/blob/master/Docs/crypto.md)|
-| Ruby     | Unix, Linux, OS X          | |
-| Java     | Unix, Linux, OS X, Windows |[Tutorial](https://github.com/VirgilSecurity/virgil-sdk-java-android/blob/master/docs/crypto.md)
-| .NET     | Unix, Linux, OS X, Windows |[Tutorial](https://github.com/VirgilSecurity/virgil-sdk-net/blob/master/Docs/crypto.md), [Reference API](https://github.com/VirgilSecurity/virgil-sdk-net/blob/v3-docs/Crypto/Source/Virgil.Crypto.Wrapper/reference-api.md)|
-| AsmJS    | Unix, Linux, OS X, Windows | |
-| NodeJS   | Unix, Linux, OS X, Windows |[Tutorial](https://github.com/VirgilSecurity/virgil-crypto-javascript)|                      
+| Language | Supported OS               | Usage                                                                                                                                                                                                                        |
+|----------|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| C++      | ANY                        | [Tutorial](https://github.com/VirgilSecurity/virgil-sdk-cpp/blob/release/tutorial/virgil_crypto.md),  [Reference API](http://virgilsecurity.github.io/virgil-crypto/)                                                        |
+| PHP      | Unix, Linux, OS X          |                                                                                                                                                                                                                              |
+| Python   | Unix, Linux, OS X          | [Tutorial](https://github.com/VirgilSecurity/virgil-sdk-python/blob/master/Docs/crypto.md)                                                                                                                                   |
+| Ruby     | Unix, Linux, OS X          |                                                                                                                                                                                                                              |
+| Java     | Unix, Linux, OS X, Windows | [Tutorial](https://github.com/VirgilSecurity/virgil-sdk-java-android/blob/master/docs/crypto.md)                                                                                                                             |
+| .NET     | Unix, Linux, OS X, Windows | [Tutorial](https://github.com/VirgilSecurity/virgil-sdk-net/blob/master/Docs/crypto.md), [Reference API](https://github.com/VirgilSecurity/virgil-sdk-net/blob/v3-docs/Crypto/Source/Virgil.Crypto.Wrapper/reference-api.md) |
+| AsmJS    | Unix, Linux, OS X, Windows | [Tutorial](https://github.com/VirgilSecurity/virgil-crypto-javascript)                                                                                                                                                       |
+| NodeJS   | Unix, Linux, OS X, Windows | [Tutorial](https://github.com/VirgilSecurity/virgil-crypto-javascript)                                                                                                                                                       |                      
 
 ## Library purposes
 * Encrypt data;

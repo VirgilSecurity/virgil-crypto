@@ -179,7 +179,6 @@ Windows OS:
 ```shell
 > set MSVC_ROOT=c:\path\to\msvc\root
 > set JAVA_HOME=c:\path\to\jdk
-> git clone https://github.com/VirgilSecurity/virgil-crypto.git
 > cd virgil-crypto
 > .\utils\build.bat {{TARGET}}
 > dir .\install\{{TARGET}}

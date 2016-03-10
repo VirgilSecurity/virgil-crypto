@@ -169,8 +169,9 @@ Replace ```{{TARGET}}``` placeholder to the corresponding value from the the [ta
 Unix-like OS:
 
 ```shell
-> ./virgil-crypto/utils/build.sh {{TARGET}}
-> ls ./virgil-crypto/install/{{TARGET}}
+> cd virgil-crypto
+> ./utils/build.sh {{TARGET}}
+> ls ./install/{{TARGET}}
 ```
 
 Windows OS:
@@ -179,8 +180,9 @@ Windows OS:
 > set MSVC_ROOT=c:\path\to\msvc\root
 > set JAVA_HOME=c:\path\to\jdk
 > git clone https://github.com/VirgilSecurity/virgil-crypto.git
-> .\virgil-crypto\utils\build.bat {{TARGET}}
-> dir .\virgil-crypto\install\{{TARGET}}
+> cd virgil-crypto
+> .\utils\build.bat {{TARGET}}
+> dir .\install\{{TARGET}}
 ```
 
 

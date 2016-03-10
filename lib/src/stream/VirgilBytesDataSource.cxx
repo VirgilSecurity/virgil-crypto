@@ -34,39 +34,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/foundation/PolarsslException.h>
+#include <virgil/crypto/stream/VirgilBytesDataSource.h>
+using virgil::crypto::stream::VirgilBytesDataSource;
 
-#include <cstring>
-#include <string>
+#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
 
-#include <mbedtls/error.h>
+#include <algorithm>
 
-using virgil::crypto::foundation::PolarsslException;
+static const size_t kChunkSizeMin = 10;
 
-// Private section constants
-enum {
-    gErrorBufferLen = 1024 // Max length of the generated error message
-};
-
-/**
- * Build error message related to the given error code.
- */
-static std::string buildErrorString(int errCode) {
-    static char errorBuffer[gErrorBufferLen + 1];
-    ::memset(errorBuffer, 0x0, gErrorBufferLen + 1);
-    ::mbedtls_strerror(errCode, errorBuffer, gErrorBufferLen);
-    return std::string(errorBuffer);
+VirgilBytesDataSource::VirgilBytesDataSource(const VirgilByteArray& in, size_t chunkSize)
+        : in_(in), chunkSize_(std::max(chunkSize, kChunkSizeMin)), leftBytes_(in.size()) {
 }
 
-
-// Public section
-PolarsslException::PolarsslException(int errCode)
-        : VirgilCryptoException(buildErrorString(errCode)), errCode_(errCode) {
+VirgilBytesDataSource::~VirgilBytesDataSource() throw() {
 }
 
-PolarsslException::~PolarsslException() throw() {
+bool VirgilBytesDataSource::hasData() {
+    return leftBytes_ > 0;
 }
 
-int PolarsslException::errCode() const throw() {
-    return errCode_;
+void VirgilBytesDataSource::reset() {
+    leftBytes_ = in_.size();
+}
+
+VirgilByteArray VirgilBytesDataSource::read() {
+    size_t actualChunkSize = std::min(chunkSize_, leftBytes_);
+    VirgilByteArray::const_iterator start = in_.begin() + in_.size() - leftBytes_;
+    VirgilByteArray::const_iterator end = start + actualChunkSize;
+    leftBytes_ -= actualChunkSize;
+    return VirgilByteArray(start, end);
 }

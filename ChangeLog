@@ -1,5 +1,15 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.3.0 released 2016-03-07
+
+Bugfix:
+  * [.NET] Fix decrypt and sign methods when passing null private key password
+
+Changes:
+  * Update underlying MbedTLS library to version 2.2.1, which includes fix of critical security issues.
+  * Use modern PBE algorithm: PKCS#5 PBES2 with SHA-384 and AES-256-CBC.
+  * Temporary disable SWIG feature: Exception unrolling. Impact classes: VirgilStreamSigner and VirgilStreamSigner.
+
 = Version 1.2.2 released 2016-01-15
 
 Bugfix:

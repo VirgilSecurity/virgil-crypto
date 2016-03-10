@@ -219,21 +219,23 @@ public:
      * Sign given hash with known private key, configured with @link setPrivateKey @endlink method,
      *     or @link genKeyPair @endlink method.
      *
-     * @param hash - digest to be signed.
+     * @param digest - digest to be signed.
+     * @param hashType - type of the hash algorithm that was used to get digest
      * @return Signed digest.
      */
-    virgil::crypto::VirgilByteArray sign(const virgil::crypto::VirgilByteArray& hash) const;
+    virgil::crypto::VirgilByteArray sign(const virgil::crypto::VirgilByteArray& digest, int hashType) const;
     /**
      * @brief Verify given hash with given sign.
      *
      * Verify given hash with known public key, configured with @link setPrivateKey @endlink method,
      *     or @link genKeyPair @endlink method, and with given sign.
      *
-     * @param hash - digest to be verified.
+     * @param digest - digest to be verified.
      * @param sign - signed digest to be used during vefification.
-     * @return true if given hash corresponds to the given signed digest, otherwise - false.
+     * @param hashType - type of the hash algorithm that was used to get digest
+     * @return true if given digest corresponds to the given digest sign, otherwise - false.
      */
-    bool verify(const virgil::crypto::VirgilByteArray& hash, const virgil::crypto::VirgilByteArray& sign) const;
+    bool verify(const virgil::crypto::VirgilByteArray& digest, const virgil::crypto::VirgilByteArray& sign, int hashType) const;
     ///@}
     /**
      * @name Copy constructor / assignment operator

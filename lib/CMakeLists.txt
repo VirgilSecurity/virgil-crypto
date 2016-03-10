@@ -99,7 +99,7 @@ if (INSTALL_EXT_HEADERS)
 endif ()
 
 # add a target to generate API documentation with Doxygen
-find_host_program (dot DOT_PROGRAM)
+find_host_program (DOT_PROGRAM NAMES dot)
 if (DOT_PROGRAM)
     set (DOT_FOUND "YES")
 else ()
@@ -108,6 +108,16 @@ endif (DOT_PROGRAM)
 
 find_host_package (Doxygen)
 if (DOXYGEN_FOUND)
+    if (DOXYGEN_EXCLUDE_PRIVATE)
+        set (DOXYGEN_EXCLUDE
+            "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/priv/*"
+            "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/asn1/priv/*"
+        )
+        string (REPLACE ";" " " DOXYGEN_EXCLUDE "${DOXYGEN_EXCLUDE}")
+        set (DOXYGEN_EXTRACT_PRIVATE "NO")
+    else ()
+        set (DOXYGEN_EXTRACT_PRIVATE "YES")
+    endif (DOXYGEN_EXCLUDE_PRIVATE)
     configure_file (${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
     add_custom_target (doc
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile

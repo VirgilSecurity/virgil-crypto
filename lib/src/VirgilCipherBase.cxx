@@ -39,7 +39,7 @@
 #include <cstring>
 #include <string>
 
-#include <polarssl/asn1.h>
+#include <mbedtls/asn1.h>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
@@ -275,9 +275,9 @@ void VirgilCipherBase::buildContentInfo() {
         const VirgilByteArray& password = *it;
 
         const VirgilByteArray salt = impl_->random.randomize(16);
-        const size_t iterationCount = 2048;
+        const size_t iterationCount = impl_->random.randomize(3072, 8192);
 
-        VirgilPBE pbe = VirgilPBE::pkcs12(salt, iterationCount);
+        VirgilPBE pbe = VirgilPBE::pkcs5(salt, iterationCount);
 
         VirgilCMSPasswordRecipient recipient;
         recipient.keyEncryptionAlgorithm = pbe.toAsn1();

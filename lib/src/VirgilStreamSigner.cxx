@@ -67,11 +67,11 @@ VirgilByteArray VirgilStreamSigner::sign(VirgilDataSource& source, const VirgilB
     VirgilAsymmetricCipher cipher;
     cipher.setPrivateKey(privateKey, privateKeyPassword);
     // Sign digest
-    VirgilByteArray signedDigest = cipher.sign(digest);
+    VirgilByteArray digestSign = cipher.sign(digest, hash_.type());
     // Create sign
     VirgilAsn1Writer asn1Writer;
     size_t asn1Len = 0;
-    asn1Len += asn1Writer.writeOctetString(signedDigest);
+    asn1Len += asn1Writer.writeOctetString(digestSign);
     asn1Len += hash_.asn1Write(asn1Writer);
     asn1Len += asn1Writer.writeSequence(asn1Len);
     // Return sign as binary data
@@ -84,7 +84,7 @@ bool VirgilStreamSigner::verify(VirgilDataSource& source, const VirgilByteArray&
     asn1Reader.readSequence();
     VirgilHash hash;
     hash.asn1Read(asn1Reader);
-    VirgilByteArray signedDigest = asn1Reader.readOctetString();
+    VirgilByteArray digestSign = asn1Reader.readOctetString();
     // Calculate data digest
     hash.start();
     while (source.hasData()) {
@@ -95,5 +95,5 @@ bool VirgilStreamSigner::verify(VirgilDataSource& source, const VirgilByteArray&
     VirgilAsymmetricCipher cipher;
     cipher.setPublicKey(publicKey);
     // Verify
-    return cipher.verify(digest, signedDigest);
+    return cipher.verify(digest, digestSign, hash_.type());
 }

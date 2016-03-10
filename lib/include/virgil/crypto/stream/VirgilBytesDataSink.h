@@ -34,39 +34,46 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/foundation/PolarsslException.h>
+#ifndef VIRGIL_CRYPTO_VIRGIL_BYTES_DATA_SINK_H
+#define VIRGIL_CRYPTO_VIRGIL_BYTES_DATA_SINK_H
 
-#include <cstring>
-#include <string>
+#include <virgil/crypto/VirgilDataSink.h>
 
-#include <mbedtls/error.h>
-
-using virgil::crypto::foundation::PolarsslException;
-
-// Private section constants
-enum {
-    gErrorBufferLen = 1024 // Max length of the generated error message
-};
+namespace virgil { namespace crypto { namespace stream {
 
 /**
- * Build error message related to the given error code.
+ * @brief C++ Byte Array implementation of the VirgilDataSink class.
+ *
+ * @note This class CAN not be used in wrappers.
  */
-static std::string buildErrorString(int errCode) {
-    static char errorBuffer[gErrorBufferLen + 1];
-    ::memset(errorBuffer, 0x0, gErrorBufferLen + 1);
-    ::mbedtls_strerror(errCode, errorBuffer, gErrorBufferLen);
-    return std::string(errorBuffer);
-}
+class VirgilBytesDataSink : public virgil::crypto::VirgilDataSink {
+public:
+    /**
+     * @brief Creates data sink based on byte array.
+     */
+    explicit VirgilBytesDataSink(virgil::crypto::VirgilByteArray& out);
+    /**
+     * @brief Polymorphic destructor.
+     */
+    virtual ~VirgilBytesDataSink() throw();
+    /**
+     * @brief Overriding of @link VirgilDataSink::isGood() @endlink method.
+     */
+    virtual bool isGood();
+    /**
+     * @brief Overriding of @link VirgilDataSink::write() @endlink method.
+     */
+    virtual void write(const virgil::crypto::VirgilByteArray& data);
+    /**
+     * @brief Reset internal state to initial.
+     *
+     * Erase all data from the output byte array.
+     */
+    virtual void reset();
+private:
+    virgil::crypto::VirgilByteArray& out_;
+};
 
+}}}
 
-// Public section
-PolarsslException::PolarsslException(int errCode)
-        : VirgilCryptoException(buildErrorString(errCode)), errCode_(errCode) {
-}
-
-PolarsslException::~PolarsslException() throw() {
-}
-
-int PolarsslException::errCode() const throw() {
-    return errCode_;
-}
+#endif /* VIRGIL_CRYPTO_VIRGIL_BYTES_DATA_SINK_H */

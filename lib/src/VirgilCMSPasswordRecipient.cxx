@@ -40,7 +40,7 @@
 #include <string>
 
 #include <virgil/crypto/VirgilCryptoException.h>
-#include <virgil/crypto/foundation/VirgilOID.h>
+#include <virgil/crypto/foundation/priv/VirgilOID.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 

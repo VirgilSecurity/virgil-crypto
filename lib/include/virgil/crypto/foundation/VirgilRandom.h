@@ -79,6 +79,23 @@ public:
      * @return Random byte sequence.
      */
     virgil::crypto::VirgilByteArray randomize(size_t bytesNum);
+    /**
+     * Returns a pseudo-random number.
+     *
+     * @return Random Number
+     */
+     size_t randomize();
+    /**
+     * Returns a pseudo-random number between min and max, inclusive.
+     *
+     * The difference between min and max can be at most
+     * <code>std::numeric_limits<size_t>::max() - 1</code>.
+     *
+     * @param min - minimum value.
+     * @param max - maximum value. Must be greater than min.
+     * @return Number between min and max, inclusive.
+     */
+     size_t randomize(size_t min, size_t max);
     ///@}
 
 private:

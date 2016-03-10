@@ -38,9 +38,9 @@
 
 #include <string>
 
-#include <polarssl/kdf.h>
-#include <polarssl/oid.h>
-#include <polarssl/kdf.h>
+#include <mbedtls/kdf.h>
+#include <mbedtls/oid.h>
+#include <mbedtls/kdf.h>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
@@ -63,7 +63,7 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
  * @name Configuration constants
  */
 ///@{
-static const md_type_t kHashType_Default = POLARSSL_MD_SHA256;
+static const mbedtls_md_type_t kHashType_Default = MBEDTLS_MD_SHA256;
 ///@}
 
 namespace virgil { namespace crypto { namespace foundation {
@@ -73,30 +73,30 @@ public:
     VirgilKDFImpl() : kdfInfo(0), mdInfo(0)  {
     }
 
-    VirgilKDFImpl(kdf_type_t kdfType, md_type_t md_type_t) : kdfInfo(0), mdInfo(0)  {
-        kdfInfo = kdf_info_from_type(kdfType);
-        mdInfo = md_info_from_type(md_type_t);
+    VirgilKDFImpl(mbedtls_kdf_type_t kdfType, mbedtls_md_type_t mbedtls_md_type_t) : kdfInfo(0), mdInfo(0)  {
+        kdfInfo = mbedtls_kdf_info_from_type(kdfType);
+        mdInfo = mbedtls_md_info_from_type(mbedtls_md_type_t);
     }
 public:
-    kdf_info_t const * kdfInfo; // KDF algorithm type info
-    md_info_t const *  mdInfo; // hash algorithm type info
+    mbedtls_kdf_info_t const * kdfInfo; // KDF algorithm type info
+    mbedtls_md_info_t const *  mdInfo; // hash algorithm type info
 };
 
 }}}
 
 VirgilKDF VirgilKDF::kdf1() {
-    return VirgilKDF(POLARSSL_KDF_KDF1, kHashType_Default);
+    return VirgilKDF(MBEDTLS_KDF_KDF1, kHashType_Default);
 }
 
 VirgilKDF VirgilKDF::kdf2() {
-    return VirgilKDF(POLARSSL_KDF_KDF2, kHashType_Default);
+    return VirgilKDF(MBEDTLS_KDF_KDF2, kHashType_Default);
 }
 
 VirgilKDF::VirgilKDF() : impl_(new VirgilKDFImpl()) {
 }
 
 VirgilKDF::VirgilKDF(int kdfType, int mdType)
-        : impl_(new VirgilKDFImpl(static_cast<kdf_type_t>(kdfType), static_cast<md_type_t>(mdType))) {
+        : impl_(new VirgilKDFImpl(static_cast<mbedtls_kdf_type_t>(kdfType), static_cast<mbedtls_md_type_t>(mdType))) {
 }
 
 VirgilKDF::~VirgilKDF() throw() {
@@ -123,15 +123,15 @@ VirgilKDF& VirgilKDF::operator=(const VirgilKDF& rhs) {
 
 std::string VirgilKDF::name() const {
     checkState();
-    return std::string(::kdf_get_name(impl_->kdfInfo));
+    return std::string(::mbedtls_kdf_get_name(impl_->kdfInfo));
 }
 
 
 VirgilByteArray VirgilKDF::derive(const VirgilByteArray& in, size_t outSize) {
     checkState();
     VirgilByteArray result(outSize);
-    POLARSSL_ERROR_HANDLER(
-        ::kdf(impl_->kdfInfo, impl_->mdInfo, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(in), result.data(), result.size())
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_kdf(impl_->kdfInfo, impl_->mdInfo, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(in), result.data(), result.size())
     );
     return result;
 }
@@ -151,18 +151,18 @@ size_t VirgilKDF::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenByt
     size_t oidLen;
 
     // Write hash algorithm identifier
-    md_type_t mdType = ::md_get_type(impl_->mdInfo);
-    POLARSSL_ERROR_HANDLER(
-        ::oid_get_oid_by_md(mdType, &oid, &oidLen)
+    mbedtls_md_type_t mdType = ::mbedtls_md_get_type(impl_->mdInfo);
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_oid_get_oid_by_md(mdType, &oid, &oidLen)
     );
     len += asn1Writer.writeNull();
     len += asn1Writer.writeOID(std::string(oid, oidLen));
     len += asn1Writer.writeSequence(len);
 
     // Write key derivation function algorithm identifier
-    kdf_type_t kdfType = ::kdf_get_type(impl_->kdfInfo);
-    POLARSSL_ERROR_HANDLER(
-        ::oid_get_oid_by_kdf_alg(kdfType, &oid, &oidLen)
+    mbedtls_kdf_type_t kdfType = ::mbedtls_kdf_get_type(impl_->kdfInfo);
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_oid_get_oid_by_kdf_alg(kdfType, &oid, &oidLen)
     );
     len += asn1Writer.writeOID(std::string(oid, oidLen));
     len += asn1Writer.writeSequence(len);
@@ -171,7 +171,7 @@ size_t VirgilKDF::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenByt
 }
 
 void VirgilKDF::asn1Read(VirgilAsn1Reader& asn1Reader) {
-    asn1_buf oidAsn1Buf;
+    mbedtls_asn1_buf oidAsn1Buf;
     std::string oid;
 
     // Read key derivation function algorithm identifier
@@ -180,9 +180,9 @@ void VirgilKDF::asn1Read(VirgilAsn1Reader& asn1Reader) {
     oidAsn1Buf.len = oid.size();
     oidAsn1Buf.p = reinterpret_cast<unsigned char *>(const_cast<std::string::pointer>(oid.c_str()));
 
-    kdf_type_t kdfType = POLARSSL_KDF_NONE;
-    POLARSSL_ERROR_HANDLER(
-        ::oid_get_kdf_alg(&oidAsn1Buf, &kdfType)
+    mbedtls_kdf_type_t kdfType = MBEDTLS_KDF_NONE;
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_oid_get_kdf_alg(&oidAsn1Buf, &kdfType)
     );
 
     // Read hash algorithm identifier
@@ -191,9 +191,9 @@ void VirgilKDF::asn1Read(VirgilAsn1Reader& asn1Reader) {
     oidAsn1Buf.len = oid.size();
     oidAsn1Buf.p = reinterpret_cast<unsigned char *>(const_cast<std::string::pointer>(oid.c_str()));
 
-    md_type_t mdType = POLARSSL_MD_NONE;
-    POLARSSL_ERROR_HANDLER(
-        ::oid_get_md_alg(&oidAsn1Buf, &mdType)
+    mbedtls_md_type_t mdType = MBEDTLS_MD_NONE;
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_oid_get_md_alg(&oidAsn1Buf, &mdType)
     );
 
     asn1Reader.readNull();

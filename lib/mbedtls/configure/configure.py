@@ -47,7 +47,7 @@ import argparse
 
 def parseArguments():
     parser = argparse.ArgumentParser(description=
-        "Use this utility to patch PolarSSL library add extended it functionality.");
+        "Use this utility to patch MbedTLS library add extended it functionality.");
     parser.add_argument("-i", "--input-dir", dest="inputDir", help="library directoty", required=True)
     parser.add_argument("-d", "--config-defines", dest="configDefines",
             help="configuration file full name for defines", required=True)
@@ -56,10 +56,10 @@ def parseArguments():
     return parser.parse_args()
 
 def regexForEnabledDefine(define):
-    return r'^[\s]*(#define[\s]+' + define + ')'
+    return r'^[\s]*(#define[\s]+' + define + r')[\s]+'
 
 def regexForDisabledDefine(define):
-    return r'^[\s]*//[\s]*(#define[\s]+' + define + ')'
+    return r'^[\s]*//[\s]*(#define[\s]+' + define + r')[\s+]'
 
 def disableDefines(defines, filePath):
     if not defines:
@@ -104,16 +104,16 @@ def main(argv=None):
     args = parseArguments()
     # Define paths
     libraryDir = os.path.abspath(os.path.normpath(args.inputDir))
-    configFilePath = os.path.join(libraryDir, "include/polarssl/config.h")
-    checkConfigFilePath = os.path.join(libraryDir, "include/polarssl/check_config.h")
+    configFilePath = os.path.join(libraryDir, "include/mbedtls/config.h")
+    checkConfigFilePath = os.path.join(libraryDir, "include/mbedtls/check_config.h")
     # Apply common defines
     commonDefines = yaml.load(open(args.configDefines));
     disableDefines(commonDefines.get("disable", []), configFilePath);
     enableDefines(commonDefines.get("enable", []), configFilePath);
     addDefines(commonDefines.get("new", []), configFilePath,
-            regexForEnabledDefine("POLARSSL_CONFIG_H"));
+            regexForEnabledDefine("MBEDTLS_CONFIG_H"));
     addDefines(commonDefines.get("check", []), checkConfigFilePath,
-            regexForEnabledDefine("POLARSSL_CHECK_CONFIG_H"));
+            regexForEnabledDefine("MBEDTLS_CHECK_CONFIG_H"));
     # Apply platform specific defines
     if args.configPlatformDefines:
         for configPlatformDefineFile in args.configPlatformDefines:
@@ -121,9 +121,9 @@ def main(argv=None):
             disableDefines(configPlatformDefines.get("disable", []), configFilePath);
             enableDefines(configPlatformDefines.get("enable", []), configFilePath);
             addDefines(configPlatformDefines.get("new", []), configFilePath,
-                    regexForEnabledDefine("POLARSSL_CONFIG_H"));
+                    regexForEnabledDefine("MBEDTLS_CONFIG_H"));
             addDefines(configPlatformDefines.get("check", []), checkConfigFilePath,
-                    regexForEnabledDefine("POLARSSL_CHECK_CONFIG_H"));
+                    regexForEnabledDefine("MBEDTLS_CHECK_CONFIG_H"));
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv))

@@ -39,7 +39,7 @@
 #include <cstddef>
 #include <string>
 
-#include <polarssl/asn1.h>
+#include <mbedtls/asn1.h>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
@@ -71,21 +71,21 @@ size_t VirgilCMSContentInfo::defineSize(const VirgilByteArray& data) {
     VirgilByteArray::const_pointer p_end = p_begin + data.size();
     VirgilByteArray::pointer p = const_cast<VirgilByteArray::pointer>(p_begin);
     // Validate TAG
-    if (*p != (ASN1_CONSTRUCTED | ASN1_SEQUENCE)) {
+    if (*p != (MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)) {
         return 0;
     }
     ++p;
     // Read length
     size_t size = 0;
-    int result = ::asn1_get_len(&p, p_end, &size);
-    if (result == 0 || result == POLARSSL_ERR_ASN1_OUT_OF_DATA) {
+    int result = ::mbedtls_asn1_get_len(&p, p_end, &size);
+    if (result == 0 || result == MBEDTLS_ERR_ASN1_OUT_OF_DATA) {
         size += p - p_begin;
     } else {
         return 0;
     }
     // Validate ContentInfo version
     int version = 0;
-    result = ::asn1_get_int(&p, p_end, &version);
+    result = ::mbedtls_asn1_get_int(&p, p_end, &version);
     if (result != 0 || version != kAsn1_ContentInfoVersion) {
         return 0;
     }

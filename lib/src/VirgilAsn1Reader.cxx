@@ -38,7 +38,7 @@
 
 #include <cstddef>
 #include <string>
-#include <polarssl/asn1.h>
+#include <mbedtls/asn1.h>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
@@ -71,8 +71,8 @@ void VirgilAsn1Reader::reset(const VirgilByteArray& data) {
 int VirgilAsn1Reader::readInteger() {
     checkState();
     int result;
-    POLARSSL_ERROR_HANDLER(
-        ::asn1_get_int(&p_, end_, &result);
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_asn1_get_int(&p_, end_, &result);
     );
     return result;
 }
@@ -80,8 +80,8 @@ int VirgilAsn1Reader::readInteger() {
 bool VirgilAsn1Reader::readBool() {
     checkState();
     int result;
-    POLARSSL_ERROR_HANDLER(
-        ::asn1_get_bool(&p_, end_, &result);
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_asn1_get_bool(&p_, end_, &result);
     );
     return (bool)result;
 }
@@ -89,8 +89,8 @@ bool VirgilAsn1Reader::readBool() {
 void VirgilAsn1Reader::readNull() {
     checkState();
     size_t len;
-    POLARSSL_ERROR_HANDLER(
-        ::asn1_get_tag(&p_, end_, &len, ASN1_NULL)
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_NULL)
     );
 }
 
@@ -104,10 +104,10 @@ size_t VirgilAsn1Reader::readContextTag(unsigned char tag) {
     }
     checkState();
     size_t len;
-    int result = ::asn1_get_tag(&p_, end_, &len, ASN1_CONTEXT_SPECIFIC | ASN1_CONSTRUCTED | tag);
+    int result = ::mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_CONTEXT_SPECIFIC | MBEDTLS_ASN1_CONSTRUCTED | tag);
     if (result == 0) {
         return len;
-    } else if (result == POLARSSL_ERR_ASN1_UNEXPECTED_TAG) {
+    } else if (result == MBEDTLS_ERR_ASN1_UNEXPECTED_TAG) {
         return 0;
     } else {
         throw PolarsslException(result);
@@ -117,8 +117,8 @@ size_t VirgilAsn1Reader::readContextTag(unsigned char tag) {
 VirgilByteArray VirgilAsn1Reader::readOctetString() {
     checkState();
     size_t len;
-    POLARSSL_ERROR_HANDLER(
-        ::asn1_get_tag(&p_, end_, &len, ASN1_OCTET_STRING)
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_OCTET_STRING)
     );
     p_ += len;
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(p_ - len, len);
@@ -127,8 +127,8 @@ VirgilByteArray VirgilAsn1Reader::readOctetString() {
 VirgilByteArray VirgilAsn1Reader::readUTF8String() {
     checkState();
     size_t len;
-    POLARSSL_ERROR_HANDLER(
-        ::asn1_get_tag(&p_, end_, &len, ASN1_UTF8_STRING)
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_UTF8_STRING)
     );
     p_ += len;
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(p_ - len, len);
@@ -139,8 +139,8 @@ VirgilByteArray VirgilAsn1Reader::readData() {
     size_t len;
     unsigned char *dataStart = p_;
     p_ += 1; // Ignore tag value
-    POLARSSL_ERROR_HANDLER(
-        ::asn1_get_len(&p_, end_, &len)
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_asn1_get_len(&p_, end_, &len)
     );
     p_ += len;
     return VirgilByteArray(dataStart, p_);
@@ -150,8 +150,8 @@ VirgilByteArray VirgilAsn1Reader::readData() {
 std::string VirgilAsn1Reader::readOID() {
     checkState();
     size_t len;
-    POLARSSL_ERROR_HANDLER(
-        ::asn1_get_tag(&p_, end_, &len, ASN1_OID)
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_OID)
     );
     p_ += len;
     return std::string(reinterpret_cast<std::string::const_pointer>(p_ - len), len);
@@ -160,8 +160,8 @@ std::string VirgilAsn1Reader::readOID() {
 size_t VirgilAsn1Reader::readSequence() {
     checkState();
     size_t len;
-    POLARSSL_ERROR_HANDLER(
-        ::asn1_get_tag(&p_, end_, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE)
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)
     );
     return len;
 }
@@ -169,8 +169,8 @@ size_t VirgilAsn1Reader::readSequence() {
 size_t VirgilAsn1Reader::readSet() {
     checkState();
     size_t len;
-    POLARSSL_ERROR_HANDLER(
-        ::asn1_get_tag(&p_, end_, &len, ASN1_CONSTRUCTED | ASN1_SET)
+    MBEDTLS_ERROR_HANDLER(
+        ::mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SET)
     );
     return len;
 }

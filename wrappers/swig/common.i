@@ -65,13 +65,14 @@ namespace std {
 #include <virgil/crypto/VirgilCryptoException.h>
 %}
 
-#ifdef SWIGPHP
-%feature("director:except") {
-    if ($error == FAILURE) {
-        throw Swig::DirectorMethodException();
-    }
-}
-#endif
+// This code should be commited until SWIG issue "https://github.com/swig/swig/issues/627" is fixed
+// #ifdef SWIGPHP
+// %feature("director:except") {
+//     if ($error == FAILURE) {
+//         throw Swig::DirectorMethodException();
+//     }
+// }
+// #endif
 %exception {
     try {
         $action

@@ -103,7 +103,7 @@ Table 1 - Supported languages
 
 Replace ```{{LANG}}``` placeholder to the corresponding value from the the [table above](#table1).
 
-```
+```shell
 > cd virgil-crypto
 > cmake -H. -B_build -DCMAKE_INSTALL_PREFIX=`pwd`/_install -DLANG={{LANG}}
 > cmake --build _build/ --target install

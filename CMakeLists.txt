@@ -45,7 +45,7 @@
 #     - LIB_LOW_LEVEL_API   - boolean value that defines whether to include low-level API or not.
 #     - LIB_FILE_IO         - boolean value that defines whether to include module depends on file IO or not.
 #                             or separate utilities.
-#     - INSTALL_CORE_LIBS    - boolean value that defines whether install core library and it's dependencies or not,
+#     - INSTALL_CORE_LIBS   - boolean value that defines whether install core library and it's dependencies or not,
 #                             if this value is NO or undefined - only wrapped library will be installed.
 #     - INSTALL_EXT_HEADERS - boolean value that defines whether install third-party library headers or not.
 #     - ENABLE_TESTING      - boolean value that defines whether include unit testing or not.
@@ -56,6 +56,9 @@
 #     - INSTALL_MAN_DIR_NAME  - name of the directory where man pages will be installed.
 #     - INSTALL_DOC_DIR_NAME  - name of the directory where documentation will be installed.
 #     - INSTALL_API_DIR_NAME  - name of the directory where API source files will be installed.
+#
+#     - DOXYGEN_EXCLUDE_PRIVATE - boolean value that defines whether to exclude private API
+#                                 from Doxygen documentation or not
 #
 # Define variables:
 #     - VIRGIL_VERSION       - library full version.
@@ -80,8 +83,8 @@ project (VirgilSecurity)
 
 # Set library version
 set (VIRGIL_VERSION_MAJOR 1)
-set (VIRGIL_VERSION_MINOR 2)
-set (VIRGIL_VERSION_PATCH 2)
+set (VIRGIL_VERSION_MINOR 3)
+set (VIRGIL_VERSION_PATCH 0)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 1)
 message (STATUS "Virgil version: " ${VIRGIL_VERSION})
@@ -193,6 +196,9 @@ set (INSTALL_CORE_LIBS ${INSTALL_CORE_LIBS_TMP} CACHE BOOL
         "Defines whether install core library and it's dependencies or not")
 set (INSTALL_EXT_HEADERS OFF CACHE BOOL
         "Defines whether install third-party library headers or not")
+
+# Configure Doxygen behaviour
+set (DOXYGEN_EXCLUDE_PRIVATE ON CACHE BOOL "Exclude private API from Doxygen documentation")
 
 # Configure testing
 if (ENABLE_TESTING)

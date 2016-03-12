@@ -105,8 +105,8 @@ Replace ```{{LANG}}``` placeholder to the corresponding value from the the [tabl
 
 ```shell
 > cd virgil-crypto
-> cmake -H. -B_build -DCMAKE_INSTALL_PREFIX=`pwd`/_install -DLANG={{LANG}}
-> cmake --build _build/ --target install
+> cmake -H. -B_build -DCMAKE_INSTALL_PREFIX=_install -DLANG={{LANG}}
+> cmake --build _build --target install
 ```
 
 > Note, if you are using ```-DLANG=nodejs```, one of the next parameters can be appended:

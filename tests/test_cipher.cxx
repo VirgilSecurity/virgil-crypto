@@ -210,3 +210,42 @@ TEST_CASE("encrypt and decrypt with password", "[cipher]") {
         REQUIRE(testData == decryptedData);
     }
 }
+
+TEST_CASE("encrypt and decrypt RSA-3072", "[cipher]") {
+    VirgilByteArray password = str2bytes("password");
+    VirgilByteArray testData = str2bytes("this string will be encrypted");
+    VirgilByteArray recipientId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_RSA_3072, password);
+
+    VirgilCipher cipher;
+    cipher.addKeyRecipient(recipientId, keyPair.publicKey());
+
+    SECTION("and embedded content info") {
+        VirgilByteArray encryptedData = cipher.encrypt(testData, true);
+        VirgilByteArray decryptedData;
+        REQUIRE_THROWS(
+            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey())
+        );
+        REQUIRE_NOTHROW(
+            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
+        );
+        REQUIRE(testData == decryptedData);
+    }
+}
+
+TEST_CASE("encrypt and decrypt RSA-8192", "[cipher]") {
+    VirgilByteArray password = str2bytes("password");
+    VirgilByteArray testData = str2bytes("this string will be encrypted");
+    VirgilByteArray recipientId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_RSA_8192, password);
+
+    VirgilCipher cipher;
+    cipher.addKeyRecipient(recipientId, keyPair.publicKey());
+
+    SECTION("and embedded content info") {
+        VirgilByteArray encryptedData = cipher.encrypt(testData, true);
+        VirgilByteArray decryptedData;
+        decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password);
+        REQUIRE(testData == decryptedData);
+    }
+}

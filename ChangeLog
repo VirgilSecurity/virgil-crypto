@@ -1,5 +1,10 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.3.1 released 2016-03-14
+
+Bugfix:
+  * Fix error when parse RSA private key with key length greater then 3072 bit
+
 = Version 1.3.0 released 2016-03-07
 
 Bugfix:

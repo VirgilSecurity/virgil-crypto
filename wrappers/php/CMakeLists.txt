@@ -82,10 +82,15 @@ swig_link_libraries (${PHP_MODULE_NAME} ${WRAPPED_LIB_NAME})
 
 set_target_properties(${PHP_SWIG_TARGET_NAME} PROPERTIES PREFIX "")
 
+set (PHP_WRAPPER_VERSION_STRING "(char*)\\\"${VIRGIL_VERSION}\\\"")
+message (STATUS "${PHP_WRAPPER_VERSION_STRING}")
 add_custom_target (${PHP_SWIG_TARGET_NAME}_patch_version
-    COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/patch/add_version.py"
-        --input "${swig_generated_file_fullname}"
-        --lib-version "${VIRGIL_VERSION}"
+    COMMAND ${CMAKE_COMMAND}
+    ARGS
+        -DSRC:PATH="${swig_generated_file_fullname}"
+        -DREGULAR_EXPRESSION:STRING="NO_VERSION_YET"
+        -DREPLACE_EXPRESSION:STRING="${PHP_WRAPPER_VERSION_STRING}"
+        -P ${CMAKE_SOURCE_DIR}/cmake/file_regex_replace.cmake
     DEPENDS "${swig_generated_file_fullname}"
     COMMENT "Add version to the SWIG generated wrapper."
 )

@@ -102,9 +102,12 @@ add_custom_command (TARGET ${CSHARP_SWIG_TARGET_NAME} POST_BUILD
     )
 
 add_custom_command (TARGET ${CSHARP_SWIG_TARGET_NAME} POST_BUILD
-        COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/patch/uppercase_namespaces.py"
-        ARGS ${CSHARP_SOURCE_DIRECTORY}
-        COMMENT "Uppercase C# namespaces for ${CSHARP_SOURCE_DIRECTORY}/*."
+        COMMAND ${CMAKE_COMMAND}
+        ARGS
+            -DSRC_DIR:PATH=${CSHARP_SOURCE_DIRECTORY}
+            -DGLOBBING_EXPRESSION:STRING="*.cs"
+            -P ${CMAKE_SOURCE_DIR}/cmake/uppercase_namespaces.cmake
+        COMMENT "Uppercase C# namespaces for ${CSHARP_SOURCE_DIRECTORY}/*.cs"
     )
 
 # Configure assembly

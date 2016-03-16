@@ -28,12 +28,18 @@ def createNativeUnixBuild(slave) {
             sh 'rm -fr build install'
             sh './utils/build.sh cpp'
             sh './utils/build.sh ruby'
-            sh './utils/build.sh python'
             if (slave.contains('centos7')) {
+                sh './utils/build.sh python-2.7'
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/python33/enable', ''].join("\n")
-                sh './utils/build.sh python . build/python/python33 install/python/python33'
+                sh './utils/build.sh python-3.3'
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python34/enable', ''].join("\n")
-                sh './utils/build.sh python . build/python/python34 install/python/python34'
+                sh './utils/build.sh python-3.4'
+                organizeFilesUnix('install/python')
+            }
+            if (slave.contains('build-os-x')) {
+                sh './utils/build.sh python-2.7'
+                sh './utils/build.sh python-3.4'
+                sh './utils/build.sh python-3.5'
                 organizeFilesUnix('install/python')
             }
             sh './utils/build.sh java'

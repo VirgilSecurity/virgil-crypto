@@ -34,7 +34,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.4 FATAL_ERROR)
 
 project (${WRAPPED_LIB_NAME}_python)
 
@@ -42,7 +42,14 @@ set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 set (PYTHON_MODULE_NAME ${PROJECT_NAME})
 set (SWIG_MODULE_NAME ${PYTHON_MODULE_NAME})
 
-find_host_package (PythonLibs REQUIRED)
+if (LANG_VERSION)
+    find_host_package (PythonInterp "${LANG_VERSION}" EXACT)
+    find_host_package (PythonLibs "${LANG_VERSION}" EXACT REQUIRED)
+else ()
+    find_host_package (PythonInterp)
+    find_host_package (PythonLibs REQUIRED)
+endif (LANG_VERSION)
+
 include_directories (${PYTHON_INCLUDE_DIRS})
 
 if (PYTHONLIBS_VERSION_STRING)

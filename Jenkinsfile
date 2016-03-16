@@ -29,6 +29,13 @@ def createNativeUnixBuild(slave) {
             sh './utils/build.sh cpp'
             sh './utils/build.sh ruby'
             sh './utils/build.sh python'
+            if (slave.contains('centos7')) {
+                writeFile file: './utils/env.sh', text: ['source /opt/rh/python33/enable', ''].join("\n")
+                sh './utils/build.sh python . build/python/python33 install/python/python33'
+                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python34/enable', ''].join("\n")
+                sh './utils/build.sh python . build/python/python34 install/python/python34'
+                organizeFilesUnix('install/python')
+            }
             sh './utils/build.sh java'
             sh './utils/build.sh nodejs-0.12.7 . build/nodejs/0.12.7 install/nodejs/0.12.7'
             sh './utils/build.sh nodejs-4.1.0 . build/nodejs/4.1.0 install/nodejs/4.1.0'

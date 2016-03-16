@@ -75,7 +75,7 @@ if not "%3" == "" (
     mkdir %3 2>nul || REM Ignore error during creation
     call :abspath BUILD_DIR=%3
 ) else (
-    set BUILD_DIR=%CURRENT_DIR%\build\%TARGET%
+    set BUILD_DIR=%CURRENT_DIR%\build\%TARGET_NAME%\%TARGET_VERSION%
 )
 call :show_info BUILD_DIR: %BUILD_DIR%
 
@@ -83,7 +83,7 @@ if not "%4" == "" (
     mkdir %4 2>nul || REM Ignore error during creation
     call :abspath INSTALL_DIR=%4
 ) else (
-    set INSTALL_DIR=%CURRENT_DIR%\install\%TARGET%
+    set INSTALL_DIR=%CURRENT_DIR%\install\%TARGET_NAME%\%TARGET_VERSION%
     mkdir %INSTALL_DIR% 2>nul || REM Ignore error during creation
 )
 call :show_info INSTALL_DIR: %INSTALL_DIR%

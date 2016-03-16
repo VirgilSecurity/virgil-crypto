@@ -215,7 +215,7 @@ if [ ! -z "$3" ]; then
     mkdir -p "$3"
     BUILD_DIR=$(abspath "$3")
 else
-    BUILD_DIR="${CURRENT_DIR}/build/${TARGET}"
+    BUILD_DIR="${CURRENT_DIR}/build/${TARGET_NAME}/${TARGET_VERSION}"
     mkdir -p "${BUILD_DIR}"
 fi
 show_info "<build_dir>: ${BUILD_DIR}"
@@ -224,7 +224,7 @@ if [ ! -z "$4" ]; then
     mkdir -p "$4"
     INSTALL_DIR=$(abspath "$4")
 else
-    INSTALL_DIR="${CURRENT_DIR}/install/${TARGET}"
+    INSTALL_DIR="${CURRENT_DIR}/install/${TARGET_NAME}/${TARGET_VERSION}"
     mkdir -p "${INSTALL_DIR}"
 fi
 show_info "<install_dir>: ${INSTALL_DIR}"

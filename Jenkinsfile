@@ -26,8 +26,11 @@ def createNativeUnixBuild(slave) {
         node(slave) {
             unstash 'src'
             sh 'rm -fr build install'
+            // C++
             sh './utils/build.sh cpp'
+            // Ruby
             sh './utils/build.sh ruby'
+            // Python
             if (slave.contains('centos7')) {
                 sh './utils/build.sh python-2.7'
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/python33/enable', ''].join("\n")
@@ -42,18 +45,22 @@ def createNativeUnixBuild(slave) {
                 sh './utils/build.sh python-3.5'
                 organizeFilesUnix('install/python')
             }
+            // Java
             sh './utils/build.sh java'
-            sh './utils/build.sh nodejs-0.12.7 . build/nodejs/0.12.7 install/nodejs/0.12.7'
-            sh './utils/build.sh nodejs-4.1.0 . build/nodejs/4.1.0 install/nodejs/4.1.0'
+            // NodeJS
+            sh './utils/build.sh nodejs-0.12.7'
+            sh './utils/build.sh nodejs-4.1.0'
+            organizeFilesUnix('install/nodejs')
+            // PHP
             sh './utils/build.sh php'
             if (slave.contains('centos7')) {
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/php55/enable', ''].join("\n")
-                sh './utils/build.sh php . build/php/php55 install/php/php55'
+                sh './utils/build.sh php-5.5'
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-php56/enable', ''].join("\n")
-                sh './utils/build.sh php . build/php/php56 install/php/php56'
+                sh './utils/build.sh php-5.6'
                 organizeFilesUnix('install/php')
             }
-            organizeFilesUnix('install/nodejs')
+
             archiveArtifacts('install/**')
         }
     }

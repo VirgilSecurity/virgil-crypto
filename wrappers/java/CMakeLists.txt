@@ -38,19 +38,6 @@ cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
 project (${WRAPPED_LIB_NAME}_java)
 
-# Macros
-macro (subdirlist result curdir)
-  file (GLOB children ${curdir}/*)
-  set (dirlist "")
-  foreach (child ${children})
-    if (IS_DIRECTORY ${child})
-        list (APPEND dirlist ${child})
-    endif ()
-  endforeach ()
-  set (${result} ${dirlist})
-  unset (dirlist)
-endmacro ()
-
 # Configure Java
 set (JAVA_MODULE_NAME ${PROJECT_NAME})
 set (JAVA_JAR_NAME ${JAVA_MODULE_NAME})

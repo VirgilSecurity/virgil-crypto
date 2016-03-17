@@ -92,7 +92,6 @@ if not "%4" == "" (
     ) else (
         set INSTALL_DIR=%CURRENT_DIR%\install\%TARGET_NAME%\%TARGET_VERSION%
     )
-    mkdir %INSTALL_DIR% 2>nul || REM Ignore error during creation
 )
 call :show_info INSTALL_DIR: %INSTALL_DIR%
 

@@ -115,6 +115,7 @@ endforeach (JAVA_FILE)
 # Add assembly dependencies
 add_jar (${JAVA_JAR_TARGET_NAME}
     "${CMAKE_CURRENT_BINARY_DIR}/src/VirgilStreamDataSink.java"
+    "${CMAKE_CURRENT_BINARY_DIR}/src/VirgilStreamDataSource.java"
     OUTPUT_NAME ${JAVA_JAR_NAME}
 )
 add_dependencies (${JAVA_JAR_TARGET_NAME} ${JAVA_SWIG_TARGET_NAME})

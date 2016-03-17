@@ -96,9 +96,14 @@ set_target_properties (${JAVA_SWIG_TARGET_NAME}
 set_target_properties (${JAVA_SWIG_TARGET_NAME}
         PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-if (UNIX AND NOT (${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
-    set_target_properties (${JAVA_SWIG_TARGET_NAME}
-            PROPERTIES NO_SONAME OFF VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
+if (UNIX AND NOT (CMAKE_SYSTEM_NAME MATCHES "Darwin"))
+    if (CMAKE_SYSTEM_NAME MATCHES "Android")
+        string(REPLACE "<CMAKE_SHARED_LIBRARY_SONAME_CXX_FLAG><TARGET_SONAME>" ""
+                CMAKE_CXX_CREATE_SHARED_MODULE "${CMAKE_CXX_CREATE_SHARED_MODULE}")
+    else ()
+        set_target_properties (${JAVA_SWIG_TARGET_NAME}
+                PROPERTIES NO_SONAME OFF VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
+    endif ()
 endif ()
 
 # Copy additional source files

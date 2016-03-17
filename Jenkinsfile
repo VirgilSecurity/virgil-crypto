@@ -77,8 +77,8 @@ def createNativeWindowsBuild(slave) {
                 bat 'utils\\build.bat cpp'
                 bat 'utils\\build.bat net'
                 bat 'utils\\build.bat java'
-                bat 'utils\\build.bat nodejs-0.12.7 . build\\nodejs\\0.12.7 install\\nodejs\\0.12.7'
-                bat 'utils\\build.bat nodejs-4.1.0 . build\\nodejs\\4.1.0 install\\nodejs\\4.1.0'
+                bat 'utils\\build.bat nodejs-0.12.7'
+                bat 'utils\\build.bat nodejs-4.1.0'
             }
             organizeFilesWindows('install\\cpp')
             organizeFilesWindows('install\\net')

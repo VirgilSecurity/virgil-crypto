@@ -101,7 +101,7 @@ Table 1 - Supported languages
 
 ### Step 4 - Build
 
-Replace ```{{LANG}}``` placeholder to the corresponding value from the the [table above](#table1).
+Replace ```{{LANG}}``` placeholder to the corresponding value from the [table above](#table1).
 
 ```shell
 > cd virgil-crypto
@@ -153,7 +153,7 @@ Table 2 - Supported languages and platforms
 1. Check that all tools which are listed in the [build prerequisites](#build-prerequisites) are available there.
   * for Windows compiler should be MSVC;
   * for OS X build toolchain should be Xcode Toolchain.
-1. Check that all dependencies from the the [table above](#table2) are accessible.
+1. Check that all dependencies from the [table above](#table2) are accessible.
 1. Set environment variables according to the [table above](#table2).
 
 ### Step 3 - Get source code
@@ -164,7 +164,7 @@ Table 2 - Supported languages and platforms
 
 ### Step 4 - Build
 
-Replace ```{{TARGET}}``` placeholder to the corresponding value from the the [table above](#table2).
+Replace ```{{TARGET}}``` placeholder to the corresponding value from the [table above](#table2).
 
 Unix-like OS:
 

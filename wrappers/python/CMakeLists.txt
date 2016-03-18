@@ -83,6 +83,9 @@ else()
     set_target_properties(${SWIG_TARGET} PROPERTIES VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
 endif ()
 swig_link_libraries (${PYTHON_MODULE_NAME} ${WRAPPED_LIB_NAME})
+if (WIN32)
+    swig_link_libraries (${PYTHON_MODULE_NAME} ${PYTHON_LIBRARY})
+endif (WIN32)
 
 install (TARGETS ${SWIG_TARGET}
         RUNTIME DESTINATION "${INSTALL_BIN_DIR_NAME}"

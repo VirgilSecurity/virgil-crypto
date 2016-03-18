@@ -57,12 +57,16 @@ if not "%1" == "" (
 )
 call :show_info TARGET: %TARGET%
 
-set "TARGET_NAME=%TARGET:-="^&REM #%
-set "TARGET_VERSION=%TARGET:*-=%"
-if "%TARGET_NAME%" == "%TARGET_VERSION%" set TARGET_VERSION=
+:: Parse target format target-version-architecture, i.e nodejs-0.12.7-x86
+for /F "tokens=1,2,3 delims=-" %%a in ("%TARGET%") do (
+    set TARGET_NAME=%%a
+    set TARGET_VERSION=%%b
+    set TARGET_ARCH=%%c
+)
 
 call :show_info TARGET_NAME: %TARGET_NAME%
 if not "%TARGET_VERSION%" == "" call :show_info TARGET_VERSION: %TARGET_VERSION%
+if not "%TARGET_ARCH%" == "" call :show_info TARGET_ARCH: %TARGET_ARCH%
 
 if not "%2" == "" (
     call :abspath SRC_DIR=%2
@@ -106,24 +110,32 @@ if "%TARGET_NAME%" == "cpp" goto cpp
 if "%TARGET_NAME%" == "java" goto java
 if "%TARGET_NAME%" == "net" goto net
 if "%TARGET_NAME%" == "nodejs" goto nodejs
+if "%TARGET_NAME%" == "python" goto python
 
 :: No supported target was found
 goto error_target_not_supported
 
 :cpp
-goto native
+call :native
 goto :eof
 
 :java
 if "%JAVA_HOME%" == "" goto error_not_java_home
-goto native
+call :native
 goto :eof
 
 :nodejs
 if not "%TARGET_VERSION%" == "" (
     set CMAKE_ARGS=%CMAKE_ARGS% -DLANG_VERSION=%TARGET_VERSION%
 )
-goto native
+call :native
+goto :eof
+
+:python
+if not "%TARGET_VERSION%" == "" (
+    set CMAKE_ARGS=%CMAKE_ARGS% -DLANG_VERSION=%TARGET_VERSION%
+)
+call :native
 goto :eof
 
 :net
@@ -152,22 +164,18 @@ call :archive_artifacts %INSTALL_DIR% %ARCHIVE_NAME%
 goto :eof
 
 :native
-:: Build x86 architecture
+if "%TARGET_ARCH%" == "" (
+    call :native_arch x86
+    call :native_arch x64
+) else (
+    call :native_arch %TARGET_ARCH%
+)
+goto :eof
+
+:native_arch
+:: Make native build with given architecture
 setlocal
-    set PLATFORM_ARCH=x86
-    set INSTALL_DIR=%INSTALL_DIR%\%PLATFORM_ARCH%
-    call :clean_dirs %BUILD_DIR%
-    call :configure_%PLATFORM_ARCH%
-    set CMAKE_ARGS=%CMAKE_ARGS% -DPLATFORM_ARCH=%PLATFORM_ARCH% -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%"
-    cmake %CMAKE_ARGS% -DLANG=%TARGET_NAME% "%SRC_DIR%" || goto end
-    nmake && nmake install || goto end
-    xcopy /y/q "%SRC_DIR%\VERSION" "%INSTALL_DIR%" >nul
-    set /p ARCHIVE_NAME=<lib_name_full.txt
-    call :archive_artifacts %INSTALL_DIR% %ARCHIVE_NAME%
-endlocal
-:: Build x64 architecture
-setlocal
-    set PLATFORM_ARCH=x64
+    set PLATFORM_ARCH=%1
     set INSTALL_DIR=%INSTALL_DIR%\%PLATFORM_ARCH%
     call :clean_dirs %BUILD_DIR%
     call :configure_%PLATFORM_ARCH%

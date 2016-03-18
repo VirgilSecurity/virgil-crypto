@@ -79,11 +79,36 @@ def createNativeWindowsBuild(slave) {
                 bat 'utils\\build.bat java'
                 bat 'utils\\build.bat nodejs-0.12.7'
                 bat 'utils\\build.bat nodejs-4.1.0'
+                withEnv(["PATH=C:\\Python27_x86;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-2.7-x86'
+                }
+                withEnv(["PATH=C:\\Python27_64;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-2.7-x64'
+                }
+                withEnv(["PATH=C:\\Python33_x86;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.3-x86'
+                }
+                withEnv(["PATH=C:\\Python33_64;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.3-x64'
+                }
+                withEnv(["PATH=C:\\Python34_x86;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.4-x86'
+                }
+                withEnv(["PATH=C:\\Python34_64;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.4-x64'
+                }
+                withEnv(["PATH=C:\\Python35_x86;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.5-x86'
+                }
+                withEnv(["PATH=C:\\Python35_64;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.5-x64'
+                }
             }
             organizeFilesWindows('install\\cpp')
             organizeFilesWindows('install\\net')
             organizeFilesWindows('install\\java')
             organizeFilesWindows('install\\nodejs')
+            organizeFilesWindows('install\\python')
             archiveArtifacts('install/**')
         }
     }

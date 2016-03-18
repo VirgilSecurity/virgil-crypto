@@ -84,6 +84,9 @@ if not "%3" == "" (
 if not "%TARGET_VERSION%" == "" (
     set BUILD_DIR=%BUILD_DIR%\%TARGET_VERSION%
 )
+if not "%TARGET_ARCH%" == "" (
+    set BUILD_DIR=%BUILD_DIR%\%TARGET_ARCH%
+)
 call :show_info BUILD_DIR: %BUILD_DIR%
 
 if not "%4" == "" (
@@ -94,6 +97,9 @@ if not "%4" == "" (
 )
 if not "%TARGET_VERSION%" == "" (
     set INSTALL_DIR=%INSTALL_DIR%\%TARGET_VERSION%
+)
+if not "%TARGET_ARCH%" == "" (
+    set INSTALL_DIR=%INSTALL_DIR%\%TARGET_ARCH%
 )
 call :show_info INSTALL_DIR: %INSTALL_DIR%
 

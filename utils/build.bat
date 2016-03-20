@@ -149,7 +149,7 @@ goto :eof
 setlocal
     set PLATFORM_ARCH=x86
     call :clean_dirs %BUILD_DIR%
-    call :configure_%PLATFORM_ARCH%
+    call :configure_env %PLATFORM_ARCH%
     set CMAKE_ARGS=%CMAKE_ARGS% -DPLATFORM_ARCH=%PLATFORM_ARCH% -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%"
     cmake %CMAKE_ARGS% -DLANG=%TARGET_NAME% "%SRC_DIR%" || goto end
     nmake && nmake install || goto end
@@ -158,7 +158,7 @@ endlocal
 setlocal
     set PLATFORM_ARCH=x64
     call :clean_dirs %BUILD_DIR%
-    call :configure_%PLATFORM_ARCH%
+    call :configure_env %PLATFORM_ARCH%
     set CMAKE_ARGS=%CMAKE_ARGS% -DPLATFORM_ARCH=%PLATFORM_ARCH% -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%"
     cmake %CMAKE_ARGS% -DLANG=%TARGET_NAME% "%SRC_DIR%" || goto end
     nmake && nmake install || goto end
@@ -184,7 +184,7 @@ setlocal
     set PLATFORM_ARCH=%1
     set INSTALL_DIR=%INSTALL_DIR%\%PLATFORM_ARCH%
     call :clean_dirs %BUILD_DIR%
-    call :configure_%PLATFORM_ARCH%
+    call :configure_env %PLATFORM_ARCH%
     set CMAKE_ARGS=%CMAKE_ARGS% -DPLATFORM_ARCH=%PLATFORM_ARCH% -DCMAKE_INSTALL_PREFIX="%INSTALL_DIR%"
     cmake %CMAKE_ARGS% -DLANG=%TARGET_NAME% "%SRC_DIR%" || goto end
     nmake && nmake install || goto end
@@ -222,12 +222,8 @@ goto :eof
 echo [ERROR] %*
 goto :eof
 
-:configure_x86
-call "%MSVC_ROOT%\VC\vcvarsall.bat" x86
-goto :eof
-
-:configure_x64
-call "%MSVC_ROOT%\VC\vcvarsall.bat" x64
+:configure_env
+call "%MSVC_ROOT%\VC\vcvarsall.bat" %1
 goto :eof
 
 :: Remove content of the given directories.

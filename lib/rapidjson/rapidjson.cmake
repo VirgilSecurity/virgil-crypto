@@ -33,34 +33,6 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-
-# Dependecy to https://github.com/miloyip/rapidjson
-
-# Configure external project
-if (NOT TARGET rapidproject_json)
-    ExternalProject_Add (rapidproject_json
-        GIT_REPOSITORY "https://github.com/miloyip/rapidjson.git"
-        GIT_TAG "v1.0.2"
-        PREFIX "${CMAKE_CURRENT_BINARY_DIR}/ext/rapidjson"
-        CMAKE_COMMAND ""
-        BUILD_COMMAND ""
-        INSTALL_COMMAND ""
-        TEST_COMMAND ""
-    )
-endif ()
-
-# Configure output
-ExternalProject_Get_Property (rapidproject_json PREFIX)
-set (RAPIDJSON_INCLUDE_DIRS "${PREFIX}/src/rapidproject_json/include")
-
-# Workaround of http://public.kitware.com/Bug/view.php?id=14495
-file (MAKE_DIRECTORY ${RAPIDJSON_INCLUDE_DIRS})
-
 # Make target
-if (NOT TARGET rapidjson)
-    add_library (rapidjson STATIC IMPORTED)
-    set_target_properties (rapidjson PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES ${RAPIDJSON_INCLUDE_DIRS}
-    )
-    add_dependencies (rapidjson rapidproject_json)
-endif ()
+
+set (RAPIDJSON_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/rapidjson/include")

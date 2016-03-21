@@ -34,22 +34,9 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
 project (${WRAPPED_LIB_NAME}_java)
-
-# Macros
-macro (subdirlist result curdir)
-  file (GLOB children ${curdir}/*)
-  set (dirlist "")
-  foreach (child ${children})
-    if (IS_DIRECTORY ${child})
-        list (APPEND dirlist ${child})
-    endif ()
-  endforeach ()
-  set (${result} ${dirlist})
-  unset (dirlist)
-endmacro ()
 
 # Configure Java
 set (JAVA_MODULE_NAME ${PROJECT_NAME})
@@ -109,9 +96,14 @@ set_target_properties (${JAVA_SWIG_TARGET_NAME}
 set_target_properties (${JAVA_SWIG_TARGET_NAME}
         PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-if (UNIX AND NOT (${CMAKE_SYSTEM_NAME} MATCHES "Darwin"))
-    set_target_properties (${JAVA_SWIG_TARGET_NAME}
-            PROPERTIES NO_SONAME OFF VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
+if (UNIX AND NOT (CMAKE_SYSTEM_NAME MATCHES "Darwin"))
+    if (CMAKE_SYSTEM_NAME MATCHES "Android")
+        string(REPLACE "<CMAKE_SHARED_LIBRARY_SONAME_CXX_FLAG><TARGET_SONAME>" ""
+                CMAKE_CXX_CREATE_SHARED_MODULE "${CMAKE_CXX_CREATE_SHARED_MODULE}")
+    else ()
+        set_target_properties (${JAVA_SWIG_TARGET_NAME}
+                PROPERTIES NO_SONAME OFF VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
+    endif ()
 endif ()
 
 # Copy additional source files
@@ -128,6 +120,7 @@ endforeach (JAVA_FILE)
 # Add assembly dependencies
 add_jar (${JAVA_JAR_TARGET_NAME}
     "${CMAKE_CURRENT_BINARY_DIR}/src/VirgilStreamDataSink.java"
+    "${CMAKE_CURRENT_BINARY_DIR}/src/VirgilStreamDataSource.java"
     OUTPUT_NAME ${JAVA_JAR_NAME}
 )
 add_dependencies (${JAVA_JAR_TARGET_NAME} ${JAVA_SWIG_TARGET_NAME})

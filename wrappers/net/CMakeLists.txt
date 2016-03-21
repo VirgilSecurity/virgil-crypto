@@ -102,9 +102,12 @@ add_custom_command (TARGET ${CSHARP_SWIG_TARGET_NAME} POST_BUILD
     )
 
 add_custom_command (TARGET ${CSHARP_SWIG_TARGET_NAME} POST_BUILD
-        COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/patch/uppercase_namespaces.py"
-        ARGS ${CSHARP_SOURCE_DIRECTORY}
-        COMMENT "Uppercase C# namespaces for ${CSHARP_SOURCE_DIRECTORY}/*."
+        COMMAND ${CMAKE_COMMAND}
+        ARGS
+            -DSRC_DIR:PATH=${CSHARP_SOURCE_DIRECTORY}
+            -DGLOBBING_EXPRESSION:STRING="*.cs"
+            -P ${CMAKE_SOURCE_DIR}/cmake/uppercase_namespaces.cmake
+        COMMENT "Uppercase C# namespaces for ${CSHARP_SOURCE_DIRECTORY}/*.cs"
     )
 
 # Configure assembly
@@ -114,10 +117,16 @@ set_target_properties (${CSHARP_SWIG_TARGET_NAME}
         PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CSHARP_BINARY_DIRECTORY})
 set_target_properties (${CSHARP_SWIG_TARGET_NAME}
         PROPERTIES POSITION_INDEPENDENT_CODE ON)
-if (UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set_target_properties (${CSHARP_SWIG_TARGET_NAME}
-            PROPERTIES NO_SONAME OFF VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
-endif (UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+
+if (UNIX AND NOT (CMAKE_SYSTEM_NAME MATCHES "Darwin"))
+    if (CMAKE_SYSTEM_NAME MATCHES "Android")
+        string(REPLACE "<CMAKE_SHARED_LIBRARY_SONAME_CXX_FLAG><TARGET_SONAME>" ""
+                CMAKE_CXX_CREATE_SHARED_MODULE "${CMAKE_CXX_CREATE_SHARED_MODULE}")
+    else ()
+        set_target_properties (${JAVA_SWIG_TARGET_NAME}
+                PROPERTIES NO_SONAME OFF VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
+    endif ()
+endif ()
 
 file (GLOB_RECURSE ASSEMBLY_SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cs")
 foreach (CS_FILE ${ASSEMBLY_SRC})

@@ -60,7 +60,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin" AND CMAKE_OSX_ARCHITECTURES)
     endforeach (arch)
 endif ()
 
-# Confugure additional CMake parameters
+# Configure additional CMake parameters
 append_cmake_arg (CMAKE_ARGS NAME ENABLE_PROGRAMS TYPE BOOL VALUE OFF)
 append_cmake_arg (CMAKE_ARGS NAME ENABLE_TESTING TYPE BOOL VALUE OFF)
 if (NOT CMAKE_TOOLCHAIN_FILE)
@@ -70,26 +70,32 @@ if (NOT CMAKE_TOOLCHAIN_FILE)
     append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_FLAGS_DEBUG TYPE STRING)
 endif ()
 
-# Add external project build steps
-set (MBEDTLS_CONFIGURE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/configure")
-set (MBEDTLS_CONFIG_DEFINES "${MBEDTLS_CONFIGURE_DIR}/settings/defines.yml")
-set (MBEDTLS_CONFIG_PLATFORM_DEFINES_LANG "${MBEDTLS_CONFIGURE_DIR}/settings/defines_${LANG}.yml")
-set (MBEDTLS_CONFIG_PLATFORM_DEFINES_PLATFROM "${MBEDTLS_CONFIGURE_DIR}/settings/defines_${PLATFORM}.yml")
-
-set (CONFIGURE_COMMAND_ARGS
-    --input-dir=<SOURCE_DIR>
-    --config-defines=${MBEDTLS_CONFIG_DEFINES}
+# Configure custom MbedTLS 'config.h' file
+set (MBEDTLS_CONFIGS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/configs")
+configure_file (
+    ${MBEDTLS_CONFIGS_DIR}/config.h
+    ${CMAKE_CURRENT_BINARY_DIR}/mbedtls/configs/config.h
+    COPYONLY
 )
 
-if (EXISTS ${MBEDTLS_CONFIG_PLATFORM_DEFINES_LANG})
-    list (APPEND CONFIGURE_COMMAND_ARGS
-        --config-platform-defines=${MBEDTLS_CONFIG_PLATFORM_DEFINES_LANG}
+# Configure platform dependent MbedTLS 'config*.h' files
+if (EXISTS "${MBEDTLS_CONFIGS_DIR}/config_${LANG}.h")
+    configure_file (
+        ${MBEDTLS_CONFIGS_DIR}/config_${LANG}.h
+        ${CMAKE_CURRENT_BINARY_DIR}/mbedtls/configs/config_platform.h
+        COPYONLY
     )
-endif ()
-
-if (EXISTS ${MBEDTLS_CONFIG_PLATFORM_DEFINES_PLATFROM})
-    list (APPEND CONFIGURE_COMMAND_ARGS
-        --config-platform-defines=${MBEDTLS_CONFIG_PLATFORM_DEFINES_PLATFROM}
+elseif (EXISTS "${MBEDTLS_CONFIGS_DIR}/config_${PLATFORM}.h")
+    configure_file (
+        ${MBEDTLS_CONFIGS_DIR}/config_${PLATFORM}.h
+        ${CMAKE_CURRENT_BINARY_DIR}/mbedtls/configs/config_platform.h
+        COPYONLY
+    )
+else ()
+    configure_file (
+        ${MBEDTLS_CONFIGS_DIR}/config_desktop.h
+        ${CMAKE_CURRENT_BINARY_DIR}/mbedtls/configs/config_platform.h
+        COPYONLY
     )
 endif ()
 
@@ -98,7 +104,9 @@ ExternalProject_Add (${MBEDTLS_PROJECT_NAME}
     GIT_TAG "79acd6ee2b089379f683bc2d0e8e6d5eeb7d2c9c"
     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbedtls"
     CMAKE_ARGS ${CMAKE_ARGS}
-    UPDATE_COMMAND python "${MBEDTLS_CONFIGURE_DIR}/configure.py" ${CONFIGURE_COMMAND_ARGS}
+    UPDATE_COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_BINARY_DIR}/mbedtls/configs
+            ${CMAKE_CURRENT_BINARY_DIR}/mbedtls/src/${MBEDTLS_PROJECT_NAME}/include/mbedtls
 )
 
 # Payload targets and output variables

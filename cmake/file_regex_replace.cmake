@@ -1,5 +1,3 @@
-#! /usr/bin/python
-
 #
 # Copyright (C) 2015 Virgil Security Inc.
 #
@@ -36,37 +34,36 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-import os
-import fileinput
-import re
+#
+# This module can be used as part of the build process to perferom regex replace in given file.
+#
+# @example:
+#     add_custom_command (TARGET ${tgt} POST_BUILD
+#          COMMAND ${CMAKE_COMMAND}
+#          ARGS
+#              -DSRC:PATH=${PATH_TO_SOURCE_FILE}
+#              -DREGULAR_EXPRESSION:STRING="XXX"
+#              -DREPLACE_EXPRESSION:STRING="YYY"
+#              -P "${FULL_PATH_TO_THIS_FILE}"
+#     )
+#
 
-import sys
+if (NOT SRC)
+    message (FATAL_ERROR "Source file is not defined. Please define variable SRC.")
+endif ()
 
-import argparse
+if (NOT EXISTS ${SRC})
+    message (FATAL_ERROR "Given source file does not exists: " ${SRC})
+endif ()
 
-def parseArguments():
-    parser = argparse.ArgumentParser(description=
-        "Use this utility to patch wrapper by adding Virgil Crypto library version.");
-    parser.add_argument("-i", "--input", dest="wrapperFile",
-            help="path to the SWIG generated C++ wrapper file", required=True)
-    parser.add_argument("-v", "--lib-version", dest="libVersion",
-            help="Virgil Crypto library version", required=True)
-    return parser.parse_args()
+if (NOT REGULAR_EXPRESSION)
+    message (FATAL_ERROR "Regular expression is not defined. Please define variable REGULAR_EXPRESSION.")
+endif ()
 
-def main():
-    # Parse arguments
-    args = parseArguments()
-    wrapperFile = args.wrapperFile;
-    libVersion = args.libVersion;
+if (NOT REPLACE_EXPRESSION)
+    message (FATAL_ERROR "Regular expression is not defined. Please define variable REPLACE_EXPRESSION.")
+endif ()
 
-    if not os.path.isfile(wrapperFile):
-        return "File: " + wrapperFile + " not found"
-
-    for line in fileinput.input(wrapperFile, inplace=True):
-        pattern = "NO_VERSION_YET";
-        if pattern in line:
-            line = line.replace(pattern, '(char*)"' + libVersion + '"')
-        sys.stdout.write(line)
-
-if __name__ == "__main__":
-    sys.exit(main())
+file (READ ${SRC} content)
+string (REGEX REPLACE "${REGULAR_EXPRESSION}" "${REPLACE_EXPRESSION}" modified_content "${content}")
+file (WRITE "${SRC}" "${modified_content}")

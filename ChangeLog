@@ -1,5 +1,19 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.3.2 released 2016-03-21
+
+## Features
+
+  * [Build] Add python3 build support
+
+## Changes
+
+  * [Build] Perform speed optimization of the build process
+
+## Bugfix
+
+  * [Java] Add missed class 'VirgilStreamDataSource' to the Java wrapper
+
 = Version 1.3.1 released 2016-03-14
 
 Bugfix:

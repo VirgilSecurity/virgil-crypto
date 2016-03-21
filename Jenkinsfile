@@ -26,21 +26,41 @@ def createNativeUnixBuild(slave) {
         node(slave) {
             unstash 'src'
             sh 'rm -fr build install'
+            // C++
             sh './utils/build.sh cpp'
+            // Ruby
             sh './utils/build.sh ruby'
-            sh './utils/build.sh python'
+            // Python
+            if (slave.contains('centos7')) {
+                sh './utils/build.sh python-2.7'
+                writeFile file: './utils/env.sh', text: ['source /opt/rh/python33/enable', ''].join("\n")
+                sh './utils/build.sh python-3.3'
+                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python34/enable', ''].join("\n")
+                sh './utils/build.sh python-3.4'
+                organizeFilesUnix('install/python')
+            }
+            if (slave.contains('build-os-x')) {
+                sh './utils/build.sh python-2.7'
+                sh './utils/build.sh python-3.4'
+                sh './utils/build.sh python-3.5'
+                organizeFilesUnix('install/python')
+            }
+            // Java
             sh './utils/build.sh java'
-            sh './utils/build.sh nodejs-0.12.7 . build/nodejs/0.12.7 install/nodejs/0.12.7'
-            sh './utils/build.sh nodejs-4.1.0 . build/nodejs/4.1.0 install/nodejs/4.1.0'
+            // NodeJS
+            sh './utils/build.sh nodejs-0.12.7'
+            sh './utils/build.sh nodejs-4.1.0'
+            organizeFilesUnix('install/nodejs')
+            // PHP
             sh './utils/build.sh php'
             if (slave.contains('centos7')) {
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/php55/enable', ''].join("\n")
-                sh './utils/build.sh php . build/php/php55 install/php/php55'
+                sh './utils/build.sh php-5.5'
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-php56/enable', ''].join("\n")
-                sh './utils/build.sh php . build/php/php56 install/php/php56'
+                sh './utils/build.sh php-5.6'
                 organizeFilesUnix('install/php')
             }
-            organizeFilesUnix('install/nodejs')
+
             archiveArtifacts('install/**')
         }
     }
@@ -57,13 +77,38 @@ def createNativeWindowsBuild(slave) {
                 bat 'utils\\build.bat cpp'
                 bat 'utils\\build.bat net'
                 bat 'utils\\build.bat java'
-                bat 'utils\\build.bat nodejs-0.12.7 . build\\nodejs\\0.12.7 install\\nodejs\\0.12.7'
-                bat 'utils\\build.bat nodejs-4.1.0 . build\\nodejs\\4.1.0 install\\nodejs\\4.1.0'
+                bat 'utils\\build.bat nodejs-0.12.7'
+                bat 'utils\\build.bat nodejs-4.1.0'
+                withEnv(["PATH=C:\\Python27_x86;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-2.7-x86'
+                }
+                withEnv(["PATH=C:\\Python27_64;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-2.7-x64'
+                }
+                withEnv(["PATH=C:\\Python33_x86;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.3-x86'
+                }
+                withEnv(["PATH=C:\\Python33_64;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.3-x64'
+                }
+                withEnv(["PATH=C:\\Python34_x86;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.4-x86'
+                }
+                withEnv(["PATH=C:\\Python34_64;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.4-x64'
+                }
+                withEnv(["PATH=C:\\Python35_x86;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.5-x86'
+                }
+                withEnv(["PATH=C:\\Python35_64;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.5-x64'
+                }
             }
             organizeFilesWindows('install\\cpp')
             organizeFilesWindows('install\\net')
             organizeFilesWindows('install\\java')
             organizeFilesWindows('install\\nodejs')
+            organizeFilesWindows('install\\python')
             archiveArtifacts('install/**')
         }
     }

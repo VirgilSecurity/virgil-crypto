@@ -49,7 +49,15 @@ if (PHP_VERSION_STRING)
     string (REPLACE "." ";" PHP_VERSION_LIST ${PHP_VERSION_STRING})
     list (GET PHP_VERSION_LIST 0 PHP_VERSION_MAJOR)
     list (GET PHP_VERSION_LIST 1 PHP_VERSION_MINOR)
-    set (LANG_VERSION "${PHP_VERSION_MAJOR}.${PHP_VERSION_MINOR}" CACHE STRING "PHP version" FORCE)
+    set (PHP_VERSION_MAJOR_MINOR "${PHP_VERSION_MAJOR}.${PHP_VERSION_MINOR}")
+    if (LANG_VERSION)
+        if (NOT LANG_VERSION VERSION_EQUAL PHP_VERSION_MAJOR_MINOR)
+            message (FATAL_ERROR
+                "Found PHP version ${PHP_VERSION_MAJOR_MINOR} is not equal to the requested version ${LANG_VERSION}")
+        endif ()
+    else ()
+        set (LANG_VERSION ${PHP_VERSION_MAJOR_MINOR} CACHE STRING "PHP version" FORCE)
+    endif (LANG_VERSION)
 endif (PHP_VERSION_STRING)
 
 find_host_package (SWIG REQUIRED)
@@ -82,10 +90,15 @@ swig_link_libraries (${PHP_MODULE_NAME} ${WRAPPED_LIB_NAME})
 
 set_target_properties(${PHP_SWIG_TARGET_NAME} PROPERTIES PREFIX "")
 
+set (PHP_WRAPPER_VERSION_STRING "(char*)\\\"${VIRGIL_VERSION}\\\"")
+message (STATUS "${PHP_WRAPPER_VERSION_STRING}")
 add_custom_target (${PHP_SWIG_TARGET_NAME}_patch_version
-    COMMAND python "${CMAKE_CURRENT_SOURCE_DIR}/patch/add_version.py"
-        --input "${swig_generated_file_fullname}"
-        --lib-version "${VIRGIL_VERSION}"
+    COMMAND ${CMAKE_COMMAND}
+    ARGS
+        -DSRC:PATH="${swig_generated_file_fullname}"
+        -DREGULAR_EXPRESSION:STRING="NO_VERSION_YET"
+        -DREPLACE_EXPRESSION:STRING="${PHP_WRAPPER_VERSION_STRING}"
+        -P ${CMAKE_SOURCE_DIR}/cmake/file_regex_replace.cmake
     DEPENDS "${swig_generated_file_fullname}"
     COMMENT "Add version to the SWIG generated wrapper."
 )

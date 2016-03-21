@@ -41,7 +41,7 @@ project (virgil_crypto)
 # Include and build external libraries
 include (ExternalProject)
 include (${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/mbedtls_ext.cmake)
-include (${CMAKE_CURRENT_SOURCE_DIR}/cmake/rapidjson.cmake)
+include (${CMAKE_CURRENT_SOURCE_DIR}/rapidjson/rapidjson.cmake)
 
 set (VIRGIL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 include_directories (${VIRGIL_INCLUDE_DIR})
@@ -74,7 +74,6 @@ set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_COD
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${VIRGIL_INCLUDE_DIR})
 
 target_link_libraries (${PROJECT_NAME} mbedtls)
-add_dependencies (${PROJECT_NAME} rapidjson)
 add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy_if_different

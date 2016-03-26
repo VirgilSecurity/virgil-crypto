@@ -91,25 +91,25 @@ def createNativeWindowsBuild(slave) {
                 withEnv(["PATH=C:\\Python27_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-2.7-x86'
                 }
-                withEnv(["PATH=C:\\Python27_64;${env.PATH}"]) {
+                withEnv(["PATH=C:\\Python27_x64;${env.PATH}"]) {
                     bat 'utils\\build.bat python-2.7-x64'
                 }
                 withEnv(["PATH=C:\\Python33_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.3-x86'
                 }
-                withEnv(["PATH=C:\\Python33_64;${env.PATH}"]) {
+                withEnv(["PATH=C:\\Python33_x64;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.3-x64'
                 }
                 withEnv(["PATH=C:\\Python34_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.4-x86'
                 }
-                withEnv(["PATH=C:\\Python34_64;${env.PATH}"]) {
+                withEnv(["PATH=C:\\Python34_x64;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.4-x64'
                 }
                 withEnv(["PATH=C:\\Python35_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.5-x86'
                 }
-                withEnv(["PATH=C:\\Python35_64;${env.PATH}"]) {
+                withEnv(["PATH=C:\\Python35_x64;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.5-x64'
                 }
             }

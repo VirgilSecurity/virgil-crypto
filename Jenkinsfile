@@ -21,6 +21,15 @@ slaves['darwin'] = createDarwinBuild('build-os-x');
 slaves['android'] = createAndroidBuild('build-os-x');
 parallel slaves
 
+stage 'Fingerprint'
+
+node('master') {
+    def artifactsDir = env.JENKINS_HOME + '/jobs/' + env.JOB_NAME + '/builds/' + env.BUILD_NUMBER + '/archive'
+    dir(artifactsDir) {
+        sh 'find . -type f -name "virgil-crypto-*" -exec sh -c "sha256sum {} | cut -d\' \' -f1-1 > {}.sha256" \\;'
+    }
+}
+
 def createNativeUnixBuild(slave) {
     return {
         node(slave) {

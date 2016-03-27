@@ -21,6 +21,18 @@ slaves['darwin'] = createDarwinBuild('build-os-x');
 slaves['android'] = createAndroidBuild('build-os-x');
 parallel slaves
 
+stage 'Fingerprint'
+
+node('master') {
+    def branchSubPath =  env.BRANCH_NAME ? '/branches/' + env.BRANCH_NAME : ''
+    def shortJobName = env.BRANCH_NAME ? env.JOB_NAME.replace('/' + env.BRANCH_NAME, '') : env.JOB_NAME
+    def artifactsDir =
+            env.JENKINS_HOME + '/jobs/' + shortJobName + branchSubPath + '/builds/' + env.BUILD_NUMBER + '/archive'
+    dir(artifactsDir) {
+        sh 'find . -type f -name "virgil-crypto-*" -exec sh -c "sha256sum {} | cut -d\' \' -f1-1 > {}.sha256" \\;'
+    }
+}
+
 def createNativeUnixBuild(slave) {
     return {
         node(slave) {
@@ -82,25 +94,25 @@ def createNativeWindowsBuild(slave) {
                 withEnv(["PATH=C:\\Python27_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-2.7-x86'
                 }
-                withEnv(["PATH=C:\\Python27_64;${env.PATH}"]) {
+                withEnv(["PATH=C:\\Python27_x64;${env.PATH}"]) {
                     bat 'utils\\build.bat python-2.7-x64'
                 }
                 withEnv(["PATH=C:\\Python33_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.3-x86'
                 }
-                withEnv(["PATH=C:\\Python33_64;${env.PATH}"]) {
+                withEnv(["PATH=C:\\Python33_x64;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.3-x64'
                 }
                 withEnv(["PATH=C:\\Python34_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.4-x86'
                 }
-                withEnv(["PATH=C:\\Python34_64;${env.PATH}"]) {
+                withEnv(["PATH=C:\\Python34_x64;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.4-x64'
                 }
                 withEnv(["PATH=C:\\Python35_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.5-x86'
                 }
-                withEnv(["PATH=C:\\Python35_64;${env.PATH}"]) {
+                withEnv(["PATH=C:\\Python35_x64;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.5-x64'
                 }
             }

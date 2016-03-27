@@ -54,10 +54,16 @@ namespace virgil { namespace crypto { namespace foundation { namespace asn1 {
 class VirgilAsn1Writer {
 public:
     /**
-     * @brief Initialize internal state for first use.
+     * @brief Initialize internal state for the first use.
      * @see @link reset @endlink method for reusing this class to create new ASN.1 stucture.
      */
     VirgilAsn1Writer();
+    /**
+     * @brief Initialize internal state for the first use.
+     * @param capacity - expected ASN.1 final size
+     * @see @link reset @endlink method for reusing this class to create new ASN.1 stucture.
+     */
+    VirgilAsn1Writer(size_t capacity);
     /**
      * @brief Dispose internal resources.
      */
@@ -70,6 +76,11 @@ public:
      * @brief Reset all internal states and prepare to new ASN.1 writing operations.
      */
     void reset();
+    /**
+     * @brief Reset all internal states and prepare to new ASN.1 writing operations.
+     * @param capacity - expected ASN.1 final size
+     */
+    void reset(size_t capacity);
     /**
      * @brief Returns the result ASN.1 structure.
      * @return ASN.1 structure that was written.

@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">1.3.2</span>
+   &#160;<span id="projectnumber">1.3.4</span>
    </div>
   </td>
  </tr>
@@ -105,8 +105,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:adb30c2e0bf8e93aebbd89d10226ff01a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#adb30c2e0bf8e93aebbd89d10226ff01a">VirgilAsn1Writer</a> ()</td></tr>
-<tr class="memdesc:adb30c2e0bf8e93aebbd89d10226ff01a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize internal state for first use.  <a href="#adb30c2e0bf8e93aebbd89d10226ff01a">More...</a><br /></td></tr>
+<tr class="memdesc:adb30c2e0bf8e93aebbd89d10226ff01a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize internal state for the first use.  <a href="#adb30c2e0bf8e93aebbd89d10226ff01a">More...</a><br /></td></tr>
 <tr class="separator:adb30c2e0bf8e93aebbd89d10226ff01a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9f29578ad8fb3ed62a8e9169bfbf87e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#ac9f29578ad8fb3ed62a8e9169bfbf87e">VirgilAsn1Writer</a> (size_t capacity)</td></tr>
+<tr class="memdesc:ac9f29578ad8fb3ed62a8e9169bfbf87e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize internal state for the first use.  <a href="#ac9f29578ad8fb3ed62a8e9169bfbf87e">More...</a><br /></td></tr>
+<tr class="separator:ac9f29578ad8fb3ed62a8e9169bfbf87e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53e897b411b6180250a015d3dd909ee8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53e897b411b6180250a015d3dd909ee8"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#a53e897b411b6180250a015d3dd909ee8">~VirgilAsn1Writer</a> ()  throw ()</td></tr>
 <tr class="memdesc:a53e897b411b6180250a015d3dd909ee8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dispose internal resources. <br /></td></tr>
@@ -116,6 +119,9 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#a5fc06e0eb15968f222b6606438a80907">reset</a> ()</td></tr>
 <tr class="memdesc:a5fc06e0eb15968f222b6606438a80907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset all internal states and prepare to new ASN.1 writing operations. <br /></td></tr>
 <tr class="separator:a5fc06e0eb15968f222b6606438a80907"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02b4e7f85b941df7fbe74e69f22c9ee3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#a02b4e7f85b941df7fbe74e69f22c9ee3">reset</a> (size_t capacity)</td></tr>
+<tr class="memdesc:a02b4e7f85b941df7fbe74e69f22c9ee3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset all internal states and prepare to new ASN.1 writing operations.  <a href="#a02b4e7f85b941df7fbe74e69f22c9ee3">More...</a><br /></td></tr>
+<tr class="separator:a02b4e7f85b941df7fbe74e69f22c9ee3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aedad402874f0918c9d06fce029eb827b"><td class="memItemLeft" align="right" valign="top">virgil::crypto::VirgilByteArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#aedad402874f0918c9d06fce029eb827b">finish</a> ()</td></tr>
 <tr class="memdesc:aedad402874f0918c9d06fce029eb827b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the result ASN.1 structure.  <a href="#aedad402874f0918c9d06fce029eb827b">More...</a><br /></td></tr>
 <tr class="separator:aedad402874f0918c9d06fce029eb827b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -171,7 +177,32 @@ Implementation is not complete yet, only minimum set of operations are supported
       </table>
 </div><div class="memdoc">
 
-<p>Initialize internal state for first use. </p>
+<p>Initialize internal state for the first use. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#a5fc06e0eb15968f222b6606438a80907">reset</a> method for reusing this class to create new ASN.1 stucture. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ac9f29578ad8fb3ed62a8e9169bfbf87e"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virgil::crypto::foundation::asn1::VirgilAsn1Writer::VirgilAsn1Writer </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>capacity</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize internal state for the first use. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">capacity</td><td>- expected ASN.1 final size </td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#a5fc06e0eb15968f222b6606438a80907">reset</a> method for reusing this class to create new ASN.1 stucture. </dd></dl>
 
 </div>
@@ -193,6 +224,30 @@ Implementation is not complete yet, only minimum set of operations are supported
 <p>Returns the result ASN.1 structure. </p>
 <dl class="section return"><dt>Returns</dt><dd>ASN.1 structure that was written. </dd></dl>
 <dl class="section warning"><dt>Warning</dt><dd>After call this method all attempts to write more data will cause exceptions. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a02b4e7f85b941df7fbe74e69f22c9ee3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void virgil::crypto::foundation::asn1::VirgilAsn1Writer::reset </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>capacity</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reset all internal states and prepare to new ASN.1 writing operations. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">capacity</td><td>- expected ASN.1 final size </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

@@ -91,7 +91,7 @@ bool VirgilSigner::verify(const VirgilByteArray& data, const VirgilByteArray& si
         cipher.setPublicKey(publicKey);
         // Verify
         return cipher.verify(digest, digestSign, hash_.type());
-    } catch (const PolarsslException& exception) {
+    } catch (const PolarsslException&) {
         throw VirgilCryptoException("VirgilSigner: malformed sign.");
     }
 }

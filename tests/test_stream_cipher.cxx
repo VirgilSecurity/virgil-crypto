@@ -271,5 +271,9 @@ TEST_CASE("Stream Cipher: generated keys", "[stream-cipher]") {
 }
 
 #else
-    #warning "Tests for class VirgilStreamCipher are ignored, because LIB_FILE_IO build parameter is not defined"
+#if defined(_MSC_VER)
+#pragma message("Tests for class VirgilStreamCipher are ignored, because LIB_FILE_IO build parameter is not defined")
+#else
+#warning "Tests for class VirgilStreamCipher are ignored, because LIB_FILE_IO build parameter is not defined"
+#endif /* _MSC_VER */
 #endif /* LIB_FILE_IO */

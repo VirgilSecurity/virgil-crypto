@@ -36,11 +36,11 @@
 
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
+#include <cmath>
 #include <cstddef>
-#include <climits>
-#include <cstring>
 #include <algorithm>
 #include <stdexcept>
+
 #include <mbedtls/asn1.h>
 #include <mbedtls/asn1write.h>
 
@@ -55,12 +55,15 @@ using virgil::crypto::foundation::PolarsslException;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 
-static const size_t kBufLenDefault = 2048;
+static const size_t kBufLenDefault = 128;
 
 static const size_t kAsn1TagValueSize = 1;
 static const size_t kAsn1LengthValueSize = 3;
 static const size_t kAsn1IntegerValueSize = kAsn1TagValueSize + kAsn1LengthValueSize + 8;
 static const size_t kAsn1BoolValueSize = 3;
+static const size_t kAsn1NullValueSize = kAsn1TagValueSize + 1;
+static const size_t kAsn1SizeMax = 65535 + kAsn1TagValueSize + 3; // According to MbedTLS restriction on TAG: LENGTH
+static const size_t kAsn1ContextTagMax = 0x1E;
 
 #define RETURN_POINTER_DIFF_AFTER_INVOCATION(pointer,invocation) \
 do { \
@@ -74,13 +77,24 @@ VirgilAsn1Writer::VirgilAsn1Writer() : p_(0), start_(0), buf_(0), bufLen_(0) {
     this->reset();
 }
 
+VirgilAsn1Writer::VirgilAsn1Writer(size_t capacity) : p_(0), start_(0), buf_(0), bufLen_(0) {
+    this->reset(capacity);
+}
+
 VirgilAsn1Writer::~VirgilAsn1Writer() throw() {
     dispose();
 }
 
 void VirgilAsn1Writer::reset() {
+    this->reset(kBufLenDefault);
+}
+
+void VirgilAsn1Writer::reset(size_t capacity) {
+    if (capacity == 0) {
+        throw std::logic_error("VirgilAsn1Writer: capacity is 0, but should be positive");
+    }
     dispose();
-    relocateBuffer(kBufLenDefault);
+    relocateBuffer(capacity);
 }
 
 VirgilByteArray VirgilAsn1Writer::finish() {
@@ -112,7 +126,7 @@ size_t VirgilAsn1Writer::writeBool(bool value) {
 
 size_t VirgilAsn1Writer::writeNull() {
     checkState();
-    ensureBufferEnough(kAsn1TagValueSize);
+    ensureBufferEnough(kAsn1NullValueSize);
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
         MBEDTLS_ERROR_HANDLER(
             ::mbedtls_asn1_write_null(&p_, start_)
@@ -149,11 +163,13 @@ size_t VirgilAsn1Writer::writeUTF8String(const VirgilByteArray& data) {
 }
 
 size_t VirgilAsn1Writer::writeContextTag(unsigned char tag, size_t len) {
-    if (tag > 0x1F) {
-        throw VirgilCryptoException("Tag value is too big, MAX value is 31.");
-    }
     checkState();
-    ensureBufferEnough(kAsn1TagValueSize);
+    if (tag > kAsn1ContextTagMax) {
+        std::ostringstream errStream;
+        errStream << "VirgilAsn1Writer: exceeded maximum ASN.1 context tag value " << kAsn1ContextTagMax;
+        throw std::length_error(errStream.str());
+    }
+    ensureBufferEnough(kAsn1TagValueSize + kAsn1LengthValueSize);
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
         {
             MBEDTLS_ERROR_HANDLER(
@@ -181,7 +197,7 @@ size_t VirgilAsn1Writer::writeData(const VirgilByteArray& data) {
 
 size_t VirgilAsn1Writer::writeOID(const std::string& oid) {
     checkState();
-    ensureBufferEnough(kAsn1TagValueSize + oid.size());
+    ensureBufferEnough(kAsn1TagValueSize + kAsn1LengthValueSize + oid.size());
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
         {
             MBEDTLS_ERROR_HANDLER(
@@ -207,22 +223,26 @@ size_t VirgilAsn1Writer::writeSequence(size_t len) {
 }
 
 size_t VirgilAsn1Writer::writeSet(const std::vector<VirgilByteArray>& set) {
-    std::vector<VirgilByteArray> orderedSet = set;
+    checkState();
+
+    size_t setLength = 0;
+    for (std::vector<VirgilByteArray>::const_iterator it = set.begin(); it != set.end(); ++it) {
+        setLength += it->size();
+    }
+    ensureBufferEnough(kAsn1TagValueSize + kAsn1LengthValueSize + setLength);
+
+    std::vector<VirgilByteArray> orderedSet(set);
     makeOrderedSet(orderedSet);
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,
         {
-            size_t len = 0;
             for (std::vector<VirgilByteArray>::const_reverse_iterator it = orderedSet.rbegin();
                     it != orderedSet.rend(); ++it) {
-                len += it->size();
-                ensureBufferEnough(it->size());
                 MBEDTLS_ERROR_HANDLER(
                     ::mbedtls_asn1_write_raw_buffer(&p_, start_, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN((*it)))
                 );
             }
-            ensureBufferEnough(kAsn1LengthValueSize + kAsn1TagValueSize);
             MBEDTLS_ERROR_HANDLER(
-                ::mbedtls_asn1_write_len(&p_, start_, len)
+                ::mbedtls_asn1_write_len(&p_, start_, setLength)
             );
             MBEDTLS_ERROR_HANDLER(
                 ::mbedtls_asn1_write_tag(&p_, start_, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SET)
@@ -265,17 +285,16 @@ void VirgilAsn1Writer::makeOrderedSet(std::vector<VirgilByteArray>& set) {
 
 void VirgilAsn1Writer::checkState() {
     if (p_ == 0 || start_ == 0) {
-        throw VirgilCryptoException("Writer was not initialized - 'reset' method was not called.");
+        throw VirgilCryptoException("VirgilAsn1Writer: object is not initialized - 'reset' method was not called");
     }
 }
 
 void VirgilAsn1Writer::relocateBuffer(size_t newBufLen) {
     if (newBufLen < bufLen_) {
-        throw VirgilCryptoException("ASN.1 buffer relocation failed: could not reserve space less than current.");
+        throw std::length_error("VirgilAsn1Writer: could not reserve space less than current");
     }
     unsigned char *newBuf = new unsigned char[newBufLen];
     size_t writtenBytes = 0;
-    memset(newBuf, 0x00, newBufLen);
     if (buf_ && p_ && start_) {
         writtenBytes = bufLen_ - (p_ - start_);
         memcpy(newBuf + newBufLen - writtenBytes, p_, writtenBytes);
@@ -290,18 +309,17 @@ void VirgilAsn1Writer::relocateBuffer(size_t newBufLen) {
 void VirgilAsn1Writer::ensureBufferEnough(size_t len) {
     checkState();
     size_t unusedSpace = (size_t)(p_ - start_);
-    if (unusedSpace < len) {
-        size_t usedSpace = size_t(start_ + bufLen_ - p_);
-        size_t newBufLen = bufLen_;
-        do {
-            if (newBufLen < (UINT_MAX >> 1)) {
-                newBufLen <<= 1;
-            } else {
-                throw std::overflow_error(std::string("VirgilAsn1Writer: ") +
-                        "Internal buffer cannot be enlarged. Maximum size is reached.");
-            }
-        } while (newBufLen < usedSpace + len);
-        relocateBuffer(newBufLen);
+    if (len > unusedSpace) {
+        const size_t usedSpace = bufLen_ - unusedSpace;
+        const size_t requiredLenMin = len + usedSpace;
+        if (requiredLenMin > kAsn1SizeMax) {
+            std::ostringstream errStream;
+            errStream << "VirgilAsn1Writer: exceeded maximum ASN.1 size of " << kAsn1SizeMax << " bytes";
+            throw std::length_error(errStream.str());
+        }
+        const size_t requiredLenMax = 1 << (size_t)(std::ceil(std::log((double)requiredLenMin) / std::log(2.0)));
+        const size_t adjustedLen = requiredLenMax > kAsn1SizeMax ? kAsn1SizeMax : requiredLenMax;
+        relocateBuffer(adjustedLen);
     }
 }
 

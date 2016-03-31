@@ -39,6 +39,7 @@
 #include <cstring>
 #include <algorithm>
 
+#include <mbedtls/config.h>
 #include <mbedtls/pk.h>
 #include <mbedtls/md.h>
 #include <mbedtls/oid.h>
@@ -517,33 +518,58 @@ VirgilByteArray VirgilAsymmetricCipher::decrypt(const VirgilByteArray& in) const
 
 VirgilByteArray VirgilAsymmetricCipher::sign(const VirgilByteArray& digest, int hashType) const {
     checkState();
-    const char *pers = "sign";
 
     unsigned char sign[MBEDTLS_MPI_MAX_SIZE];
     size_t actualSignLen = 0;
+    int (*f_rng)(void *, unsigned char *, size_t);
+    mbedtls_ctr_drbg_context *p_rng = NULL;
+    mbedtls_entropy_context *entropy = NULL;
 
-    mbedtls_entropy_context entropy;
-    mbedtls_entropy_init(&entropy);
+    /**
+     * Use pseudo random functionality for RSA and and non deterministic EC
+     */
+    bool useRandom =
+#if defined(MBEDTLS_ECDSA_DETERMINISTIC)
+        mbedtls_pk_get_type(impl_->ctx) == MBEDTLS_PK_RSA    ||
+        mbedtls_pk_get_type(impl_->ctx) == MBEDTLS_PK_RSA_ALT ||
+        mbedtls_pk_get_type(impl_->ctx) == MBEDTLS_PK_RSASSA_PSS;
+#else
+        true;
+#endif /* defined(MBEDTLS_ECDSA_DETERMINISTIC) */
 
-    mbedtls_ctr_drbg_context ctr_drbg;
-    ::mbedtls_ctr_drbg_init(&ctr_drbg);
+    if (useRandom) {
+        const char *pers = "sign";
+
+        mbedtls_entropy_context entropy_ctx;
+        mbedtls_entropy_init(&entropy_ctx);
+        entropy = &entropy_ctx;
+
+        mbedtls_ctr_drbg_context ctr_drbg;
+        ::mbedtls_ctr_drbg_init(&ctr_drbg);
+
+        MBEDTLS_ERROR_HANDLER_DISPOSE(
+            ::mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, entropy,
+                    (const unsigned char *)pers, strlen(pers)),
+            { goto cleanup; }
+        );
+
+        f_rng = mbedtls_ctr_drbg_random;
+        p_rng = &ctr_drbg;
+    }
 
     MBEDTLS_ERROR_HANDLER_DISPOSE(
-        ::mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy, (const unsigned char *)pers, strlen(pers)),
-        ::mbedtls_entropy_free(&entropy)
+        ::mbedtls_pk_sign(impl_->ctx, static_cast<mbedtls_md_type_t>(hashType),
+                VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(digest), sign, &actualSignLen, f_rng, p_rng),
+        { goto cleanup; }
     );
 
-    MBEDTLS_ERROR_HANDLER_DISPOSE(
-        ::mbedtls_pk_sign(impl_->ctx, static_cast<mbedtls_md_type_t>(hashType), VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(digest), sign, &actualSignLen,
-                mbedtls_ctr_drbg_random, &ctr_drbg),
-        {
-            ::mbedtls_ctr_drbg_free(&ctr_drbg);
-            ::mbedtls_entropy_free(&entropy);
-        }
-    );
-
-    ::mbedtls_ctr_drbg_free(&ctr_drbg);
-    ::mbedtls_entropy_free(&entropy);
+cleanup:
+    if (p_rng) {
+        ::mbedtls_ctr_drbg_free(p_rng);
+    }
+    if (entropy) {
+        ::mbedtls_entropy_free(entropy);
+    }
 
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(sign, actualSignLen);
 }

@@ -54,12 +54,35 @@ using virgil::crypto::VirgilSigner;
 using virgil::crypto::VirgilKeyPair;
 using virgil::crypto::VirgilCryptoException;
 
-TEST_CASE("sign", "[signer]") {
+TEST_CASE("sign-ec", "[signer]") {
     VirgilByteArray testData = str2bytes("this string will be signed");
     VirgilByteArray malformedData = str2bytes("this string will is malformed");
     VirgilByteArray malformedSign = str2bytes("I am malformed sign");
     VirgilByteArray keyPassword = str2bytes("password");
     VirgilKeyPair keyPair(keyPassword);
+
+    VirgilSigner signer;
+    VirgilByteArray sign = signer.sign(testData, keyPair.privateKey(), keyPassword);
+
+    SECTION("and verify with original data and correspond sign") {
+        REQUIRE(signer.verify(testData, sign, keyPair.publicKey()) == true);
+    }
+
+    SECTION("and verify with malformed data") {
+        REQUIRE(signer.verify(malformedData, sign, keyPair.publicKey()) == false);
+    }
+
+    SECTION("and verify with malformed sign") {
+        REQUIRE_THROWS_AS(signer.verify(testData, malformedSign, keyPair.publicKey()), VirgilCryptoException);
+    }
+}
+
+TEST_CASE("sign-rsa", "[signer]") {
+    VirgilByteArray testData = str2bytes("this string will be signed");
+    VirgilByteArray malformedData = str2bytes("this string will is malformed");
+    VirgilByteArray malformedSign = str2bytes("I am malformed sign");
+    VirgilByteArray keyPassword = str2bytes("password");
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_RSA_2048, keyPassword);
 
     VirgilSigner signer;
     VirgilByteArray sign = signer.sign(testData, keyPair.privateKey(), keyPassword);

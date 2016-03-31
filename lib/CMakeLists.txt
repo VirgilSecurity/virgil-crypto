@@ -73,7 +73,9 @@ set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${VIRGIL_INCLUDE_DIR})
 
-target_link_libraries (${PROJECT_NAME} mbedtls)
+target_link_libraries (${PROJECT_NAME} ${MBEDTLS_LIBRARIES})
+add_dependencies (${PROJECT_NAME} mbedtls)
+
 add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy_if_different
@@ -88,7 +90,7 @@ set (VIRGIL_INCLUDE_DIR ${VIRGIL_INCLUDE_DIR} PARENT_SCOPE)
 if (INSTALL_CORE_LIBS)
     install (TARGETS ${PROJECT_NAME}
             DESTINATION "${INSTALL_LIB_DIR_NAME}")
-    install (FILES ${MBEDTLS_LIBRARY}
+    install (FILES ${MBEDTLS_LIBRARIES}
             DESTINATION "${INSTALL_LIB_DIR_NAME}")
     add_subdirectory (include)
 endif ()

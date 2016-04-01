@@ -545,31 +545,33 @@ VirgilByteArray VirgilAsymmetricCipher::sign(const VirgilByteArray& digest, int 
         entropy = &entropy_ctx;
 
         mbedtls_ctr_drbg_context ctr_drbg;
-        ::mbedtls_ctr_drbg_init(&ctr_drbg);
+        mbedtls_ctr_drbg_init(&ctr_drbg);
+        p_rng = &ctr_drbg;
 
         MBEDTLS_ERROR_HANDLER_DISPOSE(
-            ::mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, entropy,
+            mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, entropy,
                     (const unsigned char *)pers, strlen(pers)),
-            { goto cleanup; }
+            {
+                mbedtls_ctr_drbg_free(p_rng);
+                mbedtls_entropy_free(entropy);
+            }
         );
 
         f_rng = mbedtls_ctr_drbg_random;
-        p_rng = &ctr_drbg;
     }
 
     MBEDTLS_ERROR_HANDLER_DISPOSE(
         ::mbedtls_pk_sign(impl_->ctx, static_cast<mbedtls_md_type_t>(hashType),
                 VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(digest), sign, &actualSignLen, f_rng, p_rng),
-        { goto cleanup; }
+        {
+            if (p_rng) {
+                mbedtls_ctr_drbg_free(p_rng);
+            }
+            if (entropy) {
+                mbedtls_entropy_free(entropy);
+            }
+        }
     );
-
-cleanup:
-    if (p_rng) {
-        ::mbedtls_ctr_drbg_free(p_rng);
-    }
-    if (entropy) {
-        ::mbedtls_entropy_free(entropy);
-    }
 
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(sign, actualSignLen);
 }

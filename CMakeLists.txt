@@ -62,11 +62,13 @@
 #                                 from Doxygen documentation or not
 #
 # Define variables:
-#     - VIRGIL_VERSION       - library full version.
-#     - VIRGIL_VERSION_MAJOR - library major version number.
-#     - VIRGIL_VERSION_MINOR - library minor version number.
-#     - VIRGIL_VERSION_PATCH - library patch number.
-#     - VIRGIL_SOVERSION     - library ABI version.
+#     - VIRGIL_VERSION           - library full version.
+#     - VIRGIL_VERSION_MAJOR     - library major version number.
+#     - VIRGIL_VERSION_MINOR     - library minor version number.
+#     - VIRGIL_VERSION_PATCH     - library patch number.
+#     - VIRGIL_SOVERSION         - library ABI version.
+#     - VIRGIL_VERSION_FEATURE   - library version feature, i.e. rc1, or coolfeature, etc.
+#     - VIRGIL_VERSION_FULL_NAME - library version full name, i.e. 1.3.4-rc1
 #
 #     - POINTER_SIZE         - compiler pointer size.
 #
@@ -89,9 +91,13 @@ set (VIRGIL_VERSION_PATCH 0)
 set (VIRGIL_VERSION_FEATURE rc1)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 1)
+
 if (VIRGIL_VERSION_FEATURE)
-    set (VIRGIL_VERSION ${VIRGIL_VERSION}-${VIRGIL_VERSION_FEATURE})
+    set (VIRGIL_VERSION_FULL_NAME ${VIRGIL_VERSION}-${VIRGIL_VERSION_FEATURE})
+else (VIRGIL_VERSION_FEATURE)
+    set (VIRGIL_VERSION_FULL_NAME ${VIRGIL_VERSION})
 endif (VIRGIL_VERSION_FEATURE)
+
 message (STATUS "Virgil version: " ${VIRGIL_VERSION})
 message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 
@@ -252,7 +258,7 @@ endif (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
 
 
 # Define full platform name
-set (LIB_NAME_FULL "virgil-crypto-${VIRGIL_VERSION}-${LANG}")
+set (LIB_NAME_FULL "virgil-crypto-${VIRGIL_VERSION_FULL_NAME}-${LANG}")
 
 if (LANG AND LANG_VERSION)
     set (LIB_NAME_FULL "${LIB_NAME_FULL}-${LANG_VERSION}")

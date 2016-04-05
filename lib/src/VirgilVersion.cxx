@@ -24,3 +24,7 @@ size_t VirgilVersion::minorVersion() {
 size_t VirgilVersion::patchVersion() {
     return @VIRGIL_VERSION_PATCH@;
 }
+
+std::string VirgilVersion::fullName() {
+    return std::string("@VIRGIL_VERSION_FULL_NAME@");
+}

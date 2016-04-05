@@ -101,7 +101,7 @@ endif ()
 
 ExternalProject_Add (${MBEDTLS_PROJECT_NAME}
     GIT_REPOSITORY "https://github.com/VirgilSecurity/mbedtls.git"
-    GIT_TAG "virgil-security-ed25519"
+    GIT_TAG "de84f5ac331727ca8aef6e311fb95b5f00d78656"
     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/mbedtls"
     CMAKE_ARGS ${CMAKE_ARGS}
     UPDATE_COMMAND ${CMAKE_COMMAND} -E copy_directory

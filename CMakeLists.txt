@@ -49,6 +49,7 @@
 #                             if this value is NO or undefined - only wrapped library will be installed.
 #     - INSTALL_EXT_HEADERS - boolean value that defines whether install third-party library headers or not.
 #     - ENABLE_TESTING      - boolean value that defines whether include unit testing or not.
+#     - ENABLE_BENCHMARK    - boolean value that defines whether include benchmark or not.
 #
 #     - INSTALL_INC_DIR_NAME  - name of the directory where include will be installed.
 #     - INSTALL_LIB_DIR_NAME  - name of the directory where libraries will be installed.
@@ -161,6 +162,7 @@ set_property (CACHE LANG PROPERTY STRINGS
 set (LIB_LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API or not")
 set (LIB_FILE_IO OFF CACHE BOOL "Defines whether to include module depends on file IO or not")
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
+set (ENABLE_BENCHMARK OFF CACHE BOOL "Defines whether include benchmark or not.")
 
 # Propogate some parameters as C/C++ defines
 if (LIB_FILE_IO)
@@ -234,11 +236,14 @@ set (PLATFORM_EMBEDDED NO CACHE BOOL "Mark target platform as embedded")
 mark_as_advanced (PLATFORM_EMBEDDED PLATFORM_VERSION)
 unset (PLATFORM_VERSION_LOCAL)
 
-# Enable C++ tests only for native platforms
+# Enable C++ tests and profiling only for native platforms
 if (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
     if (ENABLE_TESTING)
         add_subdirectory (tests)
     endif (ENABLE_TESTING)
+    if (ENABLE_BENCHMARK)
+        add_subdirectory (benchmark)
+    endif (ENABLE_BENCHMARK)
 endif (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
 
 

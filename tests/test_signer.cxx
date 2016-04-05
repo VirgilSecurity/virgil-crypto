@@ -109,3 +109,26 @@ TEST_CASE("sign-rsa with small key", "[signer]") {
 
     REQUIRE_THROWS(VirgilSigner().sign(testData, keyPair.privateKey(), keyPassword));
 }
+
+TEST_CASE("sign-curve25519", "[signer]") {
+    VirgilByteArray testData = str2bytes("this string will be signed");
+    VirgilByteArray malformedData = str2bytes("this string will is malformed");
+    VirgilByteArray malformedSign = str2bytes("I am malformed sign");
+    VirgilByteArray keyPassword = str2bytes("password");
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_M255, keyPassword);
+
+    VirgilSigner signer;
+    VirgilByteArray sign = signer.sign(testData, keyPair.privateKey(), keyPassword);
+
+    SECTION("and verify with original data and correspond sign") {
+        REQUIRE(signer.verify(testData, sign, keyPair.publicKey()) == true);
+    }
+
+    SECTION("and verify with malformed data") {
+        REQUIRE(signer.verify(malformedData, sign, keyPair.publicKey()) == false);
+    }
+
+    SECTION("and verify with malformed sign") {
+        REQUIRE_THROWS_AS(signer.verify(testData, malformedSign, keyPair.publicKey()), VirgilCryptoException);
+    }
+}

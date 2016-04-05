@@ -138,7 +138,7 @@ package com.virgilsecurity.crypto.foundation {
 
         [Test(description="VirgilHash.withName()")]
         public function test_withName_md5():void {
-            var hash:VirgilHash = VirgilHash.withName(ConvertionUtils.utf8StringToArray("md5"));
+            var hash:VirgilHash = VirgilHash.withName(ConvertionUtils.utf8StringToArray("MD5"));
             internal_hash(hash, "", "d41d8cd98f00b204e9800998ecf8427e");
             internal_hash(hash, "abc", "900150983cd24fb0d6963f7d28e17f72");
             internal_hash(hash, "Test Строка", "041e9cea31ca2db024d1ca35f5459821");

@@ -88,15 +88,16 @@ set (VIRGIL_INCLUDE_DIR ${VIRGIL_INCLUDE_DIR} PARENT_SCOPE)
 
 # Install
 if (INSTALL_CORE_LIBS)
-    install (TARGETS ${PROJECT_NAME}
-            DESTINATION "${INSTALL_LIB_DIR_NAME}")
-    install (FILES ${MBEDTLS_LIBRARIES}
-            DESTINATION "${INSTALL_LIB_DIR_NAME}")
+    install (TARGETS ${PROJECT_NAME} DESTINATION "${INSTALL_LIB_DIR_NAME}")
+    if (INSTALL_EXT_LIBS)
+        install (FILES ${MBEDTLS_LIBRARIES} DESTINATION "${INSTALL_LIB_DIR_NAME}")
+    endif (INSTALL_EXT_LIBS)
     add_subdirectory (include)
 endif ()
 
 if (INSTALL_EXT_HEADERS)
     install (DIRECTORY ${MBEDTLS_INCLUDE_DIR}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
+    install (DIRECTORY ${RAPIDJSON_INCLUDE_DIRS}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
 endif ()
 
 # add a target to generate API documentation with Doxygen

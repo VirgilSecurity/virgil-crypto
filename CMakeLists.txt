@@ -48,6 +48,7 @@
 #     - INSTALL_CORE_LIBS   - boolean value that defines whether install core library and it's dependencies or not,
 #                             if this value is NO or undefined - only wrapped library will be installed.
 #     - INSTALL_EXT_HEADERS - boolean value that defines whether install third-party library headers or not.
+#     - INSTALL_EXT_LIBS    - boolean value that defines whether install third-party library binaries or not.
 #     - ENABLE_TESTING      - boolean value that defines whether include unit testing or not.
 #     - ENABLE_BENCHMARK    - boolean value that defines whether include benchmark or not.
 #
@@ -208,6 +209,9 @@ set (INSTALL_CORE_LIBS ${INSTALL_CORE_LIBS_TMP} CACHE BOOL
         "Defines whether install core library and it's dependencies or not")
 set (INSTALL_EXT_HEADERS OFF CACHE BOOL
         "Defines whether install third-party library headers or not")
+set (INSTALL_EXT_LIBS ON CACHE BOOL
+        "Defines whether install third-party library binaries or not")
+
 
 # Configure Doxygen behaviour
 set (DOXYGEN_EXCLUDE_PRIVATE ON CACHE BOOL "Exclude private API from Doxygen documentation")

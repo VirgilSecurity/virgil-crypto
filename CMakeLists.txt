@@ -48,7 +48,9 @@
 #     - INSTALL_CORE_LIBS   - boolean value that defines whether install core library and it's dependencies or not,
 #                             if this value is NO or undefined - only wrapped library will be installed.
 #     - INSTALL_EXT_HEADERS - boolean value that defines whether install third-party library headers or not.
+#     - INSTALL_EXT_LIBS    - boolean value that defines whether install third-party library binaries or not.
 #     - ENABLE_TESTING      - boolean value that defines whether include unit testing or not.
+#     - ENABLE_BENCHMARK    - boolean value that defines whether include benchmark or not.
 #
 #     - INSTALL_INC_DIR_NAME  - name of the directory where include will be installed.
 #     - INSTALL_LIB_DIR_NAME  - name of the directory where libraries will be installed.
@@ -61,11 +63,13 @@
 #                                 from Doxygen documentation or not
 #
 # Define variables:
-#     - VIRGIL_VERSION       - library full version.
-#     - VIRGIL_VERSION_MAJOR - library major version number.
-#     - VIRGIL_VERSION_MINOR - library minor version number.
-#     - VIRGIL_VERSION_PATCH - library patch number.
-#     - VIRGIL_SOVERSION     - library ABI version.
+#     - VIRGIL_VERSION           - library full version.
+#     - VIRGIL_VERSION_MAJOR     - library major version number.
+#     - VIRGIL_VERSION_MINOR     - library minor version number.
+#     - VIRGIL_VERSION_PATCH     - library patch number.
+#     - VIRGIL_SOVERSION         - library ABI version.
+#     - VIRGIL_VERSION_FEATURE   - library version feature, i.e. rc1, or coolfeature, etc.
+#     - VIRGIL_VERSION_FULL_NAME - library version full name, i.e. 1.3.4-rc1
 #
 #     - POINTER_SIZE         - compiler pointer size.
 #
@@ -83,10 +87,18 @@ project (VirgilSecurity)
 
 # Set library version
 set (VIRGIL_VERSION_MAJOR 1)
-set (VIRGIL_VERSION_MINOR 3)
-set (VIRGIL_VERSION_PATCH 4)
+set (VIRGIL_VERSION_MINOR 4)
+set (VIRGIL_VERSION_PATCH 0)
+set (VIRGIL_VERSION_FEATURE)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 1)
+
+if (VIRGIL_VERSION_FEATURE)
+    set (VIRGIL_VERSION_FULL_NAME ${VIRGIL_VERSION}-${VIRGIL_VERSION_FEATURE})
+else (VIRGIL_VERSION_FEATURE)
+    set (VIRGIL_VERSION_FULL_NAME ${VIRGIL_VERSION})
+endif (VIRGIL_VERSION_FEATURE)
+
 message (STATUS "Virgil version: " ${VIRGIL_VERSION})
 message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 
@@ -161,6 +173,7 @@ set_property (CACHE LANG PROPERTY STRINGS
 set (LIB_LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API or not")
 set (LIB_FILE_IO OFF CACHE BOOL "Defines whether to include module depends on file IO or not")
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
+set (ENABLE_BENCHMARK OFF CACHE BOOL "Defines whether include benchmark or not.")
 
 # Propogate some parameters as C/C++ defines
 if (LIB_FILE_IO)
@@ -196,6 +209,9 @@ set (INSTALL_CORE_LIBS ${INSTALL_CORE_LIBS_TMP} CACHE BOOL
         "Defines whether install core library and it's dependencies or not")
 set (INSTALL_EXT_HEADERS OFF CACHE BOOL
         "Defines whether install third-party library headers or not")
+set (INSTALL_EXT_LIBS ON CACHE BOOL
+        "Defines whether install third-party library binaries or not")
+
 
 # Configure Doxygen behaviour
 set (DOXYGEN_EXCLUDE_PRIVATE ON CACHE BOOL "Exclude private API from Doxygen documentation")
@@ -234,16 +250,19 @@ set (PLATFORM_EMBEDDED NO CACHE BOOL "Mark target platform as embedded")
 mark_as_advanced (PLATFORM_EMBEDDED PLATFORM_VERSION)
 unset (PLATFORM_VERSION_LOCAL)
 
-# Enable C++ tests only for native platforms
+# Enable C++ tests and profiling only for native platforms
 if (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
     if (ENABLE_TESTING)
         add_subdirectory (tests)
     endif (ENABLE_TESTING)
+    if (ENABLE_BENCHMARK)
+        add_subdirectory (benchmark)
+    endif (ENABLE_BENCHMARK)
 endif (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
 
 
 # Define full platform name
-set (LIB_NAME_FULL "virgil-crypto-${VIRGIL_VERSION}-${LANG}")
+set (LIB_NAME_FULL "virgil-crypto-${VIRGIL_VERSION_FULL_NAME}-${LANG}")
 
 if (LANG AND LANG_VERSION)
     set (LIB_NAME_FULL "${LIB_NAME_FULL}-${LANG_VERSION}")

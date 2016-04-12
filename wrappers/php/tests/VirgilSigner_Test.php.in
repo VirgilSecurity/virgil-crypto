@@ -153,9 +153,6 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
 
         $signer = new VirgilSigner();
         $sign = $signer->sign($initialString, $privateKeyPem128);
-        $verifyResult = $signer->verify($initialString, $sign, $publicKeyPem128);
-
-        $this->assertEquals($verifyResult, True);
     }
 
     /**

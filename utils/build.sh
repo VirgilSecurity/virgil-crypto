@@ -127,6 +127,7 @@ function make_bundle {
     HEADERS_DIR="$INDIR/include"
 
     LIBMBEDTLS="libmbedcrypto.a"
+    LIBED25519="libed25519.a"
     LIBVIRGIL="libvirgil_crypto.a"
 
     # Create working dir
@@ -135,13 +136,18 @@ function make_bundle {
     # Find all archs of library ARM mbedTLS
     LIBMBEDTLS_LIBS=$(find "${INDIR}" -name "${LIBMBEDTLS}" | tr '\n' ' ')
 
+    # Find all archs of library ed25519
+    LIBED25519_LIBS=$(find "${INDIR}" -name "${LIBED25519}" | tr '\n' ' ')
+
     # Find all archs of library Virgil Crypto
     LIBVIRGIL_LIBS=$(find "${INDIR}" -name "${LIBVIRGIL}" | tr '\n' ' ')
 
     xcrun lipo -create ${LIBMBEDTLS_LIBS} -output "$OUTDIR/$LIBMBEDTLS"
+    xcrun lipo -create ${LIBED25519_LIBS} -output "$OUTDIR/$LIBED25519"
     xcrun lipo -create ${LIBVIRGIL_LIBS} -output "$OUTDIR/$LIBVIRGIL"
     # Merge several static libraries in one static library which will actually be framework
-    xcrun libtool -static -o "$OUTDIR/$FRAMEWORK_NAME" "$OUTDIR/$LIBMBEDTLS" "$OUTDIR/$LIBVIRGIL"
+    xcrun libtool -static -o "$OUTDIR/$FRAMEWORK_NAME" \
+            "$OUTDIR/$LIBMBEDTLS" "$OUTDIR/$LIBED25519" "$OUTDIR/$LIBVIRGIL"
 
     FRAMEWORK_FULL_NAME="$FRAMEWORK_NAME.framework"
     # Compose framework directory structure
@@ -158,6 +164,7 @@ function make_bundle {
     cp -Rf "$HEADERS_DIR/" "$OUTDIR/$FRAMEWORK_FULL_NAME/Versions/A/Headers/"
 
     rm -f "$OUTDIR/$LIBMBEDTLS"
+    rm -f "$OUTDIR/$LIBED25519"
     rm -f "$OUTDIR/$LIBVIRGIL"
     rm -f "$OUTDIR/$FRAMEWORK_NAME"
 }

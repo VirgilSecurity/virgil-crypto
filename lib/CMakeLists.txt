@@ -48,6 +48,8 @@ include_directories (${VIRGIL_INCLUDE_DIR})
 include_directories (${MBEDTLS_INCLUDE_DIR})
 include_directories (${RAPIDJSON_INCLUDE_DIRS})
 
+set (VIRGIL_EXT_LIBRARIES ${MBEDTLS_LIBRARIES})
+
 # Define sources list
 aux_source_directory ("src" src)
 if (LIB_FILE_IO)
@@ -73,24 +75,20 @@ set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${VIRGIL_INCLUDE_DIR})
 
-target_link_libraries (${PROJECT_NAME} ${MBEDTLS_LIBRARIES})
+target_link_libraries (${PROJECT_NAME} ${VIRGIL_EXT_LIBRARIES})
 add_dependencies (${PROJECT_NAME} mbedtls)
 
-add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy_if_different
-            $<TARGET_FILE:${PROJECT_NAME}>
-            ${EXTERNAL_LIBS_DIR}/$<TARGET_FILE_NAME:${PROJECT_NAME}>
-)
-
 # Export includes
-set (VIRGIL_INCLUDE_DIR ${VIRGIL_INCLUDE_DIR} PARENT_SCOPE)
+set (VIRGIL_INCLUDE_DIR ${VIRGIL_INCLUDE_DIR} CACHE INTERNAL "Path the virgil crypto includes")
+
+# Export dependencies
+set (VIRGIL_EXT_LIBRARIES ${VIRGIL_EXT_LIBRARIES} CACHE INTERNAL "Libraries that virgil crypto depends on")
 
 # Install
 if (INSTALL_CORE_LIBS)
     install (TARGETS ${PROJECT_NAME} DESTINATION "${INSTALL_LIB_DIR_NAME}")
     if (INSTALL_EXT_LIBS)
-        install (FILES ${MBEDTLS_LIBRARIES} DESTINATION "${INSTALL_LIB_DIR_NAME}")
+        install (FILES ${VIRGIL_EXT_LIBRARIES} DESTINATION "${INSTALL_LIB_DIR_NAME}")
     endif (INSTALL_EXT_LIBS)
     add_subdirectory (include)
 endif ()

@@ -196,10 +196,6 @@ if (ANDROID)
     set (ANDROID_INSTALL_JNI_DIR_NAME "lib/${ANDROID_NDK_ABI_NAME}")
 endif (ANDROID)
 
-# Configure internal path variables
-set (EXTERNAL_LIBS_DIR "${CMAKE_CURRENT_BINARY_DIR}/libs" CACHE INTERNAL
-        "Path to the folder where all libs MUST be located after build")
-
 # Configure submodules installation
 set (INSTALL_CORE_LIBS_TMP OFF)
 if (LANG STREQUAL "cpp")

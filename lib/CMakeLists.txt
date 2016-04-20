@@ -36,16 +36,28 @@
 
 cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
-project (virgil_crypto)
+project (virgil_crypto VERSION ${VIRGIL_VERSION})
 
 # Include and build external libraries
-include (ExternalProject)
-include (${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/mbedtls_ext.cmake)
-include (${CMAKE_CURRENT_SOURCE_DIR}/rapidjson/rapidjson.cmake)
+include (virgil_depends)
+
+virgil_depends (
+    PACKAGE_NAME "mbedtls"
+    VERSION "2.2"
+    CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mbedtls"
+    CMAKE_ARGS "${CMAKE_ARGS}"
+)
+
+virgil_depends (
+    PACKAGE_NAME "rapidjson"
+    VERSION "1.0.2"
+    CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/rapidjson"
+    CMAKE_ARGS "${CMAKE_ARGS}"
+)
 
 set (VIRGIL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
 include_directories (${VIRGIL_INCLUDE_DIR})
-include_directories (${MBEDTLS_INCLUDE_DIR})
 include_directories (${RAPIDJSON_INCLUDE_DIRS})
 
 set (VIRGIL_EXT_LIBRARIES ${MBEDTLS_LIBRARIES})
@@ -68,35 +80,39 @@ set (src "")
 aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src src)
 aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src/stream src)
 
-# Build
-add_library (${PROJECT_NAME} STATIC ${src})
+add_library (${PROJECT_NAME} ${src})
+
 set_property (TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME ${PROJECT_NAME})
 set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${VIRGIL_INCLUDE_DIR})
 
-target_link_libraries (${PROJECT_NAME} ${VIRGIL_EXT_LIBRARIES})
-add_dependencies (${PROJECT_NAME} mbedtls)
+target_link_libraries (${PROJECT_NAME} mbedtls::mbedcrypto mbedtls::ed25519)
+
+if (INSTALL_CORE_LIBS)
+    # Install targets
+    install (TARGETS ${PROJECT_NAME}
+        LIBRARY DESTINATION "${INSTALL_LIB_DIR_NAME}"
+        ARCHIVE DESTINATION "${INSTALL_LIB_DIR_NAME}"
+        RUNTIME DESTINATION "${INSTALL_BIN_DIR_NAME}"
+    )
+
+    if (INSTALL_EXT_LIBS)
+        install (DIRECTORY "${VIRGIL_DEPENDS_PREFIX}/lib/" DESTINATION "${INSTALL_LIB_DIR_NAME}")
+    endif (INSTALL_EXT_LIBS)
+
+    # Install headers
+    add_subdirectory (include)
+    if (INSTALL_EXT_HEADERS)
+        install (DIRECTORY  "${VIRGIL_DEPENDS_PREFIX}/include/" DESTINATION "${INSTALL_INC_DIR_NAME}")
+    endif ()
+endif ()
 
 # Export includes
 set (VIRGIL_INCLUDE_DIR ${VIRGIL_INCLUDE_DIR} CACHE INTERNAL "Path the virgil crypto includes")
 
 # Export dependencies
 set (VIRGIL_EXT_LIBRARIES ${VIRGIL_EXT_LIBRARIES} CACHE INTERNAL "Libraries that virgil crypto depends on")
-
-# Install
-if (INSTALL_CORE_LIBS)
-    install (TARGETS ${PROJECT_NAME} DESTINATION "${INSTALL_LIB_DIR_NAME}")
-    if (INSTALL_EXT_LIBS)
-        install (FILES ${VIRGIL_EXT_LIBRARIES} DESTINATION "${INSTALL_LIB_DIR_NAME}")
-    endif (INSTALL_EXT_LIBS)
-    add_subdirectory (include)
-endif ()
-
-if (INSTALL_EXT_HEADERS)
-    install (DIRECTORY ${MBEDTLS_INCLUDE_DIR}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
-    install (DIRECTORY ${RAPIDJSON_INCLUDE_DIRS}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
-endif ()
 
 # add a target to generate API documentation with Doxygen
 find_host_program (DOT_PROGRAM NAMES dot)

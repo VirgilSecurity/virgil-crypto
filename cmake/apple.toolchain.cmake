@@ -38,6 +38,21 @@
 #  A macro used to find executable programs on the host system, not within the Apple *OS environment.
 #  Thanks to the android-cmake project for providing the command
 
+# Subsequent toolchain loading is not really needed
+if (DEFINED CMAKE_CROSSCOMPILING)
+    return ()
+endif ()
+
+# Touch toolchain variable to suppress "unused variable" warning
+if (CMAKE_TOOLCHAIN_FILE)
+endif ()
+
+# inherit settings in recursive loads
+get_property (_CMAKE_IN_TRY_COMPILE GLOBAL PROPERTY IN_TRY_COMPILE)
+if (_CMAKE_IN_TRY_COMPILE)
+    include ("${CMAKE_CURRENT_SOURCE_DIR}/../apple.toolchain.config.cmake" OPTIONAL)
+endif ()
+
 # Standard settings
 set (CMAKE_SYSTEM_NAME Darwin)
 set (CMAKE_SYSTEM_VERSION 1)
@@ -119,7 +134,7 @@ elseif (APPLE_TV)
         set (CMAKE_XCODE_EFFECTIVE_PLATFORMS "-appletvos")
     endif ()
 else ()
-    message (FATAL_ERROR "Unsupported PLATFORM value selected. Please choose one: ios, tv, watch")
+    message (FATAL_ERROR "Unsupported PLATFORM value selected. Please choose one: ios, appletvos, applewatchos")
 endif ()
 
 # Setup Apple *OS developer location unless specified manually with CMAKE_APPLE_PLATFORM_DEVELOPER_ROOT
@@ -225,7 +240,7 @@ set (CMAKE_SYSTEM_FRAMEWORK_PATH
 )
 
 # only search the Apple *OS sdks, not the remainder of the host filesystem
-set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM ONLY)
+set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM)
 set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set (CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
@@ -265,6 +280,28 @@ set (PLATFORM_VERSION ${APPLE_PLATFORM_VERSION_MIN} CACHE STRING "Apple *OS mini
 string (REPLACE ";" "-" PLATFORM_ARCH "${APPLE_ARCH}")
 set (PLATFORM_ARCH ${PLATFORM_ARCH} CACHE STRING "Target processor architecture")
 
+# export toolchain settings for the try_compile() command
+if( NOT _CMAKE_IN_TRY_COMPILE )
+ set( __toolchain_config "")
+ foreach( __var
+                PLATFORM
+                SIMULATOR
+                ENABLE_BITCODE
+                CMAKE_APPLE_PLATFORM_DEVELOPER_ROOT
+                CMAKE_APPLE_SDK_ROOT
+                )
+  if( DEFINED ${__var} )
+   if( ${__var} MATCHES " ")
+    set( __toolchain_config "${__toolchain_config}set( ${__var} \"${${__var}}\" CACHE INTERNAL \"\" )\n" )
+   else()
+    set( __toolchain_config "${__toolchain_config}set( ${__var} ${${__var}} CACHE INTERNAL \"\" )\n" )
+   endif()
+  endif()
+ endforeach()
+ file( WRITE "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/apple.toolchain.config.cmake" "${__toolchain_config}" )
+ unset( __toolchain_config )
+endif()
+
 # This little macro lets you set any XCode specific property
 macro (set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE)
     set_property (TARGET ${TARGET} PROPERTY XCODE_ATTRIBUTE_${XCODE_PROPERTY} ${XCODE_VALUE})
@@ -280,7 +317,7 @@ macro (find_host_package)
     find_package(${ARGN})
 
     set (IOS TRUE)
-    set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM ONLY)
+    set (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM)
     set (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
     set (CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 endmacro (find_host_package)

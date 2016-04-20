@@ -110,25 +110,10 @@ include (find_host_utils)
 
 # Define possible cmake_args
 include (cmake_args)
-set (CMAKE_ARGS
-    -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-)
-append_cmake_arg (CMAKE_ARGS NAME CMAKE_TOOLCHAIN_FILE TYPE PATH)
-append_cmake_arg (CMAKE_ARGS NAME CMAKE_BUILD_TYPE TYPE STRING)
-append_cmake_arg (CMAKE_ARGS NAME PLATFORM TYPE STRING)
-append_cmake_arg (CMAKE_ARGS NAME PLATFORM_VERSION TYPE STRING)
-if (NOT CMAKE_TOOLCHAIN_FILE)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_COMPILER TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_FLAGS TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_FLAGS_RELEASE TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_FLAGS_DEBUG TYPE STRING)
+set (CMAKE_ARGS "")
 
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_CXX_COMPILER TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_CXX_FLAGS TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_CXX_FLAGS_RELEASE TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_CXX_FLAGS_DEBUG TYPE STRING)
-endif ()
 if (ANDROID)
+    append_cmake_arg (CMAKE_ARGS NAME PLATFORM_VERSION TYPE STRING)
     append_cmake_arg (CMAKE_ARGS NAME ANDROID_NDK TYPE PATH)
     append_cmake_arg (CMAKE_ARGS NAME ANDROID_ABI TYPE STRING)
     append_cmake_arg (CMAKE_ARGS NAME ANDROID_NATIVE_API_LEVEL TYPE STRING)
@@ -141,6 +126,7 @@ if (ANDROID)
 endif (ANDROID)
 
 if (CMAKE_TOOLCHAIN_FILE AND APPLE)
+    append_cmake_arg (CMAKE_ARGS NAME PLATFORM TYPE STRING)
     append_cmake_arg (CMAKE_ARGS NAME SIMULATOR TYPE BOOL)
     append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_PLATFORM_DEVELOPER_ROOT TYPE PATH)
     append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_SDK_ROOT TYPE PATH)
@@ -179,9 +165,6 @@ set (ENABLE_BENCHMARK OFF CACHE BOOL "Defines whether include benchmark or not."
 if (LIB_FILE_IO)
     add_definitions(-DLIB_FILE_IO)
 endif (LIB_FILE_IO)
-
-# Configure
-find_host_package (Git)
 
 # Configure path variables
 set (INSTALL_INC_DIR_NAME include CACHE STRING "Installation directory name for includes")

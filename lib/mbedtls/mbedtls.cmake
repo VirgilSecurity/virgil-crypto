@@ -40,21 +40,62 @@ project ("@VIRGIL_DEPENDS_PACKAGE_NAME@-depends")
 
 include (ExternalProject)
 
+set (BUILD_SHARED_LIBS @BUILD_SHARED_LIBS@)
+
+if (BUILD_SHARED_LIBS)
+    set (USE_STATIC_MBEDTLS_LIBRARY OFF)
+    set (USE_SHARED_MBEDTLS_LIBRARY ON)
+else (BUILD_SHARED_LIBS)
+    set (USE_STATIC_MBEDTLS_LIBRARY ON)
+    set (USE_SHARED_MBEDTLS_LIBRARY OFF)
+endif (BUILD_SHARED_LIBS)
+
 # Configure additional CMake parameters
 file (WRITE "@VIRGIL_DEPENDS_ARGS_FILE@"
-    "set (RAPIDJSON_BUILD_EXAMPLES OFF CACHE INTERNAL \"\")\n"
-    "set (RAPIDJSON_BUILD_TESTS OFF CACHE INTERNAL \"\")\n"
-    "set (RAPIDJSON_BUILD_DOC OFF CACHE INTERNAL \"\")\n"
-    "set (RAPIDJSON_BUILD_THIRDPARTY_GTEST OFF CACHE INTERNAL \"\")\n"
-    "set (RAPIDJSON_BUILD_CXX11 OFF CACHE INTERNAL \"\")\n"
+    "set (ENABLE_PROGRAMS OFF CACHE INTERNAL \"\")\n"
+    "set (ENABLE_TESTING OFF CACHE INTERNAL \"\")\n"
+    "set (USE_STATIC_MBEDTLS_LIBRARY ${USE_STATIC_MBEDTLS_LIBRARY} CACHE INTERNAL \"\")\n"
+    "set (USE_SHARED_MBEDTLS_LIBRARY ${USE_SHARED_MBEDTLS_LIBRARY} CACHE INTERNAL \"\")\n"
 )
+
+# Configure custom MbedTLS 'config.h' file
+set (MBEDTLS_CONFIGS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/configs")
+configure_file (
+    ${MBEDTLS_CONFIGS_DIR}/config.h
+    ${CMAKE_CURRENT_BINARY_DIR}/configs/config.h
+    COPYONLY
+)
+
+# Configure platform dependent MbedTLS 'config*.h' files
+if (EXISTS "${MBEDTLS_CONFIGS_DIR}/config_${LANG}.h")
+    configure_file (
+        ${MBEDTLS_CONFIGS_DIR}/config_${LANG}.h
+        ${CMAKE_CURRENT_BINARY_DIR}/configs/config_platform.h
+        COPYONLY
+    )
+elseif (EXISTS "${MBEDTLS_CONFIGS_DIR}/config_${PLATFORM}.h")
+    configure_file (
+        ${MBEDTLS_CONFIGS_DIR}/config_${PLATFORM}.h
+        ${CMAKE_CURRENT_BINARY_DIR}/configs/config_platform.h
+        COPYONLY
+    )
+else ()
+    configure_file (
+        ${MBEDTLS_CONFIGS_DIR}/config_desktop.h
+        ${CMAKE_CURRENT_BINARY_DIR}/configs/config_platform.h
+        COPYONLY
+    )
+endif ()
 
 ExternalProject_Add (${PROJECT_NAME}
     DOWNLOAD_DIR "@VIRGIL_DEPENDS_CACHE_DIR@"
-    URL "https://github.com/miloyip/rapidjson/archive/v1.0.2.tar.gz"
-    URL_HASH SHA256=c3711ed2b3c76a5565ee9f0128bb4ec6753dbcc23450b713842df8f236d08666
+    URL "https://github.com/VirgilSecurity/mbedtls/archive/1a3b4997453089af345a639fe81caf634bbeadaf.tar.gz"
+    URL_HASH SHA1=2fce1f360374a87f6d33ab94d08c11d79b4bb649
     PREFIX "@VIRGIL_DEPENDS_BUILD_DIR@"
     CMAKE_ARGS "@VIRGIL_DEPENDS_CMAKE_ARGS@"
+    UPDATE_COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_BINARY_DIR}/configs
+            ${CMAKE_CURRENT_BINARY_DIR}/src/${PROJECT_NAME}/include/mbedtls
 )
 
 add_custom_target ("${PROJECT_NAME}-build" ALL COMMENT "Build package ${PROJECT_NAME}")

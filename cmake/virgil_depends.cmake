@@ -150,13 +150,10 @@ macro (virgil_depends)
     if (NOT VIRGIL_DEPENDS_PACKAGE_NAME)
         virgil_depends_log_error ("PACKAGE_NAME can't be empty")
     endif ()
+    string (TOLOWER "${VIRGIL_DEPENDS_PACKAGE_NAME}" VIRGIL_DEPENDS_PACKAGE_NAME_LOWER)
+
     if (NOT VIRGIL_DEPENDS_CONFIG_DIR)
         virgil_depends_log_error("CONFIG_DIR can't be empty")
-    endif ()
-    if (NOT EXISTS "${VIRGIL_DEPENDS_CONFIG_DIR}/${VIRGIL_DEPENDS_PACKAGE_NAME}.cmake")
-        virgil_depends_log_error(
-            "${VIRGIL_DEPENDS_PACKAGE_NAME}.cmake file is not exists in ${VIRGIL_DEPENDS_CONFIG_DIR}"
-        )
     endif ()
     if (NOT VIRGIL_DEPENDS_VERSION)
         set (VIRGIL_DEPENDS_VERSION)
@@ -175,6 +172,19 @@ macro (virgil_depends)
 
     set (VIRGIL_DEPENDS_CACHE_FILE "${CMAKE_BINARY_DIR}/cmake_cache.cmake")
     set (VIRGIL_DEPENDS_ARGS_FILE "${VIRGIL_DEPENDS_HOME_DIR}/${VIRGIL_DEPENDS_PACKAGE_NAME}_args.cmake")
+
+    if (EXISTS "${VIRGIL_DEPENDS_CONFIG_DIR}/${VIRGIL_DEPENDS_PACKAGE_NAME}.cmake")
+        set (VIRGIL_DEPENDS_PACKAGE_CONFIG_FILE
+                "${VIRGIL_DEPENDS_CONFIG_DIR}/${VIRGIL_DEPENDS_PACKAGE_NAME}.cmake")
+    elseif (EXISTS "${VIRGIL_DEPENDS_CONFIG_DIR}/${VIRGIL_DEPENDS_PACKAGE_NAME}.cmake")
+        set (VIRGIL_DEPENDS_PACKAGE_CONFIG_FILE
+                "${VIRGIL_DEPENDS_CONFIG_DIR}/${VIRGIL_DEPENDS_PACKAGE_NAME_LOWER}.cmake")
+    else ()
+        virgil_depends_log_error(
+            "${VIRGIL_DEPENDS_PACKAGE_NAME}.cmake file nor ${VIRGIL_DEPENDS_PACKAGE_NAME_LOWER}.cmake"
+            "    are exist in ${VIRGIL_DEPENDS_CONFIG_DIR}"
+        )
+    endif ()
 
     virgil_depends_create_cache_file ("${VIRGIL_DEPENDS_CACHE_FILE}")
     file (WRITE "${VIRGIL_DEPENDS_ARGS_FILE}" "")

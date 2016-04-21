@@ -42,14 +42,14 @@ project (virgil_crypto VERSION ${VIRGIL_VERSION})
 include (virgil_depends)
 
 virgil_depends (
-    PACKAGE_NAME "mbedtls"
+    PACKAGE_NAME "MbedTLS"
     VERSION "2.2"
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mbedtls"
     CMAKE_ARGS "${CMAKE_ARGS}"
 )
 
 virgil_depends (
-    PACKAGE_NAME "rapidjson"
+    PACKAGE_NAME "RapidJSON"
     VERSION "1.0.2"
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/rapidjson"
     CMAKE_ARGS "${CMAKE_ARGS}"

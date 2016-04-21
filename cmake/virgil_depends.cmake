@@ -207,7 +207,7 @@ macro (virgil_depends)
     )
 
     configure_file (
-        "${VIRGIL_DEPENDS_HOME_DIR}/${VIRGIL_DEPENDS_PACKAGE_NAME}.cmake"
+        "${VIRGIL_DEPENDS_PACKAGE_CONFIG_FILE}"
         "${VIRGIL_DEPENDS_HOME_DIR}/CMakeLists.txt"
         @ONLY
     )
@@ -271,6 +271,7 @@ macro (virgil_depends)
     set (_generate_result)
     set (_build_result)
     set (VIRGIL_DEPENDS_PACKAGE_NAME)
+    set (VIRGIL_DEPENDS_PACKAGE_CONFIG_FILE)
     set (VIRGIL_DEPENDS_VERSION)
     set (VIRGIL_DEPENDS_CONFIG_DIR)
     set (VIRGIL_DEPENDS_HOME_DIR)

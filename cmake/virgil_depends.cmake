@@ -175,7 +175,9 @@ function (virgil_depends)
     set (VIRGIL_DEPENDS_CACHE_DIR "${CMAKE_SOURCE_DIR}/.depends_cache"
             CACHE PATH "Temporary folder that holds all downloaded dependencies")
 
-    set (VIRGIL_DEPENDS_PREFIX "${CMAKE_BINARY_DIR}/depends/installed")
+    set (VIRGIL_DEPENDS_PREFIX "${CMAKE_BINARY_DIR}/depends/installed"
+            CACHE PATH "Path to the installed depenencies")
+
     set (VIRGIL_DEPENDS_HOME_DIR "${CMAKE_BINARY_DIR}/depends/${VIRGIL_DEPENDS_PACKAGE_NAME}")
     set (VIRGIL_DEPENDS_BUILD_DIR "${VIRGIL_DEPENDS_HOME_DIR}/build")
 
@@ -274,6 +276,4 @@ function (virgil_depends)
         ${VIRGIL_DEPENDS_PACKAGE_NAME} ${VIRGIL_DEPENDS_VERSION}
         REQUIRED CONFIG HINTS "${VIRGIL_DEPENDS_PREFIX}" NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
     )
-
-    set (VIRGIL_DEPENDS_PREFIX ${VIRGIL_DEPENDS_PREFIX} PARENT_SCOPE)
 endfunction (virgil_depends)

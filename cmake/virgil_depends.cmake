@@ -165,6 +165,11 @@ function (virgil_depends)
         set (VIRGIL_DEPENDS_CMAKE_ARGS "")
     endif ()
 
+    # Do nothing if given package exists
+    if (${VIRGIL_DEPENDS_PACKAGE_NAME}_DIR)
+        return ()
+    endif ()
+
     set (VIRGIL_DEPENDS_CACHE_DIR "${CMAKE_SOURCE_DIR}/.depends_cache"
             CACHE PATH "Temporary folder that holds all downloaded dependencies")
 

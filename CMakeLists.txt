@@ -132,6 +132,33 @@ if (CMAKE_TOOLCHAIN_FILE AND APPLE)
     append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_SDK_ROOT TYPE PATH)
 endif ()
 
+# Define additional compiler flags
+if (NOT CMAKE_CROSSCOMPILING)
+    include (CheckCCompilerFlag)
+    check_c_compiler_flag (-fPIC COMPILER_SUPPORT_PIC)
+    if (COMPILER_SUPPORT_PIC)
+        set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    endif ()
+endif (NOT CMAKE_CROSSCOMPILING)
+
+# Include and build external libraries
+include (virgil_depends)
+
+virgil_depends (
+    PACKAGE_NAME "MbedTLS"
+    VERSION "2.2"
+    CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/mbedtls"
+    CMAKE_ARGS "${CMAKE_ARGS}"
+)
+
+virgil_depends (
+    PACKAGE_NAME "RapidJSON"
+    VERSION "1.0.2"
+    CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/rapidjson"
+    CMAKE_ARGS "${CMAKE_ARGS}"
+)
+
 # Define enviroment parameters
 if (NOT DEFINED POINTER_SIZE)
     include (check_pointer_size)

@@ -44,7 +44,7 @@
 if (EXISTS "${VIRGIL_DEPENDS_CMAKE_FILE}")
     include ("${VIRGIL_DEPENDS_CMAKE_FILE}")
 else ()
-    find_file (VIRGIL_DEPENDS_CMAKE_FILE "virgil_depends_local.cmake" HINTS ${CMAKE_SOURCE_DIR})
+    find_file (VIRGIL_DEPENDS_CMAKE_FILE "virgil_depends_local.cmake" HINTS ${CMAKE_MODULE_PATH})
     if (VIRGIL_DEPENDS_CMAKE_FILE)
         include ("${VIRGIL_DEPENDS_CMAKE_FILE}")
     else ()

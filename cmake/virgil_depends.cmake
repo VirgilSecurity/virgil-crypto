@@ -138,6 +138,8 @@ function (virgil_depends_create_cache_file cache_path)
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_OSX_ARCHITECTURES")
     # Pass DEBUG
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_VERBOSE_MAKEFILE")
+    # Pass SHARED
+    virgil_depends_write_cache_var ("${cache_path}" "BUILD_SHARED_LIBS")
 endfunction ()
 
 # Exported variables:

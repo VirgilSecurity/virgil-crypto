@@ -88,7 +88,7 @@ else ()
 endif ()
 
 ExternalProject_Add (${PROJECT_NAME}
-    DOWNLOAD_DIR "@VIRGIL_DEPENDS_CACHE_DIR@"
+    DOWNLOAD_DIR "@VIRGIL_DEPENDS_CACHE_DIR@/@VIRGIL_DEPENDS_PACKAGE_NAME@"
     URL "https://github.com/VirgilSecurity/mbedtls/archive/1a3b4997453089af345a639fe81caf634bbeadaf.tar.gz"
     URL_HASH SHA1=2fce1f360374a87f6d33ab94d08c11d79b4bb649
     PREFIX "@VIRGIL_DEPENDS_BUILD_DIR@"

@@ -72,10 +72,6 @@ target_include_directories (${PROJECT_NAME}
 target_link_libraries (${PROJECT_NAME} mbedtls::mbedcrypto mbedtls::ed25519)
 
 if (INSTALL_CORE_LIBS)
-    # For target install next packages should be found again
-    find_package (MbedTLS REQUIRED CONFIG)
-    find_package (RapidJSON REQUIRED CONFIG)
-
     # Define names for configuration files
     set (INSTALL_CFG_DIR_NAME
         "${INSTALL_LIB_DIR_NAME}/cmake/${PROJECT_NAME}" CACHE STRING

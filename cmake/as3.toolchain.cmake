@@ -34,8 +34,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
+# Subsequent toolchain loading is not really needed
+if (DEFINED CMAKE_CROSSCOMPILING)
+    return ()
+endif ()
+
+# Touch toolchain variable to suppress "unused variable" warning
+if (CMAKE_TOOLCHAIN_FILE)
+endif ()
+
 include (CMakeForceCompiler)
 
+set (UNIX                        True CACHE BOOL "Crossbridge available on *nix systems only")
 set (LANG                        "as3" CACHE STRING "Language name")
 set (PLATFORM                    "" CACHE STRING "Platform name")
 set (PLATFORM_EMBEDDED           YES CACHE BOOL "Mark target platform as embedded")

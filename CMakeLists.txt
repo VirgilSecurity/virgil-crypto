@@ -105,6 +105,9 @@ message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 # Configure path to custom modules
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
+# Build shared library if defined
+set (BUILD_SHARED_LIBS OFF CACHE BOOL "Force to create shared libraries")
+
 # Add find_host_* utilities
 include (find_host_utils)
 

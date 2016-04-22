@@ -140,7 +140,10 @@ function (virgil_depends_create_cache_file cache_path)
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_VERBOSE_MAKEFILE")
 endfunction ()
 
-macro (virgil_depends)
+# Exported variables:
+#     VIRGIL_DEPENDS_PREFIX
+function (virgil_depends)
+    # Parse arguments
     set (_one_value PACKAGE_NAME VERSION CONFIG_DIR)
     set (_multi_value CMAKE_ARGS)
     cmake_parse_arguments (VIRGIL_DEPENDS "" "${_one_value}" "${_multi_value}" ${ARGN})
@@ -161,7 +164,6 @@ macro (virgil_depends)
     if (NOT VIRGIL_DEPENDS_CMAKE_ARGS)
         set (VIRGIL_DEPENDS_CMAKE_ARGS "")
     endif ()
-
 
     set (VIRGIL_DEPENDS_CACHE_DIR "${CMAKE_SOURCE_DIR}/.depends_cache"
             CACHE PATH "Temporary folder that holds all downloaded dependencies")
@@ -266,19 +268,5 @@ macro (virgil_depends)
         REQUIRED CONFIG HINTS "${VIRGIL_DEPENDS_PREFIX}" NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH
     )
 
-    set (_one_value)
-    set (_multi_value)
-    set (_generate_result)
-    set (_build_result)
-    set (VIRGIL_DEPENDS_PACKAGE_NAME)
-    set (VIRGIL_DEPENDS_PACKAGE_CONFIG_FILE)
-    set (VIRGIL_DEPENDS_VERSION)
-    set (VIRGIL_DEPENDS_CONFIG_DIR)
-    set (VIRGIL_DEPENDS_HOME_DIR)
-    set (VIRGIL_DEPENDS_BUILD_DIR)
-    set (VIRGIL_DEPENDS_ARGS_FILE)
-    set (VIRGIL_DEPENDS_CMAKE_ARGS)
-
-    # Exported variables:
-    #     VIRGIL_DEPENDS_PREFIX
-endmacro (virgil_depends)
+    set (VIRGIL_DEPENDS_PREFIX ${VIRGIL_DEPENDS_PREFIX} PARENT_SCOPE)
+endfunction (virgil_depends)

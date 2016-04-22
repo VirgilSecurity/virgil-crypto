@@ -150,19 +150,17 @@ include (virgil_depends)
 
 virgil_depends (
     PACKAGE_NAME "MbedTLS"
-    VERSION "2.2"
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/mbedtls"
     CMAKE_ARGS "${CMAKE_ARGS}"
 )
-virgil_find_package (MbedTLS)
+virgil_find_package (MbedTLS 2.2)
 
 virgil_depends (
     PACKAGE_NAME "RapidJSON"
-    VERSION "1.0.2"
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/rapidjson"
     CMAKE_ARGS "${CMAKE_ARGS}"
 )
-virgil_find_package (RapidJSON)
+virgil_find_package (RapidJSON 1.0)
 
 # Define enviroment parameters
 if (NOT DEFINED POINTER_SIZE)

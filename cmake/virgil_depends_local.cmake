@@ -260,7 +260,6 @@ function (virgil_depends)
         COMMAND ${cmd}
         WORKING_DIRECTORY "${VIRGIL_DEPENDS_HOME_DIR}"
         RESULT_VARIABLE _build_result
-        ${logging_params}
     )
 
     if (_build_result EQUAL 0)
@@ -270,6 +269,31 @@ function (virgil_depends)
     else ()
         virgil_depends_log_error(
               "Build step failed (dir: ${VIRGIL_DEPENDS_BUILD_DIR}"
+        )
+    endif ()
+
+    # Install target package
+    set (cmd
+        "${CMAKE_COMMAND}"
+        --build
+        "${VIRGIL_DEPENDS_BUILD_DIR}"
+        --target install
+    )
+
+    execute_process (
+        COMMAND ${cmd}
+        WORKING_DIRECTORY "${VIRGIL_DEPENDS_HOME_DIR}"
+        RESULT_VARIABLE _install_result
+    )
+
+    if (_install_result EQUAL 0)
+        virgil_depends_log_info (
+              "Install step successful (dir: ${VIRGIL_DEPENDS_BUILD_DIR})"
+        )
+    else ()
+        # Just ignore, because not all packages have target 'install'
+        virgil_depends_log_debug (
+              "Install step failed (dir: ${VIRGIL_DEPENDS_BUILD_DIR})"
         )
     endif ()
 endfunction (virgil_depends)

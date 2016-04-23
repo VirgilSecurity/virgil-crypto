@@ -115,7 +115,7 @@ if (INSTALL_CORE_LIBS)
     # Install headers
     add_subdirectory (include)
     if (INSTALL_EXT_HEADERS)
-        install (DIRECTORY  "${VIRGIL_DEPENDS_PREFIX}/include/" DESTINATION "${INSTALL_INC_DIR_NAME}")
+        install (DIRECTORY "${VIRGIL_DEPENDS_PREFIX}/include/" DESTINATION "${INSTALL_INC_DIR_NAME}")
     endif ()
 
     # Install configurations

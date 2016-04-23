@@ -191,11 +191,6 @@ set (LIB_FILE_IO OFF CACHE BOOL "Defines whether to include module depends on fi
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
 set (ENABLE_BENCHMARK OFF CACHE BOOL "Defines whether include benchmark or not.")
 
-# Propogate some parameters as C/C++ defines
-if (LIB_FILE_IO)
-    add_definitions(-DLIB_FILE_IO)
-endif (LIB_FILE_IO)
-
 # Configure path variables
 set (INSTALL_INC_DIR_NAME include CACHE STRING "Installation directory name for includes")
 set (INSTALL_LIB_DIR_NAME lib CACHE STRING "Installation directory name for libraries")

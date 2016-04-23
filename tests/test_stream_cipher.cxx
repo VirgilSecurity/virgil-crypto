@@ -39,7 +39,7 @@
  * @brief Covers class VirgilStreamCipher
  */
 
-#if defined(LIB_FILE_IO)
+#if LIB_FILE_IO
 
 #include "catch.hpp"
 

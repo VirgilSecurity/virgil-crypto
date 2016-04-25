@@ -47,6 +47,7 @@ using namespace emscripten;
 
 #include <virgil/crypto/foundation/VirgilHash.h>
 #include <virgil/crypto/foundation/VirgilBase64.h>
+#include <virgil/crypto/foundation/VirgilPBKDF.h>
 #include <virgil/crypto/VirgilCustomParams.h>
 
 #include <virgil/crypto/VirgilKeyPair.h>
@@ -239,5 +240,19 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_foundation) {
     class_<virgil::crypto::foundation::VirgilBase64>("VirgilBase64")
         .class_function("encode", &virgil::crypto::foundation::VirgilBase64::encode)
         .class_function("decode", &virgil::crypto::foundation::VirgilBase64::decode)
+    ;
+
+    class_<virgil::crypto::foundation::VirgilPBKDF>("VirgilPBKDF")
+        .constructor<>()
+        .constructor<const virgil::crypto::VirgilByteArray&, unsigned int>()
+        .function("getSalt", &virgil::crypto::foundation::VirgilPBKDF::getSalt)
+        .function("getIterationCount", &virgil::crypto::foundation::VirgilPBKDF::getIterationCount)
+        .function("setAlgorithm", &virgil::crypto::foundation::VirgilPBKDF::setAlgorithm)
+        .function("getAlgorithm", &virgil::crypto::foundation::VirgilPBKDF::getAlgorithm)
+        .function("setHash", &virgil::crypto::foundation::VirgilPBKDF::setHash)
+        .function("getHash", &virgil::crypto::foundation::VirgilPBKDF::getHash)
+        .function("enableRecommendationsCheck", &virgil::crypto::foundation::VirgilPBKDF::enableRecommendationsCheck)
+        .function("disableRecommendationsCheck", &virgil::crypto::foundation::VirgilPBKDF::disableRecommendationsCheck)
+        .function("derive", &virgil::crypto::foundation::VirgilPBKDF::derive)
     ;
 }

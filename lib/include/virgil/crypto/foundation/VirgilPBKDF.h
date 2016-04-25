@@ -57,28 +57,26 @@ class VirgilPBKDFImpl;
 class VirgilPBKDF : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
     /**
-     * @name Additional types
+     * @brief Defines specific password based key derivation function algorithm
      */
-    ///@{
+    typedef enum {
+        Algorithm_None = 0, /**< No algorithm defined */
+        Algorithm_Default,  /**< Defines recommended algorithm */
+        Algorithm_PBKDF2    /**< Defines PBKDF2 algorithm (https://www.ietf.org/rfc/rfc2898.txt) */
+    } Algorithm;
     /**
-     * @brief Defines specific password based key derivation algorithm
+     * @brief Defines specific underlying hash algorithm for the password based key derivation function algorithm
      */
     typedef enum {
-        VirgilPBKDF_Alg_None = 0,
-        VirgilPBKDF_Alg_Default,
-        VirgilPBKDF_Alg_PBKDF2 // Default
-    } VirgilPBKDF_Alg;
+        Hash_None = 0, /**< No hash algorithm defined */
+        Hash_Default,  /**< Defines recommended hash algorithm */
+        Hash_SHA1,     /**< Defines SHA1 hash algorithm */
+        Hash_SHA224,   /**< Defines SHA-224 hash algorithm */
+        Hash_SHA256,   /**< Defines SHA-256 hash algorithm */
+        Hash_SHA384,   /**< Defines SHA-384 hash algorithm */
+        Hash_SHA512    /**< Defines SHA-512 hash algorithm */
+    } Hash;
 
-    typedef enum {
-        VirgilPBKDF_Hash_None = 0,
-        VirgilPBKDF_Hash_Default,
-        VirgilPBKDF_Hash_SHA1,
-        VirgilPBKDF_Hash_SHA224,
-        VirgilPBKDF_Hash_SHA256,
-        VirgilPBKDF_Hash_SHA384, // Default
-        VirgilPBKDF_Hash_SHA512
-    } VirgilPBKDF_Hash;
-    ///@}
     /**
      * @name Constructor / Destructor
      */
@@ -118,21 +116,21 @@ public:
      */
     unsigned int getIterationCount() const;
     /**
-     * @brief Set specific password based key derivation function algorithm.
+     * @brief Set specific algorithm of the password based key derivation function.
      */
-    void setAlg(VirgilPBKDF_Alg alg);
+    void setAlg(VirgilPBKDF::Algorithm alg);
     /**
-     * @brief Return current password based key derivation function algorithm.
+     * @brief Return current algorithm of the password based key derivation function.
      */
-    VirgilPBKDF_Alg getAlg() const;
+    VirgilPBKDF::Algorithm getAlgorithm() const;
     /**
      * @brief Set underlying digest algorithm.
      */
-    void setHash(VirgilPBKDF_Hash hash);
+    void setHash(Hash hash);
     /**
      * @brief Returns underlying digest algorithm.
      */
-    VirgilPBKDF_Hash getHash() const;
+    VirgilPBKDF::Hash getHash() const;
     /**
      * @brief Involve security check for used parameters.
      * @note Enabled by default.
@@ -194,8 +192,8 @@ private:
      */
     void checkRecommendations(const VirgilByteArray& pwd) const;
 private:
-    VirgilPBKDF_Alg alg_;
-    VirgilPBKDF_Hash hash_;
+    VirgilPBKDF::Algorithm algorithm_;
+    VirgilPBKDF::Hash hash_;
     VirgilByteArray salt_;
     unsigned int iterationCount_;
     unsigned int iterationCountMin_;

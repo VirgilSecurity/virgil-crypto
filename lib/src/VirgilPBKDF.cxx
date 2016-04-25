@@ -67,61 +67,61 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 static const unsigned int kIterationCount_Min = 2048;
 ///@}
 
-static mbedtls_md_type_t hash_to_md_type(VirgilPBKDF::VirgilPBKDF_Hash hash) {
+static mbedtls_md_type_t hash_to_md_type(VirgilPBKDF::Hash hash) {
     switch (hash) {
-        case VirgilPBKDF::VirgilPBKDF_Hash_SHA1: {
+        case VirgilPBKDF::Hash_SHA1: {
             return MBEDTLS_MD_SHA1;
         }
-        case VirgilPBKDF::VirgilPBKDF_Hash_SHA224: {
+        case VirgilPBKDF::Hash_SHA224: {
             return MBEDTLS_MD_SHA224;
         }
-        case VirgilPBKDF::VirgilPBKDF_Hash_SHA256: {
+        case VirgilPBKDF::Hash_SHA256: {
             return MBEDTLS_MD_SHA256;
         }
-        case VirgilPBKDF::VirgilPBKDF_Hash_Default:
-        case VirgilPBKDF::VirgilPBKDF_Hash_SHA384: {
+        case VirgilPBKDF::Hash_Default:
+        case VirgilPBKDF::Hash_SHA384: {
             return MBEDTLS_MD_SHA384;
         }
-        case VirgilPBKDF::VirgilPBKDF_Hash_SHA512: {
+        case VirgilPBKDF::Hash_SHA512: {
             return MBEDTLS_MD_SHA512;
         }
-        case VirgilPBKDF::VirgilPBKDF_Hash_None:
+        case VirgilPBKDF::Hash_None:
         default: {
             return MBEDTLS_MD_NONE;
         }
     }
 }
 
-static VirgilPBKDF::VirgilPBKDF_Hash md_type_to_hash(mbedtls_md_type_t mdType) {
+static VirgilPBKDF::Hash md_type_to_hash(mbedtls_md_type_t mdType) {
     switch (mdType) {
         case MBEDTLS_MD_SHA1: {
-            return VirgilPBKDF::VirgilPBKDF_Hash_SHA1;
+            return VirgilPBKDF::Hash_SHA1;
         }
         case MBEDTLS_MD_SHA224: {
-            return VirgilPBKDF::VirgilPBKDF_Hash_SHA224;
+            return VirgilPBKDF::Hash_SHA224;
         }
         case MBEDTLS_MD_SHA256: {
-            return VirgilPBKDF::VirgilPBKDF_Hash_SHA256;
+            return VirgilPBKDF::Hash_SHA256;
         }
         case MBEDTLS_MD_SHA384: {
-            return VirgilPBKDF::VirgilPBKDF_Hash_SHA384;
+            return VirgilPBKDF::Hash_SHA384;
         }
         case MBEDTLS_MD_SHA512: {
-            return VirgilPBKDF::VirgilPBKDF_Hash_SHA512;
+            return VirgilPBKDF::Hash_SHA512;
         }
         case MBEDTLS_MD_NONE:
         default: {
-            return VirgilPBKDF::VirgilPBKDF_Hash_None;
+            return VirgilPBKDF::Hash_None;
         }
     }
 }
 
-VirgilPBKDF::VirgilPBKDF() : alg_(VirgilPBKDF_Alg_None), hash_(VirgilPBKDF::VirgilPBKDF_Hash_None), salt_(),
+VirgilPBKDF::VirgilPBKDF() : algorithm_(Algorithm_None), hash_(VirgilPBKDF::Hash_None), salt_(),
         iterationCount_(0), iterationCountMin_(kIterationCount_Min), checkRecommendations_(true) {
 }
 
 VirgilPBKDF::VirgilPBKDF(const virgil::crypto::VirgilByteArray& salt, unsigned int iterationCount)
-        : alg_(VirgilPBKDF_Alg_Default), hash_(VirgilPBKDF_Hash_Default), salt_(salt),
+        : algorithm_(Algorithm_Default), hash_(Hash_Default), salt_(salt),
         iterationCount_(iterationCount), iterationCountMin_(kIterationCount_Min), checkRecommendations_(true) {
 }
 
@@ -135,19 +135,19 @@ unsigned int VirgilPBKDF::getIterationCount() const {
     return iterationCount_;
 }
 
-void VirgilPBKDF::setAlg(VirgilPBKDF::VirgilPBKDF_Alg alg) {
-    alg_ = alg;
+void VirgilPBKDF::setAlg(VirgilPBKDF::Algorithm alg) {
+    algorithm_ = alg;
 }
 
-VirgilPBKDF::VirgilPBKDF_Alg VirgilPBKDF::getAlg() const {
-    return alg_;
+VirgilPBKDF::Algorithm VirgilPBKDF::getAlgorithm() const {
+    return algorithm_;
 }
 
-void VirgilPBKDF::setHash(VirgilPBKDF::VirgilPBKDF_Hash hash) {
+void VirgilPBKDF::setHash(VirgilPBKDF::Hash hash) {
     hash_ = hash;
 }
 
-VirgilPBKDF::VirgilPBKDF_Hash VirgilPBKDF::getHash() const {
+VirgilPBKDF::Hash VirgilPBKDF::getHash() const {
     return hash_;
 }
 
@@ -173,9 +173,9 @@ VirgilByteArray VirgilPBKDF::derive(const virgil::crypto::VirgilByteArray& pwd, 
         mbedtls_md_free(&hmacCtx)
     );
 
-    switch (alg_) {
-        case VirgilPBKDF_Alg_Default:
-        case VirgilPBKDF_Alg_PBKDF2: {
+    switch (algorithm_) {
+        case Algorithm_Default:
+        case Algorithm_PBKDF2: {
             MBEDTLS_ERROR_HANDLER_DISPOSE(
                 mbedtls_pkcs5_pbkdf2_hmac(&hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(salt_), iterationCount_, outSize, result.data()),
@@ -183,7 +183,7 @@ VirgilByteArray VirgilPBKDF::derive(const virgil::crypto::VirgilByteArray& pwd, 
             );
             break;
         }
-        case VirgilPBKDF_Alg_None:
+        case Algorithm_None:
         default: {
             throw std::logic_error("VirgilPBKDF: unknown state.");
         }
@@ -193,7 +193,7 @@ VirgilByteArray VirgilPBKDF::derive(const virgil::crypto::VirgilByteArray& pwd, 
 }
 
 void VirgilPBKDF::checkState() const {
-    if (alg_ == VirgilPBKDF_Alg_None || hash_ == VirgilPBKDF_Hash_None) {
+    if (algorithm_ == Algorithm_None || hash_ == Hash_None) {
         throw VirgilCryptoException(std::string("VirgilPBKDF: object has undefined algorithms.") +
                 " Use constructor with parameters or method 'fromAsn1' to define key derivation function algorithms.");
     }
@@ -220,7 +220,7 @@ void VirgilPBKDF::checkRecommendations(const VirgilByteArray& pwd) const {
 size_t VirgilPBKDF::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     checkState();
 
-    if (alg_ != VirgilPBKDF_Alg_PBKDF2) {
+    if (algorithm_ != Algorithm_PBKDF2) {
         throw std::logic_error("VirgilPBKDF: ASN.1 write - unsupported PBKDF algorithm");
     }
 
@@ -273,6 +273,6 @@ void VirgilPBKDF::asn1Read(VirgilAsn1Reader& asn1Reader) {
         mbedtls_oid_get_md_alg(&oidAsn1Buf, &mdType)
     );
 
-    alg_ = VirgilPBKDF_Alg_PBKDF2;
+    algorithm_ = Algorithm_PBKDF2;
     hash_ = md_type_to_hash(mdType);
 }

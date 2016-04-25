@@ -116,7 +116,7 @@ public:
     /**
      * @brief Set specific algorithm of the password based key derivation function.
      */
-    void setAlg(VirgilPBKDF::Algorithm alg);
+    void setAlgorithm(VirgilPBKDF::Algorithm alg);
     /**
      * @brief Return current algorithm of the password based key derivation function.
      */

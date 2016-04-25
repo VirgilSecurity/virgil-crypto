@@ -58,7 +58,7 @@ static void test_pbkdf_derive_helper(VirgilPBKDF::Algorithm alg, VirgilPBKDF::Ha
         const char *expectedKeyHex) {
 
     VirgilPBKDF pbkdf = VirgilPBKDF(hex2bytes(saltHex), iterationCount);
-    pbkdf.setAlg(alg);
+    pbkdf.setAlgorithm(alg);
     pbkdf.setHash(hash);
     pbkdf.disableRecommendationsCheck();
     VirgilByteArray derivedKey = pbkdf.derive(hex2bytes(pwdHex), outSize);
@@ -69,7 +69,7 @@ static void test_pbkdf_to_asn1_helper(VirgilPBKDF::Algorithm alg, VirgilPBKDF::H
         const char *saltHex, unsigned int iterationCount, const char *expectedAsn1) {
 
     VirgilPBKDF pbkdf = VirgilPBKDF(hex2bytes(saltHex), iterationCount);
-    pbkdf.setAlg(alg);
+    pbkdf.setAlgorithm(alg);
     pbkdf.setHash(hash);
     VirgilByteArray asn1 = pbkdf.toAsn1();
     REQUIRE(bytes2hex(asn1) == std::string(expectedAsn1));

@@ -134,7 +134,7 @@ unsigned int VirgilPBKDF::getIterationCount() const {
     return iterationCount_;
 }
 
-void VirgilPBKDF::setAlg(VirgilPBKDF::Algorithm alg) {
+void VirgilPBKDF::setAlgorithm(VirgilPBKDF::Algorithm alg) {
     algorithm_ = alg;
 }
 

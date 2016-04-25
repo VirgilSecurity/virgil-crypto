@@ -65,6 +65,8 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
  */
 ///@{
 static const unsigned int kIterationCount_Min = 2048;
+static const VirgilPBKDF::Algorithm kAlgorithm_Default = VirgilPBKDF::Algorithm_PBKDF2;
+static const VirgilPBKDF::Hash kHash_Default = VirgilPBKDF::Hash_SHA384;
 ///@}
 
 static mbedtls_md_type_t hash_to_md_type(VirgilPBKDF::Hash hash) {
@@ -78,14 +80,12 @@ static mbedtls_md_type_t hash_to_md_type(VirgilPBKDF::Hash hash) {
         case VirgilPBKDF::Hash_SHA256: {
             return MBEDTLS_MD_SHA256;
         }
-        case VirgilPBKDF::Hash_Default:
         case VirgilPBKDF::Hash_SHA384: {
             return MBEDTLS_MD_SHA384;
         }
         case VirgilPBKDF::Hash_SHA512: {
             return MBEDTLS_MD_SHA512;
         }
-        case VirgilPBKDF::Hash_None:
         default: {
             return MBEDTLS_MD_NONE;
         }
@@ -109,19 +109,18 @@ static VirgilPBKDF::Hash md_type_to_hash(mbedtls_md_type_t mdType) {
         case MBEDTLS_MD_SHA512: {
             return VirgilPBKDF::Hash_SHA512;
         }
-        case MBEDTLS_MD_NONE:
         default: {
-            return VirgilPBKDF::Hash_None;
+            throw std::logic_error("VirgilPBKDF: unknown hash algorithm detected");
         }
     }
 }
 
-VirgilPBKDF::VirgilPBKDF() : algorithm_(Algorithm_None), hash_(VirgilPBKDF::Hash_None), salt_(),
+VirgilPBKDF::VirgilPBKDF() : algorithm_(Algorithm_None), hash_(kHash_Default), salt_(),
         iterationCount_(0), iterationCountMin_(kIterationCount_Min), checkRecommendations_(true) {
 }
 
 VirgilPBKDF::VirgilPBKDF(const virgil::crypto::VirgilByteArray& salt, unsigned int iterationCount)
-        : algorithm_(Algorithm_Default), hash_(Hash_Default), salt_(salt),
+        : algorithm_(kAlgorithm_Default), hash_(kHash_Default), salt_(salt),
         iterationCount_(iterationCount), iterationCountMin_(kIterationCount_Min), checkRecommendations_(true) {
 }
 
@@ -174,7 +173,6 @@ VirgilByteArray VirgilPBKDF::derive(const virgil::crypto::VirgilByteArray& pwd, 
     );
 
     switch (algorithm_) {
-        case Algorithm_Default:
         case Algorithm_PBKDF2: {
             MBEDTLS_ERROR_HANDLER_DISPOSE(
                 mbedtls_pkcs5_pbkdf2_hmac(&hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
@@ -183,7 +181,6 @@ VirgilByteArray VirgilPBKDF::derive(const virgil::crypto::VirgilByteArray& pwd, 
             );
             break;
         }
-        case Algorithm_None:
         default: {
             throw std::logic_error("VirgilPBKDF: unknown state.");
         }
@@ -193,7 +190,7 @@ VirgilByteArray VirgilPBKDF::derive(const virgil::crypto::VirgilByteArray& pwd, 
 }
 
 void VirgilPBKDF::checkState() const {
-    if (algorithm_ == Algorithm_None || hash_ == Hash_None) {
+    if (algorithm_ == VirgilPBKDF::Algorithm_None) {
         throw VirgilCryptoException(std::string("VirgilPBKDF: object has undefined algorithms.") +
                 " Use constructor with parameters or method 'fromAsn1' to define key derivation function algorithms.");
     }

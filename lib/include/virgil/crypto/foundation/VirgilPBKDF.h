@@ -61,16 +61,14 @@ public:
      */
     typedef enum {
         Algorithm_None = 0, /**< No algorithm defined */
-        Algorithm_Default,  /**< Defines recommended algorithm */
         Algorithm_PBKDF2    /**< Defines PBKDF2 algorithm (https://www.ietf.org/rfc/rfc2898.txt) */
     } Algorithm;
     /**
      * @brief Defines specific underlying hash algorithm for the password based key derivation function algorithm
      */
     typedef enum {
-        Hash_None = 0, /**< No hash algorithm defined */
-        Hash_Default,  /**< Defines recommended hash algorithm */
-        Hash_SHA1,     /**< Defines SHA1 hash algorithm */
+                       /**< 0 reserved */
+        Hash_SHA1 = 1, /**< Defines SHA1 hash algorithm */
         Hash_SHA224,   /**< Defines SHA-224 hash algorithm */
         Hash_SHA256,   /**< Defines SHA-256 hash algorithm */
         Hash_SHA384,   /**< Defines SHA-384 hash algorithm */

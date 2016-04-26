@@ -19,9 +19,10 @@ var searchData=
   ['removepasswordrecipient',['removePasswordRecipient',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a8c989e04cfee5bac34e0f7125d2077e1',1,'virgil::crypto::VirgilCipherBase']]],
   ['removestring',['removeString',['../classvirgil_1_1crypto_1_1_virgil_custom_params.html#ad5b092702ec386c783f89a06dee391d3',1,'virgil::crypto::VirgilCustomParams']]],
   ['reset',['reset',['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html#aef1dae65b8d5b6ca2d21a2105f8ac39d',1,'virgil::crypto::foundation::asn1::VirgilAsn1Reader::reset()'],['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#a5fc06e0eb15968f222b6606438a80907',1,'virgil::crypto::foundation::asn1::VirgilAsn1Writer::reset()'],['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#a02b4e7f85b941df7fbe74e69f22c9ee3',1,'virgil::crypto::foundation::asn1::VirgilAsn1Writer::reset(size_t capacity)'],['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#adc5f1a7f525530503fc1beebb0d5bd7a',1,'virgil::crypto::foundation::VirgilSymmetricCipher::reset()'],['../classvirgil_1_1crypto_1_1stream_1_1_virgil_bytes_data_sink.html#a38a1e3fb3f1cdf337d96257658e5ec57',1,'virgil::crypto::stream::VirgilBytesDataSink::reset()'],['../classvirgil_1_1crypto_1_1stream_1_1_virgil_bytes_data_source.html#ade61403ff71e4510c640caaa5c634610',1,'virgil::crypto::stream::VirgilBytesDataSource::reset()']]],
-  ['rsa1024',['rsa1024',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#ae5c1f68a047cfcb290dcce3262d099ae',1,'virgil::crypto::VirgilKeyPair']]],
-  ['rsa2048',['rsa2048',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a621bb8d885dd4336205a509562d1f8e3',1,'virgil::crypto::VirgilKeyPair']]],
-  ['rsa256',['rsa256',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a0eb15671ae28cc3518c48286f31f8ac7',1,'virgil::crypto::VirgilKeyPair']]],
-  ['rsa4096',['rsa4096',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a585e65fbb56bc140905ebde7625e29ac',1,'virgil::crypto::VirgilKeyPair']]],
-  ['rsa512',['rsa512',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#ae1c1e86efca0b0508ae28788ca46512c',1,'virgil::crypto::VirgilKeyPair']]]
+  ['resetprivatekeypassword',['resetPrivateKeyPassword',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a54a1f1c38f8051b2b3873702c2fa97f1',1,'virgil::crypto::VirgilKeyPair']]],
+  ['rsa1024',['rsa1024',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a00af45388c5338c8f1f36e70ffcc14f9',1,'virgil::crypto::VirgilKeyPair']]],
+  ['rsa2048',['rsa2048',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a904256e45450979e7d38930db6bdb801',1,'virgil::crypto::VirgilKeyPair']]],
+  ['rsa256',['rsa256',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#abd2f907d1d5faf26513527448ac58503',1,'virgil::crypto::VirgilKeyPair']]],
+  ['rsa4096',['rsa4096',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#acbc8a080c686444cf671233be2239498',1,'virgil::crypto::VirgilKeyPair']]],
+  ['rsa512',['rsa512',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a808b2c830b1ed3703e764f929d1f0148',1,'virgil::crypto::VirgilKeyPair']]]
 ];

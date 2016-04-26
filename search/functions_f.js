@@ -1,9 +1,11 @@
 var searchData=
 [
+  ['setalgorithm',['setAlgorithm',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_k_d_f.html#aebc11f4f386aaf86714bf02d55e18ebe',1,'virgil::crypto::foundation::VirgilPBKDF']]],
   ['setcontentinfo',['setContentInfo',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a51d98aadf6d6c20b6c1ea4b26d6ce6ca',1,'virgil::crypto::VirgilCipherBase']]],
   ['setdata',['setData',['../classvirgil_1_1crypto_1_1_virgil_custom_params.html#af30cb1e605cfbedcea308d275c1fcf77',1,'virgil::crypto::VirgilCustomParams']]],
   ['setdecryptionkey',['setDecryptionKey',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a62a4b694ecfd1922ce9c78c358b7b032',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
   ['setencryptionkey',['setEncryptionKey',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a6eb903797b58bb4d766303615ff4944a',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
+  ['sethash',['setHash',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_k_d_f.html#a30803b562fe4d0d295e9a14e45474d24',1,'virgil::crypto::foundation::VirgilPBKDF']]],
   ['setinteger',['setInteger',['../classvirgil_1_1crypto_1_1_virgil_custom_params.html#a7ea178d77dd42023bbc08557d950b685',1,'virgil::crypto::VirgilCustomParams']]],
   ['setiv',['setIV',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a8caf6f1e69f96a416ab4260a65df57a6',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
   ['setpadding',['setPadding',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a3184c435efe82b34e645b4a5f042cb1c',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],

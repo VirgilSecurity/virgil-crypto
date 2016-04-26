@@ -7,6 +7,7 @@ var searchData=
   ['type_5fec_5fbp256r1',['Type_EC_BP256R1',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907ae4a976f98cc11749c87ade9fc0c5487b',1,'virgil::crypto::VirgilKeyPair']]],
   ['type_5fec_5fbp384r1',['Type_EC_BP384R1',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907a80f0c2b3b64b5797259a1933f1695d28',1,'virgil::crypto::VirgilKeyPair']]],
   ['type_5fec_5fbp512r1',['Type_EC_BP512R1',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907acadbf96bef860b0e5b215b412c9a66bb',1,'virgil::crypto::VirgilKeyPair']]],
+  ['type_5fec_5fcurve25519',['Type_EC_Curve25519',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907a405119e2c8b2e0f49e16de7d2c428d53',1,'virgil::crypto::VirgilKeyPair']]],
   ['type_5fec_5fm221',['Type_EC_M221',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907acbfaa4048a3a0ec2be5b2dafbc5e970f',1,'virgil::crypto::VirgilKeyPair']]],
   ['type_5fec_5fm255',['Type_EC_M255',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907afab60d82f2d0814f439f4a7fba9b8e8d',1,'virgil::crypto::VirgilKeyPair']]],
   ['type_5fec_5fm383',['Type_EC_M383',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907a480ff9f34574975ceb781caf0e9c6178',1,'virgil::crypto::VirgilKeyPair']]],

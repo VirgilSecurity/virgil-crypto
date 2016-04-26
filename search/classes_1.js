@@ -25,6 +25,7 @@ var searchData=
   ['virgilkdf',['VirgilKDF',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html',1,'virgil::crypto::foundation']]],
   ['virgilkeypair',['VirgilKeyPair',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html',1,'virgil::crypto']]],
   ['virgilpbe',['VirgilPBE',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_e.html',1,'virgil::crypto::foundation']]],
+  ['virgilpbkdf',['VirgilPBKDF',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_k_d_f.html',1,'virgil::crypto::foundation']]],
   ['virgilrandom',['VirgilRandom',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_random.html',1,'virgil::crypto::foundation']]],
   ['virgilsigner',['VirgilSigner',['../classvirgil_1_1crypto_1_1_virgil_signer.html',1,'virgil::crypto']]],
   ['virgilstreamcipher',['VirgilStreamCipher',['../classvirgil_1_1crypto_1_1_virgil_stream_cipher.html',1,'virgil::crypto']]],

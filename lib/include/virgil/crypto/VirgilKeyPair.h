@@ -81,87 +81,87 @@ public:
      * @param pwd - private key password (max length is 31 byte).
      */
     static VirgilKeyPair generate(VirgilKeyPair::Type type = VirgilKeyPair::Type_Default,
-            const VirgilByteArray& pwd = VirgilByteArray());
+            const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with 192-bits NIST curve.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair ecNist192(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair ecNist192(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with 224-bits NIST curve.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair ecNist224(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair ecNist224(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with 256-bits NIST curve.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair ecNist256(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair ecNist256(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with 384-bits NIST curve.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair ecNist384(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair ecNist384(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with 521-bits NIST curve.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair ecNist521(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair ecNist521(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with 256-bits Brainpool curve.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair ecBrainpool256(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair ecBrainpool256(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with 384-bits Brainpool curve.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair ecBrainpool384(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair ecBrainpool384(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with 512-bits Brainpool curve.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair ecBrainpool512(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair ecBrainpool512(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with 192-bits "Koblitz" curve.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair ecKoblitz192(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair ecKoblitz192(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with 224-bits "Koblitz" curve.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair ecKoblitz224(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair ecKoblitz224(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with 256-bits "Koblitz" curve.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair ecKoblitz256(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair ecKoblitz256(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with RSA 256-bits.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair rsa256(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair rsa256(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with RSA 512-bits.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair rsa512(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair rsa512(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with RSA 1024-bits.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair rsa1024(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair rsa1024(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with RSA 2048-bits.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair rsa2048(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair rsa2048(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with RSA 4096-bits.
      * @deprecated Use generate() instead.
      */
-    static VirgilKeyPair rsa4096(const VirgilByteArray& pwd = VirgilByteArray());
+    static VirgilKeyPair rsa4096(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
 
     /**
      * @name Keys validation
@@ -213,7 +213,7 @@ public:
      *
      * @return Private Key that is encrypted with the new password.
      */
-    static VirgilByteArray resetPrivateKeyPassword(const virgil::crypto::VirgilByteArray& privateKey,
+    static virgil::crypto::VirgilByteArray resetPrivateKeyPassword(const virgil::crypto::VirgilByteArray& privateKey,
             const virgil::crypto::VirgilByteArray& oldPassword, const virgil::crypto::VirgilByteArray& newPassword);
     ///@}
 
@@ -221,22 +221,22 @@ public:
      * @brief Generate new key pair with default settings.
      * @deprecated Use generate() with default type instead.
      */
-    explicit VirgilKeyPair(const VirgilByteArray& pwd = VirgilByteArray());
+    explicit VirgilKeyPair(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
     /**
      * @brief Initialize key pair with given public and private key.
      */
-    VirgilKeyPair(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey);
+    VirgilKeyPair(const virgil::crypto::VirgilByteArray& publicKey, const virgil::crypto::VirgilByteArray& privateKey);
     /**
      * @brief Provide access to the public key.
      */
-    VirgilByteArray publicKey() const;
+    virgil::crypto::VirgilByteArray publicKey() const;
     /**
      * @brief Provide access to the private key.
      */
-    VirgilByteArray privateKey() const;
+    virgil::crypto::VirgilByteArray privateKey() const;
 private:
-    VirgilByteArray publicKey_;
-    VirgilByteArray privateKey_;
+    virgil::crypto::VirgilByteArray publicKey_;
+    virgil::crypto::VirgilByteArray privateKey_;
 };
 
 }}

@@ -246,6 +246,7 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_foundation) {
 
     class_<virgil::crypto::foundation::VirgilPBKDF>("VirgilPBKDF")
         .constructor<>()
+        .constructor<const virgil::crypto::VirgilByteArray&>()
         .constructor<const virgil::crypto::VirgilByteArray&, unsigned int>()
         .function("getSalt", &virgil::crypto::foundation::VirgilPBKDF::getSalt)
         .function("getIterationCount", &virgil::crypto::foundation::VirgilPBKDF::getIterationCount)

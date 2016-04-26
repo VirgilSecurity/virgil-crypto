@@ -50,30 +50,30 @@ public:
      * @brief Type of the keypair.
      */
     enum Type {
-        Type_Default = 0,                   /**< recommended most safe type */
-        Type_RSA_256,                       /**< RSA 1024 bit (not recommended) */
-        Type_RSA_512,                       /**< RSA 1024 bit (not recommended) */
-        Type_RSA_1024,                      /**< RSA 1024 bit (not recommended) */
-        Type_RSA_2048,                      /**< RSA 2048 bit (not recommended) */
-        Type_RSA_3072,                      /**< RSA 3072 bit */
-        Type_RSA_4096,                      /**< RSA 4096 bit */
-        Type_RSA_8192,                      /**< RSA 8192 bit */
-        Type_EC_SECP192R1,                  /**< 192-bits NIST curve */
-        Type_EC_SECP224R1,                  /**< 224-bits NIST curve */
-        Type_EC_SECP256R1,                  /**< 256-bits NIST curve */
-        Type_EC_SECP384R1,                  /**< 384-bits NIST curve */
-        Type_EC_SECP521R1,                  /**< 521-bits NIST curve */
-        Type_EC_BP256R1,                    /**< 256-bits Brainpool curve */
-        Type_EC_BP384R1,                    /**< 384-bits Brainpool curve */
-        Type_EC_BP512R1,                    /**< 512-bits Brainpool curve */
-        Type_EC_M221,                       /**< (not implemented yet)    */
-        Type_EC_M255,                       /**< Curve25519               */
-        Type_EC_Curve25519 = Type_EC_M255,  /**< Curve25519               */
-        Type_EC_M383,                       /**< (not implemented yet)    */
-        Type_EC_M511,                       /**< (not implemented yet)    */
-        Type_EC_SECP192K1,                  /**< 192-bits "Koblitz" curve */
-        Type_EC_SECP224K1,                  /**< 224-bits "Koblitz" curve */
-        Type_EC_SECP256K1,                  /**< 256-bits "Koblitz" curve */
+        Type_Default = 0,        /**< recommended most safe type */
+        Type_RSA_256,            /**< RSA 1024 bit (not recommended) */
+        Type_RSA_512,            /**< RSA 1024 bit (not recommended) */
+        Type_RSA_1024,           /**< RSA 1024 bit (not recommended) */
+        Type_RSA_2048,           /**< RSA 2048 bit (not recommended) */
+        Type_RSA_3072,           /**< RSA 3072 bit */
+        Type_RSA_4096,           /**< RSA 4096 bit */
+        Type_RSA_8192,           /**< RSA 8192 bit */
+        Type_EC_SECP192R1,       /**< 192-bits NIST curve */
+        Type_EC_SECP224R1,       /**< 224-bits NIST curve */
+        Type_EC_SECP256R1,       /**< 256-bits NIST curve */
+        Type_EC_SECP384R1,       /**< 384-bits NIST curve */
+        Type_EC_SECP521R1,       /**< 521-bits NIST curve */
+        Type_EC_BP256R1,         /**< 256-bits Brainpool curve */
+        Type_EC_BP384R1,         /**< 384-bits Brainpool curve */
+        Type_EC_BP512R1,         /**< 512-bits Brainpool curve */
+        Type_EC_M221,            /**< (not implemented yet)    */
+        Type_EC_M255,            /**< Curve25519               */
+        Type_EC_Curve25519 = 17, /**< Curve25519               */
+        Type_EC_M383,            /**< (not implemented yet)    */
+        Type_EC_M511,            /**< (not implemented yet)    */
+        Type_EC_SECP192K1,       /**< 192-bits "Koblitz" curve */
+        Type_EC_SECP224K1,       /**< 224-bits "Koblitz" curve */
+        Type_EC_SECP256K1,       /**< 256-bits "Koblitz" curve */
     };
 public:
     /**

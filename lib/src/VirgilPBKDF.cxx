@@ -182,10 +182,12 @@ VirgilByteArray VirgilPBKDF::derive(const virgil::crypto::VirgilByteArray& pwd, 
             break;
         }
         default: {
+            mbedtls_md_free(&hmacCtx);
             throw std::logic_error("VirgilPBKDF: unknown state.");
         }
     }
 
+    mbedtls_md_free(&hmacCtx);
     return result;
 }
 

@@ -162,7 +162,6 @@ void VirgilPBKDF::disableRecommendationsCheck() {
 VirgilByteArray VirgilPBKDF::derive(const virgil::crypto::VirgilByteArray& pwd, size_t outSize) {
     checkState();
     checkRecommendations(pwd);
-    VirgilByteArray result(outSize);
 
     const mbedtls_md_info_t *hmacInfo = mbedtls_md_info_from_type(hash_to_md_type(hash_));
     mbedtls_md_context_t hmacCtx;
@@ -172,20 +171,26 @@ VirgilByteArray VirgilPBKDF::derive(const virgil::crypto::VirgilByteArray& pwd, 
         mbedtls_md_free(&hmacCtx)
     );
 
+    const size_t adjustedOutSize = (outSize > 0) ? outSize : mbedtls_md_get_size(hmacInfo) ;
+
+    VirgilByteArray result(adjustedOutSize);
+
     switch (algorithm_) {
         case Algorithm_PBKDF2: {
             MBEDTLS_ERROR_HANDLER_DISPOSE(
                 mbedtls_pkcs5_pbkdf2_hmac(&hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
-                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(salt_), iterationCount_, outSize, result.data()),
+                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(salt_), iterationCount_, adjustedOutSize, result.data()),
                 mbedtls_md_free(&hmacCtx)
             );
             break;
         }
         default: {
+            mbedtls_md_free(&hmacCtx);
             throw std::logic_error("VirgilPBKDF: unknown state.");
         }
     }
 
+    mbedtls_md_free(&hmacCtx);
     return result;
 }
 

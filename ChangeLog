@@ -1,5 +1,16 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.5.0 released 2016-04-26
+
+## Features
+
+  * [Lib] Add PBKDF2 algoritm
+  * [Lib] Add ability to reset password on the private key
+
+## Changes
+
+  * [Lib] Change default generated curve to the Curve25519
+
 = Version 1.4.0 released 2016-04-12
 
 ## Features

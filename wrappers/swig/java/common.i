@@ -66,5 +66,5 @@
 %include "java/VirgilByteArray.i"
 
 // Apply a rule for renaming the enum elements to avoid the common prefixes
-// which are redundant in C#
+// which are redundant in Java
 %rename("%(regex:/^([A-Z][a-z]+)+_(.*)/\\2/)s", %$isenumitem) "";

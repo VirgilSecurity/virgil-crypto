@@ -131,6 +131,18 @@ bool VirgilKeyPair::isPrivateKeyEncrypted(const VirgilByteArray& privateKey) {
     return VirgilAsymmetricCipher::isPrivateKeyEncrypted(privateKey);
 }
 
+VirgilByteArray VirgilKeyPair::resetPrivateKeyPassword(const VirgilByteArray& privateKey,
+        const VirgilByteArray& oldPassword, const VirgilByteArray& newPassword) {
+    VirgilAsymmetricCipher cipher;
+    cipher.setPrivateKey(privateKey, oldPassword);
+    const bool isPEM = privateKey.front() == 0x2D;
+    if (isPEM) {
+        return cipher.exportPrivateKeyToPEM(newPassword);
+    } else {
+        return cipher.exportPrivateKeyToDER(newPassword);
+    }
+}
+
 VirgilKeyPair::VirgilKeyPair(const VirgilByteArray& pwd) {
     VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_Default, pwd);
     this->publicKey_ = keyPair.publicKey();

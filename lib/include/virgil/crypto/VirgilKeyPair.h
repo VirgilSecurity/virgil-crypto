@@ -198,6 +198,24 @@ public:
      */
     static bool isPrivateKeyEncrypted(const virgil::crypto::VirgilByteArray& privateKey);
     ///@}
+    /**
+     * @name Keys
+     */
+    ///@{
+    /**
+     * @brief Reset password for the given private key.
+     *
+     * Re-encrypt given Private Key with a new password.
+     *
+     * @param privateKey - Private Key that is encrypted with old password.
+     * @param oldPassword - current Private Key password.
+     * @param newPassword - new Private Key password.
+     *
+     * @return Private Key that is encrypted with the new password.
+     */
+    static VirgilByteArray resetPrivateKeyPassword(const virgil::crypto::VirgilByteArray& privateKey,
+            const virgil::crypto::VirgilByteArray& oldPassword, const virgil::crypto::VirgilByteArray& newPassword);
+    ///@}
 
     /**
      * @brief Generate new key pair with default settings.

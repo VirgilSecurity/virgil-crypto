@@ -315,3 +315,29 @@ TEST_CASE("PBKDF2 from ASN.1", "[PBKDF]") {
                 "73616c7435", 0x0FFFFFFF, "302706092a864886f70d01050c301a040573616c743502040fffffff300b0609608648016503040203");
     }
 }
+
+TEST_CASE("PBKDF2 with default output size", "[PBKDF]") {
+    const VirgilByteArray salt = str2bytes("salt");
+    const VirgilByteArray pwd = str2bytes("password");
+    VirgilPBKDF pbkdf(salt);
+    SECTION("SHA1") {
+        pbkdf.setHash(VirgilPBKDF::Hash_SHA1);
+        REQUIRE(pbkdf.derive(pwd).size() == 20);
+    }
+    SECTION("SHA224") {
+        pbkdf.setHash(VirgilPBKDF::Hash_SHA224);
+        REQUIRE(pbkdf.derive(pwd).size() == 28);
+    }
+    SECTION("SHA256") {
+        pbkdf.setHash(VirgilPBKDF::Hash_SHA256);
+        REQUIRE(pbkdf.derive(pwd).size() == 32);
+    }
+    SECTION("SHA384") {
+        pbkdf.setHash(VirgilPBKDF::Hash_SHA384);
+        REQUIRE(pbkdf.derive(pwd).size() == 48);
+    }
+    SECTION("SHA512") {
+        pbkdf.setHash(VirgilPBKDF::Hash_SHA512);
+        REQUIRE(pbkdf.derive(pwd).size() == 64);
+    }
+}

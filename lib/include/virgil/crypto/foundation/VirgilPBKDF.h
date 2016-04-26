@@ -57,6 +57,12 @@ class VirgilPBKDFImpl;
 class VirgilPBKDF : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
     /**
+     * @property kIterationCount_Default
+     * @brief Default iteration count.
+     */
+     static const unsigned int kIterationCount_Default = 2048;
+public:
+    /**
      * @brief Defines specific password based key derivation function algorithm
      */
     typedef enum {
@@ -88,10 +94,10 @@ public:
     /**
      * @brief Create object with default algorithm.
      *
-     * @param salt - salt to use when generating key.
-     * @param iterationCount - iteration count.
+     * @param salt - salt to use when generating key, the best practice is to pass random value.
+     * @param iterationCount - iteration count, the best practice is to pass random value.
      */
-    VirgilPBKDF(const virgil::crypto::VirgilByteArray& salt, unsigned int iterationCount);
+    VirgilPBKDF(const virgil::crypto::VirgilByteArray& salt, unsigned int iterationCount = kIterationCount_Default);
     /**
      * @brief Polymorphic destructor.
      */
@@ -148,10 +154,10 @@ public:
      * @brief Derive key from the given key material.
      *
      * @param pwd - password to use when generating key.
-     * @param outSize - size of the output sequence.
+     * @param outSize - size of the output sequence, if 0 - then size of the underlying hash will be used.
      * @return Output sequence.
      */
-    virgil::crypto::VirgilByteArray derive(const virgil::crypto::VirgilByteArray& pwd, size_t outSize);
+    virgil::crypto::VirgilByteArray derive(const virgil::crypto::VirgilByteArray& pwd, size_t outSize = 0);
     ///@}
     /**
      * @name VirgilAsn1Compatible implementation

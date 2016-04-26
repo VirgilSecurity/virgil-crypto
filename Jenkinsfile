@@ -154,6 +154,7 @@ def createDarwinBuild(slave) {
             sh './utils/build.sh ios . build/cpp/ios install/cpp/ios '
             sh './utils/build.sh applewatchos . build/cpp/watchos install/cpp/watchos'
             sh './utils/build.sh appletvos . build/cpp/tvos install/cpp/tvos'
+            sh './utils/build.sh net . build/net/osx install/net/osx'
             sh './utils/build.sh net_ios . build/net/ios install/net/ios'
             sh './utils/build.sh net_applewatchos . build/net/watchos install/net/watchos'
             sh './utils/build.sh net_appletvos . build/net/tvos install/net/tvos'

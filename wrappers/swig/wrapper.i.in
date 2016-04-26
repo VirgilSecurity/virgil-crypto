@@ -100,7 +100,6 @@ INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::foundation::asn1, virgil/cry
 #if defined(LIB_LOW_LEVEL_API)
     DEFINE_NAMESPACE(VirgilSymmetricCipherPadding, virgil::crypto::foundation)
     DEFINE_NAMESPACE(ECKeyGroup, virgil::crypto::foundation)
-    DEFINE_NAMESPACE(VirgilKeyPairType, virgil::crypto::foundation)
 
     INCLUDE_CLASS(VirgilKDF, virgil::crypto::foundation, virgil/crypto/foundation)
     INCLUDE_CLASS(VirgilSymmetricCipher, virgil::crypto::foundation, virgil/crypto/foundation)
@@ -110,6 +109,7 @@ INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::foundation::asn1, virgil/cry
 #endif /* defined(LIB_LOW_LEVEL_API) */
 INCLUDE_CLASS(VirgilHash, virgil::crypto::foundation, virgil/crypto/foundation)
 INCLUDE_CLASS(VirgilBase64, virgil::crypto::foundation, virgil/crypto/foundation)
+INCLUDE_CLASS(VirgilPBKDF, virgil::crypto::foundation, virgil/crypto/foundation)
 
 // Package: virgil::crypto
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCustomParams, virgil::crypto, virgil/crypto)

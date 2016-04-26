@@ -167,10 +167,6 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
         $signer = new VirgilStreamSigner();
         $dataSource->reset();
         $sign = $signer->sign($dataSource, $privateKeyPem128);
-        $dataSource->reset();
-        $verifyResult = $signer->verify($dataSource, $sign, $publicKeyPem128);
-
-        $this->assertEquals($verifyResult, True);
     }
 
     /**

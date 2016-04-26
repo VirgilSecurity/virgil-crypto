@@ -68,6 +68,14 @@ public:
      * Return the minor version number.
      */
     static size_t patchVersion();
+    /**
+     * Return version full name.
+     *
+     * If current release contains some additional tag, like rc1,
+     * then version full name will be different from the string returned by method asString(),
+     * i.e. 1.3.4-rc1, or 1.3.4-coolfeature, etc.
+     */
+    static std::string fullName();
 };
 
 }}

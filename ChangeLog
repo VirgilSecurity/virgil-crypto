@@ -1,5 +1,29 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.5.0 released 2016-04-26
+
+## Features
+
+  * [Lib] Add PBKDF2 algoritm
+  * [Lib] Add ability to reset password on the private key
+
+## Changes
+
+  * [Lib] Change default generated curve to the Curve25519
+
+= Version 1.4.0 released 2016-04-12
+
+## Features
+
+  * [Lib] Add ability to use Curve25519 for all crypo operations (EXPEREMENTAL)
+  * [Build] Add feature prefix to the lib version
+  * [Build] Add .net build for OS X (Jenkinsfile)
+
+## Changes
+
+  * [Build] Make external dependencies installation as optional
+  * [Build] Add feature prefix to the lib version, make impact only for archive name
+
 = Version 1.3.4 released 2016-03-27
 
 ## Bugfix

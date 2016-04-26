@@ -7,7 +7,7 @@ os:
 env:
   global:
     - BUILD_DIR_NAME=build
-    - DOC_BRANCH=release
+    - DOC_BRANCH=master
     # COVERITY_SCAN_TOKEN
     - secure: "GjN2rHGtPPXTMwWUzpB9ULqDrFXmShysGtQ8VIXYJULUUHZ26entYWuwTb8q3NI8syVeDFyCmam7PSnRgc/nuaOBh8/2lO+dAB1H54jfvbREBBYC2yIIZAT1z/oQ/ZYWdJBrWsNw+pPYk8lY1Z52ggLu2Gd4fktrzuISch7CuCY="
   matrix:

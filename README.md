@@ -61,8 +61,6 @@ The page lists the prerequisite packages which need to be installed on the diffe
   - ```make```
 * Other tools:
   - ```git```
-  - ```python``` (version >= 2.7)
-  - ```pyyaml```
   - ```swig``` (version >= 3.0.7), optional for C++ build
   - ```doxygen``` (optional)
 

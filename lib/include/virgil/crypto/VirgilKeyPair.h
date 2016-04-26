@@ -47,7 +47,7 @@ namespace virgil { namespace crypto {
 class VirgilKeyPair {
 public:
     /**
-     * @brief Type if the keypair.
+     * @brief Type of the keypair.
      */
     enum Type {
         Type_Default = 0,       /**< recommended most safe type */

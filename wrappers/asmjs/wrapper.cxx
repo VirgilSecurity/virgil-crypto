@@ -47,6 +47,7 @@ using namespace emscripten;
 
 #include <virgil/crypto/foundation/VirgilHash.h>
 #include <virgil/crypto/foundation/VirgilBase64.h>
+#include <virgil/crypto/foundation/VirgilPBKDF.h>
 #include <virgil/crypto/VirgilCustomParams.h>
 
 #include <virgil/crypto/VirgilKeyPair.h>
@@ -137,6 +138,7 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .class_function("isKeyPairMatch", &virgil::crypto::VirgilKeyPair::isKeyPairMatch)
         .class_function("checkPrivateKeyPassword", &virgil::crypto::VirgilKeyPair::checkPrivateKeyPassword)
         .class_function("isPrivateKeyEncrypted", &virgil::crypto::VirgilKeyPair::isPrivateKeyEncrypted)
+        .class_function("resetPrivateKeyPassword", &virgil::crypto::VirgilKeyPair::resetPrivateKeyPassword)
     ;
 
     enum_<virgil::crypto::VirgilKeyPair::Type>("VirgilKeyPairType")
@@ -160,6 +162,7 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .value("EC_M255", virgil::crypto::VirgilKeyPair::Type_EC_M255)
         .value("EC_M383", virgil::crypto::VirgilKeyPair::Type_EC_M383)
         .value("EC_M511", virgil::crypto::VirgilKeyPair::Type_EC_M511)
+        .value("EC_Curve25519", virgil::crypto::VirgilKeyPair::Type_EC_Curve25519)
         .value("EC_SECP192K1", virgil::crypto::VirgilKeyPair::Type_EC_SECP192K1)
         .value("EC_SECP224K1", virgil::crypto::VirgilKeyPair::Type_EC_SECP224K1)
         .value("EC_SECP256K1", virgil::crypto::VirgilKeyPair::Type_EC_SECP256K1)
@@ -239,5 +242,19 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_foundation) {
     class_<virgil::crypto::foundation::VirgilBase64>("VirgilBase64")
         .class_function("encode", &virgil::crypto::foundation::VirgilBase64::encode)
         .class_function("decode", &virgil::crypto::foundation::VirgilBase64::decode)
+    ;
+
+    class_<virgil::crypto::foundation::VirgilPBKDF>("VirgilPBKDF")
+        .constructor<>()
+        .constructor<const virgil::crypto::VirgilByteArray&, unsigned int>()
+        .function("getSalt", &virgil::crypto::foundation::VirgilPBKDF::getSalt)
+        .function("getIterationCount", &virgil::crypto::foundation::VirgilPBKDF::getIterationCount)
+        .function("setAlgorithm", &virgil::crypto::foundation::VirgilPBKDF::setAlgorithm)
+        .function("getAlgorithm", &virgil::crypto::foundation::VirgilPBKDF::getAlgorithm)
+        .function("setHash", &virgil::crypto::foundation::VirgilPBKDF::setHash)
+        .function("getHash", &virgil::crypto::foundation::VirgilPBKDF::getHash)
+        .function("enableRecommendationsCheck", &virgil::crypto::foundation::VirgilPBKDF::enableRecommendationsCheck)
+        .function("disableRecommendationsCheck", &virgil::crypto::foundation::VirgilPBKDF::disableRecommendationsCheck)
+        .function("derive", &virgil::crypto::foundation::VirgilPBKDF::derive)
     ;
 }

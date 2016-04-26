@@ -445,7 +445,7 @@ void VirgilAsymmetricCipher::genKeyPair(VirgilKeyPair::Type type) {
             break;
         case VirgilKeyPair::Type_Default:
         default:
-            ecTypeId = MBEDTLS_ECP_DP_SECP384R1;
+            ecTypeId = MBEDTLS_ECP_DP_CURVE25519;
             break;
     }
 

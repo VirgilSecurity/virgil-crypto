@@ -521,7 +521,7 @@ VirgilByteArray VirgilAsymmetricCipher::sign(const VirgilByteArray& digest, int 
 
     unsigned char sign[MBEDTLS_MPI_MAX_SIZE];
     size_t actualSignLen = 0;
-    int (*f_rng)(void *, unsigned char *, size_t);
+    int (*f_rng)(void *, unsigned char *, size_t) = NULL;
     mbedtls_ctr_drbg_context *p_rng = NULL;
     mbedtls_entropy_context *entropy = NULL;
 
@@ -540,20 +540,18 @@ VirgilByteArray VirgilAsymmetricCipher::sign(const VirgilByteArray& digest, int 
     if (useRandom) {
         const char *pers = "sign";
 
-        mbedtls_entropy_context entropy_ctx;
-        mbedtls_entropy_init(&entropy_ctx);
-        entropy = &entropy_ctx;
+        entropy = new mbedtls_entropy_context();
+        mbedtls_entropy_init(entropy);
 
-        mbedtls_ctr_drbg_context ctr_drbg;
-        mbedtls_ctr_drbg_init(&ctr_drbg);
-        p_rng = &ctr_drbg;
+        p_rng = new mbedtls_ctr_drbg_context();
+        mbedtls_ctr_drbg_init(p_rng);
 
         MBEDTLS_ERROR_HANDLER_DISPOSE(
-            mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, entropy,
+            mbedtls_ctr_drbg_seed(p_rng, mbedtls_entropy_func, entropy,
                     (const unsigned char *)pers, strlen(pers)),
             {
-                mbedtls_ctr_drbg_free(p_rng);
-                mbedtls_entropy_free(entropy);
+                mbedtls_ctr_drbg_free(p_rng); delete p_rng; p_rng = NULL;
+                mbedtls_entropy_free(entropy); delete entropy; entropy = NULL;
             }
         );
 
@@ -573,6 +571,14 @@ VirgilByteArray VirgilAsymmetricCipher::sign(const VirgilByteArray& digest, int 
         }
     );
 
+    if (p_rng) {
+        mbedtls_ctr_drbg_free(p_rng);
+        delete p_rng;
+    }
+    if (entropy) {
+        mbedtls_entropy_free(entropy);
+        delete entropy;
+    }
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(sign, actualSignLen);
 }
 

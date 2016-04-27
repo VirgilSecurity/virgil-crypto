@@ -141,6 +141,7 @@ function (virgil_depends_create_cache_file cache_path)
     # Pass SHARED
     virgil_depends_write_cache_var ("${cache_path}" "BUILD_SHARED_LIBS")
     # Pass RPATH settings
+    virgil_depends_write_cache_var ("${cache_path}" "CMAKE_MACOSX_RPATH")
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_INSTALL_NAME_DIR")
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_INSTALL_RPATH")
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_SKIP_BUILD_RPATH")
@@ -195,7 +196,6 @@ function (virgil_depends)
     set (VIRGIL_DEPENDS_PREFIX "${VIRGIL_DEPENDS_HOME_DIR}/installed"
             CACHE PATH "Path to the installed depenencies")
 
-    # Configure local variables, that wiil be available for current project only
     set (VIRGIL_DEPENDS_PACKAGE_DOWNLOAD_DIR "${VIRGIL_DEPENDS_CACHE_DIR}/${VIRGIL_DEPENDS_PACKAGE_NAME}")
     set (VIRGIL_DEPENDS_PACKAGE_SOURCE_DIR "${VIRGIL_DEPENDS_HOME_DIR}/${VIRGIL_DEPENDS_PACKAGE_NAME}")
     set (VIRGIL_DEPENDS_PACKAGE_BUILD_DIR "${VIRGIL_DEPENDS_PACKAGE_SOURCE_DIR}/build")

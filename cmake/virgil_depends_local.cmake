@@ -147,6 +147,8 @@ function (virgil_depends_create_cache_file cache_path)
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_SKIP_BUILD_RPATH")
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_BUILD_WITH_INSTALL_RPATH")
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_INSTALL_RPATH_USE_LINK_PATH")
+    # Pass find package paths
+    virgil_depends_write_cache_var ("${cache_path}" "CMAKE_PREFIX_PATH")
     # Pass VIRGIL_DEPENDS_*
     virgil_depends_write_cache_var ("${cache_path}" "VIRGIL_DEPENDS_PREFIX")
     virgil_depends_write_cache_var ("${cache_path}" "VIRGIL_DEPENDS_HOME_DIR")

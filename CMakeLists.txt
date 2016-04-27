@@ -198,6 +198,9 @@ set (INSTALL_MAN_DIR_NAME "share/man" CACHE STRING "Installation directory name 
 set (INSTALL_DOC_DIR_NAME "share/doc" CACHE STRING "Installation directory name for doc pages")
 set (INSTALL_API_DIR_NAME api CACHE STRING "Installation directory name for interface files")
 
+# Configure crosscompiling
+set (UCLIBC OFF CACHE BOOL "Enable pathches if library is build with uClibc++")
+
 # Configure platform specific path variables
 if (ANDROID)
     set (ANDROID_INSTALL_JNI_DIR_NAME "lib/${ANDROID_NDK_ABI_NAME}")

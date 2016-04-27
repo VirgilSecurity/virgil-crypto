@@ -113,7 +113,6 @@ include (find_host_utils)
 
 # Define possible cmake_args
 include (cmake_args)
-set (CMAKE_ARGS "")
 
 if (ANDROID)
     append_cmake_arg (CMAKE_ARGS NAME PLATFORM_VERSION TYPE STRING)

@@ -1,5 +1,11 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.5.1 released 2016-04-29
+
+## Bugfix
+
+  * [AsmJS] Inner enumerations of class VirgilPBKDF: Algorithm and Hash are not accessible from AsmJS wrapper
+
 = Version 1.5.0 released 2016-04-26
 
 ## Features

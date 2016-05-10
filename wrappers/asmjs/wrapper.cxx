@@ -171,6 +171,7 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
     class_<virgil::crypto::VirgilCipherBase>("VirgilCipherBase")
         .function("addKeyRecipient", &virgil::crypto::VirgilCipherBase::addKeyRecipient)
         .function("removeKeyRecipient", &virgil::crypto::VirgilCipherBase::removeKeyRecipient)
+        .function("keyRecipientExists", &virgil::crypto::VirgilCipherBase::keyRecipientExists)
         .function("addPasswordRecipient", &virgil::crypto::VirgilCipherBase::addPasswordRecipient)
         .function("removePasswordRecipient", &virgil::crypto::VirgilCipherBase::removePasswordRecipient)
         .function("removeAllRecipients", &virgil::crypto::VirgilCipherBase::removeAllRecipients)

@@ -85,6 +85,17 @@ public:
      */
     void removeKeyRecipient(const VirgilByteArray& recipientId);
     /**
+     * @brief Check whether recipient with given identifier exists.
+     *
+     * Search order:
+     *     1. Local structures - useful when cipher is used for encryption.
+     *     2. ContentInfo structure - useful when cipher is used for decryption.
+     *
+     * @param recipientId - recipient's unique identifier.
+     * @return true if recipient with given identifier exists, false - otherwise.
+     */
+    bool keyRecipientExists(const VirgilByteArray& recipientId) const;
+    /**
      * @brief Add recipient defined with password.
      */
     void addPasswordRecipient(const VirgilByteArray& pwd);

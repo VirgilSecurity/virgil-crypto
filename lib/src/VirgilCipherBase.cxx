@@ -125,6 +125,24 @@ void VirgilCipherBase::removeKeyRecipient(const VirgilByteArray& recipientId) {
     impl_->keyRecipients.erase(recipientId);
 }
 
+bool VirgilCipherBase::keyRecipientExists(const VirgilByteArray& recipientId) const {
+    // 1. Search within local structure
+    std::map<VirgilByteArray, VirgilByteArray>::const_iterator found = impl_->keyRecipients.find(recipientId);
+    if (found != impl_->keyRecipients.end()) {
+        return true;
+    }
+    // 2. Search within ContentInfo structure
+    std::vector<VirgilCMSKeyTransRecipient>::const_iterator recipientIt =
+            impl_->envelopedData.keyTransRecipients.begin();
+    for (; recipientIt != impl_->envelopedData.keyTransRecipients.end(); ++recipientIt) {
+        if (recipientIt->recipientIdentifier == recipientId) {
+            return true;
+        }
+    }
+    // 3. Not found within any structure
+    return false;
+}
+
 void VirgilCipherBase::addPasswordRecipient(const VirgilByteArray& pwd) {
     if (pwd.empty()) {
         throw VirgilCryptoException("VirgilCipherBase: Parameter 'pwd' is not specified.");

@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">1.5.1</span>
+   &#160;<span id="projectnumber">1.6.0</span>
    </div>
   </td>
  </tr>
@@ -132,6 +132,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:aceb36e35aa76687fc84d9dd22e2f6853"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_cipher_base.html#aceb36e35aa76687fc84d9dd22e2f6853">removeKeyRecipient</a> (const VirgilByteArray &amp;recipientId)</td></tr>
 <tr class="memdesc:aceb36e35aa76687fc84d9dd22e2f6853"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove recipient with given id.  <a href="#aceb36e35aa76687fc84d9dd22e2f6853">More...</a><br /></td></tr>
 <tr class="separator:aceb36e35aa76687fc84d9dd22e2f6853"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b52a79c2a86b8871f448725467c23d3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a0b52a79c2a86b8871f448725467c23d3">keyRecipientExists</a> (const VirgilByteArray &amp;recipientId) const </td></tr>
+<tr class="memdesc:a0b52a79c2a86b8871f448725467c23d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether recipient with given identifier exists.  <a href="#a0b52a79c2a86b8871f448725467c23d3">More...</a><br /></td></tr>
+<tr class="separator:a0b52a79c2a86b8871f448725467c23d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af99331a11012bf4d7c270fb561b9264d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af99331a11012bf4d7c270fb561b9264d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_cipher_base.html#af99331a11012bf4d7c270fb561b9264d">addPasswordRecipient</a> (const VirgilByteArray &amp;pwd)</td></tr>
 <tr class="memdesc:af99331a11012bf4d7c270fb561b9264d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add recipient defined with password. <br /></td></tr>
@@ -487,6 +490,35 @@ You CAN not use symmetric cipher returned by the method <a class="el" href="clas
 <dl class="section note"><dt>Note</dt><dd>cipher's key randomly generated. </dd>
 <dd>
 cipher's input vector is randomly generated. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a0b52a79c2a86b8871f448725467c23d3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool virgil::crypto::VirgilCipherBase::keyRecipientExists </td>
+          <td>(</td>
+          <td class="paramtype">const VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>recipientId</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check whether recipient with given identifier exists. </p>
+<p>Search order:</p><ol type="1">
+<li>Local structures - useful when cipher is used for encryption.</li>
+<li>ContentInfo structure - useful when cipher is used for decryption.</li>
+</ol>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">recipientId</td><td>- recipient's unique identifier. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if recipient with given identifier exists, false - otherwise. </dd></dl>
 
 </div>
 </div>

@@ -171,6 +171,7 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
     class_<virgil::crypto::VirgilCipherBase>("VirgilCipherBase")
         .function("addKeyRecipient", &virgil::crypto::VirgilCipherBase::addKeyRecipient)
         .function("removeKeyRecipient", &virgil::crypto::VirgilCipherBase::removeKeyRecipient)
+        .function("keyRecipientExists", &virgil::crypto::VirgilCipherBase::keyRecipientExists)
         .function("addPasswordRecipient", &virgil::crypto::VirgilCipherBase::addPasswordRecipient)
         .function("removePasswordRecipient", &virgil::crypto::VirgilCipherBase::removePasswordRecipient)
         .function("removeAllRecipients", &virgil::crypto::VirgilCipherBase::removeAllRecipients)
@@ -258,4 +259,18 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_foundation) {
         .function("disableRecommendationsCheck", &virgil::crypto::foundation::VirgilPBKDF::disableRecommendationsCheck)
         .function("derive", &virgil::crypto::foundation::VirgilPBKDF::derive)
     ;
+
+    enum_<virgil::crypto::foundation::VirgilPBKDF::Algorithm>("VirgilPBKDFAlgorithm")
+        .value("None", virgil::crypto::foundation::VirgilPBKDF::Algorithm::Algorithm_None)
+        .value("PBKDF2", virgil::crypto::foundation::VirgilPBKDF::Algorithm::Algorithm_PBKDF2)
+    ;
+
+    enum_<virgil::crypto::foundation::VirgilPBKDF::Hash>("VirgilPBKDFHash")
+        .value("SHA1", virgil::crypto::foundation::VirgilPBKDF::Hash::Hash_SHA1)
+        .value("SHA224", virgil::crypto::foundation::VirgilPBKDF::Hash::Hash_SHA224)
+        .value("SHA256", virgil::crypto::foundation::VirgilPBKDF::Hash::Hash_SHA256)
+        .value("SHA384", virgil::crypto::foundation::VirgilPBKDF::Hash::Hash_SHA384)
+        .value("SHA512", virgil::crypto::foundation::VirgilPBKDF::Hash::Hash_SHA512)
+    ;
+
 }

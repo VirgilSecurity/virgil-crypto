@@ -40,9 +40,6 @@ cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 set (VIRGIL_CRYPTO_LIB_NAME virgil_crypto)
 set (TEST_RUNNER test_runner)
 
-# Add include directory of wrapped module
-include_directories (${VIRGIL_INCLUDE_DIR})
-
 aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR} SRC_LIST)
 add_executable(${TEST_RUNNER} ${SRC_LIST})
 target_link_libraries (${TEST_RUNNER} ${VIRGIL_CRYPTO_LIB_NAME})

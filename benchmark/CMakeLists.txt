@@ -43,9 +43,6 @@ set (CMAKE_CXX_STANDARD_REQUIRED ON)
 # Define variables
 set (VIRGIL_CRYPTO_LIB_NAME virgil_crypto)
 
-# Add include directory of wrapped module
-include_directories (${VIRGIL_INCLUDE_DIR})
-
 aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR} SRC_LIST)
 
 foreach (src ${SRC_LIST})

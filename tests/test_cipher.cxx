@@ -211,7 +211,7 @@ TEST_CASE("encrypt and decrypt with password", "[cipher]") {
     }
 }
 
-TEST_CASE("encrypt and decrypt RSA-3072", "[cipher]") {
+TEST_CASE("encrypt and decrypt RSA-3072", "[cipher-rsa]") {
     VirgilByteArray password = str2bytes("password");
     VirgilByteArray testData = str2bytes("this string will be encrypted");
     VirgilByteArray recipientId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
@@ -233,7 +233,7 @@ TEST_CASE("encrypt and decrypt RSA-3072", "[cipher]") {
     }
 }
 
-TEST_CASE("encrypt and decrypt RSA-8192", "[cipher]") {
+TEST_CASE("encrypt and decrypt RSA-8192", "[cipher-rsa]") {
     VirgilByteArray password = str2bytes("password");
     VirgilByteArray testData = str2bytes("this string will be encrypted");
     VirgilByteArray recipientId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
@@ -264,5 +264,34 @@ TEST_CASE("encrypt and decrypt curve25519", "[cipher]") {
         VirgilByteArray decryptedData;
         decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password);
         REQUIRE(testData == decryptedData);
+    }
+}
+
+TEST_CASE("check recipient existance", "[cipher]") {
+    VirgilByteArray bobId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
+    VirgilByteArray johnId = str2bytes("968dc52d-2045-4abe-ab51-0b04737cac76");
+    VirgilByteArray aliceId = str2bytes("99e435e7-2527-4a5a-89bb-37927bdb337b");
+    VirgilKeyPair bobKeyPair;
+    VirgilKeyPair johnKeyPair;
+
+    VirgilCipher cipher;
+    cipher.addKeyRecipient(bobId, bobKeyPair.publicKey());
+    cipher.addKeyRecipient(johnId, johnKeyPair.publicKey());
+
+    SECTION("within local context") {
+        REQUIRE(cipher.keyRecipientExists(bobId));
+        REQUIRE(cipher.keyRecipientExists(johnId));
+        REQUIRE_FALSE(cipher.keyRecipientExists(aliceId));
+    }
+
+    SECTION("ContentInfo context") {
+        (void)cipher.encrypt(VirgilByteArray());
+
+        VirgilCipher restoredCipher;
+        restoredCipher.setContentInfo(cipher.getContentInfo());
+
+        REQUIRE(restoredCipher.keyRecipientExists(bobId));
+        REQUIRE(restoredCipher.keyRecipientExists(johnId));
+        REQUIRE_FALSE(restoredCipher.keyRecipientExists(aliceId));
     }
 }

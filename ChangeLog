@@ -1,5 +1,14 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.6.0 released 2016-05-11
+
+## Features
+
+  * [Lib] Add functionality that check whether recipient with given identifier exists or not
+  * [NodeJS] Make builds for Node.js versions: 4.4.4, 5.9.1, 6.1.0
+  * [Build] Implement in-house package manager based on CMake
+
+
 = Version 1.5.1 released 2016-04-29
 
 ## Bugfix

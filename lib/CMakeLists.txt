@@ -36,17 +36,7 @@
 
 cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
-project (virgil_crypto)
-
-# Include and build external libraries
-include (ExternalProject)
-include (${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/mbedtls_ext.cmake)
-include (${CMAKE_CURRENT_SOURCE_DIR}/rapidjson/rapidjson.cmake)
-
-set (VIRGIL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
-include_directories (${VIRGIL_INCLUDE_DIR})
-include_directories (${MBEDTLS_INCLUDE_DIR})
-include_directories (${RAPIDJSON_INCLUDE_DIRS})
+project (virgil_crypto VERSION ${VIRGIL_VERSION})
 
 # Define sources list
 aux_source_directory ("src" src)
@@ -66,38 +56,79 @@ set (src "")
 aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src src)
 aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src/stream src)
 
-# Build
-add_library (${PROJECT_NAME} STATIC ${src})
+add_library (${PROJECT_NAME} ${src})
+
 set_property (TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME ${PROJECT_NAME})
 set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
-set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${VIRGIL_INCLUDE_DIR})
+set_property (TARGET ${PROJECT_NAME} PROPERTY DEBUG_POSTFIX "_d")
+if (BUILD_SHARED_LIBS)
+    set_target_properties (${PROJECT_NAME} PROPERTIES VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
+endif (BUILD_SHARED_LIBS)
 
-target_link_libraries (${PROJECT_NAME} ${MBEDTLS_LIBRARIES})
-add_dependencies (${PROJECT_NAME} mbedtls)
-
-add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy_if_different
-            $<TARGET_FILE:${PROJECT_NAME}>
-            ${EXTERNAL_LIBS_DIR}/$<TARGET_FILE_NAME:${PROJECT_NAME}>
+target_include_directories (${PROJECT_NAME}
+    PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
 )
+target_link_libraries (${PROJECT_NAME} mbedtls::mbedcrypto mbedtls::ed25519)
+target_compile_definitions (${PROJECT_NAME} PUBLIC "LIB_FILE_IO=$<BOOL:${LIB_FILE_IO}>" "UCLIBC=$<BOOL:${UCLIBC}>")
 
-# Export includes
-set (VIRGIL_INCLUDE_DIR ${VIRGIL_INCLUDE_DIR} PARENT_SCOPE)
-
-# Install
 if (INSTALL_CORE_LIBS)
-    install (TARGETS ${PROJECT_NAME} DESTINATION "${INSTALL_LIB_DIR_NAME}")
-    if (INSTALL_EXT_LIBS)
-        install (FILES ${MBEDTLS_LIBRARIES} DESTINATION "${INSTALL_LIB_DIR_NAME}")
-    endif (INSTALL_EXT_LIBS)
-    add_subdirectory (include)
-endif ()
+    # Define names for configuration files
+    set (INSTALL_CFG_DIR_NAME
+        "${INSTALL_LIB_DIR_NAME}/cmake/${PROJECT_NAME}" CACHE STRING
+        "Path to the CMake configuration files be installed"
+    )
+    set (generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+    set (version_config "${generated_dir}/${PROJECT_NAME}-config-version.cmake")
+    set (project_config "${generated_dir}/${PROJECT_NAME}-config.cmake")
+    set (targets_export_name "${PROJECT_NAME}-targets")
+    set (namespace "virgil::security::")
 
-if (INSTALL_EXT_HEADERS)
-    install (DIRECTORY ${MBEDTLS_INCLUDE_DIR}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
-    install (DIRECTORY ${RAPIDJSON_INCLUDE_DIRS}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
+    # Create configuration files
+    include (CMakePackageConfigHelpers)
+
+    # Write Version Config
+    write_basic_package_version_file (
+        "${version_config}" COMPATIBILITY SameMajorVersion
+    )
+
+    # Write  Project Config
+    configure_package_config_file (
+        "cmake/config.cmake.in"
+        "${project_config}"
+        INSTALL_DESTINATION "${INSTALL_CFG_DIR_NAME}"
+    )
+
+    # Install targets
+    install (TARGETS ${PROJECT_NAME}
+        EXPORT "${targets_export_name}"
+        LIBRARY DESTINATION "${INSTALL_LIB_DIR_NAME}"
+        ARCHIVE DESTINATION "${INSTALL_LIB_DIR_NAME}"
+        RUNTIME DESTINATION "${INSTALL_BIN_DIR_NAME}"
+        INCLUDES DESTINATION "include"
+    )
+
+    if (INSTALL_EXT_LIBS)
+        install (DIRECTORY "${VIRGIL_DEPENDS_PREFIX}/lib/" DESTINATION "${INSTALL_LIB_DIR_NAME}")
+    endif (INSTALL_EXT_LIBS)
+
+    # Install headers
+    add_subdirectory (include)
+    if (INSTALL_EXT_HEADERS)
+        install (DIRECTORY "${VIRGIL_DEPENDS_PREFIX}/include/" DESTINATION "${INSTALL_INC_DIR_NAME}")
+    endif ()
+
+    # Install configurations
+    install (
+        FILES "${project_config}" "${version_config}"
+        DESTINATION "${INSTALL_CFG_DIR_NAME}"
+    )
+
+    install (
+        EXPORT "${targets_export_name}"
+        NAMESPACE "${namespace}"
+        DESTINATION "${INSTALL_CFG_DIR_NAME}"
+    )
 endif ()
 
 # add a target to generate API documentation with Doxygen

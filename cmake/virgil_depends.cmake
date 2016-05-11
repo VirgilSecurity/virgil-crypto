@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 Virgil Security Inc.
+# Copyright (C) 2016 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -34,17 +34,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
+#
+# See 'virgil_depends_local.cmake' for documentation
+# Note:
+#     VIRGIL_DEPENDS_CMAKE_FILE cache varibale can be used to define alternative 'virgil_depends.cmake'
+#     module implementation, i.e. from an upstream project.
+#
 
-# Define variables
-set (VIRGIL_CRYPTO_LIB_NAME virgil_crypto)
-set (TEST_RUNNER test_runner)
-
-aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR} SRC_LIST)
-add_executable(${TEST_RUNNER} ${SRC_LIST})
-target_link_libraries (${TEST_RUNNER} ${VIRGIL_CRYPTO_LIB_NAME})
-
-add_test (
-    NAME ${TEST_RUNNER}
-    COMMAND ./${TEST_RUNNER}
-)
+if (EXISTS "${VIRGIL_DEPENDS_CMAKE_FILE}")
+    include ("${VIRGIL_DEPENDS_CMAKE_FILE}")
+else ()
+    find_file (VIRGIL_DEPENDS_CMAKE_FILE "virgil_depends_local.cmake" HINTS ${CMAKE_MODULE_PATH})
+    if (VIRGIL_DEPENDS_CMAKE_FILE)
+        include ("${VIRGIL_DEPENDS_CMAKE_FILE}")
+    else ()
+        include (virgil_depends_local)
+    endif ()
+endif ()

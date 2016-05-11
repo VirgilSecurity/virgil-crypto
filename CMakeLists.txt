@@ -105,30 +105,17 @@ message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 # Configure path to custom modules
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
+# Build shared library if defined
+set (BUILD_SHARED_LIBS OFF CACHE BOOL "Force to create shared libraries")
+
 # Add find_host_* utilities
 include (find_host_utils)
 
 # Define possible cmake_args
 include (cmake_args)
-set (CMAKE_ARGS
-    -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-)
-append_cmake_arg (CMAKE_ARGS NAME CMAKE_TOOLCHAIN_FILE TYPE PATH)
-append_cmake_arg (CMAKE_ARGS NAME CMAKE_BUILD_TYPE TYPE STRING)
-append_cmake_arg (CMAKE_ARGS NAME PLATFORM TYPE STRING)
-append_cmake_arg (CMAKE_ARGS NAME PLATFORM_VERSION TYPE STRING)
-if (NOT CMAKE_TOOLCHAIN_FILE)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_COMPILER TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_FLAGS TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_FLAGS_RELEASE TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_C_FLAGS_DEBUG TYPE STRING)
 
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_CXX_COMPILER TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_CXX_FLAGS TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_CXX_FLAGS_RELEASE TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_CXX_FLAGS_DEBUG TYPE STRING)
-endif ()
 if (ANDROID)
+    append_cmake_arg (CMAKE_ARGS NAME PLATFORM_VERSION TYPE STRING)
     append_cmake_arg (CMAKE_ARGS NAME ANDROID_NDK TYPE PATH)
     append_cmake_arg (CMAKE_ARGS NAME ANDROID_ABI TYPE STRING)
     append_cmake_arg (CMAKE_ARGS NAME ANDROID_NATIVE_API_LEVEL TYPE STRING)
@@ -141,10 +128,38 @@ if (ANDROID)
 endif (ANDROID)
 
 if (CMAKE_TOOLCHAIN_FILE AND APPLE)
+    append_cmake_arg (CMAKE_ARGS NAME PLATFORM TYPE STRING)
     append_cmake_arg (CMAKE_ARGS NAME SIMULATOR TYPE BOOL)
     append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_PLATFORM_DEVELOPER_ROOT TYPE PATH)
     append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_SDK_ROOT TYPE PATH)
 endif ()
+
+# Define additional compiler flags
+if (NOT CMAKE_CROSSCOMPILING)
+    include (CheckCCompilerFlag)
+    check_c_compiler_flag (-fPIC COMPILER_SUPPORT_PIC)
+    if (COMPILER_SUPPORT_PIC)
+        set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    endif ()
+endif (NOT CMAKE_CROSSCOMPILING)
+
+# Include and build external libraries
+include (virgil_depends)
+
+virgil_depends (
+    PACKAGE_NAME "MbedTLS"
+    CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/mbedtls"
+    CMAKE_ARGS "${CMAKE_ARGS}"
+)
+virgil_find_package (MbedTLS 2.2)
+
+virgil_depends (
+    PACKAGE_NAME "RapidJSON"
+    CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/rapidjson"
+    CMAKE_ARGS "${CMAKE_ARGS}"
+)
+virgil_find_package (RapidJSON 1.0)
 
 # Define enviroment parameters
 if (NOT DEFINED POINTER_SIZE)
@@ -175,14 +190,6 @@ set (LIB_FILE_IO OFF CACHE BOOL "Defines whether to include module depends on fi
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
 set (ENABLE_BENCHMARK OFF CACHE BOOL "Defines whether include benchmark or not.")
 
-# Propogate some parameters as C/C++ defines
-if (LIB_FILE_IO)
-    add_definitions(-DLIB_FILE_IO)
-endif (LIB_FILE_IO)
-
-# Configure
-find_host_package (Git)
-
 # Configure path variables
 set (INSTALL_INC_DIR_NAME include CACHE STRING "Installation directory name for includes")
 set (INSTALL_LIB_DIR_NAME lib CACHE STRING "Installation directory name for libraries")
@@ -191,14 +198,13 @@ set (INSTALL_MAN_DIR_NAME "share/man" CACHE STRING "Installation directory name 
 set (INSTALL_DOC_DIR_NAME "share/doc" CACHE STRING "Installation directory name for doc pages")
 set (INSTALL_API_DIR_NAME api CACHE STRING "Installation directory name for interface files")
 
+# Configure crosscompiling
+set (UCLIBC OFF CACHE BOOL "Enable pathches if library is build with uClibc++")
+
 # Configure platform specific path variables
 if (ANDROID)
     set (ANDROID_INSTALL_JNI_DIR_NAME "lib/${ANDROID_NDK_ABI_NAME}")
 endif (ANDROID)
-
-# Configure internal path variables
-set (EXTERNAL_LIBS_DIR "${CMAKE_CURRENT_BINARY_DIR}/libs" CACHE INTERNAL
-        "Path to the folder where all libs MUST be located after build")
 
 # Configure submodules installation
 set (INSTALL_CORE_LIBS_TMP OFF)

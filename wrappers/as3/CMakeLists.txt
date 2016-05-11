@@ -115,17 +115,18 @@ add_custom_command (OUTPUT ${WRAPPER_EXPORT_FILE}
 # Link wrapper with target library
 set (WRAPPER_SWC_NAME ${SWIG_MODULE_NAME}.swc)
 set (WRAPPER_SWC ${CMAKE_CURRENT_BINARY_DIR}/${WRAPPER_SWC_NAME})
+get_target_property (WRAPPED_LIB_NAME_DEPEND_LIBS ${WRAPPED_LIB_NAME} INTERFACE_LINK_LIBRARIES)
 add_custom_command (OUTPUT ${WRAPPER_SWC}
     COMMENT "Building ${WRAPPER_SWC_NAME}"
     COMMAND ${CMAKE_CXX_COMPILER}
             -emit-swc=${SWIG_MODULE_NAMESPACE} ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_OPTIONAL}
             -flto-api=${WRAPPER_EXPORT_FILE} -jvmopt=-Xmx4G
             -o ${WRAPPER_SWC} ${WRAPPER_OBJ} ${WRAPPER_ABC}
-            $<TARGET_LINKER_FILE:${WRAPPED_LIB_NAME}>
-                    ${CMAKE_BINARY_DIR}/libs/libmbedcrypto.a
-                    ${CMAKE_BINARY_DIR}/libs/libed25519.a
-                    -lAS3++
-    DEPENDS $<TARGET_LINKER_FILE:${WRAPPED_LIB_NAME}>
+                $<TARGET_LINKER_FILE:${WRAPPED_LIB_NAME}>
+                $<TARGET_LINKER_FILE:mbedtls::mbedcrypto>
+                $<TARGET_LINKER_FILE:mbedtls::ed25519>
+                -lAS3++
+    DEPENDS ${WRAPPED_LIB_NAME}
     DEPENDS ${WRAPPER_OBJ}
     DEPENDS ${WRAPPER_ABC}
     DEPENDS ${WRAPPER_EXPORT_FILE}

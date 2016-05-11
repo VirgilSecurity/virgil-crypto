@@ -34,17 +34,28 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required (VERSION @CMAKE_VERSION@ FATAL_ERROR)
 
-# Define variables
-set (VIRGIL_CRYPTO_LIB_NAME virgil_crypto)
-set (TEST_RUNNER test_runner)
+project ("@VIRGIL_DEPENDS_PACKAGE_NAME@-depends")
 
-aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR} SRC_LIST)
-add_executable(${TEST_RUNNER} ${SRC_LIST})
-target_link_libraries (${TEST_RUNNER} ${VIRGIL_CRYPTO_LIB_NAME})
+include (ExternalProject)
 
-add_test (
-    NAME ${TEST_RUNNER}
-    COMMAND ./${TEST_RUNNER}
+# Configure additional CMake parameters
+file (APPEND "@VIRGIL_DEPENDS_ARGS_FILE@"
+    "set (RAPIDJSON_BUILD_EXAMPLES OFF CACHE INTERNAL \"\")\n"
+    "set (RAPIDJSON_BUILD_TESTS OFF CACHE INTERNAL \"\")\n"
+    "set (RAPIDJSON_BUILD_DOC OFF CACHE INTERNAL \"\")\n"
+    "set (RAPIDJSON_BUILD_THIRDPARTY_GTEST OFF CACHE INTERNAL \"\")\n"
+    "set (RAPIDJSON_BUILD_CXX11 OFF CACHE INTERNAL \"\")\n"
 )
+
+ExternalProject_Add (${PROJECT_NAME}
+    DOWNLOAD_DIR "@VIRGIL_DEPENDS_PACKAGE_DOWNLOAD_DIR@"
+    URL "https://github.com/miloyip/rapidjson/archive/v1.0.2.tar.gz"
+    URL_HASH SHA256=c3711ed2b3c76a5565ee9f0128bb4ec6753dbcc23450b713842df8f236d08666
+    PREFIX "@VIRGIL_DEPENDS_PACKAGE_BUILD_DIR@"
+    CMAKE_ARGS "@VIRGIL_DEPENDS_CMAKE_ARGS@"
+)
+
+add_custom_target ("${PROJECT_NAME}-build" ALL COMMENT "Build package ${PROJECT_NAME}")
+add_dependencies ("${PROJECT_NAME}-build" ${PROJECT_NAME})

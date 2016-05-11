@@ -40,7 +40,7 @@
 */
 namespace std
 {
-  string to_string(unsigned val) {
+  static inline string to_string(unsigned val) {
       stringstream val_stream;
       val_stream << val;
       return val_stream.str();

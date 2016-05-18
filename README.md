@@ -74,16 +74,22 @@ This section describes how to build Virgil Crypto Library for а particular lang
 <a name="table1"></a>
 Table 1 - Supported languages
 
-| Language | Supported OS               | Dependencies          | Build parameters | Environment |
-|----------|----------------------------|-----------------------|------------------|-------------|
-| C++      | ANY                        |                       | LANG=cpp         |             |
-| PHP      | Unix, Linux, OS X          | php, php5-dev         | LANG=php         |             |
-| Python   | Unix, Linux, OS X          | python                | LANG=python      |             |
-| Ruby     | Unix, Linux, OS X          | ruby, ruby-dev        | LANG=ruby        |             |
-| Java     | Unix, Linux, OS X, Windows | Java JDK 1.6          | LANG=java        | JAVA_HOME   |
-| .NET     | Unix, Linux, OS X, Windows | .NET 2.0, or mono 2.0 | LANG=net         |             |
-| AsmJS    | Unix, Linux, OS X, Windows | Emscripten 1.35       | LANG=asmjs       | EMSDK_HOME  |
-| NodeJS   | Unix, Linux, OS X, Windows |                       | LANG=nodejs      |             |
+|Language| Supported OS               | Dependencies          | Build parameters | Environment | Binary |
+|--------|----------------------------|-----------------------|------------------|-------------|--------|
+| C++      | ANY                        |                       | LANG=cpp         |             |[CDN](https://cdn.virgilsecurity.com/virgil-crypto/cpp/)|
+| PHP      | Unix, Linux, OS X          | php, php5-dev         | LANG=php         |             |[CDN](https://cdn.virgilsecurity.com/virgil-crypto/php/)|
+| Python   | Unix, Linux, OS X          | python                | LANG=python      |             |[CDN](https://cdn.virgilsecurity.com/virgil-crypto/python/)
+| Ruby     | Unix, Linux, OS X          | ruby, ruby-dev        | LANG=ruby        |             |[CDN](https://cdn.virgilsecurity.com/virgil-crypto/ruby/)|
+| Java     | Unix, Linux, OS X, Windows\* | Java JDK 1.6          | LANG=java        | JAVA_HOME   |[CDN](https://cdn.virgilsecurity.com/virgil-crypto/java/)|
+| .NET     | Unix, Linux, OS X, Windows\* | .NET 2.0, or mono 2.0 | LANG=net         |             |[CDN](https://cdn.virgilsecurity.com/virgil-crypto/net/)|
+| AsmJS    | Unix, Linux, OS X, Windows\* | Emscripten 1.35       | LANG=asmjs       | EMSDK_HOME  |[CDN](https://cdn.virgilsecurity.com/virgil-crypto/asmjs/)|
+| NodeJS   | Unix, Linux, OS X, Windows\* |                       | LANG=nodejs      |             |[CDN](https://cdn.virgilsecurity.com/virgil-crypto/nodejs/)|
+
+>\* External dependencies for Windows binaries:
+>	- msvcp140.dll
+>	- vcruntime140.dll
+
+>These dependencies can be installed as a part of [Visual C++ Redistributable for Visual Studio 2015](https://www.microsoft.com/en-us/download/details.aspx?id=48145)
 
 ### Step 2 - Configure environment
 
@@ -128,22 +134,24 @@ This section describes how to build Virgil Crypto Library for multi architecture
 <a name="table2"></a>
 Table 2 - Supported languages and platforms
 
-| Language    | Platform | Host OS | Dependencies          | Build parameters        | Environment |
-|-------------|----------|---------|-----------------------|-------------------------|-------------|
-| C++         | OS X     | OS X    |                       | TARGET=osx              |             |
-| C++         | iOS      | OS X    |                       | TARGET=ios              |             |
-| C++         | WatchOS  | OS X    |                       | TARGET=applewatchos     |             |
-| C++         | TVOS     | OS X    |                       | TARGET=appletvos        |             |
-| C++         | Windows  | Windows |                       | TARGET=cpp              |             |
-| .NET        | iOS      | OS X    | mono 2.0              | TARGET=net_ios          |             |
-| .NET        | WatchOS  | OS X    | mono 2.0              | TARGET=net_applewatchos |             |
-| .NET        | TVOS     | OS X    | mono 2.0              | TARGET=net_appletvos    |             |
-| .NET        | Android  | *nix    | Android NDK, mono 2.0 | TARGET=net_android      | ANDROID_NDK |
-| .NET        | Windows  | Windows | .NET 2.0              | TARGET=net              |             |
-| Java        | Android  | *nix    | Android NDK           | TARGET=java_android     | ANDROID_NDK |
-| Java        | Windows  | Windows | Java JDK              | TARGET=java             | JAVA_HOME   |
-| NodeJS 0.12 | Windows  | Windows |                       | TARGET=nodejs-0.12.7    |             |
-| NodeJS 4.1  | Windows  | Windows |                       | TARGET=nodejs-4.1.0     |             |
+| Language| Platform |Host OS| Dependencies          | Build parameters        |Environment|Binary|
+|---------|----------|-------|-----------------------|-------------------------|-----------|------|
+| C++         | OS X     | OS X |                       | TARGET=osx              |             |[:arrow_down:](https://cdn.virgilsecurity.com/virgil-crypto/cpp/virgil-crypto-1.6.0-cpp-osx-14.5-universal.tgz)|
+| C++         | iOS      | OS X |                       | TARGET=ios              |             |[:arrow_down:](https://cdn.virgilsecurity.com/virgil-crypto/cpp/virgil-crypto-1.6.0-cpp-ios-7.0.tgz)|
+| C++         | WatchOS  | OS X |                       | TARGET=applewatchos     |             |[:arrow_down:](https://cdn.virgilsecurity.com/virgil-crypto/cpp/virgil-crypto-1.6.0-cpp-applewatchos-2.0.tgz)|
+| C++         | TVOS     | OS X |                       | TARGET=appletvos        |             |[:arrow_down:](https://cdn.virgilsecurity.com/virgil-crypto/cpp/virgil-crypto-1.6.0-cpp-appletvos-9.0.tgz)|
+| C++         | Windows  | Windows| msvcp140.dll\*, vcruntime140.dll\*                     | TARGET=cpp              |             |[:arrow_down:](https://cdn.virgilsecurity.com/virgil-crypto/cpp/virgil-crypto-1.6.0-cpp-windows-6.3-x64.zip)|
+| .NET        | iOS      | OS X | mono 2.0              | TARGET=net_ios          |             |[:arrow_down:](https://cdn.virgilsecurity.com/virgil-crypto/net/virgil-crypto-1.6.0-mono-ios-7.0.tgz)|
+| .NET        | WatchOS  | OS X | mono 2.0              | TARGET= net_applewatchos |             |[:arrow_down:](https://cdn.virgilsecurity.com/virgil-crypto/net/virgil-crypto-1.6.0-mono-applewatchos-2.0.tgz)|
+| .NET        | TVOS     | OS X | mono 2.0              | TARGET=net_appletvos    |             |[:arrow_down:](https://cdn.virgilsecurity.com/virgil-crypto/net/virgil-crypto-1.6.0-mono-appletvos-9.0.tgz)|
+| .NET        | Android  | *nix | Android NDK, mono 2.0 | TARGET=net_android      | ANDROID_NDK |[:arrow_down:](https://cdn.virgilsecurity.com/virgil-crypto/net/virgil-crypto-1.6.0-mono-android-21.tgz)|
+| .NET        | Windows  | Windows| .NET 2.0, msvcp140.dll\*, vcruntime140.dll\*              | TARGET=net              |             |[:arrow_down:](https://cdn.virgilsecurity.com/virgil-crypto/net/virgil-crypto-1.6.0-net-windows-6.3.zip)|
+| Java        | Android  | *nix | Android NDK           | TARGET=java_android     | ANDROID_NDK |[:arrow_down:](https://cdn.virgilsecurity.com/virgil-crypto/java/virgil-crypto-1.6.0-java-android-21.tgz)|
+| Java        | Windows  | Windows| Java JDK, msvcp140.dll\*, vcruntime140.dll\*              | TARGET=java             | JAVA_HOME   |[:arrow_down:](https://cdn.virgilsecurity.com/virgil-crypto/java/virgil-crypto-1.6.0-java-windows-6.3-x64.zip)|
+| NodeJS 0.12 | Windows  | Windows| msvcp140.dll\*, vcruntime140.dll\*                       | TARGET=nodejs-0.12.7    |             |[:arrow_down:](https://cdn.virgilsecurity.com/virgil-crypto/nodejs/virgil-crypto-1.6.0-nodejs-0.12.7-windows-6.3-x64.zip)|
+| NodeJS 4.1  | Windows  | Windows| msvcp140.dll\*, vcruntime140.dll\*                       | TARGET=nodejs-4.1.0     |             |[:arrow_down:](https://cdn.virgilsecurity.com/virgil-crypto/nodejs/virgil-crypto-1.6.0-nodejs-4.1.0-windows-6.3-x64.zip)|
+
+>These dependencies can be installed as a part of [Visual C++ Redistributable for Visual Studio 2015](https://www.microsoft.com/en-us/download/details.aspx?id=48145)
 
 ### Step 2 - Configure environment
 

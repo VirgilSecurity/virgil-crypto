@@ -155,6 +155,27 @@ public:
      */
     const VirgilCustomParams& customParams() const;
     ///@}
+    /**
+     * @name Helpers to create shared key with Diffie–Hellman algorithms
+     */
+    ///@{
+    /**
+     * @brief Compute shared secret key on a given keys
+     *
+     * @param publicKey - alice public key.
+     * @param privateKey - bob private key.
+     * @param privateKeyPassword - bob private key password.
+     *
+     * @throw VirgilCryptoException - if keys are invalid or keys are not compatible.
+     *
+     * @warning Keys SHOULD be of the identical type, i.e. both of type Curve25519.
+     *
+     * @see VirgilKeyPair::generate(const VirgilKeyPair&, const VirgilByteArray&, const VirgilByteArray&)
+     */
+    static VirgilByteArray computeShared(const VirgilByteArray& publicKey,
+            const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    ///@}
+
 protected:
     /**
      * @brief Make attempt to read content info from the encrypted data.

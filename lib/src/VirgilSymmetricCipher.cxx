@@ -63,12 +63,12 @@ namespace virgil { namespace crypto { namespace foundation {
 class VirgilSymmetricCipherImpl {
 public:
     VirgilSymmetricCipherImpl(mbedtls_cipher_type_t cipherType)
-            : type(MBEDTLS_CIPHER_NONE), ctx(0), iv(), tagFilter() {
+            : type(MBEDTLS_CIPHER_NONE), ctx(0), iv(), authData(), tagFilter() {
         init_(cipherType);
     }
 
     VirgilSymmetricCipherImpl(const VirgilSymmetricCipherImpl& other)
-            : type(MBEDTLS_CIPHER_NONE), ctx(0), iv(), tagFilter() {
+            : type(MBEDTLS_CIPHER_NONE), ctx(0), iv(), authData(), tagFilter() {
         init_(other.type);
     }
 
@@ -113,6 +113,7 @@ public:
     mbedtls_cipher_type_t type;
     mbedtls_cipher_context_t *ctx;
     VirgilByteArray iv;
+    VirgilByteArray authData;
     VirgilTagFilter tagFilter;
 };
 
@@ -249,11 +250,16 @@ void VirgilSymmetricCipher::setIV(const VirgilByteArray& iv) {
     impl_->iv = iv;
 }
 
+void VirgilSymmetricCipher::setAuthData(const virgil::crypto::VirgilByteArray& authData) {
+    checkState();
+    impl_->authData = authData;
+}
+
 void VirgilSymmetricCipher::reset() {
     checkState();
     MBEDTLS_ERROR_HANDLER(::mbedtls_cipher_reset(impl_->ctx));
     if (mbedtls_cipher_get_cipher_mode(impl_->ctx) == MBEDTLS_MODE_GCM) {
-        MBEDTLS_ERROR_HANDLER(::mbedtls_cipher_update_ad(impl_->ctx, NULL, 0));
+        MBEDTLS_ERROR_HANDLER(::mbedtls_cipher_update_ad(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(impl_->authData)));
     }
     if (isDecryptionMode()) {
         impl_->tagFilter.reset(blockSize());

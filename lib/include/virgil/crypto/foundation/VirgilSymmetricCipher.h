@@ -170,6 +170,13 @@ public:
      */
     void setIV(const virgil::crypto::VirgilByteArray& iv);
     /**
+     * @brief Add additional data (for AEAD ciphers).
+     * @note Currently only supported with GCM.
+     * @note Must be called before reset().
+     * @see isAuthMode()
+     */
+    void setAuthData(const virgil::crypto::VirgilByteArray& authData);
+    /**
      * @brief Finish preparation before encryption / decryption.
      */
     void reset();

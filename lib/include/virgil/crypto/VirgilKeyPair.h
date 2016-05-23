@@ -79,10 +79,20 @@ public:
     /**
      * @brief Generate new key pair given type.
      * @param type - private key type to be generated.
-     * @param pwd - private key password (max length is 31 byte).
+     * @param pwd - private key password.
      */
     static VirgilKeyPair generate(VirgilKeyPair::Type type = VirgilKeyPair::Type_Default,
             const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
+    /**
+     * @brief Generate new key pair of the same type based on the donor key pair.
+     * @param donorKeyPair - public key or private key is used to determine the new key pair type.
+     * @param donorPrivateKeyPassword - donor private key password, optional if public key is defined.
+     * @param newKeyPairPassword - private key password of the new key pair.
+     */
+    static VirgilKeyPair generate(const VirgilKeyPair& donorKeyPair,
+            const virgil::crypto::VirgilByteArray& donorPrivateKeyPassword = virgil::crypto::VirgilByteArray(),
+            const virgil::crypto::VirgilByteArray& newKeyPairPassword = virgil::crypto::VirgilByteArray());
     /**
      * @brief Generate new key pair with 192-bits NIST curve.
      * @deprecated Use generate() instead.
@@ -235,6 +245,10 @@ public:
      * @brief Provide access to the private key.
      */
     virgil::crypto::VirgilByteArray privateKey() const;
+    /**
+     *
+     */
+
 private:
     virgil::crypto::VirgilByteArray publicKey_;
     virgil::crypto::VirgilByteArray privateKey_;

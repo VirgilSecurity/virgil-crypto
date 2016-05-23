@@ -184,6 +184,19 @@ const VirgilCustomParams& VirgilCipherBase::customParams() const {
     return impl_->contentInfo.customParams;
 }
 
+VirgilByteArray VirgilCipherBase::computeShared(
+        const VirgilByteArray& publicKey, const VirgilByteArray& privateKey,
+        const VirgilByteArray& privateKeyPassword) {
+
+    VirgilAsymmetricCipher publicContext;
+    publicContext.setPublicKey(publicKey);
+
+    VirgilAsymmetricCipher privateContext;
+    privateContext.setPrivateKey(privateKey, privateKeyPassword);
+
+    return VirgilAsymmetricCipher::computeShared(publicContext, privateContext);
+}
+
 VirgilByteArray VirgilCipherBase::tryReadContentInfo(const VirgilByteArray& encryptedData) {
     size_t contentInfoSize = defineContentInfoSize(encryptedData);
     if (contentInfoSize > 0) {

@@ -53,6 +53,22 @@ VirgilKeyPair VirgilKeyPair::generate(VirgilKeyPair::Type type, const VirgilByte
     return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
 }
 
+VirgilKeyPair VirgilKeyPair::generate(
+        const VirgilKeyPair& donorKeyPair, const VirgilByteArray& donorPrivateKeyPassword,
+        const VirgilByteArray& newKeyPairPassword) {
+
+    VirgilAsymmetricCipher donorCipher;
+    if (!donorKeyPair.publicKey_.empty()) {
+        donorCipher.setPublicKey(donorKeyPair.publicKey_);
+    } else  if (!donorKeyPair.privateKey_.empty()) {
+        donorCipher.setPrivateKey(donorKeyPair.privateKey_, donorPrivateKeyPassword);
+    }
+
+    VirgilAsymmetricCipher cipher;
+    cipher.genKeyPair(donorCipher);
+    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(newKeyPairPassword));
+}
+
 VirgilKeyPair VirgilKeyPair::ecNist192(const VirgilByteArray& pwd) {
     return generate(VirgilKeyPair::Type_EC_SECP192R1);
 }

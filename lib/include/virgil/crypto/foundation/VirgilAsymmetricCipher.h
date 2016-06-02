@@ -167,7 +167,7 @@ public:
      * @param other - donor context.
      * @throw VirgilCryptoException - if donor context does not contain own key pair.
      */
-    void genKeyPair(const VirgilAsymmetricCipher& other);
+    void genKeyPairFrom(const VirgilAsymmetricCipher& other);
 
     /**
      * @brief Compute shared secret key on a given contexts.

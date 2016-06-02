@@ -58,4 +58,23 @@
 %include "VirgilByteArray.i"
 
 // Redefine typemap for enums
-%typemap(in) VirgilKeyPair::Type = int;
+%typemap(in)  VirgilKeyPair::Type = int;
+%typemap(out) VirgilKeyPair::Type = int;
+
+%typemap(in)  VirgilPBKDF::Algorithm = int;
+%typemap(out) VirgilPBKDF::Algorithm = int;
+%typemap(in)  VirgilPBKDF::Hash = int;
+%typemap(out) VirgilPBKDF::Hash = int;
+
+%typemap(in)  VirgilTinyCipher::PackageSize = size_t;
+%typemap(out) VirgilTinyCipher::PackageSize = size_t;
+
+#if defined(LIB_LOW_LEVEL_API)
+
+%typemap(in)  VirgilSymmetricCipher::VirgilSymmetricCipherPadding = int;
+%typemap(out) VirgilSymmetricCipher::VirgilSymmetricCipherPadding = int;
+
+%typemap(in)  VirgilCMSContentType = int;
+%typemap(out) VirgilCMSContentType = int;
+
+#endif

@@ -253,7 +253,7 @@ void VirgilTinyCipher::encryptAndSign(
     recipientContext.setPublicKey(recipientPublicKey);
 
     VirgilAsymmetricCipher ephemeralContext;
-    ephemeralContext.genKeyPair(recipientContext);
+    ephemeralContext.genKeyPairFrom(recipientContext);
 
     VirgilByteArray sharedSecret = VirgilAsymmetricCipher::computeShared(recipientContext, ephemeralContext);
 

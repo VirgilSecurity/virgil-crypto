@@ -90,7 +90,8 @@ public:
      * @param donorPrivateKeyPassword - donor private key password, optional if public key is defined.
      * @param newKeyPairPassword - private key password of the new key pair.
      */
-    static VirgilKeyPair generate(const VirgilKeyPair& donorKeyPair,
+    static VirgilKeyPair generateFrom(
+            const VirgilKeyPair& donorKeyPair,
             const virgil::crypto::VirgilByteArray& donorPrivateKeyPassword = virgil::crypto::VirgilByteArray(),
             const virgil::crypto::VirgilByteArray& newKeyPairPassword = virgil::crypto::VirgilByteArray());
     /**

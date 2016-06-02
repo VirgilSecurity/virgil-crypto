@@ -553,7 +553,7 @@ void VirgilAsymmetricCipher::genKeyPair(VirgilKeyPair::Type type) {
     MBEDTLS_ERROR_MESSAGE_HANDLER(errMsg);
 }
 
-void VirgilAsymmetricCipher::genKeyPair(const VirgilAsymmetricCipher& other) {
+void VirgilAsymmetricCipher::genKeyPairFrom(const VirgilAsymmetricCipher& other) {
     other.checkState();
 
     int result = 0;

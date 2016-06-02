@@ -90,7 +90,7 @@ TEST_CASE("Generate ephemeral key pair and compute shared", "[key-pair]") {
     SECTION("with plain private key") {
         VirgilKeyPair donorPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519);
 
-        VirgilKeyPair ephemeralKeyPair = VirgilKeyPair::generate(donorPair);
+        VirgilKeyPair ephemeralKeyPair = VirgilKeyPair::generateFrom(donorPair);
 
         VirgilByteArray sharedEphemeral;
         REQUIRE_NOTHROW(
@@ -108,7 +108,7 @@ TEST_CASE("Generate ephemeral key pair and compute shared", "[key-pair]") {
         VirgilKeyPair donorPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_BP256R1, donorKeyPassword);
 
         VirgilByteArray ephemeralKeyPassword = VirgilByteArrayUtils::stringToBytes("ephemeral password");
-        VirgilKeyPair ephemeralKeyPair = VirgilKeyPair::generate(donorPair, donorKeyPassword, ephemeralKeyPassword);
+        VirgilKeyPair ephemeralKeyPair = VirgilKeyPair::generateFrom(donorPair, donorKeyPassword, ephemeralKeyPassword);
 
         VirgilByteArray sharedEphemeral;
         REQUIRE_NOTHROW(

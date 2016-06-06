@@ -28,149 +28,208 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 
-static const unsigned char kPackageCount_Max = 0x0F;
+static const unsigned char kPackageCount_Max = 0x0F; ///< Defines maximum package count
 
-typedef std::map<size_t, VirgilByteArray> PackageMap;
+typedef std::map<size_t, VirgilByteArray> PackageMap; ///< { PackageNo -> PackageData }
 
-// TODO: Document helper functions and move them to the end of the file
+/**
+ *
+ * Master package:
+ *
+ *     |--------|----------------------|-------------|---------|
+ *     | header | ephemeral public key | sender sign | payload |
+ *     |--------|----------------------|-------------|---------|
+ *
+ * Master package legend:
+ *
+ *     * header - master package header;
+ *     * ephemeral public key - public key with eliminated crypto agility;
+ *     * sender sign - sign of the encrypted data that was made with sender's private key;
+ *     * payload - chunk of the encrypted data.
+ *
+ * Master package header - 1 byte of the packed data:
+ *
+ *     |-----------|-----------|-----------------|---------------|
+ *     | is master | is signed | public key code | package count |
+ *     |-----------|-----------|-----------------|---------------|
+ *     |0         0|1         1|2               3|4             7|
+ *     |-----------|-----------|-----------------|---------------|
+ *     |   1 bit   |   1 bit   |     2 bits      |    4 bits     |
+ *     |-----------|-----------|-----------------|---------------|
+ *
+ * Master package header legend:
+ *
+ *     * is master - defines that given package is a master package: 0 - data package, 1 - master package;
+ *     * is signed - defines that given package contains encrypted data sign: 0 - does not contain, 1 - contains;
+ *     * public key code:
+ *         - 00 - Curve25519;
+ *         - 01 - not defined / not supported;
+ *         - 10 - not defined / not supported;
+ *         - 11 - not defined / not supported, possible 'extended package' meaning will be used in the future.
+ *     * package count - total package count (including master package).
+ *
+ *
+ * Data package:
+ *
+ *     |--------|----------------------------------------------|
+ *     | header | payload                                      |
+ *     |--------|----------------------------------------------|
+ *
+ * Data package legend:
+ *
+ *     * header - data package header;
+ *     * payload - chunk of the encrypted data.
+ *
+ * Data package header - 1 byte of the packed data:
+ *
+ *     |-----------|----------------------------|----------------|
+ *     | is master |           unused           | package number |
+ *     |-----------|----------------------------|----------------|
+ *     |0         0|1                          3|4              7|
+ *     |-----------|----------------------------|----------------|
+ *     |   1 bit   |           3 bits           |     4 bits     |
+ *     |-----------|----------------------------|----------------|
+ *
+ * Data package header legend:
+ *
+ *     * is master - defines that given package is a master package: 0 - data package, 1 - master package;
+ *     * unused - unused bits, correspond information stored in the master package.
+ *     * package number - index number of the current package.
+ */
 
-static VirgilKeyPair::Type pk_type_from_code(unsigned char code) {
-    switch (code) {
-        case 0x00:
-            return VirgilKeyPair::Type_EC_Curve25519;
-        default:
-            throw VirgilCryptoException("VirgilTinyCipher: unsupported key type was given");
-    }
-}
+/**
+ * @brief Transform given authentication code of AEAD ciphers to the input vector of given length.
+ *
+ * @param data - additional authenticated data
+ * @param ivSize - length of the input vector to be derived
+ *
+ * @return Derived input vector
+ */
+static VirgilByteArray auth_to_iv(const VirgilByteArray& data, size_t ivSize);
 
-static unsigned char pk_type_to_code(VirgilKeyPair::Type pk_type) {
-    switch (pk_type) {
-        case VirgilKeyPair::Type_EC_Curve25519:
-            return 0x00;
-        default:
-            throw VirgilCryptoException("VirgilTinyCipher: unsupported key was given");
-    }
-}
+/**
+ * @brief Return package count based on the given parameters.
+ *
+ * @param dataSize - size of the data to be packed
+ * @param packageSize - maximum size of the one package
+ * @param publicKeySize - size of the ephemeral public key to be packed
+ * @param signSize - size of the ephemeral public key to be packed
+ *
+ * @return Calculated package count.
+ */
+static size_t calc_package_count(size_t dataSize, size_t packageSize, size_t publicKeySize, size_t signSize);
 
-static size_t public_key_get_length(VirgilKeyPair::Type pk_type) {
-    switch (pk_type) {
-        case VirgilKeyPair::Type_EC_Curve25519:
-            return 32;
-        default:
-            return 0;
-    }
-}
+/**
+ * @brief Return payload of the master package.
+ *
+ * Master package is a special package that contains some service data in conjunction with user payload,
+ *     as so user payload has limited length, that should be calculated dynamically.
+ *
+ * @param packageSize - maximum size of the one package
+ * @param publicKeySize - size of the ephemeral public key to be packed
+ * @param signSize - size of the ephemeral public key to be packed
+ *
+ * @return Payload length in the master package.
+ */
+static size_t calc_master_package_payload_size(size_t packageSize, size_t publicKeySize, size_t signSize);
 
-static size_t public_key_get_length(unsigned char pk_type) {
-    return public_key_get_length(pk_type_from_code(pk_type));
-}
+/**
+ * @brief Produce additional authenticated data for AEAD cipher.
+ *
+ * @param packageCount- package count
+ * @param ephemeralContext - asymmetric cipher context that handles ephemeral public key
+ * @param isSigned - defines that package is signed
+ */
+static VirgilByteArray
+        make_auth_data(size_t packageCount, const VirgilAsymmetricCipher& ephemeralContext, bool isSigned);
 
-static size_t public_key_get_sign_length(VirgilKeyPair::Type pk_type) {
-    switch (pk_type) {
-        case VirgilKeyPair::Type_EC_Curve25519:
-            return 64;
-        default:
-            return 0;
-    }
-}
-
-static size_t public_key_get_sign_length(unsigned char pk_type) {
-    return public_key_get_sign_length(pk_type_from_code(pk_type));
-}
-
-static unsigned char write_package_header(
-        bool is_initial, bool is_signed, unsigned char pk_type, size_t package_count) {
-    if (package_count > kPackageCount_Max) {
-        throw std::logic_error("VirgilTinyCipher: package count / package number greater then maximum allowed (15)");
-    }
-
-    unsigned char header = 0x0;
-    if (is_initial) {
-        header |= 0x80; // Set 1-st bit
-    };
-    if (is_signed) {
-        header |= 0x40; // Set 2-nd bit
-    }
-    header |= (pk_type & 0x03) << 4; // Set bits: 3-4
-    header |= (package_count & 0x0F); // Set bits: 5-8
-
-    return header;
-}
-
+/**
+ * @brief Read header from the package and parse it.
+ *
+ * @param[inout] packageIt - current parse position in the package
+ * @param[in] end - end of the package
+ * @param[out] isMaster - defines that package is master
+ * @param[out] isSigned - defines that package is signed
+ * @param[out] pkCode - ephemeral public key code
+ * @param[out] packageCount - package count
+ */
 static void read_package_header(
-        VirgilByteArray::const_iterator& packageIt, VirgilByteArray::const_iterator end,
-        bool* is_initial, bool* is_signed, unsigned char* pk_type, size_t* package_count) {
-    if (packageIt == end) {
-        throw VirgilCryptoException("VirgilTinyCipher: package is malformed (empty package)");
-    }
-    unsigned char header = *packageIt++;
-    *is_initial = (header & 0x80) != 0;
-    *is_signed = (header & 0x40) != 0;
-    *pk_type = (header >> 4) & (unsigned char) 0x03;
-    *package_count = header & (unsigned char) 0x0F;
-}
+        VirgilByteArray::const_iterator& packageIt, VirgilByteArray::const_iterator end, bool* isMaster,
+        bool* isSigned, unsigned char* pkCode, size_t* packageCount);
 
-static VirgilByteArray read_package_ephemeral_public_key(
-        VirgilByteArray::const_iterator& packageIt, VirgilByteArray::const_iterator end, unsigned char pk_type) {
+/**
+ * @brief Read sign bits from the package.
+ *
+ * @param packageIt - current parse position in the package
+ * @param end - end of the package
+ * @param signLength - expected sign length
+ */
+static VirgilByteArray read_package_sign_bits
+        (VirgilByteArray::const_iterator& packageIt, VirgilByteArray::const_iterator end, size_t signLength);
 
-    VirgilAsymmetricCipher ephemeralPublicKeyContext;
-    ephemeralPublicKeyContext.setKeyType(pk_type_from_code(pk_type));
+/**
+ * @brief Read ephemeral public key from the package.
+ *
+ * @param packageIt - current parse position in the package
+ * @param end - end of the package
+ * @param pkCode - ephemeral public key code
+ */
+static VirgilByteArray read_package_ephemeral_public_key
+        (VirgilByteArray::const_iterator& packageIt, VirgilByteArray::const_iterator end, unsigned char pkCode);
 
-    VirgilByteArray ephemeralPublicKeyBits;
-    while (packageIt != end && ephemeralPublicKeyBits.size() < public_key_get_length(pk_type)) {
-        ephemeralPublicKeyBits.push_back(*packageIt++);
-    }
+/**
+ * @brief Pack given parameters to the package header.
+ *
+ * @param isMaster - defines that package is master
+ * @param isSigned - defines that package is signed
+ * @param pkCode - ephemeral public key code
+ * @param packageCount - package count
+ *
+ * @return Packed header
+ */
+static unsigned char write_package_header(bool isMaster, bool isSigned, unsigned char pkCode, size_t packageCount);
 
-    if (ephemeralPublicKeyBits.size() != public_key_get_length(pk_type)) {
-        throw VirgilCryptoException("VirgilTinyCipher: package is malformed (ephemeral public key is corrupted)");
-    }
-    ephemeralPublicKeyContext.setPublicKeyBits(ephemeralPublicKeyBits);
+/**
+ * @brief Return sign size according to the given public key code.
+ *
+ * @param pkCode - public key code
+ * @return Sign length in bytes
+ */
+static size_t get_sign_size(unsigned char pkCode);
 
-    return ephemeralPublicKeyContext.exportPublicKeyToDER();
-}
+/**
+ * @brief Return sign size according to the given public key type.
+ *
+ * @param pkType - public key type
+ * @return Sign length in bytes
+ */
+static size_t get_sign_size(VirgilKeyPair::Type pkType);
 
-static VirgilByteArray read_package_sign_bits(
-        VirgilByteArray::const_iterator& packageIt, VirgilByteArray::const_iterator end, size_t signLength) {
-    VirgilByteArray signBits;
-    while (packageIt != end && signBits.size() < signLength) {
-        signBits.push_back(*packageIt++);
-    }
-    if (signBits.size() != signLength) {
-        throw VirgilCryptoException("VirgilTinyCipher: package is malformed (sign is corrupted)");
-    }
-    return signBits;
-}
+/**
+ * @brief Return public key size according to the given public key code.
+ *
+ * @param pkCode - public key code
+ * @return Public key size in bytes
+ */
+static size_t get_public_key_size(unsigned char pkCode);
 
-VirgilByteArray make_auth_data(size_t packageCount, const VirgilAsymmetricCipher& ephemeralContext, bool isSigned) {
-    if (packageCount > kPackageCount_Max) {
-        throw std::logic_error("VirgilTinyCipher: package count greater then maximum allowed (15)");
-    }
-    VirgilByteArray authData;
-    const VirgilByteArray ephemeralKey = ephemeralContext.getPublicKeyBits();
-    authData.push_back(
-            write_package_header(true, isSigned, pk_type_to_code(ephemeralContext.getKeyType()), packageCount));
-    authData.insert(authData.end(), ephemeralKey.begin(), ephemeralKey.end());
-    return authData;
-}
+/**
+ * @brief Return public key size according to the given public key type.
+ *
+ * @param pkType - public key type
+ * @return Public key size in bytes
+ */
+static size_t get_public_key_size(VirgilKeyPair::Type pkType);
 
-static size_t calc_master_package_payload_size(size_t packageSize, size_t publicKeySize, size_t signSize) {
-    const size_t masterPackageHeaderSize = 1 + publicKeySize + signSize;
-    const size_t masterPackagePayloadSize = packageSize - masterPackageHeaderSize;
-    return masterPackagePayloadSize;
-}
+/**
+ * @brief Convert public key type to the public key code.
+ */
+static unsigned char pk_type_to_code(VirgilKeyPair::Type pkType);
 
-static size_t calc_package_count(size_t dataSize, size_t packageSize, size_t publicKeySize, size_t signSize) {
-    const size_t masterPackagePayloadSize = calc_master_package_payload_size(packageSize, publicKeySize, signSize);
-    if (dataSize < masterPackagePayloadSize) {
-        return 1;
-    } else {
-        return 1 + (size_t) (size_t) std::ceil(double(dataSize - masterPackagePayloadSize) / (packageSize - 1));
-    }
-}
-
-static VirgilByteArray auth_to_iv(const VirgilByteArray& data, size_t ivSize) {
-    return VirgilKDF::kdf2().derive(data, ivSize);
-}
+/**
+ * @brief Convert public key code to the public key type.
+ */
+static VirgilKeyPair::Type pk_type_from_code(unsigned char pkCode);
 
 
 namespace virgil { namespace crypto {
@@ -228,7 +287,7 @@ void VirgilTinyCipher::addPackage(const VirgilByteArray& package) {
         impl_->ephemeralPublicKey = read_package_ephemeral_public_key(packageIt, package.end(), pk_type);
         if (is_signed) {
             impl_->packageSignBits =
-                    read_package_sign_bits(packageIt, package.end(), public_key_get_sign_length(pk_type));
+                    read_package_sign_bits(packageIt, package.end(), get_sign_size(pk_type));
         }
         package_no = 0; // number of master package is 0
     }
@@ -260,10 +319,10 @@ void VirgilTinyCipher::encryptAndSign(
     VirgilSymmetricCipher sharedCipher = VirgilSymmetricCipher::aes256();
 
     const bool doSign = !senderPrivateKey.empty();
-    size_t signLength = doSign ? public_key_get_sign_length(ephemeralContext.getKeyType()) : 0;
+    size_t signLength = doSign ? get_sign_size(ephemeralContext.getKeyType()) : 0;
 
     const size_t packageCount = calc_package_count(data.size() + sharedCipher.authTagLength(), impl_->packageSize,
-            public_key_get_length(recipientContext.getKeyType()), signLength);
+            get_public_key_size(recipientContext.getKeyType()), signLength);
 
     if (packageCount > kPackageCount_Max) {
         throw VirgilCryptoException("VirgilTinyCipher: given data is too big to be encrypted");
@@ -397,4 +456,143 @@ VirgilByteArray VirgilTinyCipher::verifyAndDecrypt(
     VirgilByteArrayUtils::zeroize(authData);
 
     return decryptedData;
+}
+
+static VirgilKeyPair::Type pk_type_from_code(unsigned char pkCode) {
+    switch (pkCode) {
+        case 0x00:
+            return VirgilKeyPair::Type_EC_Curve25519;
+        default:
+            throw VirgilCryptoException("VirgilTinyCipher: unsupported key type was given");
+    }
+}
+
+static unsigned char pk_type_to_code(VirgilKeyPair::Type pkType) {
+    switch (pkType) {
+        case VirgilKeyPair::Type_EC_Curve25519:
+            return 0x00;
+        default:
+            throw VirgilCryptoException("VirgilTinyCipher: unsupported key was given");
+    }
+}
+
+static size_t get_public_key_size(VirgilKeyPair::Type pkType) {
+    switch (pkType) {
+        case VirgilKeyPair::Type_EC_Curve25519:
+            return 32;
+        default:
+            return 0;
+    }
+}
+
+static size_t get_public_key_size(unsigned char pkCode) {
+    return get_public_key_size(pk_type_from_code(pkCode));
+}
+
+static size_t get_sign_size(VirgilKeyPair::Type pkType) {
+    switch (pkType) {
+        case VirgilKeyPair::Type_EC_Curve25519:
+            return 64;
+        default:
+            return 0;
+    }
+}
+
+static size_t get_sign_size(unsigned char pkCode) {
+    return get_sign_size(pk_type_from_code(pkCode));
+}
+
+static unsigned char write_package_header(
+        bool isMaster, bool isSigned, unsigned char pkCode, size_t packageCount) {
+    if (packageCount > kPackageCount_Max) {
+        throw std::logic_error("VirgilTinyCipher: package count / package number greater then maximum allowed (15)");
+    }
+
+    unsigned char header = 0x0;
+    if (isMaster) {
+        header |= 0x80; // Set 1-st bit
+    };
+    if (isSigned) {
+        header |= 0x40; // Set 2-nd bit
+    }
+    header |= (pkCode & 0x03) << 4; // Set bits: 3-4
+    header |= (packageCount & 0x0F); // Set bits: 5-8
+
+    return header;
+}
+
+static void read_package_header(
+        VirgilByteArray::const_iterator& packageIt, VirgilByteArray::const_iterator end,
+        bool* isMaster, bool* isSigned, unsigned char* pkCode, size_t* packageCount) {
+    if (packageIt == end) {
+        throw VirgilCryptoException("VirgilTinyCipher: package is malformed (empty package)");
+    }
+    unsigned char header = *packageIt++;
+    *isMaster = (header & 0x80) != 0;
+    *isSigned = (header & 0x40) != 0;
+    *pkCode = (header >> 4) & (unsigned char) 0x03;
+    *packageCount = header & (unsigned char) 0x0F;
+}
+
+static VirgilByteArray read_package_ephemeral_public_key(
+        VirgilByteArray::const_iterator& packageIt, VirgilByteArray::const_iterator end, unsigned char pkCode) {
+
+    VirgilAsymmetricCipher ephemeralPublicKeyContext;
+    ephemeralPublicKeyContext.setKeyType(pk_type_from_code(pkCode));
+
+    VirgilByteArray ephemeralPublicKeyBits;
+    while (packageIt != end && ephemeralPublicKeyBits.size() < get_public_key_size(pkCode)) {
+        ephemeralPublicKeyBits.push_back(*packageIt++);
+    }
+
+    if (ephemeralPublicKeyBits.size() != get_public_key_size(pkCode)) {
+        throw VirgilCryptoException("VirgilTinyCipher: package is malformed (ephemeral public key is corrupted)");
+    }
+    ephemeralPublicKeyContext.setPublicKeyBits(ephemeralPublicKeyBits);
+
+    return ephemeralPublicKeyContext.exportPublicKeyToDER();
+}
+
+static VirgilByteArray read_package_sign_bits(
+        VirgilByteArray::const_iterator& packageIt, VirgilByteArray::const_iterator end, size_t signLength) {
+    VirgilByteArray signBits;
+    while (packageIt != end && signBits.size() < signLength) {
+        signBits.push_back(*packageIt++);
+    }
+    if (signBits.size() != signLength) {
+        throw VirgilCryptoException("VirgilTinyCipher: package is malformed (sign is corrupted)");
+    }
+    return signBits;
+}
+
+static VirgilByteArray make_auth_data(
+        size_t packageCount, const VirgilAsymmetricCipher& ephemeralContext, bool isSigned) {
+    if (packageCount > kPackageCount_Max) {
+        throw std::logic_error("VirgilTinyCipher: package count greater then maximum allowed (15)");
+    }
+    VirgilByteArray authData;
+    const VirgilByteArray ephemeralKey = ephemeralContext.getPublicKeyBits();
+    authData.push_back(
+            write_package_header(true, isSigned, pk_type_to_code(ephemeralContext.getKeyType()), packageCount));
+    authData.insert(authData.end(), ephemeralKey.begin(), ephemeralKey.end());
+    return authData;
+}
+
+static size_t calc_master_package_payload_size(size_t packageSize, size_t publicKeySize, size_t signSize) {
+    const size_t masterPackageHeaderSize = 1 + publicKeySize + signSize;
+    const size_t masterPackagePayloadSize = packageSize - masterPackageHeaderSize;
+    return masterPackagePayloadSize;
+}
+
+static size_t calc_package_count(size_t dataSize, size_t packageSize, size_t publicKeySize, size_t signSize) {
+    const size_t masterPackagePayloadSize = calc_master_package_payload_size(packageSize, publicKeySize, signSize);
+    if (dataSize < masterPackagePayloadSize) {
+        return 1;
+    } else {
+        return 1 + (size_t) (size_t) std::ceil(double(dataSize - masterPackagePayloadSize) / (packageSize - 1));
+    }
+}
+
+static VirgilByteArray auth_to_iv(const VirgilByteArray& data, size_t ivSize) {
+    return VirgilKDF::kdf2().derive(data, ivSize);
 }

@@ -62,9 +62,13 @@ public:
      */
     ///@{
     static VirgilHash md5();
+
     static VirgilHash sha256();
+
     static VirgilHash sha384();
+
     static VirgilHash sha512();
+
     static VirgilHash withName(const virgil::crypto::VirgilByteArray& name);
     ///@}
     /**
@@ -77,6 +81,7 @@ public:
      *     i.e. VirgilHash hash = VirgilHash().fromAsn1(asn1);
      */
     VirgilHash();
+
     /**
      * @brief Polymorphic destructor.
      */
@@ -95,6 +100,7 @@ public:
      * @return Name of the hash function.
      */
     std::string name() const;
+
     /**
      * @brief Return underlying hash type
      * @note Used for internal purposes only
@@ -129,6 +135,7 @@ public:
      * @brief Initialize hashing for the new message hash.
      */
     void start();
+
     /**
      * @brief Update / process message hash.
      *
@@ -139,6 +146,7 @@ public:
      * @see @link start() @endlink
      */
     void update(const virgil::crypto::VirgilByteArray& bytes);
+
     /**
      * @brief Return final message hash.
      * @return Message hash processed by series of @link update() @endlink method.
@@ -162,7 +170,8 @@ public:
      * @param bytes - message to be hashed.
      * @return HMAC hash of the given message.
      */
-    virgil::crypto::VirgilByteArray hmac(const virgil::crypto::VirgilByteArray& key,
+    virgil::crypto::VirgilByteArray hmac(
+            const virgil::crypto::VirgilByteArray& key,
             const virgil::crypto::VirgilByteArray& bytes) const;
     ///@}
 
@@ -178,10 +187,12 @@ public:
      * @param key - secret key.
      */
     void hmacStart(const virgil::crypto::VirgilByteArray& key);
+
     /**
      * @brief Reset HMAC hashing for the new message hash.
      */
     void hmacReset();
+
     /**
      * @brief Update / process message HMAC hash.
      *
@@ -193,6 +204,7 @@ public:
      * @see @link hmacReset() @endlink
      */
     void hmacUpdate(const virgil::crypto::VirgilByteArray& bytes);
+
     /**
      * @brief Return final message HMAC hash.
      * @return Message HMAC hash processed by series of @link hmacUpdate() @endlink method.
@@ -210,22 +222,28 @@ public:
      */
     ///@{
     VirgilHash(const VirgilHash& other);
+
     VirgilHash& operator=(const VirgilHash& rhs);
     ///@}
     /**
      * @name VirgilAsn1Compatible implementation
      */
     ///@{
-    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+    virtual size_t asn1Write(
+            virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
             size_t childWrittenBytes = 0) const;
+
     virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
 private:
     explicit VirgilHash(int type);
-    explicit VirgilHash(const char * name);
+
+    explicit VirgilHash(const char* name);
+
     void checkState() const;
+
 private:
-    VirgilHashImpl *impl_;
+    VirgilHashImpl* impl_;
 };
 
 }}}

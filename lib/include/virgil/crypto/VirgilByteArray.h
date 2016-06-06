@@ -73,12 +73,14 @@ namespace virgil { namespace crypto {
 inline VirgilByteArray str2bytes(const std::string& str) {
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(str.data(), str.size());
 }
+
 /**
  * @brief Represent given byte array as string.
  */
 inline std::string bytes2str(const VirgilByteArray& array) {
-    return std::string(reinterpret_cast<const char *>(array.data()), array.size());
+    return std::string(reinterpret_cast<const char*>(array.data()), array.size());
 }
+
 /**
  * @brief Translate given HEX string to the byte array.
  * @param hexStr - HEX string.
@@ -91,10 +93,11 @@ inline VirgilByteArray hex2bytes(const std::string hexStr) {
     while (istr.read(hexChars, 2)) {
         int byte = 0;
         std::istringstream(hexChars) >> std::hex >> byte;
-        result.push_back((unsigned char)byte);
+        result.push_back((unsigned char) byte);
     }
     return result;
 }
+
 /**
  * @brief Translate given byte array to the HEX string.
  * @param array - byte array.
@@ -105,8 +108,8 @@ inline VirgilByteArray hex2bytes(const std::string hexStr) {
 inline std::string bytes2hex(const VirgilByteArray& array, bool formatted = false) {
     std::ostringstream hexStream;
     hexStream << std::setfill('0');
-    for(size_t i = 0; i < array.size(); ++i) {
-        hexStream << std::hex << std::setw(2) << (int)array[i];
+    for (size_t i = 0; i < array.size(); ++i) {
+        hexStream << std::hex << std::setw(2) << (int) array[i];
         if (formatted) {
             hexStream << (((i + 1) % 16 == 0) ? "\n" : " ");
         }
@@ -122,16 +125,17 @@ inline std::string bytes2hex(const VirgilByteArray& array, bool formatted = fals
  */
 inline void bytes_zeroize(VirgilByteArray& array) {
     size_t n = array.size();
-    volatile unsigned char *p = const_cast<unsigned char *>(array.data());
-    while (n--) *p++ = 0;
+    volatile unsigned char* p = const_cast<unsigned char*>(array.data());
+    while (n--) { *p++ = 0; }
 }
+
 /**
  * @brief Make all chars zero.
  */
 inline void string_zeroize(std::string& str) {
     size_t n = str.size();
-    volatile char *p = const_cast<char *>(str.c_str());
-    while (n--) *p++ = '\0';
+    volatile char* p = const_cast<char*>(str.c_str());
+    while (n--) { *p++ = '\0'; }
 }
 ///@}
 

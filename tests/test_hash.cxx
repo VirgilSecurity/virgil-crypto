@@ -41,8 +41,6 @@
 
 #include "catch.hpp"
 
-#include <string>
-
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/VirgilHash.h>
 
@@ -99,21 +97,21 @@ TEST_CASE("SHA-384", "[hash]") {
         VirgilByteArray testVector = str2bytes("");
         VirgilByteArray testVectorHash = hex2bytes(
                 "38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da"
-                "274edebfe76f65fbd51ad2f14898b95b");
+                        "274edebfe76f65fbd51ad2f14898b95b");
         REQUIRE(hash.hash(testVector) == testVectorHash);
     }
     SECTION("Test vector NIST CAVS #2") {
         VirgilByteArray testVector = hex2bytes("ab");
         VirgilByteArray testVectorHash = hex2bytes(
                 "fb94d5be118865f6fcbc978b825da82cff188faec2f66cb84b2537d74b4938469"
-                "854b0ca89e66fa2e182834736629f3d");
+                        "854b0ca89e66fa2e182834736629f3d");
         REQUIRE(hash.hash(testVector) == testVectorHash);
     }
     SECTION("Test vector NIST CAVS #3") {
         VirgilByteArray testVector = hex2bytes("7c27");
         VirgilByteArray testVectorHash = hex2bytes(
                 "3d80be467df86d63abb9ea1d3f9cb39cd19890e7f2c53a6200bedc5006842b35e"
-                "820dc4e0ca90ca9b97ab23ef07080fc");
+                        "820dc4e0ca90ca9b97ab23ef07080fc");
         REQUIRE(hash.hash(testVector) == testVectorHash);
     }
 }
@@ -124,21 +122,21 @@ TEST_CASE("SHA-512", "[hash]") {
         VirgilByteArray testVector = str2bytes("");
         VirgilByteArray testVectorHash = hex2bytes(
                 "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce"
-                "47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e");
+                        "47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e");
         REQUIRE(hash.hash(testVector) == testVectorHash);
     }
     SECTION("Test vector NIST CAVS #2") {
         VirgilByteArray testVector = hex2bytes("8f");
         VirgilByteArray testVectorHash = hex2bytes(
                 "e4cd2d19931b5aad9c920f45f56f6ce34e3d38c6d319a6e11d0588ab8b838576"
-                "d6ce6d68eea7c830de66e2bd96458bfa7aafbcbec981d4ed040498c3dd95f22a");
+                        "d6ce6d68eea7c830de66e2bd96458bfa7aafbcbec981d4ed040498c3dd95f22a");
         REQUIRE(hash.hash(testVector) == testVectorHash);
     }
     SECTION("Test vector NIST CAVS #3") {
         VirgilByteArray testVector = hex2bytes("e724");
         VirgilByteArray testVectorHash = hex2bytes(
                 "7dbb520221a70287b23dbcf62bfc1b73136d858e86266732a7fffa875ecaa2c1"
-                "b8f673b5c065d360c563a7b9539349f5f59bef8c0c593f9587e3cd50bb26a231");
+                        "b8f673b5c065d360c563a7b9539349f5f59bef8c0c593f9587e3cd50bb26a231");
         REQUIRE(hash.hash(testVector) == testVectorHash);
     }
 }

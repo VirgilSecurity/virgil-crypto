@@ -41,8 +41,6 @@
 
 #include "catch.hpp"
 
-#include <string>
-
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilSigner.h>
 #include <virgil/crypto/VirgilKeyPair.h>

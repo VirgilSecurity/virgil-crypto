@@ -52,22 +52,27 @@ public:
      *
      */
     static size_t asNumber();
+
     /**
      * Return the version number as string.
      */
     static std::string asString();
+
     /**
      * Return the major version number.
      */
     static size_t majorVersion();
+
     /**
      * Return the minor version number.
      */
-    static size_t  minorVersion();
+    static size_t minorVersion();
+
     /**
      * Return the minor version number.
      */
     static size_t patchVersion();
+
     /**
      * Return version full name.
      *

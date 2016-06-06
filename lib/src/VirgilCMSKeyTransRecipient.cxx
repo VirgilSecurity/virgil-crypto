@@ -36,11 +36,7 @@
 
 #include <virgil/crypto/foundation/cms/VirgilCMSKeyTransRecipient.h>
 
-#include <cstddef>
-#include <string>
-
 #include <virgil/crypto/VirgilCryptoException.h>
-#include <virgil/crypto/foundation/priv/VirgilOID.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
@@ -81,7 +77,7 @@ size_t VirgilCMSKeyTransRecipient::asn1Write(VirgilAsn1Writer& asn1Writer, size_
 }
 
 void VirgilCMSKeyTransRecipient::asn1Read(VirgilAsn1Reader& asn1Reader) {
-    (void)asn1Reader.readSequence();
+    (void) asn1Reader.readSequence();
     int version = asn1Reader.readInteger();
     if (version != kCMS_KeyTransRecipientVersion) {
         throw VirgilCryptoException(std::string("VirgilCMSKeyTransRecipient: ") +

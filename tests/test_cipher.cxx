@@ -41,8 +41,6 @@
 
 #include "catch.hpp"
 
-#include <string>
-
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCipher.h>
 #include <virgil/crypto/VirgilKeyPair.h>
@@ -67,10 +65,10 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
         VirgilByteArray encryptedData = cipher.encrypt(testData, true);
         VirgilByteArray decryptedData;
         REQUIRE_THROWS(
-            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey())
+                decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey())
         );
         REQUIRE_NOTHROW(
-            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
+                decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
         );
         REQUIRE(testData == decryptedData);
     }
@@ -93,7 +91,7 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
 
         VirgilByteArray decryptedData;
         REQUIRE_NOTHROW(
-            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
+                decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
         );
         REQUIRE(testData == decryptedData);
 
@@ -108,15 +106,15 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
         REQUIRE(contentInfo.size() > 0);
 
         REQUIRE_NOTHROW(
-            cipher.setContentInfo(contentInfo)
+                cipher.setContentInfo(contentInfo)
         );
 
         VirgilByteArray decryptedData;
         REQUIRE_THROWS(
-            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey())
+                decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey())
         );
         REQUIRE_NOTHROW(
-            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
+                decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
         );
         REQUIRE(testData == decryptedData);
     }
@@ -138,12 +136,12 @@ TEST_CASE("encrypt and decrypt with generated keys", "[cipher]") {
         REQUIRE(contentInfo.size() > 0);
 
         REQUIRE_NOTHROW(
-            cipher.setContentInfo(contentInfo)
+                cipher.setContentInfo(contentInfo)
         );
 
         VirgilByteArray decryptedData;
         REQUIRE_NOTHROW(
-            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
+                decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
         );
         REQUIRE(testData == decryptedData);
 
@@ -202,10 +200,10 @@ TEST_CASE("encrypt and decrypt with password", "[cipher]") {
         VirgilByteArray encryptedData = cipher.encrypt(testData, true);
         VirgilByteArray decryptedData;
         REQUIRE_THROWS(
-            decryptedData = cipher.decryptWithPassword(encryptedData, wrongPassword)
+                decryptedData = cipher.decryptWithPassword(encryptedData, wrongPassword)
         );
         REQUIRE_NOTHROW(
-            decryptedData = cipher.decryptWithPassword(encryptedData, password)
+                decryptedData = cipher.decryptWithPassword(encryptedData, password)
         );
         REQUIRE(testData == decryptedData);
     }
@@ -224,10 +222,10 @@ TEST_CASE("encrypt and decrypt RSA-3072", "[cipher-rsa]") {
         VirgilByteArray encryptedData = cipher.encrypt(testData, true);
         VirgilByteArray decryptedData;
         REQUIRE_THROWS(
-            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey())
+                decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey())
         );
         REQUIRE_NOTHROW(
-            decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
+                decryptedData = cipher.decryptWithKey(encryptedData, recipientId, keyPair.privateKey(), password)
         );
         REQUIRE(testData == decryptedData);
     }
@@ -285,7 +283,7 @@ TEST_CASE("check recipient existance", "[cipher]") {
     }
 
     SECTION("ContentInfo context") {
-        (void)cipher.encrypt(VirgilByteArray());
+        (void) cipher.encrypt(VirgilByteArray());
 
         VirgilCipher restoredCipher;
         restoredCipher.setContentInfo(cipher.getContentInfo());

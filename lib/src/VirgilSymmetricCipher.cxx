@@ -39,10 +39,8 @@
 #include <mbedtls/cipher.h>
 #include <mbedtls/oid.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/PolarsslException.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 #include <virgil/crypto/foundation/priv/VirgilTagFilter.h>
@@ -88,22 +86,22 @@ public:
 private:
     void init_(mbedtls_cipher_type_t cipherType) {
         ctx = new mbedtls_cipher_context_t();
-        ::mbedtls_cipher_init(ctx);
+        mbedtls_cipher_init(ctx);
         type = cipherType;
         if (cipherType == MBEDTLS_CIPHER_NONE) {
             return;
         }
-        const mbedtls_cipher_info_t * info = mbedtls_cipher_info_from_type(cipherType);
+        const mbedtls_cipher_info_t* info = mbedtls_cipher_info_from_type(cipherType);
         MBEDTLS_ERROR_HANDLER_DISPOSE(
-            ::mbedtls_cipher_setup(ctx, info),
-            free_()
+                mbedtls_cipher_setup(ctx, info),
+                free_()
         );
     }
 
     void free_() throw() {
         type = MBEDTLS_CIPHER_NONE;
         if (ctx) {
-            ::mbedtls_cipher_free(ctx);
+            mbedtls_cipher_free(ctx);
             delete ctx;
             ctx = 0;
         }
@@ -111,7 +109,7 @@ private:
 
 public:
     mbedtls_cipher_type_t type;
-    mbedtls_cipher_context_t *ctx;
+    mbedtls_cipher_context_t* ctx;
     VirgilByteArray iv;
     VirgilByteArray authData;
     VirgilTagFilter tagFilter;
@@ -135,7 +133,7 @@ VirgilSymmetricCipher& VirgilSymmetricCipher::operator=(const VirgilSymmetricCip
     if (this == &rhs) {
         return *this;
     }
-    VirgilSymmetricCipherImpl *newImpl = new VirgilSymmetricCipherImpl(rhs.impl_->type);
+    VirgilSymmetricCipherImpl* newImpl = new VirgilSymmetricCipherImpl(rhs.impl_->type);
     if (impl_) {
         delete impl_;
     }
@@ -156,22 +154,22 @@ VirgilSymmetricCipher VirgilSymmetricCipher::aes256() {
 
 std::string VirgilSymmetricCipher::name() const {
     checkState();
-    return ::mbedtls_cipher_get_name(impl_->ctx);
+    return mbedtls_cipher_get_name(impl_->ctx);
 }
 
 size_t VirgilSymmetricCipher::blockSize() const {
     checkState();
-    return ::mbedtls_cipher_get_block_size(impl_->ctx);
+    return mbedtls_cipher_get_block_size(impl_->ctx);
 }
 
 size_t VirgilSymmetricCipher::ivSize() const {
     checkState();
-    return ::mbedtls_cipher_get_iv_size(impl_->ctx);
+    return mbedtls_cipher_get_iv_size(impl_->ctx);
 }
 
 size_t VirgilSymmetricCipher::keySize() const {
     checkState();
-    return ::mbedtls_cipher_get_key_bitlen(impl_->ctx);
+    return mbedtls_cipher_get_key_bitlen(impl_->ctx);
 }
 
 size_t VirgilSymmetricCipher::keyLength() const {
@@ -180,7 +178,7 @@ size_t VirgilSymmetricCipher::keyLength() const {
 
 size_t VirgilSymmetricCipher::authTagLength() const {
     checkState();
-    switch (::mbedtls_cipher_get_cipher_mode(impl_->ctx)) {
+    switch (mbedtls_cipher_get_cipher_mode(impl_->ctx)) {
         case MBEDTLS_MODE_GCM:
             return 16;
         default:
@@ -190,35 +188,35 @@ size_t VirgilSymmetricCipher::authTagLength() const {
 
 bool VirgilSymmetricCipher::isEncryptionMode() const {
     checkState();
-    return ::mbedtls_cipher_get_operation(impl_->ctx) == MBEDTLS_ENCRYPT;
+    return mbedtls_cipher_get_operation(impl_->ctx) == MBEDTLS_ENCRYPT;
 }
 
 bool VirgilSymmetricCipher::isDecryptionMode() const {
     checkState();
-    return ::mbedtls_cipher_get_operation(impl_->ctx) == MBEDTLS_DECRYPT;
+    return mbedtls_cipher_get_operation(impl_->ctx) == MBEDTLS_DECRYPT;
 }
 
 bool VirgilSymmetricCipher::isAuthMode() const {
     checkState();
-    return ::mbedtls_cipher_get_cipher_mode(impl_->ctx) == MBEDTLS_MODE_GCM;
+    return mbedtls_cipher_get_cipher_mode(impl_->ctx) == MBEDTLS_MODE_GCM;
 }
 
 bool VirgilSymmetricCipher::isSupportPadding() const {
     checkState();
-    return ::mbedtls_cipher_get_cipher_mode(impl_->ctx) == MBEDTLS_MODE_CBC;
+    return mbedtls_cipher_get_cipher_mode(impl_->ctx) == MBEDTLS_MODE_CBC;
 }
 
 void VirgilSymmetricCipher::setEncryptionKey(const VirgilByteArray& key) {
     checkState();
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_cipher_setkey(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key) * 8, MBEDTLS_ENCRYPT)
+            mbedtls_cipher_setkey(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key) * 8, MBEDTLS_ENCRYPT)
     );
 }
 
 void VirgilSymmetricCipher::setDecryptionKey(const VirgilByteArray& key) {
     checkState();
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_cipher_setkey(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key) * 8, MBEDTLS_DECRYPT)
+            mbedtls_cipher_setkey(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key) * 8, MBEDTLS_DECRYPT)
     );
 }
 
@@ -239,13 +237,13 @@ void VirgilSymmetricCipher::setPadding(VirgilSymmetricCipherPadding padding) {
             paddingCode = MBEDTLS_PADDING_ZEROS;
             break;
     }
-    MBEDTLS_ERROR_HANDLER(::mbedtls_cipher_set_padding_mode(impl_->ctx, paddingCode));
+    MBEDTLS_ERROR_HANDLER(mbedtls_cipher_set_padding_mode(impl_->ctx, paddingCode));
 }
 
 void VirgilSymmetricCipher::setIV(const VirgilByteArray& iv) {
     checkState();
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_cipher_set_iv(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(iv))
+            mbedtls_cipher_set_iv(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(iv))
     );
     impl_->iv = iv;
 }
@@ -257,9 +255,10 @@ void VirgilSymmetricCipher::setAuthData(const virgil::crypto::VirgilByteArray& a
 
 void VirgilSymmetricCipher::reset() {
     checkState();
-    MBEDTLS_ERROR_HANDLER(::mbedtls_cipher_reset(impl_->ctx));
+    MBEDTLS_ERROR_HANDLER(mbedtls_cipher_reset(impl_->ctx));
     if (mbedtls_cipher_get_cipher_mode(impl_->ctx) == MBEDTLS_MODE_GCM) {
-        MBEDTLS_ERROR_HANDLER(::mbedtls_cipher_update_ad(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(impl_->authData)));
+        MBEDTLS_ERROR_HANDLER(
+                mbedtls_cipher_update_ad(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(impl_->authData)));
     }
     if (isDecryptionMode()) {
         impl_->tagFilter.reset(blockSize());
@@ -268,7 +267,7 @@ void VirgilSymmetricCipher::reset() {
 
 void VirgilSymmetricCipher::clear() {
     if (impl_) {
-        VirgilSymmetricCipherImpl *newImpl = new VirgilSymmetricCipherImpl(impl_->type);
+        VirgilSymmetricCipherImpl* newImpl = new VirgilSymmetricCipherImpl(impl_->type);
         delete impl_;
         impl_ = newImpl;
     }
@@ -299,12 +298,14 @@ VirgilByteArray VirgilSymmetricCipher::update(const VirgilByteArray& input) {
         if (impl_->tagFilter.hasData()) {
             VirgilByteArray data = impl_->tagFilter.popData();
             MBEDTLS_ERROR_HANDLER(
-                ::mbedtls_cipher_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data), result.data(), &writtenBytes)
+                    mbedtls_cipher_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data), result.data(),
+                            &writtenBytes)
             );
         }
     } else {
         MBEDTLS_ERROR_HANDLER(
-            ::mbedtls_cipher_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(input), result.data(), &writtenBytes)
+                mbedtls_cipher_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(input), result.data(),
+                        &writtenBytes)
         );
     }
 
@@ -317,20 +318,20 @@ VirgilByteArray VirgilSymmetricCipher::finish() {
     size_t writtenBytes = 0;
     VirgilByteArray result(blockSize());
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_cipher_finish(impl_->ctx, result.data(), &writtenBytes)
+            mbedtls_cipher_finish(impl_->ctx, result.data(), &writtenBytes)
     );
     result.resize(writtenBytes);
     if (isAuthMode()) {
         if (isEncryptionMode()) {
             VirgilByteArray tag(authTagLength());
             MBEDTLS_ERROR_HANDLER(
-                ::mbedtls_cipher_write_tag(impl_->ctx, tag.data(), tag.size())
+                    mbedtls_cipher_write_tag(impl_->ctx, tag.data(), tag.size())
             );
             result.insert(result.end(), tag.begin(), tag.end());
         } else if (isDecryptionMode()) {
             VirgilByteArray tag = impl_->tagFilter.tag();
             MBEDTLS_ERROR_HANDLER(
-                ::mbedtls_cipher_check_tag(impl_->ctx, tag.data(), tag.size())
+                    mbedtls_cipher_check_tag(impl_->ctx, tag.data(), tag.size())
             );
         }
     }
@@ -346,10 +347,10 @@ void VirgilSymmetricCipher::checkState() const {
 
 size_t VirgilSymmetricCipher::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     checkState();
-    const char *oid = 0;
+    const char* oid = 0;
     size_t oidLen;
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_oid_get_oid_by_cipher_alg(impl_->type, &oid, &oidLen)
+            mbedtls_oid_get_oid_by_cipher_alg(impl_->type, &oid, &oidLen)
     );
     size_t len = 0;
     len += asn1Writer.writeOctetString(impl_->iv);
@@ -364,11 +365,11 @@ void VirgilSymmetricCipher::asn1Read(VirgilAsn1Reader& asn1Reader) {
 
     mbedtls_asn1_buf oidAsn1Buf;
     oidAsn1Buf.len = oid.size();
-    oidAsn1Buf.p = reinterpret_cast<unsigned char *>(const_cast<std::string::pointer>(oid.c_str()));
+    oidAsn1Buf.p = reinterpret_cast<unsigned char*>(const_cast<std::string::pointer>(oid.c_str()));
 
     mbedtls_cipher_type_t type = MBEDTLS_CIPHER_NONE;
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_oid_get_cipher_alg(&oidAsn1Buf, &type)
+            mbedtls_oid_get_cipher_alg(&oidAsn1Buf, &type)
     );
 
     *this = VirgilSymmetricCipher(type);

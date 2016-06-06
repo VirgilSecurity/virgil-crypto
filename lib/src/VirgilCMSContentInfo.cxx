@@ -36,12 +36,8 @@
 
 #include <virgil/crypto/foundation/cms/VirgilCMSContentInfo.h>
 
-#include <cstddef>
-#include <string>
-
 #include <mbedtls/asn1.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
@@ -77,7 +73,7 @@ size_t VirgilCMSContentInfo::defineSize(const VirgilByteArray& data) {
     ++p;
     // Read length
     size_t size = 0;
-    int result = ::mbedtls_asn1_get_len(&p, p_end, &size);
+    int result = mbedtls_asn1_get_len(&p, p_end, &size);
     if (result == 0 || result == MBEDTLS_ERR_ASN1_OUT_OF_DATA) {
         size += p - p_begin;
     } else {
@@ -85,7 +81,7 @@ size_t VirgilCMSContentInfo::defineSize(const VirgilByteArray& data) {
     }
     // Validate ContentInfo version
     int version = 0;
-    result = ::mbedtls_asn1_get_int(&p, p_end, &version);
+    result = mbedtls_asn1_get_int(&p, p_end, &version);
     if (result != 0 || version != kAsn1_ContentInfoVersion) {
         return 0;
     }
@@ -107,7 +103,7 @@ size_t VirgilCMSContentInfo::asn1Write(VirgilAsn1Writer& asn1Writer, size_t chil
 }
 
 void VirgilCMSContentInfo::asn1Read(VirgilAsn1Reader& asn1Reader) {
-    (void)asn1Reader.readSequence();
+    (void) asn1Reader.readSequence();
     if (asn1Reader.readInteger() != kAsn1_ContentInfoVersion) {
         throw VirgilCryptoException(std::string("VirgilCMSContentInfo: ") +
                 "Unsupported content info version was given.");

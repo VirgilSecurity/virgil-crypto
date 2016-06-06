@@ -36,9 +36,6 @@
 
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 
-#include <sstream>
-
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
 
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
@@ -53,7 +50,7 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 VirgilByteArray VirgilAsn1Compatible::toAsn1() const {
     VirgilAsn1Writer asn1Writer;
-    (void)asn1Write(asn1Writer);
+    (void) asn1Write(asn1Writer);
     return asn1Writer.finish();
 }
 
@@ -63,7 +60,7 @@ void VirgilAsn1Compatible::fromAsn1(const VirgilByteArray& asn1) {
 }
 
 
-void VirgilAsn1Compatible::checkAsn1ParamNotEmpty(const VirgilByteArray& param,  const char *paramName) const {
+void VirgilAsn1Compatible::checkAsn1ParamNotEmpty(const VirgilByteArray& param, const char* paramName) const {
     if (param.empty()) {
         std::ostringstream ostr;
         ostr << "VirgilAsn1Compatible: ";

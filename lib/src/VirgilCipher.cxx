@@ -36,7 +36,6 @@
 
 #include <virgil/crypto/VirgilCipher.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
 
 using virgil::crypto::VirgilCipher;
@@ -67,7 +66,8 @@ VirgilByteArray VirgilCipher::encrypt(const VirgilByteArray& data, bool embedCon
     return encryptedData;
 }
 
-VirgilByteArray VirgilCipher::decryptWithKey(const VirgilByteArray& encryptedData,
+VirgilByteArray VirgilCipher::decryptWithKey(
+        const VirgilByteArray& encryptedData,
         const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
 

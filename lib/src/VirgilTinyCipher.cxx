@@ -173,10 +173,10 @@ static VirgilByteArray auth_to_iv(const VirgilByteArray& data, size_t ivSize) {
 }
 
 
-namespace virgil {namespace crypto {
+namespace virgil { namespace crypto {
 
 struct VirgilTinyCipherImpl {
-    VirgilTinyCipherImpl() : packageSize(0), packageCount(0), packageMap(), packageSignBits(), ephemeralPublicKey() {}
+    VirgilTinyCipherImpl() : packageSize(0), packageCount(0), packageMap(), packageSignBits(), ephemeralPublicKey() { }
 
     size_t packageSize;
     size_t packageCount;

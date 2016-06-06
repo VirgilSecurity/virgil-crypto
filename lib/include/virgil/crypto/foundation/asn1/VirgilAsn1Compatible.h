@@ -44,8 +44,9 @@
  */
 /// @{
 namespace virgil { namespace crypto { namespace foundation { namespace asn1 {
-    class VirgilAsn1Reader;
-    class VirgilAsn1Writer;
+class VirgilAsn1Reader;
+
+class VirgilAsn1Writer;
 }}}}
 /// @}
 
@@ -61,14 +62,17 @@ public:
      * @brief Save object state to the ASN.1 structure.
      */
     virgil::crypto::VirgilByteArray toAsn1() const;
+
     /**
      * @brief Restore object state from the ASN.1 structure.
      */
     void fromAsn1(const virgil::crypto::VirgilByteArray& asn1);
+
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilAsn1Compatible() throw() {}
+    virtual ~VirgilAsn1Compatible() throw() { }
+
     /**
      * @brief Write object state to the writer.
      * @param asn1Writer writer that should be payloaded by subclasses.
@@ -76,17 +80,19 @@ public:
      * @return Writen bytes count.
      */
     virtual size_t asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const = 0;
+
     /**
      * @brief Read object state from the reader.
      * @param asn1Reader reader payloaded with ASN.1 to be read.
      */
     virtual void asn1Read(VirgilAsn1Reader& asn1Reader) = 0;
+
 protected:
     /**
      * @brief If given parameter is empty exception will be thrown.
      * @throw virgil::crypto::VirgilCryptoException.
      */
-    virtual void checkAsn1ParamNotEmpty(const virgil::crypto::VirgilByteArray& param, const char *paramName = 0) const;
+    virtual void checkAsn1ParamNotEmpty(const virgil::crypto::VirgilByteArray& param, const char* paramName = 0) const;
 };
 
 }}}}

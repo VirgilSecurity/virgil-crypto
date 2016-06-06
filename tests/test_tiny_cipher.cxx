@@ -124,42 +124,42 @@ TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-ci
     }
 
     SECTION("Curve25519 with sign - malformed header in the data package") {
-            VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519, password);
-            encCipher.encryptAndSign(testData, keyPair.publicKey(), keyPair.privateKey(), password);
+        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519, password);
+        encCipher.encryptAndSign(testData, keyPair.publicKey(), keyPair.privateKey(), password);
 
-            REQUIRE_FALSE(decCipher.isPackagesAccumulated());
-            for (size_t i = 0; i < encCipher.getPackageCount(); ++i) {
-                if (i != 0) {
-                    VirgilByteArray malformedPackage = encCipher.getPackage(i);
-                    malformedPackage[0] |= 0xFF;
-                    REQUIRE_THROWS(decCipher.addPackage(malformedPackage));
-                } else {
-                    decCipher.addPackage(encCipher.getPackage(i));
-                }
+        REQUIRE_FALSE(decCipher.isPackagesAccumulated());
+        for (size_t i = 0; i < encCipher.getPackageCount(); ++i) {
+            if (i != 0) {
+                VirgilByteArray malformedPackage = encCipher.getPackage(i);
+                malformedPackage[0] |= 0xFF;
+                REQUIRE_THROWS(decCipher.addPackage(malformedPackage));
+            } else {
+                decCipher.addPackage(encCipher.getPackage(i));
             }
-            REQUIRE_FALSE(decCipher.isPackagesAccumulated());
-            REQUIRE_THROWS(
-                    decryptedData = decCipher.verifyAndDecrypt(keyPair.publicKey(), keyPair.privateKey(), password));
+        }
+        REQUIRE_FALSE(decCipher.isPackagesAccumulated());
+        REQUIRE_THROWS(
+                decryptedData = decCipher.verifyAndDecrypt(keyPair.publicKey(), keyPair.privateKey(), password));
     }
 
     SECTION("Curve25519 with sign - malformed body in the data package") {
-            VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519, password);
-            encCipher.encryptAndSign(testData, keyPair.publicKey(), keyPair.privateKey(), password);
+        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519, password);
+        encCipher.encryptAndSign(testData, keyPair.publicKey(), keyPair.privateKey(), password);
 
-            REQUIRE_FALSE(decCipher.isPackagesAccumulated());
-            for (size_t i = 0; i < encCipher.getPackageCount(); ++i) {
-                if (i != 0) {
-                    VirgilByteArray malformedPackage = encCipher.getPackage(i);
-                    malformedPackage[3] |= 0xFF;
-                    malformedPackage[4] |= 0xBB;
-                    REQUIRE_NOTHROW(decCipher.addPackage(malformedPackage));
-                } else {
-                    decCipher.addPackage(encCipher.getPackage(i));
-                }
+        REQUIRE_FALSE(decCipher.isPackagesAccumulated());
+        for (size_t i = 0; i < encCipher.getPackageCount(); ++i) {
+            if (i != 0) {
+                VirgilByteArray malformedPackage = encCipher.getPackage(i);
+                malformedPackage[3] |= 0xFF;
+                malformedPackage[4] |= 0xBB;
+                REQUIRE_NOTHROW(decCipher.addPackage(malformedPackage));
+            } else {
+                decCipher.addPackage(encCipher.getPackage(i));
             }
-            REQUIRE(decCipher.isPackagesAccumulated());
-            REQUIRE_THROWS(
-                    decryptedData = decCipher.verifyAndDecrypt(keyPair.publicKey(), keyPair.privateKey(), password));
+        }
+        REQUIRE(decCipher.isPackagesAccumulated());
+        REQUIRE_THROWS(
+                decryptedData = decCipher.verifyAndDecrypt(keyPair.publicKey(), keyPair.privateKey(), password));
     }
 
 }

@@ -43,7 +43,7 @@
 #include <virgil/crypto/VirgilKeyPair.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 
-namespace virgil {namespace crypto {namespace foundation {
+namespace virgil { namespace crypto { namespace foundation {
 
 /**
  * @name Forward declarations
@@ -227,11 +227,13 @@ public:
      * @note Properly works only with Curve25519 keys.
      */
     virgil::crypto::VirgilKeyPair::Type getKeyType() const;
+
     /**
      * @brief Change type of the underlying key.
      * @note Properly works only with Curve25519 keys.
      */
     void setKeyType(virgil::crypto::VirgilKeyPair::Type keyType);
+
     /**
      * @brief Return number of the underlying public key.
      *
@@ -241,6 +243,7 @@ public:
      * @note Properly works only with Curve25519 keys.
      */
     virgil::crypto::VirgilByteArray getPublicKeyBits() const;
+
     /**
      * @brief Set number of the underlying public key.
      *
@@ -250,6 +253,7 @@ public:
      * @note Properly works only with Curve25519 keys.
      */
     void setPublicKeyBits(const virgil::crypto::VirgilByteArray& bits);
+
     /**
      * @brief Return number of the given sign.
      *
@@ -259,6 +263,7 @@ public:
      * @note Properly works only with Curve25519 keys.
      */
     virgil::crypto::VirgilByteArray signToBits(const virgil::crypto::VirgilByteArray& sign);
+
     /**
      * @brief Make sign from the given number.
      *

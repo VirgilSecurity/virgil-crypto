@@ -52,6 +52,7 @@ public:
      * @brief Transform given bytes to the base64 string.
      */
     static std::string encode(const virgil::crypto::VirgilByteArray& data);
+
     /**
      * @brief Transform given base64 string to the bytes.
      */

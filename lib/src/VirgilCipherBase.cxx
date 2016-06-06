@@ -36,14 +36,7 @@
 
 #include <virgil/crypto/VirgilCipherBase.h>
 
-#include <cstring>
-#include <string>
-
-#include <mbedtls/asn1.h>
-
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
-#include <virgil/crypto/VirgilCustomParams.h>
 #include <virgil/crypto/foundation/VirgilRandom.h>
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
@@ -51,8 +44,6 @@
 #include <virgil/crypto/foundation/cms/VirgilCMSContent.h>
 #include <virgil/crypto/foundation/cms/VirgilCMSContentInfo.h>
 #include <virgil/crypto/foundation/cms/VirgilCMSEnvelopedData.h>
-#include <virgil/crypto/foundation/cms/VirgilCMSKeyTransRecipient.h>
-#include <virgil/crypto/foundation/cms/VirgilCMSPasswordRecipient.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
@@ -84,17 +75,18 @@ namespace virgil { namespace crypto {
 class VirgilCipherBaseImpl {
 public:
     VirgilCipherBaseImpl() :
-        random(str2bytes(std::string("virgil::VirgilCipherBase"))),
-        symmetricCipher(), symmetricCipherKey(), contentInfo(), envelopedData(),
-        keyRecipients(), passwordRecipients() {}
+            random(str2bytes(std::string("virgil::VirgilCipherBase"))),
+            symmetricCipher(), symmetricCipherKey(), contentInfo(), envelopedData(),
+            keyRecipients(), passwordRecipients() { }
+
 public:
     VirgilRandom random;
     VirgilSymmetricCipher symmetricCipher;
     VirgilByteArray symmetricCipherKey;
     VirgilCMSContentInfo contentInfo;
     VirgilCMSEnvelopedData envelopedData;
-    std::map<VirgilByteArray, VirgilByteArray> keyRecipients; /**< recipient id -> public key */
-    std::set<VirgilByteArray> passwordRecipients; /**< passwords */
+    std::map<VirgilByteArray, VirgilByteArray> keyRecipients; ///< recipient id -> public key
+    std::set<VirgilByteArray> passwordRecipients; ///< passwords
 };
 
 }}
@@ -265,11 +257,13 @@ VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithPassword(const Virgil
     return impl_->symmetricCipher;
 }
 
-VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithKey(const VirgilByteArray& recipientId,
+VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithKey(
+        const VirgilByteArray& recipientId,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
 
     VirgilByteArray contentEncryptionKey =
-            decryptContentEncryptionKey(impl_->envelopedData.keyTransRecipients, recipientId, privateKey, privateKeyPassword);
+            decryptContentEncryptionKey(impl_->envelopedData.keyTransRecipients, recipientId, privateKey,
+                    privateKeyPassword);
     impl_->symmetricCipher = VirgilSymmetricCipher();
     impl_->symmetricCipher.fromAsn1(impl_->envelopedData.encryptedContent.contentEncryptionAlgorithm);
     impl_->symmetricCipher.setDecryptionKey(contentEncryptionKey);
@@ -286,7 +280,7 @@ void VirgilCipherBase::buildContentInfo() {
     impl_->envelopedData.passwordRecipients.clear();
     // Add KeyTransRecipient's
     for (std::map<VirgilByteArray, VirgilByteArray>::const_iterator it = impl_->keyRecipients.begin();
-            it != impl_->keyRecipients.end(); ++it) {
+         it != impl_->keyRecipients.end(); ++it) {
         const VirgilByteArray& recipientId = it->first;
         const VirgilByteArray& publicKey = it->second;
 
@@ -302,7 +296,7 @@ void VirgilCipherBase::buildContentInfo() {
     }
     // Add PasswordRecipient's
     for (std::set<VirgilByteArray>::const_iterator it = impl_->passwordRecipients.begin();
-            it != impl_->passwordRecipients.end(); ++it) {
+         it != impl_->passwordRecipients.end(); ++it) {
         const VirgilByteArray& password = *it;
 
         const VirgilByteArray salt = impl_->random.randomize(16);

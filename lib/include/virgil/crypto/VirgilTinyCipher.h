@@ -41,7 +41,7 @@
 
 #include <virgil/crypto/VirgilByteArray.h>
 
-namespace virgil {namespace crypto {
+namespace virgil { namespace crypto {
 
 /**
  * @brief Forward declaration of the implementation class.

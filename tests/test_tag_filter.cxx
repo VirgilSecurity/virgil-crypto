@@ -41,7 +41,6 @@
 
 #include "catch.hpp"
 
-#include <string>
 #include <iostream>
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -59,7 +58,7 @@ TEST_CASE("Get TAG", "[tag-filter]") {
     SECTION("Case 1") {
         tagFilter.reset(kTagLen);
         tagFilter.process(VirgilByteArrayUtils::hexToBytes(
-            "5eb9ee8ee83801858815e0fc301204102ccda65f87808b4dcdfebd970b881e95")
+                "5eb9ee8ee83801858815e0fc301204102ccda65f87808b4dcdfebd970b881e95")
         );
         REQUIRE(kTagLen == tagFilter.tag().size());
         REQUIRE(VirgilByteArrayUtils::bytesToHex(tagFilter.tag()) == "2ccda65f87808b4dcdfebd970b881e95");
@@ -67,7 +66,7 @@ TEST_CASE("Get TAG", "[tag-filter]") {
     SECTION("Case 2") {
         tagFilter.reset(kTagLen);
         tagFilter.process(VirgilByteArrayUtils::hexToBytes(
-            "11111111111111301204102ccda65f87808b4dcdfebd970b881e95")
+                "11111111111111301204102ccda65f87808b4dcdfebd970b881e95")
         );
         REQUIRE(kTagLen == tagFilter.tag().size());
         REQUIRE(VirgilByteArrayUtils::bytesToHex(tagFilter.tag()) == "2ccda65f87808b4dcdfebd970b881e95");

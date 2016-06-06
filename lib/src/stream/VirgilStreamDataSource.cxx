@@ -35,9 +35,11 @@
  */
 
 #include <virgil/crypto/stream/VirgilStreamDataSource.h>
+
 using virgil::crypto::stream::VirgilStreamDataSource;
 
 #include <virgil/crypto/VirgilByteArray.h>
+
 using virgil::crypto::VirgilByteArray;
 
 #include <algorithm>
@@ -57,7 +59,7 @@ bool VirgilStreamDataSource::hasData() {
 
 VirgilByteArray VirgilStreamDataSource::read() {
     VirgilByteArray result(chunkSize_);
-    in_.read(reinterpret_cast<std::istream::char_type *>(result.data()), chunkSize_);
+    in_.read(reinterpret_cast<std::istream::char_type*>(result.data()), chunkSize_);
     if (!in_) {
         // Only part of chunk was read, so result MUST be trimmed.
         result.resize(in_.gcount());

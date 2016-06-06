@@ -43,7 +43,6 @@
 #include <mbedtls/entropy.h>
 #include <mbedtls/ctr_drbg.h>
 #include <mbedtls/ecdh.h>
-#include <mbedtls/asn1.h>
 
 #include <virgil/crypto/VirgilByteArrayUtils.h>
 #include <virgil/crypto/VirgilCryptoException.h>
@@ -211,7 +210,7 @@ static void key_type_set_params(
 }
 
 /// @name Private section
-namespace virgil {namespace crypto {namespace foundation {
+namespace virgil { namespace crypto { namespace foundation {
 
 class VirgilAsymmetricCipherImpl {
 public:
@@ -238,7 +237,7 @@ public:
 
     mbedtls_pk_type_t pkType() const {
         if (ctx != 0) {
-            return ::mbedtls_pk_get_type(ctx);
+            return mbedtls_pk_get_type(ctx);
         } else {
             return MBEDTLS_PK_NONE;
         }
@@ -247,11 +246,11 @@ public:
 private:
     void init_(mbedtls_pk_type_t pkType) {
         ctx = new mbedtls_pk_context();
-        ::mbedtls_pk_init(ctx);
+        mbedtls_pk_init(ctx);
         if (pkType != MBEDTLS_PK_NONE) {
             const mbedtls_pk_info_t* info = mbedtls_pk_info_from_type(pkType);
             MBEDTLS_ERROR_HANDLER_DISPOSE(
-                    ::mbedtls_pk_setup(ctx, info),
+                    mbedtls_pk_setup(ctx, info),
                     free_()
             );
         }
@@ -259,7 +258,7 @@ private:
 
     void free_() {
         if (ctx) {
-            ::mbedtls_pk_free(ctx);
+            mbedtls_pk_free(ctx);
             delete ctx;
             ctx = 0;
         }
@@ -318,34 +317,34 @@ public:
     } Type;
 
     PolarsslKeyExport(mbedtls_pk_context* ctx, Format format, Type type, const VirgilByteArray& pwd = VirgilByteArray())
-            : ctx_(ctx), format_(format), type_(type), pwd_(pwd) {}
+            : ctx_(ctx), format_(format), type_(type), pwd_(pwd) { }
 
-    Format format() const {return format_;}
+    Format format() const { return format_; }
 
-    Type type() const {return type_;}
+    Type type() const { return type_; }
 
     int operator()(unsigned char* buf, size_t bufLen) {
         VirgilRandom random(VirgilByteArrayUtils::stringToBytes("key_export"));
         VirgilByteArray pbesAlg = VirgilAsn1Alg::buildPKCS5(random.randomize(16), random.randomize(3072, 8192));
         if (type_ == Public && format_ == PEM) {
-            return ::mbedtls_pk_write_pubkey_pem(ctx_, buf, bufLen);
+            return mbedtls_pk_write_pubkey_pem(ctx_, buf, bufLen);
         }
         if (type_ == Public && format_ == DER) {
-            return ::mbedtls_pk_write_pubkey_der(ctx_, buf, bufLen);
+            return mbedtls_pk_write_pubkey_der(ctx_, buf, bufLen);
         }
         if (type_ == Private && format_ == PEM) {
             if (pwd_.empty()) {
-                return ::mbedtls_pk_write_key_pem(ctx_, buf, bufLen);
+                return mbedtls_pk_write_key_pem(ctx_, buf, bufLen);
             } else {
-                return ::mbedtls_pk_write_key_pkcs8_pem(ctx_, buf, bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd_),
+                return mbedtls_pk_write_key_pkcs8_pem(ctx_, buf, bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd_),
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pbesAlg));
             }
         }
         if (type_ == Private && format_ == DER) {
             if (pwd_.empty()) {
-                return ::mbedtls_pk_write_key_der(ctx_, buf, bufLen);
+                return mbedtls_pk_write_key_der(ctx_, buf, bufLen);
             } else {
-                return ::mbedtls_pk_write_key_pkcs8_der(ctx_, buf, bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd_),
+                return mbedtls_pk_write_key_pkcs8_der(ctx_, buf, bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd_),
                         VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pbesAlg));
             }
         }
@@ -401,24 +400,24 @@ VirgilByteArray processEncryptionDecryption_(
     mbedtls_entropy_init(&entropy);
 
     mbedtls_ctr_drbg_context ctr_drbg;
-    ::mbedtls_ctr_drbg_init(&ctr_drbg);
+    mbedtls_ctr_drbg_init(&ctr_drbg);
 
     MBEDTLS_ERROR_HANDLER_DISPOSE(
-            ::mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy, (const unsigned char*) pers,
+            mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy, (const unsigned char*) pers,
                     strlen(pers)),
-            ::mbedtls_entropy_free(&entropy)
+            mbedtls_entropy_free(&entropy)
     );
 
     MBEDTLS_ERROR_HANDLER_DISPOSE(
             processFunc(ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(in),
                     (unsigned char*) result.data(), &resultLen, result.size(), mbedtls_ctr_drbg_random, &ctr_drbg),
             {
-                ::mbedtls_ctr_drbg_free(&ctr_drbg);
-                ::mbedtls_entropy_free(&entropy);
+                mbedtls_ctr_drbg_free(&ctr_drbg);
+                mbedtls_entropy_free(&entropy);
             }
     );
-    ::mbedtls_ctr_drbg_free(&ctr_drbg);
-    ::mbedtls_entropy_free(&entropy);
+    mbedtls_ctr_drbg_free(&ctr_drbg);
+    mbedtls_entropy_free(&entropy);
     result.resize(resultLen);
     return result;
 }
@@ -437,12 +436,12 @@ static VirgilByteArray fixKey(const VirgilByteArray& key) {
 
 size_t VirgilAsymmetricCipher::keySize() const {
     checkState();
-    return ::mbedtls_pk_get_bitlen(impl_->ctx);
+    return mbedtls_pk_get_bitlen(impl_->ctx);
 }
 
 size_t VirgilAsymmetricCipher::keyLength() const {
     checkState();
-    return ::mbedtls_pk_get_len(impl_->ctx);
+    return mbedtls_pk_get_len(impl_->ctx);
 }
 
 bool VirgilAsymmetricCipher::isKeyPairMatch(
@@ -453,22 +452,22 @@ bool VirgilAsymmetricCipher::isKeyPairMatch(
     mbedtls_pk_init(&public_ctx);
     VirgilByteArray fixedPublicKey = fixKey(publicKey);
     MBEDTLS_ERROR_HANDLER(
-            ::mbedtls_pk_parse_public_key(&public_ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(fixedPublicKey))
+            mbedtls_pk_parse_public_key(&public_ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(fixedPublicKey))
     );
 
     mbedtls_pk_context private_ctx;
     mbedtls_pk_init(&private_ctx);
     VirgilByteArray fixedPrivateKey = fixKey(privateKey);
     MBEDTLS_ERROR_HANDLER_DISPOSE(
-            ::mbedtls_pk_parse_key(&private_ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(fixedPrivateKey),
+            mbedtls_pk_parse_key(&private_ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(fixedPrivateKey),
                     VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(privateKeyPassword)),
-            ::mbedtls_pk_free(&public_ctx);
+            mbedtls_pk_free(&public_ctx);
     );
 
-    int result = ::mbedtls_pk_check_pair(&public_ctx, &private_ctx);
+    int result = mbedtls_pk_check_pair(&public_ctx, &private_ctx);
 
-    ::mbedtls_pk_free(&public_ctx);
-    ::mbedtls_pk_free(&private_ctx);
+    mbedtls_pk_free(&public_ctx);
+    mbedtls_pk_free(&private_ctx);
 
     return result == 0;
 }
@@ -481,10 +480,10 @@ bool VirgilAsymmetricCipher::checkPrivateKeyPassword(
     mbedtls_pk_context private_ctx;
     mbedtls_pk_init(&private_ctx);
     VirgilByteArray fixedKey = fixKey(key);
-    int result = ::mbedtls_pk_parse_key(&private_ctx,
+    int result = mbedtls_pk_parse_key(&private_ctx,
             VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(fixedKey),
             VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd));
-    ::mbedtls_pk_free(&private_ctx);
+    mbedtls_pk_free(&private_ctx);
     return result == 0;
 }
 
@@ -496,7 +495,7 @@ void VirgilAsymmetricCipher::setPrivateKey(const VirgilByteArray& key, const Vir
     checkPasswordLen(pwd.size());
     VirgilByteArray fixedKey = fixKey(key);
     MBEDTLS_ERROR_HANDLER(
-            ::mbedtls_pk_parse_key(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(fixedKey),
+            mbedtls_pk_parse_key(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(fixedKey),
                     VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd));
     );
 }
@@ -504,7 +503,7 @@ void VirgilAsymmetricCipher::setPrivateKey(const VirgilByteArray& key, const Vir
 void VirgilAsymmetricCipher::setPublicKey(const VirgilByteArray& key) {
     VirgilByteArray fixedKey = fixKey(key);
     MBEDTLS_ERROR_HANDLER(
-            ::mbedtls_pk_parse_public_key(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(fixedKey));
+            mbedtls_pk_parse_public_key(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(fixedKey));
     );
 }
 
@@ -520,26 +519,26 @@ void VirgilAsymmetricCipher::genKeyPair(VirgilKeyPair::Type type) {
 
     const char* pers = "virgil_gen_keypair";
     mbedtls_entropy_context entropy;
-    ::mbedtls_entropy_init(&entropy);
+    mbedtls_entropy_init(&entropy);
 
     mbedtls_ctr_drbg_context ctr_drbg;
-    ::mbedtls_ctr_drbg_init(&ctr_drbg);
+    mbedtls_ctr_drbg_init(&ctr_drbg);
 
     MBEDTLS_ERROR_HANDLER_CLEANUP(result,
-            ::mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
+            mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
                     (const unsigned char*) pers, strlen(pers))
     );
 
     if (rsaSize > 0) {
         *this = VirgilAsymmetricCipher(MBEDTLS_PK_RSA);
         MBEDTLS_ERROR_HANDLER_CLEANUP(result,
-                ::mbedtls_rsa_gen_key(mbedtls_pk_rsa(*(impl_->ctx)), mbedtls_ctr_drbg_random,
+                mbedtls_rsa_gen_key(mbedtls_pk_rsa(*(impl_->ctx)), mbedtls_ctr_drbg_random,
                         &ctr_drbg, rsaSize, 65537)
         );
     } else if (ecTypeId != MBEDTLS_ECP_DP_NONE) {
         *this = VirgilAsymmetricCipher(MBEDTLS_PK_ECKEY);
         MBEDTLS_ERROR_HANDLER_CLEANUP(result,
-                ::mbedtls_ecp_gen_key(ecTypeId, mbedtls_pk_ec(*(impl_->ctx)),
+                mbedtls_ecp_gen_key(ecTypeId, mbedtls_pk_ec(*(impl_->ctx)),
                         mbedtls_ctr_drbg_random, &ctr_drbg)
         );
     } else {
@@ -547,8 +546,8 @@ void VirgilAsymmetricCipher::genKeyPair(VirgilKeyPair::Type type) {
     }
 
     cleanup:
-    ::mbedtls_ctr_drbg_free(&ctr_drbg);
-    ::mbedtls_entropy_free(&entropy);
+    mbedtls_ctr_drbg_free(&ctr_drbg);
+    mbedtls_entropy_free(&entropy);
     MBEDTLS_ERROR_HANDLER(result);
     MBEDTLS_ERROR_MESSAGE_HANDLER(errMsg);
 }
@@ -561,26 +560,26 @@ void VirgilAsymmetricCipher::genKeyPairFrom(const VirgilAsymmetricCipher& other)
 
     const char* pers = "virgil_gen_keypair";
     mbedtls_entropy_context entropy;
-    ::mbedtls_entropy_init(&entropy);
+    mbedtls_entropy_init(&entropy);
 
     mbedtls_ctr_drbg_context ctr_drbg;
-    ::mbedtls_ctr_drbg_init(&ctr_drbg);
+    mbedtls_ctr_drbg_init(&ctr_drbg);
 
     MBEDTLS_ERROR_HANDLER_CLEANUP(result,
-            ::mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
+            mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
                     (const unsigned char*) pers, strlen(pers))
     );
 
     *this = VirgilAsymmetricCipher(other.impl_->pkType());
     if (mbedtls_pk_can_do(impl_->ctx, MBEDTLS_PK_RSA)) {
         MBEDTLS_ERROR_HANDLER_CLEANUP(result,
-                ::mbedtls_rsa_gen_key(mbedtls_pk_rsa(*(impl_->ctx)),
+                mbedtls_rsa_gen_key(mbedtls_pk_rsa(*(impl_->ctx)),
                         mbedtls_ctr_drbg_random, &ctr_drbg,
                         mbedtls_pk_get_bitlen(other.impl_->ctx), 65537)
         );
     } else if (mbedtls_pk_can_do(impl_->ctx, MBEDTLS_PK_ECKEY)) {
         MBEDTLS_ERROR_HANDLER_CLEANUP(result,
-                ::mbedtls_ecp_gen_key(mbedtls_pk_ec(*(other.impl_->ctx))->grp.id,
+                mbedtls_ecp_gen_key(mbedtls_pk_ec(*(other.impl_->ctx))->grp.id,
                         mbedtls_pk_ec(*(impl_->ctx)),
                         mbedtls_ctr_drbg_random, &ctr_drbg)
         );
@@ -618,7 +617,7 @@ VirgilByteArray VirgilAsymmetricCipher::computeShared(
     size_t sharedLen = 0;
 
     MBEDTLS_ERROR_HANDLER_CLEANUP(result,
-            ::mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
+            mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
                     (const unsigned char*) pers, strlen(pers))
     );
 
@@ -689,12 +688,12 @@ VirgilByteArray VirgilAsymmetricCipher::exportPublicKeyToPEM() const {
 
 VirgilByteArray VirgilAsymmetricCipher::encrypt(const VirgilByteArray& in) const {
     checkState();
-    return processEncryptionDecryption_(::mbedtls_pk_encrypt, impl_->ctx, in);
+    return processEncryptionDecryption_(mbedtls_pk_encrypt, impl_->ctx, in);
 }
 
 VirgilByteArray VirgilAsymmetricCipher::decrypt(const VirgilByteArray& in) const {
     checkState();
-    return processEncryptionDecryption_(::mbedtls_pk_decrypt, impl_->ctx, in);
+    return processEncryptionDecryption_(mbedtls_pk_decrypt, impl_->ctx, in);
 }
 
 VirgilByteArray VirgilAsymmetricCipher::sign(const VirgilByteArray& digest, int hashType) const {
@@ -744,7 +743,7 @@ VirgilByteArray VirgilAsymmetricCipher::sign(const VirgilByteArray& digest, int 
     }
 
     MBEDTLS_ERROR_HANDLER_DISPOSE(
-            ::mbedtls_pk_sign(impl_->ctx, static_cast<mbedtls_md_type_t>(hashType),
+            mbedtls_pk_sign(impl_->ctx, static_cast<mbedtls_md_type_t>(hashType),
                     VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(digest), sign, &actualSignLen, f_rng, p_rng),
             {
                 if (p_rng) {
@@ -769,7 +768,7 @@ VirgilByteArray VirgilAsymmetricCipher::sign(const VirgilByteArray& digest, int 
 
 bool VirgilAsymmetricCipher::verify(const VirgilByteArray& digest, const VirgilByteArray& sign, int hashType) const {
     checkState();
-    return ::mbedtls_pk_verify(impl_->ctx, static_cast<mbedtls_md_type_t>(hashType),
+    return mbedtls_pk_verify(impl_->ctx, static_cast<mbedtls_md_type_t>(hashType),
             VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(digest), VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(sign)) == 0;
 }
 
@@ -980,14 +979,14 @@ size_t VirgilAsymmetricCipher::asn1Write(VirgilAsn1Writer& asn1Writer, size_t ch
     size_t len = 0;
     if (impl_->pkType() == MBEDTLS_PK_ECKEY && mbedtls_pk_ec(*impl_->ctx)->grp.id != MBEDTLS_ECP_DP_NONE) {
         MBEDTLS_ERROR_HANDLER(
-                ::mbedtls_oid_get_oid_by_ec_grp(mbedtls_pk_ec(*impl_->ctx)->grp.id, &oid, &oidLen)
+                mbedtls_oid_get_oid_by_ec_grp(mbedtls_pk_ec(*impl_->ctx)->grp.id, &oid, &oidLen)
         );
         len += asn1Writer.writeOID(std::string(oid, oidLen));
     } else {
         len += asn1Writer.writeNull();
     }
     MBEDTLS_ERROR_HANDLER(
-            ::mbedtls_oid_get_oid_by_pk_alg(impl_->pkType(), &oid, &oidLen)
+            mbedtls_oid_get_oid_by_pk_alg(impl_->pkType(), &oid, &oidLen)
     );
     len += asn1Writer.writeOID(std::string(oid, oidLen));
     len += asn1Writer.writeSequence(len);
@@ -1005,7 +1004,7 @@ void VirgilAsymmetricCipher::asn1Read(VirgilAsn1Reader& asn1Reader) {
 
     mbedtls_pk_type_t type = MBEDTLS_PK_NONE;
     MBEDTLS_ERROR_HANDLER(
-            ::mbedtls_oid_get_pk_alg(&oidAsn1Buf, &type)
+            mbedtls_oid_get_pk_alg(&oidAsn1Buf, &type)
     );
 
     *this = VirgilAsymmetricCipher(type);

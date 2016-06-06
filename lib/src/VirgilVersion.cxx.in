@@ -1,8 +1,5 @@
 #include <virgil/crypto/VirgilVersion.h>
 
-#include <cstddef>
-#include <string>
-
 using virgil::crypto::VirgilVersion;
 
 size_t VirgilVersion::asNumber() {

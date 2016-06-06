@@ -134,8 +134,8 @@ private:
         algId = pbeAlgId;
         mdType = MBEDTLS_MD_NONE;
         cipherType = MBEDTLS_CIPHER_NONE;
-        memset(&pbeAlgOID, 0x00, sizeof(pbeAlgOID));
-        memset(&pbeParams, 0x00, sizeof(pbeParams));
+        std::memset(&pbeAlgOID, 0x00, sizeof(pbeAlgOID));
+        std::memset(&pbeParams, 0x00, sizeof(pbeParams));
 
         // Parse ASN.1
         p = const_cast<unsigned char*>(algId.data());

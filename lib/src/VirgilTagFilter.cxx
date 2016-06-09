@@ -36,8 +36,6 @@
 
 #include <virgil/crypto/foundation/priv/VirgilTagFilter.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
-
 using virgil::crypto::foundation::priv::VirgilTagFilter;
 
 using virgil::crypto::VirgilByteArray;

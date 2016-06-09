@@ -56,24 +56,29 @@ public:
      *                    Note, the real value may be different from the given value, it is only recommendation.
      */
     explicit VirgilBytesDataSource(const virgil::crypto::VirgilByteArray& in, size_t chunkSize = 5);
+
     /**
      * @brief Polymorphic destructor.
      */
     virtual ~VirgilBytesDataSource() throw();
+
     /**
      * @brief Overriding of @link VirgilDataSource::hasData() @endlink method.
      */
     virtual bool hasData();
+
     /**
      * @brief Overriding of @link VirgilDataSource::read() @endlink method.
      */
     virtual virgil::crypto::VirgilByteArray read();
+
     /**
      * @brief Reset internal state to initial.
      *
      * This method can used for secondary data reading.
      */
     virtual void reset();
+
 private:
     const virgil::crypto::VirgilByteArray& in_;
     const size_t chunkSize_;

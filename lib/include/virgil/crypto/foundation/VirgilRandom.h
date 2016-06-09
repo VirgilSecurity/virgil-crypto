@@ -79,12 +79,14 @@ public:
      * @return Random byte sequence.
      */
     virgil::crypto::VirgilByteArray randomize(size_t bytesNum);
+
     /**
      * Returns a pseudo-random number.
      *
      * @return Random Number
      */
-     size_t randomize();
+    size_t randomize();
+
     /**
      * Returns a pseudo-random number between min and max, inclusive.
      *
@@ -95,16 +97,19 @@ public:
      * @param max - maximum value. Must be greater than min.
      * @return Number between min and max, inclusive.
      */
-     size_t randomize(size_t min, size_t max);
+    size_t randomize(size_t min, size_t max);
     ///@}
 
 private:
     VirgilRandom(const VirgilRandom& other);
+
     VirgilRandom& operator=(const VirgilRandom& other);
+
 public:
     virtual ~VirgilRandom() throw();
+
 private:
-    VirgilRandomImpl * impl_;
+    VirgilRandomImpl* impl_;
 };
 
 }}}

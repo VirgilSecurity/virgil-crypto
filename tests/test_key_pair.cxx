@@ -41,28 +41,28 @@
 
 #include "catch.hpp"
 
-#include <string>
-
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilByteArrayUtils.h>
 #include <virgil/crypto/VirgilKeyPair.h>
+#include <virgil/crypto/VirgilCipher.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::VirgilKeyPair;
+using virgil::crypto::VirgilCipher;
 
-static const char * const kPrivateKey =
-    "-----BEGIN ENCRYPTED PRIVATE KEY-----\n"
-    "MIIBKTA0BgoqhkiG9w0BDAEDMCYEIJ2CZ9XD79se4sWO8zaB8ooKkf1IR/cymmox\n"
-    "NH0pe2zCAgIgAASB8HPqZNMejdzjsPeLJrLj1SXdES8FOUgWDbIhFLm/6G3leCNi\n"
-    "/7scgIOwook/f5qEL3ydHobXcYrr5Ltlr5o5BsSBELBAJKoUKcWmu8Aub03v/wIe\n"
-    "TNsVhxA/4mn5kgs6BwJp59oODv0YqpRAFsMQsXJaXjePVWpKLsDAooT8Wa0s5cfP\n"
-    "tURNzUUQG7COakN4PF01MXgHYEsvc/ygXI/QUHIBPwBVV7bx3lIV1xDy5WCNgBfd\n"
-    "EEd8luTaIzd15Y7ahooAA9K1WDPEhtq0gl8jG5vSbZ+BCaMNd43+Gksno4c9oBkZ\n"
-    "sMaFiu8OBbyVfjhr9g==\n"
-    "-----END ENCRYPTED PRIVATE KEY-----\n";
+static const char* const kPrivateKey =
+        "-----BEGIN ENCRYPTED PRIVATE KEY-----\n"
+                "MIIBKTA0BgoqhkiG9w0BDAEDMCYEIJ2CZ9XD79se4sWO8zaB8ooKkf1IR/cymmox\n"
+                "NH0pe2zCAgIgAASB8HPqZNMejdzjsPeLJrLj1SXdES8FOUgWDbIhFLm/6G3leCNi\n"
+                "/7scgIOwook/f5qEL3ydHobXcYrr5Ltlr5o5BsSBELBAJKoUKcWmu8Aub03v/wIe\n"
+                "TNsVhxA/4mn5kgs6BwJp59oODv0YqpRAFsMQsXJaXjePVWpKLsDAooT8Wa0s5cfP\n"
+                "tURNzUUQG7COakN4PF01MXgHYEsvc/ygXI/QUHIBPwBVV7bx3lIV1xDy5WCNgBfd\n"
+                "EEd8luTaIzd15Y7ahooAA9K1WDPEhtq0gl8jG5vSbZ+BCaMNd43+Gksno4c9oBkZ\n"
+                "sMaFiu8OBbyVfjhr9g==\n"
+                "-----END ENCRYPTED PRIVATE KEY-----\n";
 
-static const char * const kPrivateKeyPwd = "strong_pwd";
+static const char* const kPrivateKeyPwd = "strong_pwd";
 
 TEST_CASE("Reset Private Key password", "[key-pair]") {
     VirgilByteArray oldPwd = VirgilByteArrayUtils::stringToBytes(kPrivateKeyPwd);
@@ -81,4 +81,45 @@ TEST_CASE("Reset Private Key password", "[key-pair]") {
 
     REQUIRE(VirgilByteArrayUtils::bytesToString(newPrivateKeyNoPassword) ==
             VirgilByteArrayUtils::bytesToString(oldPrivateKeyNoPassword));
+}
+
+TEST_CASE("Generate ephemeral key pair and compute shared", "[key-pair]") {
+
+    SECTION("with plain private key") {
+        VirgilKeyPair donorPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519);
+
+        VirgilKeyPair ephemeralKeyPair = VirgilKeyPair::generateFrom(donorPair);
+
+        VirgilByteArray sharedEphemeral;
+        REQUIRE_NOTHROW(
+                sharedEphemeral = VirgilCipher::computeShared(donorPair.publicKey(), ephemeralKeyPair.privateKey()));
+
+        VirgilByteArray sharedDonor;
+        REQUIRE_NOTHROW(
+                sharedDonor = VirgilCipher::computeShared(ephemeralKeyPair.publicKey(), donorPair.privateKey()));
+
+        REQUIRE(sharedDonor == sharedEphemeral);
+    }
+
+    SECTION("with encrypted private key") {
+        VirgilByteArray donorKeyPassword = VirgilByteArrayUtils::stringToBytes("donor password");
+        VirgilKeyPair donorPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_BP256R1, donorKeyPassword);
+
+        VirgilByteArray ephemeralKeyPassword = VirgilByteArrayUtils::stringToBytes("ephemeral password");
+        VirgilKeyPair ephemeralKeyPair = VirgilKeyPair::generateFrom(donorPair, donorKeyPassword, ephemeralKeyPassword);
+
+        VirgilByteArray sharedEphemeral;
+        REQUIRE_NOTHROW(
+                sharedEphemeral = VirgilCipher::computeShared(donorPair.publicKey(), ephemeralKeyPair.privateKey(),
+                        ephemeralKeyPassword));
+
+        VirgilByteArray sharedDonor;
+        REQUIRE_NOTHROW(
+                sharedDonor = VirgilCipher::computeShared(ephemeralKeyPair.publicKey(), donorPair.privateKey(),
+                        donorKeyPassword));
+
+        REQUIRE(sharedDonor == sharedEphemeral);
+    }
+
+
 }

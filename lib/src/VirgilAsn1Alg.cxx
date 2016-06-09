@@ -38,7 +38,6 @@
 
 #include <mbedtls/oid.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilByteArrayUtils.h>
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/VirgilRandom.h>
@@ -57,7 +56,7 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 VirgilByteArray VirgilAsn1Alg::buildPKCS5(const VirgilByteArray& salt, size_t iterationCount) {
     VirgilRandom random(VirgilByteArrayUtils::stringToBytes("pkcs5_seed"));
     VirgilAsn1Writer asn1Writer;
-    const char *oid = 0;
+    const char* oid = 0;
     size_t oidLen;
     // Write PBES2-params
     size_t pbesLen = 0;
@@ -66,9 +65,9 @@ VirgilByteArray VirgilAsn1Alg::buildPKCS5(const VirgilByteArray& salt, size_t it
         const mbedtls_cipher_type_t cipherType = MBEDTLS_CIPHER_AES_256_CBC;
         const mbedtls_md_type_t mdType = MBEDTLS_MD_SHA384;
         MBEDTLS_ERROR_HANDLER(
-            ::mbedtls_oid_get_oid_by_cipher_alg(cipherType, &oid, &oidLen)
+                mbedtls_oid_get_oid_by_cipher_alg(cipherType, &oid, &oidLen)
         );
-        const mbedtls_cipher_info_t *cipherInfo = mbedtls_cipher_info_from_type(cipherType);
+        const mbedtls_cipher_info_t* cipherInfo = mbedtls_cipher_info_from_type(cipherType);
         if (cipherInfo == 0) {
             throw VirgilCryptoException("VirgilPBE: Given cipher is not supported.");
         }
@@ -86,7 +85,8 @@ VirgilByteArray VirgilAsn1Alg::buildPKCS5(const VirgilByteArray& salt, size_t it
         kdfLen += asn1Writer.writeInteger(iterationCount);
         kdfLen += asn1Writer.writeOctetString(salt);
         kdfLen += asn1Writer.writeSequence(kdfLen);
-        kdfLen += asn1Writer.writeOID(std::string(MBEDTLS_OID_PKCS5_PBKDF2, MBEDTLS_OID_SIZE(MBEDTLS_OID_PKCS5_PBKDF2)));
+        kdfLen +=
+                asn1Writer.writeOID(std::string(MBEDTLS_OID_PKCS5_PBKDF2, MBEDTLS_OID_SIZE(MBEDTLS_OID_PKCS5_PBKDF2)));
         kdfLen += asn1Writer.writeSequence(kdfLen);
 
         pbesLen += encLen + kdfLen;
@@ -101,7 +101,7 @@ VirgilByteArray VirgilAsn1Alg::buildPKCS5(const VirgilByteArray& salt, size_t it
 
 VirgilByteArray VirgilAsn1Alg::buildPKCS12(const VirgilByteArray& salt, size_t iterationCount) {
     VirgilAsn1Writer asn1Writer;
-    const char *oid = 0;
+    const char* oid = 0;
     // Write PBE-params
     size_t pbesLen = 0;
     pbesLen += asn1Writer.writeInteger(iterationCount);
@@ -109,7 +109,8 @@ VirgilByteArray VirgilAsn1Alg::buildPKCS12(const VirgilByteArray& salt, size_t i
     pbesLen += asn1Writer.writeSequence(pbesLen);
     // Write id-PBE OBJECT IDENTIFIER
     pbesLen += asn1Writer.writeOID(
-            std::string(MBEDTLS_OID_PKCS12_PBE_SHA1_DES3_EDE_CBC, MBEDTLS_OID_SIZE(MBEDTLS_OID_PKCS12_PBE_SHA1_DES3_EDE_CBC)));
+            std::string(MBEDTLS_OID_PKCS12_PBE_SHA1_DES3_EDE_CBC,
+                    MBEDTLS_OID_SIZE(MBEDTLS_OID_PKCS12_PBE_SHA1_DES3_EDE_CBC)));
     asn1Writer.writeSequence(pbesLen);
 
     return asn1Writer.finish();

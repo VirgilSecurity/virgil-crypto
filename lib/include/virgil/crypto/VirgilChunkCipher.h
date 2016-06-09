@@ -56,7 +56,7 @@ public:
      */
     ///@{
     enum {
-        kPreferredChunkSize = 1024 * 1024 - 1 /**< 1MiB - 1b for padding */
+        kPreferredChunkSize = 1024 * 1024 - 1 ///< 1MiB - 1b for padding
     };
     ///@}
 public:
@@ -65,36 +65,44 @@ public:
      * @return Actual chunk size.
      */
     size_t startEncryption(size_t preferredChunkSize = kPreferredChunkSize);
+
     /**
      * @brief Initialize multipart decryption with given private key.
      * @return Actual chunk size.
      */
-    size_t startDecryptionWithKey(const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
-                const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    size_t startDecryptionWithKey(
+            const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
+            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+
     /**
      * @brief Initialize multipart decryption with given private key.
      * @return Actual chunk size.
      */
     size_t startDecryptionWithPassword(const VirgilByteArray& pwd);
+
     /**
      * @brief Encrypt / Decrypt given data chunk.
      * @return Encrypted / Decrypted data chunk.
      */
     VirgilByteArray process(const VirgilByteArray& data);
+
     /**
      * @brief Finalize encryption or decryption process.
      * @note Call this method after encryption or decryption are done to prevent security issues.
      */
     void finish();
+
     /**
      * @brief Polymorphic destructor.
      */
     virtual ~VirgilChunkCipher() throw();
+
 private:
     /**
      * @brief Store actual chunk size in the custom parameters.
      */
     void storeChunkSize(size_t chunkSize);
+
     /**
      * @brief Retrieve actual chunk size from the custom parameters.
      */

@@ -54,30 +54,36 @@ public:
      * @note Method reset() MUST be called anyway.
      */
     VirgilTagFilter();
+
     /**
      * @brief Get ready for data filtration.
      * @param tagLen - length of the expected Virgil TAG.
      * @note This method MUST be called before any data will be processed.
      */
     void reset(size_t tagLen);
+
     /**
      * @brief Filter given data.
      */
     void process(const virgil::crypto::VirgilByteArray& data);
+
     /**
      * @brief Return if data exist after filtration.
      */
     bool hasData() const;
+
     /**
      * @brief Return filtrated data.
      */
     virgil::crypto::VirgilByteArray popData();
+
     /**
      * @brief Return tag that was extracted from processed data.
      * @note MUST be called after method finish().
      * @return Tag or empty byte array.
      */
     virgil::crypto::VirgilByteArray tag() const;
+
 private:
     size_t tagLen_;
     virgil::crypto::VirgilByteArray data_;

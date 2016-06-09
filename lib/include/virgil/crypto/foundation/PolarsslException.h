@@ -43,12 +43,21 @@
 
 #define MBEDTLS_ERROR_HANDLER_DISPOSE(invocation, dispose) \
 do { \
-    int errCode = invocation; \
-    if (errCode < 0) { \
+    int errCode__ = invocation; \
+    if (errCode__ < 0) { \
         do { dispose; } while (0); \
-        throw PolarsslException(errCode); \
+        throw PolarsslException(errCode__); \
     } \
 } while (0)
+
+#define MBEDTLS_ERROR_HANDLER_CLEANUP(errCode, invocation) \
+do { errCode = invocation; if (errCode < 0) { goto cleanup; } } while (0)
+
+#define MBEDTLS_ERROR_MESSAGE_CLEANUP(messageVariable, message) \
+do { messageVariable = message; goto cleanup; } while (0)
+
+#define MBEDTLS_ERROR_MESSAGE_HANDLER(messageVariable) \
+do { if (messageVariable) throw VirgilCryptoException(messageVariable); } while (0)
 
 
 namespace virgil { namespace crypto { namespace foundation {

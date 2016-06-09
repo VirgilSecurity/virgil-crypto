@@ -80,8 +80,10 @@ public:
      * @endcode
      */
     ///@{
-    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+    virtual size_t asn1Write(
+            virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
             size_t childWrittenBytes = 0) const;
+
     virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
 public:

@@ -54,18 +54,22 @@ public:
      * @brief Creates data sink based on std::ostream object.
      */
     explicit VirgilStreamDataSink(std::ostream& out);
+
     /**
      * @brief Polymorphic destructor.
      */
     virtual ~VirgilStreamDataSink() throw();
+
     /**
      * @brief Overriding of @link VirgilDataSink::isGood() @endlink method.
      */
     virtual bool isGood();
+
     /**
      * @brief Overriding of @link VirgilDataSink::write() @endlink method.
      */
     virtual void write(const virgil::crypto::VirgilByteArray& data);
+
 private:
     std::ostream& out_;
 };

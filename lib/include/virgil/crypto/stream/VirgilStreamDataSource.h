@@ -58,18 +58,22 @@ public:
      *                    Note, the real value may be different from the given value, it is only recommendation.
      */
     explicit VirgilStreamDataSource(std::istream& in, size_t chunkSize = 4096);
+
     /**
      * @brief Polymorphic destructor.
      */
     virtual ~VirgilStreamDataSource() throw();
+
     /**
      * @brief Overriding of @link VirgilDataSource::hasData() @endlink method.
      */
     virtual bool hasData();
+
     /**
      * @brief Overriding of @link VirgilDataSource::read() @endlink method.
      */
     virtual virgil::crypto::VirgilByteArray read();
+
 private:
     std::istream& in_;
     size_t chunkSize_;

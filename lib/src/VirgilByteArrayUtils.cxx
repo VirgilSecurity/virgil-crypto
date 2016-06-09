@@ -36,16 +36,10 @@
 
 #include <virgil/crypto/VirgilByteArrayUtils.h>
 
-#include <string>
-#include <vector>
-#include <algorithm>
-
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
 #include <rapidjson/document.h>
-#include <rapidjson/reader.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
@@ -88,7 +82,7 @@ VirgilByteArray VirgilByteArrayUtils::jsonToBytes(const std::string& jsonString)
         rapidjson::Document jsonObj;
         jsonObj.Parse(jsonString.c_str());
         VirgilAsn1Writer asn1Writer;
-        (void)asn1_write_json_value(asn1Writer, jsonObj);
+        (void) asn1_write_json_value(asn1Writer, jsonObj);
         return asn1Writer.finish();
     } catch (const std::exception& exception) {
         throw VirgilCryptoException(exception.what());
@@ -100,7 +94,7 @@ VirgilByteArray VirgilByteArrayUtils::stringToBytes(const std::string& str) {
 }
 
 std::string VirgilByteArrayUtils::bytesToString(const VirgilByteArray& array) {
-    return std::string(reinterpret_cast<const char *>(array.data()), array.size());
+    return std::string(reinterpret_cast<const char*>(array.data()), array.size());
 }
 
 VirgilByteArray VirgilByteArrayUtils::hexToBytes(const std::string& hexStr) {
@@ -110,7 +104,7 @@ VirgilByteArray VirgilByteArrayUtils::hexToBytes(const std::string& hexStr) {
     while (istr.read(hexChars, 2)) {
         int byte = 0;
         std::istringstream(hexChars) >> std::hex >> byte;
-        result.push_back((unsigned char)byte);
+        result.push_back((unsigned char) byte);
     }
     return result;
 }
@@ -118,8 +112,8 @@ VirgilByteArray VirgilByteArrayUtils::hexToBytes(const std::string& hexStr) {
 std::string VirgilByteArrayUtils::bytesToHex(const VirgilByteArray& array, bool formatted) {
     std::ostringstream hexStream;
     hexStream << std::setfill('0');
-    for(size_t i = 0; i < array.size(); ++i) {
-        hexStream << std::hex << std::setw(2) << (int)array[i];
+    for (size_t i = 0; i < array.size(); ++i) {
+        hexStream << std::hex << std::setw(2) << (int) array[i];
         if (formatted) {
             hexStream << (((i + 1) % 16 == 0) ? "\n" : " ");
         }
@@ -141,7 +135,7 @@ size_t asn1_write_json_value(VirgilAsn1Writer& asn1Writer, const json& json, con
     return asn1_write_json_primitive(asn1Writer, json, key);
 }
 
-static bool compare_c_str(const char * a, const char * b) {
+static bool compare_c_str(const char* a, const char* b) {
     return std::strcmp(a, b) < 0;
 }
 
@@ -151,14 +145,14 @@ size_t asn1_write_json_object(VirgilAsn1Writer& asn1Writer, const json& json, co
     }
     size_t len = 0;
     // Get object keys
-    std::vector<const char *> keys;
+    std::vector<const char*> keys;
     for (json::ConstMemberIterator it = json.MemberBegin(); it != json.MemberEnd(); ++it) {
         keys.push_back(it->name.GetString());
     }
     // Sort object keys
     std::sort(keys.begin(), keys.end(), compare_c_str);
     // Process object values
-    for (std::vector<const char *>::const_reverse_iterator it = keys.rbegin(); it != keys.rend(); ++it) {
+    for (std::vector<const char*>::const_reverse_iterator it = keys.rbegin(); it != keys.rend(); ++it) {
         len += asn1_write_json_value(asn1Writer, json[*it], *it);
     }
     len += asn1Writer.writeSequence(len);

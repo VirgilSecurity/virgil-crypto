@@ -35,9 +35,11 @@
  */
 
 #include <virgil/crypto/stream/VirgilStreamDataSink.h>
+
 using virgil::crypto::stream::VirgilStreamDataSink;
 
 #include <virgil/crypto/VirgilByteArray.h>
+
 using virgil::crypto::VirgilByteArray;
 
 VirgilStreamDataSink::VirgilStreamDataSink(std::ostream& out) : out_(out) {
@@ -48,7 +50,7 @@ bool VirgilStreamDataSink::isGood() {
 }
 
 void VirgilStreamDataSink::write(const VirgilByteArray& data) {
-    out_.write(reinterpret_cast<const std::ostream::char_type *>(data.data()), data.size());
+    out_.write(reinterpret_cast<const std::ostream::char_type*>(data.data()), data.size());
 }
 
 VirgilStreamDataSink::~VirgilStreamDataSink() throw() {

@@ -36,9 +36,6 @@
 
 #include <virgil/crypto/VirgilStreamCipher.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilDataSource.h>
-#include <virgil/crypto/VirgilDataSink.h>
 #include <virgil/crypto/foundation/VirgilKDF.h>
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
@@ -74,7 +71,8 @@ void VirgilStreamCipher::encrypt(VirgilDataSource& source, VirgilDataSink& sink,
     clearCipherInfo();
 }
 
-void VirgilStreamCipher::decryptWithKey(VirgilDataSource& source, VirgilDataSink& sink,
+void VirgilStreamCipher::decryptWithKey(
+        VirgilDataSource& source, VirgilDataSink& sink,
         const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
 
@@ -83,7 +81,8 @@ void VirgilStreamCipher::decryptWithKey(VirgilDataSource& source, VirgilDataSink
     decrypt(source, sink, cipher, firstChunk);
 }
 
-void VirgilStreamCipher::decryptWithPassword(VirgilDataSource& source, VirgilDataSink& sink,
+void VirgilStreamCipher::decryptWithPassword(
+        VirgilDataSource& source, VirgilDataSink& sink,
         const VirgilByteArray& pwd) {
 
     VirgilByteArray firstChunk = tryReadContentInfo(source);
@@ -101,7 +100,7 @@ VirgilByteArray VirgilStreamCipher::tryReadContentInfo(VirgilDataSource& source)
     }
     size_t contentInfoSize = defineContentInfoSize(data);
     if (contentInfoSize > 0) {
-        while (data.size() < contentInfoSize  && source.hasData()) {
+        while (data.size() < contentInfoSize && source.hasData()) {
             VirgilByteArray nextData = source.read();
             data.insert(data.end(), nextData.begin(), nextData.end());
         }
@@ -110,7 +109,8 @@ VirgilByteArray VirgilStreamCipher::tryReadContentInfo(VirgilDataSource& source)
     return data;
 }
 
-void VirgilStreamCipher::decrypt(VirgilDataSource& source, VirgilDataSink& sink,
+void VirgilStreamCipher::decrypt(
+        VirgilDataSource& source, VirgilDataSink& sink,
         VirgilSymmetricCipher& cipher, const VirgilByteArray& firstChunk) {
 
     if (sink.isGood()) {

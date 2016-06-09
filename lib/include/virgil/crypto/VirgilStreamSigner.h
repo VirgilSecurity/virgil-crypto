@@ -54,19 +54,24 @@ public:
      * @brief Create signer with predefined hash function.
      * @note Specified hash function algorithm is used only during signing.
      */
-    explicit VirgilStreamSigner(const virgil::crypto::foundation::VirgilHash& hash =
+    explicit VirgilStreamSigner(
+            const virgil::crypto::foundation::VirgilHash& hash =
             virgil::crypto::foundation::VirgilHash::sha384());
+
     /**
      * @brief Sign data provided by the source with given private key.
      * @return Virgil Security sign.
      */
-    VirgilByteArray sign(VirgilDataSource& source, const VirgilByteArray& privateKey,
+    VirgilByteArray sign(
+            VirgilDataSource& source, const VirgilByteArray& privateKey,
             const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+
     /**
      * @brief Verify sign and data provided by the source to be conformed to the given public key.
      * @return true if sign is valid and data was not malformed.
      */
     bool verify(VirgilDataSource& source, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
+
 private:
     virgil::crypto::foundation::VirgilHash hash_;
 };

@@ -81,6 +81,7 @@ public:
      * @endcode
      */
     static VirgilByteArray buildPKCS5(const VirgilByteArray& salt, size_t iterationCount);
+
     /**
      * @brief Create PKCS#12 PBE ASN.1 structure with given parameters
      *
@@ -100,6 +101,7 @@ public:
      * @endcode
      */
     static VirgilByteArray buildPKCS12(const VirgilByteArray& salt, size_t iterationCount);
+
 private:
     /**
      * @brief Initialize internal state.

@@ -84,6 +84,7 @@ public:
      *     i.e. VirgilSymmetricCipher cipher = VirgilSymmetricCipher().fromAsn1(asn1);
      */
     VirgilSymmetricCipher();
+
     /**
      * @brief Polymorphic destructor.
      */
@@ -97,42 +98,51 @@ public:
      * @brief Returns the name of the given cipher, as a string.
      */
     std::string name() const;
+
     /**
      * @brief Returns the block size of the current cipher.
      * @return block size, in octets.
      */
     size_t blockSize() const;
+
     /**
      * @brief Returns the size of the cipher's IV in octets.
      */
     size_t ivSize() const;
+
     /**
      * @brief Returns the key length of the cipher.
      * @return key length, in bits.
      */
     size_t keySize() const;
+
     /**
      * @brief Returns the key length of the cipher.
      * @return key length, in octets.
      */
     size_t keyLength() const;
+
     /**
      * @brief Returns the authentication tag length of the cipher.
      * @return tag length, in octets.
      */
     size_t authTagLength() const;
+
     /**
      * @brief Returns true if cipher is in the encryption mode.
      */
     bool isEncryptionMode() const;
+
     /**
      * @brief Returns true if cipher is in the decryption mode.
      */
     bool isDecryptionMode() const;
+
     /**
      * @brief Returns true if cipher is configured to support authenticated encryption and decryption.
      */
     bool isAuthMode() const;
+
     /**
      * @brief Returns true if cipher support padding.
      */
@@ -150,6 +160,7 @@ public:
      * @warning Only one key CAN be set.
      */
     void setEncryptionKey(const virgil::crypto::VirgilByteArray& key);
+
     /**
      * @brief Configures decryption key.
      *
@@ -157,6 +168,7 @@ public:
      * @warning Only one key CAN be set.
      */
     void setDecryptionKey(const virgil::crypto::VirgilByteArray& key);
+
     /**
      * @brief Defines padding mode.
      *
@@ -165,14 +177,25 @@ public:
      * @see isSupportPadding()
      */
     void setPadding(VirgilSymmetricCipherPadding padding);
+
     /**
      * @brief Configures the initialization vector.
      */
     void setIV(const virgil::crypto::VirgilByteArray& iv);
+
+    /**
+     * @brief Add additional data (for AEAD ciphers).
+     * @note Currently only supported with GCM.
+     * @note Must be called before reset().
+     * @see isAuthMode()
+     */
+    void setAuthData(const virgil::crypto::VirgilByteArray& authData);
+
     /**
      * @brief Finish preparation before encryption / decryption.
      */
     void reset();
+
     /**
      * @brief Clear all configuration settings.
      * @note This method SHOULD be used if class instance was used for encryption
@@ -192,7 +215,8 @@ public:
      * @param iv - initialization vector.
      * @return Encrypted or decrypted bytes (rely on the current mode).
      */
-    virgil::crypto::VirgilByteArray crypt(const virgil::crypto::VirgilByteArray& input,
+    virgil::crypto::VirgilByteArray crypt(
+            const virgil::crypto::VirgilByteArray& input,
             const virgil::crypto::VirgilByteArray& iv);
     ///@}
     /**
@@ -209,6 +233,7 @@ public:
      * @return Encrypted or decrypted bytes (rely on the current mode).
      */
     virgil::crypto::VirgilByteArray update(const virgil::crypto::VirgilByteArray& input);
+
     /**
      * @brief Cipher finalization method.
      *
@@ -227,14 +252,17 @@ public:
      */
     ///@{
     VirgilSymmetricCipher(const VirgilSymmetricCipher& other);
+
     VirgilSymmetricCipher& operator=(const VirgilSymmetricCipher& rhs);
     ///@}
     /**
      * @name VirgilAsn1Compatible implementation
      */
     ///@{
-    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+    virtual size_t asn1Write(
+            virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
             size_t childWrittenBytes = 0) const;
+
     virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
 private:
@@ -243,12 +271,14 @@ private:
      * @warning Constructor CAN NOT be used directly, use one of factory methods to create apropriate cipher.
      */
     explicit VirgilSymmetricCipher(int type);
+
     /**
      * @brief If internal state is not initialized with specific algorithm exception will be thrown.
      */
     void checkState() const;
+
 private:
-    VirgilSymmetricCipherImpl *impl_;
+    VirgilSymmetricCipherImpl* impl_;
 };
 
 }}}

@@ -35,9 +35,11 @@
  */
 
 #include <virgil/crypto/stream/VirgilBytesDataSink.h>
+
 using virgil::crypto::stream::VirgilBytesDataSink;
 
 #include <virgil/crypto/VirgilByteArray.h>
+
 using virgil::crypto::VirgilByteArray;
 
 VirgilBytesDataSink::VirgilBytesDataSink(VirgilByteArray& out) : out_(out) {

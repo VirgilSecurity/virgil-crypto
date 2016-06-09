@@ -52,11 +52,13 @@ public:
      * @brief Return true if target source still contains unread data.
      */
     virtual bool hasData() = 0;
+
     /**
      * @brief Return next portion of read data from target source.
      */
     virtual VirgilByteArray read() = 0;
-    virtual ~VirgilDataSource() throw() {}
+
+    virtual ~VirgilDataSource() throw() { }
 };
 
 }}

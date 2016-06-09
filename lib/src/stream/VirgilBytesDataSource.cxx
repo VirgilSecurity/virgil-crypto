@@ -35,9 +35,11 @@
  */
 
 #include <virgil/crypto/stream/VirgilBytesDataSource.h>
+
 using virgil::crypto::stream::VirgilBytesDataSource;
 
 #include <virgil/crypto/VirgilByteArray.h>
+
 using virgil::crypto::VirgilByteArray;
 
 #include <algorithm>

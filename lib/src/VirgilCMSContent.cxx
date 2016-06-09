@@ -36,10 +36,6 @@
 
 #include <virgil/crypto/foundation/cms/VirgilCMSContent.h>
 
-#include <cstddef>
-#include <cstring>
-#include <string>
-
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/priv/VirgilOID.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
@@ -74,7 +70,7 @@ size_t VirgilCMSContent::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWri
 }
 
 void VirgilCMSContent::asn1Read(VirgilAsn1Reader& asn1Reader) {
-    (void)asn1Reader.readSequence();
+    (void) asn1Reader.readSequence();
     contentType = oidToContentType(asn1Reader.readOID());
     if (asn1Reader.readContextTag(kCMS_ContentTag) > 0) {
         content = asn1Reader.readData();

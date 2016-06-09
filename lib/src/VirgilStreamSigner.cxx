@@ -36,9 +36,6 @@
 
 #include <virgil/crypto/VirgilStreamSigner.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilDataSource.h>
-#include <virgil/crypto/foundation/VirgilHash.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
@@ -55,7 +52,8 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 VirgilStreamSigner::VirgilStreamSigner(const VirgilHash& hash) : hash_(hash) {
 }
 
-VirgilByteArray VirgilStreamSigner::sign(VirgilDataSource& source, const VirgilByteArray& privateKey,
+VirgilByteArray VirgilStreamSigner::sign(
+        VirgilDataSource& source, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
     // Calculate data digest
     hash_.start();
@@ -78,7 +76,8 @@ VirgilByteArray VirgilStreamSigner::sign(VirgilDataSource& source, const VirgilB
     return asn1Writer.finish();
 }
 
-bool VirgilStreamSigner::verify(VirgilDataSource& source, const VirgilByteArray& sign, const VirgilByteArray& publicKey) {
+bool VirgilStreamSigner::verify(
+        VirgilDataSource& source, const VirgilByteArray& sign, const VirgilByteArray& publicKey) {
     // Read sign
     VirgilAsn1Reader asn1Reader(sign);
     asn1Reader.readSequence();

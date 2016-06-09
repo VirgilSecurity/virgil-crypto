@@ -50,114 +50,142 @@ public:
      * @brief Type of the keypair.
      */
     enum Type {
-        Type_Default = 0,        /**< recommended most safe type */
-        Type_RSA_256,            /**< RSA 1024 bit (not recommended) */
-        Type_RSA_512,            /**< RSA 1024 bit (not recommended) */
-        Type_RSA_1024,           /**< RSA 1024 bit (not recommended) */
-        Type_RSA_2048,           /**< RSA 2048 bit (not recommended) */
-        Type_RSA_3072,           /**< RSA 3072 bit */
-        Type_RSA_4096,           /**< RSA 4096 bit */
-        Type_RSA_8192,           /**< RSA 8192 bit */
-        Type_EC_SECP192R1,       /**< 192-bits NIST curve */
-        Type_EC_SECP224R1,       /**< 224-bits NIST curve */
-        Type_EC_SECP256R1,       /**< 256-bits NIST curve */
-        Type_EC_SECP384R1,       /**< 384-bits NIST curve */
-        Type_EC_SECP521R1,       /**< 521-bits NIST curve */
-        Type_EC_BP256R1,         /**< 256-bits Brainpool curve */
-        Type_EC_BP384R1,         /**< 384-bits Brainpool curve */
-        Type_EC_BP512R1,         /**< 512-bits Brainpool curve */
-        Type_EC_M221,            /**< (not implemented yet)    */
-        Type_EC_M255,            /**< Curve25519               */
-        Type_EC_Curve25519 = 17, /**< Curve25519               */
-        Type_EC_M383,            /**< (not implemented yet)    */
-        Type_EC_M511,            /**< (not implemented yet)    */
-        Type_EC_SECP192K1,       /**< 192-bits "Koblitz" curve */
-        Type_EC_SECP224K1,       /**< 224-bits "Koblitz" curve */
-        Type_EC_SECP256K1,       /**< 256-bits "Koblitz" curve */
+        Type_Default = 0, ///< recommended most safe type
+        Type_RSA_256, ///< RSA 1024 bit (not recommended)
+        Type_RSA_512, ///< RSA 1024 bit (not recommended)
+        Type_RSA_1024, ///< RSA 1024 bit (not recommended)
+        Type_RSA_2048, ///< RSA 2048 bit (not recommended)
+        Type_RSA_3072, ///< RSA 3072 bit
+        Type_RSA_4096, ///< RSA 4096 bit
+        Type_RSA_8192, ///< RSA 8192 bit
+        Type_EC_SECP192R1, ///< 192-bits NIST curve
+        Type_EC_SECP224R1, ///< 224-bits NIST curve
+        Type_EC_SECP256R1, ///< 256-bits NIST curve
+        Type_EC_SECP384R1, ///< 384-bits NIST curve
+        Type_EC_SECP521R1, ///< 521-bits NIST curve
+        Type_EC_BP256R1, ///< 256-bits Brainpool curve
+        Type_EC_BP384R1, ///< 384-bits Brainpool curve
+        Type_EC_BP512R1, ///< 512-bits Brainpool curve
+        Type_EC_M221, ///< (not implemented yet)
+        Type_EC_M255, ///< Curve25519
+        Type_EC_Curve25519 = 17, ///< Curve25519
+        Type_EC_M383, ///< (not implemented yet)
+        Type_EC_M511, ///< (not implemented yet)
+        Type_EC_SECP192K1, ///< 192-bits "Koblitz" curve
+        Type_EC_SECP224K1, ///< 224-bits "Koblitz" curve
+        Type_EC_SECP256K1, ///< 256-bits "Koblitz" curve
     };
 public:
     /**
      * @brief Generate new key pair given type.
      * @param type - private key type to be generated.
-     * @param pwd - private key password (max length is 31 byte).
+     * @param pwd - private key password.
      */
-    static VirgilKeyPair generate(VirgilKeyPair::Type type = VirgilKeyPair::Type_Default,
+    static VirgilKeyPair generate(
+            VirgilKeyPair::Type type = VirgilKeyPair::Type_Default,
             const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
+    /**
+     * @brief Generate new key pair of the same type based on the donor key pair.
+     * @param donorKeyPair - public key or private key is used to determine the new key pair type.
+     * @param donorPrivateKeyPassword - donor private key password, optional if public key is defined.
+     * @param newKeyPairPassword - private key password of the new key pair.
+     */
+    static VirgilKeyPair generateFrom(
+            const VirgilKeyPair& donorKeyPair,
+            const virgil::crypto::VirgilByteArray& donorPrivateKeyPassword = virgil::crypto::VirgilByteArray(),
+            const virgil::crypto::VirgilByteArray& newKeyPairPassword = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with 192-bits NIST curve.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair ecNist192(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with 224-bits NIST curve.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair ecNist224(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with 256-bits NIST curve.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair ecNist256(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with 384-bits NIST curve.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair ecNist384(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with 521-bits NIST curve.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair ecNist521(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with 256-bits Brainpool curve.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair ecBrainpool256(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with 384-bits Brainpool curve.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair ecBrainpool384(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with 512-bits Brainpool curve.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair ecBrainpool512(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with 192-bits "Koblitz" curve.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair ecKoblitz192(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with 224-bits "Koblitz" curve.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair ecKoblitz224(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with 256-bits "Koblitz" curve.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair ecKoblitz256(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with RSA 256-bits.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair rsa256(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with RSA 512-bits.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair rsa512(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with RSA 1024-bits.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair rsa1024(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with RSA 2048-bits.
      * @deprecated Use generate() instead.
      */
     static VirgilKeyPair rsa2048(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Generate new key pair with RSA 4096-bits.
      * @deprecated Use generate() instead.
@@ -177,9 +205,11 @@ public:
      *
      * @return true - if public-private pair of keys matches.
      */
-    static bool isKeyPairMatch(const virgil::crypto::VirgilByteArray& publicKey,
+    static bool isKeyPairMatch(
+            const virgil::crypto::VirgilByteArray& publicKey,
             const virgil::crypto::VirgilByteArray& privateKey,
             const virgil::crypto::VirgilByteArray& privateKeyPassword = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Check if given private key and it's password matches.
      *
@@ -188,8 +218,10 @@ public:
      *
      * @return true - if private key and it's password matches.
      */
-    static bool checkPrivateKeyPassword(const virgil::crypto::VirgilByteArray& key,
+    static bool checkPrivateKeyPassword(
+            const virgil::crypto::VirgilByteArray& key,
             const virgil::crypto::VirgilByteArray& pwd);
+
     /**
      * @brief Check if given private key is encrypted.
      *
@@ -214,7 +246,8 @@ public:
      *
      * @return Private Key that is encrypted with the new password.
      */
-    static virgil::crypto::VirgilByteArray resetPrivateKeyPassword(const virgil::crypto::VirgilByteArray& privateKey,
+    static virgil::crypto::VirgilByteArray resetPrivateKeyPassword(
+            const virgil::crypto::VirgilByteArray& privateKey,
             const virgil::crypto::VirgilByteArray& oldPassword, const virgil::crypto::VirgilByteArray& newPassword);
     ///@}
 
@@ -223,18 +256,25 @@ public:
      * @deprecated Use generate() with default type instead.
      */
     explicit VirgilKeyPair(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
     /**
      * @brief Initialize key pair with given public and private key.
      */
     VirgilKeyPair(const virgil::crypto::VirgilByteArray& publicKey, const virgil::crypto::VirgilByteArray& privateKey);
+
     /**
      * @brief Provide access to the public key.
      */
     virgil::crypto::VirgilByteArray publicKey() const;
+
     /**
      * @brief Provide access to the private key.
      */
     virgil::crypto::VirgilByteArray privateKey() const;
+    /**
+     *
+     */
+
 private:
     virgil::crypto::VirgilByteArray publicKey_;
     virgil::crypto::VirgilByteArray privateKey_;

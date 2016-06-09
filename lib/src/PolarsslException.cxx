@@ -36,9 +36,6 @@
 
 #include <virgil/crypto/foundation/PolarsslException.h>
 
-#include <cstring>
-#include <string>
-
 #include <mbedtls/error.h>
 
 using virgil::crypto::foundation::PolarsslException;
@@ -52,9 +49,8 @@ enum {
  * Build error message related to the given error code.
  */
 static std::string buildErrorString(int errCode) {
-    static char errorBuffer[gErrorBufferLen + 1];
-    ::memset(errorBuffer, 0x0, gErrorBufferLen + 1);
-    ::mbedtls_strerror(errCode, errorBuffer, gErrorBufferLen);
+    static char errorBuffer[gErrorBufferLen + 1] = {0x00};
+    mbedtls_strerror(errCode, errorBuffer, gErrorBufferLen);
     return std::string(errorBuffer);
 }
 

@@ -36,17 +36,11 @@
 
 #include <virgil/crypto/foundation/VirgilPBKDF.h>
 
-#include <string>
-#include <sstream>
-#include <stdexcept>
-
 #include <mbedtls/oid.h>
 #include <mbedtls/pkcs5.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/PolarsslException.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
@@ -124,7 +118,7 @@ VirgilPBKDF::VirgilPBKDF(const virgil::crypto::VirgilByteArray& salt, unsigned i
         iterationCount_(iterationCount), iterationCountMin_(kIterationCount_Min), checkRecommendations_(true) {
 }
 
-VirgilPBKDF::~VirgilPBKDF() throw() {}
+VirgilPBKDF::~VirgilPBKDF() throw() { }
 
 VirgilByteArray VirgilPBKDF::getSalt() const {
     return salt_;
@@ -163,24 +157,24 @@ VirgilByteArray VirgilPBKDF::derive(const virgil::crypto::VirgilByteArray& pwd, 
     checkState();
     checkRecommendations(pwd);
 
-    const mbedtls_md_info_t *hmacInfo = mbedtls_md_info_from_type(hash_to_md_type(hash_));
+    const mbedtls_md_info_t* hmacInfo = mbedtls_md_info_from_type(hash_to_md_type(hash_));
     mbedtls_md_context_t hmacCtx;
     mbedtls_md_init(&hmacCtx);
     MBEDTLS_ERROR_HANDLER_DISPOSE(
-        mbedtls_md_setup(&hmacCtx, hmacInfo, 1),
-        mbedtls_md_free(&hmacCtx)
+            mbedtls_md_setup(&hmacCtx, hmacInfo, 1),
+            mbedtls_md_free(&hmacCtx)
     );
 
-    const size_t adjustedOutSize = (outSize > 0) ? outSize : mbedtls_md_get_size(hmacInfo) ;
+    const size_t adjustedOutSize = (outSize > 0) ? outSize : mbedtls_md_get_size(hmacInfo);
 
     VirgilByteArray result(adjustedOutSize);
 
     switch (algorithm_) {
         case Algorithm_PBKDF2: {
             MBEDTLS_ERROR_HANDLER_DISPOSE(
-                mbedtls_pkcs5_pbkdf2_hmac(&hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
-                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(salt_), iterationCount_, adjustedOutSize, result.data()),
-                mbedtls_md_free(&hmacCtx)
+                    mbedtls_pkcs5_pbkdf2_hmac(&hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
+                            VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(salt_), iterationCount_, adjustedOutSize, result.data()),
+                    mbedtls_md_free(&hmacCtx)
             );
             break;
         }
@@ -227,12 +221,12 @@ size_t VirgilPBKDF::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenB
     }
 
     size_t len = 0;
-    const char *oid = 0;
+    const char* oid = 0;
     size_t oidLen;
 
     // Write prf
     MBEDTLS_ERROR_HANDLER(
-        mbedtls_oid_get_oid_by_md(hash_to_md_type(hash_), &oid, &oidLen)
+            mbedtls_oid_get_oid_by_md(hash_to_md_type(hash_), &oid, &oidLen)
     );
 
     len += asn1Writer.writeOID(std::string(oid, oidLen));
@@ -268,11 +262,11 @@ void VirgilPBKDF::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
     oid = asn1Reader.readOID();
     oidAsn1Buf.len = oid.size();
-    oidAsn1Buf.p = reinterpret_cast<unsigned char *>(const_cast<std::string::pointer>(oid.c_str()));
+    oidAsn1Buf.p = reinterpret_cast<unsigned char*>(const_cast<std::string::pointer>(oid.c_str()));
 
     mbedtls_md_type_t mdType = MBEDTLS_MD_NONE;
     MBEDTLS_ERROR_HANDLER(
-        mbedtls_oid_get_md_alg(&oidAsn1Buf, &mdType)
+            mbedtls_oid_get_md_alg(&oidAsn1Buf, &mdType)
     );
 
     algorithm_ = Algorithm_PBKDF2;

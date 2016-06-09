@@ -53,6 +53,7 @@ public:
      * @brief Dispose used resources.
      */
     virtual ~VirgilCipher() throw();
+
 public:
     /**
      * @brief Encrypt given data.
@@ -63,15 +64,18 @@ public:
      * @return encrypted data.
      */
     VirgilByteArray encrypt(const VirgilByteArray& data, bool embedContentInfo = false);
+
     /**
      * @brief Decrypt given data for recipient defined by id and private key.
      * @note Content info MUST be defined, if it was not embedded to the encrypted data.
      * @see method setContentInfo().
      * @return Decrypted data.
      */
-    VirgilByteArray decryptWithKey(const VirgilByteArray& encryptedData,
+    VirgilByteArray decryptWithKey(
+            const VirgilByteArray& encryptedData,
             const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
             const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+
     /**
      * @brief Decrypt given data for recipient defined by password.
      * @note Content info MUST be defined, if it was not embedded to the encrypted data.
@@ -79,12 +83,14 @@ public:
      * @return Decrypted data.
      */
     VirgilByteArray decryptWithPassword(const VirgilByteArray& encryptedData, const VirgilByteArray& pwd);
+
 private:
     /**
      * @brief Decrypt given data.
      * @return Decrypted data.
      */
-    VirgilByteArray decrypt(const VirgilByteArray& encryptedData,
+    VirgilByteArray decrypt(
+            const VirgilByteArray& encryptedData,
             virgil::crypto::foundation::VirgilSymmetricCipher& cipher);
 };
 

@@ -36,12 +36,8 @@
 
 #include <virgil/crypto/VirgilChunkCipher.h>
 
-#include <cstring>
 #include <cmath>
-#include <string>
-#include <sstream>
 
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
@@ -57,7 +53,7 @@ using virgil::crypto::foundation::VirgilSymmetricCipher;
  * @name Contsants
  */
 ///@{
-static const char * const kCustomParameterKey_ChunkSize = "chunkSize";
+static const char* const kCustomParameterKey_ChunkSize = "chunkSize";
 ///@}
 
 VirgilChunkCipher::~VirgilChunkCipher() throw() {
@@ -68,17 +64,18 @@ static size_t adjustEncryptionChunkSize(size_t preferredChunkSize, size_t cipher
         if (preferredChunkSize < cipherBlockSize) {
             return cipherBlockSize - 1;
         } else {
-            return (size_t)(preferredChunkSize / cipherBlockSize) * cipherBlockSize - 1;
+            return (size_t) (preferredChunkSize / cipherBlockSize) * cipherBlockSize - 1;
         }
     } else {
         return preferredChunkSize;
     }
 }
 
-static size_t adjustDecryptionChunkSize(size_t encryptionChunkSize, size_t cipherBlockSize, bool isSupportPadding,
+static size_t adjustDecryptionChunkSize(
+        size_t encryptionChunkSize, size_t cipherBlockSize, bool isSupportPadding,
         size_t authTagLength) {
     if (isSupportPadding) {
-        return (size_t)ceil((double)encryptionChunkSize / cipherBlockSize) * cipherBlockSize + authTagLength;
+        return (size_t) ceil((double) encryptionChunkSize / cipherBlockSize) * cipherBlockSize + authTagLength;
     } else {
         return encryptionChunkSize + authTagLength;
     }
@@ -93,7 +90,8 @@ size_t VirgilChunkCipher::startEncryption(size_t preferredChunkSize) {
     return actualChunkSize;
 }
 
-size_t VirgilChunkCipher::startDecryptionWithKey(const VirgilByteArray& recipientId,
+size_t VirgilChunkCipher::startDecryptionWithKey(
+        const VirgilByteArray& recipientId,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
     VirgilSymmetricCipher& symmetricCipher = initDecryptionWithKey(recipientId, privateKey, privateKeyPassword);
     return adjustDecryptionChunkSize(retrieveChunkSize(),

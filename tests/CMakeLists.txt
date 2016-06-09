@@ -46,5 +46,5 @@ target_link_libraries (${TEST_RUNNER} ${VIRGIL_CRYPTO_LIB_NAME})
 
 add_test (
     NAME ${TEST_RUNNER}
-    COMMAND ./${TEST_RUNNER}
+    COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${TEST_RUNNER}"
 )

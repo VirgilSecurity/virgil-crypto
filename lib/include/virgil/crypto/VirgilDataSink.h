@@ -52,11 +52,13 @@ public:
      * @brief Return true if target object is able to write data.
      */
     virtual bool isGood() = 0;
+
     /**
      * @brief Write data to the target object.
      */
     virtual void write(const VirgilByteArray& data) = 0;
-    virtual ~VirgilDataSink() throw() {}
+
+    virtual ~VirgilDataSink() throw() { }
 };
 
 }}

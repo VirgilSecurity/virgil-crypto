@@ -36,9 +36,6 @@
 
 #include <virgil/crypto/foundation/cms/VirgilCMSEncryptedContent.h>
 
-#include <cstddef>
-#include <string>
-
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/priv/VirgilOID.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
@@ -77,8 +74,8 @@ size_t VirgilCMSEncryptedContent::asn1Write(VirgilAsn1Writer& asn1Writer, size_t
 }
 
 void VirgilCMSEncryptedContent::asn1Read(VirgilAsn1Reader& asn1Reader) {
-    (void)asn1Reader.readSequence();
-    (void)asn1Reader.readOID(); // Ignore OID
+    (void) asn1Reader.readSequence();
+    (void) asn1Reader.readOID(); // Ignore OID
     contentEncryptionAlgorithm = asn1Reader.readData();
     if (asn1Reader.readContextTag(kCMS_EncryptedContentTag) > 0) {
         encryptedContent = asn1Reader.readOctetString();

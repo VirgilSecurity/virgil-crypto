@@ -1,3 +1,4 @@
+<?php
 /**
  * Copyright (C) 2015 Virgil Security Inc.
  *
@@ -34,55 +35,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_VERSION_H
-#define VIRGIL_VERSION_H
-
-#include <cstddef>
-#include <string>
-
-namespace virgil { namespace crypto {
+include_once "@PHP_MODULE_FILE_NAME@";
 
 /**
- * @brief Provides information about Virgil library version.
+ * @coversDefaultClass VirgilPBKDF
  */
-class VirgilVersion {
-public:
-    /**
-     * Return version number in the format MMNNPP (Major, Minor, Patch).
-     *
-     */
-    static size_t asNumber();
+class VirgilPBKDF_Test extends PHPUnit_Framework_TestCase {
 
     /**
-     * Return the version number as string.
+     * @covers VirgilPBKDF::setAlgorithm
+     * @covers VirgilPBKDF::setHash
+     * @covers VirgilPBKDF::derive
      */
-    static std::string asString();
+    public function test_pbkdf() {
+        $initialString = "This string will be PBKDFed.";
+        $pwd = "password";
+        $salt = "salt";
+        $iterationCount = 2048;
+        $outSize = 512;
 
-    /**
-     * Return the major version number.
-     */
-    static size_t majorVersion();
+        $pbkdf = new VirgilPBKDF($salt, $iterationCount);
+        $pbkdf->setAlgorithm(VirgilPBKDF::Algorithm_PBKDF2);
+        $pbkdf->setHash(VirgilPBKDF::Hash_SHA512);
 
-    /**
-     * Return the minor version number.
-     */
-    static size_t minorVersion();
+        $out = $pbkdf->derive($pwd, $outSize);
 
-    /**
-     * Return the minor version number.
-     */
-    static size_t patchVersion();
+        $this->assertEquals(strlen($out), $outSize);
+    }
+}
 
-    /**
-     * Return version full name.
-     *
-     * If current release contains some additional tag, like rc1,
-     * then version full name will be different from the string returned by method asString(),
-     * i.e. 1.3.4-rc1, or 1.3.4-coolfeature, etc.
-     */
-    static std::string fullName();
-};
-
-}}
-
-#endif /* VIRGIL_VERSION_H */
+?>

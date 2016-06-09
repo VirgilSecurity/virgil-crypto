@@ -59,20 +59,24 @@ public:
      * @note Underlying canonical representation is ASN.1, but it can be changed in future.
      */
     static VirgilByteArray jsonToBytes(const std::string& json);
+
     /**
      * @brief Represents given string as byte array.
      */
     static VirgilByteArray stringToBytes(const std::string& str);
+
     /**
      * @brief Represent given byte array as string.
      */
     static std::string bytesToString(const VirgilByteArray& array);
+
     /**
      * @brief Translate given HEX string to the byte array.
      * @param hexStr - HEX string.
      * @return Byte array.
      */
     static VirgilByteArray hexToBytes(const std::string& hexStr);
+
     /**
      * @brief Translate given byte array to the HEX string.
      * @param array - byte array.
@@ -81,12 +85,14 @@ public:
      * @return HEX string.
      */
     static std::string bytesToHex(const VirgilByteArray& array, bool formatted = false);
+
     /**
      * @brief Make all bytes zero.
      *
      * This method SHOULD be used to securely delete sensitive data.
      */
     static void zeroize(VirgilByteArray& array);
+
 private:
     /**
      * @brief Deny object creation.

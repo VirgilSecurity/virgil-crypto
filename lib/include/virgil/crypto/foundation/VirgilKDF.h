@@ -65,6 +65,7 @@ public:
      * @brief Configures with KDF1 (ISO-18033-2) algorithm.
      */
     static VirgilKDF kdf1();
+
     /**
      * @brief Configures with KDF1 (ISO-18033-2) algorithm.
      */
@@ -80,6 +81,7 @@ public:
      *     i.e. VirgilKDF kdf = VirgilKDF().fromAsn1(asn1);
      */
     VirgilKDF();
+
     /**
      * @brief Polymorphic destructor.
      */
@@ -120,6 +122,7 @@ public:
      */
     ///@{
     VirgilKDF(const VirgilKDF& other);
+
     VirgilKDF& operator=(const VirgilKDF& rhs);
     ///@}
     /**
@@ -145,18 +148,22 @@ public:
      * @endcode
      */
     ///@{
-    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+    virtual size_t asn1Write(
+            virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
             size_t childWrittenBytes = 0) const;
+
     virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
 private:
     explicit VirgilKDF(int kdfType, int mdType);
+
     /**
      * @brief If internal state is not initialized with specific algorithm exception will be thrown.
      */
     void checkState() const;
+
 private:
-    VirgilKDFImpl *impl_;
+    VirgilKDFImpl* impl_;
 };
 
 }}}

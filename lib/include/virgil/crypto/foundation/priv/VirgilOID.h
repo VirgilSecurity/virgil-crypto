@@ -51,20 +51,20 @@
 /**
  * PKCS#7 OIDs
  */
-#define OID_PKCS7 MBEDTLS_OID_PKCS "\x07" /**< pkcs-7 OBJECT IDENTIFIER ::= { iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) 7 } */
-#define OID_PKCS7_DATA OID_PKCS7 "\x01" /**< data ::= { pkcs-7 1 } */
-#define OID_PKCS7_SIGNED_DATA OID_PKCS7 "\x02" /**< signedData ::= { pkcs-7 2 } */
-#define OID_PKCS7_ENVELOPED_DATA OID_PKCS7 "\x03" /**< envelopedData ::= { pkcs-7 3 } */
-#define OID_PKCS7_SIGNED_AND_ENVELOPED_DATA OID_PKCS7 "\x04" /**< signedAndEnvelopedData ::= { pkcs-7 4 } */
-#define OID_PKCS7_DIGESTED_DATA OID_PKCS7 "\x05" /**< digestedData ::= { pkcs-7 5 } */
-#define OID_PKCS7_ENCRYPTED_DATA OID_PKCS7 "\x06" /**< encryptedData ::= { pkcs-7 6 } */
-#define OID_PKCS7_DATA_WITH_ATTRIBUTES OID_PKCS7 "\x07" /**< dataWithAttributes ::= { pkcs-7 7 } */
-#define OID_PKCS7_ENCRYPTED_PRIVATE_KEY_INFO OID_PKCS7 "\x07" /**< encryptedPrivateKeyInfo ::= { pkcs-7 8 } */
+#define OID_PKCS7 MBEDTLS_OID_PKCS "\x07" ///< pkcs-7 OBJECT IDENTIFIER ::= { iso(1) member-body(2) us(840) rsadsi(113549) pkcs(1) 7 }
+#define OID_PKCS7_DATA OID_PKCS7 "\x01" ///< data ::= { pkcs-7 1 }
+#define OID_PKCS7_SIGNED_DATA OID_PKCS7 "\x02" ///< signedData ::= { pkcs-7 2 }
+#define OID_PKCS7_ENVELOPED_DATA OID_PKCS7 "\x03" ///< envelopedData ::= { pkcs-7 3 }
+#define OID_PKCS7_SIGNED_AND_ENVELOPED_DATA OID_PKCS7 "\x04" ///< signedAndEnvelopedData ::= { pkcs-7 4 }
+#define OID_PKCS7_DIGESTED_DATA OID_PKCS7 "\x05" ///< digestedData ::= { pkcs-7 5 }
+#define OID_PKCS7_ENCRYPTED_DATA OID_PKCS7 "\x06" ///< encryptedData ::= { pkcs-7 6 }
+#define OID_PKCS7_DATA_WITH_ATTRIBUTES OID_PKCS7 "\x07" ///< dataWithAttributes ::= { pkcs-7 7 }
+#define OID_PKCS7_ENCRYPTED_PRIVATE_KEY_INFO OID_PKCS7 "\x07" ///< encryptedPrivateKeyInfo ::= { pkcs-7 8 }
 
 /**
  * PKCS#9 OIDs
  */
-#define OID_PKCS9_AUTHENTICATED_DATA MBEDTLS_OID_PKCS9 "\x0F\x01\x02" /**< ct-authData ::= { pkcs-9 smime(16) ct(1) ct-authData(2) } */
+#define OID_PKCS9_AUTHENTICATED_DATA MBEDTLS_OID_PKCS9 "\x0F\x01\x02" ///< ct-authData ::= { pkcs-9 smime(16) ct(1) ct-authData(2) }
 
 /**
  * @brief Translate low-level oid to std::string

@@ -36,16 +36,11 @@
 
 #include <virgil/crypto/foundation/VirgilHash.h>
 
-#include <string>
-
 #include <mbedtls/md.h>
 #include <mbedtls/oid.h>
-#include <mbedtls/asn1.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/PolarsslException.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
@@ -69,9 +64,9 @@ public:
         init_(mdType);
     }
 
-    VirgilHashImpl(const char * mdName)
+    VirgilHashImpl(const char* mdName)
             : type(MBEDTLS_MD_NONE), info(0), digest(0), digestSize(0), ctx(0), hmacCtx(0) {
-        const mbedtls_md_info_t * mdInfo = mbedtls_md_info_from_string(mdName);
+        const mbedtls_md_info_t* mdInfo = mbedtls_md_info_from_string(mdName);
         mbedtls_md_type_t mdType = mdInfo ? mbedtls_md_get_type(mdInfo) : MBEDTLS_MD_NONE;
         init_(mdType);
     }
@@ -105,42 +100,43 @@ private:
         digest = new unsigned char[digestSize];
         ctx = new mbedtls_md_context_t();
         MBEDTLS_ERROR_HANDLER_DISPOSE(
-            ::mbedtls_md_setup(ctx, info, 0),
-            free_()
+                mbedtls_md_setup(ctx, info, 0),
+                free_()
         );
         hmacCtx = new mbedtls_md_context_t();
         MBEDTLS_ERROR_HANDLER_DISPOSE(
-            ::mbedtls_md_setup(hmacCtx, info, 1),
-            free_()
+                mbedtls_md_setup(hmacCtx, info, 1),
+                free_()
         );
     }
 
     void free_() throw() {
         if (digest) {
-            delete [] digest;
+            delete[] digest;
             digest = 0;
             digestSize = 0;
         }
         if (ctx) {
-            ::mbedtls_md_free(ctx);
+            mbedtls_md_free(ctx);
             delete ctx;
             ctx = 0;
         }
         if (hmacCtx) {
-            ::mbedtls_md_free(hmacCtx);
+            mbedtls_md_free(hmacCtx);
             delete hmacCtx;
             hmacCtx = 0;
         }
         type = MBEDTLS_MD_NONE;
         info = 0;
     }
+
 public:
     mbedtls_md_type_t type; // hash algorithm type
-    const mbedtls_md_info_t *info; // hash algorithm info
-    unsigned char *digest; // pointer to the array that handles hash digest
+    const mbedtls_md_info_t* info; // hash algorithm info
+    unsigned char* digest; // pointer to the array that handles hash digest
     size_t digestSize; // size of hash digest
-    mbedtls_md_context_t *ctx; // pointer to the hash context, is used for chaining hash
-    mbedtls_md_context_t *hmacCtx; // pointer to the hmac hash context, is used for chaining hash
+    mbedtls_md_context_t* ctx; // pointer to the hash context, is used for chaining hash
+    mbedtls_md_context_t* hmacCtx; // pointer to the hmac hash context, is used for chaining hash
 };
 
 }}}
@@ -171,7 +167,7 @@ VirgilHash::VirgilHash() : impl_(new VirgilHashImpl(MBEDTLS_MD_NONE)) {
 VirgilHash::VirgilHash(int type) : impl_(new VirgilHashImpl(static_cast<mbedtls_md_type_t>(type))) {
 }
 
-VirgilHash::VirgilHash(const char * name) : impl_(new VirgilHashImpl(name)) {
+VirgilHash::VirgilHash(const char* name) : impl_(new VirgilHashImpl(name)) {
 }
 
 VirgilHash::~VirgilHash() throw() {
@@ -188,7 +184,7 @@ VirgilHash& VirgilHash::operator=(const VirgilHash& rhs) {
     if (this == &rhs) {
         return *this;
     }
-    VirgilHashImpl *newImpl = new VirgilHashImpl(rhs.impl_->type);
+    VirgilHashImpl* newImpl = new VirgilHashImpl(rhs.impl_->type);
     if (impl_) {
         delete impl_;
     }
@@ -198,7 +194,7 @@ VirgilHash& VirgilHash::operator=(const VirgilHash& rhs) {
 
 std::string VirgilHash::name() const {
     checkState();
-    return std::string(::mbedtls_md_get_name(impl_->info));
+    return std::string(mbedtls_md_get_name(impl_->info));
 }
 
 int VirgilHash::type() const {
@@ -207,26 +203,26 @@ int VirgilHash::type() const {
 
 void VirgilHash::start() {
     checkState();
-    MBEDTLS_ERROR_HANDLER(::mbedtls_md_starts(impl_->ctx));
+    MBEDTLS_ERROR_HANDLER(mbedtls_md_starts(impl_->ctx));
 }
 
 void VirgilHash::update(const VirgilByteArray& bytes) {
     checkState();
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_md_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes));
+            mbedtls_md_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes));
     );
 }
 
 VirgilByteArray VirgilHash::finish() {
     checkState();
-    MBEDTLS_ERROR_HANDLER(::mbedtls_md_finish(impl_->ctx, impl_->digest));
+    MBEDTLS_ERROR_HANDLER(mbedtls_md_finish(impl_->ctx, impl_->digest));
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
 }
 
 VirgilByteArray VirgilHash::hash(const VirgilByteArray& bytes) const {
     checkState();
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_md(impl_->info, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes), impl_->digest)
+            mbedtls_md(impl_->info, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes), impl_->digest)
     );
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
 }
@@ -234,33 +230,33 @@ VirgilByteArray VirgilHash::hash(const VirgilByteArray& bytes) const {
 void VirgilHash::hmacStart(const VirgilByteArray& key) {
     checkState();
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_md_hmac_starts(impl_->hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key));
+            mbedtls_md_hmac_starts(impl_->hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key));
     );
 }
 
 void VirgilHash::hmacReset() {
     checkState();
-    MBEDTLS_ERROR_HANDLER(::mbedtls_md_hmac_reset(impl_->hmacCtx));
+    MBEDTLS_ERROR_HANDLER(mbedtls_md_hmac_reset(impl_->hmacCtx));
 }
 
 void VirgilHash::hmacUpdate(const VirgilByteArray& bytes) {
     checkState();
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_md_hmac_update(impl_->hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes));
+            mbedtls_md_hmac_update(impl_->hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes));
     );
 }
 
 VirgilByteArray VirgilHash::hmacFinish() {
     checkState();
-    MBEDTLS_ERROR_HANDLER(::mbedtls_md_hmac_finish(impl_->hmacCtx, impl_->digest));
+    MBEDTLS_ERROR_HANDLER(mbedtls_md_hmac_finish(impl_->hmacCtx, impl_->digest));
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
 }
 
 VirgilByteArray VirgilHash::hmac(const VirgilByteArray& key, const VirgilByteArray& bytes) const {
     checkState();
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_md_hmac(impl_->info, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key),
-                VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes), impl_->digest);
+            mbedtls_md_hmac(impl_->info, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key),
+                    VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes), impl_->digest);
     );
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
 }
@@ -274,10 +270,10 @@ void VirgilHash::checkState() const {
 
 size_t VirgilHash::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     checkState();
-    const char *oid = 0;
+    const char* oid = 0;
     size_t oidLen;
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_oid_get_oid_by_md(impl_->type, &oid, &oidLen)
+            mbedtls_oid_get_oid_by_md(impl_->type, &oid, &oidLen)
     );
     size_t len = 0;
     len += asn1Writer.writeNull();
@@ -292,11 +288,11 @@ void VirgilHash::asn1Read(VirgilAsn1Reader& asn1Reader) {
 
     mbedtls_asn1_buf oidAsn1Buf;
     oidAsn1Buf.len = oid.size();
-    oidAsn1Buf.p = reinterpret_cast<unsigned char *>(const_cast<std::string::pointer>(oid.c_str()));
+    oidAsn1Buf.p = reinterpret_cast<unsigned char*>(const_cast<std::string::pointer>(oid.c_str()));
 
     mbedtls_md_type_t type = MBEDTLS_MD_NONE;
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_oid_get_md_alg(&oidAsn1Buf, &type)
+            mbedtls_oid_get_md_alg(&oidAsn1Buf, &type)
     );
 
     asn1Reader.readNull();

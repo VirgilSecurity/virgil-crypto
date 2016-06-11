@@ -75,6 +75,8 @@ def createNativeUnixBuild(slave) {
                 sh './utils/build.sh php-5.6'
                 organizeFilesUnix('install/php')
             }
+            //DotNET - Mono
+            sh './utils/build.sh net'
 
             archiveArtifacts('install/**')
         }

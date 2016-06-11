@@ -36,16 +36,11 @@
 
 #include <virgil/crypto/foundation/VirgilKDF.h>
 
-#include <string>
-
 #include <mbedtls/kdf.h>
 #include <mbedtls/oid.h>
-#include <mbedtls/kdf.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/PolarsslException.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
@@ -70,16 +65,17 @@ namespace virgil { namespace crypto { namespace foundation {
 
 class VirgilKDFImpl {
 public:
-    VirgilKDFImpl() : kdfInfo(0), mdInfo(0)  {
+    VirgilKDFImpl() : kdfInfo(0), mdInfo(0) {
     }
 
-    VirgilKDFImpl(mbedtls_kdf_type_t kdfType, mbedtls_md_type_t mbedtls_md_type_t) : kdfInfo(0), mdInfo(0)  {
+    VirgilKDFImpl(mbedtls_kdf_type_t kdfType, mbedtls_md_type_t mbedtls_md_type_t) : kdfInfo(0), mdInfo(0) {
         kdfInfo = mbedtls_kdf_info_from_type(kdfType);
         mdInfo = mbedtls_md_info_from_type(mbedtls_md_type_t);
     }
+
 public:
-    mbedtls_kdf_info_t const * kdfInfo; // KDF algorithm type info
-    mbedtls_md_info_t const *  mdInfo; // hash algorithm type info
+    mbedtls_kdf_info_t const* kdfInfo; // KDF algorithm type info
+    mbedtls_md_info_t const* mdInfo; // hash algorithm type info
 };
 
 }}}
@@ -113,7 +109,7 @@ VirgilKDF& VirgilKDF::operator=(const VirgilKDF& rhs) {
     if (this == &rhs) {
         return *this;
     }
-    VirgilKDFImpl *newImpl = new VirgilKDFImpl(*rhs.impl_);
+    VirgilKDFImpl* newImpl = new VirgilKDFImpl(*rhs.impl_);
     if (impl_) {
         delete impl_;
     }
@@ -123,7 +119,7 @@ VirgilKDF& VirgilKDF::operator=(const VirgilKDF& rhs) {
 
 std::string VirgilKDF::name() const {
     checkState();
-    return std::string(::mbedtls_kdf_get_name(impl_->kdfInfo));
+    return std::string(mbedtls_kdf_get_name(impl_->kdfInfo));
 }
 
 
@@ -131,7 +127,8 @@ VirgilByteArray VirgilKDF::derive(const VirgilByteArray& in, size_t outSize) {
     checkState();
     VirgilByteArray result(outSize);
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_kdf(impl_->kdfInfo, impl_->mdInfo, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(in), result.data(), result.size())
+            mbedtls_kdf(impl_->kdfInfo, impl_->mdInfo, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(in), result.data(),
+                    result.size())
     );
     return result;
 }
@@ -147,22 +144,22 @@ size_t VirgilKDF::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenByt
     checkState();
 
     size_t len = 0;
-    const char *oid = 0;
+    const char* oid = 0;
     size_t oidLen;
 
     // Write hash algorithm identifier
-    mbedtls_md_type_t mdType = ::mbedtls_md_get_type(impl_->mdInfo);
+    mbedtls_md_type_t mdType = mbedtls_md_get_type(impl_->mdInfo);
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_oid_get_oid_by_md(mdType, &oid, &oidLen)
+            mbedtls_oid_get_oid_by_md(mdType, &oid, &oidLen)
     );
     len += asn1Writer.writeNull();
     len += asn1Writer.writeOID(std::string(oid, oidLen));
     len += asn1Writer.writeSequence(len);
 
     // Write key derivation function algorithm identifier
-    mbedtls_kdf_type_t kdfType = ::mbedtls_kdf_get_type(impl_->kdfInfo);
+    mbedtls_kdf_type_t kdfType = mbedtls_kdf_get_type(impl_->kdfInfo);
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_oid_get_oid_by_kdf_alg(kdfType, &oid, &oidLen)
+            mbedtls_oid_get_oid_by_kdf_alg(kdfType, &oid, &oidLen)
     );
     len += asn1Writer.writeOID(std::string(oid, oidLen));
     len += asn1Writer.writeSequence(len);
@@ -178,22 +175,22 @@ void VirgilKDF::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
     oid = asn1Reader.readOID();
     oidAsn1Buf.len = oid.size();
-    oidAsn1Buf.p = reinterpret_cast<unsigned char *>(const_cast<std::string::pointer>(oid.c_str()));
+    oidAsn1Buf.p = reinterpret_cast<unsigned char*>(const_cast<std::string::pointer>(oid.c_str()));
 
     mbedtls_kdf_type_t kdfType = MBEDTLS_KDF_NONE;
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_oid_get_kdf_alg(&oidAsn1Buf, &kdfType)
+            mbedtls_oid_get_kdf_alg(&oidAsn1Buf, &kdfType)
     );
 
     // Read hash algorithm identifier
     asn1Reader.readSequence();
     oid = asn1Reader.readOID();
     oidAsn1Buf.len = oid.size();
-    oidAsn1Buf.p = reinterpret_cast<unsigned char *>(const_cast<std::string::pointer>(oid.c_str()));
+    oidAsn1Buf.p = reinterpret_cast<unsigned char*>(const_cast<std::string::pointer>(oid.c_str()));
 
     mbedtls_md_type_t mdType = MBEDTLS_MD_NONE;
     MBEDTLS_ERROR_HANDLER(
-        ::mbedtls_oid_get_md_alg(&oidAsn1Buf, &mdType)
+            mbedtls_oid_get_md_alg(&oidAsn1Buf, &mdType)
     );
 
     asn1Reader.readNull();

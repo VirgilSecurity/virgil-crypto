@@ -36,11 +36,8 @@
 
 #include <virgil/crypto/foundation/VirgilBase64.h>
 
-#include <string>
-
 #include <mbedtls/base64.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/PolarsslException.h>
 
 using virgil::crypto::VirgilByteArray;
@@ -53,12 +50,12 @@ std::string VirgilBase64::encode(const VirgilByteArray& data) {
     }
     // Define output length
     size_t bufLen = 0;
-    ::mbedtls_base64_encode(NULL, 0, &bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data));
+    mbedtls_base64_encode(NULL, 0, &bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data));
     // Encode
-    unsigned char *buf = new unsigned char[bufLen];
-    ::mbedtls_base64_encode(buf, bufLen, &bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data));
+    unsigned char* buf = new unsigned char[bufLen];
+    mbedtls_base64_encode(buf, bufLen, &bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data));
     // Return result
-    std::string result(reinterpret_cast<const char *>(buf), bufLen);
+    std::string result(reinterpret_cast<const char*>(buf), bufLen);
     delete[] buf;
     return result;
 }
@@ -69,11 +66,12 @@ VirgilByteArray VirgilBase64::decode(const std::string& base64str) {
     }
     // Define output length
     size_t bufLen = 0;
-    ::mbedtls_base64_decode(NULL, 0, &bufLen, reinterpret_cast<const unsigned char *>(base64str.data()), base64str.size());
+    mbedtls_base64_decode(NULL, 0, &bufLen, reinterpret_cast<const unsigned char*>(base64str.data()),
+            base64str.size());
     // Decode
     VirgilByteArray result(bufLen);
-    ::mbedtls_base64_decode(result.data(), bufLen, &bufLen,
-            reinterpret_cast<const unsigned char *>(base64str.data()), base64str.size());
+    mbedtls_base64_decode(result.data(), bufLen, &bufLen,
+            reinterpret_cast<const unsigned char*>(base64str.data()), base64str.size());
     // Return result
     return result;
 }

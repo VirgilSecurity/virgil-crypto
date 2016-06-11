@@ -36,11 +36,7 @@
 
 #include <virgil/crypto/foundation/cms/VirgilCMSEnvelopedData.h>
 
-#include <cstddef>
-#include <string>
-
 #include <virgil/crypto/VirgilCryptoException.h>
-#include <virgil/crypto/foundation/priv/VirgilOID.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
@@ -94,10 +90,10 @@ void VirgilCMSEnvelopedData::asn1Read(VirgilAsn1Reader& asn1Reader) {
     keyTransRecipients.clear();
     passwordRecipients.clear();
 
-    (void)asn1Reader.readSequence();
-    (void)asn1Reader.readInteger(); // Ignore version
+    (void) asn1Reader.readSequence();
+    (void) asn1Reader.readInteger(); // Ignore version
     if (asn1Reader.readContextTag(kCMS_OriginatorInfoTag) > 0) {
-        (void)asn1Reader.readData(); // Ignore origibatorInfo
+        (void) asn1Reader.readData(); // Ignore origibatorInfo
     }
 
     size_t setLen = asn1Reader.readSet();
@@ -112,8 +108,8 @@ void VirgilCMSEnvelopedData::asn1Read(VirgilAsn1Reader& asn1Reader) {
         } else {
             bool unsupportedRecipientInfoDefined =
                     recipientAsn1Reader.readContextTag(kCMS_KeyAgreeRecipientTag) > 0 ||
-                    recipientAsn1Reader.readContextTag(kCMS_KEKRecipientTag) > 0 ||
-                    recipientAsn1Reader.readContextTag(kCMS_OtherRecipientTag) > 0;
+                            recipientAsn1Reader.readContextTag(kCMS_KEKRecipientTag) > 0 ||
+                            recipientAsn1Reader.readContextTag(kCMS_OtherRecipientTag) > 0;
             if (unsupportedRecipientInfoDefined) {
                 throw VirgilCryptoException(std::string("VirgilCMSEnvelopedData: ") +
                         "Given RecipientInfo type is not supported.");

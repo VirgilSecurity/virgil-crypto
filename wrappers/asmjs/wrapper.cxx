@@ -55,6 +55,7 @@ using namespace emscripten;
 #include <virgil/crypto/VirgilCipherBase.h>
 #include <virgil/crypto/VirgilCipher.h>
 #include <virgil/crypto/VirgilSigner.h>
+#include <virgil/crypto/VirgilTinyCipher.h>
 
 using virgil::crypto::VirgilByteArray;
 
@@ -119,6 +120,7 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .function("publicKey", &virgil::crypto::VirgilKeyPair::publicKey)
         .function("privateKey", &virgil::crypto::VirgilKeyPair::privateKey)
         .class_function("generate", &virgil::crypto::VirgilKeyPair::generate)
+        .class_function("generateFrom", &virgil::crypto::VirgilKeyPair::generateFrom)
         .class_function("ecNist192", &virgil::crypto::VirgilKeyPair::ecNist192)
         .class_function("ecNist224", &virgil::crypto::VirgilKeyPair::ecNist224)
         .class_function("ecNist256", &virgil::crypto::VirgilKeyPair::ecNist256)
@@ -177,8 +179,9 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .function("removeAllRecipients", &virgil::crypto::VirgilCipherBase::removeAllRecipients)
         .function("getContentInfo", &virgil::crypto::VirgilCipherBase::getContentInfo)
         .function("setContentInfo", &virgil::crypto::VirgilCipherBase::setContentInfo)
-        .class_function("defineContentInfoSize", &virgil::crypto::VirgilCipherBase::defineContentInfoSize)
         .function("customParams", &virgil::crypto::VirgilCipherBase_customParams)
+        .class_function("defineContentInfoSize", &virgil::crypto::VirgilCipherBase::defineContentInfoSize)
+        .class_function("computeShared", &virgil::crypto::VirgilCipherBase::computeShared)
     ;
 
     class_<virgil::crypto::VirgilCipher, base<virgil::crypto::VirgilCipherBase>>("VirgilCipher")
@@ -218,6 +221,26 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .class_function("hexToBytes", &virgil::crypto::VirgilByteArrayUtils::hexToBytes)
         .class_function("bytesToHex", &virgil::crypto::VirgilByteArrayUtils::bytesToHex)
         .class_function("zeroize", &virgil::crypto::VirgilByteArrayUtils::zeroize)
+    ;
+
+    enum_<virgil::crypto::VirgilTinyCipher::PackageSize>("VirgilTinyCipherPackageSize")
+        .value("Min", virgil::crypto::VirgilTinyCipher::PackageSize_Min)
+        .value("Short_SMS", virgil::crypto::VirgilTinyCipher::PackageSize_Short_SMS)
+        .value("Long_SMS", virgil::crypto::VirgilTinyCipher::PackageSize_Long_SMS)
+    ;
+
+    class_<virgil::crypto::VirgilTinyCipher>("VirgilTinyCipher")
+        .constructor<>()
+        .constructor<size_t>()
+        .function("reset", &virgil::crypto::VirgilTinyCipher::reset)
+        .function("encrypt", &virgil::crypto::VirgilTinyCipher::encrypt)
+        .function("encryptAndSign", &virgil::crypto::VirgilTinyCipher::encryptAndSign)
+        .function("getPackageCount", &virgil::crypto::VirgilTinyCipher::getPackageCount)
+        .function("getPackage", &virgil::crypto::VirgilTinyCipher::getPackage)
+        .function("addPackage", &virgil::crypto::VirgilTinyCipher::addPackage)
+        .function("isPackagesAccumulated", &virgil::crypto::VirgilTinyCipher::isPackagesAccumulated)
+        .function("decrypt", &virgil::crypto::VirgilTinyCipher::decrypt)
+        .function("verifyAndDecrypt", &virgil::crypto::VirgilTinyCipher::verifyAndDecrypt)
     ;
 }
 

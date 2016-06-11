@@ -1,5 +1,12 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.7.0 released 2016-06-11
+
+## Features
+
+  * [Lib] Add ability to produce minimum encryption output: class VirgilTinyCipher (experemental)
+  * [CI] Build .NET wrapper for linux OS
+
 = Version 1.6.0 released 2016-05-11
 
 ## Features

@@ -36,9 +36,6 @@
 
 #include <virgil/crypto/VirgilKeyPair.h>
 
-#include <string>
-
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/VirgilRandom.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 
@@ -51,6 +48,22 @@ VirgilKeyPair VirgilKeyPair::generate(VirgilKeyPair::Type type, const VirgilByte
     VirgilAsymmetricCipher cipher;
     cipher.genKeyPair(type);
     return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+}
+
+VirgilKeyPair VirgilKeyPair::generateFrom(
+        const VirgilKeyPair& donorKeyPair, const VirgilByteArray& donorPrivateKeyPassword,
+        const VirgilByteArray& newKeyPairPassword) {
+
+    VirgilAsymmetricCipher donorCipher;
+    if (!donorKeyPair.publicKey_.empty()) {
+        donorCipher.setPublicKey(donorKeyPair.publicKey_);
+    } else if (!donorKeyPair.privateKey_.empty()) {
+        donorCipher.setPrivateKey(donorKeyPair.privateKey_, donorPrivateKeyPassword);
+    }
+
+    VirgilAsymmetricCipher cipher;
+    cipher.genKeyPairFrom(donorCipher);
+    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(newKeyPairPassword));
 }
 
 VirgilKeyPair VirgilKeyPair::ecNist192(const VirgilByteArray& pwd) {
@@ -117,12 +130,14 @@ VirgilKeyPair VirgilKeyPair::rsa4096(const VirgilByteArray& pwd) {
     return generate(VirgilKeyPair::Type_RSA_4096);
 }
 
-bool VirgilKeyPair::isKeyPairMatch(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey,
+bool VirgilKeyPair::isKeyPairMatch(
+        const VirgilByteArray& publicKey, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
     return VirgilAsymmetricCipher::isKeyPairMatch(publicKey, privateKey, privateKeyPassword);
 }
 
-bool VirgilKeyPair::checkPrivateKeyPassword(const VirgilByteArray& key,
+bool VirgilKeyPair::checkPrivateKeyPassword(
+        const VirgilByteArray& key,
         const VirgilByteArray& pwd) {
     return VirgilAsymmetricCipher::checkPrivateKeyPassword(key, pwd);
 }
@@ -131,7 +146,8 @@ bool VirgilKeyPair::isPrivateKeyEncrypted(const VirgilByteArray& privateKey) {
     return VirgilAsymmetricCipher::isPrivateKeyEncrypted(privateKey);
 }
 
-VirgilByteArray VirgilKeyPair::resetPrivateKeyPassword(const VirgilByteArray& privateKey,
+VirgilByteArray VirgilKeyPair::resetPrivateKeyPassword(
+        const VirgilByteArray& privateKey,
         const VirgilByteArray& oldPassword, const VirgilByteArray& newPassword) {
     VirgilAsymmetricCipher cipher;
     cipher.setPrivateKey(privateKey, oldPassword);

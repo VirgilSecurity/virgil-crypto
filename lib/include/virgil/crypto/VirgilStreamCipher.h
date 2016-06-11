@@ -54,6 +54,7 @@ public:
      * @brief Polymorphic destructor.
      */
     virtual ~VirgilStreamCipher() throw();
+
 public:
     /**
      * @brief Encrypt data read from given source and write it the sink.
@@ -65,14 +66,17 @@ public:
      * @return encrypted data.
      */
     void encrypt(VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo = false);
+
     /**
      * @brief Decrypt data read from given source for recipient defined by id and private key,
      *     and write it to the sink.
      * @note Content info MUST be defined, if it was not embedded to the encrypted data.
      * @see method setContentInfo().
      */
-    void decryptWithKey(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& recipientId,
+    void decryptWithKey(
+            VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& recipientId,
             const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+
     /**
      * @brief Decrypt data read from given source for recipient defined by password,
      *     and write it to the sink.
@@ -87,10 +91,12 @@ private:
      * @return Data that was read from the source and is not content info.
      */
     VirgilByteArray tryReadContentInfo(VirgilDataSource& source);
+
     /**
      * @brief Decrypt data read from given source, and write it to the sink.
      */
-    void decrypt(VirgilDataSource& source, VirgilDataSink& sink,
+    void decrypt(
+            VirgilDataSource& source, VirgilDataSink& sink,
             virgil::crypto::foundation::VirgilSymmetricCipher& cipher, const VirgilByteArray& firstChunk);
 };
 

@@ -60,25 +60,25 @@ public:
      * @property kIterationCount_Default
      * @brief Default iteration count.
      */
-     static const unsigned int kIterationCount_Default = 2048;
+    static const unsigned int kIterationCount_Default = 2048;
 public:
     /**
      * @brief Defines specific password based key derivation function algorithm
      */
     typedef enum {
-        Algorithm_None = 0, /**< No algorithm defined */
-        Algorithm_PBKDF2    /**< Defines PBKDF2 algorithm (https://www.ietf.org/rfc/rfc2898.txt) */
+        Algorithm_None = 0, ///< No algorithm defined
+        Algorithm_PBKDF2    ///< Defines PBKDF2 algorithm (https://www.ietf.org/rfc/rfc2898.txt)
     } Algorithm;
     /**
      * @brief Defines specific underlying hash algorithm for the password based key derivation function algorithm
+     * @note Start numbering from 1, 0 is reserved.
      */
     typedef enum {
-                       /**< 0 reserved */
-        Hash_SHA1 = 1, /**< Defines SHA1 hash algorithm */
-        Hash_SHA224,   /**< Defines SHA-224 hash algorithm */
-        Hash_SHA256,   /**< Defines SHA-256 hash algorithm */
-        Hash_SHA384,   /**< Defines SHA-384 hash algorithm */
-        Hash_SHA512    /**< Defines SHA-512 hash algorithm */
+        Hash_SHA1 = 1, ///< Defines SHA1 hash algorithm
+        Hash_SHA224,   ///< Defines SHA-224 hash algorithm
+        Hash_SHA256,   ///< Defines SHA-256 hash algorithm
+        Hash_SHA384,   ///< Defines SHA-384 hash algorithm
+        Hash_SHA512    ///< Defines SHA-512 hash algorithm
     } Hash;
 
     /**
@@ -91,6 +91,7 @@ public:
      *     i.e. VirgilPBKDF pbkdf = VirgilPBKDF().fromAsn1(asn1);
      */
     VirgilPBKDF();
+
     /**
      * @brief Create object with default algorithm.
      *
@@ -98,6 +99,7 @@ public:
      * @param iterationCount - iteration count, the best practice is to pass random value.
      */
     VirgilPBKDF(const virgil::crypto::VirgilByteArray& salt, unsigned int iterationCount = kIterationCount_Default);
+
     /**
      * @brief Polymorphic destructor.
      */
@@ -115,31 +117,38 @@ public:
      * @brief Return salt.
      */
     VirgilByteArray getSalt() const;
+
     /**
      * @brief Return iteration count.
      */
     unsigned int getIterationCount() const;
+
     /**
      * @brief Set specific algorithm of the password based key derivation function.
      */
     void setAlgorithm(VirgilPBKDF::Algorithm alg);
+
     /**
      * @brief Return current algorithm of the password based key derivation function.
      */
     VirgilPBKDF::Algorithm getAlgorithm() const;
+
     /**
      * @brief Set underlying digest algorithm.
      */
     void setHash(Hash hash);
+
     /**
      * @brief Returns underlying digest algorithm.
      */
     VirgilPBKDF::Hash getHash() const;
+
     /**
      * @brief Involve security check for used parameters.
      * @note Enabled by default.
      */
     void enableRecommendationsCheck();
+
     /**
      * @brief Ignore security check for used parameters.
      * @warning It's strongly recommended do not disable recommendations check.
@@ -182,8 +191,10 @@ public:
      * @endcode
      */
     ///@{
-    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+    virtual size_t asn1Write(
+            virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
             size_t childWrittenBytes = 0) const;
+
     virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
 private:
@@ -191,10 +202,12 @@ private:
      * @brief If internal state is not initialized with specific algorithm exception will be thrown.
      */
     void checkState() const;
+
     /**
      * @brief If security recommendations is not satisfied exception will be thrown.
      */
     void checkRecommendations(const VirgilByteArray& pwd) const;
+
 private:
     VirgilPBKDF::Algorithm algorithm_;
     VirgilPBKDF::Hash hash_;

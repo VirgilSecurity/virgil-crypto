@@ -36,10 +36,6 @@
 
 #include <virgil/crypto/VirgilCustomParams.h>
 
-#include <cstddef>
-#include <vector>
-
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
@@ -132,7 +128,7 @@ size_t VirgilCustomParams::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childW
     std::vector<VirgilByteArray> keyValues;
 
     for (std::map<VirgilByteArray, int>::const_iterator it = intValues_.begin();
-            it != intValues_.end(); ++it) {
+         it != intValues_.end(); ++it) {
 
         VirgilAsn1Writer keyValueAsn1Writer;
         size_t len = 0;
@@ -145,7 +141,7 @@ size_t VirgilCustomParams::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childW
     }
 
     for (std::map<VirgilByteArray, VirgilByteArray>::const_iterator it = stringValues_.begin();
-            it != stringValues_.end(); ++it) {
+         it != stringValues_.end(); ++it) {
 
         VirgilAsn1Writer keyValueAsn1Writer;
         size_t len = 0;
@@ -158,7 +154,7 @@ size_t VirgilCustomParams::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childW
     }
 
     for (std::map<VirgilByteArray, VirgilByteArray>::const_iterator it = dataValues_.begin();
-            it != dataValues_.end(); ++it) {
+         it != dataValues_.end(); ++it) {
 
         VirgilAsn1Writer keyValueAsn1Writer;
         size_t len = 0;
@@ -184,7 +180,7 @@ void VirgilCustomParams::asn1Read(VirgilAsn1Reader& asn1Reader) {
         VirgilByteArray keyValueAsn1 = asn1Reader.readData();
         VirgilAsn1Reader keyValueAsn1Reader(keyValueAsn1);
 
-        (void)keyValueAsn1Reader.readSequence();
+        (void) keyValueAsn1Reader.readSequence();
         VirgilByteArray key = keyValueAsn1Reader.readUTF8String();
 
         if (keyValueAsn1Reader.readContextTag(kCMS_IntegerValueTag) > 0) {

@@ -36,24 +36,16 @@
 
 #include <virgil/crypto/foundation/VirgilPBE.h>
 
-#include <cstring>
 #include <map>
-#include <string>
-#include <sstream>
-#include <algorithm>
 
 #include <mbedtls/asn1.h>
 #include <mbedtls/oid.h>
 #include <mbedtls/pkcs5.h>
 #include <mbedtls/pkcs12.h>
-#include <mbedtls/cipher.h>
-#include <mbedtls/md.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/PolarsslException.h>
 #include <virgil/crypto/foundation/VirgilRandom.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 #include <virgil/crypto/foundation/asn1/priv/VirgilAsn1Alg.h>
@@ -120,9 +112,11 @@ public:
         }
 
     }
+
     explicit VirgilPBEImpl(const VirgilByteArray& pbeAlgId) : type(VIRGIL_PBE_NONE) {
         init_(pbeAlgId);
     }
+
 private:
     /**
      * @brief Parse given PBE algorithm identifier and stores parsed data as local object state.
@@ -133,22 +127,22 @@ private:
      * @throw VirgilCryptoException if algorithm identifier is not supported or ASN.1 structure is corrupted.
      */
     void init_(const VirgilByteArray& pbeAlgId) {
-        unsigned char *p, *end;
+        unsigned char* p, * end;
 
         // Initial init
         type = VIRGIL_PBE_NONE;
         algId = pbeAlgId;
         mdType = MBEDTLS_MD_NONE;
         cipherType = MBEDTLS_CIPHER_NONE;
-        memset (&pbeAlgOID, 0x00, sizeof(pbeAlgOID));
-        memset (&pbeParams, 0x00, sizeof(pbeParams));
+        std::memset(&pbeAlgOID, 0x00, sizeof(pbeAlgOID));
+        std::memset(&pbeParams, 0x00, sizeof(pbeParams));
 
         // Parse ASN.1
-        p = const_cast<unsigned char *>(algId.data());
+        p = const_cast<unsigned char*>(algId.data());
         end = p + algId.size();
 
         MBEDTLS_ERROR_HANDLER(
-            ::mbedtls_asn1_get_alg(&p, end, &pbeAlgOID, &pbeParams)
+                mbedtls_asn1_get_alg(&p, end, &pbeAlgOID, &pbeParams)
         );
 
         if (mbedtls_oid_get_pkcs12_pbe_alg(&pbeAlgOID, &mdType, &cipherType) == 0) {
@@ -194,7 +188,7 @@ VirgilPBE& VirgilPBE::operator=(const VirgilPBE& rhs) {
     if (this == &rhs) {
         return *this;
     }
-    VirgilPBEImpl *newImpl = new VirgilPBEImpl(rhs.impl_->algId);
+    VirgilPBEImpl* newImpl = new VirgilPBEImpl(rhs.impl_->algId);
     if (impl_) {
         delete impl_;
     }
@@ -220,29 +214,29 @@ VirgilByteArray VirgilPBE::process(const VirgilByteArray& data, const VirgilByte
     switch (impl_->type) {
         case VIRGIL_PBE_PKCS5:
             MBEDTLS_ERROR_HANDLER(
-                ::mbedtls_pkcs5_pbes2_ext(&pbeParams, mode,
-                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
-                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
-                        output.data(), &olen)
+                    mbedtls_pkcs5_pbes2_ext(&pbeParams, mode,
+                            VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
+                            VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
+                            output.data(), &olen)
             );
             break;
         case VIRGIL_PBE_PKCS12:
             checkPasswordLen(pwd.size());
             MBEDTLS_ERROR_HANDLER(
-                ::mbedtls_pkcs12_pbe_ext(&pbeParams, mode,
-                        impl_->cipherType, impl_->mdType,
-                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
-                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
-                        output.data(), &olen)
+                    mbedtls_pkcs12_pbe_ext(&pbeParams, mode,
+                            impl_->cipherType, impl_->mdType,
+                            VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
+                            VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
+                            output.data(), &olen)
             );
             break;
         case VIRGIL_PBE_PKCS12_SHA1_RC4_128:
             checkPasswordLen(pwd.size());
             MBEDTLS_ERROR_HANDLER(
-                ::mbedtls_pkcs12_pbe_sha1_rc4_128(&pbeParams, mode,
-                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
-                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
-                        output.data())
+                    mbedtls_pkcs12_pbe_sha1_rc4_128(&pbeParams, mode,
+                            VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
+                            VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
+                            output.data())
             );
             break;
         default:

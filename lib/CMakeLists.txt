@@ -45,16 +45,13 @@ if (LIB_FILE_IO)
     list (APPEND src ${stream_src})
 endif()
 
-foreach (src_file ${src})
-    configure_file (
-        "${CMAKE_CURRENT_SOURCE_DIR}/${src_file}"
-        "${CMAKE_CURRENT_BINARY_DIR}/${src_file}"
-        @ONLY
-    )
-endforeach ()
-set (src "")
-aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src src)
-aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src/stream src)
+configure_file (
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/VirgilVersion.cxx.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/src/VirgilVersion.cxx"
+    @ONLY
+)
+
+aux_source_directory("${CMAKE_CURRENT_BINARY_DIR}/src" src)
 
 add_library (${PROJECT_NAME} ${src})
 

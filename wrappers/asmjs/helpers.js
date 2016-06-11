@@ -58,3 +58,4 @@ Module['VirgilByteArray']['prototype']['toUTF8'] = function() {
 Module['VirgilKeyPair']['Type'] = Module['VirgilKeyPairType']
 Module['VirgilPBKDF']['Algorithm'] = Module['VirgilPBKDFAlgorithm']
 Module['VirgilPBKDF']['Hash'] = Module['VirgilPBKDFHash']
+Module['VirgilTinyCipher']['PackageSize'] = Module['VirgilTinyCipherPackageSize']

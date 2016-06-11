@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">1.6.0</span>
+   &#160;<span id="projectnumber">1.7.0</span>
    </div>
   </td>
  </tr>
@@ -103,18 +103,24 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html">   49</a></span>&#160;<span class="keyword">class </span><a class="code" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html">VirgilByteArrayUtils</a> {</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keyword">public</span>:</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keyword">static</span> VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#a1b1831c9a3abaf4a9e12c4521ad5a1d8">jsonToBytes</a>(<span class="keyword">const</span> std::string&amp; json);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keyword">static</span> VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#a4433fa550f3be187589f3e5cf96db646">stringToBytes</a>(<span class="keyword">const</span> std::string&amp; str);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keyword">static</span> std::string <a class="code" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#ad6bf4f2f2cbe8214952993e3bb266d09">bytesToString</a>(<span class="keyword">const</span> VirgilByteArray&amp; array);</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keyword">static</span> VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#ad12b4ceda7573da0fbd72c958c47b74d">hexToBytes</a>(<span class="keyword">const</span> std::string&amp; hexStr);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keyword">static</span> std::string <a class="code" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#af5ae916a1a88fb670745219a04e88ed7">bytesToHex</a>(<span class="keyword">const</span> VirgilByteArray&amp; array, <span class="keywordtype">bool</span> formatted = <span class="keyword">false</span>);</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#ad0fd03ec85513bee03da5f14b7ce0f37">zeroize</a>(VirgilByteArray&amp; array);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html">VirgilByteArrayUtils</a>();</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;};</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}}</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_BYTE_ARRAY_UTILS_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keyword">static</span> VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#a4433fa550f3be187589f3e5cf96db646">stringToBytes</a>(<span class="keyword">const</span> std::string&amp; str);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keyword">static</span> std::string <a class="code" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#ad6bf4f2f2cbe8214952993e3bb266d09">bytesToString</a>(<span class="keyword">const</span> VirgilByteArray&amp; array);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keyword">static</span> VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#ad12b4ceda7573da0fbd72c958c47b74d">hexToBytes</a>(<span class="keyword">const</span> std::string&amp; hexStr);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keyword">static</span> std::string <a class="code" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#af5ae916a1a88fb670745219a04e88ed7">bytesToHex</a>(<span class="keyword">const</span> VirgilByteArray&amp; array, <span class="keywordtype">bool</span> formatted = <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#ad0fd03ec85513bee03da5f14b7ce0f37">zeroize</a>(VirgilByteArray&amp; array);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html">VirgilByteArrayUtils</a>();</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;};</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;}}</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_BYTE_ARRAY_UTILS_H */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_byte_array_utils_html_ad0fd03ec85513bee03da5f14b7ce0f37"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#ad0fd03ec85513bee03da5f14b7ce0f37">virgil::crypto::VirgilByteArrayUtils::zeroize</a></div><div class="ttdeci">static void zeroize(VirgilByteArray &amp;array)</div><div class="ttdoc">Make all bytes zero. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_byte_array_utils_html_af5ae916a1a88fb670745219a04e88ed7"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#af5ae916a1a88fb670745219a04e88ed7">virgil::crypto::VirgilByteArrayUtils::bytesToHex</a></div><div class="ttdeci">static std::string bytesToHex(const VirgilByteArray &amp;array, bool formatted=false)</div><div class="ttdoc">Translate given byte array to the HEX string. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_byte_array_utils_html_a1b1831c9a3abaf4a9e12c4521ad5a1d8"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#a1b1831c9a3abaf4a9e12c4521ad5a1d8">virgil::crypto::VirgilByteArrayUtils::jsonToBytes</a></div><div class="ttdeci">static VirgilByteArray jsonToBytes(const std::string &amp;json)</div><div class="ttdoc">Represents given JSON object as byte array in canonical form. </div></div>

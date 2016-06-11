@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">1.6.0</span>
+   &#160;<span id="projectnumber">1.7.0</span>
    </div>
   </td>
  </tr>
@@ -106,61 +106,79 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">   57</a></span>&#160;<span class="keyword">class </span><a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a> : <span class="keyword">public</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible.html">virgil::crypto::foundation::asn1::VirgilAsn1Compatible</a> {</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keyword">public</span>:</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">static</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a> md5();</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keyword">static</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a> sha256();</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keyword">static</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a> sha384();</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keyword">static</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a> sha512();</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">static</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a> withName(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a28ad1c93961338f0929088ebc52297e8">name</a>);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#aea946161cc3f73c389f820a89673b9ec">VirgilHash</a>();</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a24a81f2f9b8090ed372e0c8385c5f81b">~VirgilHash</a>() <span class="keywordflow">throw</span>();</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    std::string <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a28ad1c93961338f0929088ebc52297e8">name</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#af86892c303525acc9b970aaf6b91f551">type</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a2ab047f8e206f8d6bcade17fd76a94ee">hash</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; bytes) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a39ea2c77e1c3cc330a5fef28ac419a03">start</a>();</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#ab86d43dc1c40cffb955a48764a9fd34e">update</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; bytes);</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#ab3c86051ab42bc3b70acd47f4d7541c8">finish</a>();</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a213c3f28d95ec0d4b5b363c9b74631f6">hmac</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; key,</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;            <span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; bytes) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a942ec1d68235708c6f8927203196f4e1">hmacStart</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; key);</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a2ade50fab735a2134aa0952e5ee7ff7f">hmacReset</a>();</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#ab941466cba175e4496f58422d39b9a79">hmacUpdate</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; bytes);</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#acdb6313c6057a6f4d8a9b7df07ba3a37">hmacFinish</a>();</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#aea946161cc3f73c389f820a89673b9ec">VirgilHash</a>(<span class="keyword">const</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a>&amp; other);</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a>&amp; rhs);</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a1cc6bde85aa3ed2a6d7c86c7d3c91721">asn1Write</a>(<a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html">virgil::crypto::foundation::asn1::VirgilAsn1Writer</a>&amp; asn1Writer,</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            <span class="keywordtype">size_t</span> childWrittenBytes = 0) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#aca80a47c8dac213e6dced9702045eec4">asn1Read</a>(<a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html">virgil::crypto::foundation::asn1::VirgilAsn1Reader</a>&amp; asn1Reader);</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#aea946161cc3f73c389f820a89673b9ec">VirgilHash</a>(<span class="keywordtype">int</span> type);</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#aea946161cc3f73c389f820a89673b9ec">VirgilHash</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> * name);</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    <span class="keywordtype">void</span> checkState() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    VirgilHashImpl *impl_;</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;};</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;}}}</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_HASH_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keyword">static</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a> sha256();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">static</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a> sha384();</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keyword">static</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a> sha512();</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keyword">static</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a> withName(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a28ad1c93961338f0929088ebc52297e8">name</a>);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#aea946161cc3f73c389f820a89673b9ec">VirgilHash</a>();</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a24a81f2f9b8090ed372e0c8385c5f81b">~VirgilHash</a>() <span class="keywordflow">throw</span>();</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    std::string <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a28ad1c93961338f0929088ebc52297e8">name</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#af86892c303525acc9b970aaf6b91f551">type</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a2ab047f8e206f8d6bcade17fd76a94ee">hash</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; bytes) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a39ea2c77e1c3cc330a5fef28ac419a03">start</a>();</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#ab86d43dc1c40cffb955a48764a9fd34e">update</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; bytes);</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#ab3c86051ab42bc3b70acd47f4d7541c8">finish</a>();</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a213c3f28d95ec0d4b5b363c9b74631f6">hmac</a>(</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;            <span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; key,</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;            <span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; bytes) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a942ec1d68235708c6f8927203196f4e1">hmacStart</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; key);</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a2ade50fab735a2134aa0952e5ee7ff7f">hmacReset</a>();</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#ab941466cba175e4496f58422d39b9a79">hmacUpdate</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; bytes);</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#acdb6313c6057a6f4d8a9b7df07ba3a37">hmacFinish</a>();</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#aea946161cc3f73c389f820a89673b9ec">VirgilHash</a>(<span class="keyword">const</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a>&amp; other);</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">VirgilHash</a>&amp; rhs);</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a1cc6bde85aa3ed2a6d7c86c7d3c91721">asn1Write</a>(</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html">virgil::crypto::foundation::asn1::VirgilAsn1Writer</a>&amp; asn1Writer,</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;            <span class="keywordtype">size_t</span> childWrittenBytes = 0) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#aca80a47c8dac213e6dced9702045eec4">asn1Read</a>(<a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html">virgil::crypto::foundation::asn1::VirgilAsn1Reader</a>&amp; asn1Reader);</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#aea946161cc3f73c389f820a89673b9ec">VirgilHash</a>(<span class="keywordtype">int</span> type);</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#aea946161cc3f73c389f820a89673b9ec">VirgilHash</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* name);</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    <span class="keywordtype">void</span> checkState() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    VirgilHashImpl* impl_;</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;};</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;}}}</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_HASH_H */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash_html_af86892c303525acc9b970aaf6b91f551"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#af86892c303525acc9b970aaf6b91f551">virgil::crypto::foundation::VirgilHash::type</a></div><div class="ttdeci">int type() const </div><div class="ttdoc">Return underlying hash type. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash_html_a39ea2c77e1c3cc330a5fef28ac419a03"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a39ea2c77e1c3cc330a5fef28ac419a03">virgil::crypto::foundation::VirgilHash::start</a></div><div class="ttdeci">void start()</div><div class="ttdoc">Initialize hashing for the new message hash. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash_html_a213c3f28d95ec0d4b5b363c9b74631f6"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a213c3f28d95ec0d4b5b363c9b74631f6">virgil::crypto::foundation::VirgilHash::hmac</a></div><div class="ttdeci">virgil::crypto::VirgilByteArray hmac(const virgil::crypto::VirgilByteArray &amp;key, const virgil::crypto::VirgilByteArray &amp;bytes) const </div><div class="ttdoc">Produce HMAC hash. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html">virgil::crypto::foundation::asn1::VirgilAsn1Reader</a></div><div class="ttdoc">This class provides methods for reading ASN.1 data structure. </div><div class="ttdef"><b>Definition:</b> VirgilAsn1Reader.h:53</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash_html_ab86d43dc1c40cffb955a48764a9fd34e"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#ab86d43dc1c40cffb955a48764a9fd34e">virgil::crypto::foundation::VirgilHash::update</a></div><div class="ttdeci">void update(const virgil::crypto::VirgilByteArray &amp;bytes)</div><div class="ttdoc">Update / process message hash. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash_html_a24a81f2f9b8090ed372e0c8385c5f81b"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a24a81f2f9b8090ed372e0c8385c5f81b">virgil::crypto::foundation::VirgilHash::~VirgilHash</a></div><div class="ttdeci">virtual ~VirgilHash()</div><div class="ttdoc">Polymorphic destructor. </div></div>
-<div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible.html">virgil::crypto::foundation::asn1::VirgilAsn1Compatible</a></div><div class="ttdoc">This class provides interface that allow to save and restore object state in the ASN.1 structure. </div><div class="ttdef"><b>Definition:</b> VirgilAsn1Compatible.h:58</div></div>
+<div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible.html">virgil::crypto::foundation::asn1::VirgilAsn1Compatible</a></div><div class="ttdoc">This class provides interface that allow to save and restore object state in the ASN.1 structure. </div><div class="ttdef"><b>Definition:</b> VirgilAsn1Compatible.h:59</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">virgil::crypto::foundation::VirgilHash</a></div><div class="ttdoc">Provides hashing (message digest) algorithms. </div><div class="ttdef"><b>Definition:</b> VirgilHash.h:57</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash_html_aca80a47c8dac213e6dced9702045eec4"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#aca80a47c8dac213e6dced9702045eec4">virgil::crypto::foundation::VirgilHash::asn1Read</a></div><div class="ttdeci">virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader &amp;asn1Reader)</div><div class="ttdoc">Read object state from the reader. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html">virgil::crypto::foundation::asn1::VirgilAsn1Writer</a></div><div class="ttdoc">This class provides methods for writing ASN.1 data structure. </div><div class="ttdef"><b>Definition:</b> VirgilAsn1Writer.h:54</div></div>

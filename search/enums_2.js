@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['type',['Type',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907',1,'virgil::crypto::VirgilKeyPair']]]
+  ['packagesize',['PackageSize',['../classvirgil_1_1crypto_1_1_virgil_tiny_cipher.html#ae56cb31496e5e1bc7a17307e12b3c472',1,'virgil::crypto::VirgilTinyCipher']]]
 ];

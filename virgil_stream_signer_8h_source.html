@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">1.6.0</span>
+   &#160;<span id="projectnumber">1.7.0</span>
    </div>
   </td>
  </tr>
@@ -102,18 +102,23 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
 <div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classvirgil_1_1crypto_1_1_virgil_stream_signer.html">   51</a></span>&#160;<span class="keyword">class </span><a class="code" href="classvirgil_1_1crypto_1_1_virgil_stream_signer.html">VirgilStreamSigner</a> {</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_stream_signer.html#a058463d37a3e3551b8cab0ce5d904ff6">VirgilStreamSigner</a>(<span class="keyword">const</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">virgil::crypto::foundation::VirgilHash</a>&amp; hash =</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            virgil::crypto::foundation::VirgilHash::sha384());</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1_virgil_stream_signer.html#a9f84b25d4dbd518f44229519c3f91741">sign</a>(<a class="code" href="classvirgil_1_1crypto_1_1_virgil_data_source.html">VirgilDataSource</a>&amp; source, <span class="keyword">const</span> VirgilByteArray&amp; privateKey,</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            <span class="keyword">const</span> VirgilByteArray&amp; privateKeyPassword = VirgilByteArray());</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_stream_signer.html#ad52b84357cbe89ccc454c232e7eaddc9">verify</a>(<a class="code" href="classvirgil_1_1crypto_1_1_virgil_data_source.html">VirgilDataSource</a>&amp; source, <span class="keyword">const</span> VirgilByteArray&amp; sign, <span class="keyword">const</span> VirgilByteArray&amp; publicKey);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">virgil::crypto::foundation::VirgilHash</a> hash_;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;};</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;}}</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_STREAM_SIGNER_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_stream_signer.html#a058463d37a3e3551b8cab0ce5d904ff6">VirgilStreamSigner</a>(</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            <span class="keyword">const</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">virgil::crypto::foundation::VirgilHash</a>&amp; hash =</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            virgil::crypto::foundation::VirgilHash::sha384());</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1_virgil_stream_signer.html#a9f84b25d4dbd518f44229519c3f91741">sign</a>(</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            <a class="code" href="classvirgil_1_1crypto_1_1_virgil_data_source.html">VirgilDataSource</a>&amp; source, <span class="keyword">const</span> VirgilByteArray&amp; privateKey,</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            <span class="keyword">const</span> VirgilByteArray&amp; privateKeyPassword = VirgilByteArray());</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_stream_signer.html#ad52b84357cbe89ccc454c232e7eaddc9">verify</a>(<a class="code" href="classvirgil_1_1crypto_1_1_virgil_data_source.html">VirgilDataSource</a>&amp; source, <span class="keyword">const</span> VirgilByteArray&amp; sign, <span class="keyword">const</span> VirgilByteArray&amp; publicKey);</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">virgil::crypto::foundation::VirgilHash</a> hash_;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;};</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;}}</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_STREAM_SIGNER_H */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_stream_signer_html_a9f84b25d4dbd518f44229519c3f91741"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_stream_signer.html#a9f84b25d4dbd518f44229519c3f91741">virgil::crypto::VirgilStreamSigner::sign</a></div><div class="ttdeci">VirgilByteArray sign(VirgilDataSource &amp;source, const VirgilByteArray &amp;privateKey, const VirgilByteArray &amp;privateKeyPassword=VirgilByteArray())</div><div class="ttdoc">Sign data provided by the source with given private key. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_stream_signer_html_ad52b84357cbe89ccc454c232e7eaddc9"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_stream_signer.html#ad52b84357cbe89ccc454c232e7eaddc9">virgil::crypto::VirgilStreamSigner::verify</a></div><div class="ttdeci">bool verify(VirgilDataSource &amp;source, const VirgilByteArray &amp;sign, const VirgilByteArray &amp;publicKey)</div><div class="ttdoc">Verify sign and data provided by the source to be conformed to the given public key. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html">virgil::crypto::foundation::VirgilHash</a></div><div class="ttdoc">Provides hashing (message digest) algorithms. </div><div class="ttdef"><b>Definition:</b> VirgilHash.h:57</div></div>

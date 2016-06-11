@@ -1,6 +1,7 @@
 var searchData=
 [
   ['addkeyrecipient',['addKeyRecipient',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a9e498eedb9702445229e592ead19e5b8',1,'virgil::crypto::VirgilCipherBase']]],
+  ['addpackage',['addPackage',['../classvirgil_1_1crypto_1_1_virgil_tiny_cipher.html#aaba08047ce89112b6711f373efee0032',1,'virgil::crypto::VirgilTinyCipher']]],
   ['addpasswordrecipient',['addPasswordRecipient',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#af99331a11012bf4d7c270fb561b9264d',1,'virgil::crypto::VirgilCipherBase']]],
   ['aes256',['aes256',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a9cfbab098412851a5588bb7b9b82cdee',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
   ['algorithm',['Algorithm',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_k_d_f.html#a7f19a63826f1997286ddb83c7fd2b432',1,'virgil::crypto::foundation::VirgilPBKDF']]],

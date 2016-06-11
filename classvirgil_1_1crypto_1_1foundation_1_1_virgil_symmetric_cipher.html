@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">1.6.0</span>
+   &#160;<span id="projectnumber">1.7.0</span>
    </div>
   </td>
  </tr>
@@ -181,6 +181,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a8caf6f1e69f96a416ab4260a65df57a6">setIV</a> (const virgil::crypto::VirgilByteArray &amp;iv)</td></tr>
 <tr class="memdesc:a8caf6f1e69f96a416ab4260a65df57a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configures the initialization vector. <br /></td></tr>
 <tr class="separator:a8caf6f1e69f96a416ab4260a65df57a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a5d27de88473d8b2a0d8285846099a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a8a5d27de88473d8b2a0d8285846099a2">setAuthData</a> (const virgil::crypto::VirgilByteArray &amp;authData)</td></tr>
+<tr class="memdesc:a8a5d27de88473d8b2a0d8285846099a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add additional data (for AEAD ciphers).  <a href="#a8a5d27de88473d8b2a0d8285846099a2">More...</a><br /></td></tr>
+<tr class="separator:a8a5d27de88473d8b2a0d8285846099a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc5f1a7f525530503fc1beebb0d5bd7a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc5f1a7f525530503fc1beebb0d5bd7a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#adc5f1a7f525530503fc1beebb0d5bd7a">reset</a> ()</td></tr>
 <tr class="memdesc:adc5f1a7f525530503fc1beebb0d5bd7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finish preparation before encryption / decryption. <br /></td></tr>
@@ -487,6 +490,28 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Returns the key length of the cipher. </p>
 <dl class="section return"><dt>Returns</dt><dd>key length, in bits. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a8a5d27de88473d8b2a0d8285846099a2"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void virgil::crypto::foundation::VirgilSymmetricCipher::setAuthData </td>
+          <td>(</td>
+          <td class="paramtype">const virgil::crypto::VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>authData</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add additional data (for AEAD ciphers). </p>
+<dl class="section note"><dt>Note</dt><dd>Currently only supported with GCM. </dd>
+<dd>
+Must be called before <a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#adc5f1a7f525530503fc1beebb0d5bd7a" title="Finish preparation before encryption / decryption. ">reset()</a>. </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a5a580712bcec43a293a5e0f9761c6b64" title="Returns true if cipher is configured to support authenticated encryption and decryption. ">isAuthMode()</a> </dd></dl>
 
 </div>
 </div>

@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">1.6.0</span>
+   &#160;<span id="projectnumber">1.7.0</span>
    </div>
   </td>
  </tr>
@@ -107,39 +107,46 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keyword">public</span>:</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keyword">static</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html">VirgilKDF</a> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a75de186f39b7b47ac64e97d7303891f2">kdf1</a>();</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keyword">static</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html">VirgilKDF</a> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#acb783fd0cac2593c3ce3c1ffee829312">kdf2</a>();</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a5e6019432af6bd3e9b24f8b3b43ffde3">VirgilKDF</a>();</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#ad8a02adb0fe7840a7f8090b73cf0a74f">~VirgilKDF</a>() <span class="keywordflow">throw</span>();</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    std::string <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#ab2b0850a41b787b997db121dc5e2f42b">name</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a2fa3c381b16bff812319b4fa5400e062">derive</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; in, <span class="keywordtype">size_t</span> outSize);</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a5e6019432af6bd3e9b24f8b3b43ffde3">VirgilKDF</a>(<span class="keyword">const</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html">VirgilKDF</a>&amp; other);</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html">VirgilKDF</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html">VirgilKDF</a>&amp; rhs);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keyword">static</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html">VirgilKDF</a> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#acb783fd0cac2593c3ce3c1ffee829312">kdf2</a>();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a5e6019432af6bd3e9b24f8b3b43ffde3">VirgilKDF</a>();</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#ad8a02adb0fe7840a7f8090b73cf0a74f">~VirgilKDF</a>() <span class="keywordflow">throw</span>();</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    std::string <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#ab2b0850a41b787b997db121dc5e2f42b">name</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a2fa3c381b16bff812319b4fa5400e062">derive</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; in, <span class="keywordtype">size_t</span> outSize);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a5e6019432af6bd3e9b24f8b3b43ffde3">VirgilKDF</a>(<span class="keyword">const</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html">VirgilKDF</a>&amp; other);</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#ac121b85d046d29cae75de82ee9b5560a">asn1Write</a>(<a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html">virgil::crypto::foundation::asn1::VirgilAsn1Writer</a>&amp; asn1Writer,</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            <span class="keywordtype">size_t</span> childWrittenBytes = 0) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a7f1c2ee351bd35ab215ddeb70f514e39">asn1Read</a>(<a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html">virgil::crypto::foundation::asn1::VirgilAsn1Reader</a>&amp; asn1Reader);</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a5e6019432af6bd3e9b24f8b3b43ffde3">VirgilKDF</a>(<span class="keywordtype">int</span> kdfType, <span class="keywordtype">int</span> mdType);</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="keywordtype">void</span> checkState() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    VirgilKDFImpl *impl_;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;};</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;}}}</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_KDF_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html">VirgilKDF</a>&amp; operator=(<span class="keyword">const</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html">VirgilKDF</a>&amp; rhs);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#ac121b85d046d29cae75de82ee9b5560a">asn1Write</a>(</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;            <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html">virgil::crypto::foundation::asn1::VirgilAsn1Writer</a>&amp; asn1Writer,</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;            <span class="keywordtype">size_t</span> childWrittenBytes = 0) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a7f1c2ee351bd35ab215ddeb70f514e39">asn1Read</a>(<a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html">virgil::crypto::foundation::asn1::VirgilAsn1Reader</a>&amp; asn1Reader);</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a5e6019432af6bd3e9b24f8b3b43ffde3">VirgilKDF</a>(<span class="keywordtype">int</span> kdfType, <span class="keywordtype">int</span> mdType);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordtype">void</span> checkState() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    VirgilKDFImpl* impl_;</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;};</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;}}}</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_KDF_H */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f_html_a75de186f39b7b47ac64e97d7303891f2"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a75de186f39b7b47ac64e97d7303891f2">virgil::crypto::foundation::VirgilKDF::kdf1</a></div><div class="ttdeci">static VirgilKDF kdf1()</div><div class="ttdoc">Configures with KDF1 (ISO-18033-2) algorithm. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html">virgil::crypto::foundation::asn1::VirgilAsn1Reader</a></div><div class="ttdoc">This class provides methods for reading ASN.1 data structure. </div><div class="ttdef"><b>Definition:</b> VirgilAsn1Reader.h:53</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f_html_ab2b0850a41b787b997db121dc5e2f42b"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#ab2b0850a41b787b997db121dc5e2f42b">virgil::crypto::foundation::VirgilKDF::name</a></div><div class="ttdeci">std::string name() const </div><div class="ttdoc">Returns name of the key derivation function. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html">virgil::crypto::foundation::VirgilKDF</a></div><div class="ttdoc">Provides key derivation function algorithms. </div><div class="ttdef"><b>Definition:</b> VirgilKDF.h:57</div></div>
-<div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible.html">virgil::crypto::foundation::asn1::VirgilAsn1Compatible</a></div><div class="ttdoc">This class provides interface that allow to save and restore object state in the ASN.1 structure. </div><div class="ttdef"><b>Definition:</b> VirgilAsn1Compatible.h:58</div></div>
+<div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible.html">virgil::crypto::foundation::asn1::VirgilAsn1Compatible</a></div><div class="ttdoc">This class provides interface that allow to save and restore object state in the ASN.1 structure. </div><div class="ttdef"><b>Definition:</b> VirgilAsn1Compatible.h:59</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f_html_acb783fd0cac2593c3ce3c1ffee829312"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#acb783fd0cac2593c3ce3c1ffee829312">virgil::crypto::foundation::VirgilKDF::kdf2</a></div><div class="ttdeci">static VirgilKDF kdf2()</div><div class="ttdoc">Configures with KDF1 (ISO-18033-2) algorithm. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f_html_a7f1c2ee351bd35ab215ddeb70f514e39"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a7f1c2ee351bd35ab215ddeb70f514e39">virgil::crypto::foundation::VirgilKDF::asn1Read</a></div><div class="ttdeci">virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader &amp;asn1Reader)</div><div class="ttdoc">Read object state from the reader. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html">virgil::crypto::foundation::asn1::VirgilAsn1Writer</a></div><div class="ttdoc">This class provides methods for writing ASN.1 data structure. </div><div class="ttdef"><b>Definition:</b> VirgilAsn1Writer.h:54</div></div>

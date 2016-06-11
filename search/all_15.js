@@ -22,5 +22,6 @@ var searchData=
   ['_7evirgilstreamcipher',['~VirgilStreamCipher',['../classvirgil_1_1crypto_1_1_virgil_stream_cipher.html#aa509495b0d1f125a3770cf752312f534',1,'virgil::crypto::VirgilStreamCipher']]],
   ['_7evirgilstreamdatasink',['~VirgilStreamDataSink',['../classvirgil_1_1crypto_1_1stream_1_1_virgil_stream_data_sink.html#a5f14e1b8ad028cd2aef1008e9511e4f1',1,'virgil::crypto::stream::VirgilStreamDataSink']]],
   ['_7evirgilstreamdatasource',['~VirgilStreamDataSource',['../classvirgil_1_1crypto_1_1stream_1_1_virgil_stream_data_source.html#a428f76432c0819269245bd2939fec728',1,'virgil::crypto::stream::VirgilStreamDataSource']]],
-  ['_7evirgilsymmetriccipher',['~VirgilSymmetricCipher',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#ace00df8cff2ef760523120c22a1c5c63',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]]
+  ['_7evirgilsymmetriccipher',['~VirgilSymmetricCipher',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#ace00df8cff2ef760523120c22a1c5c63',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
+  ['_7evirgiltinycipher',['~VirgilTinyCipher',['../classvirgil_1_1crypto_1_1_virgil_tiny_cipher.html#a6e93d62319183d4b3ba9bd798b0d4816',1,'virgil::crypto::VirgilTinyCipher']]]
 ];

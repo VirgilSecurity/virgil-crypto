@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">1.6.0</span>
+   &#160;<span id="projectnumber">1.7.0</span>
    </div>
   </td>
  </tr>
@@ -160,6 +160,13 @@ Use this method before encryption process.</dd></dl>
 <tr class="memdesc:ae8d5b7b0297551101dcd6b879efecd84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provide readonly access to the object that handles custom parameters.  <a href="#ae8d5b7b0297551101dcd6b879efecd84">More...</a><br /></td></tr>
 <tr class="separator:ae8d5b7b0297551101dcd6b879efecd84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr><td colspan="2"><div class="groupHeader">Helpers to create shared key with Diffie–Hellman algorithms</div></td></tr>
+<tr class="memitem:a39b4aedcd7b6d78ca18b39f367257912"><td class="memItemLeft" align="right" valign="top">static VirgilByteArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a39b4aedcd7b6d78ca18b39f367257912">computeShared</a> (const VirgilByteArray &amp;publicKey, const VirgilByteArray &amp;privateKey, const VirgilByteArray &amp;privateKeyPassword=VirgilByteArray())</td></tr>
+<tr class="memdesc:a39b4aedcd7b6d78ca18b39f367257912"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute shared secret key on a given keys.  <a href="#a39b4aedcd7b6d78ca18b39f367257912">More...</a><br /></td></tr>
+<tr class="separator:a39b4aedcd7b6d78ca18b39f367257912"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:a507d8f760cd9cd0671f35fc343509b9f"><td class="memItemLeft" align="right" valign="top">VirgilByteArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a507d8f760cd9cd0671f35fc343509b9f">tryReadContentInfo</a> (const VirgilByteArray &amp;encryptedData)</td></tr>
@@ -256,6 +263,64 @@ Content Info Access / Management</h2></td></tr>
 <p>Clear symmetric cipher and correspond internal states. </p><dl class="section note"><dt>Note</dt><dd>This method SHOULD be called after encryption or decryption process is finished. </dd>
 <dd>
 You CAN not use symmetric cipher returned by the method <a class="el" href="classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a46aa3a20e32b0e2859da368f71ad89e3">() </a>, after this method call. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a39b4aedcd7b6d78ca18b39f367257912"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static VirgilByteArray virgil::crypto::VirgilCipherBase::computeShared </td>
+          <td>(</td>
+          <td class="paramtype">const VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>publicKey</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>privateKey</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>privateKeyPassword</em> = <code>VirgilByteArray()</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute shared secret key on a given keys. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">publicKey</td><td>- alice public key. </td></tr>
+    <tr><td class="paramname">privateKey</td><td>- bob private key. </td></tr>
+    <tr><td class="paramname">privateKeyPassword</td><td>- bob private key password.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="Encapsulates logic errors of module &#39;crypto&#39;. ">VirgilCryptoException</a></td><td>- if keys are invalid or keys are not compatible.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section warning"><dt>Warning</dt><dd>Keys SHOULD be of the identical type, i.e. both of type Curve25519.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>VirgilKeyPair::generate(const VirgilKeyPair&amp;, const VirgilByteArray&amp;, const VirgilByteArray&amp;) </dd></dl>
 
 </div>
 </div>

@@ -1,6 +1,7 @@
 var searchData=
 [
   ['verify',['verify',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a566a82d71559d9dd3ffef6b56d03b87e',1,'virgil::crypto::foundation::VirgilAsymmetricCipher::verify()'],['../classvirgil_1_1crypto_1_1_virgil_signer.html#a10fa9b26670f584ad3c130c2691ffd81',1,'virgil::crypto::VirgilSigner::verify()'],['../classvirgil_1_1crypto_1_1_virgil_stream_signer.html#ad52b84357cbe89ccc454c232e7eaddc9',1,'virgil::crypto::VirgilStreamSigner::verify()']]],
+  ['verifyanddecrypt',['verifyAndDecrypt',['../classvirgil_1_1crypto_1_1_virgil_tiny_cipher.html#ae07a90a512c10559e172ae30dd7c4861',1,'virgil::crypto::VirgilTinyCipher']]],
   ['virgilasn1reader',['VirgilAsn1Reader',['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html#a4a7a45b97d7bf0cf2216d010569d8fc3',1,'virgil::crypto::foundation::asn1::VirgilAsn1Reader::VirgilAsn1Reader()'],['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html#a61b362999742e8e99440c617f471041b',1,'virgil::crypto::foundation::asn1::VirgilAsn1Reader::VirgilAsn1Reader(const virgil::crypto::VirgilByteArray &amp;data)']]],
   ['virgilasn1writer',['VirgilAsn1Writer',['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#adb30c2e0bf8e93aebbd89d10226ff01a',1,'virgil::crypto::foundation::asn1::VirgilAsn1Writer::VirgilAsn1Writer()'],['../classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html#ac9f29578ad8fb3ed62a8e9169bfbf87e',1,'virgil::crypto::foundation::asn1::VirgilAsn1Writer::VirgilAsn1Writer(size_t capacity)']]],
   ['virgilasymmetriccipher',['VirgilAsymmetricCipher',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a171f45c52b82d68800831d66f1bead77',1,'virgil::crypto::foundation::VirgilAsymmetricCipher']]],
@@ -18,5 +19,6 @@ var searchData=
   ['virgilstreamdatasink',['VirgilStreamDataSink',['../classvirgil_1_1crypto_1_1stream_1_1_virgil_stream_data_sink.html#a64f0765b5fec42bc67e5b29fe31379be',1,'virgil::crypto::stream::VirgilStreamDataSink']]],
   ['virgilstreamdatasource',['VirgilStreamDataSource',['../classvirgil_1_1crypto_1_1stream_1_1_virgil_stream_data_source.html#a7a72373691c1fd2793ec65aaad3137a8',1,'virgil::crypto::stream::VirgilStreamDataSource']]],
   ['virgilstreamsigner',['VirgilStreamSigner',['../classvirgil_1_1crypto_1_1_virgil_stream_signer.html#a058463d37a3e3551b8cab0ce5d904ff6',1,'virgil::crypto::VirgilStreamSigner']]],
-  ['virgilsymmetriccipher',['VirgilSymmetricCipher',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a5748382216977e9b202678e8b4a81737',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]]
+  ['virgilsymmetriccipher',['VirgilSymmetricCipher',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a5748382216977e9b202678e8b4a81737',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
+  ['virgiltinycipher',['VirgilTinyCipher',['../classvirgil_1_1crypto_1_1_virgil_tiny_cipher.html#ade458ea379bba647c574e6cb79d72d88',1,'virgil::crypto::VirgilTinyCipher']]]
 ];

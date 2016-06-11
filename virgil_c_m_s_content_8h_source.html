@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">1.6.0</span>
+   &#160;<span id="projectnumber">1.7.0</span>
    </div>
   </td>
  </tr>
@@ -115,21 +115,25 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="classvirgil_1_1crypto_1_1foundation_1_1cms_1_1_virgil_c_m_s_content.html#acece011de98245dcd4b688cf525930c7">   70</a></span>&#160;    VirgilCMSContentType <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1cms_1_1_virgil_c_m_s_content.html#acece011de98245dcd4b688cf525930c7">contentType</a>;</div>
 <div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="classvirgil_1_1crypto_1_1foundation_1_1cms_1_1_virgil_c_m_s_content.html#a936017354d2e142b2550f8e10a93c624">   75</a></span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1cms_1_1_virgil_c_m_s_content.html#a936017354d2e142b2550f8e10a93c624">content</a>;</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1cms_1_1_virgil_c_m_s_content.html#a1f3e10df56bb1c2abec880b02c086cc7">asn1Write</a>(<a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html">virgil::crypto::foundation::asn1::VirgilAsn1Writer</a>&amp; asn1Writer,</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;            <span class="keywordtype">size_t</span> childWrittenBytes = 0) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1cms_1_1_virgil_c_m_s_content.html#a4f0fa8ee2b47ba1949ca4be159d4fb33">asn1Read</a>(<a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html">virgil::crypto::foundation::asn1::VirgilAsn1Reader</a>&amp; asn1Reader);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1cms_1_1_virgil_c_m_s_content.html#a31e3f44a0794b15742f50dcf0e0512f2">~VirgilCMSContent</a>() throw();</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;private:</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    static std::<span class="keywordtype">string</span> contentTypeToOID(VirgilCMSContentType contentType);</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    static VirgilCMSContentType oidToContentType(const std::<span class="keywordtype">string</span>&amp; oid);</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;};</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;}}}}</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">size_t</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1cms_1_1_virgil_c_m_s_content.html#a1f3e10df56bb1c2abec880b02c086cc7">asn1Write</a>(</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;            <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html">virgil::crypto::foundation::asn1::VirgilAsn1Writer</a>&amp; asn1Writer,</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            <span class="keywordtype">size_t</span> childWrittenBytes = 0) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1cms_1_1_virgil_c_m_s_content.html#a4f0fa8ee2b47ba1949ca4be159d4fb33">asn1Read</a>(<a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html">virgil::crypto::foundation::asn1::VirgilAsn1Reader</a>&amp; asn1Reader);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classvirgil_1_1crypto_1_1foundation_1_1cms_1_1_virgil_c_m_s_content.html#a31e3f44a0794b15742f50dcf0e0512f2">~VirgilCMSContent</a>() throw();</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;private:</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    static std::<span class="keywordtype">string</span> contentTypeToOID(VirgilCMSContentType contentType);</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    static VirgilCMSContentType oidToContentType(const std::<span class="keywordtype">string</span>&amp; oid);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;};</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;}}}}</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_H */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_reader.html">virgil::crypto::foundation::asn1::VirgilAsn1Reader</a></div><div class="ttdoc">This class provides methods for reading ASN.1 data structure. </div><div class="ttdef"><b>Definition:</b> VirgilAsn1Reader.h:53</div></div>
-<div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible.html">virgil::crypto::foundation::asn1::VirgilAsn1Compatible</a></div><div class="ttdoc">This class provides interface that allow to save and restore object state in the ASN.1 structure. </div><div class="ttdef"><b>Definition:</b> VirgilAsn1Compatible.h:58</div></div>
+<div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_compatible.html">virgil::crypto::foundation::asn1::VirgilAsn1Compatible</a></div><div class="ttdoc">This class provides interface that allow to save and restore object state in the ASN.1 structure. </div><div class="ttdef"><b>Definition:</b> VirgilAsn1Compatible.h:59</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1asn1_1_1_virgil_asn1_writer.html">virgil::crypto::foundation::asn1::VirgilAsn1Writer</a></div><div class="ttdoc">This class provides methods for writing ASN.1 data structure. </div><div class="ttdef"><b>Definition:</b> VirgilAsn1Writer.h:54</div></div>
 <div class="ttc" id="namespacevirgil_html"><div class="ttname"><a href="namespacevirgil.html">virgil</a></div><div class="ttdef"><b>Definition:</b> VirgilAsn1Compatible.h:46</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1foundation_1_1cms_1_1_virgil_c_m_s_content_html_a31e3f44a0794b15742f50dcf0e0512f2"><div class="ttname"><a href="classvirgil_1_1crypto_1_1foundation_1_1cms_1_1_virgil_c_m_s_content.html#a31e3f44a0794b15742f50dcf0e0512f2">virgil::crypto::foundation::cms::VirgilCMSContent::~VirgilCMSContent</a></div><div class="ttdeci">virtual ~VirgilCMSContent()</div><div class="ttdoc">Polymorphic destructor. </div></div>

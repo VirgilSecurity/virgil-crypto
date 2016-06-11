@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">1.6.0</span>
+   &#160;<span id="projectnumber">1.7.0</span>
    </div>
   </td>
  </tr>
@@ -164,6 +164,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a04ccbfa2744d50d5f343e5c6da1e7e81"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a04ccbfa2744d50d5f343e5c6da1e7e81">generate</a> (<a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907">VirgilKeyPair::Type</a> type=<a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907a0efd5c496f7e17b507709d33f5019211">VirgilKeyPair::Type_Default</a>, const virgil::crypto::VirgilByteArray &amp;pwd=virgil::crypto::VirgilByteArray())</td></tr>
 <tr class="memdesc:a04ccbfa2744d50d5f343e5c6da1e7e81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair given type.  <a href="#a04ccbfa2744d50d5f343e5c6da1e7e81">More...</a><br /></td></tr>
 <tr class="separator:a04ccbfa2744d50d5f343e5c6da1e7e81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f15d83ec153c6babdbae0c27bb67930"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a5f15d83ec153c6babdbae0c27bb67930">generateFrom</a> (const <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a> &amp;donorKeyPair, const virgil::crypto::VirgilByteArray &amp;donorPrivateKeyPassword=virgil::crypto::VirgilByteArray(), const virgil::crypto::VirgilByteArray &amp;newKeyPairPassword=virgil::crypto::VirgilByteArray())</td></tr>
+<tr class="memdesc:a5f15d83ec153c6babdbae0c27bb67930"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair of the same type based on the donor key pair.  <a href="#a5f15d83ec153c6babdbae0c27bb67930">More...</a><br /></td></tr>
+<tr class="separator:a5f15d83ec153c6babdbae0c27bb67930"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fbe67fc2cdd2c0bad0642171e6a6207"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a0fbe67fc2cdd2c0bad0642171e6a6207">ecNist192</a> (const virgil::crypto::VirgilByteArray &amp;pwd=virgil::crypto::VirgilByteArray())</td></tr>
 <tr class="memdesc:a0fbe67fc2cdd2c0bad0642171e6a6207"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate new key pair with 192-bits NIST curve.  <a href="#a0fbe67fc2cdd2c0bad0642171e6a6207">More...</a><br /></td></tr>
 <tr class="separator:a0fbe67fc2cdd2c0bad0642171e6a6207"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -258,13 +261,13 @@ Static Public Member Functions</h2></td></tr>
 <p>RSA 2048 bit (not recommended) </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="af87c1b54db35dddcde489132c4d5c907a66ec6a99a357588060577e54b07a2b3b"></a>Type_RSA_3072&#160;</td><td class="fielddoc">
-<p>RSA 3072 bit </p>
+<p>RSA 3072 bit. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="af87c1b54db35dddcde489132c4d5c907ad0d39c8fa27ba86a10ccdeb2ab7568b3"></a>Type_RSA_4096&#160;</td><td class="fielddoc">
-<p>RSA 4096 bit </p>
+<p>RSA 4096 bit. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="af87c1b54db35dddcde489132c4d5c907a4c3271e3fba1f99a71bcd42b6e02e914"></a>Type_RSA_8192&#160;</td><td class="fielddoc">
-<p>RSA 8192 bit </p>
+<p>RSA 8192 bit. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="af87c1b54db35dddcde489132c4d5c907a5f8e8dc2f6548c79d82dddcd45edb051"></a>Type_EC_SECP192R1&#160;</td><td class="fielddoc">
 <p>192-bits NIST curve </p>
@@ -294,10 +297,10 @@ Static Public Member Functions</h2></td></tr>
 <p>(not implemented yet) </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="af87c1b54db35dddcde489132c4d5c907afab60d82f2d0814f439f4a7fba9b8e8d"></a>Type_EC_M255&#160;</td><td class="fielddoc">
-<p>Curve25519 </p>
+<p>Curve25519. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="af87c1b54db35dddcde489132c4d5c907a405119e2c8b2e0f49e16de7d2c428d53"></a>Type_EC_Curve25519&#160;</td><td class="fielddoc">
-<p>Curve25519 </p>
+<p>Curve25519. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="af87c1b54db35dddcde489132c4d5c907a480ff9f34574975ceb781caf0e9c6178"></a>Type_EC_M383&#160;</td><td class="fielddoc">
 <p>(not implemented yet) </p>
@@ -724,7 +727,57 @@ Static Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">type</td><td>- private key type to be generated. </td></tr>
-    <tr><td class="paramname">pwd</td><td>- private key password (max length is 31 byte). </td></tr>
+    <tr><td class="paramname">pwd</td><td>- private key password. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a5f15d83ec153c6babdbae0c27bb67930"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a> virgil::crypto::VirgilKeyPair::generateFrom </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">VirgilKeyPair</a> &amp;&#160;</td>
+          <td class="paramname"><em>donorKeyPair</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const virgil::crypto::VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>donorPrivateKeyPassword</em> = <code>virgil::crypto::VirgilByteArray()</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const virgil::crypto::VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>newKeyPairPassword</em> = <code>virgil::crypto::VirgilByteArray()</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Generate new key pair of the same type based on the donor key pair. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">donorKeyPair</td><td>- public key or private key is used to determine the new key pair type. </td></tr>
+    <tr><td class="paramname">donorPrivateKeyPassword</td><td>- donor private key password, optional if public key is defined. </td></tr>
+    <tr><td class="paramname">newKeyPairPassword</td><td>- private key password of the new key pair. </td></tr>
   </table>
   </dd>
 </dl>

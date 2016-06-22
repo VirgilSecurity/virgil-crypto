@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">1.7.0</span>
+   &#160;<span id="projectnumber">1.8.0</span>
    </div>
   </td>
  </tr>
@@ -184,22 +184,26 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    <span class="keyword">static</span> virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a54a1f1c38f8051b2b3873702c2fa97f1">resetPrivateKeyPassword</a>(</div>
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            <span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; privateKey,</div>
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            <span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; oldPassword, <span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; newPassword);</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#ae754fb560d1d22e82bdcb962ac9d6359">VirgilKeyPair</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; pwd = virgil::crypto::VirgilByteArray());</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#ae754fb560d1d22e82bdcb962ac9d6359">VirgilKeyPair</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; publicKey, <span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; privateKey);</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a15f0bf5aceb687f8954770fcc2477383">publicKey</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a055edb7ef2a571f2b3c327fd4a9edd37">privateKey</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    virgil::crypto::VirgilByteArray publicKey_;</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    virgil::crypto::VirgilByteArray privateKey_;</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;};</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;}}</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_KEY_PAIR_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <span class="keyword">static</span> virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#ac736906acc3fd0589d2d038dd4290a1f">extractPublicKey</a>(</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;            <span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; privateKey,</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;            <span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; privateKeyPassword);</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#ae754fb560d1d22e82bdcb962ac9d6359">VirgilKeyPair</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; pwd = virgil::crypto::VirgilByteArray());</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#ae754fb560d1d22e82bdcb962ac9d6359">VirgilKeyPair</a>(<span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; publicKey, <span class="keyword">const</span> virgil::crypto::VirgilByteArray&amp; privateKey);</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a15f0bf5aceb687f8954770fcc2477383">publicKey</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    virgil::crypto::VirgilByteArray <a class="code" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a055edb7ef2a571f2b3c327fd4a9edd37">privateKey</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    virgil::crypto::VirgilByteArray publicKey_;</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    virgil::crypto::VirgilByteArray privateKey_;</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;};</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;}}</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_KEY_PAIR_H */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_key_pair_html_af87c1b54db35dddcde489132c4d5c907a005466895ec225abc8e855c1cdad31dd"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907a005466895ec225abc8e855c1cdad31dd">virgil::crypto::VirgilKeyPair::Type_RSA_256</a></div><div class="ttdoc">RSA 1024 bit (not recommended) </div><div class="ttdef"><b>Definition:</b> VirgilKeyPair.h:54</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_key_pair_html_acbc8a080c686444cf671233be2239498"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#acbc8a080c686444cf671233be2239498">virgil::crypto::VirgilKeyPair::rsa4096</a></div><div class="ttdeci">static VirgilKeyPair rsa4096(const virgil::crypto::VirgilByteArray &amp;pwd=virgil::crypto::VirgilByteArray())</div><div class="ttdoc">Generate new key pair with RSA 4096-bits. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_key_pair_html_a04ccbfa2744d50d5f343e5c6da1e7e81"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a04ccbfa2744d50d5f343e5c6da1e7e81">virgil::crypto::VirgilKeyPair::generate</a></div><div class="ttdeci">static VirgilKeyPair generate(VirgilKeyPair::Type type=VirgilKeyPair::Type_Default, const virgil::crypto::VirgilByteArray &amp;pwd=virgil::crypto::VirgilByteArray())</div><div class="ttdoc">Generate new key pair given type. </div></div>
@@ -228,6 +232,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_key_pair_html_af87c1b54db35dddcde489132c4d5c907ad0d39c8fa27ba86a10ccdeb2ab7568b3"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907ad0d39c8fa27ba86a10ccdeb2ab7568b3">virgil::crypto::VirgilKeyPair::Type_RSA_4096</a></div><div class="ttdoc">RSA 4096 bit. </div><div class="ttdef"><b>Definition:</b> VirgilKeyPair.h:59</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_key_pair_html_a4ac2da83603a864f40d9a109c40b82ac"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a4ac2da83603a864f40d9a109c40b82ac">virgil::crypto::VirgilKeyPair::ecNist521</a></div><div class="ttdeci">static VirgilKeyPair ecNist521(const virgil::crypto::VirgilByteArray &amp;pwd=virgil::crypto::VirgilByteArray())</div><div class="ttdoc">Generate new key pair with 521-bits NIST curve. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_key_pair_html_af87c1b54db35dddcde489132c4d5c907a5f8e8dc2f6548c79d82dddcd45edb051"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907a5f8e8dc2f6548c79d82dddcd45edb051">virgil::crypto::VirgilKeyPair::Type_EC_SECP192R1</a></div><div class="ttdoc">192-bits NIST curve </div><div class="ttdef"><b>Definition:</b> VirgilKeyPair.h:61</div></div>
+<div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_key_pair_html_ac736906acc3fd0589d2d038dd4290a1f"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#ac736906acc3fd0589d2d038dd4290a1f">virgil::crypto::VirgilKeyPair::extractPublicKey</a></div><div class="ttdeci">static virgil::crypto::VirgilByteArray extractPublicKey(const virgil::crypto::VirgilByteArray &amp;privateKey, const virgil::crypto::VirgilByteArray &amp;privateKeyPassword)</div><div class="ttdoc">Extract public key from the private key. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_key_pair_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_key_pair.html">virgil::crypto::VirgilKeyPair</a></div><div class="ttdoc">This class handles information about Virgil Security key pair. </div><div class="ttdef"><b>Definition:</b> VirgilKeyPair.h:47</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_key_pair_html_af87c1b54db35dddcde489132c4d5c907a405119e2c8b2e0f49e16de7d2c428d53"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907a405119e2c8b2e0f49e16de7d2c428d53">virgil::crypto::VirgilKeyPair::Type_EC_Curve25519</a></div><div class="ttdoc">Curve25519. </div><div class="ttdef"><b>Definition:</b> VirgilKeyPair.h:71</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_key_pair_html_a15f0bf5aceb687f8954770fcc2477383"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a15f0bf5aceb687f8954770fcc2477383">virgil::crypto::VirgilKeyPair::publicKey</a></div><div class="ttdeci">virgil::crypto::VirgilByteArray publicKey() const </div><div class="ttdoc">Provide access to the public key. </div></div>

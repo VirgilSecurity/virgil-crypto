@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">1.7.0</span>
+   &#160;<span id="projectnumber">1.8.0</span>
    </div>
   </td>
  </tr>
@@ -229,6 +229,9 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a54a1f1c38f8051b2b3873702c2fa97f1"><td class="memItemLeft" align="right" valign="top">static virgil::crypto::VirgilByteArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a54a1f1c38f8051b2b3873702c2fa97f1">resetPrivateKeyPassword</a> (const virgil::crypto::VirgilByteArray &amp;<a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a055edb7ef2a571f2b3c327fd4a9edd37">privateKey</a>, const virgil::crypto::VirgilByteArray &amp;oldPassword, const virgil::crypto::VirgilByteArray &amp;newPassword)</td></tr>
 <tr class="memdesc:a54a1f1c38f8051b2b3873702c2fa97f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset password for the given private key.  <a href="#a54a1f1c38f8051b2b3873702c2fa97f1">More...</a><br /></td></tr>
 <tr class="separator:a54a1f1c38f8051b2b3873702c2fa97f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac736906acc3fd0589d2d038dd4290a1f"><td class="memItemLeft" align="right" valign="top">static virgil::crypto::VirgilByteArray&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#ac736906acc3fd0589d2d038dd4290a1f">extractPublicKey</a> (const virgil::crypto::VirgilByteArray &amp;<a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a055edb7ef2a571f2b3c327fd4a9edd37">privateKey</a>, const virgil::crypto::VirgilByteArray &amp;privateKeyPassword)</td></tr>
+<tr class="memdesc:ac736906acc3fd0589d2d038dd4290a1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract public key from the private key.  <a href="#ac736906acc3fd0589d2d038dd4290a1f">More...</a><br /></td></tr>
+<tr class="separator:ac736906acc3fd0589d2d038dd4290a1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class handles information about Virgil Security key pair. </p>
@@ -688,6 +691,50 @@ Static Public Member Functions</h2></td></tr>
 
 <p>Generate new key pair with 521-bits NIST curve. </p>
 <dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000005">Deprecated:</a></b></dt><dd>Use <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a04ccbfa2744d50d5f343e5c6da1e7e81" title="Generate new key pair given type. ">generate()</a> instead. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ac736906acc3fd0589d2d038dd4290a1f"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static virgil::crypto::VirgilByteArray virgil::crypto::VirgilKeyPair::extractPublicKey </td>
+          <td>(</td>
+          <td class="paramtype">const virgil::crypto::VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>privateKey</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const virgil::crypto::VirgilByteArray &amp;&#160;</td>
+          <td class="paramname"><em>privateKeyPassword</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Extract public key from the private key. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">privateKey</td><td>- Private Key. </td></tr>
+    <tr><td class="paramname">privateKeyPassword</td><td>- Private Key password.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Public Key. </dd></dl>
 
 </div>
 </div>

@@ -19,5 +19,6 @@ var searchData=
   ['exportprivatekeytoder',['exportPrivateKeyToDER',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a058f8ddb9a5aad91a6b69bc18c20e93b',1,'virgil::crypto::foundation::VirgilAsymmetricCipher']]],
   ['exportprivatekeytopem',['exportPrivateKeyToPEM',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#ac90952467f20ac902c5fa9dc8924e426',1,'virgil::crypto::foundation::VirgilAsymmetricCipher']]],
   ['exportpublickeytoder',['exportPublicKeyToDER',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a6d1c82db69aedf565ccf4f4c49f9d088',1,'virgil::crypto::foundation::VirgilAsymmetricCipher']]],
-  ['exportpublickeytopem',['exportPublicKeyToPEM',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#affcdea33626dba4570f40fbbd4f3fb92',1,'virgil::crypto::foundation::VirgilAsymmetricCipher']]]
+  ['exportpublickeytopem',['exportPublicKeyToPEM',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#affcdea33626dba4570f40fbbd4f3fb92',1,'virgil::crypto::foundation::VirgilAsymmetricCipher']]],
+  ['extractpublickey',['extractPublicKey',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#ac736906acc3fd0589d2d038dd4290a1f',1,'virgil::crypto::VirgilKeyPair']]]
 ];

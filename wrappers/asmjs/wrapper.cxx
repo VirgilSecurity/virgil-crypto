@@ -48,6 +48,7 @@ using namespace emscripten;
 #include <virgil/crypto/foundation/VirgilHash.h>
 #include <virgil/crypto/foundation/VirgilBase64.h>
 #include <virgil/crypto/foundation/VirgilPBKDF.h>
+#include <virgil/crypto/foundation/VirgilRandom.h>
 #include <virgil/crypto/VirgilCustomParams.h>
 
 #include <virgil/crypto/VirgilKeyPair.h>
@@ -58,6 +59,7 @@ using namespace emscripten;
 #include <virgil/crypto/VirgilTinyCipher.h>
 
 using virgil::crypto::VirgilByteArray;
+using virgil::crypto::foundation::VirgilRandom;
 
 namespace virgil { namespace crypto {
 
@@ -141,6 +143,7 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .class_function("checkPrivateKeyPassword", &virgil::crypto::VirgilKeyPair::checkPrivateKeyPassword)
         .class_function("isPrivateKeyEncrypted", &virgil::crypto::VirgilKeyPair::isPrivateKeyEncrypted)
         .class_function("resetPrivateKeyPassword", &virgil::crypto::VirgilKeyPair::resetPrivateKeyPassword)
+        .class_function("extractPublicKey", &virgil::crypto::VirgilKeyPair::extractPublicKey)
     ;
 
     enum_<virgil::crypto::VirgilKeyPair::Type>("VirgilKeyPairType")
@@ -296,4 +299,10 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_foundation) {
         .value("SHA512", virgil::crypto::foundation::VirgilPBKDF::Hash::Hash_SHA512)
     ;
 
+    class_<VirgilRandom>("VirgilRandom")
+        .constructor<const VirgilByteArray&>()
+        .function("randomizeBytes", select_overload<VirgilByteArray(size_t)>(&VirgilRandom::randomize))
+        .function("randomizeNumber", select_overload<size_t()>(&VirgilRandom::randomize))
+        .function("randomizeNumberInRange", select_overload<size_t(size_t, size_t)>(&VirgilRandom::randomize))
+    ;
 }

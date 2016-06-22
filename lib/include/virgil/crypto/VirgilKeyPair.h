@@ -249,6 +249,18 @@ public:
     static virgil::crypto::VirgilByteArray resetPrivateKeyPassword(
             const virgil::crypto::VirgilByteArray& privateKey,
             const virgil::crypto::VirgilByteArray& oldPassword, const virgil::crypto::VirgilByteArray& newPassword);
+
+    /**
+     * @brief Extract public key from the private key.
+     *
+     * @param privateKey - Private Key.
+     * @param privateKeyPassword - Private Key password.
+     *
+     * @return Public Key.
+     */
+    static virgil::crypto::VirgilByteArray extractPublicKey(
+            const virgil::crypto::VirgilByteArray& privateKey,
+            const virgil::crypto::VirgilByteArray& privateKeyPassword);
     ///@}
 
     /**

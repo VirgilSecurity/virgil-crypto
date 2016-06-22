@@ -141,6 +141,7 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .class_function("checkPrivateKeyPassword", &virgil::crypto::VirgilKeyPair::checkPrivateKeyPassword)
         .class_function("isPrivateKeyEncrypted", &virgil::crypto::VirgilKeyPair::isPrivateKeyEncrypted)
         .class_function("resetPrivateKeyPassword", &virgil::crypto::VirgilKeyPair::resetPrivateKeyPassword)
+        .class_function("extractPublicKey", &virgil::crypto::VirgilKeyPair::extractPublicKey)
     ;
 
     enum_<virgil::crypto::VirgilKeyPair::Type>("VirgilKeyPairType")

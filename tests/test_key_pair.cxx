@@ -120,6 +120,12 @@ TEST_CASE("Generate ephemeral key pair and compute shared", "[key-pair]") {
 
         REQUIRE(sharedDonor == sharedEphemeral);
     }
+}
 
 
+TEST_CASE("Extract public key from private key", "[key-pair]") {
+    VirgilByteArray privateKey = VirgilByteArrayUtils::stringToBytes(kPrivateKey);
+    VirgilByteArray privateKeyPassword = VirgilByteArrayUtils::stringToBytes(kPrivateKeyPwd);
+    VirgilByteArray publicKey = VirgilKeyPair::extractPublicKey(privateKey, privateKeyPassword);
+    REQUIRE(VirgilKeyPair::isKeyPairMatch(publicKey, privateKey, privateKeyPassword));
 }

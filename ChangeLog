@@ -1,5 +1,12 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.8.0 released 2016-06-22
+
+## Features
+
+  * [Lib] Add ability to extract public key from the private key: class VirgilKeyPair
+  * [Lib] Move class VirgilRandom to the high level API
+
 = Version 1.7.0 released 2016-06-11
 
 ## Features

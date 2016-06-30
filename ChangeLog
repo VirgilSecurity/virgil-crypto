@@ -1,5 +1,11 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.8.1 released 2016-06-30
+
+## Bugfix
+
+  * [Lib] Remove stale restriction on the password length for the private key
+
 = Version 1.8.0 released 2016-06-22
 
 ## Features

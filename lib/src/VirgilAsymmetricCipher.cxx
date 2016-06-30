@@ -66,19 +66,6 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::priv::VirgilAsn1Alg;
 
-/**
- * @brief Throw exception if password is too long.
- * @note MbedTLS PKCS#12 restriction.
- */
-static void checkPasswordLen(size_t pwdLen) {
-    const size_t kPasswordLengthMax = 31;
-    if (pwdLen > kPasswordLengthMax) {
-        std::ostringstream errMsg;
-        errMsg << "Password is too long. Max length is " << kPasswordLengthMax << " bytes.";
-        throw VirgilCryptoException(errMsg.str());
-    }
-}
-
 static VirgilKeyPair::Type key_type_from_params(size_t rsa_key_size, mbedtls_ecp_group_id ecp_group_id) {
     if (rsa_key_size > 0) {
         switch (rsa_key_size) {
@@ -476,7 +463,6 @@ bool VirgilAsymmetricCipher::checkPrivateKeyPassword(
         const VirgilByteArray& key,
         const VirgilByteArray& pwd) {
 
-    checkPasswordLen(pwd.size());
     mbedtls_pk_context private_ctx;
     mbedtls_pk_init(&private_ctx);
     VirgilByteArray fixedKey = fixKey(key);
@@ -492,7 +478,6 @@ bool VirgilAsymmetricCipher::isPrivateKeyEncrypted(const VirgilByteArray& privat
 }
 
 void VirgilAsymmetricCipher::setPrivateKey(const VirgilByteArray& key, const VirgilByteArray& pwd) {
-    checkPasswordLen(pwd.size());
     VirgilByteArray fixedKey = fixKey(key);
     MBEDTLS_ERROR_HANDLER(
             mbedtls_pk_parse_key(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(fixedKey),
@@ -662,7 +647,6 @@ VirgilByteArray VirgilAsymmetricCipher::computeShared(
 
 VirgilByteArray VirgilAsymmetricCipher::exportPrivateKeyToDER(const VirgilByteArray& pwd) const {
     checkState();
-    checkPasswordLen(pwd.size());
     PolarsslKeyExport polarsslKeyExport(impl_->ctx, PolarsslKeyExport::DER, PolarsslKeyExport::Private, pwd);
     return exportKey_(polarsslKeyExport);
 }
@@ -675,7 +659,6 @@ VirgilByteArray VirgilAsymmetricCipher::exportPublicKeyToDER() const {
 
 VirgilByteArray VirgilAsymmetricCipher::exportPrivateKeyToPEM(const VirgilByteArray& pwd) const {
     checkState();
-    checkPasswordLen(pwd.size());
     PolarsslKeyExport polarsslKeyExport(impl_->ctx, PolarsslKeyExport::PEM, PolarsslKeyExport::Private, pwd);
     return exportKey_(polarsslKeyExport);
 }

@@ -122,10 +122,22 @@ TEST_CASE("Generate ephemeral key pair and compute shared", "[key-pair]") {
     }
 }
 
-
 TEST_CASE("Extract public key from private key", "[key-pair]") {
     VirgilByteArray privateKey = VirgilByteArrayUtils::stringToBytes(kPrivateKey);
     VirgilByteArray privateKeyPassword = VirgilByteArrayUtils::stringToBytes(kPrivateKeyPwd);
     VirgilByteArray publicKey = VirgilKeyPair::extractPublicKey(privateKey, privateKeyPassword);
     REQUIRE(VirgilKeyPair::isKeyPairMatch(publicKey, privateKey, privateKeyPassword));
+}
+
+TEST_CASE("Generate private key with long password", "[key-pair]") {
+    VirgilByteArray keyPassword = VirgilByteArrayUtils::stringToBytes(
+            "m5I&8~@Rohh+7B0-iL`Sf6Se\"7A=8i!oQhIDNhk,q25RwoY2vF"
+            "Lrx8XJ0]WIO5k#B=liHk&!iTj,42CsBrt|UePW*753r^w\"X06p"
+            "EoJ,2DIj{rfrZ2c]1L!L_45[]1KPGY6Mqy-jFY3Q$5PHkFKx5("
+            "yR$N5B,MC#]6Rw3C]q1;-xs33szYC5XDk#YvP=mhnN7kgPp4}0"
+            "PtImqC2mT#=M85axZw8cPo6TUD0Ba,_HN^5E4v`R\"@8e>Xp]y6"
+            "X&#8g0~FHG5qFI67&PM`3u8{>lVxZ7!q-t9jVUHcv|d3OGxpxB"
+    );
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519, keyPassword);
+    REQUIRE(VirgilKeyPair::isKeyPairMatch(keyPair.publicKey(), keyPair.privateKey(), keyPassword));
 }

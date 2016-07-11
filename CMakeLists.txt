@@ -161,6 +161,13 @@ virgil_depends (
 )
 virgil_find_package (RapidJSON 1.0)
 
+virgil_depends (
+    PACKAGE_NAME "fmt"
+    CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/fmt"
+    CMAKE_ARGS "${CMAKE_ARGS}"
+)
+virgil_find_package (fmt 3.0.0)
+
 # Define enviroment parameters
 if (NOT DEFINED POINTER_SIZE)
     include (check_pointer_size)

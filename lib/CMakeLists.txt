@@ -68,6 +68,7 @@ target_include_directories (${PROJECT_NAME}
 )
 target_link_libraries (${PROJECT_NAME} mbedtls::mbedcrypto mbedtls::ed25519)
 target_compile_definitions (${PROJECT_NAME} PUBLIC "LIB_FILE_IO=$<BOOL:${LIB_FILE_IO}>" "UCLIBC=$<BOOL:${UCLIBC}>")
+target_compile_definitions (${PROJECT_NAME} PRIVATE "FMT_HEADER_ONLY")
 
 if (INSTALL_CORE_LIBS)
     # Define names for configuration files
@@ -155,3 +156,11 @@ if (DOXYGEN_FOUND)
         COMMENT "Generating API documentation with Doxygen" VERBATIM
     )
 endif (DOXYGEN_FOUND)
+
+# if (VIRGIL_CRYPTO_BUILD_COVERAGE)
+#     add_custom_target(coverage
+#         COMMAND
+#         DEPENDS ${PROJECT_NAME}
+#     )
+
+# endif ()

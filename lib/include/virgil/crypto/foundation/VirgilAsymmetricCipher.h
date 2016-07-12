@@ -37,7 +37,7 @@
 #ifndef VIRGIL_CRYPTO_ASYMMETRIC_CIPHER_H
 #define VIRGIL_CRYPTO_ASYMMETRIC_CIPHER_H
 
-#include <cstddef>
+#include <cstdlib>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilKeyPair.h>

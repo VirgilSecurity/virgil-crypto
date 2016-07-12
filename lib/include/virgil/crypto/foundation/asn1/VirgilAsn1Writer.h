@@ -37,7 +37,7 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_ASN1_WRITER_H
 #define VIRGIL_CRYPTO_VIRGIL_ASN1_WRITER_H
 
-#include <cstddef>
+#include <cstdlib>
 #include <string>
 #include <vector>
 

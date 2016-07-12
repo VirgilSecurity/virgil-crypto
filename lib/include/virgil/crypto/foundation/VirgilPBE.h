@@ -37,7 +37,7 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_PBE_H
 #define VIRGIL_CRYPTO_VIRGIL_PBE_H
 
-#include <cstddef>
+#include <cstdlib>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>

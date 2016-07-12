@@ -37,7 +37,7 @@
 #ifndef VIRGIL_VERSION_H
 #define VIRGIL_VERSION_H
 
-#include <cstddef>
+#include <cstdlib>
 #include <string>
 
 namespace virgil { namespace crypto {

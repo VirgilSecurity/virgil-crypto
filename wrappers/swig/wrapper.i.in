@@ -45,7 +45,7 @@
 #cmakedefine LIB_LOW_LEVEL_API
 
 %insert ("begin") %{
-#include <cstddef>
+#include <cstdlib>
 %}
 
 #if defined(LIB_LOW_LEVEL_API)

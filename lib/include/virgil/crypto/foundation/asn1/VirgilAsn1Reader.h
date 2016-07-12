@@ -37,7 +37,7 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_ASN1_READER_H
 #define VIRGIL_CRYPTO_VIRGIL_ASN1_READER_H
 
-#include <cstddef>
+#include <cstdlib>
 #include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>

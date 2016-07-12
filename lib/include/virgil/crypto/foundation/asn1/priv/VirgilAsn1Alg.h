@@ -37,7 +37,7 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_ASN1_ALG_H
 #define VIRGIL_CRYPTO_VIRGIL_ASN1_ALG_H
 
-#include <cstddef>
+#include <cstdlib>
 
 #include <virgil/crypto/VirgilByteArray.h>
 

@@ -37,7 +37,7 @@
 #ifndef VIRGIL_CHUNK_CIPHER_H
 #define VIRGIL_CHUNK_CIPHER_H
 
-#include <cstddef>
+#include <cstdlib>
 
 #include <virgil/crypto/VirgilCipherBase.h>
 #include <virgil/crypto/VirgilByteArray.h>

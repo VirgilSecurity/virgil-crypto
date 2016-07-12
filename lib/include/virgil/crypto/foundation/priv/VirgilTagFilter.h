@@ -37,7 +37,7 @@
 #ifndef VIRGIL_CRYPTO_TAG_FILTER_H
 #define VIRGIL_CRYPTO_TAG_FILTER_H
 
-#include <cstddef>
+#include <cstdlib>
 
 #include <virgil/crypto/VirgilByteArray.h>
 

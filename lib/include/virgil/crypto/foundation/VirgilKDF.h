@@ -38,6 +38,7 @@
 #define VIRGIL_CRYPTO_KDF_H
 
 #include <string>
+#include <memory>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
@@ -45,16 +46,9 @@
 namespace virgil { namespace crypto { namespace foundation {
 
 /**
- * @name Forward declarations
- */
-///@{
-class VirgilKDFImpl;
-///@}
-
-/**
  * @brief Provides key derivation function algorithms.
  */
-class VirgilKDF : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
+class VirgilKDF : public asn1::VirgilAsn1Compatible {
 public:
     /**
      * @name Creation methods
@@ -81,11 +75,6 @@ public:
      *     i.e. VirgilKDF kdf = VirgilKDF().fromAsn1(asn1);
      */
     VirgilKDF();
-
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilKDF() throw();
     ///@}
     /**
      * @brief
@@ -115,17 +104,6 @@ public:
     virgil::crypto::VirgilByteArray derive(const virgil::crypto::VirgilByteArray& in, size_t outSize);
     ///@}
     /**
-     * @name Copy constructor / assignment operator
-     * @warning Copy constructor and assignment operator create copy of the object as it was created
-     *          by on of the creation methods. All changes in the internal state,
-     *          that was made after creation, are not copied!
-     */
-    ///@{
-    VirgilKDF(const VirgilKDF& other);
-
-    VirgilKDF& operator=(const VirgilKDF& rhs);
-    ///@}
-    /**
      * @name VirgilAsn1Compatible implementation
      * @code
      * Marshalling format:
@@ -148,14 +126,20 @@ public:
      * @endcode
      */
     ///@{
-    virtual size_t asn1Write(
-            virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
-            size_t childWrittenBytes = 0) const;
+    size_t asn1Write(asn1::VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const override;
 
-    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
+    void asn1Read(asn1::VirgilAsn1Reader& asn1Reader) override;
     ///@}
+public:
+    VirgilKDF(VirgilKDF&& rhs);
+
+    VirgilKDF& operator=(VirgilKDF&& rhs);
+
+    virtual ~VirgilKDF() noexcept;
+
 private:
-    explicit VirgilKDF(int kdfType, int mdType);
+    template<typename TypeKDF, typename TypeMD>
+    explicit VirgilKDF(TypeKDF kdf_type, TypeMD type_type);
 
     /**
      * @brief If internal state is not initialized with specific algorithm exception will be thrown.
@@ -163,7 +147,9 @@ private:
     void checkState() const;
 
 private:
-    VirgilKDFImpl* impl_;
+    class Impl;
+
+    std::unique_ptr<Impl> impl_;
 };
 
 }}}

@@ -64,7 +64,6 @@ TEST_CASE("Encrypt and decrypt with generated keys", "[chunk-cipher]") {
     SECTION("and embedded content info") {
         size_t chunkSize = cipher.startEncryption(16);
         VirgilByteArray encryptedData;
-        size_t i = 0;
         for (size_t pos = 0; pos < plainData.size(); pos += chunkSize) {
             size_t adjustedChunkSize = std::min(chunkSize, plainData.size() - pos);
             VirgilByteArray::const_iterator start = plainData.begin() + pos;

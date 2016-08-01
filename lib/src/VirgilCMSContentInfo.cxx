@@ -34,16 +34,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define MODULE_NAME "VirgilCMSContentInfo"
+
 #include <virgil/crypto/foundation/cms/VirgilCMSContentInfo.h>
 
 #include <mbedtls/asn1.h>
 
-#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
 using virgil::crypto::VirgilByteArray;
-using virgil::crypto::VirgilCryptoException;
 using virgil::crypto::foundation::cms::VirgilCMSContentInfo;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
@@ -104,9 +105,9 @@ size_t VirgilCMSContentInfo::asn1Write(VirgilAsn1Writer& asn1Writer, size_t chil
 
 void VirgilCMSContentInfo::asn1Read(VirgilAsn1Reader& asn1Reader) {
     (void) asn1Reader.readSequence();
-    if (asn1Reader.readInteger() != kAsn1_ContentInfoVersion) {
-        throw VirgilCryptoException(std::string("VirgilCMSContentInfo: ") +
-                "Unsupported content info version was given.");
+    const int version = asn1Reader.readInteger();
+    if (version != kAsn1_ContentInfoVersion) {
+        throw make_error(VirgilCryptoError::UnsupportedAlgorithm, "Unsupported version of CMS Content Info.");
     }
     cmsContent.asn1Read(asn1Reader);
     if (asn1Reader.readContextTag(kAsn1_CustomParamsTag) > 0) {

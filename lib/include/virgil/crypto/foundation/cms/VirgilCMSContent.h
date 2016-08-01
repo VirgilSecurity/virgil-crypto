@@ -54,7 +54,10 @@ typedef enum {
     VirgilCMSContentType_EnvelopedData,
     VirgilCMSContentType_DigestedData,
     VirgilCMSContentType_EncryptedData,
-    VirgilCMSContentType_AuthenticatedData
+    VirgilCMSContentType_AuthenticatedData,
+    VirgilCMSContentType_SignedAndEnvelopedData,
+    VirgilCMSContentType_DataWithAttributes,
+    VirgilCMSContentType_EncryptedPrivateKeyInfo
 } VirgilCMSContentType;
 
 /**

@@ -37,23 +37,46 @@
 #ifndef VIRGIL_CRYPTO_EXCEPTION_H
 #define VIRGIL_CRYPTO_EXCEPTION_H
 
-#include <stdexcept>
 #include <string>
+#include <stdexcept>
+#include <system_error>
 
 namespace virgil { namespace crypto {
 
 /**
- * @brief Encapsulates logic errors of module 'crypto'
+ * @brief Base class for all library errors
  */
-class VirgilCryptoException : public std::logic_error {
+class VirgilCryptoException : public std::exception {
 public:
+    VirgilCryptoException(int ev, const std::error_category& ecat);
+
+    VirgilCryptoException(int ev, const std::error_category& ecat, const std::string& what);
+
+    VirgilCryptoException(int ev, const std::error_category& ecat, const char* what);
+
     /**
-     * @brief Construct exception with detailed information about it.
+     * Get string identifying exception.
+     *
+     * @return null terminated character sequence that may be used to identify the exception.
      */
-    explicit VirgilCryptoException(const std::string& what);
+    const char* what() const noexcept override;
+
+    virtual ~VirgilCryptoException() noexcept {};
+
+private:
+    std::error_condition condition_;
+    std::string what_;
 };
+
+//template<typename EnumType>
+//inline VirgilCryptoException make_error(EnumType ev);
+//
+//template<typename EnumType>
+//inline VirgilCryptoException make_error(EnumType ev, const std::string& what);
+//
+//template<typename EnumType>
+//inline VirgilCryptoException make_error(EnumType ev, const char* what);
 
 }}
 
 #endif /* VIRGIL_CRYPTO_EXCEPTION_H */
-

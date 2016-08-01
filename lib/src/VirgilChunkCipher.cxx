@@ -37,15 +37,16 @@
 #include <virgil/crypto/VirgilChunkCipher.h>
 
 #include <cmath>
+#include <fmt/format.h>
 
-#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/VirgilByteArrayUtils.h>
+#include <virgil/crypto/VirgilCryptoError.h>
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 
-using virgil::crypto::str2bytes;
 using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::VirgilChunkCipher;
-using virgil::crypto::VirgilCryptoException;
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
 using virgil::crypto::foundation::VirgilSymmetricCipher;
 
@@ -109,10 +110,8 @@ VirgilByteArray VirgilChunkCipher::process(const VirgilByteArray& data) {
     if (symmetricCipher.isDecryptionMode() && symmetricCipher.isSupportPadding()) {
         bool isDataAlignedToBlockSize = (data.size() % symmetricCipher.blockSize()) == 0;
         if (!isDataAlignedToBlockSize) {
-            std::ostringstream message;
-            message << "In the decryption support padding mode data size MUST be multiple of ";
-            message << symmetricCipher.blockSize() << " bytes.";
-            throw VirgilCryptoException(message.str());
+            throw make_error(VirgilCryptoError::InvalidArgument,
+                    fmt::format("Expected block size: multiple of {} bytes.", symmetricCipher.blockSize()));
         }
     }
 

@@ -45,11 +45,11 @@
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilByteArrayUtils.h>
-#include <virgil/crypto/foundation/priv/VirgilTagFilter.h>
+#include <virgil/crypto/foundation/internal/VirgilTagFilter.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
-using virgil::crypto::foundation::priv::VirgilTagFilter;
+using virgil::crypto::foundation::internal::VirgilTagFilter;
 
 TEST_CASE("Get TAG", "[tag-filter]") {
     VirgilTagFilter tagFilter;

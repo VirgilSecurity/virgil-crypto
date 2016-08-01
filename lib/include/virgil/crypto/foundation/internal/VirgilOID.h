@@ -59,7 +59,7 @@
 #define OID_PKCS7_DIGESTED_DATA OID_PKCS7 "\x05" ///< digestedData ::= { pkcs-7 5 }
 #define OID_PKCS7_ENCRYPTED_DATA OID_PKCS7 "\x06" ///< encryptedData ::= { pkcs-7 6 }
 #define OID_PKCS7_DATA_WITH_ATTRIBUTES OID_PKCS7 "\x07" ///< dataWithAttributes ::= { pkcs-7 7 }
-#define OID_PKCS7_ENCRYPTED_PRIVATE_KEY_INFO OID_PKCS7 "\x07" ///< encryptedPrivateKeyInfo ::= { pkcs-7 8 }
+#define OID_PKCS7_ENCRYPTED_PRIVATE_KEY_INFO OID_PKCS7 "\x08" ///< encryptedPrivateKeyInfo ::= { pkcs-7 8 }
 
 /**
  * PKCS#9 OIDs

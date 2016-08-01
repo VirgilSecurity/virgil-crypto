@@ -34,17 +34,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define MODULE_NAME "VirgilAsn1Reader"
+
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 
 #include <mbedtls/asn1.h>
 
-#include <virgil/crypto/VirgilCryptoException.h>
-#include <virgil/crypto/foundation/PolarsslException.h>
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 
 using virgil::crypto::VirgilByteArray;
-using virgil::crypto::VirgilCryptoException;
-
-using virgil::crypto::foundation::PolarsslException;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 
 VirgilAsn1Reader::VirgilAsn1Reader() : p_(0), end_(0), data_() {
@@ -54,22 +52,23 @@ VirgilAsn1Reader::VirgilAsn1Reader(const VirgilByteArray& data) : p_(0), end_(0)
     this->reset(data);
 }
 
-VirgilAsn1Reader::~VirgilAsn1Reader() throw() {
+VirgilAsn1Reader::~VirgilAsn1Reader() noexcept {
     p_ = 0;
     end_ = 0;
 }
 
 void VirgilAsn1Reader::reset(const VirgilByteArray& data) {
     data_ = data;
-    p_ = const_cast<unsigned char*>(data_.data());
+    p_ = data_.data();
     end_ = p_ + data_.size();
 }
 
 int VirgilAsn1Reader::readInteger() {
     checkState();
     int result;
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_asn1_get_int(&p_, end_, &result);
+    system_crypto_handler(
+            mbedtls_asn1_get_int(&p_, end_, &result),
+            [](int){ std::throw_with_nested(make_error(VirgilCryptoError::InvalidFormat)); }
     );
     return result;
 }
@@ -77,8 +76,9 @@ int VirgilAsn1Reader::readInteger() {
 bool VirgilAsn1Reader::readBool() {
     checkState();
     int result;
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_asn1_get_bool(&p_, end_, &result);
+    system_crypto_handler(
+            mbedtls_asn1_get_bool(&p_, end_, &result),
+            [](int){ std::throw_with_nested(make_error(VirgilCryptoError::InvalidFormat)); }
     );
     return (bool) result;
 }
@@ -86,14 +86,16 @@ bool VirgilAsn1Reader::readBool() {
 void VirgilAsn1Reader::readNull() {
     checkState();
     size_t len;
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_NULL)
+    system_crypto_handler(
+            mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_NULL),
+            [](int){ std::throw_with_nested(make_error(VirgilCryptoError::InvalidFormat)); }
     );
 }
 
 size_t VirgilAsn1Reader::readContextTag(unsigned char tag) {
-    if (tag > 0x1F) {
-        throw VirgilCryptoException("Tag value is too big, MAX value is 31.");
+    const unsigned char kAsn1Tag_Max = 0x1F;
+    if (tag > kAsn1Tag_Max) {
+        throw make_error(VirgilCryptoError::InvalidArgument, "Requested ASN.1 tag is greater then maximum allowed.");
     }
     if (p_ != 0 && end_ != 0 && p_ >= end_) {
         // Expected optional tag located at the end of the ASN.1 structure is absent.
@@ -107,16 +109,16 @@ size_t VirgilAsn1Reader::readContextTag(unsigned char tag) {
         return len;
     } else if (result == MBEDTLS_ERR_ASN1_UNEXPECTED_TAG) {
         return 0;
-    } else {
-        throw PolarsslException(result);
     }
+    throw make_error(VirgilCryptoError::InvalidFormat);
 }
 
 VirgilByteArray VirgilAsn1Reader::readOctetString() {
     checkState();
     size_t len;
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_OCTET_STRING)
+    system_crypto_handler(
+            mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_OCTET_STRING),
+            [](int){ std::throw_with_nested(make_error(VirgilCryptoError::InvalidFormat)); }
     );
     p_ += len;
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(p_ - len, len);
@@ -125,8 +127,9 @@ VirgilByteArray VirgilAsn1Reader::readOctetString() {
 VirgilByteArray VirgilAsn1Reader::readUTF8String() {
     checkState();
     size_t len;
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_UTF8_STRING)
+    system_crypto_handler(
+            mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_UTF8_STRING),
+            [](int){ std::throw_with_nested(make_error(VirgilCryptoError::InvalidFormat)); }
     );
     p_ += len;
     return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(p_ - len, len);
@@ -137,8 +140,9 @@ VirgilByteArray VirgilAsn1Reader::readData() {
     size_t len;
     unsigned char* dataStart = p_;
     p_ += 1; // Ignore tag value
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_asn1_get_len(&p_, end_, &len)
+    system_crypto_handler(
+            mbedtls_asn1_get_len(&p_, end_, &len),
+            [](int){ std::throw_with_nested(make_error(VirgilCryptoError::InvalidFormat)); }
     );
     p_ += len;
     return VirgilByteArray(dataStart, p_);
@@ -148,8 +152,9 @@ VirgilByteArray VirgilAsn1Reader::readData() {
 std::string VirgilAsn1Reader::readOID() {
     checkState();
     size_t len;
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_OID)
+    system_crypto_handler(
+            mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_OID),
+            [](int){ std::throw_with_nested(make_error(VirgilCryptoError::InvalidFormat)); }
     );
     p_ += len;
     return std::string(reinterpret_cast<std::string::const_pointer>(p_ - len), len);
@@ -158,8 +163,9 @@ std::string VirgilAsn1Reader::readOID() {
 size_t VirgilAsn1Reader::readSequence() {
     checkState();
     size_t len;
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE)
+    system_crypto_handler(
+            mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SEQUENCE),
+            [](int){ std::throw_with_nested(make_error(VirgilCryptoError::InvalidFormat)); }
     );
     return len;
 }
@@ -167,20 +173,19 @@ size_t VirgilAsn1Reader::readSequence() {
 size_t VirgilAsn1Reader::readSet() {
     checkState();
     size_t len;
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SET)
+    system_crypto_handler(
+            mbedtls_asn1_get_tag(&p_, end_, &len, MBEDTLS_ASN1_CONSTRUCTED | MBEDTLS_ASN1_SET),
+            [](int){ std::throw_with_nested(make_error(VirgilCryptoError::InvalidFormat)); }
     );
     return len;
 }
 
 void VirgilAsn1Reader::checkState() {
     if (p_ == 0 || end_ == 0) {
-        throw VirgilCryptoException(std::string("VirgilAsn1Reader: ") +
-                "Reader was not initialized - 'reset' method was not called.");
+        throw make_error(VirgilCryptoError::NotInitialized);
     }
     if (p_ >= end_) {
-        throw VirgilCryptoException(std::string("VirgilAsn1Reader: ") +
-                "ASN.1 structure was totally read, so no data left to be processed.");
+        throw make_error(VirgilCryptoError::InvalidState, "Attempt to read empty ASN.1 structure.");
     }
 }
 

@@ -63,11 +63,11 @@ TEST_CASE("sign-ec", "[signer]") {
     VirgilByteArray sign = signer.sign(testData, keyPair.privateKey(), keyPassword);
 
     SECTION("and verify with original data and correspond sign") {
-        REQUIRE(signer.verify(testData, sign, keyPair.publicKey()) == true);
+        REQUIRE(signer.verify(testData, sign, keyPair.publicKey()));
     }
 
     SECTION("and verify with malformed data") {
-        REQUIRE(signer.verify(malformedData, sign, keyPair.publicKey()) == false);
+        REQUIRE(!signer.verify(malformedData, sign, keyPair.publicKey()));
     }
 
     SECTION("and verify with malformed sign") {
@@ -86,11 +86,11 @@ TEST_CASE("sign-rsa", "[signer]") {
     VirgilByteArray sign = signer.sign(testData, keyPair.privateKey(), keyPassword);
 
     SECTION("and verify with original data and correspond sign") {
-        REQUIRE(signer.verify(testData, sign, keyPair.publicKey()) == true);
+        REQUIRE(signer.verify(testData, sign, keyPair.publicKey()));
     }
 
     SECTION("and verify with malformed data") {
-        REQUIRE(signer.verify(malformedData, sign, keyPair.publicKey()) == false);
+        REQUIRE(!signer.verify(malformedData, sign, keyPair.publicKey()));
     }
 
     SECTION("and verify with malformed sign") {
@@ -100,8 +100,6 @@ TEST_CASE("sign-rsa", "[signer]") {
 
 TEST_CASE("sign-rsa with small key", "[signer]") {
     VirgilByteArray testData = str2bytes("this string will be signed");
-    VirgilByteArray malformedData = str2bytes("this string will is malformed");
-    VirgilByteArray malformedSign = str2bytes("I am malformed sign");
     VirgilByteArray keyPassword = str2bytes("password");
     VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_RSA_256, keyPassword);
 
@@ -119,11 +117,11 @@ TEST_CASE("sign-curve25519", "[signer]") {
     VirgilByteArray sign = signer.sign(testData, keyPair.privateKey(), keyPassword);
 
     SECTION("and verify with original data and correspond sign") {
-        REQUIRE(signer.verify(testData, sign, keyPair.publicKey()) == true);
+        REQUIRE(signer.verify(testData, sign, keyPair.publicKey()));
     }
 
     SECTION("and verify with malformed data") {
-        REQUIRE(signer.verify(malformedData, sign, keyPair.publicKey()) == false);
+        REQUIRE(!signer.verify(malformedData, sign, keyPair.publicKey()));
     }
 
     SECTION("and verify with malformed sign") {

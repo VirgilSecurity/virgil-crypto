@@ -40,9 +40,9 @@ project (virgil_crypto VERSION ${VIRGIL_VERSION})
 
 # Define sources list
 aux_source_directory ("src" src)
+aux_source_directory ("src/internal" src)
 if (LIB_FILE_IO)
-    aux_source_directory ("src/stream" stream_src)
-    list (APPEND src ${stream_src})
+    aux_source_directory ("src/stream" src)
 endif()
 
 configure_file (
@@ -141,8 +141,8 @@ find_host_package (Doxygen)
 if (DOXYGEN_FOUND)
     if (DOXYGEN_EXCLUDE_PRIVATE)
         set (DOXYGEN_EXCLUDE
-            "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/priv/*"
-            "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/asn1/priv/*"
+            "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/internal/*"
+             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/asn1/internal/*"
         )
         string (REPLACE ";" " " DOXYGEN_EXCLUDE "${DOXYGEN_EXCLUDE}")
         set (DOXYGEN_EXTRACT_PRIVATE "NO")
@@ -156,11 +156,3 @@ if (DOXYGEN_FOUND)
         COMMENT "Generating API documentation with Doxygen" VERBATIM
     )
 endif (DOXYGEN_FOUND)
-
-# if (VIRGIL_CRYPTO_BUILD_COVERAGE)
-#     add_custom_target(coverage
-#         COMMAND
-#         DEPENDS ${PROJECT_NAME}
-#     )
-
-# endif ()

@@ -84,11 +84,6 @@ public:
      *     i.e. VirgilSymmetricCipher cipher = VirgilSymmetricCipher().fromAsn1(asn1);
      */
     VirgilSymmetricCipher();
-
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilSymmetricCipher() throw();
     ///@}
     /**
      * @name Info
@@ -245,40 +240,32 @@ public:
     virgil::crypto::VirgilByteArray finish();
     ///@}
     /**
-     * @name Copy constructor / assignment operator
-     * @warning Copy constructor and assignment operator create copy of the object as it was created
-     *          by on of the creation methods. All changes in the internal state,
-     *          that was made after creation, are not copied!
-     */
-    ///@{
-    VirgilSymmetricCipher(const VirgilSymmetricCipher& other);
-
-    VirgilSymmetricCipher& operator=(const VirgilSymmetricCipher& rhs);
-    ///@}
-    /**
      * @name VirgilAsn1Compatible implementation
      */
     ///@{
-    virtual size_t asn1Write(
+    size_t asn1Write(
             virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
-            size_t childWrittenBytes = 0) const;
+            size_t childWrittenBytes = 0) const override;
 
-    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
+    void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader) override;
     ///@}
-private:
-    /**
-     * @brief Creates and initialize cipher with specified type.
-     * @warning Constructor CAN NOT be used directly, use one of factory methods to create apropriate cipher.
-     */
-    explicit VirgilSymmetricCipher(int type);
+public:
+    VirgilSymmetricCipher(VirgilSymmetricCipher&& rhs);
 
+    VirgilSymmetricCipher& operator=(VirgilSymmetricCipher&& rhs);
+
+    virtual ~VirgilSymmetricCipher() noexcept;
+
+private:
     /**
      * @brief If internal state is not initialized with specific algorithm exception will be thrown.
      */
     void checkState() const;
 
 private:
-    VirgilSymmetricCipherImpl* impl_;
+    class Impl;
+
+    std::unique_ptr<Impl> impl_;
 };
 
 }}}

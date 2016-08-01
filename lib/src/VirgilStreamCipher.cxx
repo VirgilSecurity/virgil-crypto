@@ -122,6 +122,5 @@ void VirgilStreamCipher::decrypt(
     if (sink.isGood()) {
         sink.write(cipher.finish());
     }
-
     clearCipherInfo();
 }

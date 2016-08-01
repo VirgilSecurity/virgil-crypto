@@ -36,7 +36,37 @@
 
 #include <virgil/crypto/VirgilCryptoException.h>
 
+#include <fmt/format.h>
+
 using virgil::crypto::VirgilCryptoException;
 
-VirgilCryptoException::VirgilCryptoException(const std::string& what) : std::logic_error(what) {
+namespace virgil { namespace crypto { namespace internal {
+
+static std::string format_message(const std::error_condition& condition) noexcept {
+    try {
+        return fmt::format("Module: {}. Error code: {}. {}",
+                condition.category().name(), condition.value(), condition.message());
+    } catch (...) {
+        return std::string();
+    }
+}
+
+static std::string format_message(const std::error_condition& condition, const std::string& what) noexcept {
+    return fmt::format("{} {}", format_message(condition), what);
+}
+
+}}}
+
+VirgilCryptoException::VirgilCryptoException(int ev, const std::error_category& ecat)
+        : condition_(ev, ecat), what_(internal::format_message(condition_)) {
+}
+
+VirgilCryptoException::VirgilCryptoException(int ev, const std::error_category& ecat, const std::string& what)
+        : condition_(ev, ecat), what_(internal::format_message(condition_, what)) {}
+
+VirgilCryptoException::VirgilCryptoException(int ev, const std::error_category& ecat, const char* what)
+        : condition_(ev, ecat), what_(internal::format_message(condition_, what)) {}
+
+const char* VirgilCryptoException::what() const noexcept {
+    return what_.c_str();
 }

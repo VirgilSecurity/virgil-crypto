@@ -38,18 +38,12 @@
 #define VIRGIL_CRYPTO_HASH_H
 
 #include <string>
+#include <memory>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 
 namespace virgil { namespace crypto { namespace foundation {
-
-/**
- * @name Forward declarations
- */
-///@{
-class VirgilHashImpl;
-///@}
 
 /**
  * @brief Provides hashing (message digest) algorithms.
@@ -81,11 +75,6 @@ public:
      *     i.e. VirgilHash hash = VirgilHash().fromAsn1(asn1);
      */
     VirgilHash();
-
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilHash() throw();
     ///@}
     /**
      * @brief
@@ -118,10 +107,10 @@ public:
      *
      * Process the given message immediately and return it's hash.
      *
-     * @param bytes - message to be hashed.
+     * @param data - message to be hashed.
      * @return Hash of the given message.
      */
-    virgil::crypto::VirgilByteArray hash(const virgil::crypto::VirgilByteArray& bytes) const;
+    virgil::crypto::VirgilByteArray hash(const virgil::crypto::VirgilByteArray& data) const;
     ///@}
 
     /**
@@ -142,10 +131,10 @@ public:
      * This method MUST be used after @link start() @endlink method only.
      * This method MAY be called multiple times to process long message splitted to a shorter chunks.
      *
-     * @param bytes - message to be hashed.
+     * @param data - message to be hashed.
      * @see @link start() @endlink
      */
-    void update(const virgil::crypto::VirgilByteArray& bytes);
+    void update(const virgil::crypto::VirgilByteArray& data);
 
     /**
      * @brief Return final message hash.
@@ -167,12 +156,12 @@ public:
      * Process the given message immediately and return it's HMAC hash.
      *
      * @param key - secret key.
-     * @param bytes - message to be hashed.
+     * @param data - message to be hashed.
      * @return HMAC hash of the given message.
      */
     virgil::crypto::VirgilByteArray hmac(
             const virgil::crypto::VirgilByteArray& key,
-            const virgil::crypto::VirgilByteArray& bytes) const;
+            const virgil::crypto::VirgilByteArray& data) const;
     ///@}
 
     /**
@@ -199,11 +188,11 @@ public:
      * This method MUST be used after @link hmacStart() @endlink or @link hmacReset() @endlink methods only.
      * This method MAY be called multiple times to process long message splitted to a shorter chunks.
      *
-     * @param bytes - message to be hashed.
+     * @param data - message to be hashed.
      * @see @link hmacStart() @endlink
      * @see @link hmacReset() @endlink
      */
-    void hmacUpdate(const virgil::crypto::VirgilByteArray& bytes);
+    void hmacUpdate(const virgil::crypto::VirgilByteArray& data);
 
     /**
      * @brief Return final message HMAC hash.
@@ -215,35 +204,33 @@ public:
     virgil::crypto::VirgilByteArray hmacFinish();
     ///@}
     /**
-     * @name Copy constructor / assignment operator
-     * @warning Copy constructor and assignment operator create copy of the object as it was created
-     *          by on of the creation methods. All changes in the internal state,
-     *          that was made after creation, are not copied!
-     */
-    ///@{
-    VirgilHash(const VirgilHash& other);
-
-    VirgilHash& operator=(const VirgilHash& rhs);
-    ///@}
-    /**
      * @name VirgilAsn1Compatible implementation
      */
     ///@{
-    virtual size_t asn1Write(
+    size_t asn1Write(
             virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
-            size_t childWrittenBytes = 0) const;
+            size_t childWrittenBytes = 0) const override;
 
-    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
+    void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader) override;
     ///@}
-private:
-    explicit VirgilHash(int type);
 
-    explicit VirgilHash(const char* name);
+public:
+    VirgilHash(VirgilHash&& other);
+
+    VirgilHash& operator=(VirgilHash&& rhs);
+
+    virtual ~VirgilHash() noexcept;
+
+private:
+    template<typename TypeOrName>
+    explicit VirgilHash(TypeOrName typeOrName);
 
     void checkState() const;
 
 private:
-    VirgilHashImpl* impl_;
+    class Impl;
+
+    std::unique_ptr<Impl> impl_;
 };
 
 }}}

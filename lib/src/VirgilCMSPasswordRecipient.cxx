@@ -36,11 +36,12 @@
 
 #include <virgil/crypto/foundation/cms/VirgilCMSPasswordRecipient.h>
 
-#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
-using virgil::crypto::VirgilCryptoException;
+#include <virgil/crypto/internal/utils.h>
+
 using virgil::crypto::foundation::cms::VirgilCMSPasswordRecipient;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
@@ -59,10 +60,10 @@ VirgilCMSPasswordRecipient::~VirgilCMSPasswordRecipient() throw() {
 size_t VirgilCMSPasswordRecipient::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t len = 0;
 
-    checkAsn1ParamNotEmpty(encryptedKey);
+    checkRequiredField(encryptedKey);
     len += asn1Writer.writeOctetString(encryptedKey);
 
-    checkAsn1ParamNotEmpty(keyEncryptionAlgorithm);
+    checkRequiredField(keyEncryptionAlgorithm);
     len += asn1Writer.writeData(keyEncryptionAlgorithm);
 
     if (!keyDerivationAlgorithm.empty()) {
@@ -81,7 +82,7 @@ void VirgilCMSPasswordRecipient::asn1Read(VirgilAsn1Reader& asn1Reader) {
     (void) asn1Reader.readSequence();
     int version = asn1Reader.readInteger();
     if (version != kCMS_PasswordRecipientVersion) {
-        throw VirgilCryptoException(std::string("VirgilCMSPasswordRecipient: ") +
+        throw make_error(VirgilCryptoError::InvalidFormat,
                 "PasswordRecipientInfo structure is malformed due to incorrect CMS version number.");
     }
 

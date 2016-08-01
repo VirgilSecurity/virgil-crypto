@@ -34,22 +34,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define MODULE_NAME "VirgilKDF"
+
 #include <virgil/crypto/foundation/VirgilKDF.h>
 
 #include <mbedtls/kdf.h>
 #include <mbedtls/oid.h>
 
-#include <virgil/crypto/VirgilCryptoException.h>
-#include <virgil/crypto/foundation/PolarsslException.h>
+#include <virgil/crypto/VirgilByteArrayUtils.h>
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
 
 using virgil::crypto::foundation::VirgilKDF;
-using virgil::crypto::foundation::VirgilKDFImpl;
-using virgil::crypto::foundation::PolarsslException;
 using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
@@ -63,22 +64,29 @@ static const mbedtls_md_type_t kHashType_Default = MBEDTLS_MD_SHA256;
 
 namespace virgil { namespace crypto { namespace foundation {
 
-class VirgilKDFImpl {
+class VirgilKDF::Impl {
 public:
-    VirgilKDFImpl() : kdfInfo(0), mdInfo(0) {
+    Impl() : kdf_info(nullptr), md_info(nullptr) {}
+
+    Impl(mbedtls_kdf_type_t kdf_type, mbedtls_md_type_t md_type) :
+            kdf_info(mbedtls_kdf_info_from_type(kdf_type)),
+            md_info(mbedtls_md_info_from_type(md_type)) {
+        if (kdf_info == nullptr || md_info == nullptr) {
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
+        }
     }
 
-    VirgilKDFImpl(mbedtls_kdf_type_t kdfType, mbedtls_md_type_t mbedtls_md_type_t) : kdfInfo(0), mdInfo(0) {
-        kdfInfo = mbedtls_kdf_info_from_type(kdfType);
-        mdInfo = mbedtls_md_info_from_type(mbedtls_md_type_t);
-    }
-
 public:
-    mbedtls_kdf_info_t const* kdfInfo; // KDF algorithm type info
-    mbedtls_md_info_t const* mdInfo; // hash algorithm type info
+    mbedtls_kdf_info_t const* kdf_info; // KDF algorithm type info
+    mbedtls_md_info_t const* md_info; // Hash algorithm type info
 };
 
 }}}
+
+template<>
+VirgilKDF::VirgilKDF(mbedtls_kdf_type_t kdf_type, mbedtls_md_type_t md_type)
+        : impl_(new Impl(kdf_type, md_type)) {
+}
 
 VirgilKDF VirgilKDF::kdf1() {
     return VirgilKDF(MBEDTLS_KDF_KDF1, kHashType_Default);
@@ -88,55 +96,34 @@ VirgilKDF VirgilKDF::kdf2() {
     return VirgilKDF(MBEDTLS_KDF_KDF2, kHashType_Default);
 }
 
-VirgilKDF::VirgilKDF() : impl_(new VirgilKDFImpl()) {
+VirgilKDF::VirgilKDF() : impl_(new Impl()) {
 }
 
-VirgilKDF::VirgilKDF(int kdfType, int mdType)
-        : impl_(new VirgilKDFImpl(static_cast<mbedtls_kdf_type_t>(kdfType), static_cast<mbedtls_md_type_t>(mdType))) {
-}
+VirgilKDF::~VirgilKDF() noexcept {}
 
-VirgilKDF::~VirgilKDF() throw() {
-    if (impl_) {
-        delete impl_;
-        impl_ = 0;
-    }
-}
+VirgilKDF::VirgilKDF(VirgilKDF&& rhs) = default;
 
-VirgilKDF::VirgilKDF(const VirgilKDF& other) : impl_(new VirgilKDFImpl(*other.impl_)) {
-}
-
-VirgilKDF& VirgilKDF::operator=(const VirgilKDF& rhs) {
-    if (this == &rhs) {
-        return *this;
-    }
-    VirgilKDFImpl* newImpl = new VirgilKDFImpl(*rhs.impl_);
-    if (impl_) {
-        delete impl_;
-    }
-    impl_ = newImpl;
-    return *this;
-}
+VirgilKDF& VirgilKDF::operator=(VirgilKDF&& rhs) = default;
 
 std::string VirgilKDF::name() const {
     checkState();
-    return std::string(mbedtls_kdf_get_name(impl_->kdfInfo));
+    return std::string(mbedtls_kdf_get_name(impl_->kdf_info));
 }
 
 
 VirgilByteArray VirgilKDF::derive(const VirgilByteArray& in, size_t outSize) {
     checkState();
     VirgilByteArray result(outSize);
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_kdf(impl_->kdfInfo, impl_->mdInfo, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(in), result.data(),
-                    result.size())
+    system_crypto_handler(
+            mbedtls_kdf(impl_->kdf_info, impl_->md_info, in.data(), in.size(), result.data(), result.size()),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidArgument)); }
     );
     return result;
 }
 
 void VirgilKDF::checkState() const {
-    if (impl_->kdfInfo == 0 || impl_->mdInfo == 0) {
-        throw VirgilCryptoException(std::string("VirgilKDF: object has undefined algorithm.") +
-                " Use one of the factory methods or method 'fromAsn1' to define key derivation function algorithm.");
+    if (impl_->kdf_info == nullptr || impl_->md_info == nullptr) {
+        throw make_error(VirgilCryptoError::NotInitialized);
     }
 }
 
@@ -148,18 +135,20 @@ size_t VirgilKDF::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenByt
     size_t oidLen;
 
     // Write hash algorithm identifier
-    mbedtls_md_type_t mdType = mbedtls_md_get_type(impl_->mdInfo);
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_oid_get_oid_by_md(mdType, &oid, &oidLen)
+    mbedtls_md_type_t mdType = mbedtls_md_get_type(impl_->md_info);
+    system_crypto_handler(
+            mbedtls_oid_get_oid_by_md(mdType, &oid, &oidLen),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
     );
     len += asn1Writer.writeNull();
     len += asn1Writer.writeOID(std::string(oid, oidLen));
     len += asn1Writer.writeSequence(len);
 
     // Write key derivation function algorithm identifier
-    mbedtls_kdf_type_t kdfType = mbedtls_kdf_get_type(impl_->kdfInfo);
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_oid_get_oid_by_kdf_alg(kdfType, &oid, &oidLen)
+    mbedtls_kdf_type_t kdfType = mbedtls_kdf_get_type(impl_->kdf_info);
+    system_crypto_handler(
+            mbedtls_oid_get_oid_by_kdf_alg(kdfType, &oid, &oidLen),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
     );
     len += asn1Writer.writeOID(std::string(oid, oidLen));
     len += asn1Writer.writeSequence(len);
@@ -168,29 +157,29 @@ size_t VirgilKDF::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenByt
 }
 
 void VirgilKDF::asn1Read(VirgilAsn1Reader& asn1Reader) {
-    mbedtls_asn1_buf oidAsn1Buf;
-    std::string oid;
-
     // Read key derivation function algorithm identifier
     asn1Reader.readSequence();
-    oid = asn1Reader.readOID();
+    VirgilByteArray oid = VirgilByteArrayUtils::stringToBytes(asn1Reader.readOID());
+    mbedtls_asn1_buf oidAsn1Buf;
     oidAsn1Buf.len = oid.size();
-    oidAsn1Buf.p = reinterpret_cast<unsigned char*>(const_cast<std::string::pointer>(oid.c_str()));
+    oidAsn1Buf.p = oid.data();
 
     mbedtls_kdf_type_t kdfType = MBEDTLS_KDF_NONE;
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_oid_get_kdf_alg(&oidAsn1Buf, &kdfType)
+    system_crypto_handler(
+            mbedtls_oid_get_kdf_alg(&oidAsn1Buf, &kdfType),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
     );
 
     // Read hash algorithm identifier
     asn1Reader.readSequence();
-    oid = asn1Reader.readOID();
+    oid = VirgilByteArrayUtils::stringToBytes(asn1Reader.readOID());
     oidAsn1Buf.len = oid.size();
-    oidAsn1Buf.p = reinterpret_cast<unsigned char*>(const_cast<std::string::pointer>(oid.c_str()));
+    oidAsn1Buf.p = oid.data();
 
     mbedtls_md_type_t mdType = MBEDTLS_MD_NONE;
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_oid_get_md_alg(&oidAsn1Buf, &mdType)
+    system_crypto_handler(
+            mbedtls_oid_get_md_alg(&oidAsn1Buf, &mdType),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
     );
 
     asn1Reader.readNull();

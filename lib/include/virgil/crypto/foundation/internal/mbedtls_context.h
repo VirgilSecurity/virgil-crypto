@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,35 +34,59 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/foundation/PolarsslException.h>
+#ifndef VIRGIL_CRYPTO_MBEDTLS_CONTEXT_H
+#define VIRGIL_CRYPTO_MBEDTLS_CONTEXT_H
 
-#include <mbedtls/error.h>
+#include <memory>
 
-using virgil::crypto::foundation::PolarsslException;
+namespace virgil { namespace crypto { namespace foundation { namespace internal {
 
-// Private section constants
-enum {
-    gErrorBufferLen = 1024 // Max length of the generated error message
+template<typename T>
+class mbedtls_context_policy;
+
+template<typename T, typename Policy = mbedtls_context_policy<T>>
+class mbedtls_context {
+public:
+    mbedtls_context() noexcept : ctx_(new T()) {
+        Policy::init_ctx(ctx_.get());
+    }
+
+    template<typename... Args>
+    mbedtls_context(Args&& ...args) : ctx_(new T()) {
+        Policy::init_ctx(ctx_.get(), std::forward(args)...);
+    }
+
+    ~mbedtls_context() noexcept {
+        Policy::free_ctx(ctx_.get());
+    }
+
+    mbedtls_context<T, Policy>& clear() {
+        Policy::free_ctx(ctx_.get());
+        ctx_.reset(new T());
+        Policy::init_ctx(ctx_.get());
+        return *this;
+    };
+
+    template<typename... Args>
+    void setup(Args ...args) {
+        Policy::setup_ctx(ctx_.get(), args...);
+    }
+
+    T* get() noexcept { return ctx_.get(); }
+
+    const T* get() const noexcept { return ctx_.get(); }
+
+public:
+    mbedtls_context(mbedtls_context&& rhs) = default;
+
+    mbedtls_context& operator=(mbedtls_context&& rhs) = default;
+
+private:
+    std::unique_ptr<T> ctx_;
 };
 
-/**
- * Build error message related to the given error code.
- */
-static std::string buildErrorString(int errCode) {
-    static char errorBuffer[gErrorBufferLen + 1] = {0x00};
-    mbedtls_strerror(errCode, errorBuffer, gErrorBufferLen);
-    return std::string(errorBuffer);
-}
+}}}}
 
+#include "mbedtls_context_policy_spec.h"
 
-// Public section
-PolarsslException::PolarsslException(int errCode)
-        : VirgilCryptoException(buildErrorString(errCode)), errCode_(errCode) {
-}
-
-PolarsslException::~PolarsslException() throw() {
-}
-
-int PolarsslException::errCode() const throw() {
-    return errCode_;
-}
+#endif //VIRGIL_CRYPTO_MBEDTLS_CONTEXT_H

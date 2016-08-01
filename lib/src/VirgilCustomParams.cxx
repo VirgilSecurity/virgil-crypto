@@ -36,14 +36,16 @@
 
 #include <virgil/crypto/VirgilCustomParams.h>
 
-#include <virgil/crypto/VirgilCryptoException.h>
+#include <fmt/format.h>
+
+#include <virgil/crypto/VirgilCryptoError.h>
+#include <virgil/crypto/VirgilByteArrayUtils.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
-using virgil::crypto::bytes2str;
 using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::VirgilCustomParams;
-using virgil::crypto::VirgilCryptoException;
 
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
@@ -73,8 +75,7 @@ int VirgilCustomParams::getInteger(const VirgilByteArray& key) const {
     if (keyValue != intValues_.end()) {
         return keyValue->second;
     } else {
-        throw VirgilCryptoException(std::string("VirgilCustomParams") +
-                "Key '" + bytes2str(key) + "' is not found.");
+        throw make_error(VirgilCryptoError::InvalidFormat);
     }
 }
 
@@ -91,8 +92,7 @@ VirgilByteArray VirgilCustomParams::getString(const VirgilByteArray& key) const 
     if (keyValue != stringValues_.end()) {
         return keyValue->second;
     } else {
-        throw VirgilCryptoException(std::string("VirgilCustomParams") +
-                "Key '" + bytes2str(key) + "' is not found.");
+        throw make_error(VirgilCryptoError::InvalidFormat);
     }
 }
 
@@ -109,8 +109,7 @@ VirgilByteArray VirgilCustomParams::getData(const VirgilByteArray& key) const {
     if (keyValue != dataValues_.end()) {
         return keyValue->second;
     } else {
-        throw VirgilCryptoException(std::string("VirgilCustomParams") +
-                "Key '" + bytes2str(key) + "' is not found.");
+        throw make_error(VirgilCryptoError::InvalidFormat);
     }
 }
 
@@ -190,8 +189,7 @@ void VirgilCustomParams::asn1Read(VirgilAsn1Reader& asn1Reader) {
         } else if (keyValueAsn1Reader.readContextTag(kCMS_DataValueTag) > 0) {
             dataValues_[key] = keyValueAsn1Reader.readOctetString();
         } else {
-            throw VirgilCryptoException(std::string("VirgilCustomParams: ") +
-                    "Expected parameter 'val' is not defined or has unexpected type.");
+            throw make_error(VirgilCryptoError::InvalidFormat);
         }
         setLen = setLen > keyValueAsn1.size() ? (setLen - keyValueAsn1.size()) : 0;
     }

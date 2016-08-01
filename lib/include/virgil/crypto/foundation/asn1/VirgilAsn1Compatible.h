@@ -92,7 +92,7 @@ protected:
      * @brief If given parameter is empty exception will be thrown.
      * @throw virgil::crypto::VirgilCryptoException.
      */
-    virtual void checkAsn1ParamNotEmpty(const virgil::crypto::VirgilByteArray& param, const char* paramName = 0) const;
+    virtual void checkRequiredField(const VirgilByteArray& param) const;
 };
 
 }}}}

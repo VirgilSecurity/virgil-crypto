@@ -34,13 +34,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define MODULE_NAME "VirgilCMSEnvelopedData"
+
 #include <virgil/crypto/foundation/cms/VirgilCMSEnvelopedData.h>
 
-#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
-using virgil::crypto::VirgilCryptoException;
+
 using virgil::crypto::foundation::cms::VirgilCMSEnvelopedData;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
@@ -93,7 +95,7 @@ void VirgilCMSEnvelopedData::asn1Read(VirgilAsn1Reader& asn1Reader) {
     (void) asn1Reader.readSequence();
     (void) asn1Reader.readInteger(); // Ignore version
     if (asn1Reader.readContextTag(kCMS_OriginatorInfoTag) > 0) {
-        (void) asn1Reader.readData(); // Ignore origibatorInfo
+        (void) asn1Reader.readData(); // Ignore originatorInfo
     }
 
     size_t setLen = asn1Reader.readSet();
@@ -111,8 +113,7 @@ void VirgilCMSEnvelopedData::asn1Read(VirgilAsn1Reader& asn1Reader) {
                             recipientAsn1Reader.readContextTag(kCMS_KEKRecipientTag) > 0 ||
                             recipientAsn1Reader.readContextTag(kCMS_OtherRecipientTag) > 0;
             if (unsupportedRecipientInfoDefined) {
-                throw VirgilCryptoException(std::string("VirgilCMSEnvelopedData: ") +
-                        "Given RecipientInfo type is not supported.");
+                throw make_error(VirgilCryptoError::UnsupportedAlgorithm, "Unsupported CMS RecipientInfo.");
             } else {
                 VirgilCMSKeyTransRecipient recipient;
                 recipient.fromAsn1(recipientAsn1);

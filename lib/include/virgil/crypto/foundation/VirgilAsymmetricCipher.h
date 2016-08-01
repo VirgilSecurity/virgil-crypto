@@ -38,21 +38,13 @@
 #define VIRGIL_CRYPTO_ASYMMETRIC_CIPHER_H
 
 #include <cstdlib>
+#include <memory>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilKeyPair.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 
 namespace virgil { namespace crypto { namespace foundation {
-
-/**
- * @name Forward declarations
- */
-///@{
-class VirgilKeyPairGenerator;
-
-class VirgilAsymmetricCipherImpl;
-///@}
 
 /**
  * @brief Provides asymmetric ciphers algorithms (PK).
@@ -108,23 +100,41 @@ public:
             const virgil::crypto::VirgilByteArray& privateKey,
             const virgil::crypto::VirgilByteArray& privateKeyPassword = virgil::crypto::VirgilByteArray());
 
+
+    /**
+     * @brief Check if given public key has a valid format.
+     *
+     * Ensure that given public key has the valid format PEM or DER.
+     *
+     * @param key - public key to be checked.
+     * @return true - if public key is valid, false - otherwise.
+     */
+    static bool isPublicKeyValid(const virgil::crypto::VirgilByteArray& key);
+
+    /**
+     * @brief Check if given public key has a valid format.
+     *
+     * Ensure that given public key has the valid format PEM or DER.
+     *
+     * @param key - public key to be checked.
+     * @throw VirgilCryptoException with VirgilCryptoError::InvalidFormat, if public key is not valid.
+     */
+    static void checkPublicKey(const virgil::crypto::VirgilByteArray& key);
+
     /**
      * @brief Check if given private key and it's password matches.
-     *
      * @param key - private key in DER or PEM format.
      * @param pwd - private key password.
-     *
      * @return true - if private key and it's password matches.
      */
     static bool checkPrivateKeyPassword(
             const virgil::crypto::VirgilByteArray& key,
             const virgil::crypto::VirgilByteArray& pwd);
 
+
     /**
      * @brief Check if given private key is encrypted.
-     *
      * @param privateKey - private key in DER or PEM format.
-     *
      * @return true - if private key is encrypted.
      */
     static bool isPrivateKeyEncrypted(const virgil::crypto::VirgilByteArray& privateKey);
@@ -138,6 +148,7 @@ public:
      * @brief Configures private key.
      *
      * Parse given private key and set it to the current context.
+     *
      * @param key - private key in DER or PEM format.
      * @param pwd - private key password if exists.
      */
@@ -149,6 +160,7 @@ public:
      * @brief Configures public key.
      *
      * Parse given public key and set it to the current context.
+     *
      * @param key - public key in DER or PEM format.
      */
     void setPublicKey(const virgil::crypto::VirgilByteArray& key);
@@ -163,7 +175,6 @@ public:
 
     /**
      * @brief Generates private and public keys of the same type from the given context.
-     *
      * @param other - donor context.
      * @throw VirgilCryptoException - if donor context does not contain own key pair.
      */
@@ -171,7 +182,6 @@ public:
 
     /**
      * @brief Compute shared secret key on a given contexts.
-     *
      * @param publicContext - public context.
      * @param privateContext - private context.
      * @throw VirgilCryptoException - if public context does not contain public key.
@@ -241,6 +251,10 @@ public:
      *     * number - EC point if underlying key belongs to the Elliptic Curve group
      *
      * @note Properly works only with Curve25519 keys.
+     * @throw VirgilFoundationException
+     *   * VirgilCryptoErrorCode::UnsupportedAlgorithm
+     *   * VirgilCryptoErrorCode::UndefinedAlgorithm
+     *   * VirgilCryptoErrorCode::InternalInvalidArgument
      */
     virgil::crypto::VirgilByteArray getPublicKeyBits() const;
 
@@ -334,43 +348,32 @@ public:
             const virgil::crypto::VirgilByteArray& sign, int hashType) const;
     ///@}
     /**
-     * @name Copy constructor / assignment operator
-     * @warning Copy constructor and assignment operator create copy of the object as it was created
-     *          by on of the creation methods. All changes in the internal state,
-     *          that was made after creation, are not copied!
-     */
-    ///@{
-    VirgilAsymmetricCipher(const VirgilAsymmetricCipher& other);
-
-    VirgilAsymmetricCipher& operator=(const VirgilAsymmetricCipher& rhs);
-    ///@}
-    /**
      * @name VirgilAsn1Compatible implementation
      */
     ///@{
     virtual size_t asn1Write(
             virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
-            size_t childWrittenBytes = 0) const;
+            size_t childWrittenBytes = 0) const override;
 
-    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
+    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader) override;
     ///@}
-private:
-    /**
-     * @brief Creates and initialize cipher with given type.
-     * @warning CAN NOT be used directly, use one of the factory methods to create apropriate cipher.
-     */
-    explicit VirgilAsymmetricCipher(int type);
+public:
+    VirgilAsymmetricCipher(VirgilAsymmetricCipher&& other);
 
+    VirgilAsymmetricCipher& operator=(VirgilAsymmetricCipher&& rhs);
+
+    virtual ~VirgilAsymmetricCipher() noexcept;
+
+private:
     /**
      * @brief If internal state is not initialized with specific algorithm exception will be thrown.
      */
     void checkState() const;
 
-public:
-    virtual ~VirgilAsymmetricCipher() throw();
-
 private:
-    VirgilAsymmetricCipherImpl* impl_;
+    class Impl;
+
+    std::unique_ptr<Impl> impl_;
 };
 
 }}}

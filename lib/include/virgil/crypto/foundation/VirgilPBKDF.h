@@ -38,6 +38,7 @@
 #define VIRGIL_CRYPTO_PBKDF_H
 
 #include <string>
+#include <memory>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
@@ -45,16 +46,9 @@
 namespace virgil { namespace crypto { namespace foundation {
 
 /**
- * @name Forward declarations
- */
-///@{
-class VirgilPBKDFImpl;
-///@}
-
-/**
  * @brief Provides password based key derivation function.
  */
-class VirgilPBKDF : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
+class VirgilPBKDF : public asn1::VirgilAsn1Compatible {
 public:
     /**
      * @property kIterationCount_Default
@@ -99,11 +93,6 @@ public:
      * @param iterationCount - iteration count, the best practice is to pass random value.
      */
     VirgilPBKDF(const virgil::crypto::VirgilByteArray& salt, unsigned int iterationCount = kIterationCount_Default);
-
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilPBKDF() throw();
     ///@}
     /**
      * @brief
@@ -191,12 +180,17 @@ public:
      * @endcode
      */
     ///@{
-    virtual size_t asn1Write(
-            virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
-            size_t childWrittenBytes = 0) const;
+    size_t asn1Write(asn1::VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const override;
 
-    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
+    void asn1Read(asn1::VirgilAsn1Reader& asn1Reader) override;
     ///@}
+public:
+    VirgilPBKDF(VirgilPBKDF&& rhs);
+
+    VirgilPBKDF& operator=(VirgilPBKDF&& rhs);
+
+    virtual ~VirgilPBKDF() noexcept;
+
 private:
     /**
      * @brief If internal state is not initialized with specific algorithm exception will be thrown.
@@ -209,12 +203,9 @@ private:
     void checkRecommendations(const VirgilByteArray& pwd) const;
 
 private:
-    VirgilPBKDF::Algorithm algorithm_;
-    VirgilPBKDF::Hash hash_;
-    VirgilByteArray salt_;
-    unsigned int iterationCount_;
-    unsigned int iterationCountMin_;
-    bool checkRecommendations_;
+    class Impl;
+
+    std::unique_ptr<Impl> impl_;
 };
 
 }}}

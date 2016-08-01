@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,62 +34,49 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_TAG_FILTER_H
-#define VIRGIL_CRYPTO_TAG_FILTER_H
+#ifndef VIRGIL_CRYPTO_FOUNDATION_ERROR_H
+#define VIRGIL_CRYPTO_FOUNDATION_ERROR_H
 
-#include <cstdlib>
+#include <system_error>
 
-#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilCryptoError.h>
 
-namespace virgil { namespace crypto { namespace foundation { namespace priv {
+namespace virgil { namespace crypto { namespace foundation {
 
-/**
- * @brief This class analize incoming data stream to filter Virgil TAG.
- * @note Virgil TAG MUST be at the end of the data stream.
- */
-class VirgilTagFilter {
+class VirgilSystemCryptoErrorCategory : public std::error_category {
 public:
-    /**
-     * @brief Base initialization.
-     * @note Method reset() MUST be called anyway.
-     */
-    VirgilTagFilter();
+    const char* name() const noexcept override;
 
-    /**
-     * @brief Get ready for data filtration.
-     * @param tagLen - length of the expected Virgil TAG.
-     * @note This method MUST be called before any data will be processed.
-     */
-    void reset(size_t tagLen);
-
-    /**
-     * @brief Filter given data.
-     */
-    void process(const virgil::crypto::VirgilByteArray& data);
-
-    /**
-     * @brief Return if data exist after filtration.
-     */
-    bool hasData() const;
-
-    /**
-     * @brief Return filtrated data.
-     */
-    virgil::crypto::VirgilByteArray popData();
-
-    /**
-     * @brief Return tag that was extracted from processed data.
-     * @note MUST be called after method finish().
-     * @return Tag or empty byte array.
-     */
-    virgil::crypto::VirgilByteArray tag() const;
-
-private:
-    size_t tagLen_;
-    virgil::crypto::VirgilByteArray data_;
-    virgil::crypto::VirgilByteArray tag_;
+    std::string message(int ev) const noexcept override;
 };
 
-}}}}
+const VirgilSystemCryptoErrorCategory& system_crypto_category() noexcept;
 
-#endif /* VIRGIL_CRYPTO_TAG_FILTER_H */
+inline int system_crypto_handler_get_result(int error) {
+    if (error >= 0) { return error; }
+    throw VirgilCryptoException(error, system_crypto_category());
+}
+
+inline void system_crypto_handler(int error) {
+    (void)system_crypto_handler_get_result(error);
+}
+
+template<typename CatchHandler>
+inline int system_crypto_handler_get_result(int error, CatchHandler catch_handler) {
+    if (error >= 0) { return error; }
+    try {
+        throw VirgilCryptoException(error, system_crypto_category());
+    } catch (...) {
+        catch_handler(error);
+        return 0;
+    }
+}
+
+template<typename CatchHandler>
+inline void system_crypto_handler(int error, CatchHandler catch_handler) {
+    (void)system_crypto_handler_get_result<CatchHandler>(error, catch_handler);
+}
+
+}}}
+
+#endif //VIRGIL_CRYPTO_FOUNDATION_ERROR_H

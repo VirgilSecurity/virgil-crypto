@@ -49,7 +49,7 @@ using virgil::crypto::foundation::VirgilAsymmetricCipher;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
-VirgilStreamSigner::VirgilStreamSigner(const VirgilHash& hash) : hash_(hash) {
+VirgilStreamSigner::VirgilStreamSigner(VirgilHash hash) : hash_(std::move(hash)) {
 }
 
 VirgilByteArray VirgilStreamSigner::sign(

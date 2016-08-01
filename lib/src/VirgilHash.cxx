@@ -34,112 +34,91 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define MODULE_NAME "VirgilHash"
+
 #include <virgil/crypto/foundation/VirgilHash.h>
 
 #include <mbedtls/md.h>
 #include <mbedtls/oid.h>
 
-#include <virgil/crypto/VirgilCryptoException.h>
-#include <virgil/crypto/foundation/PolarsslException.h>
+#include <virgil/crypto/VirgilByteArrayUtils.h>
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
-using virgil::crypto::bytes2str;
+#include <virgil/crypto/internal/utils.h>
+#include <virgil/crypto/foundation/internal/mbedtls_context.h>
+
 using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::VirgilCryptoException;
 
 using virgil::crypto::foundation::VirgilHash;
-using virgil::crypto::foundation::VirgilHashImpl;
-using virgil::crypto::foundation::PolarsslException;
 using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 namespace virgil { namespace crypto { namespace foundation {
 
-class VirgilHashImpl {
+class ImplInfo {
 public:
-    VirgilHashImpl(mbedtls_md_type_t mdType)
-            : type(MBEDTLS_MD_NONE), info(0), digest(0), digestSize(0), ctx(0), hmacCtx(0) {
-        init_(mdType);
-    }
-
-    VirgilHashImpl(const char* mdName)
-            : type(MBEDTLS_MD_NONE), info(0), digest(0), digestSize(0), ctx(0), hmacCtx(0) {
-        const mbedtls_md_info_t* mdInfo = mbedtls_md_info_from_string(mdName);
-        mbedtls_md_type_t mdType = mdInfo ? mbedtls_md_get_type(mdInfo) : MBEDTLS_MD_NONE;
-        init_(mdType);
-    }
-
-    ~VirgilHashImpl() throw() {
-        free_();
-    }
-
-    VirgilHashImpl(const VirgilHashImpl& other)
-            : type(MBEDTLS_MD_NONE), info(0), digest(0), digestSize(0), ctx(0), hmacCtx(0) {
-        init_(other.type);
-    }
-
-    VirgilHashImpl& operator=(const VirgilHashImpl& rhs) {
-        if (this == &rhs) {
-            return *this;
+    explicit ImplInfo(const mbedtls_md_context_t* md_ctx) : md_ctx_(md_ctx) {
+        if (md_ctx_ == nullptr) {
+            throw make_error(VirgilCryptoError::InvalidState);
         }
-        free_();
-        init_(rhs.type);
-        return *this;
+    }
+
+    mbedtls_md_type_t type() const noexcept {
+        return mbedtls_md_get_type(md_ctx_->md_info);
+    }
+
+    const char* name() const noexcept {
+        return mbedtls_md_get_name(md_ctx_->md_info);
+    }
+
+    size_t size() const noexcept {
+        return mbedtls_md_get_size(md_ctx_->md_info);
     }
 
 private:
-    void init_(mbedtls_md_type_t mdType) {
-        type = mdType;
-        if (mdType == MBEDTLS_MD_NONE) {
-            return;
-        }
-        info = mbedtls_md_info_from_type(mdType);
-        digestSize = mbedtls_md_get_size(info);
-        digest = new unsigned char[digestSize];
-        ctx = new mbedtls_md_context_t();
-        MBEDTLS_ERROR_HANDLER_DISPOSE(
-                mbedtls_md_setup(ctx, info, 0),
-                free_()
-        );
-        hmacCtx = new mbedtls_md_context_t();
-        MBEDTLS_ERROR_HANDLER_DISPOSE(
-                mbedtls_md_setup(hmacCtx, info, 1),
-                free_()
-        );
+    const mbedtls_md_context_t* md_ctx_;
+};
+
+struct VirgilHash::Impl {
+    Impl() : md_ctx(), hmac_ctx(), info(md_ctx.get()) {}
+
+    template<typename TypeOrName>
+    void setup(TypeOrName typeOrName) {
+        md_ctx.setup(typeOrName, 0);
+        hmac_ctx.setup(typeOrName, 1);
     }
 
-    void free_() throw() {
-        if (digest) {
-            delete[] digest;
-            digest = 0;
-            digestSize = 0;
-        }
-        if (ctx) {
-            mbedtls_md_free(ctx);
-            delete ctx;
-            ctx = 0;
-        }
-        if (hmacCtx) {
-            mbedtls_md_free(hmacCtx);
-            delete hmacCtx;
-            hmacCtx = 0;
-        }
-        type = MBEDTLS_MD_NONE;
-        info = 0;
-    }
-
-public:
-    mbedtls_md_type_t type; // hash algorithm type
-    const mbedtls_md_info_t* info; // hash algorithm info
-    unsigned char* digest; // pointer to the array that handles hash digest
-    size_t digestSize; // size of hash digest
-    mbedtls_md_context_t* ctx; // pointer to the hash context, is used for chaining hash
-    mbedtls_md_context_t* hmacCtx; // pointer to the hmac hash context, is used for chaining hash
+    internal::mbedtls_context<mbedtls_md_context_t> md_ctx;
+    internal::mbedtls_context<mbedtls_md_context_t> hmac_ctx;
+    const ImplInfo info;
 };
 
 }}}
+
+template<>
+VirgilHash::VirgilHash(mbedtls_md_type_t type) : impl_(new Impl()) {
+    impl_->setup(type);
+}
+
+template<>
+VirgilHash::VirgilHash(const char* name) : impl_(new Impl()) {
+    impl_->setup(name);
+}
+
+VirgilHash::VirgilHash() : impl_(new Impl()) {
+}
+
+VirgilHash::~VirgilHash() noexcept {}
+
+VirgilHash::VirgilHash(VirgilHash&& other) = default;
+
+VirgilHash& VirgilHash::operator=(VirgilHash&& rhs) = default;
+
 
 VirgilHash VirgilHash::md5() {
     return VirgilHash(MBEDTLS_MD_MD5);
@@ -158,113 +137,102 @@ VirgilHash VirgilHash::sha512() {
 }
 
 VirgilHash VirgilHash::withName(const VirgilByteArray& name) {
-    return VirgilHash(bytes2str(name).c_str());
-}
-
-VirgilHash::VirgilHash() : impl_(new VirgilHashImpl(MBEDTLS_MD_NONE)) {
-}
-
-VirgilHash::VirgilHash(int type) : impl_(new VirgilHashImpl(static_cast<mbedtls_md_type_t>(type))) {
-}
-
-VirgilHash::VirgilHash(const char* name) : impl_(new VirgilHashImpl(name)) {
-}
-
-VirgilHash::~VirgilHash() throw() {
-    if (impl_) {
-        delete impl_;
-        impl_ = 0;
-    }
-}
-
-VirgilHash::VirgilHash(const VirgilHash& other) : impl_(new VirgilHashImpl(other.impl_->type)) {
-}
-
-VirgilHash& VirgilHash::operator=(const VirgilHash& rhs) {
-    if (this == &rhs) {
-        return *this;
-    }
-    VirgilHashImpl* newImpl = new VirgilHashImpl(rhs.impl_->type);
-    if (impl_) {
-        delete impl_;
-    }
-    impl_ = newImpl;
-    return *this;
+    return VirgilHash(VirgilByteArrayUtils::bytesToString(name).c_str());
 }
 
 std::string VirgilHash::name() const {
     checkState();
-    return std::string(mbedtls_md_get_name(impl_->info));
+    return std::string(impl_->info.name());
 }
 
 int VirgilHash::type() const {
-    return static_cast<int>(impl_->type);
+    return static_cast<int>(impl_->info.type());
 }
 
 void VirgilHash::start() {
     checkState();
-    MBEDTLS_ERROR_HANDLER(mbedtls_md_starts(impl_->ctx));
+    system_crypto_handler(
+            mbedtls_md_starts(impl_->md_ctx.get()),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidState)); }
+    );
 }
 
-void VirgilHash::update(const VirgilByteArray& bytes) {
+void VirgilHash::update(const VirgilByteArray& data) {
     checkState();
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_md_update(impl_->ctx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes));
+    system_crypto_handler(
+            mbedtls_md_update(impl_->md_ctx.get(), data.data(), data.size()),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidState)); }
     );
 }
 
 VirgilByteArray VirgilHash::finish() {
     checkState();
-    MBEDTLS_ERROR_HANDLER(mbedtls_md_finish(impl_->ctx, impl_->digest));
-    return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
+    VirgilByteArray digest(impl_->info.size());
+    system_crypto_handler(
+            mbedtls_md_finish(impl_->md_ctx.get(), digest.data()),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidState)); }
+    );
+    return digest;
 }
 
-VirgilByteArray VirgilHash::hash(const VirgilByteArray& bytes) const {
+VirgilByteArray VirgilHash::hash(const VirgilByteArray& data) const {
     checkState();
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_md(impl_->info, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes), impl_->digest)
+    VirgilByteArray digest(impl_->info.size());
+    system_crypto_handler(
+            mbedtls_md(impl_->md_ctx.get()->md_info, data.data(), data.size(), digest.data()),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidState)); }
     );
-    return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
+    return digest;
 }
 
 void VirgilHash::hmacStart(const VirgilByteArray& key) {
     checkState();
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_md_hmac_starts(impl_->hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key));
+    system_crypto_handler(
+            mbedtls_md_hmac_starts(impl_->hmac_ctx.get(), key.data(), key.size()),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidState)); }
     );
 }
 
 void VirgilHash::hmacReset() {
     checkState();
-    MBEDTLS_ERROR_HANDLER(mbedtls_md_hmac_reset(impl_->hmacCtx));
+    system_crypto_handler(
+            mbedtls_md_hmac_reset(impl_->hmac_ctx.get()),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidState)); }
+    );
 }
 
-void VirgilHash::hmacUpdate(const VirgilByteArray& bytes) {
+void VirgilHash::hmacUpdate(const VirgilByteArray& data) {
     checkState();
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_md_hmac_update(impl_->hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes));
+    system_crypto_handler(
+            mbedtls_md_hmac_update(impl_->hmac_ctx.get(), data.data(), data.size()),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidState)); }
     );
 }
 
 VirgilByteArray VirgilHash::hmacFinish() {
     checkState();
-    MBEDTLS_ERROR_HANDLER(mbedtls_md_hmac_finish(impl_->hmacCtx, impl_->digest));
-    return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
+    VirgilByteArray digest(impl_->info.size());
+    system_crypto_handler(
+            mbedtls_md_hmac_finish(impl_->hmac_ctx.get(), digest.data()),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidState)); }
+    );
+    return digest;
 }
 
-VirgilByteArray VirgilHash::hmac(const VirgilByteArray& key, const VirgilByteArray& bytes) const {
+VirgilByteArray VirgilHash::hmac(const VirgilByteArray& key, const VirgilByteArray& data) const {
     checkState();
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_md_hmac(impl_->info, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(key),
-                    VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(bytes), impl_->digest);
+    VirgilByteArray digest(impl_->info.size());
+    system_crypto_handler(
+            mbedtls_md_hmac(impl_->hmac_ctx.get()->md_info, key.data(), key.size(),
+                    data.data(), data.size(), digest.data()),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidState)); }
     );
-    return VIRGIL_BYTE_ARRAY_FROM_PTR_AND_LEN(impl_->digest, impl_->digestSize);
+    return digest;
 }
 
 void VirgilHash::checkState() const {
-    if (impl_->type == MBEDTLS_MD_NONE || impl_->info == 0 || impl_->ctx == 0) {
-        throw VirgilCryptoException(std::string("VirgilHash: object has undefined algorithm.") +
-                std::string(" Use one of the factory methods or method 'fromAsn1' to define hash algorithm."));
+    if (impl_->info.type() == MBEDTLS_MD_NONE) {
+        throw make_error(VirgilCryptoError::NotInitialized);
     }
 }
 
@@ -272,8 +240,9 @@ size_t VirgilHash::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBy
     checkState();
     const char* oid = 0;
     size_t oidLen;
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_oid_get_oid_by_md(impl_->type, &oid, &oidLen)
+    system_crypto_handler(
+            mbedtls_oid_get_oid_by_md(impl_->info.type(), &oid, &oidLen),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
     );
     size_t len = 0;
     len += asn1Writer.writeNull();
@@ -284,19 +253,18 @@ size_t VirgilHash::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBy
 
 void VirgilHash::asn1Read(VirgilAsn1Reader& asn1Reader) {
     asn1Reader.readSequence();
-    std::string oid = asn1Reader.readOID();
+    VirgilByteArray oid = VirgilByteArrayUtils::stringToBytes(asn1Reader.readOID());
 
     mbedtls_asn1_buf oidAsn1Buf;
     oidAsn1Buf.len = oid.size();
-    oidAsn1Buf.p = reinterpret_cast<unsigned char*>(const_cast<std::string::pointer>(oid.c_str()));
+    oidAsn1Buf.p = oid.data();
 
     mbedtls_md_type_t type = MBEDTLS_MD_NONE;
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_oid_get_md_alg(&oidAsn1Buf, &type)
+    system_crypto_handler(
+            mbedtls_oid_get_md_alg(&oidAsn1Buf, &type),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
     );
 
     asn1Reader.readNull();
     *this = VirgilHash(type);
 }
-
-

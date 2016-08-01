@@ -44,7 +44,7 @@ if (LIB_LOW_LEVEL_API)
     install (DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/" DESTINATION "${INSTALL_INC_DIR_NAME}"
         FILES_MATCHING
         PATTERN "*.h"
-        PATTERN "priv" EXCLUDE
+        PATTERN "internal" EXCLUDE
         PATTERN ${EXCLUDE_FILE_IO_PATTERN} EXCLUDE
     )
 else ()
@@ -52,7 +52,7 @@ else ()
         FILES_MATCHING
         PATTERN "*.h"
         PATTERN "cms" EXCLUDE
-        PATTERN "priv" EXCLUDE
+        PATTERN "internal" EXCLUDE
         PATTERN "VirgilOID.h" EXCLUDE
         PATTERN "VirgilAsn1Reader.h" EXCLUDE
         PATTERN "VirgilAsn1Writer.h" EXCLUDE

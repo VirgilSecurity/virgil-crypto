@@ -55,7 +55,7 @@ typedef std::vector<unsigned char> VirgilByteArray;
 }}
 
 /**
- * @name ByteArray convertion utilities
+ * @name ByteArray conversation utilities
  */
 /// @{
 #define VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(array) reinterpret_cast<const unsigned char *>(array.data()), array.size()

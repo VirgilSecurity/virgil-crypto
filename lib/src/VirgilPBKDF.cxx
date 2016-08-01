@@ -34,22 +34,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define MODULE_NAME "VirgilPBKDF"
+
 #include <virgil/crypto/foundation/VirgilPBKDF.h>
 
+#include <fmt/format.h>
 #include <mbedtls/oid.h>
 #include <mbedtls/pkcs5.h>
 
-#include <virgil/crypto/VirgilCryptoException.h>
-#include <virgil/crypto/foundation/PolarsslException.h>
+#include <virgil/crypto/VirgilByteArrayUtils.h>
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
+#include <virgil/crypto/internal/utils.h>
+#include <virgil/crypto/foundation/internal/mbedtls_context.h>
+
 using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::VirgilCryptoException;
 
 using virgil::crypto::foundation::VirgilPBKDF;
-using virgil::crypto::foundation::VirgilPBKDFImpl;
-using virgil::crypto::foundation::PolarsslException;
 using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
@@ -58,10 +63,12 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
  * @name Configuration constants
  */
 ///@{
-static const unsigned int kIterationCount_Min = 2048;
-static const VirgilPBKDF::Algorithm kAlgorithm_Default = VirgilPBKDF::Algorithm_PBKDF2;
-static const VirgilPBKDF::Hash kHash_Default = VirgilPBKDF::Hash_SHA384;
+static constexpr unsigned int kIterationCount_Min = 2048;
+static constexpr VirgilPBKDF::Algorithm kAlgorithm_Default = VirgilPBKDF::Algorithm_PBKDF2;
+static constexpr VirgilPBKDF::Hash kHash_Default = VirgilPBKDF::Hash_SHA384;
 ///@}
+
+namespace virgil { namespace crypto { namespace foundation { namespace internal {
 
 static mbedtls_md_type_t hash_to_md_type(VirgilPBKDF::Hash hash) {
     switch (hash) {
@@ -86,8 +93,8 @@ static mbedtls_md_type_t hash_to_md_type(VirgilPBKDF::Hash hash) {
     }
 }
 
-static VirgilPBKDF::Hash md_type_to_hash(mbedtls_md_type_t mdType) {
-    switch (mdType) {
+static VirgilPBKDF::Hash md_type_to_hash(mbedtls_md_type_t md_type) {
+    switch (md_type) {
         case MBEDTLS_MD_SHA1: {
             return VirgilPBKDF::Hash_SHA1;
         }
@@ -104,52 +111,70 @@ static VirgilPBKDF::Hash md_type_to_hash(mbedtls_md_type_t mdType) {
             return VirgilPBKDF::Hash_SHA512;
         }
         default: {
-            throw std::logic_error("VirgilPBKDF: unknown hash algorithm detected");
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
         }
     }
 }
 
-VirgilPBKDF::VirgilPBKDF() : algorithm_(Algorithm_None), hash_(kHash_Default), salt_(),
-        iterationCount_(0), iterationCountMin_(kIterationCount_Min), checkRecommendations_(true) {
+}}}}
+
+struct VirgilPBKDF::Impl {
+    Impl() {}
+
+    Impl(const VirgilByteArray& saltValue, unsigned int iterationCountValue) :
+            salt(saltValue), iterationCount(iterationCountValue) {}
+
+    VirgilByteArray salt;
+    unsigned int iterationCount{ 0 };
+    VirgilPBKDF::Algorithm algorithm{ kAlgorithm_Default };
+    VirgilPBKDF::Hash hash{ kHash_Default };
+    unsigned int iterationCountMin{ kIterationCount_Min };
+    bool checkRecommendations{ true };
+};
+
+VirgilPBKDF::VirgilPBKDF() : impl_(std::make_unique<Impl>()) {
 }
 
 VirgilPBKDF::VirgilPBKDF(const virgil::crypto::VirgilByteArray& salt, unsigned int iterationCount)
-        : algorithm_(kAlgorithm_Default), hash_(kHash_Default), salt_(salt),
-        iterationCount_(iterationCount), iterationCountMin_(kIterationCount_Min), checkRecommendations_(true) {
+        : impl_(std::make_unique<Impl>(salt, iterationCount)) {
 }
 
-VirgilPBKDF::~VirgilPBKDF() throw() { }
+VirgilPBKDF::VirgilPBKDF(VirgilPBKDF&&) = default;
+
+VirgilPBKDF& VirgilPBKDF::operator=(VirgilPBKDF&&) = default;
+
+VirgilPBKDF::~VirgilPBKDF() noexcept {}
 
 VirgilByteArray VirgilPBKDF::getSalt() const {
-    return salt_;
+    return impl_->salt;
 }
 
 unsigned int VirgilPBKDF::getIterationCount() const {
-    return iterationCount_;
+    return impl_->iterationCount;
 }
 
 void VirgilPBKDF::setAlgorithm(VirgilPBKDF::Algorithm alg) {
-    algorithm_ = alg;
+    impl_->algorithm = alg;
 }
 
 VirgilPBKDF::Algorithm VirgilPBKDF::getAlgorithm() const {
-    return algorithm_;
+    return impl_->algorithm;
 }
 
 void VirgilPBKDF::setHash(VirgilPBKDF::Hash hash) {
-    hash_ = hash;
+    impl_->hash = hash;
 }
 
 VirgilPBKDF::Hash VirgilPBKDF::getHash() const {
-    return hash_;
+    return impl_->hash;
 }
 
 void VirgilPBKDF::enableRecommendationsCheck() {
-    checkRecommendations_ = true;
+    impl_->checkRecommendations = true;
 }
 
 void VirgilPBKDF::disableRecommendationsCheck() {
-    checkRecommendations_ = false;
+    impl_->checkRecommendations = false;
 }
 
 
@@ -157,67 +182,56 @@ VirgilByteArray VirgilPBKDF::derive(const virgil::crypto::VirgilByteArray& pwd, 
     checkState();
     checkRecommendations(pwd);
 
-    const mbedtls_md_info_t* hmacInfo = mbedtls_md_info_from_type(hash_to_md_type(hash_));
-    mbedtls_md_context_t hmacCtx;
-    mbedtls_md_init(&hmacCtx);
-    MBEDTLS_ERROR_HANDLER_DISPOSE(
-            mbedtls_md_setup(&hmacCtx, hmacInfo, 1),
-            mbedtls_md_free(&hmacCtx)
-    );
+    internal::mbedtls_context <mbedtls_md_context_t> hmac_ctx;
+    hmac_ctx.setup(internal::hash_to_md_type(impl_->hash), 1);
 
-    const size_t adjustedOutSize = (outSize > 0) ? outSize : mbedtls_md_get_size(hmacInfo);
+    const size_t adjustedOutSize = (outSize > 0) ? outSize : mbedtls_md_get_size(hmac_ctx.get()->md_info);
 
     VirgilByteArray result(adjustedOutSize);
 
-    switch (algorithm_) {
-        case Algorithm_PBKDF2: {
-            MBEDTLS_ERROR_HANDLER_DISPOSE(
-                    mbedtls_pkcs5_pbkdf2_hmac(&hmacCtx, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
-                            VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(salt_), iterationCount_, adjustedOutSize, result.data()),
-                    mbedtls_md_free(&hmacCtx)
+    switch (impl_->algorithm) {
+        case Algorithm_PBKDF2:
+            system_crypto_handler(
+                    mbedtls_pkcs5_pbkdf2_hmac(hmac_ctx.get(), pwd.data(), pwd.size(), impl_->salt.data(),
+                            impl_->salt.size(), impl_->iterationCount, adjustedOutSize, result.data()),
+                    [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidArgument)); }
             );
             break;
-        }
         default: {
-            mbedtls_md_free(&hmacCtx);
-            throw std::logic_error("VirgilPBKDF: unknown state.");
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
         }
     }
-
-    mbedtls_md_free(&hmacCtx);
     return result;
 }
 
 void VirgilPBKDF::checkState() const {
-    if (algorithm_ == VirgilPBKDF::Algorithm_None) {
-        throw VirgilCryptoException(std::string("VirgilPBKDF: object has undefined algorithms.") +
-                " Use constructor with parameters or method 'fromAsn1' to define key derivation function algorithms.");
+    if (impl_->algorithm == VirgilPBKDF::Algorithm_None) {
+        throw make_error(VirgilCryptoError::NotInitialized);
     }
 }
 
 void VirgilPBKDF::checkRecommendations(const VirgilByteArray& pwd) const {
-    if (!checkRecommendations_) {
+    if (!impl_->checkRecommendations) {
         return;
     }
     if (pwd.empty()) {
-        throw VirgilCryptoException("VirgilPBKDF: empty password is not secure");
+        throw make_error(VirgilCryptoError::NotSecure, "Empty password is not secure.");
     }
-    if (salt_.empty()) {
-        throw VirgilCryptoException("VirgilPBKDF: empty salt is not secure");
+    if (impl_->salt.empty()) {
+        throw make_error(VirgilCryptoError::NotSecure, "Empty salt is not secure.");
     }
-    if (iterationCount_ < iterationCountMin_) {
-        std::ostringstream errMsg;
-        errMsg << "VirgilPBKDF: iteration count (" << iterationCount_ << ") is not secure, ";
-        errMsg << "minimum recommended value is " << iterationCountMin_;
-        throw VirgilCryptoException(errMsg.str());
+    if (impl_->iterationCount < impl_->iterationCountMin) {
+        throw make_error(VirgilCryptoError::NotSecure,
+                fmt::format("Iteration count {} is not secure, minimum recommended value is {}.",
+                        impl_->iterationCount, impl_->iterationCountMin));
     }
 }
 
 size_t VirgilPBKDF::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     checkState();
 
-    if (algorithm_ != Algorithm_PBKDF2) {
-        throw std::logic_error("VirgilPBKDF: ASN.1 write - unsupported PBKDF algorithm");
+    if (impl_->algorithm != Algorithm_PBKDF2) {
+        throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
     }
 
     size_t len = 0;
@@ -225,15 +239,16 @@ size_t VirgilPBKDF::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenB
     size_t oidLen;
 
     // Write prf
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_oid_get_oid_by_md(hash_to_md_type(hash_), &oid, &oidLen)
+    system_crypto_handler(
+            mbedtls_oid_get_oid_by_md(internal::hash_to_md_type(impl_->hash), &oid, &oidLen),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
     );
 
     len += asn1Writer.writeOID(std::string(oid, oidLen));
     len += asn1Writer.writeSequence(len);
 
-    len += asn1Writer.writeInteger(static_cast<int>(iterationCount_));
-    len += asn1Writer.writeOctetString(salt_);
+    len += asn1Writer.writeInteger(static_cast<int>(impl_->iterationCount));
+    len += asn1Writer.writeOctetString(impl_->salt);
     len += asn1Writer.writeSequence(len);
     len += asn1Writer.writeOID(std::string(MBEDTLS_OID_PKCS5_PBKDF2, MBEDTLS_OID_SIZE(MBEDTLS_OID_PKCS5_PBKDF2)));
     len += asn1Writer.writeSequence(len);
@@ -242,33 +257,34 @@ size_t VirgilPBKDF::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenB
 }
 
 void VirgilPBKDF::asn1Read(VirgilAsn1Reader& asn1Reader) {
-    mbedtls_asn1_buf oidAsn1Buf;
-    std::string oid;
-
     // Read key derivation function algorithm identifier
     asn1Reader.readSequence();
-    oid = asn1Reader.readOID();
+    VirgilByteArray oid = VirgilByteArrayUtils::stringToBytes(asn1Reader.readOID());
+    mbedtls_asn1_buf oid_buf;
+    oid_buf.p = oid.data();
+    oid_buf.len = oid.size();
 
-    if (oid != std::string(MBEDTLS_OID_PKCS5_PBKDF2, MBEDTLS_OID_SIZE(MBEDTLS_OID_PKCS5_PBKDF2))) {
-        throw std::logic_error("VirgilPBKDF: ASN.1 read - unsupported PBKDF algorithm");
+    if (MBEDTLS_OID_CMP(MBEDTLS_OID_PKCS5_PBKDF2, &oid_buf) != 0) {
+        throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
     }
 
     // Read PBKDF2-Params
     asn1Reader.readSequence();
-    salt_ = asn1Reader.readOctetString();
-    iterationCount_ = static_cast<unsigned int>(asn1Reader.readInteger());
+    impl_->salt = asn1Reader.readOctetString();
+    impl_->iterationCount = static_cast<unsigned int>(asn1Reader.readInteger());
 
     // Read PRF
     asn1Reader.readSequence();
-    oid = asn1Reader.readOID();
-    oidAsn1Buf.len = oid.size();
-    oidAsn1Buf.p = reinterpret_cast<unsigned char*>(const_cast<std::string::pointer>(oid.c_str()));
+    oid = VirgilByteArrayUtils::stringToBytes(asn1Reader.readOID());
+    oid_buf.p = oid.data();
+    oid_buf.len = oid.size();
 
-    mbedtls_md_type_t mdType = MBEDTLS_MD_NONE;
-    MBEDTLS_ERROR_HANDLER(
-            mbedtls_oid_get_md_alg(&oidAsn1Buf, &mdType)
+    mbedtls_md_type_t md_type = MBEDTLS_MD_NONE;
+    system_crypto_handler(
+            mbedtls_oid_get_md_alg(&oid_buf, &md_type),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
     );
 
-    algorithm_ = Algorithm_PBKDF2;
-    hash_ = md_type_to_hash(mdType);
+    impl_->algorithm = Algorithm_PBKDF2;
+    impl_->hash = internal::md_type_to_hash(md_type);
 }

@@ -42,10 +42,6 @@ using virgil::crypto::VirgilCipher;
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::foundation::VirgilSymmetricCipher;
 
-
-VirgilCipher::~VirgilCipher() throw() {
-}
-
 VirgilByteArray VirgilCipher::encrypt(const VirgilByteArray& data, bool embedContentInfo) {
     VirgilSymmetricCipher& symmetricCipher = initEncryption();
     VirgilByteArray encryptedData;

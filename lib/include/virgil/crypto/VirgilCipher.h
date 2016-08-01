@@ -50,12 +50,6 @@ namespace virgil { namespace crypto {
 class VirgilCipher : public VirgilCipherBase {
 public:
     /**
-     * @brief Dispose used resources.
-     */
-    virtual ~VirgilCipher() throw();
-
-public:
-    /**
      * @brief Encrypt given data.
      * @param data - data to be encrypted.
      * @param embedContentInfo - determines whether to embed content info the the encrypted data, or not.

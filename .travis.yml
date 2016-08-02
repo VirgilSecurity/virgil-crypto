@@ -1,6 +1,9 @@
 language: cpp
-sudo: false
-
+compiler:
+  - gcc
+  - clang
+os:
+  - linux
 env:
   global:
     - BUILD_DIR_NAME=build
@@ -12,29 +15,25 @@ env:
     - LANG=cpp LIB_LOW_LEVEL_API=OFF
     - LANG=php LIB_LOW_LEVEL_API=ON
     - LANG=php LIB_LOW_LEVEL_API=OFF
-
-matrix:
-  include:
-    - compiler: gcc
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.9
-            - libcurl4-openssl-dev
-            - php5
-            - php5-dev
-            - php5-cli
-            - graphviz
-      env:
-        - COMPILER=g++-4.9
 cache:
   directories:
     - $HOME/cmake
     - $HOME/swig
     - $HOME/phpunit
     - $HOME/doxygen
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - libcurl4-openssl-dev
+      - g++-4.8
+      - php5
+      - php5-dev
+      - php5-cli
+      - graphviz
+install:
+- if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 before_install:
   - bash ./ci/install-cmake.sh
   - bash ./ci/install-swig.sh
@@ -47,3 +46,4 @@ script:
   - bash ./ci/run.sh
 after_success:
   - bash ./ci/publish-docs.sh
+sudo: false

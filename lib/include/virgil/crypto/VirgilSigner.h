@@ -70,9 +70,11 @@ public:
     bool verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
 
 public:
-    VirgilSigner(VirgilSigner&& rhs);
+    //! @cond Doxygen_Suppress
     VirgilSigner& operator=(VirgilSigner&& rhs);
 
+    VirgilSigner(VirgilSigner&& rhs);
+    //! @endcond
 private:
     foundation::VirgilHash hash_;
 };

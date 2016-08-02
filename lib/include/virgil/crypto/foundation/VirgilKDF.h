@@ -131,11 +131,13 @@ public:
     void asn1Read(asn1::VirgilAsn1Reader& asn1Reader) override;
     ///@}
 public:
+    //! @cond Doxygen_Suppress
     VirgilKDF(VirgilKDF&& rhs);
 
     VirgilKDF& operator=(VirgilKDF&& rhs);
 
     virtual ~VirgilKDF() noexcept;
+    //! @endcond
 
 private:
     template<typename TypeKDF, typename TypeMD>

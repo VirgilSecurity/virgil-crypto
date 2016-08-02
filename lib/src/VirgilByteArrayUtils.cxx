@@ -78,15 +78,15 @@ static size_t asn1_write_json_primitive(VirgilAsn1Writer& asn1Writer, const json
  * @brief JSON to ASN.1 mapping
  */
 VirgilByteArray VirgilByteArrayUtils::jsonToBytes(const std::string& jsonString) {
+    rapidjson::Document jsonObj;
     try {
-        rapidjson::Document jsonObj;
         jsonObj.Parse(jsonString.c_str());
-        VirgilAsn1Writer asn1Writer;
-        (void) asn1_write_json_value(asn1Writer, jsonObj);
-        return asn1Writer.finish();
     } catch (const std::exception& exception) {
         throw make_error(VirgilCryptoError::InvalidFormat, exception.what());
     }
+    VirgilAsn1Writer asn1Writer;
+    (void) asn1_write_json_value(asn1Writer, jsonObj);
+    return asn1Writer.finish();
 }
 
 VirgilByteArray VirgilByteArrayUtils::stringToBytes(const std::string& str) {

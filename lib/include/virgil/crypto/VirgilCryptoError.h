@@ -34,13 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * @file VirgilCryptoError.h
- *
- * @brief This file contains error codes, error category, and helper functions for error creating,
- *     specific for the crypto library.
- */
-
 #ifndef VIRGIL_CRYPTO_ERROR_H
 #define VIRGIL_CRYPTO_ERROR_H
 
@@ -52,7 +45,8 @@ namespace virgil { namespace crypto {
 
 /**
  * @brief Specific error codes for the crypto library.
- */
+ * @ingroup Error
+*/
 enum class VirgilCryptoError  {
     Reserved = 0, ///< Should not be used.
     EmptyParameter, ///< Given parameter is null or empty.
@@ -65,7 +59,6 @@ enum class VirgilCryptoError  {
     InvalidSignature, ///< Invalid format of the Signature.
     InvalidState, ///< Function call prerequisite is broken.
     MismatchSignature, ///< Signature validation failed.
-    NotCurve25519, ///< Only Curve25519 elliptic curve currently supported.
     NotFoundKeyRecipient, ///< Recipient with given identifier is not found.
     NotFoundPasswordRecipient, ///< Recipient with given password is not found.
     NotInitialized, ///< Object is not initialized with specific algorithm, so can't be used.
@@ -76,6 +69,7 @@ enum class VirgilCryptoError  {
 
 /**
  * @brief This is specific error category that contains information about crypto library errors.
+ * @ingroup Error
  */
 class VirgilCryptoErrorCategory : public std::error_category {
 public:
@@ -95,7 +89,8 @@ public:
 
 /**
  * @brief Return singleton instance of the crypto error category.
- * @return kdjhfd
+ * @return Instance of the crypto error categoty.
+ * @ingroup Error
  */
 const VirgilCryptoErrorCategory& crypto_category() noexcept;
 
@@ -104,6 +99,7 @@ const VirgilCryptoErrorCategory& crypto_category() noexcept;
  * @param ev Error value.
  * @return Exception with given error value and corresond error category.
  * @see VirgilCryptoError for specific error values.
+ * @ingroup Error
  */
 inline VirgilCryptoException make_error(VirgilCryptoError ev) {
     return VirgilCryptoException(static_cast<int>(ev), crypto_category());
@@ -115,6 +111,7 @@ inline VirgilCryptoException make_error(VirgilCryptoError ev) {
  * @param what Additional error description.
  * @return Exception with given error value and corresond error category.
  * @see VirgilCryptoError for specific error values.
+ * @ingroup Error
  */
 inline VirgilCryptoException make_error(VirgilCryptoError ev, const std::string& what) {
     return VirgilCryptoException(static_cast<int>(ev), crypto_category(), what);
@@ -126,6 +123,7 @@ inline VirgilCryptoException make_error(VirgilCryptoError ev, const std::string&
  * @param what Additional error description.
  * @return Exception with given error value and corresond error category.
  * @see VirgilCryptoError for specific error values.
+ * @ingroup Error
  */
 inline VirgilCryptoException make_error(VirgilCryptoError ev, const char* what) {
     return VirgilCryptoException(static_cast<int>(ev), crypto_category(), what);

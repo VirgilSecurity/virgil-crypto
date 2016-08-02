@@ -102,11 +102,13 @@ public:
     ///@}
 
 public:
+    //! @cond Doxygen_Suppress
     VirgilRandom(VirgilRandom&& other);
 
     VirgilRandom& operator=(VirgilRandom&& other);
 
     virtual ~VirgilRandom() noexcept;
+    //! @endcond
 
 private:
     class Impl;

@@ -44,14 +44,36 @@
 namespace virgil { namespace crypto {
 
 /**
- * @brief Base class for all library errors
+ * @brief This only exception that crypto library can produce.
+ *
+ * To determine the real exception reason, error codes with conjuction with error category are used.
+ * Error codes can be found in the enumeration @link VirgilCryptoError @endlink.
+ *
+ * @ingroup Error
  */
 class VirgilCryptoException : public std::exception {
 public:
+    /**
+     * @brief Initialize Exception with specific error code and correspond error category.
+     * @param ev Error value (code).
+     * @param ecat Error category.
+     */
     VirgilCryptoException(int ev, const std::error_category& ecat);
 
+    /**
+     * @brief Initialize Exception with specific error code, correspond error category, and error description.
+     * @param ev Error value (code).
+     * @param ecat Error category.
+     * @param what Additional error description.
+     */
     VirgilCryptoException(int ev, const std::error_category& ecat, const std::string& what);
 
+    /**
+     * @brief Initialize Exception with specific error code, correspond error category, and error description.
+     * @param ev Error value (code).
+     * @param ecat Error category.
+     * @param what Additional error description.
+     */
     VirgilCryptoException(int ev, const std::error_category& ecat, const char* what);
 
     /**
@@ -67,15 +89,6 @@ private:
     std::error_condition condition_;
     std::string what_;
 };
-
-//template<typename EnumType>
-//inline VirgilCryptoException make_error(EnumType ev);
-//
-//template<typename EnumType>
-//inline VirgilCryptoException make_error(EnumType ev, const std::string& what);
-//
-//template<typename EnumType>
-//inline VirgilCryptoException make_error(EnumType ev, const char* what);
 
 }}
 

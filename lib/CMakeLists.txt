@@ -141,7 +141,8 @@ find_host_package (Doxygen)
 if (DOXYGEN_FOUND)
     if (DOXYGEN_EXCLUDE_PRIVATE)
         set (DOXYGEN_EXCLUDE
-            "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/internal/*"
+             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/internal/*"
+             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/internal/*"
              "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/asn1/internal/*"
         )
         string (REPLACE ";" " " DOXYGEN_EXCLUDE "${DOXYGEN_EXCLUDE}")

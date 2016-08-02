@@ -47,8 +47,8 @@ namespace virgil { namespace crypto {
 class VirgilKeyPair {
 public:
     /**
-    * @brief Type of the keypair.
-    */
+     * @brief Type of the keypair.
+     */
     enum Type {
         Type_Default = 0, ///< recommended most safe type
         Type_RSA_256, ///< RSA 1024 bit (not recommended)

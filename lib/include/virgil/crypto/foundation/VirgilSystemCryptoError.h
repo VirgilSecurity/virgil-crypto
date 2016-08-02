@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_FOUNDATION_ERROR_H
-#define VIRGIL_CRYPTO_FOUNDATION_ERROR_H
+#ifndef VIRGIL_SYSTEM_CRYPTO_ERROR_H
+#define VIRGIL_SYSTEM_CRYPTO_ERROR_H
 
 #include <system_error>
 
@@ -43,40 +43,107 @@
 
 namespace virgil { namespace crypto { namespace foundation {
 
+/**
+ * @brief Error category that handles error codes from the system crypto library.
+ * @ingroup Error
+ */
 class VirgilSystemCryptoErrorCategory : public std::error_category {
 public:
+    /**
+     * @brief Return name of the system crypto category.
+     * @return Name of the system crypto category.
+     */
     const char* name() const noexcept override;
 
+    /**
+     * @brief Return description for the given error code.
+     * @param ev Error code.
+     * @return Error Description.
+     */
     std::string message(int ev) const noexcept override;
 };
 
+/**
+ * @brief Return singleton instance of the system crypto error category.
+ * @return Instance of the syste, crypto error categoty.
+ * @ingroup Error
+ */
 const VirgilSystemCryptoErrorCategory& system_crypto_category() noexcept;
 
-inline int system_crypto_handler_get_result(int error) {
-    if (error >= 0) { return error; }
-    throw VirgilCryptoException(error, system_crypto_category());
+/**
+ * @brief Handle value returned by underling system crypto library.
+ *
+ * If given value is an error then VirgilCryptoException will be thrown with appropriate description.
+ * If given value is not an error then it will be returned.
+ *
+ * @param result Value returned by system crypto library.
+ * @return Value if it's not an error.
+ * @throw VirgilCryptoException with given error code and correspond category, if given value represents an error.
+ * @ingroup Error
+ */
+inline int system_crypto_handler_get_result(int result) {
+    if (result >= 0) { return result; }
+    throw VirgilCryptoException(result, system_crypto_category());
 }
 
-inline void system_crypto_handler(int error) {
-    (void)system_crypto_handler_get_result(error);
+/**
+ * @brief Handle value returned by underling system crypto library.
+ *
+ * If given value is an error then VirgilCryptoException will be thrown with appropriate description.
+ * If given value is not an error then do nothing.
+ *
+ * @param result Value returned by system crypto library.
+ * @throw VirgilCryptoException with given error code and correspond category, if given value represents an error.
+ * @ingroup Error
+ */
+inline void system_crypto_handler(int result) {
+    (void) system_crypto_handler_get_result(result);
 }
 
+/**
+ * @brief Handle value returned by underling system crypto library.
+ *
+ * This function is usefull if thrown exception SHOULD be wrapped.
+ * Initial exception can be accessed via std::current_exception(), or std::throw_with_nested().
+ *
+ * If given value is an error then VirgilCryptoException will be thrown with appropriate description.
+ * If given value is not an error then it will be returned.
+ *
+ * @param result Value returned by system crypto library.
+ * @param catch_handler Function that can handle the error in a different way.
+ *
+ * @return Value if it's not an error.
+ * @ingroup Error
+ */
 template<typename CatchHandler>
-inline int system_crypto_handler_get_result(int error, CatchHandler catch_handler) {
-    if (error >= 0) { return error; }
+inline int system_crypto_handler_get_result(int result, CatchHandler catch_handler) {
+    if (result >= 0) { return result; }
     try {
-        throw VirgilCryptoException(error, system_crypto_category());
+        throw VirgilCryptoException(result, system_crypto_category());
     } catch (...) {
-        catch_handler(error);
+        catch_handler(result);
         return 0;
     }
 }
 
+/**
+ * @brief Handle value returned by underling system crypto library.
+ *
+ * This function is usefull if thrown exception SHOULD be wrapped or error can be handled in a different way.
+ * Initial exception can be accessed via std::current_exception(), or std::throw_with_nested().
+ *
+ * If given value is an error then VirgilCryptoException will be thrown with appropriate description.
+ * If given value is not an error then do nothing.
+ *
+ * @param result Value returned by system crypto library.
+ * @param catch_handler Function that can handle the error in a different way.
+ * @ingroup Error
+ */
 template<typename CatchHandler>
-inline void system_crypto_handler(int error, CatchHandler catch_handler) {
-    (void)system_crypto_handler_get_result<CatchHandler>(error, catch_handler);
+inline void system_crypto_handler(int result, CatchHandler catch_handler) {
+    (void) system_crypto_handler_get_result<CatchHandler>(result, catch_handler);
 }
 
 }}}
 
-#endif //VIRGIL_CRYPTO_FOUNDATION_ERROR_H
+#endif //VIRGIL_SYSTEM_CRYPTO_ERROR_H

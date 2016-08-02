@@ -65,8 +65,6 @@ std::string VirgilCryptoErrorCategory::message(int ev) const noexcept {
             return "Function call prerequisite is broken.";
         case VirgilCryptoError::MismatchSignature:
             return "Signature validation failed.";
-        case VirgilCryptoError::NotCurve25519:
-            return "Only Curve25519 elliptic curve currently supported.";
         case VirgilCryptoError::NotFoundKeyRecipient:
             return "Recipient with given identifier is not found.";
         case VirgilCryptoError::NotFoundPasswordRecipient:

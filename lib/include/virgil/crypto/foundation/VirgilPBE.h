@@ -128,11 +128,13 @@ public:
     void asn1Read(asn1::VirgilAsn1Reader& asn1Reader) override;
     ///@}
 public:
+    //! @cond Doxygen_Suppress
     VirgilPBE(VirgilPBE&& other);
 
     VirgilPBE& operator=(VirgilPBE&& rhs);
 
     virtual ~VirgilPBE() noexcept;
+    //! @endcond
 
 private:
     /**

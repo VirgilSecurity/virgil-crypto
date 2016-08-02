@@ -86,13 +86,15 @@ void gen_key_pair(
         pk_ctx.clear().setup(MBEDTLS_PK_RSA);
         system_crypto_handler(
                 mbedtls_rsa_gen_key(mbedtls_pk_rsa(*(pk_ctx.get())), mbedtls_ctr_drbg_random,
-                        ctr_drbg_ctx.get(), rsa_size, rsa_exponent)
+                        ctr_drbg_ctx.get(), rsa_size, rsa_exponent),
+                [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
         );
     } else if (ecp_group_id != MBEDTLS_ECP_DP_NONE) {
         pk_ctx.clear().setup(MBEDTLS_PK_ECKEY);
         system_crypto_handler(
                 mbedtls_ecp_gen_key(ecp_group_id, mbedtls_pk_ec(*(pk_ctx.get())),
-                        mbedtls_ctr_drbg_random, ctr_drbg_ctx.get())
+                        mbedtls_ctr_drbg_random, ctr_drbg_ctx.get()),
+                [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
         );
     }
 }
@@ -166,7 +168,9 @@ static VirgilByteArray exportKey(KeyExportHelper& keyExportHelper) {
         }
     } while (isNotEnoughSpace);
 
-    system_crypto_handler(result);
+    system_crypto_handler(result,
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidState)); }
+    );
 
     size_t writtenBytes = 0;
     if (keyExportHelper.format() == KeyExportHelper::DER && result > 0) {
@@ -331,12 +335,15 @@ void VirgilAsymmetricCipher::genKeyPairFrom(const VirgilAsymmetricCipher& other)
     } else if (mbedtls_pk_can_do(other.impl_->pk_ctx.get(), MBEDTLS_PK_ECKEY)) {
         internal::gen_key_pair(impl_->pk_ctx, 0, 0, mbedtls_pk_ec(*(other.impl_->pk_ctx.get()))->grp.id);
     } else {
-        throw make_error(VirgilCryptoError::UnsupportedAlgorithm, "Algorithm is not defined in the source.");
+        throw make_error(VirgilCryptoError::InvalidState, "Algorithm is not defined in the source.");
     }
 }
 
 VirgilByteArray VirgilAsymmetricCipher::computeShared(
         const VirgilAsymmetricCipher& publicContext, const VirgilAsymmetricCipher& privateContext) {
+
+    publicContext.checkState();
+    privateContext.checkState();
 
     mbedtls_context<mbedtls_entropy_context> entropy_ctx;
     mbedtls_context<mbedtls_ctr_drbg_context> ctr_drbg_ctx;
@@ -358,10 +365,20 @@ VirgilByteArray VirgilAsymmetricCipher::computeShared(
 
         public_keypair = mbedtls_pk_ec(*publicContext.impl_->pk_ctx.get());
         private_keypair = mbedtls_pk_ec(*privateContext.impl_->pk_ctx.get());
+
+        if (mbedtls_ecp_is_zero(&public_keypair->Q)) {
+            throw make_error(VirgilCryptoError::InvalidArgument, "Public context does not handle public key.");
+        }
+
+        if (mbedtls_mpi_cmp_int(&private_keypair->d, 0) == 0) {
+            throw make_error(VirgilCryptoError::InvalidArgument, "Private context does not handle private key.");
+        }
+
         if (public_keypair->grp.id != private_keypair->grp.id) {
             throw make_error(VirgilCryptoError::InvalidArgument,
-                    "Can not compute shared key on a different elliptic curves.");
+                    "Can not compute shared key if elliptic curve groups are different.");
         }
+
         system_crypto_handler(
                 mbedtls_ecp_group_copy(&ecdh_ctx.get()->grp, &public_keypair->grp)
         );
@@ -456,7 +473,8 @@ VirgilByteArray VirgilAsymmetricCipher::sign(const VirgilByteArray& digest, int 
 
     system_crypto_handler(
             mbedtls_pk_sign(impl_->pk_ctx.get(), static_cast<mbedtls_md_type_t>(hashType),
-                    digest.data(), digest.size(), sign, &actualSignLen, f_rng, ctr_drbg_ctx.get())
+                    digest.data(), digest.size(), sign, &actualSignLen, f_rng, ctr_drbg_ctx.get()),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
     );
 
     return VirgilByteArray(sign, sign + actualSignLen);
@@ -489,7 +507,7 @@ void VirgilAsymmetricCipher::setKeyType(VirgilKeyPair::Type keyType) {
                 mbedtls_ecp_group_load(&mbedtls_pk_ec(*impl_->pk_ctx.get())->grp, ecTypeId),
                 [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
         );
-    } else if (rsaSize > 0){
+    } else if (rsaSize > 0) {
         throw make_error(VirgilCryptoError::UnsupportedAlgorithm, internal::to_string(MBEDTLS_PK_RSA));
     } else {
         throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
@@ -497,6 +515,7 @@ void VirgilAsymmetricCipher::setKeyType(VirgilKeyPair::Type keyType) {
 }
 
 VirgilByteArray VirgilAsymmetricCipher::getPublicKeyBits() const {
+    checkState();
     if (mbedtls_pk_can_do(impl_->pk_ctx.get(), MBEDTLS_PK_ECKEY)) {
         mbedtls_ecp_keypair* ecp = mbedtls_pk_ec(*impl_->pk_ctx.get());
         switch (ecp->grp.id) {
@@ -508,7 +527,7 @@ VirgilByteArray VirgilAsymmetricCipher::getPublicKeyBits() const {
                 return VirgilByteArray(q, q + sizeof(q));
             }
             default:
-                throw make_error(VirgilCryptoError::NotCurve25519);
+                throw make_error(VirgilCryptoError::UnsupportedAlgorithm, internal::to_string(ecp->grp.id));
         }
     } else {
         throw make_error(VirgilCryptoError::UnsupportedAlgorithm,
@@ -538,7 +557,7 @@ void VirgilAsymmetricCipher::setPublicKeyBits(const VirgilByteArray& bits) {
                 break;
             }
             default:
-                throw make_error(VirgilCryptoError::NotCurve25519);
+                throw make_error(VirgilCryptoError::UnsupportedAlgorithm, internal::to_string(ecp->grp.id));
         }
     } else {
         throw make_error(VirgilCryptoError::UnsupportedAlgorithm,
@@ -582,7 +601,7 @@ VirgilByteArray VirgilAsymmetricCipher::signToBits(const VirgilByteArray& sign) 
                 return VirgilByteArray(signature, signature + sizeof(signature));
             }
             default:
-                throw make_error(VirgilCryptoError::NotCurve25519);
+                throw make_error(VirgilCryptoError::UnsupportedAlgorithm, internal::to_string(ecp->grp.id));
         }
     } else {
         throw make_error(VirgilCryptoError::UnsupportedAlgorithm,
@@ -637,7 +656,7 @@ VirgilByteArray VirgilAsymmetricCipher::signFromBits(const VirgilByteArray& bits
                 return VirgilByteArray(p, asn1 + asn1_len);
             }
             default:
-                throw make_error(VirgilCryptoError::NotCurve25519);
+                throw make_error(VirgilCryptoError::UnsupportedAlgorithm, internal::to_string(ecp->grp.id));
         }
     } else {
         throw make_error(VirgilCryptoError::UnsupportedAlgorithm,

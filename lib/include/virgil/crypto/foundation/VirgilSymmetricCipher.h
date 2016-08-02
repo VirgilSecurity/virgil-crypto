@@ -250,11 +250,13 @@ public:
     void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader) override;
     ///@}
 public:
+    //! @cond Doxygen_Suppress
     VirgilSymmetricCipher(VirgilSymmetricCipher&& rhs);
 
     VirgilSymmetricCipher& operator=(VirgilSymmetricCipher&& rhs);
 
     virtual ~VirgilSymmetricCipher() noexcept;
+    //! @endcond
 
 private:
     /**

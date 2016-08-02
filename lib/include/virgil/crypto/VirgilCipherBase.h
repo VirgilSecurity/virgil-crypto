@@ -64,6 +64,7 @@ public:
      * @brief Initialize submodules.
      */
     VirgilCipherBase();
+
 public:
     /**
      * @name Recipent management
@@ -283,12 +284,13 @@ protected:
     void clearCipherInfo();
 
 public:
+    //! @cond Doxygen_Suppress
     VirgilCipherBase(VirgilCipherBase&& rhs);
 
     VirgilCipherBase& operator=(VirgilCipherBase&& rhs);
 
     virtual ~VirgilCipherBase() noexcept;
-
+    //! @endcond
 private:
     class Impl;
 

@@ -172,7 +172,7 @@ static inline void key_type_set_params(
     }
 }
 
-static inline std::string to_string(mbedtls_pk_type_t pk_type) {
+static inline std::string to_string(mbedtls_pk_type_t pk_type) noexcept {
     switch (pk_type) {
         case MBEDTLS_PK_NONE:
             return "NONE";
@@ -193,7 +193,7 @@ static inline std::string to_string(mbedtls_pk_type_t pk_type) {
     }
 }
 
-static inline std::string to_string(mbedtls_md_type_t md_type) {
+static inline std::string to_string(mbedtls_md_type_t md_type) noexcept {
     switch (md_type) {
         case MBEDTLS_MD_NONE:
             return "NONE";
@@ -220,7 +220,7 @@ static inline std::string to_string(mbedtls_md_type_t md_type) {
     }
 }
 
-static inline std::string to_string(mbedtls_kdf_type_t kdf_type) {
+static inline std::string to_string(mbedtls_kdf_type_t kdf_type) noexcept {
     switch (kdf_type) {
         case MBEDTLS_KDF_NONE:
             return "NONE";
@@ -233,7 +233,7 @@ static inline std::string to_string(mbedtls_kdf_type_t kdf_type) {
     }
 }
 
-static inline std::string to_string(mbedtls_cipher_type_t cipher_type) {
+static inline std::string to_string(mbedtls_cipher_type_t cipher_type) noexcept {
     switch (cipher_type) {
         case MBEDTLS_CIPHER_NONE:
             return "NONE";
@@ -333,6 +333,39 @@ static inline std::string to_string(mbedtls_cipher_type_t cipher_type) {
             return "CAMELLIA_192_CCM";
         case MBEDTLS_CIPHER_CAMELLIA_256_CCM:
             return "CAMELLIA_256_CCM";
+        default:
+            return "UNDEFINED";
+    }
+}
+
+static inline std::string to_string(mbedtls_ecp_group_id id) noexcept {
+    switch (id) {
+        case MBEDTLS_ECP_DP_NONE:
+            return "ECP_DP_NONE";
+        case MBEDTLS_ECP_DP_SECP192R1:
+            return "ECP_DP_SECP192R1";
+        case MBEDTLS_ECP_DP_SECP224R1:
+            return "ECP_DP_SECP224R1";
+        case MBEDTLS_ECP_DP_SECP256R1:
+            return "ECP_DP_SECP256R1";
+        case MBEDTLS_ECP_DP_SECP384R1:
+            return "ECP_DP_SECP384R1";
+        case MBEDTLS_ECP_DP_SECP521R1:
+            return "ECP_DP_SECP521R1";
+        case MBEDTLS_ECP_DP_BP256R1:
+            return "ECP_DP_BP256R1";
+        case MBEDTLS_ECP_DP_BP384R1:
+            return "ECP_DP_BP384R1";
+        case MBEDTLS_ECP_DP_BP512R1:
+            return "ECP_DP_BP512R1";
+        case MBEDTLS_ECP_DP_CURVE25519:
+            return "ECP_DP_CURVE25519";
+        case MBEDTLS_ECP_DP_SECP192K1:
+            return "ECP_DP_SECP192K1";
+        case MBEDTLS_ECP_DP_SECP224K1:
+            return "ECP_DP_SECP224K1";
+        case MBEDTLS_ECP_DP_SECP256K1:
+            return "ECP_DP_SECP256K1";
         default:
             return "UNDEFINED";
     }

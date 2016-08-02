@@ -1,5 +1,42 @@
 /**
- * \mainpage Virgil Security Crypto library
+ * @mainpage Virgil Security Crypto library
  *
  * The Virgil Security Crypto library offers set of methods that allow encrypt, decrypt, sign and verify data.
+ */
+
+/**
+ * @namespace virgil
+ * @brief Root namespace for all Virgil Security libraries.
+ */
+
+/**
+ * @namespace virgil::crypto
+ * @brief This namespace contains interfaces for high-level crypto operations,
+ *     i.e. generate key pair, encrypt and decrypt data, sign and verify data.
+ */
+
+/**
+ * @namespace virgil::crypto::foundation
+ * @brief This namespace contains interfaces for low-level crypto operations.
+ */
+
+/**
+ * @namespace virgil::crypto::foundation::asn1
+ * @brief This namespace contains interfaces for ASN.1 data manipulation.
+ */
+
+/**
+ * @namespace virgil::crypto::foundation::cms
+ * @brief This namespace contains interfaces for CMS data manipulation.
+ */
+
+/**
+ * @namespace virgil::crypto::stream
+ * @brief This namespace contains interfaces for stream data processing in crypto algorithms.
+ */
+
+/**
+ * @defgroup Error
+ *
+ * @brief This group contains interfaces for error handling mechanism that is used in the library.
  */

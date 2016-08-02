@@ -215,11 +215,13 @@ public:
     ///@}
 
 public:
+    //! @cond Doxygen_Suppress
     VirgilHash(VirgilHash&& other);
 
     VirgilHash& operator=(VirgilHash&& rhs);
 
     virtual ~VirgilHash() noexcept;
+    //! @endcond
 
 private:
     template<typename TypeOrName>

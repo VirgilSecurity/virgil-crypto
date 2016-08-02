@@ -52,6 +52,7 @@ DEFINE_NAMESPACE(className, package)
 %insert("header") %{
 #include <includePath/className.h>
 %}
+%ignore package::className::className(className&&);
 %include <includePath/className.h>
 %enddef
 

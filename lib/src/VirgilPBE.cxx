@@ -162,10 +162,14 @@ private:
 
 VirgilPBE::VirgilPBE() : impl_(std::make_unique<Impl>()) {}
 
+namespace virgil { namespace crypto { namespace foundation {
+
 template<>
 VirgilPBE::VirgilPBE(internal::VirgilTypePBE type, const VirgilByteArray& salt, size_t iterationCount)
         : impl_(std::make_unique<Impl>(type, salt, iterationCount)) {
 }
+
+}}}
 
 VirgilPBE VirgilPBE::pkcs5(const VirgilByteArray& salt, size_t iterationCount) {
     return VirgilPBE(internal::VirgilTypePBE::PKCS5, salt, iterationCount);

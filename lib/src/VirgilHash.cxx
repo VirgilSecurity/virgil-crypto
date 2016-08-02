@@ -100,6 +100,8 @@ struct VirgilHash::Impl {
 
 }}}
 
+namespace virgil { namespace crypto { namespace foundation {
+
 template<>
 VirgilHash::VirgilHash(mbedtls_md_type_t type) : impl_(new Impl()) {
     impl_->setup(type);
@@ -109,6 +111,8 @@ template<>
 VirgilHash::VirgilHash(const char* name) : impl_(new Impl()) {
     impl_->setup(name);
 }
+
+}}}
 
 VirgilHash::VirgilHash() : impl_(new Impl()) {
 }

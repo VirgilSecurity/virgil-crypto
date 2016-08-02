@@ -83,10 +83,14 @@ public:
 
 }}}
 
+namespace virgil { namespace crypto { namespace foundation {
+
 template<>
 VirgilKDF::VirgilKDF(mbedtls_kdf_type_t kdf_type, mbedtls_md_type_t md_type)
         : impl_(new Impl(kdf_type, md_type)) {
 }
+
+}}}
 
 VirgilKDF VirgilKDF::kdf1() {
     return VirgilKDF(MBEDTLS_KDF_KDF1, kHashType_Default);

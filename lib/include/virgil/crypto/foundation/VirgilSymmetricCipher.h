@@ -37,6 +37,7 @@
 #ifndef VIRGIL_CRYPTO_SYMMETRIC_SIPHER_H
 #define VIRGIL_CRYPTO_SYMMETRIC_SIPHER_H
 
+#include <memory>
 #include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>

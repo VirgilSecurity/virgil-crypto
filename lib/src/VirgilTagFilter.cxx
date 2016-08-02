@@ -36,9 +36,9 @@
 
 #include <virgil/crypto/foundation/internal/VirgilTagFilter.h>
 
+using virgil::crypto::VirgilByteArray;
 using virgil::crypto::foundation::internal::VirgilTagFilter;
 
-using virgil::crypto::VirgilByteArray;
 
 VirgilTagFilter::VirgilTagFilter() : tagLen_(0), data_(), tag_() {
 }
@@ -52,7 +52,7 @@ void VirgilTagFilter::reset(size_t tagLen) {
 void VirgilTagFilter::process(const VirgilByteArray& data) {
     tag_.insert(tag_.end(), data.begin(), data.end());
 
-    ptrdiff_t tagSurplusLen = tag_.size() - tagLen_;
+    std::ptrdiff_t tagSurplusLen = tag_.size() - tagLen_;
     if (tagSurplusLen > 0) {
         VirgilByteArray::iterator tagSurplusBegin = tag_.begin();
         VirgilByteArray::iterator tagSurplusEnd = tagSurplusBegin + tagSurplusLen;

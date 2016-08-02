@@ -39,6 +39,7 @@
 #include <virgil/crypto/foundation/VirgilRandom.h>
 
 #include <array>
+#include <atomic>
 
 #include <mbedtls/entropy.h>
 #include <mbedtls/ctr_drbg.h>

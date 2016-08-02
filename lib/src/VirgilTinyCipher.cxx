@@ -375,7 +375,7 @@ void VirgilTinyCipher::encryptAndSign(
         }
 
         const size_t spaceLeft = impl_->packageSize - package.size();
-        const ptrdiff_t payloadAvailable = encryptedData.end() - payloadIt;
+        const std::ptrdiff_t payloadAvailable = encryptedData.end() - payloadIt;
         const size_t payloadSize = spaceLeft > payloadAvailable ? (size_t) payloadAvailable : spaceLeft;
         package.insert(package.end(), payloadIt, payloadIt + payloadSize);
         payloadIt += payloadSize;

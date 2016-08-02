@@ -1,47 +1,41 @@
 language: cpp
 sudo: false
 
-matrix:
-  include:
-    - os: linux
-      compiler: g++
-      env: COMPILER='g++-4.8'
-      addons:
-        apt:
-         sources: ['ubuntu-toolchain-r-test']
-         packages: ['g++-4.8']
-    - os: linux
-      compiler: clang++
-      env: COMPILER='clang++'
-
 env:
   global:
     - BUILD_DIR_NAME=build
     - DOC_BRANCH=master
     # COVERITY_SCAN_TOKEN
     - secure: "GjN2rHGtPPXTMwWUzpB9ULqDrFXmShysGtQ8VIXYJULUUHZ26entYWuwTb8q3NI8syVeDFyCmam7PSnRgc/nuaOBh8/2lO+dAB1H54jfvbREBBYC2yIIZAT1z/oQ/ZYWdJBrWsNw+pPYk8lY1Z52ggLu2Gd4fktrzuISch7CuCY="
-  matrix:
-    - LANG=cpp LIB_LOW_LEVEL_API=ON PUBLISH_DOCS=ON PUBLISH_COVERITY_SCAN=ON
-    - LANG=cpp LIB_LOW_LEVEL_API=OFF
-    - LANG=php LIB_LOW_LEVEL_API=ON
-    - LANG=php LIB_LOW_LEVEL_API=OFF
+
+matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+            - libcurl4-openssl-dev
+            - php5
+            - php5-dev
+            - php5-cli
+            - graphviz
+      env:
+        global:
+          - COMPILER=g++-4.9
+        matrix:
+          - LANG=cpp LIB_LOW_LEVEL_API=ON PUBLISH_DOCS=ON PUBLISH_COVERITY_SCAN=ON
+          - LANG=cpp LIB_LOW_LEVEL_API=OFF
+          - LANG=php LIB_LOW_LEVEL_API=ON
+          - LANG=php LIB_LOW_LEVEL_API=OFF
 cache:
   directories:
     - $HOME/cmake
     - $HOME/swig
     - $HOME/phpunit
     - $HOME/doxygen
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - libcurl4-openssl-dev
-      - python-yaml
-      - php5
-      - php5-dev
-      - php5-cli
-      - graphviz
 before_install:
   - bash ./ci/install-cmake.sh
   - bash ./ci/install-swig.sh

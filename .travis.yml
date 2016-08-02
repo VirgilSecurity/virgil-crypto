@@ -1,9 +1,19 @@
 language: cpp
-compiler:
-  - gcc
-  - clang
-os:
-  - linux
+sudo: false
+
+matrix:
+  include:
+    - os: linux
+      compiler: g++
+      env: COMPILER='g++-4.8'
+      addons:
+        apt:
+         sources: ['ubuntu-toolchain-r-test']
+         packages: ['g++-4.8']
+    - os: linux
+      compiler: clang++
+      env: COMPILER='clang++'
+
 env:
   global:
     - BUILD_DIR_NAME=build
@@ -44,4 +54,3 @@ script:
   - bash ./ci/run.sh
 after_success:
   - bash ./ci/publish-docs.sh
-sudo: false

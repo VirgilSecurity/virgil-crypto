@@ -37,6 +37,7 @@
 #ifndef VIRGIL_CRYPTO_ERROR_H
 #define VIRGIL_CRYPTO_ERROR_H
 
+#include <limits>
 #include <system_error>
 
 #include <virgil/crypto/VirgilCryptoException.h>

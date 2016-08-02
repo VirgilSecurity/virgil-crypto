@@ -55,7 +55,7 @@ if (ANDROID)
 else (ANDROID)
     find_host_package (JNI REQUIRED)
 endif (ANDROID)
-include_directories (${JNI_INCLUDE_DIRS})
+include_directories (SYSTEM ${JNI_INCLUDE_DIRS})
 
 # Make sure the nested directory structure exists
 set (JAVA_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin CACHE INTERNAL "")

@@ -49,7 +49,7 @@ set (NODEJS_TARGET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/node-v${LANG_VERSION}")
 if (EXISTS "${NODEJS_TARGET_DIR}/")
     # Make target for Node
     add_library (node INTERFACE)
-    target_include_directories (node INTERFACE
+    target_include_directories (node SYSTEM INTERFACE
         $<BUILD_INTERFACE:${NODEJS_TARGET_DIR}/include>
     )
     if (WIN32)

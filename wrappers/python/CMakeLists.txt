@@ -50,7 +50,7 @@ else ()
     find_host_package (PythonLibs REQUIRED)
 endif (LANG_VERSION)
 
-include_directories (${PYTHON_INCLUDE_DIRS})
+include_directories (SYSTEM ${PYTHON_INCLUDE_DIRS})
 
 if (PYTHONLIBS_VERSION_STRING)
     string (REPLACE "." ";" PYTHON_VERSION_LIST ${PYTHONLIBS_VERSION_STRING})

@@ -43,7 +43,7 @@ set (RUBY_MODULE_NAME ${PROJECT_NAME})
 set (SWIG_MODULE_NAME ${RUBY_MODULE_NAME})
 
 find_host_package (Ruby REQUIRED)
-include_directories (${RUBY_INCLUDE_DIRS})
+include_directories (SYSTEM ${RUBY_INCLUDE_DIRS})
 
 if (RUBY_VERSION)
     string (REPLACE "." ";" RUBY_VERSION_LIST ${RUBY_VERSION})

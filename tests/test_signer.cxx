@@ -128,3 +128,14 @@ TEST_CASE("sign-curve25519", "[signer]") {
         REQUIRE_THROWS_AS(signer.verify(testData, malformedSign, keyPair.publicKey()), VirgilCryptoException);
     }
 }
+
+
+TEST_CASE("sign with wrong key password", "[signer]") {
+    VirgilByteArray testData = str2bytes("this string will be signed");
+    VirgilByteArray keyPassword = str2bytes("password");
+    VirgilByteArray wrongKeyPassword = str2bytes("wrong password");
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_M255, keyPassword);
+
+    VirgilSigner signer;
+    REQUIRE_THROWS_AS(signer.sign(testData, keyPair.privateKey(), wrongKeyPassword), VirgilCryptoException);
+}

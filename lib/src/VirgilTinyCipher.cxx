@@ -236,6 +236,10 @@ static unsigned char pk_type_to_code(VirgilKeyPair::Type pkType);
  */
 static VirgilKeyPair::Type pk_type_from_code(unsigned char pkCode);
 
+/**
+ * @brief Create cipher for common symmetric crypto operations.
+ */
+static VirgilSymmetricCipher create_shared_cipher();
 
 namespace virgil { namespace crypto {
 
@@ -321,7 +325,7 @@ void VirgilTinyCipher::encryptAndSign(
 
     VirgilByteArray sharedSecret = VirgilAsymmetricCipher::computeShared(recipientContext, ephemeralContext);
 
-    VirgilSymmetricCipher sharedCipher = VirgilSymmetricCipher::aes256();
+    VirgilSymmetricCipher sharedCipher = create_shared_cipher();
 
     const bool doSign = !senderPrivateKey.empty();
     size_t signLength = doSign ? get_sign_size(ephemeralContext.getKeyType()) : 0;
@@ -440,7 +444,7 @@ VirgilByteArray VirgilTinyCipher::verifyAndDecrypt(
     // 3. Decrypt data
     VirgilByteArray sharedSecret = VirgilAsymmetricCipher::computeShared(ephemeralContext, recipientContext);
 
-    VirgilSymmetricCipher sharedCipher = VirgilSymmetricCipher::aes256();
+    VirgilSymmetricCipher sharedCipher = create_shared_cipher();
 
     sharedCipher.setDecryptionKey(sharedSecret);
     sharedCipher.setAuthData(authData);
@@ -600,4 +604,8 @@ static size_t calc_package_count(size_t dataSize, size_t packageSize, size_t pub
 
 static VirgilByteArray auth_to_iv(const VirgilByteArray& data, size_t ivSize) {
     return VirgilKDF(VirgilKDF::Algorithm::KDF2).derive(data, ivSize);
+}
+
+static VirgilSymmetricCipher create_shared_cipher() {
+    return VirgilSymmetricCipher(VirgilSymmetricCipher::Algorithm::AES_256_GCM);
 }

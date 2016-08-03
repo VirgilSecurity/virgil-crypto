@@ -100,8 +100,10 @@ public:
  * @name Configuration constants.
  */
 ///@{
-static const VirgilSymmetricCipher::VirgilSymmetricCipherPadding kSymmetricCipher_Padding =
+static constexpr VirgilSymmetricCipher::VirgilSymmetricCipherPadding kSymmetricCipher_Padding =
         VirgilSymmetricCipher::VirgilSymmetricCipherPadding_PKCS7;
+static constexpr VirgilSymmetricCipher::Algorithm kSymmetricCipher_Algorithm =
+        VirgilSymmetricCipher::Algorithm::AES_256_GCM;
 ///@}
 
 VirgilCipherBase::VirgilCipherBase() : impl_(new Impl()) {}
@@ -215,7 +217,7 @@ VirgilByteArray VirgilCipherBase::tryReadContentInfo(const VirgilByteArray& encr
 }
 
 VirgilSymmetricCipher& VirgilCipherBase::initEncryption() {
-    impl_->symmetricCipher = VirgilSymmetricCipher::aes256();
+    impl_->symmetricCipher = VirgilSymmetricCipher(kSymmetricCipher_Algorithm);
     impl_->symmetricCipherKey = impl_->random.randomize(impl_->symmetricCipher.keyLength());
     VirgilByteArray symmetricCipherIV = impl_->random.randomize(impl_->symmetricCipher.ivSize());
     impl_->symmetricCipher.setEncryptionKey(impl_->symmetricCipherKey);

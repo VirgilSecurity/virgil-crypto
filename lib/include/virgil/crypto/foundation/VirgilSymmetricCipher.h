@@ -46,14 +46,8 @@
 namespace virgil { namespace crypto { namespace foundation {
 
 /**
- * @name Forward declarations
- */
-///@{
-class VirgilSymmetricCipherImpl;
-///@}
-
-/**
  * @brief Provides symmetric ciphers algorithms.
+ * @ingroup Cipher
  */
 class VirgilSymmetricCipher : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
@@ -67,24 +61,41 @@ public:
         VirgilSymmetricCipherPadding_ZerosAndLen,
         VirgilSymmetricCipherPadding_Zeros
     } VirgilSymmetricCipherPadding;
+
+    /**
+     * Enumerates possible Symmetric Cipher algorithms.
+     */
+    enum class Algorithm {
+        AES_256_CBC, ///< Cipher algorithm: AES-256, mode: CBC
+        AES_256_GCM  ///< Cipher algorithm: AES-256, mode: GCM
+    };
     ///@}
 
 public:
-    /**
-     * @name Creation methods
-     */
-    ///@{
-    /**
-     * @brief Creates object that handles AES-256 encryption / decription algorithms.
-     */
-    static VirgilSymmetricCipher aes256();
-    ///@}
+
     /**
      * @brief Create object with undefined algorithm.
      * @warning SHOULD be used in conjunction with VirgilAsn1Compatible interface,
-     *     i.e. VirgilSymmetricCipher cipher = VirgilSymmetricCipher().fromAsn1(asn1);
+     *     i.e. VirgilSymmetricCipher cipher; cipher.fromAsn1(asn1);
      */
     VirgilSymmetricCipher();
+
+    /**
+     * @brief Create object with specific algorithm type.
+     */
+    explicit VirgilSymmetricCipher(Algorithm algorithm);
+
+    /**
+     * @brief Create object with given algorithm name.
+     * @note Name format: {ALG}-{LEN}-{MODE}, i.e AES-256-GCM.
+     */
+    explicit VirgilSymmetricCipher(const std::string& name);
+
+    /**
+     * @brief Create object with given algorithm name.
+     * @note Name format: {ALG}-{LEN}-{MODE}, i.e AES-256-GCM.
+     */
+    explicit VirgilSymmetricCipher(const char* name);
     ///@}
     /**
      * @name Info
@@ -272,5 +283,14 @@ private:
 };
 
 }}}
+
+namespace std {
+/**
+ * @brief Returns string representation of the Hash algorithm.
+ * @return Symmetric cipher algorithm as string.
+ * @ingroup Cipher
+ */
+string to_string(virgil::crypto::foundation::VirgilSymmetricCipher::Algorithm alg);
+}
 
 #endif /* VIRGIL_CRYPTO_SYMMETRIC_SIPHER_H */

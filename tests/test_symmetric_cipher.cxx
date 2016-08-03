@@ -54,7 +54,7 @@ using virgil::crypto::foundation::VirgilSymmetricCipher;
 using virgil::crypto::foundation::VirgilRandom;
 
 TEST_CASE("Symmetric Cipher", "[symmetric-cipher]") {
-    VirgilSymmetricCipher cipher = VirgilSymmetricCipher::aes256();
+    VirgilSymmetricCipher cipher(VirgilSymmetricCipher::Algorithm::AES_256_GCM);
     VirgilByteArray plainData = str2bytes("data to be encrypted with symmetric cipher");
 
     SECTION("with known KEY and IV") {

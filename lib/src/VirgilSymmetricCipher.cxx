@@ -54,7 +54,6 @@ using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
 
 using virgil::crypto::foundation::VirgilSymmetricCipher;
-using virgil::crypto::foundation::VirgilSymmetricCipherImpl;
 using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
@@ -70,17 +69,23 @@ struct VirgilSymmetricCipher::Impl {
 
 VirgilSymmetricCipher::VirgilSymmetricCipher() : impl_(std::make_unique<Impl>()) {}
 
+VirgilSymmetricCipher::VirgilSymmetricCipher(Algorithm algorithm) : impl_(std::make_unique<Impl>()) {
+    impl_->cipher_ctx.setup(std::to_string(algorithm).c_str());
+}
+
+VirgilSymmetricCipher::VirgilSymmetricCipher(const std::string& name) : impl_(std::make_unique<Impl>()) {
+    impl_->cipher_ctx.setup(name.c_str());
+}
+
+VirgilSymmetricCipher::VirgilSymmetricCipher(const char* name) : impl_(std::make_unique<Impl>()) {
+    impl_->cipher_ctx.setup(name);
+}
+
 VirgilSymmetricCipher::VirgilSymmetricCipher(VirgilSymmetricCipher&&) = default;
 
 VirgilSymmetricCipher& VirgilSymmetricCipher::operator=(VirgilSymmetricCipher&&) = default;
 
 VirgilSymmetricCipher::~VirgilSymmetricCipher() noexcept {}
-
-VirgilSymmetricCipher VirgilSymmetricCipher::aes256() {
-    VirgilSymmetricCipher cipher;
-    cipher.impl_->cipher_ctx.setup(MBEDTLS_CIPHER_AES_256_GCM);
-    return cipher;
-}
 
 std::string VirgilSymmetricCipher::name() const {
     checkState();
@@ -336,4 +341,13 @@ void VirgilSymmetricCipher::asn1Read(VirgilAsn1Reader& asn1Reader) {
     clear();
     impl_->cipher_ctx.setup(type);
     setIV(asn1Reader.readOctetString());
+}
+
+std::string std::to_string(virgil::crypto::foundation::VirgilSymmetricCipher::Algorithm alg) {
+    switch (alg) {
+        case VirgilSymmetricCipher::Algorithm::AES_256_CBC:
+            return "AES-256-CBC";
+        case VirgilSymmetricCipher::Algorithm::AES_256_GCM:
+            return "AES-256-GCM";
+    }
 }

@@ -49,7 +49,7 @@ class VirgilKDF_Test extends PHPUnit_Framework_TestCase {
     public function test_kdf1() {
         $initialSequnce = "test sequnce";
         $derivedSequenceLength = 512;
-        $kdf = VirgilKDF::kdf1();
+        $kdf = new VirgilKDF(VirgilKDF::Algorithm_KDF1);
 
         $this->assertInstanceOf("VirgilKDF", $kdf);
         $this->assertEquals("KDF1", $kdf->name());
@@ -66,7 +66,7 @@ class VirgilKDF_Test extends PHPUnit_Framework_TestCase {
     public function test_kdf2() {
         $initialSequnce = "test sequnce";
         $derivedSequenceLength = 512;
-        $kdf = VirgilKDF::kdf2();
+        $kdf = new VirgilKDF(VirgilKDF::Algorithm_KDF2);
 
         $this->assertInstanceOf("VirgilKDF", $kdf);
         $this->assertEquals("KDF2", $kdf->name());
@@ -83,7 +83,7 @@ class VirgilKDF_Test extends PHPUnit_Framework_TestCase {
      * @covers VirgilKDF::fromAsn1
      */
     public function test_kdf1_asn1_compatible() {
-        $this->_test_kdf_asn1_compatible(VirgilKDF::kdf1());
+        $this->_test_kdf_asn1_compatible(new VirgilKDF(VirgilKDF::Algorithm_KDF1));
     }
 
     /**
@@ -93,7 +93,7 @@ class VirgilKDF_Test extends PHPUnit_Framework_TestCase {
      * @covers VirgilKDF::fromAsn1
      */
     public function test_kdf2_asn1_compatible() {
-        $this->_test_kdf_asn1_compatible(VirgilKDF::kdf2());
+        $this->_test_kdf_asn1_compatible(new VirgilKDF(VirgilKDF::Algorithm_KDF2));
     }
 
     /**

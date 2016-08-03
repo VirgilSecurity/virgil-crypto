@@ -46,3 +46,9 @@
  *
  * @brief This group contains interfaces for producing cryptographic hashes.
  */
+
+/**
+ * @defgroup KDF
+ *
+ * @brief This group contains interfaces to Key Derivation Function algorithms.
+ */

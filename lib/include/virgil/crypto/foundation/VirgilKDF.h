@@ -47,24 +47,17 @@ namespace virgil { namespace crypto { namespace foundation {
 
 /**
  * @brief Provides key derivation function algorithms.
+ * @ingroup KDF
  */
 class VirgilKDF : public asn1::VirgilAsn1Compatible {
 public:
     /**
-     * @name Creation methods
-     * @brief Object creation with specific key derivation function.
+     * @brief Enumerates possible Key Derivation Function algorithms.
      */
-    ///@{
-    /**
-     * @brief Configures with KDF1 (ISO-18033-2) algorithm.
-     */
-    static VirgilKDF kdf1();
-
-    /**
-     * @brief Configures with KDF1 (ISO-18033-2) algorithm.
-     */
-    static VirgilKDF kdf2();
-    ///@}
+    enum class Algorithm {
+        KDF1, ///< KDF Algorithm: KDF1 (ISO-18033-2)
+        KDF2  ///< KDF Algorithm: KDF2 (ISO-18033-2)
+    };
     /**
      * @name Constructor / Destructor
      */
@@ -72,9 +65,26 @@ public:
     /**
      * @brief Create object with undefined algorithm.
      * @warning SHOULD be used in conjunction with VirgilAsn1Compatible interface,
-     *     i.e. VirgilKDF kdf = VirgilKDF().fromAsn1(asn1);
+     *     i.e. VirgilKDF kdf; kdf.fromAsn1(asn1);
      */
     VirgilKDF();
+
+    /**
+     * @brief Create object with specific algorithm type.
+     */
+    explicit VirgilKDF(VirgilKDF::Algorithm alg);
+
+    /**
+     * @brief Create object with given algorithm name.
+     * @note Names SHOULD be the identical to the VirgilKDF::Algorithm enumeration.
+     */
+    explicit VirgilKDF(const std::string& name);
+
+    /**
+     * @brief Create object with given algorithm name.
+     * @note Names SHOULD be the identical to the VirgilKDF::Algorithm enumeration.
+     */
+    explicit VirgilKDF(const char* name);
     ///@}
     /**
      * @brief
@@ -140,9 +150,6 @@ public:
     //! @endcond
 
 private:
-    template<typename TypeKDF, typename TypeMD>
-    explicit VirgilKDF(TypeKDF kdf_type, TypeMD type_type);
-
     /**
      * @brief If internal state is not initialized with specific algorithm exception will be thrown.
      */
@@ -155,5 +162,14 @@ private:
 };
 
 }}}
+
+namespace std {
+/**
+ * @brief Returns string representation of the KDF algorithm.
+ * @return KDF algorithm as string.
+ * @ingroup KDF
+ */
+string to_string(virgil::crypto::foundation::VirgilKDF::Algorithm alg);
+}
 
 #endif /* VIRGIL_CRYPTO_KDF_H */

@@ -46,6 +46,9 @@
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
+#include <virgil/crypto/internal/utils.h>
+#include <virgil/crypto/foundation/internal/mbedtls_type_utils.h>
+
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
@@ -59,7 +62,7 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
  * @name Configuration constants
  */
 ///@{
-static const mbedtls_md_type_t kHashType_Default = MBEDTLS_MD_SHA256;
+static constexpr char kHashType_Default[] = "SHA384";
 ///@}
 
 namespace virgil { namespace crypto { namespace foundation {
@@ -71,8 +74,22 @@ public:
     Impl(mbedtls_kdf_type_t kdf_type, mbedtls_md_type_t md_type) :
             kdf_info(mbedtls_kdf_info_from_type(kdf_type)),
             md_info(mbedtls_md_info_from_type(md_type)) {
-        if (kdf_info == nullptr || md_info == nullptr) {
-            throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
+        if (kdf_info == nullptr) {
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm, internal::to_string(kdf_type));
+        }
+        if (md_info == nullptr) {
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm, internal::to_string(md_type));
+        }
+    }
+
+    Impl(const char* kdf_name, const char* md_name) :
+            kdf_info(mbedtls_kdf_info_from_string(kdf_name)),
+            md_info(mbedtls_md_info_from_string(md_name)) {
+        if (kdf_info == nullptr) {
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm, kdf_name);
+        }
+        if (md_info == nullptr) {
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm, md_name);
         }
     }
 
@@ -83,24 +100,18 @@ public:
 
 }}}
 
-namespace virgil { namespace crypto { namespace foundation {
 
-template<>
-VirgilKDF::VirgilKDF(mbedtls_kdf_type_t kdf_type, mbedtls_md_type_t md_type)
-        : impl_(new Impl(kdf_type, md_type)) {
+VirgilKDF::VirgilKDF() : impl_(std::make_unique<Impl>()) {
 }
 
-}}}
-
-VirgilKDF VirgilKDF::kdf1() {
-    return VirgilKDF(MBEDTLS_KDF_KDF1, kHashType_Default);
+VirgilKDF::VirgilKDF(VirgilKDF::Algorithm alg)
+        : impl_(std::make_unique<Impl>(std::to_string(alg).c_str(), kHashType_Default)) {
 }
 
-VirgilKDF VirgilKDF::kdf2() {
-    return VirgilKDF(MBEDTLS_KDF_KDF2, kHashType_Default);
+VirgilKDF::VirgilKDF(const std::string& name) : impl_(std::make_unique<Impl>(name.c_str(), kHashType_Default)) {
 }
 
-VirgilKDF::VirgilKDF() : impl_(new Impl()) {
+VirgilKDF::VirgilKDF(const char* name) : impl_(std::make_unique<Impl>(name, kHashType_Default)) {
 }
 
 VirgilKDF::~VirgilKDF() noexcept {}
@@ -187,5 +198,14 @@ void VirgilKDF::asn1Read(VirgilAsn1Reader& asn1Reader) {
     );
 
     asn1Reader.readNull();
-    *this = VirgilKDF(kdfType, mdType);
+    impl_ = std::make_unique<Impl>(kdfType, mdType);
+}
+
+std::string std::to_string(VirgilKDF::Algorithm alg) {
+    switch (alg) {
+        case VirgilKDF::Algorithm::KDF1:
+            return "KDF1";
+        case VirgilKDF::Algorithm::KDF2:
+            return "KDF2";
+    }
 }

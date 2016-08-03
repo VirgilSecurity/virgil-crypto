@@ -599,5 +599,5 @@ static size_t calc_package_count(size_t dataSize, size_t packageSize, size_t pub
 }
 
 static VirgilByteArray auth_to_iv(const VirgilByteArray& data, size_t ivSize) {
-    return VirgilKDF::kdf2().derive(data, ivSize);
+    return VirgilKDF(VirgilKDF::Algorithm::KDF2).derive(data, ivSize);
 }

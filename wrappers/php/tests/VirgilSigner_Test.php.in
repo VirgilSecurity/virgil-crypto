@@ -42,17 +42,6 @@ include_once "StringSource.php";
  * @coversDefaultClass VirgilSigner
  */
 class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
-
-    protected static $cipher;
-
-    public static function setUpBeforeClass() {
-        self::$cipher = new VirgilCipher();
-    }
-
-    public static function tearDownAfterClass() {
-        self::$cipher = NULL;
-    }
-
     /**
      * @covers VirgilSigner::sign
      * @covers VirgilSigner::verify
@@ -97,9 +86,6 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
 
         $signer = new VirgilSigner();
         $sign = $signer->sign($initialString, $key->privateKey(), $privateKeyPassword . "Wrong password");
-        $verifyResult = $signer->verify($initialString, $sign, $key->publicKey());
-
-        $this->assertEquals($verifyResult, True);
     }
 
     /**

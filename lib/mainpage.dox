@@ -40,3 +40,9 @@
  *
  * @brief This group contains interfaces for error handling mechanism that is used in the library.
  */
+
+/**
+ * @defgroup Hash
+ *
+ * @brief This group contains interfaces for producing cryptographic hashes.
+ */

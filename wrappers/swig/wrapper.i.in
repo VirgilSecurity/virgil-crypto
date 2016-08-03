@@ -64,6 +64,9 @@
 %include "common.i"
 %include "util.i"
 
+// Package std
+%ignore std::to_string;
+
 // Package: virgil::crypto
 %ignore virgil::crypto::str2bytes;
 %ignore virgil::crypto::bytes2str;
@@ -82,11 +85,18 @@ INCLUDE_CLASS(VirgilVersion, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::crypto, virgil/crypto)
 
+// Package: virgil::crypto::foundation
+%ignore *::VirgilHash(const char *);
+%ignore *::VirgilKDF(char const *);
+%ignore *::VirgilSymmetricCipher(char const *);
+%ignore *::VirgilRandom(virgil::crypto::VirgilByteArray const &);
+
 // Package: virgil::crypto::foundation::asn1
 %ignore *::asn1Write;
 %ignore *::asn1Read;
 %ignore *::jsonWrite;
 %ignore *::jsonRead;
+
 #if defined(LIB_LOW_LEVEL_API)
     INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto::foundation::asn1, virgil/crypto/foundation/asn1)
     INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto::foundation::asn1, virgil/crypto/foundation/asn1)

@@ -315,7 +315,7 @@ void VirgilCipherBase::buildContentInfo() {
         const VirgilByteArray salt = impl_->random.randomize(16);
         const size_t iterationCount = impl_->random.randomize(3072, 8192);
 
-        VirgilPBE pbe = VirgilPBE::pkcs5(salt, iterationCount);
+        VirgilPBE pbe(VirgilPBE::Algorithm::PKCS5, salt, iterationCount);
 
         VirgilCMSPasswordRecipient recipient;
         recipient.keyEncryptionAlgorithm = pbe.toAsn1();

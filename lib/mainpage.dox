@@ -52,3 +52,9 @@
  *
  * @brief This group contains interfaces to Key Derivation Function algorithms.
  */
+
+/**
+ * @defgroup Cipher
+ *
+ * @brief This group contains interfaces to encryption and to decryption algorithms.
+ */

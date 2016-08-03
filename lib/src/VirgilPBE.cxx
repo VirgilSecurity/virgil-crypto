@@ -78,44 +78,36 @@ static inline void check_pkcs12_pwd_len(size_t pwdLen) {
     }
 }
 
-enum class VirgilTypePBE {
-    NONE = 0,
-    PKCS5,
-    PKCS12,
-    PKCS12_SHA1_RC4_128
-};
-
 }}}}
 
 class VirgilPBE::Impl {
 public:
-    internal::VirgilTypePBE type;
+    bool initialized = false;
+    VirgilPBE::Algorithm algorithm;
     VirgilByteArray algId;
     mbedtls_asn1_buf pbeAlgOID;
     mbedtls_asn1_buf pbeParams;
     mbedtls_md_type_t mdType;
     mbedtls_cipher_type_t cipherType;
 public:
-    Impl() : type(internal::VirgilTypePBE::NONE),
-            algId(), pbeAlgOID(), pbeParams(), mdType(MBEDTLS_MD_NONE), cipherType(MBEDTLS_CIPHER_NONE) {
-    }
+    Impl() : initialized(false) {}
 
-    Impl(internal::VirgilTypePBE pbeType, const VirgilByteArray& salt, size_t iterationCount) : type(pbeType) {
+    Impl(VirgilPBE::Algorithm pbeType, const VirgilByteArray& salt, size_t iterationCount)
+            : initialized(false), algorithm(pbeType) {
         const size_t adjustedIterationCount =
-                iterationCount < VirgilPBE::kIterationCountMin ? VirgilPBE::kIterationCountMin : iterationCount;
+                iterationCount < VirgilPBE::kIterationCountMin ? iterationCount + VirgilPBE::kIterationCountMin
+                                                               : iterationCount;
         switch (pbeType) {
-            case internal::VirgilTypePBE::PKCS5:
+            case VirgilPBE::Algorithm::PKCS5:
                 init_(VirgilAsn1Alg::buildPKCS5(salt, adjustedIterationCount));
                 break;
-            case internal::VirgilTypePBE::PKCS12:
+            case VirgilPBE::Algorithm::PKCS12:
                 init_(VirgilAsn1Alg::buildPKCS12(salt, adjustedIterationCount));
                 break;
-            default:
-                throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
         }
     }
 
-    Impl(const VirgilByteArray& pbeAlgId) : type(internal::VirgilTypePBE::NONE) {
+    Impl(const VirgilByteArray& pbeAlgId) : initialized(false) {
         init_(pbeAlgId);
     }
 
@@ -129,10 +121,9 @@ private:
      * @throw VirgilCryptoException if algorithm identifier is not supported or ASN.1 structure is corrupted.
      */
     void init_(const VirgilByteArray& pbeAlgId) {
-        unsigned char* p, * end;
 
         // Initial init
-        type = internal::VirgilTypePBE::NONE;
+        initialized = false;
         algId = pbeAlgId;
         mdType = MBEDTLS_MD_NONE;
         cipherType = MBEDTLS_CIPHER_NONE;
@@ -140,8 +131,8 @@ private:
         std::memset(&pbeParams, 0x00, sizeof(pbeParams));
 
         // Parse ASN.1
-        p = algId.data();
-        end = p + algId.size();
+        unsigned char* p = algId.data();
+        unsigned char* end = p + algId.size();
 
         system_crypto_handler(
                 mbedtls_asn1_get_alg(&p, end, &pbeAlgOID, &pbeParams),
@@ -149,34 +140,21 @@ private:
         );
 
         if (mbedtls_oid_get_pkcs12_pbe_alg(&pbeAlgOID, &mdType, &cipherType) == 0) {
-            type = internal::VirgilTypePBE::PKCS12;
-        } else if (MBEDTLS_OID_CMP(MBEDTLS_OID_PKCS12_PBE_SHA1_RC4_128, &pbeAlgOID) == 0) {
-            type = internal::VirgilTypePBE::PKCS12_SHA1_RC4_128;
+            algorithm = VirgilPBE::Algorithm::PKCS12;
         } else if (MBEDTLS_OID_CMP(MBEDTLS_OID_PKCS5_PBES2, &pbeAlgOID) == 0) {
-            type = internal::VirgilTypePBE::PKCS5;
+            algorithm = VirgilPBE::Algorithm::PKCS5;
         } else {
             throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
         }
+        initialized = true;
     }
 };
 
 VirgilPBE::VirgilPBE() : impl_(std::make_unique<Impl>()) {}
 
-namespace virgil { namespace crypto { namespace foundation {
+VirgilPBE::VirgilPBE(Algorithm alg, const VirgilByteArray& salt, size_t iterationCount)
+        : impl_(std::make_unique<Impl>(alg, salt, iterationCount)) {
 
-template<>
-VirgilPBE::VirgilPBE(internal::VirgilTypePBE type, const VirgilByteArray& salt, size_t iterationCount)
-        : impl_(std::make_unique<Impl>(type, salt, iterationCount)) {
-}
-
-}}}
-
-VirgilPBE VirgilPBE::pkcs5(const VirgilByteArray& salt, size_t iterationCount) {
-    return VirgilPBE(internal::VirgilTypePBE::PKCS5, salt, iterationCount);
-}
-
-VirgilPBE VirgilPBE::pkcs12(const VirgilByteArray& salt, size_t iterationCount) {
-    return VirgilPBE(internal::VirgilTypePBE::PKCS12, salt, iterationCount);
 }
 
 VirgilPBE::~VirgilPBE() noexcept {}
@@ -186,12 +164,12 @@ VirgilPBE::VirgilPBE(VirgilPBE&& other) = default;
 VirgilPBE& VirgilPBE::operator=(VirgilPBE&& rhs) = default;
 
 VirgilByteArray VirgilPBE::encrypt(const VirgilByteArray& data, const VirgilByteArray& pwd) const {
-    int mode = (impl_->type == internal::VirgilTypePBE::PKCS5) ? MBEDTLS_PKCS5_ENCRYPT : MBEDTLS_PKCS12_PBE_ENCRYPT;
+    int mode = (impl_->algorithm == VirgilPBE::Algorithm::PKCS5) ? MBEDTLS_PKCS5_ENCRYPT : MBEDTLS_PKCS12_PBE_ENCRYPT;
     return process(data, pwd, mode);
 }
 
 VirgilByteArray VirgilPBE::decrypt(const VirgilByteArray& data, const VirgilByteArray& pwd) const {
-    int mode = (impl_->type == internal::VirgilTypePBE::PKCS5) ? MBEDTLS_PKCS5_DECRYPT : MBEDTLS_PKCS12_PBE_DECRYPT;
+    int mode = (impl_->algorithm == VirgilPBE::Algorithm::PKCS5) ? MBEDTLS_PKCS5_DECRYPT : MBEDTLS_PKCS12_PBE_DECRYPT;
     return process(data, pwd, mode);
 }
 
@@ -200,15 +178,15 @@ VirgilByteArray VirgilPBE::process(const VirgilByteArray& data, const VirgilByte
     VirgilByteArray output(data.size() + MBEDTLS_MAX_BLOCK_LENGTH);
     mbedtls_asn1_buf pbeParams = impl_->pbeParams;
     size_t olen = data.size(); // For RC4: output length = input length
-    switch (impl_->type) {
-        case internal::VirgilTypePBE::PKCS5:
+    switch (impl_->algorithm) {
+        case VirgilPBE::Algorithm::PKCS5:
             system_crypto_handler(
                     mbedtls_pkcs5_pbes2_ext(&pbeParams, mode, pwd.data(), pwd.size(), data.data(), data.size(),
                             output.data(), &olen),
                     [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidArgument)); }
             );
             break;
-        case internal::VirgilTypePBE::PKCS12:
+        case VirgilPBE::Algorithm::PKCS12:
             internal::check_pkcs12_pwd_len(pwd.size());
             system_crypto_handler(
                     mbedtls_pkcs12_pbe_ext(&pbeParams, mode,
@@ -217,23 +195,13 @@ VirgilByteArray VirgilPBE::process(const VirgilByteArray& data, const VirgilByte
                     [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidArgument)); }
             );
             break;
-        case internal::VirgilTypePBE::PKCS12_SHA1_RC4_128:
-            internal::check_pkcs12_pwd_len(pwd.size());
-            system_crypto_handler(
-                    mbedtls_pkcs12_pbe_sha1_rc4_128(&pbeParams, mode, pwd.data(), pwd.size(), data.data(), data.size(),
-                            output.data()),
-                    [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidArgument)); }
-            );
-            break;
-        case internal::VirgilTypePBE::NONE:
-            throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
     }
     output.resize(olen);
     return output;
 }
 
 void VirgilPBE::checkState() const {
-    if (impl_->type == internal::VirgilTypePBE::NONE) {
+    if (!impl_->initialized) {
         throw make_error(VirgilCryptoError::NotInitialized);
     }
 }

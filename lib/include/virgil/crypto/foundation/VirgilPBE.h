@@ -47,35 +47,27 @@ namespace virgil { namespace crypto { namespace foundation {
 
 /**
  * @brief Provides Password-Based Cryptography. Now PKCS#5 and PKCS#12 are partially supported.
+ * @ingroup Cipher
  */
 class VirgilPBE : public asn1::VirgilAsn1Compatible {
 public:
+    /**
+     * @brief Enumerates possible Password Based Encryption algorithms.
+     */
+    enum class Algorithm {
+        PKCS5, ///< PBE Algorithm: from the standard PKCS#5
+        PKCS12 ///< PBE Algorithm: from the standard PKCS#12
+    };
+
     /**
      * @name Constants
      */
     ///@{
     enum {
-        kIterationCountMin = 1024
+        kIterationCountMin = 1024 ///< Recommended iteration count that is used for key derivation
     };
     ///@}
 public:
-    /**
-     * @name Creation methods
-     * @brief Object creation with specific hash function.
-     */
-    ///@{
-    /**
-     * @brief Create object with PKCS#5 parameters for PBE encryption or decryption.
-     * @note Recommended PKCS#5 parameters are set.
-     */
-    static VirgilPBE pkcs5(const virgil::crypto::VirgilByteArray& salt, size_t iterationCount = kIterationCountMin);
-
-    /**
-     * @brief Create object with PKCS#12 parameters for PBE encryption or decryption.
-     * @note Recommended PKCS#12 parameters are set.
-     */
-    static VirgilPBE pkcs12(const virgil::crypto::VirgilByteArray& salt, size_t iterationCount = kIterationCountMin);
-    ///@}
     /**
      * @name Constructor / Destructor
      */
@@ -83,9 +75,19 @@ public:
     /**
      * @brief Create object with undefined algorithm.
      * @warning SHOULD be used in conjunction with VirgilAsn1Compatible interface,
-     *     i.e. VirgilPBE pbe = VirgilPBE().fromAsn1(asn1);
+     *     i.e. VirgilPBE pbe; pbe.fromAsn1(asn1);
      */
     VirgilPBE();
+
+    /**
+     * @brief reate object with specific algorithm type.
+     * @param alg Specific PBE algorithm.
+     * @param salt Salt, it is recommended to use random value for security reasons.
+     * @param iterationCount Iteration count for the key derivation,
+     *     it is recommended to use random value for security reasons.
+     */
+    VirgilPBE(Algorithm alg, const VirgilByteArray& salt, size_t iterationCount = kIterationCountMin);
+
     ///@}
     /**
      * @name Encryption / Decryption
@@ -137,13 +139,6 @@ public:
     //! @endcond
 
 private:
-    /**
-     * @brief Creates and initialize PBKDF with specified type.
-     * @warning Constructor CAN NOT be used directly, use one of factory methods to create appropriate cipher.
-     */
-    template <typename TypePBE>
-    VirgilPBE(TypePBE pbe, const virgil::crypto::VirgilByteArray& salt, size_t iterationCount);
-
     /**
      * @brief If internal state is not initialized with specific algorithm exception will be thrown.
      */

@@ -51,7 +51,7 @@ class VirgilPBE_Test extends PHPUnit_Framework_TestCase {
         $salt = "salt";
         $iterationCount = 2048;
 
-        $pbe = VirgilPBE::pkcs5($salt, $iterationCount);
+        $pbe = new VirgilPBE(VirgilPBE::Algorithm_PKCS5, $salt, $iterationCount);
         $this->assertNotNull($pbe, "PBE was not created.");
         $this->assertNotNull($pbe->_cPtr, "Underlying pbe was not created.");
 
@@ -70,7 +70,7 @@ class VirgilPBE_Test extends PHPUnit_Framework_TestCase {
         $salt = "salt";
         $iterationCount = 2048;
 
-        $pbe = VirgilPBE::pkcs12($salt, $iterationCount);
+        $pbe = new VirgilPBE(VirgilPBE::Algorithm_PKCS12, $salt, $iterationCount);
         $this->assertNotNull($pbe, "PBE was not created.");
         $this->assertNotNull($pbe->_cPtr, "Underlying pbe was not created.");
 

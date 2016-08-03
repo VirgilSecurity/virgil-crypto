@@ -39,7 +39,7 @@
 using virgil::crypto::VirgilCryptoErrorCategory;
 
 const char* VirgilCryptoErrorCategory::name() const noexcept {
-    return "virgil::crypto";
+    return "virgil/crypto";
 }
 
 

@@ -48,7 +48,7 @@ const VirgilSystemCryptoErrorCategory& virgil::crypto::foundation::system_crypto
 }
 
 const char* VirgilSystemCryptoErrorCategory::name() const noexcept {
-    return "virgil::crypto::mbedtls";
+    return "virgil/crypto/mbedtls";
 }
 
 std::string VirgilSystemCryptoErrorCategory::message(int ev) const noexcept {

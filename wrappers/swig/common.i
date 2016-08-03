@@ -65,6 +65,21 @@ namespace std {
 #include <virgil/crypto/VirgilCryptoException.h>
 %}
 
+%insert("header") %{
+#include <sstream>
+#include <exception>
+static std::string backtrace_message(const std::exception& exception, int level = 0) {
+    std::ostringstream sstr;
+    sstr << exception.what();
+    try {
+        std::rethrow_if_nested(exception);
+    } catch(const std::exception& nested) {
+        sstr << "\n" << backtrace_message(nested, level);
+    } catch(...) {}
+    return sstr.str();
+}
+%}
+
 // This code should be commited until SWIG issue "https://github.com/swig/swig/issues/627" is fixed
 // #ifdef SWIGPHP
 // %feature("director:except") {
@@ -83,13 +98,15 @@ namespace std {
     }
 #endif
 #ifdef SWIGJAVA
-    catch (virgil::crypto::VirgilCryptoException &e) {
+catch (const std::exception& exception) {
         jclass clazz = jenv->FindClass("java/lang/Exception");
-        jenv->ThrowNew(clazz, e.what());
+        jenv->ThrowNew(clazz, backtrace_message(exception).c_str());
         return $null;
     }
 #endif
-    SWIG_CATCH_STDEXCEPT
+    catch (const std::exception& exception) {
+        SWIG_exception(SWIG_RuntimeError, backtrace_message(exception).c_str());
+    }
     catch (...) {
         SWIG_exception(SWIG_UnknownError, "Unknown exception");
     }

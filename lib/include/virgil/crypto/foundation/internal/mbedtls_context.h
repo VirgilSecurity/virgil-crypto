@@ -38,6 +38,7 @@
 #define VIRGIL_CRYPTO_MBEDTLS_CONTEXT_H
 
 #include <memory>
+#include <virgil/crypto/internal/utils.h>
 
 namespace virgil { namespace crypto { namespace foundation { namespace internal {
 
@@ -47,12 +48,12 @@ class mbedtls_context_policy;
 template<typename T, typename Policy = mbedtls_context_policy<T>>
 class mbedtls_context {
 public:
-    mbedtls_context() noexcept : ctx_(new T()) {
+    mbedtls_context() noexcept : ctx_(std::make_unique<T>()) {
         Policy::init_ctx(ctx_.get());
     }
 
     template<typename... Args>
-    mbedtls_context(Args&& ...args) : ctx_(new T()) {
+    mbedtls_context(Args&& ...args) : ctx_(std::make_unique<T>()) {
         Policy::init_ctx(ctx_.get(), std::forward(args)...);
     }
 
@@ -62,7 +63,7 @@ public:
 
     mbedtls_context<T, Policy>& clear() {
         Policy::free_ctx(ctx_.get());
-        ctx_.reset(new T());
+        ctx_ = std::make_unique<T>();
         Policy::init_ctx(ctx_.get());
         return *this;
     };

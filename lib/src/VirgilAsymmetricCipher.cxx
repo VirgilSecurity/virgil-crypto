@@ -233,7 +233,7 @@ VirgilAsymmetricCipher& VirgilAsymmetricCipher::operator=(VirgilAsymmetricCipher
 
 VirgilAsymmetricCipher::~VirgilAsymmetricCipher() noexcept = default;
 
-VirgilAsymmetricCipher::VirgilAsymmetricCipher() : impl_(new Impl()) {
+VirgilAsymmetricCipher::VirgilAsymmetricCipher() : impl_(std::make_unique<Impl>()) {
 }
 
 size_t VirgilAsymmetricCipher::keySize() const {

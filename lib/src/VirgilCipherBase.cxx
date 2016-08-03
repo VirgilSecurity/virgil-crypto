@@ -106,7 +106,7 @@ static constexpr VirgilSymmetricCipher::Algorithm kSymmetricCipher_Algorithm =
         VirgilSymmetricCipher::Algorithm::AES_256_GCM;
 ///@}
 
-VirgilCipherBase::VirgilCipherBase() : impl_(new Impl()) {}
+VirgilCipherBase::VirgilCipherBase() : impl_(std::make_unique<Impl>()) {}
 
 VirgilCipherBase::~VirgilCipherBase() noexcept = default;
 

@@ -58,7 +58,7 @@ public:
         MD5,    ///< Hash Algorithm: MD5
         SHA256, ///< Hash Algorithm: SHA256
         SHA384, ///< Hash Algorithm: SHA384
-        SHA512 ///< Hash Algorithm: SHA512
+        SHA512  ///< Hash Algorithm: SHA512
     };
 
     /**

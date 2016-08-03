@@ -54,7 +54,8 @@ public:
      * @brief Create signer with predefined hash function.
      * @note Specified hash function algorithm is used only during signing.
      */
-    explicit VirgilStreamSigner(foundation::VirgilHash hash = foundation::VirgilHash::sha384());
+    explicit VirgilStreamSigner(
+            foundation::VirgilHash::Algorithm hashAlgorithm = foundation::VirgilHash::Algorithm::SHA384);
 
     /**
      * @brief Sign data provided by the source with given private key.

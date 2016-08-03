@@ -51,7 +51,7 @@ using virgil::crypto::VirgilByteArray;
 using virgil::crypto::foundation::VirgilHash;
 
 TEST_CASE("MD5", "[hash]") {
-    VirgilHash hash = VirgilHash::md5();
+    VirgilHash hash(VirgilHash::Algorithm::MD5);
     SECTION("Test vector RFC1321 #1") {
         VirgilByteArray testVector = str2bytes("");
         VirgilByteArray testVectorHash = hex2bytes("d41d8cd98f00b204e9800998ecf8427e");
@@ -70,7 +70,7 @@ TEST_CASE("MD5", "[hash]") {
 }
 
 TEST_CASE("SHA-256", "[hash]") {
-    VirgilHash hash = VirgilHash::sha256();
+    VirgilHash hash(VirgilHash::Algorithm::SHA256);
     SECTION("Test vector NIST CAVS #1") {
         VirgilByteArray testVector = str2bytes("");
         VirgilByteArray testVectorHash = hex2bytes(
@@ -92,7 +92,7 @@ TEST_CASE("SHA-256", "[hash]") {
 }
 
 TEST_CASE("SHA-384", "[hash]") {
-    VirgilHash hash = VirgilHash::sha384();
+    VirgilHash hash(VirgilHash::Algorithm::SHA384);
     SECTION("Test vector NIST CAVS #1") {
         VirgilByteArray testVector = str2bytes("");
         VirgilByteArray testVectorHash = hex2bytes(
@@ -117,7 +117,7 @@ TEST_CASE("SHA-384", "[hash]") {
 }
 
 TEST_CASE("SHA-512", "[hash]") {
-    VirgilHash hash = VirgilHash::sha512();
+    VirgilHash hash(VirgilHash::Algorithm::SHA512);
     SECTION("Test vector NIST CAVS #1") {
         VirgilByteArray testVector = str2bytes("");
         VirgilByteArray testVectorHash = hex2bytes(
@@ -142,7 +142,7 @@ TEST_CASE("SHA-512", "[hash]") {
 }
 
 TEST_CASE("HMAC-MD5", "[HMAC hash]") {
-    VirgilHash hash = VirgilHash::md5();
+    VirgilHash hash(VirgilHash::Algorithm::MD5);
 
     SECTION("Test vector #1") {
         VirgilByteArray key = hex2bytes("61616161616161616161616161616161");

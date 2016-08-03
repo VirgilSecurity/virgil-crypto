@@ -50,7 +50,7 @@ using virgil::crypto::foundation::VirgilAsymmetricCipher;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
-VirgilSigner::VirgilSigner(VirgilHash hash) : hash_(std::move(hash)) {
+VirgilSigner::VirgilSigner(VirgilHash::Algorithm hashAlgorithm) : hash_(hashAlgorithm) {
 }
 
 VirgilSigner::VirgilSigner(VirgilSigner&& rhs) = default;

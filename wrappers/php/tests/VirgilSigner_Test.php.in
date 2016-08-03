@@ -135,7 +135,6 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
      * @covers VirgilSigner::sign
      * @covers VirgilSigner::verify
      * @expectedException Exception
-     * @expectedExceptionMessage RSA - Bad input parameters to function
      */
     public function test_data_sign_verify_with_rsa_keys_small_size() {
         $publicKeyPem128 =

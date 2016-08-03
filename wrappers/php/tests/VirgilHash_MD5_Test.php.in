@@ -43,10 +43,10 @@ include_once "@PHP_MODULE_FILE_NAME@";
 class VirgilHash_MD5_Test extends PHPUnit_Framework_TestCase {
 
     /**
-     * @covers VirgilHash::md5
+     * @covers VirgilHash::Algorithm_MD5
      */
     public function test_md5_object_creation() {
-        $hash = VirgilHash::md5();
+        $hash = new VirgilHash(VirgilHash::Algorithm_MD5);
 
         $this->assertInstanceOf("VirgilHash", $hash);
         $this->assertEquals("MD5", $hash->name());
@@ -133,10 +133,10 @@ class VirgilHash_MD5_Test extends PHPUnit_Framework_TestCase {
     /**
      * @covers VirgilHash::toAsn1
      * @covers VirgilHash::fromAsn1
+     * @depends test_md5_object_creation
      */
-    public function test_md5_object_save_restore() {
+    public function test_md5_object_save_restore(VirgilHash $hash) {
         $testString = "This string will be hashed.";
-        $hash = VirgilHash::md5();
 
         $hashAsn1 = $hash->toAsn1();
 

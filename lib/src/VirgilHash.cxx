@@ -100,21 +100,19 @@ struct VirgilHash::Impl {
 
 }}}
 
-namespace virgil { namespace crypto { namespace foundation {
-
-template<>
-VirgilHash::VirgilHash(mbedtls_md_type_t type) : impl_(new Impl()) {
-    impl_->setup(type);
+VirgilHash::VirgilHash() : impl_(std::make_unique<Impl>()) {
 }
 
-template<>
-VirgilHash::VirgilHash(const char* name) : impl_(new Impl()) {
+VirgilHash::VirgilHash(Algorithm alg) : impl_(std::make_unique<Impl>()) {
+    impl_->setup(std::to_string(alg).c_str());
+}
+
+VirgilHash::VirgilHash(const std::string& name) : impl_(std::make_unique<Impl>()) {
+    impl_->setup(name.c_str());
+}
+
+VirgilHash::VirgilHash(const char* name) : impl_(std::make_unique<Impl>()) {
     impl_->setup(name);
-}
-
-}}}
-
-VirgilHash::VirgilHash() : impl_(new Impl()) {
 }
 
 VirgilHash::~VirgilHash() noexcept {}
@@ -122,27 +120,6 @@ VirgilHash::~VirgilHash() noexcept {}
 VirgilHash::VirgilHash(VirgilHash&& other) = default;
 
 VirgilHash& VirgilHash::operator=(VirgilHash&& rhs) = default;
-
-
-VirgilHash VirgilHash::md5() {
-    return VirgilHash(MBEDTLS_MD_MD5);
-}
-
-VirgilHash VirgilHash::sha256() {
-    return VirgilHash(MBEDTLS_MD_SHA256);
-}
-
-VirgilHash VirgilHash::sha384() {
-    return VirgilHash(MBEDTLS_MD_SHA384);
-}
-
-VirgilHash VirgilHash::sha512() {
-    return VirgilHash(MBEDTLS_MD_SHA512);
-}
-
-VirgilHash VirgilHash::withName(const VirgilByteArray& name) {
-    return VirgilHash(VirgilByteArrayUtils::bytesToString(name).c_str());
-}
 
 std::string VirgilHash::name() const {
     checkState();
@@ -270,5 +247,20 @@ void VirgilHash::asn1Read(VirgilAsn1Reader& asn1Reader) {
     );
 
     asn1Reader.readNull();
-    *this = VirgilHash(type);
+    auto impl = std::make_unique<Impl>();
+    impl->setup(type);
+    this->impl_ = std::move(impl);
+}
+
+std::string std::to_string(VirgilHash::Algorithm alg) {
+    switch (alg) {
+        case VirgilHash::Algorithm::MD5:
+            return "MD5";
+        case VirgilHash::Algorithm::SHA256:
+            return "SHA256";
+        case VirgilHash::Algorithm::SHA384:
+            return "SHA384";
+        case VirgilHash::Algorithm::SHA512:
+            return "SHA512";
+    }
 }

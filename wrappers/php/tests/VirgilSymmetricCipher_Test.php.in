@@ -79,7 +79,7 @@ class VirgilSymmetricCipher_Test extends PHPUnit_Framework_TestCase {
         // Set IV.
         $cipher->setIV($this->generateIV($cipher->ivSize()));
         // Set key for encoding.
-        $keyHash = VirgilHash::sha256()->hash($key);
+        $keyHash = new VirgilHash(VirgilHash::Algorithm_SHA256)->hash($key);
         $cipher->setEncryptionKey($keyHash);
         // Finish cipher configuration for encoding.
         $cipher->reset();
@@ -100,7 +100,7 @@ class VirgilSymmetricCipher_Test extends PHPUnit_Framework_TestCase {
         // Set IV.
         $cipher->setIV($this->generateIV($cipher->ivSize()));
         // Set key for encoding.
-        $keyHash = VirgilHash::sha256()->hash($key);
+        $keyHash = new VirgilHash(VirgilHash::Algorithm_SHA256)->hash($key);
         $cipher->setDecryptionKey($keyHash);
         // Finish cipher configuration for encoding.
         $cipher->reset();
@@ -123,7 +123,7 @@ class VirgilSymmetricCipher_Test extends PHPUnit_Framework_TestCase {
      */
     public function test_aes256_object_save_restore() {
         $key = "passphrase";
-        $keyHash = VirgilHash::sha256()->hash($key);
+        $keyHash = new VirgilHash(VirgilHash::Algorithm_SHA256)->hash($key);
         $phrase = "This string will be encoded.";
         // Encrypt with initial cipher.
         // Create and configure cipher.

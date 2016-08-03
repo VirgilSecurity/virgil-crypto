@@ -47,24 +47,20 @@ namespace virgil { namespace crypto { namespace foundation {
 
 /**
  * @brief Provides hashing (message digest) algorithms.
+ * @ingroup Hash
  */
 class VirgilHash : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
     /**
-     * @name Creation methods
-     * @brief Object creation with specific hash function.
+     * @brief Enumerates possible Hash algorithms.
      */
-    ///@{
-    static VirgilHash md5();
+    enum class Algorithm {
+        MD5,    ///< Hash Algorithm: MD5
+        SHA256, ///< Hash Algorithm: SHA256
+        SHA384, ///< Hash Algorithm: SHA384
+        SHA512 ///< Hash Algorithm: SHA512
+    };
 
-    static VirgilHash sha256();
-
-    static VirgilHash sha384();
-
-    static VirgilHash sha512();
-
-    static VirgilHash withName(const virgil::crypto::VirgilByteArray& name);
-    ///@}
     /**
      * @name Constructor / Destructor
      */
@@ -72,9 +68,26 @@ public:
     /**
      * @brief Create object with undefined algorithm.
      * @warning SHOULD be used in conjunction with VirgilAsn1Compatible interface,
-     *     i.e. VirgilHash hash = VirgilHash().fromAsn1(asn1);
+     *     i.e. VirgilHash hash; hash.fromAsn1(asn1);
      */
     VirgilHash();
+
+    /**
+     * @brief Create object with specific algorithm type.
+     */
+    explicit VirgilHash(Algorithm alg);
+
+    /**
+     * @brief Create object with given algorithm name.
+     * @note Names SHOULD be the identical to the VirgilHash::Algorithm enumeration.
+     */
+    explicit VirgilHash(const std::string& name);
+
+    /**
+     * @brief Create object with given algorithm name.
+     * @note Names SHOULD be the identical to the VirgilHash::Algorithm enumeration.
+     */
+    explicit VirgilHash(const char* name);
     ///@}
     /**
      * @brief
@@ -224,9 +237,6 @@ public:
     //! @endcond
 
 private:
-    template<typename TypeOrName>
-    explicit VirgilHash(TypeOrName typeOrName);
-
     void checkState() const;
 
 private:
@@ -236,5 +246,14 @@ private:
 };
 
 }}}
+
+namespace std {
+/**
+ * @brief Returns string representation of the Hash algorithm.
+ * @return Hash algorithm as string.
+ * @ingroup Hash
+ */
+string to_string(virgil::crypto::foundation::VirgilHash::Algorithm alg);
+}
 
 #endif /* VIRGIL_CRYPTO_HASH_H */

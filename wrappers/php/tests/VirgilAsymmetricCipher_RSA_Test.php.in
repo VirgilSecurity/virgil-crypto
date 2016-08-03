@@ -306,7 +306,7 @@ class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
         $verifier = new VirgilAsymmetricCipher();
         $verifier->setPublicKey($publicKeyPem512);
 
-        $hash = VirgilHash::sha256();
+        $hash = new VirgilHash(VirgilHash::Algorithm_SHA256);
         $dataToSignValidHash = $hash->hash($dataToSign);
         $dataToSignInvalidHash = $hash->hash($dataToSign."Alien Data");
 

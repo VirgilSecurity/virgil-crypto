@@ -33,7 +33,9 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 static const unsigned char kPackageCount_Max = 0x0F; ///< Defines maximum package count
 
-typedef std::map<size_t, VirgilByteArray> PackageMap; ///< { PackageNo -> PackageData }
+constexpr VirgilHash::Algorithm kHashAlgorithm_Default = VirgilHash::Algorithm::SHA384;
+
+using PackageMap = std::map<size_t, VirgilByteArray>; ///< { PackageNo -> PackageData }
 
 /**
  *
@@ -344,7 +346,7 @@ void VirgilTinyCipher::encryptAndSign(
         VirgilAsymmetricCipher senderContext;
         senderContext.setPrivateKey(senderPrivateKey, senderPrivateKeyPassword);
 
-        VirgilHash hash = VirgilHash::sha384();
+        VirgilHash hash(kHashAlgorithm_Default);
         VirgilByteArray digest = hash.hash(encryptedData);
 
         VirgilByteArray sign = senderContext.sign(digest, hash.type());
@@ -418,7 +420,7 @@ VirgilByteArray VirgilTinyCipher::verifyAndDecrypt(
 
     // 2. Verify data
     if (doVerify) {
-        VirgilHash hash = VirgilHash::sha384();
+        VirgilHash hash(kHashAlgorithm_Default);
         hash.start();
         for (PackageMap::const_iterator packageIt = impl_->packageMap.begin(); packageIt != impl_->packageMap.end();
              ++packageIt) {

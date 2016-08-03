@@ -303,7 +303,7 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
         $verifier = new VirgilAsymmetricCipher();
         $verifier->setPublicKey($publicKeyPem512);
 
-        $hash = VirgilHash::sha512();
+        $hash = new VirgilHash(VirgilHash::Algorithm_SHA512);
         $dataToSignValidHash = $hash->hash($dataToSign);
         $dataToSignInvalidHash = $hash->hash($dataToSign."Alien Data");
 

@@ -52,48 +52,48 @@ static inline VirgilKeyPair::Type key_type_from_params(size_t rsa_key_size, mbed
     if (rsa_key_size > 0) {
         switch (rsa_key_size) {
             case 256:
-                return VirgilKeyPair::Type_RSA_256;
+                return VirgilKeyPair::Type::RSA_256;
             case 512:
-                return VirgilKeyPair::Type_RSA_512;
+                return VirgilKeyPair::Type::RSA_512;
             case 1024:
-                return VirgilKeyPair::Type_RSA_1024;
+                return VirgilKeyPair::Type::RSA_1024;
             case 2048:
-                return VirgilKeyPair::Type_RSA_2048;
+                return VirgilKeyPair::Type::RSA_2048;
             case 3072:
-                return VirgilKeyPair::Type_RSA_3072;
+                return VirgilKeyPair::Type::RSA_3072;
             case 4096:
-                return VirgilKeyPair::Type_RSA_4096;
+                return VirgilKeyPair::Type::RSA_4096;
             case 8192:
-                return VirgilKeyPair::Type_RSA_8192;
+                return VirgilKeyPair::Type::RSA_8192;
             default:
                 throw make_error(VirgilCryptoError::InvalidArgument, "Invalid RSA key size was specified.");
         }
     } else if (ecp_group_id != MBEDTLS_ECP_DP_NONE) {
         switch (ecp_group_id) {
             case MBEDTLS_ECP_DP_SECP192R1:
-                return VirgilKeyPair::Type_EC_SECP192R1;
+                return VirgilKeyPair::Type::EC_SECP192R1;
             case MBEDTLS_ECP_DP_SECP224R1:
-                return VirgilKeyPair::Type_EC_SECP224R1;
+                return VirgilKeyPair::Type::EC_SECP224R1;
             case MBEDTLS_ECP_DP_SECP256R1:
-                return VirgilKeyPair::Type_EC_SECP256R1;
+                return VirgilKeyPair::Type::EC_SECP256R1;
             case MBEDTLS_ECP_DP_SECP384R1:
-                return VirgilKeyPair::Type_EC_SECP384R1;
+                return VirgilKeyPair::Type::EC_SECP384R1;
             case MBEDTLS_ECP_DP_SECP521R1:
-                return VirgilKeyPair::Type_EC_SECP521R1;
+                return VirgilKeyPair::Type::EC_SECP521R1;
             case MBEDTLS_ECP_DP_BP256R1:
-                return VirgilKeyPair::Type_EC_BP256R1;
+                return VirgilKeyPair::Type::EC_BP256R1;
             case MBEDTLS_ECP_DP_BP384R1:
-                return VirgilKeyPair::Type_EC_BP384R1;
+                return VirgilKeyPair::Type::EC_BP384R1;
             case MBEDTLS_ECP_DP_BP512R1:
-                return VirgilKeyPair::Type_EC_BP512R1;
+                return VirgilKeyPair::Type::EC_BP512R1;
             case MBEDTLS_ECP_DP_CURVE25519:
-                return VirgilKeyPair::Type_EC_Curve25519;
+                return VirgilKeyPair::Type::EC_Curve25519;
             case MBEDTLS_ECP_DP_SECP192K1:
-                return VirgilKeyPair::Type_EC_SECP192K1;
+                return VirgilKeyPair::Type::EC_SECP192K1;
             case MBEDTLS_ECP_DP_SECP224K1:
-                return VirgilKeyPair::Type_EC_SECP224K1;
+                return VirgilKeyPair::Type::EC_SECP224K1;
             case MBEDTLS_ECP_DP_SECP256K1:
-                return VirgilKeyPair::Type_EC_SECP256K1;
+                return VirgilKeyPair::Type::EC_SECP256K1;
             default:
                 throw make_error(VirgilCryptoError::InvalidArgument, "Unknown EC type was specified.");
         }
@@ -109,62 +109,62 @@ static inline void key_type_set_params(
     *ecp_group_id = MBEDTLS_ECP_DP_NONE;
 
     switch (type) {
-        case VirgilKeyPair::Type_RSA_256:
+        case VirgilKeyPair::Type::RSA_256:
             *rsa_key_size = 256;
             break;
-        case VirgilKeyPair::Type_RSA_512:
+        case VirgilKeyPair::Type::RSA_512:
             *rsa_key_size = 512;
             break;
-        case VirgilKeyPair::Type_RSA_1024:
+        case VirgilKeyPair::Type::RSA_1024:
             *rsa_key_size = 1024;
             break;
-        case VirgilKeyPair::Type_RSA_2048:
+        case VirgilKeyPair::Type::RSA_2048:
             *rsa_key_size = 2048;
             break;
-        case VirgilKeyPair::Type_RSA_3072:
+        case VirgilKeyPair::Type::RSA_3072:
             *rsa_key_size = 3072;
             break;
-        case VirgilKeyPair::Type_RSA_4096:
+        case VirgilKeyPair::Type::RSA_4096:
             *rsa_key_size = 4096;
             break;
-        case VirgilKeyPair::Type_RSA_8192:
+        case VirgilKeyPair::Type::RSA_8192:
             *rsa_key_size = 8192;
             break;
-        case VirgilKeyPair::Type_EC_SECP192R1:
+        case VirgilKeyPair::Type::EC_SECP192R1:
             *ecp_group_id = MBEDTLS_ECP_DP_SECP192R1;
             break;
-        case VirgilKeyPair::Type_EC_SECP224R1:
+        case VirgilKeyPair::Type::EC_SECP224R1:
             *ecp_group_id = MBEDTLS_ECP_DP_SECP224R1;
             break;
-        case VirgilKeyPair::Type_EC_SECP256R1:
+        case VirgilKeyPair::Type::EC_SECP256R1:
             *ecp_group_id = MBEDTLS_ECP_DP_SECP256R1;
             break;
-        case VirgilKeyPair::Type_EC_SECP384R1:
+        case VirgilKeyPair::Type::EC_SECP384R1:
             *ecp_group_id = MBEDTLS_ECP_DP_SECP384R1;
             break;
-        case VirgilKeyPair::Type_EC_SECP521R1:
+        case VirgilKeyPair::Type::EC_SECP521R1:
             *ecp_group_id = MBEDTLS_ECP_DP_SECP521R1;
             break;
-        case VirgilKeyPair::Type_EC_BP256R1:
+        case VirgilKeyPair::Type::EC_BP256R1:
             *ecp_group_id = MBEDTLS_ECP_DP_BP256R1;
             break;
-        case VirgilKeyPair::Type_EC_BP384R1:
+        case VirgilKeyPair::Type::EC_BP384R1:
             *ecp_group_id = MBEDTLS_ECP_DP_BP384R1;
             break;
-        case VirgilKeyPair::Type_EC_BP512R1:
+        case VirgilKeyPair::Type::EC_BP512R1:
             *ecp_group_id = MBEDTLS_ECP_DP_BP512R1;
             break;
-        case VirgilKeyPair::Type_EC_M255:
-        case VirgilKeyPair::Type_Default:
+        case VirgilKeyPair::Type::EC_M255:
+        case VirgilKeyPair::Type::Default:
             *ecp_group_id = MBEDTLS_ECP_DP_CURVE25519;
             break;
-        case VirgilKeyPair::Type_EC_SECP192K1:
+        case VirgilKeyPair::Type::EC_SECP192K1:
             *ecp_group_id = MBEDTLS_ECP_DP_SECP192K1;
             break;
-        case VirgilKeyPair::Type_EC_SECP224K1:
+        case VirgilKeyPair::Type::EC_SECP224K1:
             *ecp_group_id = MBEDTLS_ECP_DP_SECP224K1;
             break;
-        case VirgilKeyPair::Type_EC_SECP256K1:
+        case VirgilKeyPair::Type::EC_SECP256K1:
             *ecp_group_id = MBEDTLS_ECP_DP_SECP256K1;
             break;
         default:

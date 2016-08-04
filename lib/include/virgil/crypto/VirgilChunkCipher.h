@@ -55,9 +55,12 @@ public:
      * @name Constants
      */
     ///@{
-    enum {
-        kPreferredChunkSize = 1024 * 1024 - 1 ///< 1MiB - 1b for padding
-    };
+    /**
+     * @property kPreferredChunkSize
+     * @brief Recommended chunk size.
+     * @note 1MiB - 1b for padding
+     */
+    static constexpr size_t kPreferredChunkSize = 1024 * 1024 - 1;
     ///@}
 public:
     /**

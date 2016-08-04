@@ -502,7 +502,7 @@ VirgilByteArray VirgilTinyCipher::verifyAndDecrypt(
 static VirgilKeyPair::Type pk_type_from_code(unsigned char pkCode) {
     switch (pkCode) {
         case 0x00:
-            return VirgilKeyPair::Type_EC_Curve25519;
+            return VirgilKeyPair::Type::EC_Curve25519;
         default:
             throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
     }
@@ -510,7 +510,7 @@ static VirgilKeyPair::Type pk_type_from_code(unsigned char pkCode) {
 
 static unsigned char pk_type_to_code(VirgilKeyPair::Type pkType) {
     switch (pkType) {
-        case VirgilKeyPair::Type_EC_Curve25519:
+        case VirgilKeyPair::Type::EC_Curve25519:
             return 0x00;
         default:
             throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
@@ -519,7 +519,7 @@ static unsigned char pk_type_to_code(VirgilKeyPair::Type pkType) {
 
 static size_t get_public_key_size(VirgilKeyPair::Type pkType) {
     switch (pkType) {
-        case VirgilKeyPair::Type_EC_Curve25519:
+        case VirgilKeyPair::Type::EC_Curve25519:
             return 32;
         default:
             throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
@@ -532,7 +532,7 @@ static size_t get_public_key_size(unsigned char pkCode) {
 
 static size_t get_sign_size(VirgilKeyPair::Type pkType) {
     switch (pkType) {
-        case VirgilKeyPair::Type_EC_Curve25519:
+        case VirgilKeyPair::Type::EC_Curve25519:
             return 64;
         default:
             throw make_error(VirgilCryptoError::UnsupportedAlgorithm);

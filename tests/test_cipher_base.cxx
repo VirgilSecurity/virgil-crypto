@@ -309,17 +309,17 @@ TEST_CASE("VirgilCipherBase::setContentInfo()", "[cipher-base]") {
 }
 
 TEST_CASE("VirgilCipherBase::computeShared()", "[cipher-base]") {
-    VirgilKeyPair bobCurve25519 = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519);
-    VirgilKeyPair aliceCurve25519 = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519);
+    VirgilKeyPair bobCurve25519 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519);
+    VirgilKeyPair aliceCurve25519 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519);
 
-    VirgilKeyPair bobNist256 = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_SECP256K1);
-    VirgilKeyPair aliceNist256 = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_SECP256K1);
+    VirgilKeyPair bobNist256 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_SECP256K1);
+    VirgilKeyPair aliceNist256 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_SECP256K1);
 
-    VirgilKeyPair bobBrainpool256 = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_BP256R1);
-    VirgilKeyPair aliceBrainpool256 = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_BP256R1);
+    VirgilKeyPair bobBrainpool256 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_BP256R1);
+    VirgilKeyPair aliceBrainpool256 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_BP256R1);
 
-    VirgilKeyPair bobRsa2048 = VirgilKeyPair::generate(VirgilKeyPair::Type_RSA_2048);
-    VirgilKeyPair aliceRsa2048 = VirgilKeyPair::generate(VirgilKeyPair::Type_RSA_2048);
+    VirgilKeyPair bobRsa2048 = VirgilKeyPair::generate(VirgilKeyPair::Type::RSA_2048);
+    VirgilKeyPair aliceRsa2048 = VirgilKeyPair::generate(VirgilKeyPair::Type::RSA_2048);
 
 
     SECTION("Compute shared key on Elliptic Curve keys of the same group") {

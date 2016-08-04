@@ -94,7 +94,7 @@ TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-ci
 
     SECTION("Curve25519 without sign - OK") {
         try {
-            VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519, password);
+            VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, password);
             encCipher.encrypt(testData, keyPair.publicKey());
 
             REQUIRE_FALSE(decCipher.isPackagesAccumulated());
@@ -112,7 +112,7 @@ TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-ci
     }
 
     SECTION("Curve25519 with sign - OK") {
-        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519, password);
+        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, password);
         encCipher.encryptAndSign(testData, keyPair.publicKey(), keyPair.privateKey(), password);
 
         REQUIRE_FALSE(decCipher.isPackagesAccumulated());
@@ -126,7 +126,7 @@ TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-ci
     }
 
     SECTION("Curve25519 without sign - malformed header in the master package") {
-        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519, password);
+        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, password);
         encCipher.encrypt(testData, keyPair.publicKey());
 
         REQUIRE_FALSE(decCipher.isPackagesAccumulated());
@@ -144,7 +144,7 @@ TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-ci
     }
 
     SECTION("Curve25519 without sign - malformed body in the master package") {
-        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519, password);
+        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, password);
         encCipher.encrypt(testData, keyPair.publicKey());
 
         REQUIRE_FALSE(decCipher.isPackagesAccumulated());
@@ -163,7 +163,7 @@ TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-ci
     }
 
     SECTION("Curve25519 with sign - malformed header in the data package") {
-        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519, password);
+        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, password);
         encCipher.encryptAndSign(testData, keyPair.publicKey(), keyPair.privateKey(), password);
 
         REQUIRE_FALSE(decCipher.isPackagesAccumulated());
@@ -182,7 +182,7 @@ TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-ci
     }
 
     SECTION("Curve25519 with sign - malformed body in the data package") {
-        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519, password);
+        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, password);
         encCipher.encryptAndSign(testData, keyPair.publicKey(), keyPair.privateKey(), password);
 
         REQUIRE_FALSE(decCipher.isPackagesAccumulated());

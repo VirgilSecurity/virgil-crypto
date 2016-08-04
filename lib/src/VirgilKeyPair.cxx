@@ -67,67 +67,67 @@ VirgilKeyPair VirgilKeyPair::generateFrom(
 }
 
 VirgilKeyPair VirgilKeyPair::ecNist192(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP192R1);
+    return generate(VirgilKeyPair::Type::EC_SECP192R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecNist224(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP224R1);
+    return generate(VirgilKeyPair::Type::EC_SECP224R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecNist256(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP256R1);
+    return generate(VirgilKeyPair::Type::EC_SECP256R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecNist384(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP384R1);
+    return generate(VirgilKeyPair::Type::EC_SECP384R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecNist521(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP521R1);
+    return generate(VirgilKeyPair::Type::EC_SECP521R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecBrainpool256(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_BP256R1);
+    return generate(VirgilKeyPair::Type::EC_BP256R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecBrainpool384(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_BP384R1);
+    return generate(VirgilKeyPair::Type::EC_BP384R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecBrainpool512(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_BP512R1);
+    return generate(VirgilKeyPair::Type::EC_BP512R1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecKoblitz192(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP192K1);
+    return generate(VirgilKeyPair::Type::EC_SECP192K1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecKoblitz224(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP224K1);
+    return generate(VirgilKeyPair::Type::EC_SECP224K1);
 }
 
 VirgilKeyPair VirgilKeyPair::ecKoblitz256(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP256K1);
+    return generate(VirgilKeyPair::Type::EC_SECP256K1);
 }
 
 VirgilKeyPair VirgilKeyPair::rsa256(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_RSA_256);
+    return generate(VirgilKeyPair::Type::RSA_256);
 }
 
 VirgilKeyPair VirgilKeyPair::rsa512(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_RSA_512);
+    return generate(VirgilKeyPair::Type::RSA_512);
 }
 
 VirgilKeyPair VirgilKeyPair::rsa1024(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_RSA_1024);
+    return generate(VirgilKeyPair::Type::RSA_1024);
 }
 
 VirgilKeyPair VirgilKeyPair::rsa2048(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_RSA_2048);
+    return generate(VirgilKeyPair::Type::RSA_2048);
 }
 
 VirgilKeyPair VirgilKeyPair::rsa4096(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_RSA_4096);
+    return generate(VirgilKeyPair::Type::RSA_4096);
 }
 
 bool VirgilKeyPair::isKeyPairMatch(
@@ -173,7 +173,7 @@ VirgilByteArray VirgilKeyPair::extractPublicKey(
 }
 
 VirgilKeyPair::VirgilKeyPair(const VirgilByteArray& pwd) {
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_Default, pwd);
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::Default, pwd);
     this->publicKey_ = keyPair.publicKey();
     this->privateKey_ = keyPair.privateKey();
 }

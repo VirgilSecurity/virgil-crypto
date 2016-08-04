@@ -80,7 +80,7 @@ TEST_CASE("sign-rsa", "[signer]") {
     VirgilByteArray malformedData = str2bytes("this string will is malformed");
     VirgilByteArray malformedSign = str2bytes("I am malformed sign");
     VirgilByteArray keyPassword = str2bytes("password");
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_RSA_2048, keyPassword);
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::RSA_2048, keyPassword);
 
     VirgilSigner signer;
     VirgilByteArray sign = signer.sign(testData, keyPair.privateKey(), keyPassword);
@@ -101,7 +101,7 @@ TEST_CASE("sign-rsa", "[signer]") {
 TEST_CASE("sign-rsa with small key", "[signer]") {
     VirgilByteArray testData = str2bytes("this string will be signed");
     VirgilByteArray keyPassword = str2bytes("password");
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_RSA_256, keyPassword);
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::RSA_256, keyPassword);
 
     REQUIRE_THROWS(VirgilSigner().sign(testData, keyPair.privateKey(), keyPassword));
 }
@@ -111,7 +111,7 @@ TEST_CASE("sign-curve25519", "[signer]") {
     VirgilByteArray malformedData = str2bytes("this string will is malformed");
     VirgilByteArray malformedSign = str2bytes("I am malformed sign");
     VirgilByteArray keyPassword = str2bytes("password");
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_M255, keyPassword);
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_M255, keyPassword);
 
     VirgilSigner signer;
     VirgilByteArray sign = signer.sign(testData, keyPair.privateKey(), keyPassword);
@@ -134,7 +134,7 @@ TEST_CASE("sign with wrong key password", "[signer]") {
     VirgilByteArray testData = str2bytes("this string will be signed");
     VirgilByteArray keyPassword = str2bytes("password");
     VirgilByteArray wrongKeyPassword = str2bytes("wrong password");
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_M255, keyPassword);
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_M255, keyPassword);
 
     VirgilSigner signer;
     REQUIRE_THROWS_AS(signer.sign(testData, keyPair.privateKey(), wrongKeyPassword), VirgilCryptoException);

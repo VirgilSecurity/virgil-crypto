@@ -341,7 +341,7 @@ TEST_CASE("encrypt and decrypt RSA-3072", "[cipher-rsa]") {
     VirgilByteArray password = str2bytes("password");
     VirgilByteArray testData = str2bytes("this string will be encrypted");
     VirgilByteArray recipientId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_RSA_3072, password);
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::RSA_3072, password);
 
     VirgilCipher cipher;
     cipher.addKeyRecipient(recipientId, keyPair.publicKey());
@@ -380,7 +380,7 @@ TEST_CASE("encrypt and decrypt curve25519", "[cipher]") {
     VirgilByteArray password = str2bytes("password");
     VirgilByteArray testData = str2bytes("this string will be encrypted");
     VirgilByteArray recipientId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_M255);
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_M255);
 
     VirgilCipher cipher;
     cipher.addKeyRecipient(recipientId, keyPair.publicKey());

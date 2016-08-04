@@ -60,7 +60,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilBytesDataSource() throw();
+    virtual ~VirgilBytesDataSource() noexcept;
 
     /**
      * @brief Overriding of @link VirgilDataSource::hasData() @endlink method.

@@ -58,7 +58,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilStreamDataSink() throw();
+    virtual ~VirgilStreamDataSink() noexcept;
 
     /**
      * @brief Overriding of @link VirgilDataSink::isGood() @endlink method.

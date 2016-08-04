@@ -151,7 +151,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilCustomParams() throw();
+    virtual ~VirgilCustomParams() noexcept;
 
 private:
     std::map<VirgilByteArray, int> intValues_;

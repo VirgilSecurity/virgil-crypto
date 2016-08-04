@@ -88,7 +88,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilCMSContentInfo() throw();
+    virtual ~VirgilCMSContentInfo() noexcept;
 };
 
 }}}}

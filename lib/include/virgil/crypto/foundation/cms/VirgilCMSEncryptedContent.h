@@ -87,7 +87,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilCMSEncryptedContent() throw();
+    virtual ~VirgilCMSEncryptedContent() noexcept;
 };
 
 }}}}

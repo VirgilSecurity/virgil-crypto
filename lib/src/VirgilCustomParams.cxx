@@ -59,7 +59,7 @@ static const unsigned char kCMS_StringValueTag = 1;
 static const unsigned char kCMS_DataValueTag = 2;
 ///@}
 
-VirgilCustomParams::~VirgilCustomParams() throw() {
+VirgilCustomParams::~VirgilCustomParams() noexcept {
 }
 
 bool VirgilCustomParams::isEmpty() const {

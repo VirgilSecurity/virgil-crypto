@@ -50,7 +50,7 @@ VirgilStreamDataSource::VirgilStreamDataSource(std::istream& in, size_t chunkSiz
         : in_(in), chunkSize_(std::max(chunkSize, kChunkSizeMin)) {
 }
 
-VirgilStreamDataSource::~VirgilStreamDataSource() throw() {
+VirgilStreamDataSource::~VirgilStreamDataSource() noexcept {
 }
 
 bool VirgilStreamDataSource::hasData() {

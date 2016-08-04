@@ -95,7 +95,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilCMSPasswordRecipient() throw();
+    virtual ~VirgilCMSPasswordRecipient() noexcept;
 };
 
 }}}}

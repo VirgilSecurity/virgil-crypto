@@ -95,7 +95,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilChunkCipher() throw();
+    virtual ~VirgilChunkCipher() noexcept;
 
 private:
     /**

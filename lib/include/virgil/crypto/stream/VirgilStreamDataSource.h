@@ -62,7 +62,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilStreamDataSource() throw();
+    virtual ~VirgilStreamDataSource() noexcept;
 
     /**
      * @brief Overriding of @link VirgilDataSource::hasData() @endlink method.

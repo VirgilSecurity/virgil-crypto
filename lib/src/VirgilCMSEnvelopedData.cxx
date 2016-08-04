@@ -57,7 +57,7 @@ static const unsigned char kCMS_PasswordRecipientTag = 3;
 static const unsigned char kCMS_OtherRecipientTag = 4;
 ///@}
 
-VirgilCMSEnvelopedData::~VirgilCMSEnvelopedData() throw() {
+VirgilCMSEnvelopedData::~VirgilCMSEnvelopedData() noexcept {
 }
 
 size_t VirgilCMSEnvelopedData::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {

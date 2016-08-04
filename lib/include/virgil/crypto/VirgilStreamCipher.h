@@ -53,7 +53,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilStreamCipher() throw();
+    virtual ~VirgilStreamCipher() noexcept;
 
 public:
     /**

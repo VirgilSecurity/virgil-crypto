@@ -50,7 +50,7 @@ VirgilBytesDataSource::VirgilBytesDataSource(const VirgilByteArray& in, size_t c
         : in_(in), chunkSize_(std::max(chunkSize, kChunkSizeMin)), leftBytes_(in.size()) {
 }
 
-VirgilBytesDataSource::~VirgilBytesDataSource() throw() {
+VirgilBytesDataSource::~VirgilBytesDataSource() noexcept {
 }
 
 bool VirgilBytesDataSource::hasData() {

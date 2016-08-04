@@ -57,5 +57,5 @@ void VirgilBytesDataSink::reset() {
     out_.clear();
 }
 
-VirgilBytesDataSink::~VirgilBytesDataSink() throw() {
+VirgilBytesDataSink::~VirgilBytesDataSink() noexcept {
 }

@@ -53,5 +53,5 @@ void VirgilStreamDataSink::write(const VirgilByteArray& data) {
     out_.write(reinterpret_cast<const std::ostream::char_type*>(data.data()), data.size());
 }
 
-VirgilStreamDataSink::~VirgilStreamDataSink() throw() {
+VirgilStreamDataSink::~VirgilStreamDataSink() noexcept {
 }

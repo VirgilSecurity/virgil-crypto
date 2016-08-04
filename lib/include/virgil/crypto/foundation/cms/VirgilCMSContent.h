@@ -100,7 +100,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilCMSContent() throw();
+    virtual ~VirgilCMSContent() noexcept;
 
 private:
     /**

@@ -54,7 +54,7 @@ static const unsigned char kCMS_KeyDerivationAlgorithmTag = 0;
 static const int kCMS_PasswordRecipientVersion = 0;
 ///@}
 
-VirgilCMSPasswordRecipient::~VirgilCMSPasswordRecipient() throw() {
+VirgilCMSPasswordRecipient::~VirgilCMSPasswordRecipient() noexcept {
 }
 
 size_t VirgilCMSPasswordRecipient::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {

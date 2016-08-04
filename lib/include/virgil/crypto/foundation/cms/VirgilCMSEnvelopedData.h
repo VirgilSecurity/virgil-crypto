@@ -111,7 +111,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilCMSEnvelopedData() throw();
+    virtual ~VirgilCMSEnvelopedData() noexcept;
 
 private:
     int defineVersion() const;

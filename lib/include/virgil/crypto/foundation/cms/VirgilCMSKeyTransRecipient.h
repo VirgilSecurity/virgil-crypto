@@ -100,7 +100,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilCMSKeyTransRecipient() throw();
+    virtual ~VirgilCMSKeyTransRecipient() noexcept;
 };
 
 }}}}

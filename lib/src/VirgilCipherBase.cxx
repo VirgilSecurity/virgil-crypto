@@ -100,10 +100,10 @@ public:
  * @name Configuration constants.
  */
 ///@{
-static constexpr VirgilSymmetricCipher::VirgilSymmetricCipherPadding kSymmetricCipher_Padding =
-        VirgilSymmetricCipher::VirgilSymmetricCipherPadding_PKCS7;
-static constexpr VirgilSymmetricCipher::Algorithm kSymmetricCipher_Algorithm =
-        VirgilSymmetricCipher::Algorithm::AES_256_GCM;
+static constexpr VirgilSymmetricCipher::Padding
+        kSymmetricCipher_Padding = VirgilSymmetricCipher::Padding::PKCS7;
+static constexpr VirgilSymmetricCipher::Algorithm
+        kSymmetricCipher_Algorithm = VirgilSymmetricCipher::Algorithm::AES_256_GCM;
 ///@}
 
 VirgilCipherBase::VirgilCipherBase() : impl_(std::make_unique<Impl>()) {}
@@ -175,7 +175,7 @@ VirgilByteArray VirgilCipherBase::getContentInfo() const {
 
 void VirgilCipherBase::setContentInfo(const VirgilByteArray& contentInfo) {
     impl_->contentInfo.fromAsn1(contentInfo);
-    if (impl_->contentInfo.cmsContent.contentType == foundation::cms::VirgilCMSContentType_EnvelopedData) {
+    if (impl_->contentInfo.cmsContent.contentType == foundation::cms::VirgilCMSContent::Type::EnvelopedData) {
         impl_->envelopedData.fromAsn1(impl_->contentInfo.cmsContent.content);
     } else {
         throw make_error(VirgilCryptoError::InvalidFormat);
@@ -198,11 +198,11 @@ VirgilByteArray VirgilCipherBase::computeShared(
         const VirgilByteArray& publicKey, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
 
-        VirgilAsymmetricCipher publicContext;
-        VirgilAsymmetricCipher privateContext;
-        publicContext.setPublicKey(publicKey);
-        privateContext.setPrivateKey(privateKey, privateKeyPassword);
-        return VirgilAsymmetricCipher::computeShared(publicContext, privateContext);
+    VirgilAsymmetricCipher publicContext;
+    VirgilAsymmetricCipher privateContext;
+    publicContext.setPublicKey(publicKey);
+    privateContext.setPrivateKey(privateKey, privateKeyPassword);
+    return VirgilAsymmetricCipher::computeShared(publicContext, privateContext);
 }
 
 VirgilByteArray VirgilCipherBase::tryReadContentInfo(const VirgilByteArray& encryptedData) {
@@ -328,7 +328,7 @@ void VirgilCipherBase::buildContentInfo() {
     impl_->envelopedData.encryptedContent.contentEncryptionAlgorithm = impl_->symmetricCipher.toAsn1();
     impl_->envelopedData.encryptedContent.encryptedContent.clear();
     // Define content info
-    impl_->contentInfo.cmsContent.contentType = foundation::cms::VirgilCMSContentType_EnvelopedData;
+    impl_->contentInfo.cmsContent.contentType = foundation::cms::VirgilCMSContent::Type::EnvelopedData;
     impl_->contentInfo.cmsContent.content = impl_->envelopedData.toAsn1();
 }
 

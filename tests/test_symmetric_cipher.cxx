@@ -66,14 +66,14 @@ TEST_CASE("Symmetric Cipher", "[symmetric-cipher]") {
         // Encrypt
         cipher.setEncryptionKey(key);
         if (cipher.isSupportPadding()) {
-            cipher.setPadding(VirgilSymmetricCipher::VirgilSymmetricCipherPadding_PKCS7);
+            cipher.setPadding(VirgilSymmetricCipher::Padding::PKCS7);
         }
         VirgilByteArray encryptedData = cipher.crypt(plainData, iv);
         // Decrypt
         cipher.clear();
         cipher.setDecryptionKey(key);
         if (cipher.isSupportPadding()) {
-            cipher.setPadding(VirgilSymmetricCipher::VirgilSymmetricCipherPadding_PKCS7);
+            cipher.setPadding(VirgilSymmetricCipher::Padding::PKCS7);
         }
         VirgilByteArray decryptedData = cipher.crypt(encryptedData, iv);
         // Check
@@ -89,14 +89,14 @@ TEST_CASE("Symmetric Cipher", "[symmetric-cipher]") {
         // Encrypt
         cipher.setEncryptionKey(key);
         if (cipher.isSupportPadding()) {
-            cipher.setPadding(VirgilSymmetricCipher::VirgilSymmetricCipherPadding_PKCS7);
+            cipher.setPadding(VirgilSymmetricCipher::Padding::PKCS7);
         }
         VirgilByteArray encryptedData = cipher.crypt(plainData, iv);
         // Decrypt
         cipher.clear();
         cipher.setDecryptionKey(key);
         if (cipher.isSupportPadding()) {
-            cipher.setPadding(VirgilSymmetricCipher::VirgilSymmetricCipherPadding_PKCS7);
+            cipher.setPadding(VirgilSymmetricCipher::Padding::PKCS7);
         }
         VirgilByteArray decryptedData = cipher.crypt(encryptedData, iv);
         // Check

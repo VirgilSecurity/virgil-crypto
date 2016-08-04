@@ -55,12 +55,16 @@ public:
      * @name Additional types
      */
     ///@{
-    typedef enum {
-        VirgilSymmetricCipherPadding_PKCS7,
-        VirgilSymmetricCipherPadding_OneAndZeros,
-        VirgilSymmetricCipherPadding_ZerosAndLen,
-        VirgilSymmetricCipherPadding_Zeros
-    } VirgilSymmetricCipherPadding;
+    /**
+     * @brief Padding modes for the symmetric cipher.
+     */
+    enum class Padding {
+        PKCS7 = 0,   ///< Padding mode: PKCS7 padding (default)
+        OneAndZeros, ///< Padding mode: ISO/IEC 7816-4 padding
+        ZerosAndLen, ///< Padding mode: ANSI X.923 padding
+        Zeros,       ///< Padding mode: zero padding (not reversible!)
+        None         ///< Padding mode: never pad (full blocks only)
+    };
 
     /**
      * Enumerates possible Symmetric Cipher algorithms.
@@ -183,7 +187,7 @@ public:
      * @note This parameter is used only for cipher modes that use padding.
      * @see isSupportPadding()
      */
-    void setPadding(VirgilSymmetricCipherPadding padding);
+    void setPadding(VirgilSymmetricCipher::Padding padding);
 
     /**
      * @brief Configures the initialization vector.

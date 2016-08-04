@@ -59,21 +59,22 @@ public:
     /**
      * @brief Defines specific password based key derivation function algorithm
      */
-    typedef enum {
-        Algorithm_None = 0, ///< No algorithm defined
-        Algorithm_PBKDF2    ///< Defines PBKDF2 algorithm (https://www.ietf.org/rfc/rfc2898.txt)
-    } Algorithm;
+    enum class Algorithm {
+        None = 0, ///< No algorithm defined
+        PBKDF2    ///< Defines PBKDF2 algorithm (https://www.ietf.org/rfc/rfc2898.txt)
+    };
     /**
      * @brief Defines specific underlying hash algorithm for the password based key derivation function algorithm
      * @note Start numbering from 1, 0 is reserved.
      */
-    typedef enum {
-        Hash_SHA1 = 1, ///< Defines SHA1 hash algorithm
-        Hash_SHA224,   ///< Defines SHA-224 hash algorithm
-        Hash_SHA256,   ///< Defines SHA-256 hash algorithm
-        Hash_SHA384,   ///< Defines SHA-384 hash algorithm
-        Hash_SHA512    ///< Defines SHA-512 hash algorithm
-    } Hash;
+    enum class Hash {
+        None = 0, ///< No hash algorithm defined
+        SHA1,     ///< Defines SHA1 hash algorithm
+        SHA224,   ///< Defines SHA-224 hash algorithm
+        SHA256,   ///< Defines SHA-256 hash algorithm
+        SHA384,   ///< Defines SHA-384 hash algorithm
+        SHA512    ///< Defines SHA-512 hash algorithm
+    };
 
     /**
      * @name Constructor / Destructor

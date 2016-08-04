@@ -45,32 +45,32 @@
 namespace virgil { namespace crypto { namespace foundation { namespace cms {
 
 /**
- * @brief Enumeration of possible CMS Content Types
- * @see RFC 5652 section 3.
- */
-typedef enum {
-    VirgilCMSContentType_Data = 0,
-    VirgilCMSContentType_SignedData,
-    VirgilCMSContentType_EnvelopedData,
-    VirgilCMSContentType_DigestedData,
-    VirgilCMSContentType_EncryptedData,
-    VirgilCMSContentType_AuthenticatedData,
-    VirgilCMSContentType_SignedAndEnvelopedData,
-    VirgilCMSContentType_DataWithAttributes,
-    VirgilCMSContentType_EncryptedPrivateKeyInfo
-} VirgilCMSContentType;
-
-/**
  * @brief Data object that represent CMS structure: ContentInfo.
  * @see RFC 5652 section 3.
  */
 class VirgilCMSContent : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
     /**
+     * @brief Enumeration of possible CMS Content Types
+     * @see RFC 5652 section 3.
+     */
+    enum class Type {
+        Data = 0,
+        SignedData,
+        EnvelopedData,
+        DigestedData,
+        EncryptedData,
+        AuthenticatedData,
+        SignedAndEnvelopedData,
+        DataWithAttributes,
+        EncryptedPrivateKeyInfo
+    };
+
+    /**
      * @property contentType
      * @brief Indicates the type of the associated content.
      */
-    VirgilCMSContentType contentType;
+    VirgilCMSContent::Type contentType;
     /**
      * @property content
      * @brief Associated data.
@@ -106,12 +106,12 @@ private:
     /**
      * @brief Convert given content type to the appropriate OID.
      */
-    static std::string contentTypeToOID(VirgilCMSContentType contentType);
+    static std::string contentTypeToOID(VirgilCMSContent::Type contentType);
 
     /**
      * @brief Convert given OID to the appropriate content type.
      */
-    static VirgilCMSContentType oidToContentType(const std::string& oid);
+    static VirgilCMSContent::Type oidToContentType(const std::string& oid);
 };
 
 }}}}

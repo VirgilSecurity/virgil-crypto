@@ -104,54 +104,52 @@ void gen_key_pair(
  */
 class KeyExportHelper {
 public:
-    typedef enum {
-        DER = 0,
-        PEM
-    } Format;
-    typedef enum {
-        Public = 0,
-        Private
-    } Type;
+    enum class Format {
+        Public_DER,
+        Public_PEM,
+        Private_DER,
+        Private_PEM
+    };
 
-    KeyExportHelper(mbedtls_pk_context* ctx, Format format, Type type, const VirgilByteArray& pwd = VirgilByteArray())
-            : ctx_(ctx), format_(format), type_(type), pwd_(pwd) {}
+    KeyExportHelper(mbedtls_pk_context* ctx, Format format, const VirgilByteArray& pwd = VirgilByteArray())
+            : ctx_(ctx), format_(format), pwd_(pwd) {}
 
-    Format format() const { return format_; }
+    bool isDER() const noexcept {
+        return format_ == Format::Public_DER || format_ == Format::Private_DER;
+    }
 
-    Type type() const { return type_; }
+    bool isPEM() const noexcept {
+        return format_ == Format::Public_PEM|| format_ == Format::Private_PEM;
+    }
 
     int operator()(unsigned char* buf, size_t bufLen) {
         VirgilRandom random(VirgilByteArrayUtils::stringToBytes("key_export"));
         VirgilByteArray pbesAlg = VirgilAsn1Alg::buildPKCS5(random.randomize(16), random.randomize(3072, 8192));
-        if (type_ == Public && format_ == PEM) {
-            return mbedtls_pk_write_pubkey_pem(ctx_, buf, bufLen);
+        switch (format_) {
+            case Format::Public_DER:
+                return mbedtls_pk_write_pubkey_der(ctx_, buf, bufLen);
+            case Format::Public_PEM:
+                return mbedtls_pk_write_pubkey_pem(ctx_, buf, bufLen);
+            case Format::Private_DER:
+                if (pwd_.empty()) {
+                    return mbedtls_pk_write_key_der(ctx_, buf, bufLen);
+                } else {
+                    return mbedtls_pk_write_key_pkcs8_der(ctx_, buf, bufLen, pwd_.data(), pwd_.size(),
+                            pbesAlg.data(), pbesAlg.size());
+                }
+            case Format::Private_PEM:
+                if (pwd_.empty()) {
+                    return mbedtls_pk_write_key_pem(ctx_, buf, bufLen);
+                } else {
+                    return mbedtls_pk_write_key_pkcs8_pem(ctx_, buf, bufLen, pwd_.data(), pwd_.size(),
+                            pbesAlg.data(), pbesAlg.size());
+                }
         }
-        if (type_ == Public && format_ == DER) {
-            return mbedtls_pk_write_pubkey_der(ctx_, buf, bufLen);
-        }
-        if (type_ == Private && format_ == PEM) {
-            if (pwd_.empty()) {
-                return mbedtls_pk_write_key_pem(ctx_, buf, bufLen);
-            } else {
-                return mbedtls_pk_write_key_pkcs8_pem(ctx_, buf, bufLen, pwd_.data(), pwd_.size(),
-                        pbesAlg.data(), pbesAlg.size());
-            }
-        }
-        if (type_ == Private && format_ == DER) {
-            if (pwd_.empty()) {
-                return mbedtls_pk_write_key_der(ctx_, buf, bufLen);
-            } else {
-                return mbedtls_pk_write_key_pkcs8_der(ctx_, buf, bufLen, pwd_.data(), pwd_.size(),
-                        pbesAlg.data(), pbesAlg.size());
-            }
-        }
-        throw make_error(VirgilCryptoError::InvalidArgument, "Undefined key type or serialization format");
     }
 
 private:
     mbedtls_pk_context* ctx_;
     Format format_;
-    Type type_;
     VirgilByteArray pwd_;
 };
 
@@ -173,12 +171,12 @@ static VirgilByteArray exportKey(KeyExportHelper& keyExportHelper) {
     );
 
     size_t writtenBytes = 0;
-    if (keyExportHelper.format() == KeyExportHelper::DER && result > 0) {
+    if (keyExportHelper.isDER() && result > 0) {
         // Define written bytes for DER format
         writtenBytes += result;
         // Change result's begin for DER format.
         memmove(exportedKey.data(), exportedKey.data() + exportedKey.size() - writtenBytes, writtenBytes);
-    } else if (keyExportHelper.format() == KeyExportHelper::PEM && result == 0) {
+    } else if (keyExportHelper.isPEM() && result == 0) {
         // Define written bytes for PEM format
         writtenBytes = ::strlen(reinterpret_cast<const char*>(exportedKey.data()));
     }
@@ -406,28 +404,28 @@ VirgilByteArray VirgilAsymmetricCipher::computeShared(
 VirgilByteArray VirgilAsymmetricCipher::exportPrivateKeyToDER(const VirgilByteArray& pwd) const {
     checkState();
     internal::KeyExportHelper keyExportHelper
-            (impl_->pk_ctx.get(), internal::KeyExportHelper::DER, internal::KeyExportHelper::Private, pwd);
+            (impl_->pk_ctx.get(), internal::KeyExportHelper::Format::Private_DER, pwd);
     return internal::exportKey(keyExportHelper);
 }
 
 VirgilByteArray VirgilAsymmetricCipher::exportPublicKeyToDER() const {
     checkState();
     internal::KeyExportHelper
-            keyExportHelper(impl_->pk_ctx.get(), internal::KeyExportHelper::DER, internal::KeyExportHelper::Public);
+            keyExportHelper(impl_->pk_ctx.get(), internal::KeyExportHelper::Format::Public_DER);
     return internal::exportKey(keyExportHelper);
 }
 
 VirgilByteArray VirgilAsymmetricCipher::exportPrivateKeyToPEM(const VirgilByteArray& pwd) const {
     checkState();
     internal::KeyExportHelper keyExportHelper
-            (impl_->pk_ctx.get(), internal::KeyExportHelper::PEM, internal::KeyExportHelper::Private, pwd);
+            (impl_->pk_ctx.get(), internal::KeyExportHelper::Format::Private_PEM, pwd);
     return internal::exportKey(keyExportHelper);
 }
 
 VirgilByteArray VirgilAsymmetricCipher::exportPublicKeyToPEM() const {
     checkState();
     internal::KeyExportHelper
-            keyExportHelper(impl_->pk_ctx.get(), internal::KeyExportHelper::PEM, internal::KeyExportHelper::Public);
+            keyExportHelper(impl_->pk_ctx.get(), internal::KeyExportHelper::Format::Public_PEM);
     return internal::exportKey(keyExportHelper);
 }
 

@@ -60,6 +60,14 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 using virgil::crypto::foundation::internal::VirgilTagFilter;
 
 
+namespace virgil { namespace crypto { namespace foundation { namespace internal {
+/**
+ * @brief Types convertion VirgilSymmetricCipher::Padding -> mbedtls_cipher_padding_t
+ */
+mbedtls_cipher_padding_t convert_padding(VirgilSymmetricCipher::Padding padding) noexcept;
+
+}}}}
+
 struct VirgilSymmetricCipher::Impl {
     internal::mbedtls_context <mbedtls_cipher_context_t> cipher_ctx;
     VirgilByteArray iv;
@@ -163,25 +171,10 @@ void VirgilSymmetricCipher::setDecryptionKey(const VirgilByteArray& key) {
     );
 }
 
-void VirgilSymmetricCipher::setPadding(VirgilSymmetricCipherPadding padding) {
+void VirgilSymmetricCipher::setPadding(VirgilSymmetricCipher::Padding padding) {
     checkState();
-    mbedtls_cipher_padding_t paddingCode = MBEDTLS_PADDING_NONE;
-    switch (padding) {
-        case VirgilSymmetricCipherPadding_PKCS7:
-            paddingCode = MBEDTLS_PADDING_PKCS7;
-            break;
-        case VirgilSymmetricCipherPadding_OneAndZeros:
-            paddingCode = MBEDTLS_PADDING_ONE_AND_ZEROS;
-            break;
-        case VirgilSymmetricCipherPadding_ZerosAndLen:
-            paddingCode = MBEDTLS_PADDING_ZEROS_AND_LEN;
-            break;
-        case VirgilSymmetricCipherPadding_Zeros:
-            paddingCode = MBEDTLS_PADDING_ZEROS;
-            break;
-    }
     system_crypto_handler(
-            mbedtls_cipher_set_padding_mode(impl_->cipher_ctx.get(), paddingCode),
+            mbedtls_cipher_set_padding_mode(impl_->cipher_ctx.get(), internal::convert_padding(padding)),
             [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
     );
 }
@@ -351,3 +344,22 @@ std::string std::to_string(virgil::crypto::foundation::VirgilSymmetricCipher::Al
             return "AES-256-GCM";
     }
 }
+
+namespace virgil { namespace crypto { namespace foundation { namespace internal {
+
+mbedtls_cipher_padding_t convert_padding(VirgilSymmetricCipher::Padding padding) noexcept {
+    switch (padding) {
+        case VirgilSymmetricCipher::Padding::PKCS7:
+            return MBEDTLS_PADDING_PKCS7;
+        case VirgilSymmetricCipher::Padding::OneAndZeros:
+            return MBEDTLS_PADDING_ONE_AND_ZEROS;
+        case VirgilSymmetricCipher::Padding::ZerosAndLen:
+            return MBEDTLS_PADDING_ZEROS_AND_LEN;
+        case VirgilSymmetricCipher::Padding::Zeros:
+            return MBEDTLS_PADDING_ZEROS;
+        case VirgilSymmetricCipher::Padding::None:
+            return MBEDTLS_PADDING_NONE;
+    }
+}
+
+}}}}

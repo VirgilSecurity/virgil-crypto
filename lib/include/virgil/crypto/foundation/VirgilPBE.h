@@ -63,9 +63,11 @@ public:
      * @name Constants
      */
     ///@{
-    enum {
-        kIterationCountMin = 1024 ///< Recommended iteration count that is used for key derivation
-    };
+    /**
+     * @property kIterationCountMin
+     * @brief Recommended iteration count that is used for key derivation.
+     */
+    static constexpr size_t kIterationCountMin = 1024;
     ///@}
 public:
     /**

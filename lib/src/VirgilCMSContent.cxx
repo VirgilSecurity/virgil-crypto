@@ -46,7 +46,6 @@
 #include <virgil/crypto/internal/utils.h>
 
 using virgil::crypto::foundation::cms::VirgilCMSContent;
-using virgil::crypto::foundation::cms::VirgilCMSContentType;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
@@ -82,50 +81,48 @@ void VirgilCMSContent::asn1Read(VirgilAsn1Reader& asn1Reader) {
     }
 }
 
-std::string VirgilCMSContent::contentTypeToOID(VirgilCMSContentType contentType) {
+std::string VirgilCMSContent::contentTypeToOID(VirgilCMSContent::Type contentType) {
     switch (contentType) {
-        case VirgilCMSContentType_Data:
+        case VirgilCMSContent::Type::Data:
             return OID_TO_STD_STRING(OID_PKCS7_DATA);
-        case VirgilCMSContentType_SignedData:
+        case VirgilCMSContent::Type::SignedData:
             return OID_TO_STD_STRING(OID_PKCS7_SIGNED_DATA);
-        case VirgilCMSContentType_EnvelopedData:
+        case VirgilCMSContent::Type::EnvelopedData:
             return OID_TO_STD_STRING(OID_PKCS7_ENVELOPED_DATA);
-        case VirgilCMSContentType_SignedAndEnvelopedData:
+        case VirgilCMSContent::Type::SignedAndEnvelopedData:
             return OID_TO_STD_STRING(OID_PKCS7_SIGNED_AND_ENVELOPED_DATA);
-        case VirgilCMSContentType_DigestedData:
+        case VirgilCMSContent::Type::DigestedData:
             return OID_TO_STD_STRING(OID_PKCS7_DIGESTED_DATA);
-        case VirgilCMSContentType_EncryptedData:
+        case VirgilCMSContent::Type::EncryptedData:
             return OID_TO_STD_STRING(OID_PKCS7_ENCRYPTED_DATA);
-        case VirgilCMSContentType_DataWithAttributes:
+        case VirgilCMSContent::Type::DataWithAttributes:
             return OID_TO_STD_STRING(OID_PKCS7_DATA_WITH_ATTRIBUTES);
-        case VirgilCMSContentType_EncryptedPrivateKeyInfo:
+        case VirgilCMSContent::Type::EncryptedPrivateKeyInfo:
             return OID_TO_STD_STRING(OID_PKCS7_ENCRYPTED_PRIVATE_KEY_INFO);
-        case VirgilCMSContentType_AuthenticatedData:
+        case VirgilCMSContent::Type::AuthenticatedData:
             return OID_TO_STD_STRING(OID_PKCS9_AUTHENTICATED_DATA);
-        default:
-            throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
     }
 }
 
-VirgilCMSContentType VirgilCMSContent::oidToContentType(const std::string& oid) {
+VirgilCMSContent::Type VirgilCMSContent::oidToContentType(const std::string& oid) {
     if (compareOID(OID_TO_STD_STRING(OID_PKCS7_DATA), oid)) {
-        return VirgilCMSContentType_Data;
+        return VirgilCMSContent::Type::Data;
     } else if (compareOID(OID_TO_STD_STRING(OID_PKCS7_SIGNED_DATA), oid)) {
-        return VirgilCMSContentType_SignedData;
+        return VirgilCMSContent::Type::SignedData;
     } else if (compareOID(OID_TO_STD_STRING(OID_PKCS7_ENVELOPED_DATA), oid)) {
-        return VirgilCMSContentType_EnvelopedData;
+        return VirgilCMSContent::Type::EnvelopedData;
     } else if (compareOID(OID_TO_STD_STRING(OID_PKCS7_DIGESTED_DATA), oid)) {
-        return VirgilCMSContentType_DigestedData;
+        return VirgilCMSContent::Type::DigestedData;
     } else if (compareOID(OID_TO_STD_STRING(OID_PKCS7_ENCRYPTED_DATA), oid)) {
-        return VirgilCMSContentType_EncryptedData;
+        return VirgilCMSContent::Type::EncryptedData;
     } else if (compareOID(OID_TO_STD_STRING(OID_PKCS9_AUTHENTICATED_DATA), oid)) {
-        return VirgilCMSContentType_AuthenticatedData;
+        return VirgilCMSContent::Type::AuthenticatedData;
     } else if (compareOID(OID_TO_STD_STRING(OID_PKCS7_SIGNED_AND_ENVELOPED_DATA), oid)) {
-        return VirgilCMSContentType_SignedAndEnvelopedData;
+        return VirgilCMSContent::Type::SignedAndEnvelopedData;
     } else if (compareOID(OID_TO_STD_STRING(OID_PKCS7_DATA_WITH_ATTRIBUTES), oid)) {
-        return VirgilCMSContentType_DataWithAttributes;
+        return VirgilCMSContent::Type::DataWithAttributes;
     } else if (compareOID(OID_TO_STD_STRING(OID_PKCS7_ENCRYPTED_PRIVATE_KEY_INFO), oid)) {
-        return VirgilCMSContentType_EncryptedPrivateKeyInfo;
+        return VirgilCMSContent::Type::EncryptedPrivateKeyInfo;
     } else {
         throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
     }

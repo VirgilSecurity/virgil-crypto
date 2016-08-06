@@ -57,9 +57,6 @@ using virgil::crypto::foundation::VirgilSymmetricCipher;
 static const char* const kCustomParameterKey_ChunkSize = "chunkSize";
 ///@}
 
-VirgilChunkCipher::~VirgilChunkCipher() noexcept {
-}
-
 static size_t adjustEncryptionChunkSize(size_t preferredChunkSize, size_t cipherBlockSize, bool isSupportPadding) {
     if (isSupportPadding) {
         if (preferredChunkSize < cipherBlockSize) {

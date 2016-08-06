@@ -57,9 +57,6 @@ static const unsigned char kAsn1_CustomParamsTag = 0;
 static const int kAsn1_ContentInfoVersion = 0;
 ///@}
 
-VirgilCMSContentInfo::~VirgilCMSContentInfo() noexcept {
-}
-
 size_t VirgilCMSContentInfo::defineSize(const VirgilByteArray& data) {
     if (data.empty()) {
         return 0;

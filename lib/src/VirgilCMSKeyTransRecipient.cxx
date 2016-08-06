@@ -54,9 +54,6 @@ static const unsigned char kCMS_SubjectKeyTag = 0;
 static const int kCMS_KeyTransRecipientVersion = 2;
 ///@}
 
-VirgilCMSKeyTransRecipient::~VirgilCMSKeyTransRecipient() noexcept {
-}
-
 size_t VirgilCMSKeyTransRecipient::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t len = 0;
 

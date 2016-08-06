@@ -49,9 +49,6 @@ using virgil::crypto::foundation::VirgilKDF;
 using virgil::crypto::foundation::VirgilSymmetricCipher;
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
-VirgilStreamCipher::~VirgilStreamCipher() noexcept {
-}
-
 void VirgilStreamCipher::encrypt(VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo) {
 
     VirgilSymmetricCipher& symmetricCipher = initEncryption();

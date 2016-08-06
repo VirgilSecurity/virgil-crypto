@@ -148,11 +148,6 @@ public:
      */
     void clear();
     ///@}
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilCustomParams() noexcept;
-
 private:
     std::map<VirgilByteArray, int> intValues_;
     std::map<VirgilByteArray, VirgilByteArray> stringValues_;

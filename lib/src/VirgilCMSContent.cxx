@@ -56,9 +56,6 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 static const unsigned char kCMS_ContentTag = 0;
 ///@}
 
-VirgilCMSContent::~VirgilCMSContent() noexcept {
-}
-
 size_t VirgilCMSContent::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t len = 0;
 

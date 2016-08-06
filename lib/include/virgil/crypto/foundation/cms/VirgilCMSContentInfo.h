@@ -84,11 +84,6 @@ public:
 
     void asn1Read(asn1::VirgilAsn1Reader& asn1Reader) override;
     ///@}
-public:
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilCMSContentInfo() noexcept;
 };
 
 }}}}

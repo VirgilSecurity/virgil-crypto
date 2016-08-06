@@ -91,11 +91,6 @@ public:
 
     virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
-public:
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilCMSPasswordRecipient() noexcept;
 };
 
 }}}}

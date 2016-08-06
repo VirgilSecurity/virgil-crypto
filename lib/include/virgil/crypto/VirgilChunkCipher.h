@@ -94,12 +94,6 @@ public:
      * @note Call this method after encryption or decryption are done to prevent security issues.
      */
     void finish();
-
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilChunkCipher() noexcept;
-
 private:
     /**
      * @brief Store actual chunk size in the custom parameters.

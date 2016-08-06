@@ -25,13 +25,13 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - libcurl4-openssl-dev
-      - g++-6
+      - g++-5
       - php5
       - php5-dev
       - php5-cli
       - graphviz
 install:
-- if [ "$CXX" = "g++" ]; then export CXX="g++-6" CC="gcc-6"; fi
+- if [ "$CXX" = "g++" ]; then export CXX="g++-5" CC="gcc-5"; fi
 before_install:
   - bash ./ci/install-cmake.sh
   - bash ./ci/install-swig.sh

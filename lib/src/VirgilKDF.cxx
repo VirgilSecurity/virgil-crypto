@@ -114,11 +114,11 @@ VirgilKDF::VirgilKDF(const std::string& name) : impl_(std::make_unique<Impl>(nam
 VirgilKDF::VirgilKDF(const char* name) : impl_(std::make_unique<Impl>(name, kHashType_Default)) {
 }
 
-VirgilKDF::~VirgilKDF() noexcept {}
+VirgilKDF::VirgilKDF(VirgilKDF&& rhs) noexcept = default;
 
-VirgilKDF::VirgilKDF(VirgilKDF&& rhs) = default;
+VirgilKDF& VirgilKDF::operator=(VirgilKDF&& rhs) noexcept = default;
 
-VirgilKDF& VirgilKDF::operator=(VirgilKDF&& rhs) = default;
+VirgilKDF::~VirgilKDF() noexcept = default;
 
 std::string VirgilKDF::name() const {
     checkState();

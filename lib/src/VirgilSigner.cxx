@@ -53,9 +53,9 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 VirgilSigner::VirgilSigner(VirgilHash::Algorithm hashAlgorithm) : hash_(hashAlgorithm) {
 }
 
-VirgilSigner::VirgilSigner(VirgilSigner&& rhs) = default;
+VirgilSigner::VirgilSigner(VirgilSigner&& rhs) noexcept = default;
 
-VirgilSigner& VirgilSigner::operator=(VirgilSigner&& rhs) = default;
+VirgilSigner& VirgilSigner::operator=(VirgilSigner&& rhs) noexcept = default;
 
 VirgilByteArray VirgilSigner::sign(
         const VirgilByteArray& data, const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {

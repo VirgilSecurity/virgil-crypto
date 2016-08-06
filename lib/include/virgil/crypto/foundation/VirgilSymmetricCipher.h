@@ -267,9 +267,9 @@ public:
     ///@}
 public:
     //! @cond Doxygen_Suppress
-    VirgilSymmetricCipher(VirgilSymmetricCipher&& rhs);
+    VirgilSymmetricCipher(VirgilSymmetricCipher&& rhs) noexcept;
 
-    VirgilSymmetricCipher& operator=(VirgilSymmetricCipher&& rhs);
+    VirgilSymmetricCipher& operator=(VirgilSymmetricCipher&& rhs) noexcept;
 
     virtual ~VirgilSymmetricCipher() noexcept;
     //! @endcond

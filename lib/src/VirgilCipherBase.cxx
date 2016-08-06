@@ -108,11 +108,11 @@ static constexpr VirgilSymmetricCipher::Algorithm
 
 VirgilCipherBase::VirgilCipherBase() : impl_(std::make_unique<Impl>()) {}
 
+VirgilCipherBase::VirgilCipherBase(VirgilCipherBase&& rhs) noexcept = default;
+
+VirgilCipherBase& VirgilCipherBase::operator=(VirgilCipherBase&& rhs) noexcept = default;
+
 VirgilCipherBase::~VirgilCipherBase() noexcept = default;
-
-VirgilCipherBase::VirgilCipherBase(VirgilCipherBase&& other) = default;
-
-VirgilCipherBase& VirgilCipherBase::operator=(VirgilCipherBase&& rhs) = default;
 
 
 void VirgilCipherBase::addKeyRecipient(const VirgilByteArray& recipientId, const VirgilByteArray& publicKey) {

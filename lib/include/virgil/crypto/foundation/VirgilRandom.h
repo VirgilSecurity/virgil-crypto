@@ -103,9 +103,9 @@ public:
 
 public:
     //! @cond Doxygen_Suppress
-    VirgilRandom(VirgilRandom&& other);
+    VirgilRandom(VirgilRandom&& rhs) noexcept;
 
-    VirgilRandom& operator=(VirgilRandom&& other);
+    VirgilRandom& operator=(VirgilRandom&& rhs) noexcept;
 
     virtual ~VirgilRandom() noexcept;
     //! @endcond

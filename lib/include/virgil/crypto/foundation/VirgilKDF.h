@@ -142,9 +142,9 @@ public:
     ///@}
 public:
     //! @cond Doxygen_Suppress
-    VirgilKDF(VirgilKDF&& rhs);
+    VirgilKDF(VirgilKDF&& rhs) noexcept;
 
-    VirgilKDF& operator=(VirgilKDF&& rhs);
+    VirgilKDF& operator=(VirgilKDF&& rhs) noexcept;
 
     virtual ~VirgilKDF() noexcept;
     //! @endcond

@@ -285,9 +285,9 @@ protected:
 
 public:
     //! @cond Doxygen_Suppress
-    VirgilCipherBase(VirgilCipherBase&& rhs);
+    VirgilCipherBase(VirgilCipherBase&& rhs) noexcept;
 
-    VirgilCipherBase& operator=(VirgilCipherBase&& rhs);
+    VirgilCipherBase& operator=(VirgilCipherBase&& rhs) noexcept;
 
     virtual ~VirgilCipherBase() noexcept;
     //! @endcond

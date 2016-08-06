@@ -229,9 +229,9 @@ public:
 
 public:
     //! @cond Doxygen_Suppress
-    VirgilHash(VirgilHash&& other);
+    VirgilHash(VirgilHash&& rhs) noexcept;
 
-    VirgilHash& operator=(VirgilHash&& rhs);
+    VirgilHash& operator=(VirgilHash&& rhs) noexcept;
 
     virtual ~VirgilHash() noexcept;
     //! @endcond

@@ -89,11 +89,11 @@ VirgilSymmetricCipher::VirgilSymmetricCipher(const char* name) : impl_(std::make
     impl_->cipher_ctx.setup(name);
 }
 
-VirgilSymmetricCipher::VirgilSymmetricCipher(VirgilSymmetricCipher&&) = default;
+VirgilSymmetricCipher::VirgilSymmetricCipher(VirgilSymmetricCipher&&) noexcept = default;
 
-VirgilSymmetricCipher& VirgilSymmetricCipher::operator=(VirgilSymmetricCipher&&) = default;
+VirgilSymmetricCipher& VirgilSymmetricCipher::operator=(VirgilSymmetricCipher&&) noexcept = default;
 
-VirgilSymmetricCipher::~VirgilSymmetricCipher() noexcept {}
+VirgilSymmetricCipher::~VirgilSymmetricCipher() noexcept = default;
 
 std::string VirgilSymmetricCipher::name() const {
     checkState();

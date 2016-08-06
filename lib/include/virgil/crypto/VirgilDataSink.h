@@ -58,7 +58,7 @@ public:
      */
     virtual void write(const VirgilByteArray& data) = 0;
 
-    virtual ~VirgilDataSink() noexcept { }
+    virtual ~VirgilDataSink() noexcept = default;
 };
 
 }}

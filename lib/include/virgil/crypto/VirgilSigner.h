@@ -71,9 +71,9 @@ public:
 
 public:
     //! @cond Doxygen_Suppress
-    VirgilSigner& operator=(VirgilSigner&& rhs);
+    VirgilSigner& operator=(VirgilSigner&& rhs) noexcept;
 
-    VirgilSigner(VirgilSigner&& rhs);
+    VirgilSigner(VirgilSigner&& rhs) noexcept;
     //! @endcond
 private:
     foundation::VirgilHash hash_;

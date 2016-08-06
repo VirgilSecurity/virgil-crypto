@@ -293,11 +293,11 @@ VirgilTinyCipher::VirgilTinyCipher(size_t packageSize) : impl_(std::make_unique<
     impl_->packageSize = packageSize;
 }
 
-VirgilTinyCipher::~VirgilTinyCipher() noexcept {}
+VirgilTinyCipher::VirgilTinyCipher(VirgilTinyCipher&& rhs) noexcept = default;
 
-VirgilTinyCipher::VirgilTinyCipher(VirgilTinyCipher&& rhs) = default;
+VirgilTinyCipher& VirgilTinyCipher::operator=(VirgilTinyCipher&& rhs) noexcept = default;
 
-VirgilTinyCipher& VirgilTinyCipher::operator=(VirgilTinyCipher&& rhs) = default;
+VirgilTinyCipher::~VirgilTinyCipher() noexcept = default;
 
 void VirgilTinyCipher::reset() {
     impl_->packageMap.clear();

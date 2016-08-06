@@ -57,6 +57,12 @@ public:
      * @brief Transform given base64 string to the bytes.
      */
     static virgil::crypto::VirgilByteArray decode(const std::string& base64str);
+public:
+    /**
+     * @brief Deny object creation.
+     */
+    VirgilBase64() = delete;
+
 };
 
 }}}

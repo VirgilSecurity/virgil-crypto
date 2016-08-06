@@ -58,7 +58,7 @@ public:
      */
     virtual VirgilByteArray read() = 0;
 
-    virtual ~VirgilDataSource() noexcept { }
+    virtual ~VirgilDataSource() noexcept = default;
 };
 
 }}

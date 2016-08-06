@@ -265,9 +265,9 @@ public:
     /// @}
 public:
     //! @cond Doxygen_Suppress
-    VirgilTinyCipher(VirgilTinyCipher&& rhs);
+    VirgilTinyCipher(VirgilTinyCipher&& rhs) noexcept;
 
-    VirgilTinyCipher& operator=(VirgilTinyCipher&& rhs);
+    VirgilTinyCipher& operator=(VirgilTinyCipher&& rhs) noexcept;
 
     virtual ~VirgilTinyCipher() noexcept;
     //! @endcond

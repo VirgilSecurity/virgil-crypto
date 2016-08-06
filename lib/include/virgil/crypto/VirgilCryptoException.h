@@ -82,9 +82,6 @@ public:
      * @return null terminated character sequence that may be used to identify the exception.
      */
     const char* what() const noexcept override;
-
-    virtual ~VirgilCryptoException() noexcept {};
-
 private:
     std::error_condition condition_;
     std::string what_;

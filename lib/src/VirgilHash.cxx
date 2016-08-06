@@ -115,11 +115,11 @@ VirgilHash::VirgilHash(const char* name) : impl_(std::make_unique<Impl>()) {
     impl_->setup(name);
 }
 
-VirgilHash::~VirgilHash() noexcept {}
+VirgilHash::VirgilHash(VirgilHash&& other) noexcept = default;
 
-VirgilHash::VirgilHash(VirgilHash&& other) = default;
+VirgilHash& VirgilHash::operator=(VirgilHash&& rhs) noexcept = default;
 
-VirgilHash& VirgilHash::operator=(VirgilHash&& rhs) = default;
+VirgilHash::~VirgilHash() noexcept = default;
 
 std::string VirgilHash::name() const {
     checkState();

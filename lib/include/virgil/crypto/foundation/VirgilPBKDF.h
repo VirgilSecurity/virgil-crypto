@@ -187,9 +187,9 @@ public:
     ///@}
 public:
     //! @cond Doxygen_Suppress
-    VirgilPBKDF(VirgilPBKDF&& rhs);
+    VirgilPBKDF(VirgilPBKDF&& rhs) noexcept;
 
-    VirgilPBKDF& operator=(VirgilPBKDF&& rhs);
+    VirgilPBKDF& operator=(VirgilPBKDF&& rhs) noexcept;
 
     virtual ~VirgilPBKDF() noexcept;
     //! @endcond

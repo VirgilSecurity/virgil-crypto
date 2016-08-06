@@ -225,9 +225,9 @@ struct VirgilAsymmetricCipher::Impl {
     internal::mbedtls_context <mbedtls_pk_context> pk_ctx;
 };
 
-VirgilAsymmetricCipher::VirgilAsymmetricCipher(VirgilAsymmetricCipher&& other) = default;
+VirgilAsymmetricCipher::VirgilAsymmetricCipher(VirgilAsymmetricCipher&& other) noexcept = default;
 
-VirgilAsymmetricCipher& VirgilAsymmetricCipher::operator=(VirgilAsymmetricCipher&& rhs) = default;
+VirgilAsymmetricCipher& VirgilAsymmetricCipher::operator=(VirgilAsymmetricCipher&& rhs) noexcept = default;
 
 VirgilAsymmetricCipher::~VirgilAsymmetricCipher() noexcept = default;
 

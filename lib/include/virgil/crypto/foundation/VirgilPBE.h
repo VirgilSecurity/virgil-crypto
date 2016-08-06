@@ -133,9 +133,9 @@ public:
     ///@}
 public:
     //! @cond Doxygen_Suppress
-    VirgilPBE(VirgilPBE&& other);
+    VirgilPBE(VirgilPBE&& rhs) noexcept;
 
-    VirgilPBE& operator=(VirgilPBE&& rhs);
+    VirgilPBE& operator=(VirgilPBE&& rhs) noexcept;
 
     virtual ~VirgilPBE() noexcept;
     //! @endcond

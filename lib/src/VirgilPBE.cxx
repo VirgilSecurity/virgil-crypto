@@ -157,11 +157,11 @@ VirgilPBE::VirgilPBE(Algorithm alg, const VirgilByteArray& salt, size_t iteratio
 
 }
 
-VirgilPBE::~VirgilPBE() noexcept {}
+VirgilPBE::VirgilPBE(VirgilPBE&& rhs) noexcept = default;
 
-VirgilPBE::VirgilPBE(VirgilPBE&& other) = default;
+VirgilPBE& VirgilPBE::operator=(VirgilPBE&& rhs) noexcept = default;
 
-VirgilPBE& VirgilPBE::operator=(VirgilPBE&& rhs) = default;
+VirgilPBE::~VirgilPBE() noexcept = default;
 
 VirgilByteArray VirgilPBE::encrypt(const VirgilByteArray& data, const VirgilByteArray& pwd) const {
     int mode = (impl_->algorithm == VirgilPBE::Algorithm::PKCS5) ? MBEDTLS_PKCS5_ENCRYPT : MBEDTLS_PKCS12_PBE_ENCRYPT;

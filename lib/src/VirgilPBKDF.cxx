@@ -139,11 +139,11 @@ VirgilPBKDF::VirgilPBKDF(const virgil::crypto::VirgilByteArray& salt, unsigned i
         : impl_(std::make_unique<Impl>(salt, iterationCount)) {
 }
 
-VirgilPBKDF::VirgilPBKDF(VirgilPBKDF&&) = default;
+VirgilPBKDF::VirgilPBKDF(VirgilPBKDF&&) noexcept = default;
 
-VirgilPBKDF& VirgilPBKDF::operator=(VirgilPBKDF&&) = default;
+VirgilPBKDF& VirgilPBKDF::operator=(VirgilPBKDF&&) noexcept = default;
 
-VirgilPBKDF::~VirgilPBKDF() noexcept {}
+VirgilPBKDF::~VirgilPBKDF() noexcept = default;
 
 VirgilByteArray VirgilPBKDF::getSalt() const {
     return impl_->salt;

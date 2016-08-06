@@ -395,9 +395,9 @@ public:
     ///@}
 public:
     //! @cond Doxygen_Suppress
-    VirgilAsymmetricCipher(VirgilAsymmetricCipher&& other);
+    VirgilAsymmetricCipher(VirgilAsymmetricCipher&& rhs) noexcept;
 
-    VirgilAsymmetricCipher& operator=(VirgilAsymmetricCipher&& rhs);
+    VirgilAsymmetricCipher& operator=(VirgilAsymmetricCipher&& rhs) noexcept;
 
     virtual ~VirgilAsymmetricCipher() noexcept;
     //! @endcond

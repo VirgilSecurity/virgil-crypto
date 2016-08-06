@@ -72,6 +72,12 @@ VirgilRandom::VirgilRandom(const std::string& personalInfo) : impl_(std::make_un
     impl_->personalInfo = VirgilByteArrayUtils::stringToBytes(personalInfo);
 }
 
+VirgilRandom::VirgilRandom(VirgilRandom&& rhs) noexcept = default;
+
+VirgilRandom& VirgilRandom::operator=(VirgilRandom&& rhs) noexcept = default;
+
+VirgilRandom::~VirgilRandom() noexcept = default;
+
 VirgilByteArray VirgilRandom::randomize(size_t bytesNum) {
 
     if (!impl_->is_init) {
@@ -106,5 +112,3 @@ size_t VirgilRandom::randomize(size_t min, size_t max) {
     }
     return min + (randomize() % size_t(max - min));
 }
-
-VirgilRandom::~VirgilRandom() noexcept { }

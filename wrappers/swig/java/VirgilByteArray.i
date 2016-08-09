@@ -61,7 +61,8 @@ class VirgilByteArray;
     size_t $1_size = (size_t)jenv->GetArrayLength($input);
     if (!$1_pdata) return $null;
     $1.assign($1_pdata, $1_pdata + $1_size);
-    jenv->ReleaseByteArrayElements($input, $1_pdata, 0); %}
+    jenv->ReleaseByteArrayElements($input, $1_pdata, 0);
+%}
 
 %typemap(directorout) VirgilByteArray
 %{ if(!$input) {
@@ -70,16 +71,19 @@ class VirgilByteArray;
      }
      return $null;
    }
+    Swig::LocalRefGuard $input_guard(jenv, $input);
     jbyte *$1_pdata = (jbyte *)jenv->GetByteArrayElements($input, 0);
     size_t $1_size = (size_t)jenv->GetArrayLength($input);
     if (!$1_pdata) return $null;
     $result.assign($1_pdata, $1_pdata + $1_size);
-    jenv->ReleaseByteArrayElements($input, $1_pdata, 0); %}
+    jenv->ReleaseByteArrayElements($input, $1_pdata, 0);
+%}
 
 %typemap(directorin,descriptor="[B") VirgilByteArray
 %{
     $input = jenv->NewByteArray($1.size());
     jenv->SetByteArrayRegion($input, 0, $1.size(), (const jbyte *)&$1[0]);
+    Swig::LocalRefGuard $1_refguard(jenv, $input);
 %}
 
 %typemap(out) VirgilByteArray
@@ -111,13 +115,16 @@ class VirgilByteArray;
     if (!$1_pdata) return $null;
     $*1_ltype $1_data($1_pdata, $1_pdata + $1_size);
     $1 = &$1_data;
-    jenv->ReleaseByteArrayElements($input, $1_pdata, 0); %}
+    jenv->ReleaseByteArrayElements($input, $1_pdata, 0);
+%}
+
 
 %typemap(directorout,warning=SWIGWARN_TYPEMAP_THREAD_UNSAFE_MSG) const VirgilByteArray &
 %{ if(!$input) {
      SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null byte array");
      return $null;
    }
+    Swig::LocalRefGuard $input_guard(jenv, $input);
     jbyte *$1_pdata = (jbyte *)jenv->GetByteArrayElements($input, 0);
     size_t $1_size = (size_t)jenv->GetArrayLength($input);
     if (!$1_pdata) return $null;
@@ -125,12 +132,14 @@ class VirgilByteArray;
     static $*1_ltype $1_data;
     $1_data = $1_pdata;
     $result = &$1_data;
-    jenv->ReleaseByteArrayElements($input, $1_pdata, 0); %}
+    jenv->ReleaseByteArrayElements($input, $1_pdata, 0);
+%}
 
 %typemap(directorin,descriptor="[B") const VirgilByteArray &
 %{
     $input = jenv->NewByteArray($1.size());
     jenv->SetByteArrayRegion($input, 0, $1.size(), (const jbyte *)&$1[0]);
+    Swig::LocalRefGuard $1_refguard(jenv, $input);
 %}
 
 %typemap(out) const VirgilByteArray & ($*1_ltype *temp)

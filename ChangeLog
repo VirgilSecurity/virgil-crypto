@@ -1,5 +1,11 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 1.8.2 released 2016-08-09
+
+## Bugfix
+
+  * [Java] Fix: Application crash on android device if stream is used for crypto operations
+
 = Version 1.8.1 released 2016-06-30
 
 ## Bugfix

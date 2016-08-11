@@ -55,35 +55,6 @@ using virgil::crypto::VirgilTinyCipher;
 using virgil::crypto::VirgilKeyPair;
 using virgil::crypto::VirgilCryptoException;
 
-void print_exception(const std::exception& e, size_t level =  0);
-void print_exception(const VirgilCryptoException& e, size_t level =  0);
-
-// prints the explanatory string of an exception. If the exception is nested,
-// recurse to print the explanatory of the exception it holds
-void print_exception(const VirgilCryptoException& e, size_t level)
-{
-    std::cerr << std::string(level, ' ') << "exception: " << e.what() << '\n';
-    try {
-        std::rethrow_if_nested(e);
-    } catch(const VirgilCryptoException& e) {
-        print_exception(e, level+1);
-    } catch(const std::exception& e) {
-        print_exception(e, level+1);
-    } catch(...) {}
-}
-
-void print_exception(const std::exception& e, size_t level)
-{
-    std::cerr << std::string(level, ' ') << "exception: " << e.what() << '\n';
-    try {
-        std::rethrow_if_nested(e);
-    } catch(const VirgilCryptoException& e) {
-        print_exception(e, level+1);
-    } catch(const std::exception& e) {
-        print_exception(e, level+1);
-    } catch(...) {}
-}
-
 TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-cipher]") {
     VirgilByteArray password = VirgilByteArrayUtils::stringToBytes("password");
     VirgilByteArray testData = VirgilByteArrayUtils::stringToBytes("this string will be encrypted and decrypted");
@@ -93,22 +64,16 @@ TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-ci
     VirgilByteArray decryptedData;
 
     SECTION("Curve25519 without sign - OK") {
-        try {
-            VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, password);
-            encCipher.encrypt(testData, keyPair.publicKey());
+        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, password);
+        encCipher.encrypt(testData, keyPair.publicKey());
 
-            REQUIRE_FALSE(decCipher.isPackagesAccumulated());
-            for (size_t i = 0; i < encCipher.getPackageCount(); ++i) {
-                decCipher.addPackage(encCipher.getPackage(i));
-            }
-            REQUIRE(decCipher.isPackagesAccumulated());
-            REQUIRE_NOTHROW(decryptedData = decCipher.decrypt(keyPair.privateKey(), password));
-            REQUIRE(decryptedData == testData);
-        } catch (const VirgilCryptoException& e) {
-            print_exception(e);
-        } catch (const std::exception& e) {
-            print_exception(e);
+        REQUIRE_FALSE(decCipher.isPackagesAccumulated());
+        for (size_t i = 0; i < encCipher.getPackageCount(); ++i) {
+            decCipher.addPackage(encCipher.getPackage(i));
         }
+        REQUIRE(decCipher.isPackagesAccumulated());
+        REQUIRE_NOTHROW(decryptedData = decCipher.decrypt(keyPair.privateKey(), password));
+        REQUIRE(decryptedData == testData);
     }
 
     SECTION("Curve25519 with sign - OK") {

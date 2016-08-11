@@ -55,16 +55,14 @@ using virgil::crypto::VirgilTinyCipher;
 using virgil::crypto::VirgilKeyPair;
 using virgil::crypto::VirgilCryptoException;
 
-TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-cipher]") {
-    VirgilByteArray password = VirgilByteArrayUtils::stringToBytes("password");
+static void test_encrypt_decrypt(const VirgilKeyPair& keyPair, const VirgilByteArray& keyPassword) {
     VirgilByteArray testData = VirgilByteArrayUtils::stringToBytes("this string will be encrypted and decrypted");
 
     VirgilTinyCipher encCipher;
     VirgilTinyCipher decCipher;
     VirgilByteArray decryptedData;
 
-    SECTION("Curve25519 without sign - OK") {
-        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, password);
+    SECTION("without signature - OK") {
         encCipher.encrypt(testData, keyPair.publicKey());
 
         REQUIRE_FALSE(decCipher.isPackagesAccumulated());
@@ -72,13 +70,12 @@ TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-ci
             decCipher.addPackage(encCipher.getPackage(i));
         }
         REQUIRE(decCipher.isPackagesAccumulated());
-        REQUIRE_NOTHROW(decryptedData = decCipher.decrypt(keyPair.privateKey(), password));
+        REQUIRE_NOTHROW(decryptedData = decCipher.decrypt(keyPair.privateKey(), keyPassword));
         REQUIRE(decryptedData == testData);
     }
 
-    SECTION("Curve25519 with sign - OK") {
-        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, password);
-        encCipher.encryptAndSign(testData, keyPair.publicKey(), keyPair.privateKey(), password);
+    SECTION("with signature - OK") {
+        encCipher.encryptAndSign(testData, keyPair.publicKey(), keyPair.privateKey(), keyPassword);
 
         REQUIRE_FALSE(decCipher.isPackagesAccumulated());
         for (size_t i = 0; i < encCipher.getPackageCount(); ++i) {
@@ -86,12 +83,11 @@ TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-ci
         }
         REQUIRE(decCipher.isPackagesAccumulated());
         REQUIRE_NOTHROW(
-                decryptedData = decCipher.verifyAndDecrypt(keyPair.publicKey(), keyPair.privateKey(), password));
+                decryptedData = decCipher.verifyAndDecrypt(keyPair.publicKey(), keyPair.privateKey(), keyPassword));
         REQUIRE(decryptedData == testData);
     }
 
-    SECTION("Curve25519 without sign - malformed header in the master package") {
-        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, password);
+    SECTION("without signature - malformed header in the master package") {
         encCipher.encrypt(testData, keyPair.publicKey());
 
         REQUIRE_FALSE(decCipher.isPackagesAccumulated());
@@ -105,11 +101,10 @@ TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-ci
             }
         }
         REQUIRE_FALSE(decCipher.isPackagesAccumulated());
-        REQUIRE_THROWS(decryptedData = decCipher.decrypt(keyPair.privateKey(), password));
+        REQUIRE_THROWS(decryptedData = decCipher.decrypt(keyPair.privateKey(), keyPassword));
     }
 
-    SECTION("Curve25519 without sign - malformed body in the master package") {
-        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, password);
+    SECTION("without signature - malformed body in the master package") {
         encCipher.encrypt(testData, keyPair.publicKey());
 
         REQUIRE_FALSE(decCipher.isPackagesAccumulated());
@@ -124,12 +119,11 @@ TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-ci
             }
         }
         REQUIRE(decCipher.isPackagesAccumulated());
-        REQUIRE_THROWS(decryptedData = decCipher.decrypt(keyPair.privateKey(), password));
+        REQUIRE_THROWS(decryptedData = decCipher.decrypt(keyPair.privateKey(), keyPassword));
     }
 
-    SECTION("Curve25519 with sign - malformed header in the data package") {
-        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, password);
-        encCipher.encryptAndSign(testData, keyPair.publicKey(), keyPair.privateKey(), password);
+    SECTION("with signature - malformed header in the data package") {
+        encCipher.encryptAndSign(testData, keyPair.publicKey(), keyPair.privateKey(), keyPassword);
 
         REQUIRE_FALSE(decCipher.isPackagesAccumulated());
         for (size_t i = 0; i < encCipher.getPackageCount(); ++i) {
@@ -143,12 +137,11 @@ TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-ci
         }
         REQUIRE_FALSE(decCipher.isPackagesAccumulated());
         REQUIRE_THROWS(
-                decryptedData = decCipher.verifyAndDecrypt(keyPair.publicKey(), keyPair.privateKey(), password));
+                decryptedData = decCipher.verifyAndDecrypt(keyPair.publicKey(), keyPair.privateKey(), keyPassword));
     }
 
-    SECTION("Curve25519 with sign - malformed body in the data package") {
-        VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, password);
-        encCipher.encryptAndSign(testData, keyPair.publicKey(), keyPair.privateKey(), password);
+    SECTION("with signature - malformed body in the data package") {
+        encCipher.encryptAndSign(testData, keyPair.publicKey(), keyPair.privateKey(), keyPassword);
 
         REQUIRE_FALSE(decCipher.isPackagesAccumulated());
         for (size_t i = 0; i < encCipher.getPackageCount(); ++i) {
@@ -163,6 +156,19 @@ TEST_CASE("VirgilTinyCipher: encrypt and decrypt with generated keys", "[tiny-ci
         }
         REQUIRE(decCipher.isPackagesAccumulated());
         REQUIRE_THROWS(
-                decryptedData = decCipher.verifyAndDecrypt(keyPair.publicKey(), keyPair.privateKey(), password));
+                decryptedData = decCipher.verifyAndDecrypt(keyPair.publicKey(), keyPair.privateKey(), keyPassword));
     }
 }
+
+
+#define TEST_CASE_ENCRYPT_DECRYPT(KeyType) \
+    TEST_CASE("VirgilTinyCipher: encrypt and decrypt with " #KeyType "keys", "[tiny-cipher]") { \
+        const VirgilByteArray keyPassword = VirgilByteArrayUtils::stringToBytes("key keyPassword"); \
+        test_encrypt_decrypt(VirgilKeyPair::generate(VirgilKeyPair::Type::KeyType, keyPassword), keyPassword); \
+    }
+
+TEST_CASE_ENCRYPT_DECRYPT(EC_Curve25519)
+
+TEST_CASE_ENCRYPT_DECRYPT(EC_Ed25519)
+
+#undef TEST_CASE_ENCRYPT_DECRYPT

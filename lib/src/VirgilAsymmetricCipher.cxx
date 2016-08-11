@@ -119,7 +119,7 @@ public:
     }
 
     bool isPEM() const noexcept {
-        return format_ == Format::Public_PEM|| format_ == Format::Private_PEM;
+        return format_ == Format::Public_PEM || format_ == Format::Private_PEM;
     }
 
     int operator()(unsigned char* buf, size_t bufLen) {
@@ -518,9 +518,18 @@ VirgilByteArray VirgilAsymmetricCipher::getPublicKeyBits() const {
         mbedtls_ecp_keypair* ecp = mbedtls_pk_ec(*impl_->pk_ctx.get());
         switch (ecp->grp.id) {
             case MBEDTLS_ECP_DP_CURVE25519: {
-                unsigned char q[32];
+                constexpr size_t kCurve25519_Length = 32; // bytes
+                unsigned char q[kCurve25519_Length];
                 system_crypto_handler(
                         mbedtls_mpi_write_binary(&ecp->Q.X, q, sizeof(q))
+                );
+                return VirgilByteArray(q, q + sizeof(q));
+            }
+            case MBEDTLS_ECP_DP_ED25519: {
+                constexpr size_t kEd25519_Length = 32; // bytes
+                unsigned char q[kEd25519_Length];
+                system_crypto_handler(
+                        mbedtls_mpi_write_binary(&ecp->Q.Y, q, sizeof(q))
                 );
                 return VirgilByteArray(q, q + sizeof(q));
             }
@@ -539,16 +548,28 @@ void VirgilAsymmetricCipher::setPublicKeyBits(const VirgilByteArray& bits) {
         mbedtls_ecp_keypair* ecp = mbedtls_pk_ec(*impl_->pk_ctx.get());
         switch (ecp->grp.id) {
             case MBEDTLS_ECP_DP_CURVE25519: {
-                const size_t kCurve25519_Length = 32; // bytes
+                constexpr size_t kCurve25519_Length = 32; // bytes
                 if (bits.size() != kCurve25519_Length) {
                     throw make_error(VirgilCryptoError::InvalidPublicKey);
                 }
                 system_crypto_handler(
                         mbedtls_mpi_read_binary(&ecp->Q.X, bits.data(), bits.size())
                 );
+                mbedtls_mpi_free(&ecp->Q.Y);
                 system_crypto_handler(
-                        mbedtls_mpi_lset(&ecp->Q.Y, 0)
+                        mbedtls_mpi_lset(&ecp->Q.Z, 1)
                 );
+                break;
+            }
+            case MBEDTLS_ECP_DP_ED25519: {
+                constexpr size_t kEd25519_Length = 32; // bytes
+                if (bits.size() != kEd25519_Length) {
+                    throw make_error(VirgilCryptoError::InvalidPublicKey);
+                }
+                system_crypto_handler(
+                        mbedtls_mpi_read_binary(&ecp->Q.Y, bits.data(), bits.size())
+                );
+                mbedtls_mpi_free(&ecp->Q.X);
                 system_crypto_handler(
                         mbedtls_mpi_lset(&ecp->Q.Z, 1)
                 );
@@ -571,9 +592,11 @@ VirgilByteArray VirgilAsymmetricCipher::signToBits(const VirgilByteArray& sign) 
         }
         mbedtls_ecp_keypair* ecp = mbedtls_pk_ec(*impl_->pk_ctx.get());
         switch (ecp->grp.id) {
-            case MBEDTLS_ECP_DP_CURVE25519: {
+            case MBEDTLS_ECP_DP_CURVE25519:
+            case MBEDTLS_ECP_DP_ED25519: {
                 size_t len = 0;
-                unsigned char signature[64];
+                constexpr size_t kEd25519_SignLength = 64;
+                unsigned char signature[kEd25519_SignLength];
 
                 mbedtls_context<mbedtls_mpi> r;
                 mbedtls_context<mbedtls_mpi> s;
@@ -612,9 +635,10 @@ VirgilByteArray VirgilAsymmetricCipher::signFromBits(const VirgilByteArray& bits
     if (mbedtls_pk_can_do(impl_->pk_ctx.get(), MBEDTLS_PK_ECKEY)) {
         mbedtls_ecp_keypair* ecp = mbedtls_pk_ec(*impl_->pk_ctx.get());
         switch (ecp->grp.id) {
-            case MBEDTLS_ECP_DP_CURVE25519: {
-                const size_t kCurve25519_SignLength = 64;
-                if (bits.size() != kCurve25519_SignLength) {
+            case MBEDTLS_ECP_DP_CURVE25519:
+            case MBEDTLS_ECP_DP_ED25519: {
+                constexpr size_t kEd25519_SignLength = 64;
+                if (bits.size() != kEd25519_SignLength) {
                     throw make_error(VirgilCryptoError::InvalidSignature);
                 }
                 unsigned char asn1[64 + 8 /* asn1 overhead*/];

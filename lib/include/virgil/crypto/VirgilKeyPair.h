@@ -74,6 +74,7 @@ public:
         EC_SECP192K1, ///< 192-bits "Koblitz" curve
         EC_SECP224K1, ///< 224-bits "Koblitz" curve
         EC_SECP256K1, ///< 256-bits "Koblitz" curve
+        EC_Ed25519, ///< Ed25519
     };
 public:
     /**
@@ -283,9 +284,6 @@ public:
      * @brief Provide access to the private key.
      */
     virgil::crypto::VirgilByteArray privateKey() const;
-    /**
-     *
-     */
 
 private:
     virgil::crypto::VirgilByteArray publicKey_;

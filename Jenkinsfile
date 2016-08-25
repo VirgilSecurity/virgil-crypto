@@ -141,10 +141,6 @@ def createCrossplatfromBuild(slave) {
             withEnv(['EMSDK_HOME=/Users/virgil/Library/VirgilEnviroment/emsdk_portable']) {
                 sh './utils/build.sh asmjs'
             }
-            withEnv(['CROSSBRIDGE_HOME=/Users/virgil/Library/VirgilEnviroment/CrossBridge_15.0.0.3',
-                     'FLEX_HOME=/Users/virgil/Library/VirgilEnviroment/flex_sdk_4.6']) {
-                sh './utils/build.sh as3'
-            }
             withEnv(['NACL_SDK_ROOT=/Users/virgil/Library/VirgilEnviroment/nacl_sdk/pepper_46']) {
                 sh './utils/build.sh pnacl . build/cpp install/cpp'
             }

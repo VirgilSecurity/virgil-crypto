@@ -106,7 +106,7 @@ TEST_CASE("VirgilSigner: sign with wrong key password", "[signer]") {
     VirgilByteArray testData = str2bytes("this string will be signed");
     VirgilByteArray keyPassword = str2bytes("password");
     VirgilByteArray wrongKeyPassword = str2bytes("wrong password");
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_M255, keyPassword);
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_CURVE25519, keyPassword);
 
     VirgilSigner signer;
     REQUIRE_THROWS_AS(signer.sign(testData, keyPair.privateKey(), wrongKeyPassword), VirgilCryptoException);

@@ -68,13 +68,13 @@ public:
         EC_BP512R1, ///< 512-bits Brainpool curve
         EC_M221, ///< (not implemented yet)
         EC_M255, ///< Curve25519
-        EC_Curve25519 = 17, ///< Curve25519
+        EC_CURVE25519 = 17, ///< Curve25519
         EC_M383, ///< (not implemented yet)
         EC_M511, ///< (not implemented yet)
         EC_SECP192K1, ///< 192-bits "Koblitz" curve
         EC_SECP224K1, ///< 224-bits "Koblitz" curve
         EC_SECP256K1, ///< 256-bits "Koblitz" curve
-        EC_Ed25519, ///< Ed25519
+        EC_ED25519, ///< Ed25519
     };
 public:
     /**

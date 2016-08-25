@@ -309,8 +309,8 @@ TEST_CASE("VirgilCipherBase::setContentInfo()", "[cipher-base]") {
 }
 
 TEST_CASE("VirgilCipherBase::computeShared()", "[cipher-base]") {
-    VirgilKeyPair bobCurve25519 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519);
-    VirgilKeyPair aliceCurve25519 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519);
+    VirgilKeyPair bobCurve25519 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_CURVE25519);
+    VirgilKeyPair aliceCurve25519 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_CURVE25519);
 
     VirgilKeyPair bobNist256 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_SECP256K1);
     VirgilKeyPair aliceNist256 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_SECP256K1);

@@ -86,7 +86,7 @@ TEST_CASE("Reset Private Key password", "[key-pair]") {
 TEST_CASE("Generate ephemeral key pair and compute shared", "[key-pair]") {
 
     SECTION("with plain private key") {
-        VirgilKeyPair donorPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519);
+        VirgilKeyPair donorPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_CURVE25519);
 
         VirgilKeyPair ephemeralKeyPair = VirgilKeyPair::generateFrom(donorPair);
 
@@ -138,6 +138,6 @@ TEST_CASE("Generate private key with long password", "[key-pair]") {
             "PtImqC2mT#=M85axZw8cPo6TUD0Ba,_HN^5E4v`R\"@8e>Xp]y6"
             "X&#8g0~FHG5qFI67&PM`3u8{>lVxZ7!q-t9jVUHcv|d3OGxpxB"
     );
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_Curve25519, keyPassword);
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_CURVE25519, keyPassword);
     REQUIRE(VirgilKeyPair::isKeyPairMatch(keyPair.publicKey(), keyPair.privateKey(), keyPassword));
 }

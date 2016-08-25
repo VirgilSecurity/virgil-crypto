@@ -167,8 +167,8 @@ static void test_encrypt_decrypt(const VirgilKeyPair& keyPair, const VirgilByteA
         test_encrypt_decrypt(VirgilKeyPair::generate(VirgilKeyPair::Type::KeyType, keyPassword), keyPassword); \
     }
 
-TEST_CASE_ENCRYPT_DECRYPT(EC_Curve25519)
+TEST_CASE_ENCRYPT_DECRYPT(EC_CURVE25519)
 
-TEST_CASE_ENCRYPT_DECRYPT(EC_Ed25519)
+TEST_CASE_ENCRYPT_DECRYPT(EC_ED25519)
 
 #undef TEST_CASE_ENCRYPT_DECRYPT

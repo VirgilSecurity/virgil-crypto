@@ -167,7 +167,7 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .value("EC_M255", virgil::crypto::VirgilKeyPair::Type_EC_M255)
         .value("EC_M383", virgil::crypto::VirgilKeyPair::Type_EC_M383)
         .value("EC_M511", virgil::crypto::VirgilKeyPair::Type_EC_M511)
-        .value("EC_Curve25519", virgil::crypto::VirgilKeyPair::Type_EC_Curve25519)
+        .value("EC_CURVE25519", virgil::crypto::VirgilKeyPair::Type_EC_CURVE25519)
         .value("EC_SECP192K1", virgil::crypto::VirgilKeyPair::Type_EC_SECP192K1)
         .value("EC_SECP224K1", virgil::crypto::VirgilKeyPair::Type_EC_SECP224K1)
         .value("EC_SECP256K1", virgil::crypto::VirgilKeyPair::Type_EC_SECP256K1)

@@ -165,7 +165,6 @@ static inline void key_type_set_params(
         case VirgilKeyPair::Type::EC_SECP256K1:
             *ecp_group_id = MBEDTLS_ECP_DP_SECP256K1;
             break;
-        case VirgilKeyPair::Type::Default:
         case VirgilKeyPair::Type::EC_CURVE25519:
             *ecp_group_id = MBEDTLS_ECP_DP_CURVE25519;
             break;

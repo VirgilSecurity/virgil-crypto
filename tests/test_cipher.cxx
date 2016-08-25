@@ -286,8 +286,6 @@ static void test_encrypt_decrypt(const VirgilKeyPair& keyPair, const VirgilByteA
         test_encrypt_decrypt(VirgilKeyPair::generate(VirgilKeyPair::Type::KeyType, keyPassword), keyPassword); \
     }
 
-TEST_CASE_ENCRYPT_DECRYPT(Default)
-
 TEST_CASE_ENCRYPT_DECRYPT(EC_SECP384R1)
 
 TEST_CASE_ENCRYPT_DECRYPT(EC_BP384R1)
@@ -318,8 +316,8 @@ TEST_CASE("VirgilCipher: encrypt and decrypt for multiple recipients", "[cipher]
     VirgilByteArray testData = str2bytes("this string will be encrypted");
     VirgilByteArray bobId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
     VirgilByteArray johnId = str2bytes("968dc52d-2045-4abe-ab51-0b04737cac76");
-    VirgilKeyPair bobKeyPair;
-    VirgilKeyPair johnKeyPair;
+    VirgilKeyPair bobKeyPair = VirgilKeyPair::generateRecommended();
+    VirgilKeyPair johnKeyPair = VirgilKeyPair::generateRecommended();
     VirgilByteArray alicePassword = str2bytes("alice secret");
 
     SECTION("encrypt for multiple recipients") {
@@ -376,8 +374,8 @@ TEST_CASE("VirgilCipher: check recipient existence", "[cipher]") {
     VirgilByteArray bobId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
     VirgilByteArray johnId = str2bytes("968dc52d-2045-4abe-ab51-0b04737cac76");
     VirgilByteArray aliceId = str2bytes("99e435e7-2527-4a5a-89bb-37927bdb337b");
-    VirgilKeyPair bobKeyPair;
-    VirgilKeyPair johnKeyPair;
+    VirgilKeyPair bobKeyPair = VirgilKeyPair::generateRecommended();
+    VirgilKeyPair johnKeyPair = VirgilKeyPair::generateRecommended();
 
     VirgilCipher cipher;
     cipher.addKeyRecipient(bobId, bobKeyPair.publicKey());

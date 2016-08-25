@@ -78,8 +78,6 @@ static void test_sign_verify(const VirgilKeyPair& keyPair, const VirgilByteArray
         test_sign_verify(VirgilKeyPair::generate(VirgilKeyPair::Type::KeyType)); \
     }
 
-TEST_CASE_SIGN_VERIFY(Default)
-
 TEST_CASE_SIGN_VERIFY(RSA_2048)
 
 TEST_CASE_SIGN_VERIFY(EC_BP384R1)

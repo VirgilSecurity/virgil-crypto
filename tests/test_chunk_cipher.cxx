@@ -56,7 +56,7 @@ TEST_CASE("Encrypt and decrypt with generated keys", "[chunk-cipher]") {
     VirgilByteArray password = str2bytes("password");
     VirgilByteArray plainData = str2bytes("!this string will be encrypted with chunk cipher!");
     VirgilByteArray recipientId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
-    VirgilKeyPair keyPair(password);
+    VirgilKeyPair keyPair = VirgilKeyPair::generateRecommended(password);
 
     VirgilChunkCipher cipher;
     cipher.addKeyRecipient(recipientId, keyPair.publicKey());

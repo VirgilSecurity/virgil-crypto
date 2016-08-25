@@ -50,7 +50,6 @@ public:
      * @brief Type of the keypair.
      */
     enum class Type {
-        Default = 0, ///< recommended most safe type
         RSA_256, ///< RSA 1024 bit (not recommended)
         RSA_512, ///< RSA 1024 bit (not recommended)
         RSA_1024, ///< RSA 1024 bit (not recommended)
@@ -78,8 +77,14 @@ public:
      * @param type - private key type to be generated.
      * @param pwd - private key password.
      */
-    static VirgilKeyPair generate(
-            VirgilKeyPair::Type type = VirgilKeyPair::Type::Default,
+    static VirgilKeyPair generate(VirgilKeyPair::Type type,
+            const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+
+    /**
+     * @brief Generate new key pair with recommended most safe type.
+     * @param pwd - private key password.
+     */
+    static VirgilKeyPair generateRecommended(
             const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
 
     /**
@@ -163,12 +168,6 @@ public:
             const virgil::crypto::VirgilByteArray& privateKey,
             const virgil::crypto::VirgilByteArray& privateKeyPassword);
     ///@}
-
-    /**
-     * @brief Generate new key pair with default settings.
-     * @deprecated Use generate() with default type instead.
-     */
-    explicit VirgilKeyPair(const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
 
     /**
      * @brief Initialize key pair with given public and private key.

@@ -50,6 +50,12 @@ VirgilKeyPair VirgilKeyPair::generate(VirgilKeyPair::Type type, const VirgilByte
     return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
 }
 
+VirgilKeyPair VirgilKeyPair::generateRecommended(const VirgilByteArray& pwd) {
+    VirgilAsymmetricCipher cipher;
+    cipher.genKeyPair(Type::EC_CURVE25519);
+    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+}
+
 VirgilKeyPair VirgilKeyPair::generateFrom(
         const VirgilKeyPair& donorKeyPair, const VirgilByteArray& donorPrivateKeyPassword,
         const VirgilByteArray& newKeyPairPassword) {
@@ -106,12 +112,6 @@ VirgilByteArray VirgilKeyPair::extractPublicKey(
     } else {
         return cipher.exportPublicKeyToDER();
     }
-}
-
-VirgilKeyPair::VirgilKeyPair(const VirgilByteArray& pwd) {
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::Default, pwd);
-    this->publicKey_ = keyPair.publicKey();
-    this->privateKey_ = keyPair.privateKey();
 }
 
 VirgilKeyPair::VirgilKeyPair(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey)

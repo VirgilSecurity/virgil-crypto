@@ -75,6 +75,10 @@
 #
 #     - CMAKE_ARGS           - list of CMake parameters in form -DVAR:TYPE=VAL
 #
+# Optimizations:
+#     - X25519_AMD64_OPTIMIZATION - boolean value that defines whether to enable AMD64 optimization
+#                                   for x25519 algorithms, or not.
+#
 # Define platform specific variables (that are defined only if build for this platform):
 #     - ANDROID_INSTALL_JNI_DIR_NAME - name of the directory where JNI libraries will be installed
 #                                      for Android platform
@@ -148,13 +152,25 @@ if (NOT CMAKE_CROSSCOMPILING)
     endif ()
 endif (NOT CMAKE_CROSSCOMPILING)
 
+# Define optimization features
+set (X25519_AMD64_OPTIMIZATION ON CACHE BOOL "Defines whether to enable AMD64 optimization for x25519 algorithms")
+
+# Configure optimizations
+set (MBEDTLS_CMAKE_ARGS "")
+if (NOT CMAKE_CROSSCOMPILING AND X25519_AMD64_OPTIMIZATION AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    execute_process (COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE MACHINE_ARCHITECTURE)
+    if (${MACHINE_ARCHITECTURE} STREQUAL "x86_64")
+        set (MBEDTLS_CMAKE_ARGS "-DUSE_X25519_AMD64_RADIX_64_24K_OPTIMIZATION:BOOL=ON")
+    endif()
+endif()
+
 # Include and build external libraries
 include (virgil_depends)
 
 virgil_depends (
     PACKAGE_NAME "MbedTLS"
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/mbedtls"
-    CMAKE_ARGS "${CMAKE_ARGS}"
+    CMAKE_ARGS "${CMAKE_ARGS}" "${MBEDTLS_CMAKE_ARGS}"
 )
 virgil_find_package (MbedTLS 2.2)
 

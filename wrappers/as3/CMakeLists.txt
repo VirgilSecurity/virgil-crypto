@@ -124,7 +124,7 @@ add_custom_command (OUTPUT ${WRAPPER_SWC}
             -o ${WRAPPER_SWC} ${WRAPPER_OBJ} ${WRAPPER_ABC}
                 $<TARGET_LINKER_FILE:${WRAPPED_LIB_NAME}>
                 $<TARGET_LINKER_FILE:mbedtls::mbedcrypto>
-                $<TARGET_LINKER_FILE:mbedtls::ed25519>
+                $<TARGET_LINKER_FILE:mbedtls::x25519>
                 -lAS3++
     DEPENDS ${WRAPPED_LIB_NAME}
     DEPENDS ${WRAPPER_OBJ}

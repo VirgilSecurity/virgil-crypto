@@ -57,10 +57,10 @@ using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::foundation::VirgilHash;
 using virgil::crypto::foundation::VirgilRandom;
 
-void benchmark_hash(benchpress::context* ctx, VirgilHash hash) {
+void benchmark_hash(benchpress::context* ctx, VirgilHash::Algorithm hashAlg) {
     VirgilRandom random(VirgilByteArrayUtils::stringToBytes("seed"));
     VirgilByteArray testData = random.randomize(8192);
-
+    VirgilHash hash(hashAlg);
     ctx->reset_timer();
     for (size_t i = 0; i < ctx->num_iterations(); ++i) {
         (void)hash.hash(testData);
@@ -68,18 +68,18 @@ void benchmark_hash(benchpress::context* ctx, VirgilHash hash) {
 }
 
 BENCHMARK("Hash -> MD5    ", [](benchpress::context* ctx){
-    benchmark_hash(ctx, VirgilHash::md5());
+    benchmark_hash(ctx, VirgilHash::Algorithm::MD5);
 });
 
 BENCHMARK("Hash -> SHA-256", [](benchpress::context* ctx){
-    benchmark_hash(ctx, VirgilHash::sha256());
+    benchmark_hash(ctx, VirgilHash::Algorithm::SHA256);
 });
 
 BENCHMARK("Hash -> SHA-384", [](benchpress::context* ctx){
-    benchmark_hash(ctx, VirgilHash::sha384());
+    benchmark_hash(ctx, VirgilHash::Algorithm::SHA384);
 });
 
 BENCHMARK("Hash -> SHA-512", [](benchpress::context* ctx){
-    benchmark_hash(ctx, VirgilHash::sha512());
+    benchmark_hash(ctx, VirgilHash::Algorithm::SHA512);
 });
 

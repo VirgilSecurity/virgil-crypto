@@ -57,7 +57,7 @@ public:
      * @see getContentInfo()
      * @return encrypted data.
      */
-    VirgilByteArray encrypt(const VirgilByteArray& data, bool embedContentInfo = false);
+    VirgilByteArray encrypt(const VirgilByteArray& data, bool embedContentInfo = true);
 
     /**
      * @brief Decrypt given data for recipient defined by id and private key.

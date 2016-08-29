@@ -161,7 +161,7 @@ class VirgilCipher_Test extends PHPUnit_Framework_TestCase {
         $cipher->addKeyRecipient($tedCertificateId, $tedPublicKey);
         $cipher->addPasswordRecipient($alicePassword);
         // Encrypt data
-        $encryptedData = $cipher->encrypt($initialString);
+        $encryptedData = $cipher->encrypt($initialString, false);
         $encryptedContentInfo = $cipher->getContentInfo();
         // Create new cipher
         $cipher = new VirgilCipher();

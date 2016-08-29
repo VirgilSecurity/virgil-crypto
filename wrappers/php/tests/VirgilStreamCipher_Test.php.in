@@ -178,7 +178,7 @@ class VirgilStreamCipher_Test extends PHPUnit_Framework_TestCase {
         // Encrypt data
         $encryptSource = new StringSource($initialString);
         $encryptSink = new StringSink();
-        $cipher->encrypt($encryptSource, $encryptSink);
+        $cipher->encrypt($encryptSource, $encryptSink, false);
         $encryptedContentInfo = $cipher->getContentInfo();
         // Create new cipher
         $cipher = new VirgilStreamCipher();

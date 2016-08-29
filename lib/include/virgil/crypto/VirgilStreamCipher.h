@@ -59,7 +59,7 @@ public:
      * @see getContentInfo()
      * @return encrypted data.
      */
-    void encrypt(VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo = false);
+    void encrypt(VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo = true);
 
     /**
      * @brief Decrypt data read from given source for recipient defined by id and private key,

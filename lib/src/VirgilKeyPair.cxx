@@ -36,6 +36,7 @@
 
 #include <virgil/crypto/VirgilKeyPair.h>
 
+#include <virgil/crypto/VirgilCryptoError.h>
 #include <virgil/crypto/foundation/VirgilRandom.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 
@@ -101,6 +102,19 @@ VirgilByteArray VirgilKeyPair::resetPrivateKeyPassword(
     }
 }
 
+VirgilByteArray VirgilKeyPair::encryptPrivateKey(
+        const virgil::crypto::VirgilByteArray& privateKey, const virgil::crypto::VirgilByteArray& privateKeyPassword) {
+    if (privateKeyPassword.empty()) {
+        throw virgil::crypto::make_error(VirgilCryptoError::InvalidArgument);
+    }
+    return VirgilKeyPair::resetPrivateKeyPassword(privateKey, VirgilByteArray(), privateKeyPassword);
+}
+
+VirgilByteArray VirgilKeyPair::decryptPrivateKey(
+        const virgil::crypto::VirgilByteArray& privateKey, const virgil::crypto::VirgilByteArray& privateKeyPassword) {
+    return VirgilKeyPair::resetPrivateKeyPassword(privateKey, privateKeyPassword, VirgilByteArray());
+}
+
 VirgilByteArray VirgilKeyPair::extractPublicKey(
         const virgil::crypto::VirgilByteArray& privateKey,
         const virgil::crypto::VirgilByteArray& privateKeyPassword) {
@@ -125,4 +139,3 @@ VirgilByteArray VirgilKeyPair::publicKey() const {
 VirgilByteArray VirgilKeyPair::privateKey() const {
     return privateKey_;
 }
-

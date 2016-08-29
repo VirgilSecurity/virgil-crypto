@@ -77,7 +77,8 @@ public:
      * @param type - private key type to be generated.
      * @param pwd - private key password.
      */
-    static VirgilKeyPair generate(VirgilKeyPair::Type type,
+    static VirgilKeyPair generate(
+            VirgilKeyPair::Type type,
             const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
 
     /**
@@ -155,6 +156,43 @@ public:
     static virgil::crypto::VirgilByteArray resetPrivateKeyPassword(
             const virgil::crypto::VirgilByteArray& privateKey,
             const virgil::crypto::VirgilByteArray& oldPassword, const virgil::crypto::VirgilByteArray& newPassword);
+
+    /**
+     * @brief Return encrypted private key in PKCS#8 format.
+     *
+     * Encrypt the given private key and return result.
+     *
+     * @param privateKey - Private Key in the plain text.
+     * @param privateKeyPassword - new Private Key password.
+     *
+     * @throw VirgilCryptoException, with VirgilCryptoError::InvalidArgument if key is empty.
+     * @throw VirgilCryptoException, with VirgilCryptoError::InvalidPrivateKeyPassword if key is already encrypted.
+     * @throw VirgilCryptoException, with VirgilCryptoError::InvalidFormat if key has invalid format.
+     *
+     * @return Encrypted Private Key.
+     */
+    static virgil::crypto::VirgilByteArray encryptPrivateKey(
+            const virgil::crypto::VirgilByteArray& privateKey,
+            const virgil::crypto::VirgilByteArray& privateKeyPassword);
+
+    /**
+     * @brief Return plain (non encrypted) private key.
+     *
+     * Decrypt the given private key and return result.
+     *
+     * @param privateKey - Encrypted Private Key.
+     * @param privateKeyPassword - current Private Key password.
+     *
+     * @throw VirgilCryptoException, with VirgilCryptoError::InvalidPrivateKeyPassword if password is wrong.
+     * @throw VirgilCryptoException, with VirgilCryptoError::InvalidFormat if key has invalid format.
+     *
+     * @note It is unsafe to store Private Key in the plain text.
+     *
+     * @return Plain Private Key.
+     */
+    static virgil::crypto::VirgilByteArray decryptPrivateKey(
+            const virgil::crypto::VirgilByteArray& privateKey,
+            const virgil::crypto::VirgilByteArray& privateKeyPassword);
 
     /**
      * @brief Extract public key from the private key.

@@ -43,8 +43,6 @@
 
 #include "catch.hpp"
 
-#include <string>
-
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilStreamCipher.h>
 #include <virgil/crypto/VirgilKeyPair.h>
@@ -62,7 +60,7 @@ using virgil::crypto::stream::VirgilBytesDataSink;
 TEST_CASE("Stream Cipher: encrypt and decrypt with generated keys", "[stream-cipher]") {
     VirgilByteArray password = str2bytes("password");
     VirgilByteArray recipientId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
-    VirgilKeyPair keyPair(password);
+    VirgilKeyPair keyPair = VirgilKeyPair::generateRecommended(password);
 
     VirgilByteArray testData = str2bytes("this string will be encrypted");
     VirgilBytesDataSource testDataSource(testData);
@@ -199,8 +197,8 @@ TEST_CASE("Stream Cipher: generated keys", "[stream-cipher]") {
     VirgilByteArray testData = str2bytes("this string will be encrypted");
     VirgilByteArray bobId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
     VirgilByteArray johnId = str2bytes("968dc52d-2045-4abe-ab51-0b04737cac76");
-    VirgilKeyPair bobKeyPair;
-    VirgilKeyPair johnKeyPair;
+    VirgilKeyPair bobKeyPair = VirgilKeyPair::generateRecommended();
+    VirgilKeyPair johnKeyPair = VirgilKeyPair::generateRecommended();
     VirgilByteArray alicePassword = str2bytes("alice secret");
 
     VirgilBytesDataSource testDataSource(testData);

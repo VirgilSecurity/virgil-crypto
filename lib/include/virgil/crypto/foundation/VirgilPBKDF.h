@@ -41,6 +41,7 @@
 #include <memory>
 
 #include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/foundation/VirgilHash.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 
 namespace virgil { namespace crypto { namespace foundation {
@@ -60,22 +61,8 @@ public:
      * @brief Defines specific password based key derivation function algorithm
      */
     enum class Algorithm {
-        None = 0, ///< No algorithm defined
         PBKDF2    ///< Defines PBKDF2 algorithm (https://www.ietf.org/rfc/rfc2898.txt)
     };
-    /**
-     * @brief Defines specific underlying hash algorithm for the password based key derivation function algorithm
-     * @note Start numbering from 1, 0 is reserved.
-     */
-    enum class Hash {
-        None = 0, ///< No hash algorithm defined
-        SHA1,     ///< Defines SHA1 hash algorithm
-        SHA224,   ///< Defines SHA-224 hash algorithm
-        SHA256,   ///< Defines SHA-256 hash algorithm
-        SHA384,   ///< Defines SHA-384 hash algorithm
-        SHA512    ///< Defines SHA-512 hash algorithm
-    };
-
     /**
      * @name Constructor / Destructor
      */
@@ -126,12 +113,12 @@ public:
     /**
      * @brief Set underlying digest algorithm.
      */
-    void setHash(Hash hash);
+    void setHashAlgorithm(VirgilHash::Algorithm hash);
 
     /**
      * @brief Returns underlying digest algorithm.
      */
-    VirgilPBKDF::Hash getHash() const;
+    VirgilHash::Algorithm getHashAlgorithm() const;
 
     /**
      * @brief Involve security check for used parameters.
@@ -195,11 +182,6 @@ public:
     //! @endcond
 
 private:
-    /**
-     * @brief If internal state is not initialized with specific algorithm exception will be thrown.
-     */
-    void checkState() const;
-
     /**
      * @brief If security recommendations is not satisfied exception will be thrown.
      */

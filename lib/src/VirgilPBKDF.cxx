@@ -55,6 +55,7 @@ using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::VirgilCryptoException;
 
 using virgil::crypto::foundation::VirgilPBKDF;
+using virgil::crypto::foundation::VirgilHash;
 using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
@@ -65,50 +66,53 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 ///@{
 static constexpr unsigned int kIterationCount_Min = 2048;
 static constexpr VirgilPBKDF::Algorithm kAlgorithm_Default = VirgilPBKDF::Algorithm::PBKDF2;
-static constexpr VirgilPBKDF::Hash kHash_Default = VirgilPBKDF::Hash::SHA384;
+static constexpr VirgilHash::Algorithm kHashAlgorithm_Default = VirgilHash::Algorithm::SHA384;
 ///@}
 
 namespace virgil { namespace crypto { namespace foundation { namespace internal {
 
-static mbedtls_md_type_t hash_to_md_type(VirgilPBKDF::Hash hash) {
-    switch (hash) {
-        case VirgilPBKDF::Hash::SHA1: {
+static mbedtls_md_type_t hash_to_md_type(VirgilHash::Algorithm hashAlgorithm) {
+    switch (hashAlgorithm) {
+        case VirgilHash::Algorithm::MD5: {
+            return MBEDTLS_MD_MD5;
+        }
+        case VirgilHash::Algorithm::SHA1: {
             return MBEDTLS_MD_SHA1;
         }
-        case VirgilPBKDF::Hash::SHA224: {
+        case VirgilHash::Algorithm::SHA224: {
             return MBEDTLS_MD_SHA224;
         }
-        case VirgilPBKDF::Hash::SHA256: {
+        case VirgilHash::Algorithm::SHA256: {
             return MBEDTLS_MD_SHA256;
         }
-        case VirgilPBKDF::Hash::SHA384: {
+        case VirgilHash::Algorithm::SHA384: {
             return MBEDTLS_MD_SHA384;
         }
-        case VirgilPBKDF::Hash::SHA512: {
+        case VirgilHash::Algorithm::SHA512: {
             return MBEDTLS_MD_SHA512;
-        }
-        default: {
-            return MBEDTLS_MD_NONE;
         }
     }
 }
 
-static VirgilPBKDF::Hash md_type_to_hash(mbedtls_md_type_t md_type) {
+static VirgilHash::Algorithm md_type_to_hash(mbedtls_md_type_t md_type) {
     switch (md_type) {
+        case MBEDTLS_MD_MD5: {
+            return VirgilHash::Algorithm::MD5;
+        }
         case MBEDTLS_MD_SHA1: {
-            return VirgilPBKDF::Hash::SHA1;
+            return VirgilHash::Algorithm::SHA1;
         }
         case MBEDTLS_MD_SHA224: {
-            return VirgilPBKDF::Hash::SHA224;
+            return VirgilHash::Algorithm::SHA224;
         }
         case MBEDTLS_MD_SHA256: {
-            return VirgilPBKDF::Hash::SHA256;
+            return VirgilHash::Algorithm::SHA256;
         }
         case MBEDTLS_MD_SHA384: {
-            return VirgilPBKDF::Hash::SHA384;
+            return VirgilHash::Algorithm::SHA384;
         }
         case MBEDTLS_MD_SHA512: {
-            return VirgilPBKDF::Hash::SHA512;
+            return VirgilHash::Algorithm::SHA512;
         }
         default: {
             throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
@@ -127,7 +131,7 @@ struct VirgilPBKDF::Impl {
     VirgilByteArray salt;
     unsigned int iterationCount{ 0 };
     VirgilPBKDF::Algorithm algorithm{ kAlgorithm_Default };
-    VirgilPBKDF::Hash hash{ kHash_Default };
+    VirgilHash::Algorithm hashAlgorithm{ kHashAlgorithm_Default };
     unsigned int iterationCountMin{ kIterationCount_Min };
     bool checkRecommendations{ true };
 };
@@ -161,12 +165,12 @@ VirgilPBKDF::Algorithm VirgilPBKDF::getAlgorithm() const {
     return impl_->algorithm;
 }
 
-void VirgilPBKDF::setHash(VirgilPBKDF::Hash hash) {
-    impl_->hash = hash;
+void VirgilPBKDF::setHashAlgorithm(VirgilHash::Algorithm hash) {
+    impl_->hashAlgorithm = hash;
 }
 
-VirgilPBKDF::Hash VirgilPBKDF::getHash() const {
-    return impl_->hash;
+VirgilHash::Algorithm VirgilPBKDF::getHashAlgorithm() const {
+    return impl_->hashAlgorithm;
 }
 
 void VirgilPBKDF::enableRecommendationsCheck() {
@@ -179,13 +183,17 @@ void VirgilPBKDF::disableRecommendationsCheck() {
 
 
 VirgilByteArray VirgilPBKDF::derive(const virgil::crypto::VirgilByteArray& pwd, size_t outSize) {
-    checkState();
     checkRecommendations(pwd);
 
-    internal::mbedtls_context <mbedtls_md_context_t> hmac_ctx;
-    hmac_ctx.setup(internal::hash_to_md_type(impl_->hash), 1);
+    if (outSize > std::numeric_limits<unsigned int>::max()) {
+        throw make_error(VirgilCryptoError::InvalidArgument, "Size of the output sequence is too big");
+    }
 
-    const size_t adjustedOutSize = (outSize > 0) ? outSize : mbedtls_md_get_size(hmac_ctx.get()->md_info);
+    internal::mbedtls_context <mbedtls_md_context_t> hmac_ctx;
+    hmac_ctx.setup(internal::hash_to_md_type(impl_->hashAlgorithm), 1);
+
+    const unsigned int adjustedOutSize =
+            (outSize > 0) ? static_cast<unsigned char>(outSize) : mbedtls_md_get_size(hmac_ctx.get()->md_info);
 
     VirgilByteArray result(adjustedOutSize);
 
@@ -197,17 +205,8 @@ VirgilByteArray VirgilPBKDF::derive(const virgil::crypto::VirgilByteArray& pwd, 
                     [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidArgument)); }
             );
             break;
-        default: {
-            throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
-        }
     }
     return result;
-}
-
-void VirgilPBKDF::checkState() const {
-    if (impl_->algorithm == VirgilPBKDF::Algorithm::None) {
-        throw make_error(VirgilCryptoError::NotInitialized);
-    }
 }
 
 void VirgilPBKDF::checkRecommendations(const VirgilByteArray& pwd) const {
@@ -228,8 +227,6 @@ void VirgilPBKDF::checkRecommendations(const VirgilByteArray& pwd) const {
 }
 
 size_t VirgilPBKDF::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
-    checkState();
-
     if (impl_->algorithm != Algorithm::PBKDF2) {
         throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
     }
@@ -240,7 +237,7 @@ size_t VirgilPBKDF::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenB
 
     // Write prf
     system_crypto_handler(
-            mbedtls_oid_get_oid_by_md(internal::hash_to_md_type(impl_->hash), &oid, &oidLen),
+            mbedtls_oid_get_oid_by_md(internal::hash_to_md_type(impl_->hashAlgorithm), &oid, &oidLen),
             [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
     );
 
@@ -286,5 +283,5 @@ void VirgilPBKDF::asn1Read(VirgilAsn1Reader& asn1Reader) {
     );
 
     impl_->algorithm = Algorithm::PBKDF2;
-    impl_->hash = internal::md_type_to_hash(md_type);
+    impl_->hashAlgorithm = internal::md_type_to_hash(md_type);
 }

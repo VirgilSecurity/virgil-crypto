@@ -256,8 +256,12 @@ std::string std::to_string(VirgilHash::Algorithm alg) {
     switch (alg) {
         case VirgilHash::Algorithm::MD5:
             return "MD5";
+        case VirgilHash::Algorithm::SHA1:
+            return "SHA1";
         case VirgilHash::Algorithm::SHA256:
             return "SHA256";
+        case VirgilHash::Algorithm::SHA224:
+            return "SHA224";
         case VirgilHash::Algorithm::SHA384:
             return "SHA384";
         case VirgilHash::Algorithm::SHA512:

@@ -56,6 +56,8 @@ public:
      */
     enum class Algorithm {
         MD5,    ///< Hash Algorithm: MD5
+        SHA1,   ///< Hash Algorithm: SHA1
+        SHA224, ///< Hash Algorithm: SHA224
         SHA256, ///< Hash Algorithm: SHA256
         SHA384, ///< Hash Algorithm: SHA384
         SHA512  ///< Hash Algorithm: SHA512

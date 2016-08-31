@@ -48,7 +48,7 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
      */
     public function test_data_sign_verify_with_generated_keys() {
         $initialString = "very long string to be signed";
-        $key = new VirgilKeyPair();
+        $key = VirgilKeyPair::generateRecommended();
 
         $signer = new VirgilSigner();
         $sign = $signer->sign($initialString, $key->privateKey());
@@ -64,7 +64,7 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
     public function test_data_sign_verify_with_generated_keys_with_password() {
         $initialString = "very long string to be signed";
         $privateKeyPassword = "password";
-        $key = new VirgilKeyPair($privateKeyPassword);
+        $key = VirgilKeyPair::generateRecommended($privateKeyPassword);
 
         $signer = new VirgilSigner();
         $sign = $signer->sign($initialString, $key->privateKey(), $privateKeyPassword);
@@ -82,7 +82,7 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
     public function test_data_sign_verify_with_generated_keys_and_wrong_password() {
         $initialString = "very long string to be signed";
         $privateKeyPassword = "password";
-        $key = new VirgilKeyPair($privateKeyPassword);
+        $key = VirgilKeyPair::generateRecommended($privateKeyPassword);
 
         $signer = new VirgilSigner();
         $sign = $signer->sign($initialString, $key->privateKey(), $privateKeyPassword . "Wrong password");
@@ -196,7 +196,7 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
             "    \"type\": \"email\"".
             "}";
 
-        $key = new VirgilKeyPair();
+        $key = VirgilKeyPair::generateRecommended();
 
         $signer = new VirgilSigner();
         $sign = $signer->sign(VirgilByteArrayUtils::jsonToBytes($prettyJson),

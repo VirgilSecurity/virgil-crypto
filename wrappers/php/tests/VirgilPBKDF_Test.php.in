@@ -48,7 +48,6 @@ class VirgilPBKDF_Test extends PHPUnit_Framework_TestCase {
      * @covers VirgilPBKDF::derive
      */
     public function test_pbkdf() {
-        $initialString = "This string will be PBKDFed.";
         $pwd = "password";
         $salt = "salt";
         $iterationCount = 2048;
@@ -56,11 +55,11 @@ class VirgilPBKDF_Test extends PHPUnit_Framework_TestCase {
 
         $pbkdf = new VirgilPBKDF($salt, $iterationCount);
         $pbkdf->setAlgorithm(VirgilPBKDF::Algorithm_PBKDF2);
-        $pbkdf->setHash(VirgilPBKDF::Hash_SHA512);
+        $pbkdf->setHashAlgorithm(VirgilHash::Algorithm_SHA512);
 
         $out = $pbkdf->derive($pwd, $outSize);
 
-        $this->assertEquals(strlen($out), $outSize);
+        $this->assertEquals($outSize, strlen($out));
     }
 }
 

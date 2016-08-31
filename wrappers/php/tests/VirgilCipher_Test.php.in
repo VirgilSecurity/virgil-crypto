@@ -70,11 +70,11 @@ class VirgilCipher_Test extends PHPUnit_Framework_TestCase {
         $initialString = "very long string to be encrypted";
         // Key recipient - Bob
         $bobCertificateId = "BOB-CERT-1234";
-        $bobKey = new VirgilKeyPair();
+        $bobKey = VirgilKeyPair::generateRecommended();
         // Key recipient - Ted
         $tedCertificateId = "TED-CERT-1234";
         $tedKeyPassword = "ted-private-key-password";
-        $tedKey = new VirgilKeyPair($tedKeyPassword);
+        $tedKey = VirgilKeyPair::generateRecommended($tedKeyPassword);
         // Password recipient - Alice
         $alicePassword = "alice-password";
         // Create cipher

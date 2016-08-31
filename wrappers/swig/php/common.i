@@ -63,16 +63,26 @@
 
 %typemap(in)  VirgilPBKDF::Algorithm = int;
 %typemap(out) VirgilPBKDF::Algorithm = int;
-%typemap(in)  VirgilPBKDF::Hash = int;
-%typemap(out) VirgilPBKDF::Hash = int;
+
+%typemap(in)  VirgilHash::Algorithm = int;
+%typemap(out) VirgilHash::Algorithm = int;
 
 %typemap(in)  VirgilTinyCipher::PackageSize = size_t;
 %typemap(out) VirgilTinyCipher::PackageSize = size_t;
 
 #if defined(LIB_LOW_LEVEL_API)
 
-%typemap(in)  VirgilSymmetricCipher::VirgilSymmetricCipherPadding = int;
-%typemap(out) VirgilSymmetricCipher::VirgilSymmetricCipherPadding = int;
+%typemap(in)  VirgilSymmetricCipher::Padding = int;
+%typemap(out) VirgilSymmetricCipher::Padding = int;
+
+%typemap(in)  VirgilSymmetricCipher::Algorithm = int;
+%typemap(out) VirgilSymmetricCipher::Algorithm = int;
+
+%typemap(in)  VirgilPBE::Algorithm = int;
+%typemap(out) VirgilPBE::Algorithm = int;
+
+%typemap(in)  VirgilKDF::Algorithm = int;
+%typemap(out) VirgilKDF::Algorithm = int;
 
 %typemap(in)  VirgilCMSContentType = int;
 %typemap(out) VirgilCMSContentType = int;

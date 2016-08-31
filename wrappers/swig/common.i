@@ -98,16 +98,22 @@ static std::string backtrace_message(const std::exception& exception, int level 
     }
 #endif
 #ifdef SWIGJAVA
-catch (const std::exception& exception) {
+    catch (const std::exception& exception) {
         jclass clazz = jenv->FindClass("java/lang/Exception");
         jenv->ThrowNew(clazz, backtrace_message(exception).c_str());
         return $null;
     }
-#endif
+    catch (...) {
+        jclass clazz = jenv->FindClass("java/lang/Exception");
+        jenv->ThrowNew(clazz, "Unknown exception");
+        return $null;
+    }
+#else
     catch (const std::exception& exception) {
         SWIG_exception(SWIG_RuntimeError, backtrace_message(exception).c_str());
     }
     catch (...) {
         SWIG_exception(SWIG_UnknownError, "Unknown exception");
     }
+#endif
 }

@@ -182,11 +182,11 @@ virgil_depends (
 virgil_find_package (RapidJSON 1.0)
 
 virgil_depends (
-    PACKAGE_NAME "fmt"
-    CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/fmt"
+    PACKAGE_NAME "tinyformat"
+    CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/tinyformat"
     CMAKE_ARGS "${CMAKE_ARGS}"
 )
-virgil_find_package (fmt 3.0.0)
+virgil_find_package (tinyformat 2.0.1)
 
 virgil_depends (
     PACKAGE_NAME "folly"

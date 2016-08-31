@@ -38,7 +38,7 @@
 
 #include <virgil/crypto/foundation/VirgilPBKDF.h>
 
-#include <fmt/format.h>
+#include <tinyformat/tinyformat.h>
 #include <mbedtls/oid.h>
 #include <mbedtls/pkcs5.h>
 
@@ -221,7 +221,7 @@ void VirgilPBKDF::checkRecommendations(const VirgilByteArray& pwd) const {
     }
     if (impl_->iterationCount < impl_->iterationCountMin) {
         throw make_error(VirgilCryptoError::NotSecure,
-                fmt::format("Iteration count {} is not secure, minimum recommended value is {}.",
+                tfm::format("Iteration count %s is not secure, minimum recommended value is %s.",
                         impl_->iterationCount, impl_->iterationCountMin));
     }
 }

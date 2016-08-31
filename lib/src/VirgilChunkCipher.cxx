@@ -37,7 +37,7 @@
 #include <virgil/crypto/VirgilChunkCipher.h>
 
 #include <cmath>
-#include <fmt/format.h>
+#include <tinyformat/tinyformat.h>
 
 #include <virgil/crypto/VirgilByteArrayUtils.h>
 #include <virgil/crypto/VirgilCryptoError.h>
@@ -108,7 +108,7 @@ VirgilByteArray VirgilChunkCipher::process(const VirgilByteArray& data) {
         bool isDataAlignedToBlockSize = (data.size() % symmetricCipher.blockSize()) == 0;
         if (!isDataAlignedToBlockSize) {
             throw make_error(VirgilCryptoError::InvalidArgument,
-                    fmt::format("Expected block size: multiple of {} bytes.", symmetricCipher.blockSize()));
+                    tfm::format("Expected block size: multiple of %s bytes.", symmetricCipher.blockSize()));
         }
     }
 

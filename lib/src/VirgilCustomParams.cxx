@@ -36,7 +36,7 @@
 
 #include <virgil/crypto/VirgilCustomParams.h>
 
-#include <fmt/format.h>
+#include <tinyformat/tinyformat.h>
 
 #include <virgil/crypto/VirgilCryptoError.h>
 #include <virgil/crypto/VirgilByteArrayUtils.h>

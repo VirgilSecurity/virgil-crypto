@@ -36,7 +36,7 @@
 
 cmake_minimum_required (VERSION @CMAKE_VERSION@ FATAL_ERROR)
 
-project (fmt VERSION 3.0.0 LANGUAGES CXX)
+project (tinyformat VERSION 2.0.1 LANGUAGES CXX)
 
 # Define names for configuration files
 set (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "The directory the headers are installed in")
@@ -67,7 +67,7 @@ configure_package_config_file (
 # Install headers
 install (
     DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/"
-    DESTINATION "include/fmt"
+    DESTINATION "include/tinyformat"
 )
 
 # Install configurations

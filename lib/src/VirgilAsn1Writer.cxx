@@ -40,7 +40,7 @@
 
 #include <cmath>
 
-#include <fmt/format.h>
+#include <tinyformat/tinyformat.h>
 #include <mbedtls/asn1.h>
 #include <mbedtls/asn1write.h>
 
@@ -163,7 +163,7 @@ size_t VirgilAsn1Writer::writeContextTag(unsigned char tag, size_t len) {
     checkState();
     if (tag > kAsn1ContextTagMax) {
         throw make_error(VirgilCryptoError::InvalidArgument,
-                fmt::format("ASN.1 context tag is too big {}, maximum is {}.", tag, kAsn1ContextTagMax));
+                tfm::format("ASN.1 context tag is too big %s, maximum is %s.", tag, kAsn1ContextTagMax));
     }
     ensureBufferEnough(kAsn1TagValueSize + kAsn1LengthValueSize);
     RETURN_POINTER_DIFF_AFTER_INVOCATION(p_,

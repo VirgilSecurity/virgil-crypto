@@ -36,7 +36,7 @@
 
 #include <virgil/crypto/VirgilCryptoException.h>
 
-#include <fmt/format.h>
+#include <tinyformat/tinyformat.h>
 
 using virgil::crypto::VirgilCryptoException;
 
@@ -44,7 +44,7 @@ namespace virgil { namespace crypto { namespace internal {
 
 static std::string format_message(const std::error_condition& condition) noexcept {
     try {
-        return fmt::format("Module: {}. Error code: {}. {}",
+        return tfm::format("Module: %s. Error code: %s. %s",
                 condition.category().name(), condition.value(), condition.message());
     } catch (...) {
         return std::string();
@@ -52,7 +52,7 @@ static std::string format_message(const std::error_condition& condition) noexcep
 }
 
 static std::string format_message(const std::error_condition& condition, const std::string& what) noexcept {
-    return fmt::format("{} {}", format_message(condition), what);
+    return tfm::format("%s %s", format_message(condition), what);
 }
 
 }}}

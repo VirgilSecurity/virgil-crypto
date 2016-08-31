@@ -193,7 +193,7 @@ VirgilByteArray VirgilPBKDF::derive(const virgil::crypto::VirgilByteArray& pwd, 
     hmac_ctx.setup(internal::hash_to_md_type(impl_->hashAlgorithm), 1);
 
     const unsigned int adjustedOutSize =
-            (outSize > 0) ? static_cast<unsigned char>(outSize) : mbedtls_md_get_size(hmac_ctx.get()->md_info);
+            (outSize > 0) ? static_cast<unsigned int>(outSize) : mbedtls_md_get_size(hmac_ctx.get()->md_info);
 
     VirgilByteArray result(adjustedOutSize);
 

@@ -53,7 +53,7 @@ VirgilKeyPair VirgilKeyPair::generate(VirgilKeyPair::Type type, const VirgilByte
 
 VirgilKeyPair VirgilKeyPair::generateRecommended(const VirgilByteArray& pwd) {
     VirgilAsymmetricCipher cipher;
-    cipher.genKeyPair(Type::EC_CURVE25519);
+    cipher.genKeyPair(Type::EC_ED25519);
     return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
 }
 

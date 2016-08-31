@@ -188,13 +188,6 @@ virgil_depends (
 )
 virgil_find_package (tinyformat 2.0.1)
 
-virgil_depends (
-    PACKAGE_NAME "folly"
-    CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/folly"
-    CMAKE_ARGS "${CMAKE_ARGS}"
-)
-virgil_find_package (folly 0.57.0)
-
 # Define enviroment parameters
 if (NOT DEFINED POINTER_SIZE)
     include (check_pointer_size)

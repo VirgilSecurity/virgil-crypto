@@ -36,8 +36,8 @@ node('master') {
 def createNativeUnixBuild(slave) {
     return {
         node(slave) {
+            sh 'rm -fr -- *'
             unstash 'src'
-            sh 'rm -fr build install'
             // C++
             sh './utils/build.sh cpp'
             // Ruby
@@ -86,9 +86,8 @@ def createNativeUnixBuild(slave) {
 def createNativeWindowsBuild(slave) {
     return {
         node(slave) {
+            bat "for /F \"delims=\" %%i in ('dir /b') do (rmdir \"%%i\" /s/q || del \"%%i\" /s/q)"
             unstash 'src'
-            bat 'if exist build rmdir /s/q build'
-            bat 'if exist install rmdir /s/q install'
             withEnv(['MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio 14.0',
                      'JAVA_HOME=C:\\Program Files\\Java\\jdk1.8.0_65']) {
                 bat 'utils\\build.bat cpp'
@@ -136,8 +135,8 @@ def createNativeWindowsBuild(slave) {
 def createCrossplatfromBuild(slave) {
     return {
         node(slave) {
+            sh 'rm -fr -- *'
             unstash 'src'
-            sh 'rm -fr build install'
             withEnv(['EMSDK_HOME=/Users/virgil/Library/VirgilEnviroment/emsdk_portable']) {
                 sh './utils/build.sh asmjs'
             }
@@ -152,6 +151,7 @@ def createCrossplatfromBuild(slave) {
 def createDarwinBuild(slave) {
     return {
         node(slave) {
+            sh 'rm -fr -- *'
             unstash 'src'
             sh 'rm -fr build install'
             sh './utils/build.sh osx . build/cpp/osx install/cpp/osx'
@@ -172,8 +172,8 @@ def createDarwinBuild(slave) {
 def createAndroidBuild(slave) {
     return {
         node(slave) {
+            sh 'rm -fr -- *'
             unstash 'src'
-            sh 'rm -fr build install'
             withEnv(['ANDROID_NDK=/Users/virgil/Library/VirgilEnviroment/android-ndk']) {
                 sh './utils/build.sh java_android . build/java/android install/java/android'
                 sh './utils/build.sh net_android . build/net/android install/net/android'

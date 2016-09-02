@@ -86,7 +86,7 @@ def createNativeUnixBuild(slave) {
 def createNativeWindowsBuild(slave) {
     return {
         node(slave) {
-            bat "for /F \"delims=\" %%i in ('dir /b') do (rmdir \"%%i\" /s/q >windows_bat.log 2>&1 NULL || del \"%%i\" /s/q >windows_bat.log 2>&1 || set errorlevel 0)"
+            bat "for /F \"delims=\" %%i in ('dir /b') do (rmdir \"%%i\" /s/q >windows_bat.log 2>&1 || del \"%%i\" /s/q >windows_bat.log 2>&1)"
             unstash 'src'
             withEnv(['MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio 14.0',
                      'JAVA_HOME=C:\\Program Files\\Java\\jdk1.8.0_65']) {
@@ -191,12 +191,8 @@ def organizeFilesUnix(where) {
 }
 
 def organizeFilesWindows(where) {
-    bat "for /r \"${where}\" %%f in (*.zip) do move /y \"%%f\" \"${where}\" >nul"
-    try {
-        bat "for /f \"delims=\" %%d in ('dir /s /b /a:d \"${where}\" ^^^| sort /r 2^>nul') do rmdir \"%%d\""
-    } catch(Exception exception) {
-        // Ignore, because 'sort' can exit with error if no empty folders was found.
-    }
+    bat "for /r \"${where}\" %%f in (*.zip) do move /y \"%%f\" \"${where}\" >>windows_bat.log 2>&1"
+    bat "for /f \"delims=\" %%d in ('dir /s /b /a:d \"${where}\" >>windows_bat.log 2>&1 ^^^| sort /r') do rmdir \"%%d\""
 }
 
 def archiveArtifacts(pattern) {

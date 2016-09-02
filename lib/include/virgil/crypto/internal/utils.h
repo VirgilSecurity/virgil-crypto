@@ -39,7 +39,8 @@
 
 #define VIRGIL_STR(var) #var
 
-#ifndef __cpp_lib_make_unique
+// Define custom implemetation of std::make_unique() function
+#if !defined(__cpp_lib_make_unique) || (defined(_MSC_VER) && _MSC_VER < 1800)
 
 #include <memory>
 

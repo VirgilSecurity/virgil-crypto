@@ -122,7 +122,8 @@ static VirgilHash::Algorithm md_type_to_hash(mbedtls_md_type_t md_type) {
 
 }}}}
 
-struct VirgilPBKDF::Impl {
+class VirgilPBKDF::Impl {
+public:
     Impl() {}
 
     Impl(const VirgilByteArray& saltValue, unsigned int iterationCountValue) :

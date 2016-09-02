@@ -37,6 +37,8 @@
 #include <virgil/crypto/VirgilChunkCipher.h>
 
 #include <cmath>
+#include <limits>
+
 #include <tinyformat/tinyformat.h>
 
 #include <virgil/crypto/VirgilByteArrayUtils.h>
@@ -128,6 +130,9 @@ void VirgilChunkCipher::finish() {
 }
 
 void VirgilChunkCipher::storeChunkSize(size_t chunkSize) {
+    if (chunkSize > std::numeric_limits<int>::max()) {
+        throw make_error(VirgilCryptoError::InvalidArgument, "Chunk size is too big.");
+    }
     customParams().setInteger(str2bytes(kCustomParameterKey_ChunkSize), chunkSize);
 }
 

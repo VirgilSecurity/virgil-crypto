@@ -38,6 +38,7 @@
 
 #include <virgil/crypto/foundation/asn1/internal/VirgilAsn1Alg.h>
 
+#include <limits>
 #include <mbedtls/oid.h>
 
 #include <virgil/crypto/VirgilByteArrayUtils.h>
@@ -55,6 +56,9 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 VirgilByteArray VirgilAsn1Alg::buildPKCS5(const VirgilByteArray& salt, size_t iterationCount) {
+    if (iterationCount > std::numeric_limits<int>::max()) {
+        throw make_error(VirgilCryptoError::InvalidArgument, "Iteration count is too big.");
+    }
     VirgilRandom random(VirgilByteArrayUtils::stringToBytes("pkcs5_seed"));
     VirgilAsn1Writer asn1Writer;
     const char* oid = 0;
@@ -83,7 +87,7 @@ VirgilByteArray VirgilAsn1Alg::buildPKCS5(const VirgilByteArray& salt, size_t it
         prfLen += asn1Writer.writeSequence(prfLen);
 
         size_t kdfLen = prfLen;
-        kdfLen += asn1Writer.writeInteger(iterationCount);
+        kdfLen += asn1Writer.writeInteger(static_cast<int>(iterationCount));
         kdfLen += asn1Writer.writeOctetString(salt);
         kdfLen += asn1Writer.writeSequence(kdfLen);
         kdfLen +=
@@ -101,10 +105,13 @@ VirgilByteArray VirgilAsn1Alg::buildPKCS5(const VirgilByteArray& salt, size_t it
 }
 
 VirgilByteArray VirgilAsn1Alg::buildPKCS12(const VirgilByteArray& salt, size_t iterationCount) {
+    if (iterationCount > std::numeric_limits<int>::max()) {
+        throw make_error(VirgilCryptoError::InvalidArgument, "Iteration count is too big.");
+    }
     VirgilAsn1Writer asn1Writer;
     // Write PBE-params
     size_t pbesLen = 0;
-    pbesLen += asn1Writer.writeInteger(iterationCount);
+    pbesLen += asn1Writer.writeInteger(static_cast<int>(iterationCount));
     pbesLen += asn1Writer.writeOctetString(salt);
     pbesLen += asn1Writer.writeSequence(pbesLen);
     // Write id-PBE OBJECT IDENTIFIER

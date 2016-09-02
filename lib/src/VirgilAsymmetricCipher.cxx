@@ -73,7 +73,7 @@ using virgil::crypto::foundation::internal::mbedtls_context_policy;
 namespace virgil { namespace crypto { namespace foundation { namespace internal {
 
 void gen_key_pair(
-        mbedtls_context<mbedtls_pk_context>& pk_ctx, size_t rsa_size, int rsa_exponent,
+        mbedtls_context<mbedtls_pk_context>& pk_ctx, unsigned int rsa_size, int rsa_exponent,
         mbedtls_ecp_group_id ecp_group_id) {
 
     mbedtls_context<mbedtls_entropy_context> entropy_ctx;
@@ -221,7 +221,8 @@ static VirgilByteArray fixKey(const VirgilByteArray& key) {
 
 /// @name Public section
 
-struct VirgilAsymmetricCipher::Impl {
+class VirgilAsymmetricCipher::Impl {
+public:
     internal::mbedtls_context <mbedtls_pk_context> pk_ctx;
 };
 
@@ -318,7 +319,7 @@ void VirgilAsymmetricCipher::setPublicKey(const VirgilByteArray& key) {
 }
 
 void VirgilAsymmetricCipher::genKeyPair(VirgilKeyPair::Type type) {
-    size_t rsaSize = 0;
+    unsigned int rsaSize = 0;
     mbedtls_ecp_group_id ecTypeId = MBEDTLS_ECP_DP_NONE;
     internal::key_type_set_params(type, &rsaSize, &ecTypeId);
     internal::gen_key_pair(impl_->pk_ctx, rsaSize, 65537, ecTypeId);
@@ -495,7 +496,7 @@ VirgilKeyPair::Type VirgilAsymmetricCipher::getKeyType() const {
 }
 
 void VirgilAsymmetricCipher::setKeyType(VirgilKeyPair::Type keyType) {
-    size_t rsaSize = 0;
+    unsigned int rsaSize = 0;
     mbedtls_ecp_group_id ecTypeId = MBEDTLS_ECP_DP_NONE;
     internal::key_type_set_params(keyType, &rsaSize, &ecTypeId);
 

@@ -68,7 +68,8 @@ mbedtls_cipher_padding_t convert_padding(VirgilSymmetricCipher::Padding padding)
 
 }}}}
 
-struct VirgilSymmetricCipher::Impl {
+class VirgilSymmetricCipher::Impl {
+public:
     internal::mbedtls_context <mbedtls_cipher_context_t> cipher_ctx;
     VirgilByteArray iv;
     VirgilByteArray authData;

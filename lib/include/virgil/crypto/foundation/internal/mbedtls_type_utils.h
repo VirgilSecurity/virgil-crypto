@@ -105,7 +105,7 @@ static inline VirgilKeyPair::Type key_type_from_params(size_t rsa_key_size, mbed
 }
 
 static inline void key_type_set_params(
-        VirgilKeyPair::Type type, size_t* rsa_key_size, mbedtls_ecp_group_id* ecp_group_id) {
+        VirgilKeyPair::Type type, unsigned int* rsa_key_size, mbedtls_ecp_group_id* ecp_group_id) {
 
     *rsa_key_size = 0;
     *ecp_group_id = MBEDTLS_ECP_DP_NONE;

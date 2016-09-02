@@ -80,7 +80,7 @@ bool VirgilAsn1Reader::readBool() {
             mbedtls_asn1_get_bool(&p_, end_, &result),
             [](int){ std::throw_with_nested(make_error(VirgilCryptoError::InvalidFormat)); }
     );
-    return (bool) result;
+    return result == 0 ? false : true;
 }
 
 void VirgilAsn1Reader::readNull() {

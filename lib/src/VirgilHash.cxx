@@ -84,7 +84,8 @@ private:
     const mbedtls_md_context_t* md_ctx_;
 };
 
-struct VirgilHash::Impl {
+class VirgilHash::Impl {
+public:
     Impl() : md_ctx(), hmac_ctx(), info(md_ctx.get()) {}
 
     template<typename TypeOrName>

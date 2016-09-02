@@ -278,7 +278,8 @@ static VirgilKeyPair::Type pk_type_from_code(unsigned char pkCode);
  */
 static VirgilSymmetricCipher create_shared_cipher();
 
-struct VirgilTinyCipher::Impl {
+class VirgilTinyCipher::Impl {
+public:
     size_t packageSize = 0;
     size_t packageCount = 0;
     PackageMap packageMap;

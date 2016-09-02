@@ -40,7 +40,8 @@
 #define VIRGIL_STR(var) #var
 
 // Define custom implemetation of std::make_unique() function
-#if !defined(__cpp_lib_make_unique) || (defined(_MSC_VER) && _MSC_VER < 1800)
+#if !defined(__cpp_lib_make_unique)
+#if !defined(_MSC_VER) || _MSC_VER < 1800
 
 #include <memory>
 
@@ -51,6 +52,7 @@ std::unique_ptr<T> make_unique(Args&& ... args) {
 }
 }
 
+#endif // !defined(_MSC_VER) || _MSC_VER < 1800
 #endif // __cpp_lib_make_unique
 
 #endif // VIRGIL_CRYPTO_INTERNAL_UTILS_H

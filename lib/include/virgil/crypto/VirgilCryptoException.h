@@ -89,4 +89,21 @@ private:
 
 }}
 
+//! @cond Doxygen_Suppress
+// TODO: Remove this when Clang compiler will be used from the Android NDK, possible in the release r13.
+#if defined(ANDROID) && defined(__GCC_ATOMIC_INT_LOCK_FREE) && __GCC_ATOMIC_INT_LOCK_FREE < 2
+namespace std {
+template<typename T>
+void throw_with_nested(const T& ex) {
+    throw ex;
+}
+template<typename T>
+void rethrow_if_nested(const T&) {
+    // Do nothing
+}
+}
+#endif
+//! @endcond
+
+
 #endif /* VIRGIL_CRYPTO_EXCEPTION_H */

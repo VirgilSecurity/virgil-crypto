@@ -86,7 +86,7 @@ def createNativeUnixBuild(slave) {
 def createNativeWindowsBuild(slave) {
     return {
         node(slave) {
-            bat "for /F \"delims=\" %%i in ('dir /b') do (rmdir \"%%i\" /s/q || del \"%%i\" /s/q)"
+            bat "for /F \"delims=\" %%i in ('dir /b') do (rmdir \"%%i\" /s/q >windows_bat.log 2>&1 NULL || del \"%%i\" /s/q >windows_bat.log 2>&1 || set errorlevel 0)"
             unstash 'src'
             withEnv(['MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio 14.0',
                      'JAVA_HOME=C:\\Program Files\\Java\\jdk1.8.0_65']) {

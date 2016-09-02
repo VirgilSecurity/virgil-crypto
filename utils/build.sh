@@ -239,11 +239,7 @@ show_info "<install_dir>: ${INSTALL_DIR}"
 CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
 
 if [[ ${TARGET_NAME} =~ ^(cpp|osx|java|net|php|python|ruby|nodejs)$ ]]; then
-    if [ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]; then
-        CMAKE_ARGS+=" -DPLATFORM_ARCH=universal -DCMAKE_OSX_ARCHITECTURES=i386;x86_64"
-    else
-        CMAKE_ARGS+=" -DPLATFORM_ARCH=$(uname -m)"
-    fi
+    CMAKE_ARGS+=" -DPLATFORM_ARCH=$(uname -m)"
 fi
 
 if [ ! -z "${TARGET_VERSION}" ]; then

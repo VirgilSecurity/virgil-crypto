@@ -192,7 +192,7 @@ def organizeFilesUnix(where) {
 
 def organizeFilesWindows(where) {
     bat "for /r \"${where}\" %%f in (*.zip) do move /y \"%%f\" \"${where}\" >>windows_bat.log 2>&1"
-    bat "for /f \"delims=\" %%d in ('dir /s /b /a:d \"${where}\" >>windows_bat.log 2>&1 ^^^| sort /r') do rmdir \"%%d\""
+    bat "for /f \"delims=\" %%d in ('dir /s /b /a:d \"${where}\" ^>^>windows_bat.log 2^>&1 ^^^| sort /r') do rmdir \"%%d\""
 }
 
 def archiveArtifacts(pattern) {

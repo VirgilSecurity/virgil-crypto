@@ -2,7 +2,7 @@
 stage 'Grab SCM'
 
 node('master') {
-    sh 'rm -fr -- *'
+    clearContentUnix()
     checkout scm
     sh 'mkdir -p install'
     sh 'cp -f VERSION install/'
@@ -36,7 +36,7 @@ node('master') {
 def createNativeUnixBuild(slave) {
     return {
         node(slave) {
-            sh 'rm -fr -- *'
+            clearContentUnix()
             unstash 'src'
             // C++
             sh './utils/build.sh cpp'
@@ -86,7 +86,7 @@ def createNativeUnixBuild(slave) {
 def createNativeWindowsBuild(slave) {
     return {
         node(slave) {
-            bat "for /F \"delims=\" %%i in ('dir /b') do (rmdir \"%%i\" /s/q >windows_bat.log 2>&1 || del \"%%i\" /s/q >windows_bat.log 2>&1)"
+            clearContentWindows()
             unstash 'src'
             withEnv(['MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio 14.0',
                      'JAVA_HOME=C:\\Program Files\\Java\\jdk1.8.0_65']) {
@@ -135,7 +135,7 @@ def createNativeWindowsBuild(slave) {
 def createCrossplatfromBuild(slave) {
     return {
         node(slave) {
-            sh 'rm -fr -- *'
+            clearContentUnix()
             unstash 'src'
             withEnv(['EMSDK_HOME=/Users/virgil/Library/VirgilEnviroment/emsdk_portable']) {
                 sh './utils/build.sh asmjs'
@@ -151,7 +151,7 @@ def createCrossplatfromBuild(slave) {
 def createDarwinBuild(slave) {
     return {
         node(slave) {
-            sh 'rm -fr -- *'
+            clearContentUnix()
             unstash 'src'
             sh 'rm -fr build install'
             sh './utils/build.sh osx . build/cpp/osx install/cpp/osx'
@@ -172,7 +172,7 @@ def createDarwinBuild(slave) {
 def createAndroidBuild(slave) {
     return {
         node(slave) {
-            sh 'rm -fr -- *'
+            clearContentUnix()
             unstash 'src'
             withEnv(['ANDROID_NDK=/Users/virgil/Library/VirgilEnviroment/android-ndk']) {
                 sh './utils/build.sh java_android . build/java/android install/java/android'
@@ -191,8 +191,16 @@ def organizeFilesUnix(where) {
 }
 
 def organizeFilesWindows(where) {
-    bat "for /r \"${where}\" %%f in (*.zip) do move /y \"%%f\" \"${where}\" >>windows_bat.log 2>&1"
-    bat "for /f \"delims=\" %%d in ('dir /s /b /a:d \"${where}\" 2^^^>^^^>windows_bat.log ^^^| sort /r') do rmdir \"%%d\""
+    bat "for /r \"${where}\" %%f in (*.zip) do move /y \"%%f\" \"${where}\""
+    bat "(for /f \"delims=\" %%d in ('dir /s /b /a:d \"${where}\" ^^^| sort /r') do rmdir \"%%d\") || rem"
+}
+
+def clearContentWindows() {
+    bat "(for /F \"delims=\" %%i in ('dir /b') do (rmdir \"%%i\" /s/q >nul 2>&1 || del \"%%i\" /s/q >nul 2>&1 )) || rem"
+}
+
+def clearContentUnix() {
+    sh "rm -fr -- *"
 }
 
 def archiveArtifacts(pattern) {

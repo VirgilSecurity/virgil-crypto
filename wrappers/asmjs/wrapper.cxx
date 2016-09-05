@@ -34,9 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
- #include <emscripten/bind.h>
-using namespace emscripten;
-
 #include <string>
 #include <memory>
 
@@ -61,6 +58,9 @@ using namespace emscripten;
 #include <virgil/crypto/VirgilStreamCipher.h>
 #include <virgil/crypto/VirgilStreamSigner.h>
 
+#include "@VIRGIL_EMBIND_FILE@"
+
+using namespace emscripten;
 using namespace virgil::crypto;
 using namespace virgil::crypto::foundation;
 

@@ -56,6 +56,10 @@ using namespace emscripten;
 #include <virgil/crypto/VirgilCipher.h>
 #include <virgil/crypto/VirgilSigner.h>
 #include <virgil/crypto/VirgilTinyCipher.h>
+#include <virgil/crypto/VirgilDataSink.h>
+#include <virgil/crypto/VirgilDataSource.h>
+#include <virgil/crypto/VirgilStreamCipher.h>
+#include <virgil/crypto/VirgilStreamSigner.h>
 
 using namespace virgil::crypto;
 using namespace virgil::crypto::foundation;
@@ -88,6 +92,28 @@ static bool VirgilSigner_verify(VirgilSigner& signer, const VirgilByteArray& dat
         const VirgilByteArray& sign, const VirgilByteArray& publicKey) {
     return signer.verify(data, sign, publicKey);
 }
+
+class VirgilDataSinkWrapper : public wrapper<VirgilDataSink> {
+public:
+    EMSCRIPTEN_WRAPPER(VirgilDataSinkWrapper);
+    bool isGood() {
+        return call<bool>("isGood");
+    }
+    void write(const VirgilByteArray& data) {
+        return call<void>("write", data);
+    }
+};
+
+class VirgilDataSourceWrapper : public wrapper<VirgilDataSource> {
+public:
+    EMSCRIPTEN_WRAPPER(VirgilDataSourceWrapper);
+    bool hasData() {
+        return call<bool>("hasData");
+    }
+    VirgilByteArray read() {
+        return call<VirgilByteArray>("read");
+    }
+};
 
 }}
 
@@ -214,6 +240,31 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .function("isPackagesAccumulated", &VirgilTinyCipher::isPackagesAccumulated)
         .function("decrypt", &VirgilTinyCipher::decrypt)
         .function("verifyAndDecrypt", &VirgilTinyCipher::verifyAndDecrypt)
+    ;
+
+    class_<VirgilDataSink>("VirgilDataSink")
+        .function("isGood", &VirgilDataSink::isGood, pure_virtual())
+        .function("write", &VirgilDataSink::write, pure_virtual())
+        .allow_subclass<VirgilDataSinkWrapper>("VirgilDataSinkWrapper")
+    ;
+
+    class_<VirgilDataSource>("VirgilDataSource")
+        .function("hasData", &VirgilDataSource::hasData, pure_virtual())
+        .function("read", &VirgilDataSource::read, pure_virtual())
+        .allow_subclass<VirgilDataSourceWrapper>("VirgilDataSourceWrapper")
+    ;
+
+    class_<VirgilStreamCipher, base<VirgilCipherBase>>("VirgilStreamCipher")
+        .constructor<>()
+        .function("encrypt", &VirgilStreamCipher::encrypt)
+        .function("decryptWithKey", &VirgilStreamCipher::decryptWithKey)
+        .function("decryptWithPassword", &VirgilStreamCipher::decryptWithPassword)
+    ;
+
+    class_<VirgilStreamSigner>("VirgilStreamSigner")
+        .constructor<>()
+        .function("sign", &VirgilStreamSigner::sign)
+        .function("verify", &VirgilStreamSigner::verify)
     ;
 }
 

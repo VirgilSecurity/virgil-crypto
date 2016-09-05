@@ -19,6 +19,37 @@
             encryptedData.delete();
             decryptedData.delete();
         };
+        function test_stream_encryption() {
+            var pwd = Module.VirgilByteArray.fromUTF8("password");
+            var keys = Module.VirgilKeyPair.generateRecommended(pwd);
+            var certId = Module.VirgilByteArray.fromUTF8("17648c7e-9ca3-4707-bdc6-a5c57b7a18fc");
+            var data = Module.VirgilByteArray.fromUTF8("data to be encrypted");
+            var cipher = new Module.VirgilStreamCipher();
+            cipher.addKeyRecipient(certId, keys.publicKey());
+
+            var dataSource = new Module.VirgilStreamDataSource(data.toUint8Array(), 1);
+            var dataSink = new Module.VirgilStreamDataSink();
+            cipher.encrypt(dataSource, dataSink, true);
+
+            var encrypedDataSource = new Module.VirgilStreamDataSource(dataSink.getBytes(), 2);
+            var decryptedDataSink = new Module.VirgilStreamDataSink();
+
+            cipher.decryptWithKey(encrypedDataSource, decryptedDataSink, certId, keys.privateKey(), pwd);
+
+            var decryptedData = Module.VirgilByteArray.fromUint8Array(decryptedDataSink.getBytes());
+
+            console.log(decryptedData.toUTF8());
+            pwd.delete();
+            keys.delete();
+            certId.delete();
+            data.delete();
+            cipher.delete();
+            decryptedData.delete();
+            dataSource.delete();
+            dataSink.delete();
+            encrypedDataSource.delete();
+            decryptedDataSink.delete();
+        };
         function test_sign() {
             var pwd = Module.VirgilByteArray.fromUTF8("");
             var keys = Module.VirgilKeyPair.generateRecommended(pwd);

@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilKDF"
-
 #include <virgil/crypto/foundation/VirgilKDF.h>
 
 #include <mbedtls/kdf.h>

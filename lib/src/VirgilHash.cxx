@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilHash"
-
 #include <virgil/crypto/foundation/VirgilHash.h>
 
 #include <mbedtls/md.h>

@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilBase64"
-
 #include <virgil/crypto/foundation/VirgilBase64.h>
 
 #include <mbedtls/base64.h>

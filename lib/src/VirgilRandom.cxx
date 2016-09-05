@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilRandom"
-
 #include <virgil/crypto/foundation/VirgilRandom.h>
 
 #include <array>

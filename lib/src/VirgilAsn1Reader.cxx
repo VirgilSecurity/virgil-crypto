@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilAsn1Reader"
-
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 
 #include <mbedtls/asn1.h>

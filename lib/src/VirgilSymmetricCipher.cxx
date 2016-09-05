@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilSymmetricCipher"
-
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
 
 #include <mbedtls/cipher.h>

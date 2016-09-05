@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilAsn1Alg"
-
 #include <virgil/crypto/foundation/asn1/internal/VirgilAsn1Alg.h>
 
 #include <limits>

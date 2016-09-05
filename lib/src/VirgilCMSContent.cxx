@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilCMSContent"
-
 #include <virgil/crypto/foundation/cms/VirgilCMSContent.h>
 
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>

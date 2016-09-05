@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilCMSEnvelopedData"
-
 #include <virgil/crypto/foundation/cms/VirgilCMSEnvelopedData.h>
 
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>

@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilCipher"
-
 #include <virgil/crypto/VirgilCipherBase.h>
 
 #include <virgil/crypto/VirgilByteArrayUtils.h>

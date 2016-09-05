@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilPBKDF"
-
 #include <virgil/crypto/foundation/VirgilPBKDF.h>
 
 #include <tinyformat/tinyformat.h>

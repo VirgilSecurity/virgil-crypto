@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilSigner"
-
 #include <virgil/crypto/VirgilSigner.h>
 
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>

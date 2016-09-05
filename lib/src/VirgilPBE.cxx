@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilPBE"
-
 #include <virgil/crypto/foundation/VirgilPBE.h>
 
 #include <map>

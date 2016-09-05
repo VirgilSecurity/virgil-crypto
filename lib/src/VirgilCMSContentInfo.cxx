@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilCMSContentInfo"
-
 #include <virgil/crypto/foundation/cms/VirgilCMSContentInfo.h>
 
 #include <mbedtls/asn1.h>

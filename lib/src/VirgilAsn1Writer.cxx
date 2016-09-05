@@ -34,8 +34,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define MODULE_NAME "VirgilAsn1Writer"
-
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
 #include <cmath>

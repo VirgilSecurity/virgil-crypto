@@ -12,7 +12,6 @@ std::string VirgilVersion::asString() {
 }
 
 size_t VirgilVersion::majorVersion() {
-    throw std::logic_error("qqqqqqqqqqqqqqq");
     return @VIRGIL_VERSION_MAJOR@;
 }
 

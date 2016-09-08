@@ -145,6 +145,10 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .class_function("extractPublicKey", &VirgilKeyPair::extractPublicKey)
         .class_function("encryptPrivateKey", &VirgilKeyPair::encryptPrivateKey)
         .class_function("decryptPrivateKey", &VirgilKeyPair::decryptPrivateKey)
+        .class_function("publicKeyToPEM", &VirgilKeyPair::publicKeyToPEM)
+        .class_function("publicKeyToDER", &VirgilKeyPair::publicKeyToDER)
+        .class_function("privateKeyToPEM", &VirgilKeyPair::privateKeyToPEM)
+        .class_function("privateKeyToDER", &VirgilKeyPair::privateKeyToDER)
     ;
 
     enum_<VirgilKeyPair::Type>("VirgilKeyPairType")

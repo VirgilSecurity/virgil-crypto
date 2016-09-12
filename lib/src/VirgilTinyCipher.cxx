@@ -34,6 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_TINY_CIPHER_MODULE)
+
 #include <virgil/crypto/VirgilTinyCipher.h>
 
 #include <map>
@@ -53,7 +61,6 @@
 
 
 using virgil::crypto::VirgilTinyCipher;
-using virgil::crypto::VirgilTinyCipherImpl;
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::VirgilKeyPair;
@@ -648,3 +655,5 @@ static VirgilByteArray auth_to_iv(const VirgilByteArray& data, size_t ivSize) {
 static VirgilSymmetricCipher create_shared_cipher() {
     return VirgilSymmetricCipher(VirgilSymmetricCipher::Algorithm::AES_256_GCM);
 }
+
+#endif //VIRGIL_CRYPTO_TINY_CIPHER_MODULE

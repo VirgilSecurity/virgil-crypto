@@ -39,6 +39,10 @@
  * @brief Covers class VirgilCipherBase.
  */
 
+#if defined(VIRGIL_CRYPTO_CIPHER_MODULE) || \
+        defined(VIRGIL_CRYPTO_STREAM_CIPHER_MODULE) || \
+        defined(VIRGIL_CRYPTO_CHUNK_CIPHER_MODULE)
+
 #include "catch.hpp"
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -354,3 +358,5 @@ TEST_CASE("VirgilCipherBase::computeShared()", "[cipher-base]") {
                 VirgilCryptoException);
     }
 }
+
+#endif //VIRGIL_CRYPTO_CIPHER_MODULE || VIRGIL_CRYPTO_STREAM_CIPHER_MODULE || VIRGIL_CRYPTO_CHUNK_CIPHER_MODULE

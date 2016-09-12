@@ -35,9 +35,18 @@
  */
 
 /**
- * @file test_hash.cxx
- * @brief Covers class VirgilByteArrayUtils
+ * @file test_tag_filter.cxx
+ * @brief Covers class VirgilTagFilter
  */
+
+
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_SYMMETRIC_CIPHER_MODULE)
 
 #include "catch.hpp"
 
@@ -72,3 +81,5 @@ TEST_CASE("Get TAG", "[tag-filter]") {
         REQUIRE(VirgilByteArrayUtils::bytesToHex(tagFilter.tag()) == "2ccda65f87808b4dcdfebd970b881e95");
     }
 }
+
+#endif //VIRGIL_CRYPTO_FOUNDATION_SYMMETRIC_CIPHER_MODULE

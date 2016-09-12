@@ -39,6 +39,14 @@
  * @brief Covers class VirgilPBKDF
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_PBKDF_MODULE)
+
 #include "catch.hpp"
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -366,3 +374,5 @@ TEST_CASE("PBKDF2 with default output size", "[PBKDF]") {
         REQUIRE(pbkdf.derive(pwd).size() == 64);
     }
 }
+
+#endif //VIRGIL_CRYPTO_FOUNDATION_PBKDF_MODULE

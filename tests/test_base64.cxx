@@ -39,6 +39,14 @@
  * @brief Covers class VirgilBase64
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_BASE64_MODULE)
+
 #include "catch.hpp"
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -100,3 +108,5 @@ TEST_CASE("VirgilBase64 - Success", "[base64]") {
         REQUIRE(VirgilBase64::decode(base64_data) == plain_data);
     }
 }
+
+#endif //VIRGIL_CRYPTO_FOUNDATION_BASE64_MODULE

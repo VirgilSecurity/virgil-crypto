@@ -39,6 +39,14 @@
  * @brief Covers class VirgilHash
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_HASH_MODULE)
+
 #include "catch.hpp"
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -151,3 +159,5 @@ TEST_CASE("HMAC-MD5", "[HMAC hash]") {
         REQUIRE(hash.hmac(key, testVector) == testVectorHash);
     }
 }
+
+#endif //VIRGIL_CRYPTO_FOUNDATION_HASH_MODULE

@@ -34,6 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_STREAM_CIPHER_MODULE)
+
 #include <virgil/crypto/VirgilStreamCipher.h>
 
 #include <virgil/crypto/foundation/VirgilKDF.h>
@@ -121,3 +129,5 @@ void VirgilStreamCipher::decrypt(
     }
     clearCipherInfo();
 }
+
+#endif //VIRGIL_CRYPTO_STREAM_CIPHER_MODULE

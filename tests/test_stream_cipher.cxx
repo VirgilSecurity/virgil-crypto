@@ -39,6 +39,14 @@
  * @brief Covers class VirgilStreamCipher
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_STREAM_CIPHER_MODULE)
+
 #if LIB_FILE_IO
 
 #include "catch.hpp"
@@ -268,10 +276,6 @@ TEST_CASE("Stream Cipher: generated keys", "[stream-cipher]") {
     }
 }
 
-#else
-#if defined(_MSC_VER)
-#pragma message("Tests for class VirgilStreamCipher are ignored, because LIB_FILE_IO build parameter is not defined")
-#else
-#warning "Tests for class VirgilStreamCipher are ignored, because LIB_FILE_IO build parameter is not defined"
-#endif /* _MSC_VER */
 #endif /* LIB_FILE_IO */
+
+#endif //VIRGIL_CRYPTO_STREAM_CIPHER_MODULE

@@ -39,6 +39,14 @@
  * @brief Covers class VirgilAsn1Writer
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_ASN1_MODULE)
+
 #include "catch.hpp"
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -266,3 +274,5 @@ TEST_CASE("ASN.1 write: check step by step ASN.1 buffer grows", "[asn1-writer]")
     size_t len = 0;
     REQUIRE_THROWS(for (; ;) { len += asn1Writer.writeSequence(len); });
 }
+
+#endif //VIRGIL_CRYPTO_FOUNDATION_ASN1_MODULE

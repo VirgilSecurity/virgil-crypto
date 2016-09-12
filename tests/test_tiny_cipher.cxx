@@ -39,6 +39,14 @@
  * @brief Covers class VirgilTinyCipher
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_TINY_CIPHER_MODULE)
+
 #include "catch.hpp"
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -172,3 +180,5 @@ TEST_CASE_ENCRYPT_DECRYPT(EC_CURVE25519)
 TEST_CASE_ENCRYPT_DECRYPT(EC_ED25519)
 
 #undef TEST_CASE_ENCRYPT_DECRYPT
+
+#endif //VIRGIL_CRYPTO_TINY_CIPHER_MODULE

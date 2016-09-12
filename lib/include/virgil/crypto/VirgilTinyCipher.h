@@ -45,11 +45,6 @@
 namespace virgil { namespace crypto {
 
 /**
- * @brief Forward declaration of the implementation class.
- */
-class VirgilTinyCipherImpl;
-
-/**
  * @brief This class aim is to minimize encryption output.
  *
  * @par Motivation

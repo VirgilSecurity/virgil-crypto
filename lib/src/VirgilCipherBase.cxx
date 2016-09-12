@@ -34,6 +34,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_CIPHER_MODULE) || \
+        defined(VIRGIL_CRYPTO_STREAM_CIPHER_MODULE) || \
+        defined(VIRGIL_CRYPTO_CHUNK_CIPHER_MODULE)
+
 #include <virgil/crypto/VirgilCipherBase.h>
 
 #include <virgil/crypto/VirgilByteArrayUtils.h>
@@ -338,3 +348,5 @@ void VirgilCipherBase::clearCipherInfo() {
 VirgilSymmetricCipher& VirgilCipherBase::getSymmetricCipher() {
     return impl_->symmetricCipher;
 }
+
+#endif //VIRGIL_CRYPTO_CIPHER_MODULE || VIRGIL_CRYPTO_STREAM_CIPHER_MODULE || VIRGIL_CRYPTO_CHUNK_CIPHER_MODULE

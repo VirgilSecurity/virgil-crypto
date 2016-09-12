@@ -39,6 +39,14 @@
  * @brief Covers class VirgilCipher
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_CIPHER_MODULE)
+
 #include "catch.hpp"
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -398,3 +406,5 @@ TEST_CASE("VirgilCipher: check recipient existence", "[cipher]") {
         REQUIRE_FALSE(restoredCipher.keyRecipientExists(aliceId));
     }
 }
+
+#endif //VIRGIL_CRYPTO_CIPHER_MODULE

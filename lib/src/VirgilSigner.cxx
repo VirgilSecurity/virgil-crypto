@@ -34,6 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_SIGNER_MODULE)
+
 #include <virgil/crypto/VirgilSigner.h>
 
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
@@ -89,3 +97,5 @@ bool VirgilSigner::verify(const VirgilByteArray& data, const VirgilByteArray& si
     // Verify
     return cipher.verify(digest, digestSign, hash_.type());
 }
+
+#endif //VIRGIL_CRYPTO_SIGNER_MODULE

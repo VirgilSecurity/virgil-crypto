@@ -36,8 +36,16 @@
 
 /**
  * @file test_chunk_cipher.cxx
- * @brief Covers class VirgilCipher
+ * @brief Covers class VirgilChunkCipher
  */
+
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_CHUNK_CIPHER_MODULE)
 
 #include "catch.hpp"
 
@@ -86,3 +94,5 @@ TEST_CASE("Encrypt and decrypt with generated keys", "[chunk-cipher]") {
         REQUIRE(bytes2str(plainData) == bytes2str(decryptedData));
     }
 }
+
+#endif //VIRGIL_CRYPTO_CHUNK_CIPHER_MODULE

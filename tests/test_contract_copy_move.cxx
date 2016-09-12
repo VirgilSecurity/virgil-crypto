@@ -39,6 +39,12 @@
  * @brief Covers class contracts: copyable, moveable
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
 #include "catch.hpp"
 
 #include <virgil/crypto/foundation/VirgilBase64.h>
@@ -91,32 +97,73 @@
     }
 
 TEST_CASE("Check contract: move only", "[copy/move]") {
+#if defined(VIRGIL_CRYPTO_FOUNDATION_ASN1_MODULE)
     SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::asn1::VirgilAsn1Reader);
     SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::asn1::VirgilAsn1Writer);
+#endif //VIRGIL_CRYPTO_FOUNDATION_ASN1_MODULE
 
+#if defined(VIRGIL_CRYPTO_FOUNDATION_HASH_MODULE)
     SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::VirgilHash);
-    SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::VirgilKDF);
-    SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::VirgilPBE);
-    SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::VirgilPBKDF);
-    SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::VirgilRandom);
-    SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::VirgilAsymmetricCipher);
-    SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::VirgilSymmetricCipher);
+#endif //VIRGIL_CRYPTO_FOUNDATION_HASH_MODULE
 
+#if defined(VIRGIL_CRYPTO_FOUNDATION_KDF_MODULE)
+    SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::VirgilKDF);
+#endif //VIRGIL_CRYPTO_FOUNDATION_KDF_MODULE
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_PBE_MODULE)
+    SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::VirgilPBE);
+#endif //VIRGIL_CRYPTO_FOUNDATION_PBE_MODULE
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_PBKDF_MODULE)
+    SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::VirgilPBKDF);
+#endif //VIRGIL_CRYPTO_FOUNDATION_PBKDF_MODULE
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_RANDOM_MODULE)
+    SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::VirgilRandom);
+#endif //VIRGIL_CRYPTO_FOUNDATION_RANDOM_MODULE
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_ASYMMETRIC_CIPHER_MODULE)
+    SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::VirgilAsymmetricCipher);
+#endif //VIRGIL_CRYPTO_FOUNDATION_ASYMMETRIC_CIPHER_MODULE
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_SYMMETRIC_CIPHER_MODULE)
+    SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::foundation::VirgilSymmetricCipher);
+#endif //VIRGIL_CRYPTO_FOUNDATION_SYMMETRIC_CIPHER_MODULE
+
+#if defined(VIRGIL_CRYPTO_CIPHER_MODULE)
     SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::VirgilCipher);
+#endif //VIRGIL_CRYPTO_CIPHER_MODULE
+
+#if defined(VIRGIL_CRYPTO_STREAM_CIPHER_MODULE)
     SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::VirgilStreamCipher);
+#endif //VIRGIL_CRYPTO_STREAM_CIPHER_MODULE
+
+#if defined(VIRGIL_CRYPTO_CHUNK_CIPHER_MODULE)
     SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::VirgilChunkCipher);
+#endif //VIRGIL_CRYPTO_CHUNK_CIPHER_MODULE
+
+#if defined(VIRGIL_CRYPTO_TINY_CIPHER_MODULE)
     SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::VirgilTinyCipher);
+#endif //VIRGIL_CRYPTO_TINY_CIPHER_MODULE
+
+#if defined(VIRGIL_CRYPTO_SIGNER_MODULE)
     SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::VirgilSigner);
+#endif //VIRGIL_CRYPTO_SIGNER_MODULE
+
+#if defined(VIRGIL_CRYPTO_STREAM_CIPHER_MODULE)
     SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::VirgilStreamSigner);
+#endif //VIRGIL_CRYPTO_STREAM_CIPHER_MODULE
 }
 
 TEST_CASE("Check contract: copy and move", "[copy/move]") {
+#if defined(VIRGIL_CRYPTO_FOUNDATION_CMS_MODULE)
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSContent);
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSContentInfo);
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSEncryptedContent);
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSEnvelopedData);
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSKeyTransRecipient);
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSPasswordRecipient);
+#endif //VIRGIL_CRYPTO_FOUNDATION_CMS_MODULE
 
 #if defined(__GNUG__) && (__GNUC__ == 5 && __GNUC_MINOR__ >= 5 )
     // VirgilCryptoException contains field with type std::string,

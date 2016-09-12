@@ -34,6 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_CIPHER_MODULE)
+
 #include <virgil/crypto/VirgilCipher.h>
 
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
@@ -90,3 +98,5 @@ VirgilByteArray VirgilCipher::decrypt(const VirgilByteArray& encryptedData, Virg
     clearCipherInfo();
     return decryptedData;
 }
+
+#endif //VIRGIL_CRYPTO_CIPHER_MODULE

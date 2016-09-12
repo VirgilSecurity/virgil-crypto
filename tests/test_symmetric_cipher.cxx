@@ -39,6 +39,14 @@
  * @brief Covers class VirgilSymmetricCipher
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_SYMMETRIC_CIPHER_MODULE)
+
 #include "catch.hpp"
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -103,3 +111,5 @@ TEST_CASE("Symmetric Cipher", "[symmetric-cipher]") {
         REQUIRE(bytes2str(plainData) == bytes2str(decryptedData));
     }
 }
+
+#endif //VIRGIL_CRYPTO_FOUNDATION_SYMMETRIC_CIPHER_MODULE

@@ -34,6 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_STREAM_SIGNER_MODULE)
+
 #include <virgil/crypto/VirgilStreamSigner.h>
 
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
@@ -96,3 +104,5 @@ bool VirgilStreamSigner::verify(
     // Verify
     return cipher.verify(digest, digestSign, hash_.type());
 }
+
+#endif //VIRGIL_CRYPTO_STREAM_SIGNER_MODULE

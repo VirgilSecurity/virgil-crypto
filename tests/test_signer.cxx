@@ -39,6 +39,14 @@
  * @brief Covers class VirgilSigner
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_SIGNER_MODULE)
+
 #include "catch.hpp"
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -109,3 +117,5 @@ TEST_CASE("VirgilSigner: sign with wrong key password", "[signer]") {
     VirgilSigner signer;
     REQUIRE_THROWS_AS(signer.sign(testData, keyPair.privateKey(), wrongKeyPassword), VirgilCryptoException);
 }
+
+#endif //VIRGIL_CRYPTO_SIGNER_MODULE

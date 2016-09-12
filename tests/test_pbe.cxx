@@ -39,6 +39,14 @@
  * @brief Covers class VirgilPBE
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_PBE_MODULE)
+
 #include "catch.hpp"
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -93,3 +101,5 @@ TEST_CASE("PBES PKCS#12", "[pbe]") {
         REQUIRE_THROWS_AS(pbe.encrypt(testData, veryLongPassword), VirgilCryptoException);
     }
 }
+
+#endif //VIRGIL_CRYPTO_FOUNDATION_PBE_MODULE

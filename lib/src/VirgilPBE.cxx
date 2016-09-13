@@ -34,6 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_PBE_MODULE)
+
 #include <virgil/crypto/foundation/VirgilPBE.h>
 
 #include <map>
@@ -213,3 +221,5 @@ size_t VirgilPBE::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenByt
 void VirgilPBE::asn1Read(VirgilAsn1Reader& asn1Reader) {
     impl_ = std::make_unique<Impl>(asn1Reader.readData());
 }
+
+#endif //VIRGIL_CRYPTO_FOUNDATION_PBE_MODULE

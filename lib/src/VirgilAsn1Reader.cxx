@@ -34,6 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_ASN1_MODULE)
+
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 
 #include <mbedtls/asn1.h>
@@ -187,4 +195,4 @@ void VirgilAsn1Reader::checkState() {
     }
 }
 
-
+#endif //VIRGIL_CRYPTO_FOUNDATION_ASN1_MODULE

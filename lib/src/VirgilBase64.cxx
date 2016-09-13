@@ -34,6 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_BASE64_MODULE)
+
 #include <virgil/crypto/foundation/VirgilBase64.h>
 
 #include <mbedtls/base64.h>
@@ -92,3 +100,5 @@ VirgilByteArray VirgilBase64::decode(const std::string& base64str) {
     result.resize(bufLen);
     return result;
 }
+
+#endif //VIRGIL_CRYPTO_FOUNDATION_BASE64_MODULE

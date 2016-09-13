@@ -34,6 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_ASYMMETRIC_CIPHER_MODULE)
+
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 
 #include <mbedtls/config.h>
@@ -738,4 +746,4 @@ void VirgilAsymmetricCipher::checkState() const {
         throw make_error(VirgilCryptoError::NotInitialized);
     }
 }
-
+#endif //VIRGIL_CRYPTO_FOUNDATION_ASYMMETRIC_CIPHER_MODULE

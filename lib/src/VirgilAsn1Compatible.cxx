@@ -34,6 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_ASN1_MODULE)
+
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
@@ -65,3 +73,5 @@ void VirgilAsn1Compatible::checkRequiredField(const VirgilByteArray& param) cons
         throw make_error(VirgilCryptoError::InvalidState);
     }
 }
+
+#endif //VIRGIL_CRYPTO_FOUNDATION_ASN1_MODULE

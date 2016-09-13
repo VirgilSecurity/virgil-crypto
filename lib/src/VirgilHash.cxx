@@ -34,6 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_HASH_MODULE)
+
 #include <virgil/crypto/foundation/VirgilHash.h>
 
 #include <mbedtls/md.h>
@@ -267,3 +275,5 @@ std::string std::to_string(VirgilHash::Algorithm alg) {
             return "SHA512";
     }
 }
+
+#endif //VIRGIL_CRYPTO_FOUNDATION_HASH_MODULE

@@ -34,6 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_KDF_MODULE)
+
 #include <virgil/crypto/foundation/VirgilKDF.h>
 
 #include <mbedtls/kdf.h>
@@ -207,3 +215,5 @@ std::string std::to_string(VirgilKDF::Algorithm alg) {
             return "KDF2";
     }
 }
+
+#endif //VIRGIL_CRYPTO_FOUNDATION_KDF_MODULE

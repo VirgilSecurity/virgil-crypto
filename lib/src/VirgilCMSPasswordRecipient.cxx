@@ -34,6 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_CMS_MODULE)
+
 #include <virgil/crypto/foundation/cms/VirgilCMSPasswordRecipient.h>
 
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
@@ -90,4 +98,4 @@ void VirgilCMSPasswordRecipient::asn1Read(VirgilAsn1Reader& asn1Reader) {
     encryptedKey = asn1Reader.readOctetString();
 }
 
-
+#endif //VIRGIL_CRYPTO_FOUNDATION_CMS_MODULE

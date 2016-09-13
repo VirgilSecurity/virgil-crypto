@@ -34,6 +34,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef VIRGIL_CRYPTO_CONFIG_FILE
+#include <virgil/crypto/config.h>
+#else
+#include VIRGIL_CRYPTO_CONFIG_FILE
+#endif
+
+#if defined(VIRGIL_CRYPTO_FOUNDATION_ASN1_MODULE)
+
 #include <virgil/crypto/foundation/asn1/internal/VirgilAsn1Alg.h>
 
 #include <limits>
@@ -120,3 +128,5 @@ VirgilByteArray VirgilAsn1Alg::buildPKCS12(const VirgilByteArray& salt, size_t i
 
     return asn1Writer.finish();
 }
+
+#endif //VIRGIL_CRYPTO_FOUNDATION_ASN1_MODULE

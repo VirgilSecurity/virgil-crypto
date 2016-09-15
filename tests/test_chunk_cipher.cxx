@@ -36,53 +36,242 @@
 
 /**
  * @file test_chunk_cipher.cxx
- * @brief Covers class VirgilCipher
+ * @brief Covers class VirgilChunkCipher
  */
+
+#if LIB_FILE_IO
 
 #include "catch.hpp"
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilChunkCipher.h>
 #include <virgil/crypto/VirgilKeyPair.h>
+#include <virgil/crypto/stream/VirgilBytesDataSource.h>
+#include <virgil/crypto/stream/VirgilBytesDataSink.h>
 
 using virgil::crypto::str2bytes;
 using virgil::crypto::bytes2hex;
-using virgil::crypto::bytes2str;
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilChunkCipher;
 using virgil::crypto::VirgilKeyPair;
+using virgil::crypto::stream::VirgilBytesDataSource;
+using virgil::crypto::stream::VirgilBytesDataSink;
 
-TEST_CASE("Encrypt and decrypt with generated keys", "[chunk-cipher]") {
+TEST_CASE("VirgilChunkCipher: encrypt and decrypt with generated keys", "[chunk-cipher]") {
     VirgilByteArray password = str2bytes("password");
-    VirgilByteArray plainData = str2bytes("!this string will be encrypted with chunk cipher!");
     VirgilByteArray recipientId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
     VirgilKeyPair keyPair = VirgilKeyPair::generateRecommended(password);
 
-    VirgilChunkCipher cipher;
-    cipher.addKeyRecipient(recipientId, keyPair.publicKey());
+    VirgilByteArray testData = str2bytes("this string will be encrypted");
+    VirgilBytesDataSource testDataSource(testData);
+
+    VirgilByteArray encryptedData;
+    VirgilBytesDataSink encryptedDataSink(encryptedData);
+    VirgilBytesDataSource encryptedDataSource(encryptedData);
+
+    VirgilByteArray decryptedData;
+    VirgilBytesDataSink decryptedDataSink(decryptedData);
+
+    VirgilChunkCipher encCipher;
+    VirgilChunkCipher decCipher;
+    encCipher.addKeyRecipient(recipientId, keyPair.publicKey());
 
     SECTION("and embedded content info") {
-        size_t chunkSize = cipher.startEncryption(16);
-        VirgilByteArray encryptedData;
-        for (size_t pos = 0; pos < plainData.size(); pos += chunkSize) {
-            size_t adjustedChunkSize = std::min(chunkSize, plainData.size() - pos);
-            VirgilByteArray::const_iterator start = plainData.begin() + pos;
-            VirgilByteArray::const_iterator end = start + adjustedChunkSize;
-            VirgilByteArray encryptedChunk = cipher.process(VirgilByteArray(start, end));
-            encryptedData.insert(encryptedData.end(), encryptedChunk.begin(), encryptedChunk.end());
-        }
-        cipher.finish();
+        testDataSource.reset();
+        encryptedDataSource.reset();
+        decryptedDataSink.reset();
 
-        VirgilByteArray decryptedData;
-        chunkSize = cipher.startDecryptionWithKey(recipientId, keyPair.privateKey(), password);
-        for (size_t pos = 0; pos < encryptedData.size(); pos += chunkSize) {
-            size_t adjustedChunkSize = std::min(chunkSize, encryptedData.size() - pos);
-            VirgilByteArray::const_iterator start = encryptedData.begin() + pos;
-            VirgilByteArray::const_iterator end = start + adjustedChunkSize;
-            VirgilByteArray decryptedChunk = cipher.process(VirgilByteArray(start, end));
-            decryptedData.insert(decryptedData.end(), decryptedChunk.begin(), decryptedChunk.end());
-        }
+        encCipher.encrypt(testDataSource, encryptedDataSink, true, 3);
 
-        REQUIRE(bytes2str(plainData) == bytes2str(decryptedData));
+        encryptedDataSource.reset();
+        decryptedDataSink.reset();
+        REQUIRE_THROWS(
+                decCipher.decryptWithKey(encryptedDataSource, decryptedDataSink, recipientId, keyPair.privateKey())
+        );
+        encryptedDataSource.reset();
+        decryptedDataSink.reset();
+        REQUIRE_NOTHROW(
+                decCipher.decryptWithKey(encryptedDataSource, decryptedDataSink, recipientId, keyPair.privateKey(), password)
+        );
+        REQUIRE(testData == decryptedData);
+    }
+
+    SECTION("and embedded content info with custom parameters") {
+        VirgilByteArray intParamKey = str2bytes("int_parameter_key");
+        const int intParamValue = 35777;
+        VirgilByteArray strParamKey = str2bytes("string_parameter_key");
+        VirgilByteArray strParamValue = str2bytes("string parameter");
+        VirgilByteArray hexParamKey = str2bytes("data_param_value");
+        VirgilByteArray hexParamValue = str2bytes("will be stored as octet string");
+
+        encCipher.customParams().setInteger(intParamKey, intParamValue);
+        encCipher.customParams().setString(strParamKey, strParamValue);
+        encCipher.customParams().setData(hexParamKey, hexParamValue);
+
+        testDataSource.reset();
+        encryptedDataSource.reset();
+        decryptedDataSink.reset();
+
+        encCipher.encrypt(testDataSource, encryptedDataSink, true);
+        encCipher.removeAllRecipients();
+        encCipher.customParams().clear();
+
+        encryptedDataSource.reset();
+        decryptedDataSink.reset();
+        REQUIRE_NOTHROW(
+                decCipher.decryptWithKey(encryptedDataSource, decryptedDataSink, recipientId, keyPair.privateKey(), password)
+        );
+        REQUIRE(testData == decryptedData);
+
+        REQUIRE(decCipher.customParams().getInteger(intParamKey) == intParamValue);
+        REQUIRE(decCipher.customParams().getString(strParamKey) == strParamValue);
+        REQUIRE(decCipher.customParams().getData(hexParamKey) == hexParamValue);
+    }
+
+    SECTION("and separated content info") {
+        testDataSource.reset();
+        encryptedDataSource.reset();
+        decryptedDataSink.reset();
+
+        encCipher.encrypt(testDataSource, encryptedDataSink, false);
+        VirgilByteArray contentInfo = encCipher.getContentInfo();
+        REQUIRE(contentInfo.size() > 0);
+        encCipher.removeAllRecipients();
+        encCipher.customParams().clear();
+
+        REQUIRE_NOTHROW(
+                decCipher.setContentInfo(contentInfo)
+        );
+        encryptedDataSource.reset();
+        decryptedDataSink.reset();
+        REQUIRE_THROWS(
+                decCipher.decryptWithKey(encryptedDataSource, decryptedDataSink, recipientId, keyPair.privateKey())
+        );
+        encryptedDataSource.reset();
+        decryptedDataSink.reset();
+        REQUIRE_NOTHROW(
+                decCipher.decryptWithKey(encryptedDataSource, decryptedDataSink, recipientId, keyPair.privateKey(), password)
+        );
+        REQUIRE(testData == decryptedData);
+    }
+
+    SECTION("and separated content info with custom parameters") {
+        VirgilByteArray intParamKey = str2bytes("int_parameter_key");
+        const int intParamValue = 35777;
+        VirgilByteArray strParamKey = str2bytes("string_parameter_key");
+        VirgilByteArray strParamValue = str2bytes("string parameter");
+        VirgilByteArray hexParamKey = str2bytes("data_param_value");
+        VirgilByteArray hexParamValue = str2bytes("will be stored as octet string");
+
+        encCipher.customParams().setInteger(intParamKey, intParamValue);
+        encCipher.customParams().setString(strParamKey, strParamValue);
+        encCipher.customParams().setData(hexParamKey, hexParamValue);
+
+        testDataSource.reset();
+        encryptedDataSource.reset();
+        decryptedDataSink.reset();
+
+        encCipher.encrypt(testDataSource, encryptedDataSink, false);
+        VirgilByteArray contentInfo = encCipher.getContentInfo();
+        encCipher.removeAllRecipients();
+        encCipher.customParams().clear();
+
+        REQUIRE_NOTHROW(
+                decCipher.setContentInfo(contentInfo)
+        );
+
+        encryptedDataSource.reset();
+        decryptedDataSink.reset();
+        REQUIRE_NOTHROW(
+                decCipher.decryptWithKey(encryptedDataSource, decryptedDataSink, recipientId, keyPair.privateKey(), password)
+        );
+        REQUIRE(testData == decryptedData);
+
+        REQUIRE(decCipher.customParams().getInteger(intParamKey) == intParamValue);
+        REQUIRE(decCipher.customParams().getString(strParamKey) == strParamValue);
+        REQUIRE(decCipher.customParams().getData(hexParamKey) == hexParamValue);
     }
 }
+
+TEST_CASE("VirgilChunkCipher: generated keys", "[chunk-cipher]") {
+    VirgilByteArray testData = str2bytes("this string will be encrypted");
+    VirgilByteArray bobId = str2bytes("2e8176ba-34db-4c65-b977-c5eac687c4ac");
+    VirgilByteArray johnId = str2bytes("968dc52d-2045-4abe-ab51-0b04737cac76");
+    VirgilKeyPair bobKeyPair = VirgilKeyPair::generateRecommended();
+    VirgilKeyPair johnKeyPair = VirgilKeyPair::generateRecommended();
+    VirgilByteArray alicePassword = str2bytes("alice secret");
+
+    VirgilBytesDataSource testDataSource(testData);
+
+    VirgilByteArray encryptedData;
+    VirgilBytesDataSink encryptedDataSink(encryptedData);
+    VirgilBytesDataSource encryptedDataSource(encryptedData);
+
+    VirgilByteArray decryptedData;
+    VirgilBytesDataSink decryptedDataSink(decryptedData);
+
+    VirgilChunkCipher encCipher;
+    VirgilChunkCipher decCipher;
+    encCipher.addKeyRecipient(bobId, bobKeyPair.publicKey());
+    encCipher.addKeyRecipient(johnId, johnKeyPair.publicKey());
+    encCipher.addPasswordRecipient(alicePassword);
+
+    SECTION("encrypt for multiple recipients with embedded content info") {
+        encCipher.encrypt(testDataSource, encryptedDataSink, true);
+        encCipher.removeAllRecipients();
+
+        SECTION("decrypt for Bob") {
+            encryptedDataSource.reset();
+            decCipher.decryptWithKey(encryptedDataSource, decryptedDataSink, bobId, bobKeyPair.privateKey());
+            REQUIRE(testData == decryptedData);
+        }
+
+        SECTION("decrypt for John") {
+            encryptedDataSource.reset();
+            decCipher.decryptWithKey(encryptedDataSource, decryptedDataSink, johnId, johnKeyPair.privateKey());
+            REQUIRE(testData == decryptedData);
+        }
+
+        SECTION("decrypt for Alice") {
+            encryptedDataSource.reset();
+            decCipher.decryptWithPassword(encryptedDataSource, decryptedDataSink, alicePassword);
+            REQUIRE(testData == decryptedData);
+        }
+    }
+
+    SECTION("encrypt for multiple recipients with separated content info") {
+        encCipher.encrypt(testDataSource, encryptedDataSink, false);
+        VirgilByteArray contentInfo = encCipher.getContentInfo();
+        encCipher.removeAllRecipients();
+
+        REQUIRE_NOTHROW(
+                decCipher.setContentInfo(contentInfo)
+        );
+
+        SECTION("decrypt for Bob") {
+            encryptedDataSource.reset();
+            decCipher.decryptWithKey(encryptedDataSource, decryptedDataSink, bobId, bobKeyPair.privateKey());
+            REQUIRE(testData == decryptedData);
+        }
+
+        SECTION("decrypt for John") {
+            encryptedDataSource.reset();
+            decCipher.decryptWithKey(encryptedDataSource, decryptedDataSink, johnId, johnKeyPair.privateKey());
+            REQUIRE(testData == decryptedData);
+        }
+
+        SECTION("decrypt for Alice") {
+            encryptedDataSource.reset();
+            decCipher.decryptWithPassword(encryptedDataSource, decryptedDataSink, alicePassword);
+            REQUIRE(testData == decryptedData);
+        }
+    }
+}
+
+#else
+#if defined(_MSC_VER)
+#pragma message("Tests for class VirgilChunkCipher are ignored, because LIB_FILE_IO build parameter is not defined")
+#else
+#warning "Tests for class VirgilChunkCipher are ignored, because LIB_FILE_IO build parameter is not defined"
+#endif /* _MSC_VER */
+#endif /* LIB_FILE_IO */

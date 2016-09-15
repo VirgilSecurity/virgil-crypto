@@ -63,6 +63,8 @@ std::string VirgilCryptoErrorCategory::message(int ev) const noexcept {
             return "Invalid format of the Signature.";
         case VirgilCryptoError::InvalidState:
             return "Function call prerequisite is broken.";
+        case VirgilCryptoError::InvalidAuth:
+            return "Invalid authentication. Data can be malformed.";
         case VirgilCryptoError::MismatchSignature:
             return "Signature validation failed.";
         case VirgilCryptoError::NotFoundKeyRecipient:

@@ -133,6 +133,8 @@ INCLUDE_CLASS(VirgilStreamSigner, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilStreamCipher, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilTinyCipher, virgil::crypto, virgil/crypto)
 %ignore virgil::crypto::VirgilByteArrayUtils::zeroize;
+%ignore virgil::crypto::VirgilByteArrayUtils::append;
+%ignore virgil::crypto::VirgilByteArrayUtils::popBytes;
 INCLUDE_CLASS(VirgilByteArrayUtils, virgil::crypto, virgil/crypto)
 
 // Package: virgil::crypto::foundation::cms

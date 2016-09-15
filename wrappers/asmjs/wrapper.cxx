@@ -57,6 +57,7 @@
 #include <virgil/crypto/VirgilDataSource.h>
 #include <virgil/crypto/VirgilStreamCipher.h>
 #include <virgil/crypto/VirgilStreamSigner.h>
+#include <virgil/crypto/VirgilChunkCipher.h>
 
 #include "@VIRGIL_EMBIND_FILE@"
 
@@ -145,6 +146,10 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .class_function("extractPublicKey", &VirgilKeyPair::extractPublicKey)
         .class_function("encryptPrivateKey", &VirgilKeyPair::encryptPrivateKey)
         .class_function("decryptPrivateKey", &VirgilKeyPair::decryptPrivateKey)
+        .class_function("publicKeyToPEM", &VirgilKeyPair::publicKeyToPEM)
+        .class_function("publicKeyToDER", &VirgilKeyPair::publicKeyToDER)
+        .class_function("privateKeyToPEM", &VirgilKeyPair::privateKeyToPEM)
+        .class_function("privateKeyToDER", &VirgilKeyPair::privateKeyToDER)
     ;
 
     enum_<VirgilKeyPair::Type>("VirgilKeyPairType")
@@ -265,6 +270,13 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .constructor<>()
         .function("sign", &VirgilStreamSigner::sign)
         .function("verify", &VirgilStreamSigner::verify)
+    ;
+
+    class_<VirgilChunkCipher, base<VirgilCipherBase>>("VirgilChunkCipher")
+        .constructor<>()
+        .function("encrypt", &VirgilChunkCipher::encrypt)
+        .function("decryptWithKey", &VirgilChunkCipher::decryptWithKey)
+        .function("decryptWithPassword", &VirgilChunkCipher::decryptWithPassword)
     ;
 }
 

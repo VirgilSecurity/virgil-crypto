@@ -59,6 +59,7 @@ enum class VirgilCryptoError  {
     InvalidPublicKey, ///< Invalid format of the Public Key.
     InvalidSignature, ///< Invalid format of the Signature.
     InvalidState, ///< Function call prerequisite is broken.
+    InvalidAuth, ///< Invalid authentication.
     MismatchSignature, ///< Signature validation failed.
     NotFoundKeyRecipient, ///< Recipient with given identifier is not found.
     NotFoundPasswordRecipient, ///< Recipient with given password is not found.

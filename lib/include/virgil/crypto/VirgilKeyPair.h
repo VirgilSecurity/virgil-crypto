@@ -79,14 +79,14 @@ public:
      */
     static VirgilKeyPair generate(
             VirgilKeyPair::Type type,
-            const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+            const VirgilByteArray& pwd = VirgilByteArray());
 
     /**
      * @brief Generate new key pair with recommended most safe type.
      * @param pwd - private key password.
      */
     static VirgilKeyPair generateRecommended(
-            const virgil::crypto::VirgilByteArray& pwd = virgil::crypto::VirgilByteArray());
+            const VirgilByteArray& pwd = VirgilByteArray());
 
     /**
      * @brief Generate new key pair of the same type based on the donor key pair.
@@ -96,8 +96,8 @@ public:
      */
     static VirgilKeyPair generateFrom(
             const VirgilKeyPair& donorKeyPair,
-            const virgil::crypto::VirgilByteArray& donorPrivateKeyPassword = virgil::crypto::VirgilByteArray(),
-            const virgil::crypto::VirgilByteArray& newKeyPairPassword = virgil::crypto::VirgilByteArray());
+            const VirgilByteArray& donorPrivateKeyPassword = VirgilByteArray(),
+            const VirgilByteArray& newKeyPairPassword = VirgilByteArray());
 
     /**
      * @name Keys validation
@@ -113,9 +113,9 @@ public:
      * @return true - if public-private pair of keys matches.
      */
     static bool isKeyPairMatch(
-            const virgil::crypto::VirgilByteArray& publicKey,
-            const virgil::crypto::VirgilByteArray& privateKey,
-            const virgil::crypto::VirgilByteArray& privateKeyPassword = virgil::crypto::VirgilByteArray());
+            const VirgilByteArray& publicKey,
+            const VirgilByteArray& privateKey,
+            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
 
     /**
      * @brief Check if given private key and it's password matches.
@@ -126,8 +126,8 @@ public:
      * @return true - if private key and it's password matches.
      */
     static bool checkPrivateKeyPassword(
-            const virgil::crypto::VirgilByteArray& key,
-            const virgil::crypto::VirgilByteArray& pwd);
+            const VirgilByteArray& key,
+            const VirgilByteArray& pwd);
 
     /**
      * @brief Check if given private key is encrypted.
@@ -136,7 +136,7 @@ public:
      *
      * @return true - if private key is encrypted.
      */
-    static bool isPrivateKeyEncrypted(const virgil::crypto::VirgilByteArray& privateKey);
+    static bool isPrivateKeyEncrypted(const VirgilByteArray& privateKey);
     ///@}
     /**
      * @name Keys
@@ -153,9 +153,9 @@ public:
      *
      * @return Private Key that is encrypted with the new password.
      */
-    static virgil::crypto::VirgilByteArray resetPrivateKeyPassword(
-            const virgil::crypto::VirgilByteArray& privateKey,
-            const virgil::crypto::VirgilByteArray& oldPassword, const virgil::crypto::VirgilByteArray& newPassword);
+    static VirgilByteArray resetPrivateKeyPassword(
+            const VirgilByteArray& privateKey,
+            const VirgilByteArray& oldPassword, const VirgilByteArray& newPassword);
 
     /**
      * @brief Return encrypted private key in PKCS#8 format.
@@ -171,9 +171,9 @@ public:
      *
      * @return Encrypted Private Key.
      */
-    static virgil::crypto::VirgilByteArray encryptPrivateKey(
-            const virgil::crypto::VirgilByteArray& privateKey,
-            const virgil::crypto::VirgilByteArray& privateKeyPassword);
+    static VirgilByteArray encryptPrivateKey(
+            const VirgilByteArray& privateKey,
+            const VirgilByteArray& privateKeyPassword);
 
     /**
      * @brief Return plain (non encrypted) private key.
@@ -190,9 +190,9 @@ public:
      *
      * @return Plain Private Key.
      */
-    static virgil::crypto::VirgilByteArray decryptPrivateKey(
-            const virgil::crypto::VirgilByteArray& privateKey,
-            const virgil::crypto::VirgilByteArray& privateKeyPassword);
+    static VirgilByteArray decryptPrivateKey(
+            const VirgilByteArray& privateKey,
+            const VirgilByteArray& privateKeyPassword);
 
     /**
      * @brief Extract public key from the private key.
@@ -202,29 +202,70 @@ public:
      *
      * @return Public Key.
      */
-    static virgil::crypto::VirgilByteArray extractPublicKey(
-            const virgil::crypto::VirgilByteArray& privateKey,
-            const virgil::crypto::VirgilByteArray& privateKeyPassword);
+    static VirgilByteArray extractPublicKey(
+            const VirgilByteArray& privateKey,
+            const VirgilByteArray& privateKeyPassword);
+
+    /**
+     * @brief Convert given public key to the PEM format.
+     *
+     * @param publicKey - Public Key to be converted.
+     * @return Public Key in the PEM fromat.
+     * @throw VirgilCryptoException, with VirgilCryptoError::InvalidFormat if key has invalid format.
+     */
+    static VirgilByteArray publicKeyToPEM(const VirgilByteArray& publicKey);
+
+    /**
+     * @brief Convert given public key to the DER format.
+     *
+     * @param publicKey - Public Key to be converted.
+     * @return Public Key in the DER fromat.
+     * @throw VirgilCryptoException, with VirgilCryptoError::InvalidFormat if key has invalid format.
+     */
+    static VirgilByteArray publicKeyToDER(const VirgilByteArray& publicKey);
+
+    /**
+     * @brief Convert given private key to the PEM format.
+     *
+     * @param publicKey - Private Key to be converted.
+     * @return Private Key in the PEM fromat.
+     * @throw VirgilCryptoException, with VirgilCryptoError::InvalidPrivateKeyPassword if password is wrong.
+     * @throw VirgilCryptoException, with VirgilCryptoError::InvalidFormat if key has invalid format.
+     */
+    static VirgilByteArray privateKeyToPEM(
+            const VirgilByteArray& privateKey,
+            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    /**
+     * @brief Convert given private key to the DER format.
+     *
+     * @param publicKey - Private Key to be converted.
+     * @return Private Key in the DER fromat.
+     * @throw VirgilCryptoException, with VirgilCryptoError::InvalidPrivateKeyPassword if password is wrong.
+     * @throw VirgilCryptoException, with VirgilCryptoError::InvalidFormat if key has invalid format.
+     */
+    static VirgilByteArray privateKeyToDER(
+            const VirgilByteArray& privateKey,
+            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
     ///@}
 
     /**
      * @brief Initialize key pair with given public and private key.
      */
-    VirgilKeyPair(const virgil::crypto::VirgilByteArray& publicKey, const virgil::crypto::VirgilByteArray& privateKey);
+    VirgilKeyPair(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey);
 
     /**
      * @brief Provide access to the public key.
      */
-    virgil::crypto::VirgilByteArray publicKey() const;
+    VirgilByteArray publicKey() const;
 
     /**
      * @brief Provide access to the private key.
      */
-    virgil::crypto::VirgilByteArray privateKey() const;
+    VirgilByteArray privateKey() const;
 
 private:
-    virgil::crypto::VirgilByteArray publicKey_;
-    virgil::crypto::VirgilByteArray privateKey_;
+    VirgilByteArray publicKey_;
+    VirgilByteArray privateKey_;
 };
 
 }}

@@ -36,15 +36,13 @@
 
 #include <virgil/crypto/stream/VirgilBytesDataSource.h>
 
-using virgil::crypto::stream::VirgilBytesDataSource;
-
-#include <virgil/crypto/VirgilByteArray.h>
-
-using virgil::crypto::VirgilByteArray;
-
 #include <algorithm>
 
-static const size_t kChunkSizeMin = 10;
+using virgil::crypto::stream::VirgilBytesDataSource;
+using virgil::crypto::VirgilByteArray;
+
+
+static const size_t kChunkSizeMin = 1;
 
 VirgilBytesDataSource::VirgilBytesDataSource(const VirgilByteArray& in, size_t chunkSize)
         : in_(in), chunkSize_(std::max(chunkSize, kChunkSizeMin)), leftBytes_(in.size()) {

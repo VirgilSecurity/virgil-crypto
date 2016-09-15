@@ -36,6 +36,7 @@
 
 #include <virgil/crypto/VirgilCryptoException.h>
 
+#include <sstream>
 #include <tinyformat/tinyformat.h>
 
 using virgil::crypto::VirgilCryptoException;
@@ -69,4 +70,15 @@ VirgilCryptoException::VirgilCryptoException(int ev, const std::error_category& 
 
 const char* VirgilCryptoException::what() const noexcept {
     return what_.c_str();
+}
+
+std::string virgil::crypto::backtrace_exception(const std::exception& exception, size_t level) {
+    std::ostringstream sstr;
+    sstr << std::string(4 * level, ' ') << exception.what();
+    try {
+        std::rethrow_if_nested(exception);
+    } catch(const std::exception& nested) {
+        sstr << "\n" << backtrace_exception(nested, level + 1);
+    } catch(...) {}
+    return sstr.str();
 }

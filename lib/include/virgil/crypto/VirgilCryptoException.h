@@ -87,6 +87,14 @@ private:
     std::string what_;
 };
 
+/**
+ * @brief Unwind information about nested excpetions.
+ * @param exception - Top level exception.
+ * @param level - initial identation level.
+ * @return Formatted message of top level exception and all nested exceptions.
+ */
+std::string backtrace_exception(const std::exception& exception, size_t level = 0);
+
 }}
 
 //! @cond Doxygen_Suppress

@@ -128,6 +128,30 @@ VirgilByteArray VirgilKeyPair::extractPublicKey(
     }
 }
 
+VirgilByteArray VirgilKeyPair::publicKeyToPEM(const VirgilByteArray& publicKey) {
+    VirgilAsymmetricCipher cipher;
+    cipher.setPublicKey(publicKey);
+    return cipher.exportPublicKeyToPEM();
+}
+
+VirgilByteArray VirgilKeyPair::publicKeyToDER(const VirgilByteArray& publicKey) {
+    VirgilAsymmetricCipher cipher;
+    cipher.setPublicKey(publicKey);
+    return cipher.exportPublicKeyToDER();
+}
+
+VirgilByteArray VirgilKeyPair::privateKeyToPEM(const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
+    VirgilAsymmetricCipher cipher;
+    cipher.setPrivateKey(privateKey, privateKeyPassword);
+    return cipher.exportPrivateKeyToPEM();
+}
+
+VirgilByteArray VirgilKeyPair::privateKeyToDER(const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
+    VirgilAsymmetricCipher cipher;
+    cipher.setPrivateKey(privateKey, privateKeyPassword);
+    return cipher.exportPrivateKeyToDER();
+}
+
 VirgilKeyPair::VirgilKeyPair(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey)
         : publicKey_(publicKey), privateKey_(privateKey) {
 };

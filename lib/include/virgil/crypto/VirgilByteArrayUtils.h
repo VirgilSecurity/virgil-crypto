@@ -97,6 +97,18 @@ public:
      */
     static void zeroize(VirgilByteArray& array);
 
+    /**
+     * @brief Append given bytes to the existing one.
+     * @param dst - destination.
+     * @param src - source.
+     */
+    static void append(VirgilByteArray& dst, const VirgilByteArray& src);
+
+    /**
+     * @brief Return first num bytes and remove it from the src
+     */
+    static VirgilByteArray popBytes(VirgilByteArray& src, size_t num);
+
 private:
     /**
      * @brief Deny object creation.

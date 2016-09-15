@@ -125,6 +125,21 @@ void VirgilByteArrayUtils::zeroize(VirgilByteArray& array) {
     virgil::crypto::bytes_zeroize(array);
 }
 
+void VirgilByteArrayUtils::append(VirgilByteArray& dst, const VirgilByteArray& src) {
+    dst.insert(dst.end(), src.begin(), src.end());
+}
+
+VirgilByteArray VirgilByteArrayUtils::popBytes(VirgilByteArray& src, size_t num) {
+    if (src.size() < num) {
+        VirgilByteArray result;
+        result.swap(src);
+        return result;
+    }
+    VirgilByteArray result(src.begin(), src.begin() + num);
+    src.erase(src.begin(), src.begin() + num);
+    return result;
+}
+
 size_t asn1_write_json_value(VirgilAsn1Writer& asn1Writer, const json& json, const std::string& key) {
     if (json.IsObject()) {
         return asn1_write_json_object(asn1Writer, json, key);

@@ -158,6 +158,11 @@ public:
      * @brief Returns true if cipher support padding.
      */
     bool isSupportPadding() const;
+
+    /**
+     * @brief Return cipher IV, or NONCE_COUNTER for CTR-mode ciphers
+     */
+    VirgilByteArray iv() const;
     ///@}
 
     /**

@@ -148,6 +148,11 @@ bool VirgilSymmetricCipher::isSupportPadding() const {
     return mbedtls_cipher_get_cipher_mode(impl_->cipher_ctx.get()) == MBEDTLS_MODE_CBC;
 }
 
+VirgilByteArray VirgilSymmetricCipher::iv() const {
+    checkState();
+    return impl_->iv;
+}
+
 void VirgilSymmetricCipher::setEncryptionKey(const VirgilByteArray& key) {
     checkState();
     system_crypto_handler(
@@ -288,7 +293,7 @@ VirgilByteArray VirgilSymmetricCipher::finish() {
             VirgilByteArray tag = impl_->tagFilter.tag();
             system_crypto_handler(
                     mbedtls_cipher_check_tag(impl_->cipher_ctx.get(), tag.data(), tag.size()),
-                    [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidState)); }
+                    [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidAuth)); }
             );
         }
     }

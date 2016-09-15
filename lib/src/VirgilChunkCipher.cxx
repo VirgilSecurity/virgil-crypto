@@ -47,6 +47,8 @@
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::VirgilChunkCipher;
+using virgil::crypto::VirgilDataSource;
+using virgil::crypto::VirgilDataSink;
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
 using virgil::crypto::foundation::VirgilSymmetricCipher;
 
@@ -56,6 +58,8 @@ using virgil::crypto::foundation::VirgilSymmetricCipher;
 ///@{
 static const char* const kCustomParameterKey_ChunkSize = "chunkSize";
 ///@}
+
+namespace virgil { namespace crypto { namespace internal {
 
 static size_t adjustEncryptionChunkSize(size_t preferredChunkSize, size_t cipherBlockSize, bool isSupportPadding) {
     if (isSupportPadding) {
@@ -78,8 +82,6 @@ static size_t adjustDecryptionChunkSize(
         return encryptionChunkSize + authTagLength;
     }
 }
-
-namespace virgil { namespace crypto { namespace internal {
 
 static void increment_octets(VirgilByteArray& octets) {
     for (VirgilByteArray::reverse_iterator it = octets.rbegin(); it != octets.rend(); ++it) {
@@ -136,7 +138,7 @@ void VirgilChunkCipher::encrypt(
         VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo, size_t preferredChunkSize) {
     VirgilSymmetricCipher& symmetricCipher = initEncryption();
 
-    const size_t actualChunkSize = adjustEncryptionChunkSize(preferredChunkSize, symmetricCipher.blockSize(),
+    const size_t actualChunkSize = internal::adjustEncryptionChunkSize(preferredChunkSize, symmetricCipher.blockSize(),
             symmetricCipher.isSupportPadding());
     storeChunkSize(actualChunkSize);
     buildContentInfo();
@@ -158,7 +160,7 @@ void VirgilChunkCipher::decryptWithKey(
 
     VirgilSymmetricCipher& symmetricCipher = initDecryptionWithKey(recipientId, privateKey, privateKeyPassword);
 
-    const size_t actualChunkSize = adjustDecryptionChunkSize(retrieveChunkSize(),
+    const size_t actualChunkSize = internal::adjustDecryptionChunkSize(retrieveChunkSize(),
             symmetricCipher.blockSize(), symmetricCipher.isSupportPadding(), symmetricCipher.authTagLength());
 
     internal::process(source, sink, symmetricCipher, actualChunkSize, firstChunk);
@@ -173,7 +175,7 @@ void VirgilChunkCipher::decryptWithPassword(
 
     VirgilSymmetricCipher& symmetricCipher = initDecryptionWithPassword(pwd);
 
-    const size_t actualChunkSize = adjustDecryptionChunkSize(retrieveChunkSize(),
+    const size_t actualChunkSize = internal::adjustDecryptionChunkSize(retrieveChunkSize(),
             symmetricCipher.blockSize(), symmetricCipher.isSupportPadding(), symmetricCipher.authTagLength());
 
     internal::process(source, sink, symmetricCipher, actualChunkSize, firstChunk);

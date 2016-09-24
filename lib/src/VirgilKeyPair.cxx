@@ -143,13 +143,13 @@ VirgilByteArray VirgilKeyPair::publicKeyToDER(const VirgilByteArray& publicKey) 
 VirgilByteArray VirgilKeyPair::privateKeyToPEM(const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
     VirgilAsymmetricCipher cipher;
     cipher.setPrivateKey(privateKey, privateKeyPassword);
-    return cipher.exportPrivateKeyToPEM();
+    return cipher.exportPrivateKeyToPEM(privateKeyPassword);
 }
 
 VirgilByteArray VirgilKeyPair::privateKeyToDER(const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
     VirgilAsymmetricCipher cipher;
     cipher.setPrivateKey(privateKey, privateKeyPassword);
-    return cipher.exportPrivateKeyToDER();
+    return cipher.exportPrivateKeyToDER(privateKeyPassword);
 }
 
 VirgilKeyPair::VirgilKeyPair(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey)

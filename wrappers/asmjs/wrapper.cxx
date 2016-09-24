@@ -168,11 +168,11 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .value("EC_BP256R1", VirgilKeyPair::Type::EC_BP256R1)
         .value("EC_BP384R1", VirgilKeyPair::Type::EC_BP384R1)
         .value("EC_BP512R1", VirgilKeyPair::Type::EC_BP512R1)
-        .value("EC_CURVE25519", VirgilKeyPair::Type::EC_CURVE25519)
-        .value("EC_ED25519", VirgilKeyPair::Type::EC_ED25519)
         .value("EC_SECP192K1", VirgilKeyPair::Type::EC_SECP192K1)
         .value("EC_SECP224K1", VirgilKeyPair::Type::EC_SECP224K1)
         .value("EC_SECP256K1", VirgilKeyPair::Type::EC_SECP256K1)
+        .value("FAST_EC_X25519", VirgilKeyPair::Type::FAST_EC_X25519)
+        .value("FAST_EC_ED25519", VirgilKeyPair::Type::FAST_EC_ED25519)
     ;
 
     class_<VirgilCipherBase>("VirgilCipherBase")

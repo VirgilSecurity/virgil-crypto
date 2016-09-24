@@ -53,13 +53,10 @@ using virgil::crypto::VirgilCipher;
 
 static const char* const kPrivateKey =
         "-----BEGIN ENCRYPTED PRIVATE KEY-----\n"
-                "MIIBKTA0BgoqhkiG9w0BDAEDMCYEIJ2CZ9XD79se4sWO8zaB8ooKkf1IR/cymmox\n"
-                "NH0pe2zCAgIgAASB8HPqZNMejdzjsPeLJrLj1SXdES8FOUgWDbIhFLm/6G3leCNi\n"
-                "/7scgIOwook/f5qEL3ydHobXcYrr5Ltlr5o5BsSBELBAJKoUKcWmu8Aub03v/wIe\n"
-                "TNsVhxA/4mn5kgs6BwJp59oODv0YqpRAFsMQsXJaXjePVWpKLsDAooT8Wa0s5cfP\n"
-                "tURNzUUQG7COakN4PF01MXgHYEsvc/ygXI/QUHIBPwBVV7bx3lIV1xDy5WCNgBfd\n"
-                "EEd8luTaIzd15Y7ahooAA9K1WDPEhtq0gl8jG5vSbZ+BCaMNd43+Gksno4c9oBkZ\n"
-                "sMaFiu8OBbyVfjhr9g==\n"
+                "MIGhMF0GCSqGSIb3DQEFDTBQMC8GCSqGSIb3DQEFDDAiBBDXDqM+Uj5o3+7pa2Xo\n"
+                "6PAkAgIWojAKBggqhkiG9w0CCjAdBglghkgBZQMEASoEELDgwtEuhySH70wD6RFI\n"
+                "G3EEQBNKQxiwmOrX8vsFmLQfhu5momj7hEQ8WZhu4LEmnVbsXJKcxOUX6QCU1QH/\n"
+                "OzbvnCIlAWTCxCdzkqYuelBnNac=\n"
                 "-----END ENCRYPTED PRIVATE KEY-----\n";
 
 
@@ -67,34 +64,20 @@ static const char* const kPrivateKeyPwd = "strong_pwd";
 
 static const char kPublicKeyPEM[] =
         "-----BEGIN PUBLIC KEY-----\n"
-                "MFowFAYHKoZIzj0CAQYJKwYBBAHaRw8BA0IABAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
-                "AAAAAAAAAAAAAAAAgQSX1eeSaK4p2BtLNOkCbm5m2BieNs68ZShSr2KToJM=\n"
+                "MCowBQYDK2VwAyEAg4boYkLfd4NRIQeDPfL8+73qk098mKXNerM9Qjpo9iY=\n"
                 "-----END PUBLIC KEY-----\n";
 
 static const char kPrivateKeyPEM[] =
-        "-----BEGIN EC PRIVATE KEY-----\n"
-                "MHgCAQEEIGYfeUhqcDyNBy5trDOrXepEUiQEeMi4vyVjLUAM7fHsoAsGCSsGAQQB\n"
-                "2kcPAaFEA0IABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgQSX1eeS\n"
-                "aK4p2BtLNOkCbm5m2BieNs68ZShSr2KToJM=\n"
-                "-----END EC PRIVATE KEY-----\n";
+        "-----BEGIN PRIVATE KEY-----\n"
+                "MC4CAQAwBQYDK2VwBCIEIEJXChwWLuA0M3jgyhzic6BXD248kBRANysvBBI3d1/G\n"
+                "-----END PRIVATE KEY-----\n";
 
 static const char kPublicKeyDER[] =
-        "305a301406072a8648ce3d020106092b"
-                "06010401da470f010342000400000000"
-                "00000000000000000000000000000000"
-                "000000000000000000000000810497d5"
-                "e79268ae29d81b4b34e9026e6e66d818"
-                "9e36cebc652852af6293a093";
+        "302a300506032b65700321008386e86242df7783512107833df2fcfbbdea934f7c98a5cd7ab33d423a68f626";
 
 static const char kPrivateKeyDER[] =
-        "30780201010420661f79486a703c8d07"
-                "2e6dac33ab5dea4452240478c8b8bf25"
-                "632d400cedf1eca00b06092b06010401"
-                "da470f01a14403420004000000000000"
-                "00000000000000000000000000000000"
-                "00000000000000000000810497d5e792"
-                "68ae29d81b4b34e9026e6e66d8189e36"
-                "cebc652852af6293a093";
+        "302e020100300506032b65700422042042570a1c162ee0343378e0ca1ce273a0570f6e3c901440372b2f041237775fc6";
+
 
 TEST_CASE("Reset Private Key password", "[key-pair]") {
     VirgilByteArray oldPwd = VirgilByteArrayUtils::stringToBytes(kPrivateKeyPwd);
@@ -118,7 +101,7 @@ TEST_CASE("Reset Private Key password", "[key-pair]") {
 TEST_CASE("Generate ephemeral key pair and compute shared", "[key-pair]") {
 
     SECTION("with plain private key") {
-        VirgilKeyPair donorPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_CURVE25519);
+        VirgilKeyPair donorPair = VirgilKeyPair::generate(VirgilKeyPair::Type::FAST_EC_X25519);
 
         VirgilKeyPair ephemeralKeyPair = VirgilKeyPair::generateFrom(donorPair);
 
@@ -170,7 +153,7 @@ TEST_CASE("Generate private key with long password", "[key-pair]") {
                     "PtImqC2mT#=M85axZw8cPo6TUD0Ba,_HN^5E4v`R\"@8e>Xp]y6"
                     "X&#8g0~FHG5qFI67&PM`3u8{>lVxZ7!q-t9jVUHcv|d3OGxpxB"
     );
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_CURVE25519, keyPassword);
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::FAST_EC_X25519, keyPassword);
     REQUIRE(VirgilKeyPair::isKeyPairMatch(keyPair.publicKey(), keyPair.privateKey(), keyPassword));
 }
 

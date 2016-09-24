@@ -76,8 +76,8 @@
 #     - CMAKE_ARGS           - list of CMake parameters in form -DVAR:TYPE=VAL
 #
 # Optimizations:
-#     - X25519_AMD64_OPTIMIZATION - boolean value that defines whether to enable AMD64 optimization
-#                                   for x25519 algorithms, or not.
+#     - ED25519_AMD64_OPTIMIZATION - boolean value that defines whether to enable AMD64 optimization
+#                                   for Ed25519 algorithms, or not.
 #
 # Define platform specific variables (that are defined only if build for this platform):
 #     - ANDROID_INSTALL_JNI_DIR_NAME - name of the directory where JNI libraries will be installed
@@ -153,16 +153,16 @@ if (NOT CMAKE_CROSSCOMPILING)
 endif (NOT CMAKE_CROSSCOMPILING)
 
 # Define optimization features
-set (X25519_AMD64_OPTIMIZATION ON CACHE BOOL "Defines whether to enable AMD64 optimization for x25519 algorithms")
+set (ED25519_AMD64_OPTIMIZATION ON CACHE BOOL "Defines whether to enable AMD64 optimization for Ed25519 algorithms")
 
 # Configure optimizations
 set (MBEDTLS_CMAKE_ARGS "")
-if (NOT CMAKE_CROSSCOMPILING AND X25519_AMD64_OPTIMIZATION AND UNIX)
+if (NOT CMAKE_CROSSCOMPILING AND ED25519_AMD64_OPTIMIZATION AND UNIX)
     if (NOT DEFINED CMAKE_OSX_ARCHITECTURES OR
             CMAKE_OSX_ARCHITECTURES STREQUAL "" OR CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
         execute_process (COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE MACHINE_ARCHITECTURE)
         if (${MACHINE_ARCHITECTURE} STREQUAL "x86_64")
-            set (MBEDTLS_CMAKE_ARGS "-DUSE_X25519_AMD64_RADIX_64_24K_OPTIMIZATION:BOOL=ON")
+            set (MBEDTLS_CMAKE_ARGS "-DUSE_ED25519_AMD64_RADIX_64_24K_OPTIMIZATION:BOOL=ON")
         endif ()
     endif ()
 endif()

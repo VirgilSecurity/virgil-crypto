@@ -89,8 +89,8 @@ endif ()
 
 ExternalProject_Add (${PROJECT_NAME}
     DOWNLOAD_DIR "@VIRGIL_DEPENDS_PACKAGE_DOWNLOAD_DIR@"
-    URL "https://github.com/VirgilSecurity/mbedtls/archive/d42aa3a47cd87fcc49e5aebb09d40d4bf36b2091.tar.gz"
-    URL_HASH SHA1=cb6ff10f4f23420088f274acd5bc725fe8233f8e
+    URL "https://github.com/VirgilSecurity/mbedtls/archive/ff09f9b88d8f1d4ee05c03405254eb8cc6928b85.tar.gz"
+    URL_HASH SHA1=2c8aa67e128a47244f3ef908213f2ed380a7ccc6
     PREFIX "@VIRGIL_DEPENDS_PACKAGE_BUILD_DIR@"
     CMAKE_ARGS "@VIRGIL_DEPENDS_CMAKE_ARGS@" "${MBEDTLS_CMAKE_ARGS}"
     UPDATE_COMMAND ${CMAKE_COMMAND} -E copy_directory

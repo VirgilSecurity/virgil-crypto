@@ -86,9 +86,7 @@ TEST_CASE_SIGN_VERIFY(EC_SECP256K1)
 
 TEST_CASE_SIGN_VERIFY(EC_SECP256R1)
 
-TEST_CASE_SIGN_VERIFY(EC_CURVE25519)
-
-TEST_CASE_SIGN_VERIFY(EC_ED25519)
+TEST_CASE_SIGN_VERIFY(FAST_EC_ED25519)
 
 #undef TEST_CASE_SIGN_VERIFY
 
@@ -104,7 +102,7 @@ TEST_CASE("VirgilSigner: sign with wrong key password", "[signer]") {
     VirgilByteArray testData = str2bytes("this string will be signed");
     VirgilByteArray keyPassword = str2bytes("password");
     VirgilByteArray wrongKeyPassword = str2bytes("wrong password");
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_CURVE25519, keyPassword);
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::FAST_EC_X25519, keyPassword);
 
     VirgilSigner signer;
     REQUIRE_THROWS_AS(signer.sign(testData, keyPair.privateKey(), wrongKeyPassword), VirgilCryptoException);

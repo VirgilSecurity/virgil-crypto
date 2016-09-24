@@ -86,14 +86,14 @@ void benchmark_decrypt(benchpress::context* ctx, const VirgilKeyPair::Type& keyT
     }
 }
 
-BENCHMARK("Encrypt -> curve25519         ", std::bind(benchmark_encrypt, _1, VirgilKeyPair::Type::EC_CURVE25519));
-BENCHMARK("Encrypt -> ed25519            ", std::bind(benchmark_encrypt, _1, VirgilKeyPair::Type::EC_ED25519));
+BENCHMARK("Encrypt -> curve25519         ", std::bind(benchmark_encrypt, _1, VirgilKeyPair::Type::FAST_EC_X25519));
+BENCHMARK("Encrypt -> ed25519            ", std::bind(benchmark_encrypt, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
 BENCHMARK("Encrypt -> 224-bits NIST curve", std::bind(benchmark_encrypt, _1, VirgilKeyPair::Type::EC_SECP224R1));
 BENCHMARK("Encrypt -> 256-bits NIST curve", std::bind(benchmark_encrypt, _1, VirgilKeyPair::Type::EC_SECP256R1));
 BENCHMARK("Encrypt -> 384-bits NIST curve", std::bind(benchmark_encrypt, _1, VirgilKeyPair::Type::EC_SECP384R1));
 
-BENCHMARK("Decrypt -> curve25519         ", std::bind(benchmark_decrypt, _1, VirgilKeyPair::Type::EC_CURVE25519));
-BENCHMARK("Decrypt -> ed25519            ", std::bind(benchmark_decrypt, _1, VirgilKeyPair::Type::EC_ED25519));
+BENCHMARK("Decrypt -> curve25519         ", std::bind(benchmark_decrypt, _1, VirgilKeyPair::Type::FAST_EC_X25519));
+BENCHMARK("Decrypt -> ed25519            ", std::bind(benchmark_decrypt, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
 BENCHMARK("Decrypt -> 224-bits NIST curve", std::bind(benchmark_decrypt, _1, VirgilKeyPair::Type::EC_SECP224R1));
 BENCHMARK("Decrypt -> 256-bits NIST curve", std::bind(benchmark_decrypt, _1, VirgilKeyPair::Type::EC_SECP256R1));
 BENCHMARK("Decrypt -> 384-bits NIST curve", std::bind(benchmark_decrypt, _1, VirgilKeyPair::Type::EC_SECP384R1));

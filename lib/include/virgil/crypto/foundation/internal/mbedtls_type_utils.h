@@ -42,13 +42,15 @@
 #include <mbedtls/ecp.h>
 #include <mbedtls/kdf.h>
 #include <mbedtls/cipher.h>
+#include <mbedtls/fast_ec.h>
 
 #include <virgil/crypto/VirgilKeyPair.h>
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 
 namespace virgil { namespace crypto { namespace foundation { namespace internal {
 
-static inline VirgilKeyPair::Type key_type_from_params(size_t rsa_key_size, mbedtls_ecp_group_id ecp_group_id) {
+static inline VirgilKeyPair::Type key_type_from_params(size_t rsa_key_size, mbedtls_ecp_group_id ecp_group_id,
+            mbedtls_fast_ec_type_t fast_ec_type) {
     if (rsa_key_size > 0) {
         switch (rsa_key_size) {
             case 256:
@@ -86,10 +88,6 @@ static inline VirgilKeyPair::Type key_type_from_params(size_t rsa_key_size, mbed
                 return VirgilKeyPair::Type::EC_BP384R1;
             case MBEDTLS_ECP_DP_BP512R1:
                 return VirgilKeyPair::Type::EC_BP512R1;
-            case MBEDTLS_ECP_DP_CURVE25519:
-                return VirgilKeyPair::Type::EC_CURVE25519;
-            case MBEDTLS_ECP_DP_ED25519:
-                return VirgilKeyPair::Type::EC_ED25519;
             case MBEDTLS_ECP_DP_SECP192K1:
                 return VirgilKeyPair::Type::EC_SECP192K1;
             case MBEDTLS_ECP_DP_SECP224K1:
@@ -99,13 +97,22 @@ static inline VirgilKeyPair::Type key_type_from_params(size_t rsa_key_size, mbed
             default:
                 throw make_error(VirgilCryptoError::InvalidArgument, "Unknown EC type was specified.");
         }
+    } else if (fast_ec_type != MBEDTLS_FAST_EC_NONE) {
+        switch (fast_ec_type) {
+            case MBEDTLS_FAST_EC_X25519:
+                return VirgilKeyPair::Type::FAST_EC_X25519;
+            case MBEDTLS_FAST_EC_ED25519:
+                return VirgilKeyPair::Type::FAST_EC_ED25519;
+            default:
+                throw make_error(VirgilCryptoError::InvalidArgument, "Unknown Fast EC type was specified.");
+        }
     } else {
         throw make_error(VirgilCryptoError::InvalidArgument, "No RSA neither EC key type was specified.");
     }
 }
 
-static inline void key_type_set_params(
-        VirgilKeyPair::Type type, unsigned int* rsa_key_size, mbedtls_ecp_group_id* ecp_group_id) {
+static inline void key_type_set_params(VirgilKeyPair::Type type, unsigned int* rsa_key_size,
+        mbedtls_ecp_group_id* ecp_group_id, mbedtls_fast_ec_type_t* fast_ec_type) {
 
     *rsa_key_size = 0;
     *ecp_group_id = MBEDTLS_ECP_DP_NONE;
@@ -165,11 +172,11 @@ static inline void key_type_set_params(
         case VirgilKeyPair::Type::EC_SECP256K1:
             *ecp_group_id = MBEDTLS_ECP_DP_SECP256K1;
             break;
-        case VirgilKeyPair::Type::EC_CURVE25519:
-            *ecp_group_id = MBEDTLS_ECP_DP_CURVE25519;
+        case VirgilKeyPair::Type::FAST_EC_X25519:
+            *fast_ec_type = MBEDTLS_FAST_EC_X25519;
             break;
-        case VirgilKeyPair::Type::EC_ED25519:
-            *ecp_group_id = MBEDTLS_ECP_DP_ED25519;
+        case VirgilKeyPair::Type::FAST_EC_ED25519:
+            *fast_ec_type = MBEDTLS_FAST_EC_ED25519;
             break;
         default:
             throw make_error(VirgilCryptoError::InvalidArgument, "Unknown Key Pair type was given.");
@@ -192,6 +199,10 @@ static inline std::string to_string(mbedtls_pk_type_t pk_type) noexcept {
             return "RSA_ALT";
         case MBEDTLS_PK_RSASSA_PSS:
             return "RSASSA_PSS";
+        case MBEDTLS_PK_X25519:
+            return "X25519";
+        case MBEDTLS_PK_ED25519:
+            return "ED25519";
         default:
             return "UNDEFINED";
     }
@@ -370,6 +381,17 @@ static inline std::string to_string(mbedtls_ecp_group_id id) noexcept {
             return "ECP_DP_SECP224K1";
         case MBEDTLS_ECP_DP_SECP256K1:
             return "ECP_DP_SECP256K1";
+        default:
+            return "UNDEFINED";
+    }
+}
+
+static inline std::string to_string(mbedtls_fast_ec_type_t type) noexcept {
+    switch (type) {
+        case MBEDTLS_FAST_EC_X25519:
+            return "FAST_EC_X25519";
+        case MBEDTLS_FAST_EC_ED25519:
+            return "FAST_EC_ED25519";
         default:
             return "UNDEFINED";
     }

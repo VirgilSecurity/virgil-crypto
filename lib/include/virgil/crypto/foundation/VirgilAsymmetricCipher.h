@@ -272,9 +272,9 @@ public:
      * @brief Return number of the underlying public key.
      *
      * Legend:
-     *     * number - EC point if underlying key belongs to the Elliptic Curve group
+     *     * number - Fast EC point if underlying key belongs to the Elliptic Curve group
      *
-     * @note Properly works only with Curve25519 keys.
+     * @note Properly works only with X25519 and ED25519 keys.
      * @throw VirgilCryptoException with VirgilCryptoError::UnsupportedAlgorithm,
      *     if given key type not allowed for this operation.
      */
@@ -284,39 +284,15 @@ public:
      * @brief Set number of the underlying public key.
      *
      * Legend:
-     *     * number - EC point if underlying key belongs to the Elliptic Curve group
+     *     * number - Fast EC point if underlying key belongs to the Elliptic Curve group
      *
-     * @note Properly works only with Curve25519 keys.
+     * @note Properly works only with X25519 and ED25519 keys.
+     * @throw VirgilCryptoException with VirgilCryptoError::InvalidArgument,
+     *     if given key size is unexpected.
      * @throw VirgilCryptoException with VirgilCryptoError::UnsupportedAlgorithm,
      *     if given key type not allowed for this operation.
      */
     void setPublicKeyBits(const virgil::crypto::VirgilByteArray& bits);
-
-    /**
-     * @brief Return number of the given sign.
-     *
-     * Legend:
-     *     * number - (r,s) if underlying key belongs to the Elliptic Curve group
-     *
-     * @note Properly works only with Curve25519 keys.
-     * @throw VirgilCryptoException with VirgilCryptoError::UnsupportedAlgorithm,
-     *     if given key type not allowed for this operation.
-     */
-    virgil::crypto::VirgilByteArray signToBits(const virgil::crypto::VirgilByteArray& sign);
-
-    /**
-     * @brief Make sign from the given number.
-     *
-     * Legend:
-     *     * number - (r,s) if underlying key belongs to the Elliptic Curve group
-     *
-     * @note Properly works only with Curve25519 keys.
-     * @throw VirgilCryptoException with VirgilCryptoError::UnsupportedAlgorithm,
-     *     if given key type not allowed for this operation.
-     * @throw VirgilCryptoException with VirgilCryptoError::InvalidSignature,
-     *     if given bits are malformed.
-     */
-    virgil::crypto::VirgilByteArray signFromBits(const virgil::crypto::VirgilByteArray& bits);
     ///@}
 
     /**

@@ -55,20 +55,17 @@ using virgil::crypto::VirgilKeyPair;
 
 constexpr char kPublicKey[] =
         "-----BEGIN PUBLIC KEY-----\n"
-                "MFswFQYHKoZIzj0CAQYKKwYBBAGXVQEFAQNCAARhEuj2bVQKPe1ZXst7ubob+bVr\n"
-                "9tcjPs7x7mVumQO7YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+                "MCowBQYDK2VwAyEAGb9ECWmEzf6FQbrBZ9w7lshQhqowtrbLDFw4rXAxZmE=\n"
                 "-----END PUBLIC KEY-----\n";
 
 constexpr char kPrivateKey[] =
-        "-----BEGIN EC PRIVATE KEY-----\n"
-                "MHkCAQEEIEShP488iU1wuJLX6t8tx8hTbi/vYJPLWiE9xSIn3bEooAwGCisGAQQB\n"
-                "l1UBBQGhRANCAARhEuj2bVQKPe1ZXst7ubob+bVr9tcjPs7x7mVumQO7YAAAAAAA\n"
-                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
-                "-----END EC PRIVATE KEY-----";
+        "-----BEGIN PRIVATE KEY-----\n"
+                "MC4CAQAwBQYDK2VwBCIEINTuctv5E1hK1bbY8fdp+K06/nwoy/HU++CXqI9EdVhC\n"
+                "-----END PRIVATE KEY-----";
 
 constexpr char kUnsupportedPublicKey[] =
         "-----BEGIN PUBLIC KEY-----\n"
-                "MFswFQYHKoZIzj0CAQYKKwYBBAGXVQEFAgNCAARhEuj2bVQKPe1ZXst7ubob+bVr\n"
+                "MFswFQYHKoZIzj0CAQYKKwYBBAGXVQEFAQNCAARhEuj2bVQKPe1ZXst7ubob+bVr\n"
                 "9tcjPs7x7mVumQO7YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
                 "-----END PUBLIC KEY-----\n";
 
@@ -309,8 +306,8 @@ TEST_CASE("VirgilCipherBase::setContentInfo()", "[cipher-base]") {
 }
 
 TEST_CASE("VirgilCipherBase::computeShared()", "[cipher-base]") {
-    VirgilKeyPair bobCurve25519 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_CURVE25519);
-    VirgilKeyPair aliceCurve25519 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_CURVE25519);
+    VirgilKeyPair bobCurve25519 = VirgilKeyPair::generate(VirgilKeyPair::Type::FAST_EC_X25519);
+    VirgilKeyPair aliceCurve25519 = VirgilKeyPair::generate(VirgilKeyPair::Type::FAST_EC_X25519);
 
     VirgilKeyPair bobNist256 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_SECP256K1);
     VirgilKeyPair aliceNist256 = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_SECP256K1);

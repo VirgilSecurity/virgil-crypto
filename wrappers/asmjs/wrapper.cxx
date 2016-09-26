@@ -122,6 +122,7 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
     class_<VirgilVersion>("VirgilVersion")
         .class_function("asNumber", &VirgilVersion::asNumber)
         .class_function("asString", &VirgilVersion::asString)
+        .class_function("fullName", &VirgilVersion::fullName)
         .class_function("majorVersion", &VirgilVersion::majorVersion)
         .class_function("minorVersion", &VirgilVersion::minorVersion)
         .class_function("patchVersion", &VirgilVersion::patchVersion)

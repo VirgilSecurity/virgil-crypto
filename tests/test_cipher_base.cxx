@@ -61,11 +61,11 @@ constexpr char kPublicKey[] =
 constexpr char kPrivateKey[] =
         "-----BEGIN PRIVATE KEY-----\n"
                 "MC4CAQAwBQYDK2VwBCIEINTuctv5E1hK1bbY8fdp+K06/nwoy/HU++CXqI9EdVhC\n"
-                "-----END PRIVATE KEY-----";
+                "-----END PRIVATE KEY-----\n";
 
 constexpr char kUnsupportedPublicKey[] =
         "-----BEGIN PUBLIC KEY-----\n"
-                "MFswFQYHKoZIzj0CAQYKKwYBBAGXVQEFAQNCAARhEuj2bVQKPe1ZXst7ubob+bVr\n"
+                "MFswFQYHKoZIzj0CAQYKKwYBBAGXVQEFBQNCAARhEuj2bVQKPe1ZXst7ubob+bVr\n"
                 "9tcjPs7x7mVumQO7YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
                 "-----END PUBLIC KEY-----\n";
 

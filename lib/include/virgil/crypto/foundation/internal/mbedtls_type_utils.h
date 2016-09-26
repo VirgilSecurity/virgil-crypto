@@ -94,6 +94,8 @@ static inline VirgilKeyPair::Type key_type_from_params(size_t rsa_key_size, mbed
                 return VirgilKeyPair::Type::EC_SECP224K1;
             case MBEDTLS_ECP_DP_SECP256K1:
                 return VirgilKeyPair::Type::EC_SECP256K1;
+            case MBEDTLS_ECP_DP_CURVE25519:
+                return VirgilKeyPair::Type::EC_CURVE25519;
             default:
                 throw make_error(VirgilCryptoError::InvalidArgument, "Unknown EC type was specified.");
         }
@@ -171,6 +173,9 @@ static inline void key_type_set_params(VirgilKeyPair::Type type, unsigned int* r
             break;
         case VirgilKeyPair::Type::EC_SECP256K1:
             *ecp_group_id = MBEDTLS_ECP_DP_SECP256K1;
+            break;
+        case VirgilKeyPair::Type::EC_CURVE25519:
+            *ecp_group_id = MBEDTLS_ECP_DP_CURVE25519;
             break;
         case VirgilKeyPair::Type::FAST_EC_X25519:
             *fast_ec_type = MBEDTLS_FAST_EC_X25519;

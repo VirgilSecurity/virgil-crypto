@@ -68,6 +68,7 @@ public:
         EC_SECP192K1, ///< 192-bits "Koblitz" curve
         EC_SECP224K1, ///< 224-bits "Koblitz" curve
         EC_SECP256K1, ///< 256-bits "Koblitz" curve
+        EC_CURVE25519, ///< Curve25519 as ECP deprecated format
         FAST_EC_X25519,  ///< Curve25519
         FAST_EC_ED25519, ///< Ed25519
     };

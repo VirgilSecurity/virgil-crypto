@@ -41,7 +41,6 @@ if [ "${PUBLISH_DOCS}" != "ON" ] || [ "${TRAVIS_BRANCH}" != "${DOC_BRANCH}" ] ||
 
 # Settings
 REPO_PATH=git@github.com:VirgilSecurity/virgil-crypto.git
-HTML_PATH_SRC="${TRAVIS_BUILD_DIR}/docs/html"
 HTML_PATH_DST="${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}/docs/html"
 COMMIT_USER="Travis CI documentation builder."
 COMMIT_EMAIL="sergey.seroshtan@gmail.com"
@@ -52,26 +51,65 @@ rm -rf ${HTML_PATH_DST}
 mkdir -p ${HTML_PATH_DST}
 git clone -b gh-pages "${REPO_PATH}" --single-branch ${HTML_PATH_DST}
 
-# rm all the files through git to prevent stale files.
-cd ${HTML_PATH_DST} && git rm -rf ./*
-cd -
+# Define SDK versions
+VIRGIL_CRYPTO_VERSION=`cat ${TRAVIS_BUILD_DIR}/VERSION | awk -F"." '{ printf "v%d.%d",$1,$2 }'`
+VIRGIL_CRYPTO_HTML_PATH_DST="${HTML_PATH_DST}/${VIRGIL_CRYPTO_VERSION}"
 
-# Generate the HTML documentation.
-cd "${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}" && make doc
-cd -
+# Prepare destination folders
+rm -fr "${VIRGIL_CRYPTO_HTML_PATH_DST}" && mkdir -p "${VIRGIL_CRYPTO_HTML_PATH_DST}"
 
 # Copy new documentation
-cp -af "${HTML_PATH_SRC}/." "${HTML_PATH_DST}/"
+cp -af "${TRAVIS_BUILD_DIR}/docs/html/." "${VIRGIL_CRYPTO_HTML_PATH_DST}"
 
 # Fix source file names
-cd "${HTML_PATH_DST}"
-for f in _*.html; do
-    old_name=$f
-    new_name=${f/${f:0:1}/}
-    mv $old_name $new_name
-    sed -i"" "s/$old_name/$new_name/g" *.html
+function fix_html_source_file_names {
+    cd "${1}"
+    for f in _*.html; do
+        old_name=$f
+        new_name=${f/${f:0:1}/}
+        mv $old_name $new_name
+        if [ "$(uname -s)" == "Darwin" ]; then
+            sed -i "" -e "s/[[:<:]]$old_name[[:>:]]/$new_name/g" *.html
+        else
+            sed -i"" "s/\b$old_name\b/$new_name/g" *.html
+        fi
+    done
+    cd -
+}
+
+fix_html_source_file_names "${VIRGIL_CRYPTO_HTML_PATH_DST}"
+
+# Generate root HTML file
+function get_dir_names {
+    local DIRS=`find "$1" -maxdepth 1 -type d -name "$2"`
+    local DIR_NAMES=()
+    for dir in ${DIRS}; do
+        DIR_NAMES+=("${dir#${1}/}")
+    done
+    echo ${DIR_NAMES[*]}
+}
+
+cat >"${HTML_PATH_DST}/index.html" <<EOL
+<!DOCTYPE HTML>
+<html>
+   <head>
+        <meta charset="utf-8">
+        <title>Virgil Security Crypto Lib</title>
+   </head>
+   <body>
+        Virgil Security Crypto Lib
+        <ul>
+EOL
+
+for dir in `get_dir_names "${VIRGIL_CRYPTO_HTML_PATH_DST}/.." "v*"`; do
+    echo "<li><p><a href=\"${dir}/index.html\">${dir}</a></p></li>" >> "${HTML_PATH_DST}/index.html"
 done
-cd -
+
+cat >>"${HTML_PATH_DST}/index.html" <<EOL
+        </ul>
+   </body>
+</html>
+EOL
 
 # Create and commit the documentation repo.
 cd ${HTML_PATH_DST}

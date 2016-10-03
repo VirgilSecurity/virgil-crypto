@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -36,29 +36,27 @@
 
 #include <virgil/crypto/VirgilSigner.h>
 
-#include <virgil/crypto/VirgilCryptoException.h>
-
-#include <virgil/crypto/foundation/PolarsslException.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
 using virgil::crypto::VirgilSigner;
 using virgil::crypto::VirgilByteArray;
-using virgil::crypto::VirgilCryptoException;
 
-using virgil::crypto::foundation::PolarsslException;
 using virgil::crypto::foundation::VirgilHash;
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
-VirgilSigner::VirgilSigner(const VirgilHash& hash) : hash_(hash) {
+VirgilSigner::VirgilSigner(VirgilHash::Algorithm hashAlgorithm) : hash_(hashAlgorithm) {
 }
 
+VirgilSigner::VirgilSigner(VirgilSigner&& rhs) noexcept = default;
+
+VirgilSigner& VirgilSigner::operator=(VirgilSigner&& rhs) noexcept = default;
+
 VirgilByteArray VirgilSigner::sign(
-        const VirgilByteArray& data, const VirgilByteArray& privateKey,
-        const VirgilByteArray& privateKeyPassword) {
+        const VirgilByteArray& data, const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
     // Calculate data digest
     VirgilByteArray digest = hash_.hash(data);
     // Prepare cipher
@@ -71,27 +69,23 @@ VirgilByteArray VirgilSigner::sign(
     size_t asn1Len = 0;
     asn1Len += asn1Writer.writeOctetString(digestSign);
     asn1Len += hash_.asn1Write(asn1Writer);
-    asn1Len += asn1Writer.writeSequence(asn1Len);
+    (void) asn1Writer.writeSequence(asn1Len);
     // Return sign as binary data
     return asn1Writer.finish();
 }
 
 bool VirgilSigner::verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey) {
     // Read sign
-    try {
-        VirgilAsn1Reader asn1Reader(sign);
-        asn1Reader.readSequence();
-        VirgilHash hash;
-        hash.asn1Read(asn1Reader);
-        VirgilByteArray digestSign = asn1Reader.readOctetString();
-        // Calculate data digest
-        VirgilByteArray digest = hash.hash(data);
-        // Prepare cipher
-        VirgilAsymmetricCipher cipher;
-        cipher.setPublicKey(publicKey);
-        // Verify
-        return cipher.verify(digest, digestSign, hash_.type());
-    } catch (const PolarsslException&) {
-        throw VirgilCryptoException("VirgilSigner: malformed sign.");
-    }
+    VirgilAsn1Reader asn1Reader(sign);
+    asn1Reader.readSequence();
+    VirgilHash hash;
+    hash.asn1Read(asn1Reader);
+    VirgilByteArray digestSign = asn1Reader.readOctetString();
+    // Calculate data digest
+    VirgilByteArray digest = hash.hash(data);
+    // Prepare cipher
+    VirgilAsymmetricCipher cipher;
+    cipher.setPublicKey(publicKey);
+    // Verify
+    return cipher.verify(digest, digestSign, hash_.type());
 }

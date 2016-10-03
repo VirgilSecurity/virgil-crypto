@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,7 +37,7 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_ASN1_WRITER_H
 #define VIRGIL_CRYPTO_VIRGIL_ASN1_WRITER_H
 
-#include <cstddef>
+#include <cstdlib>
 #include <string>
 #include <vector>
 
@@ -69,7 +69,7 @@ public:
     /**
      * @brief Dispose internal resources.
      */
-    ~VirgilAsn1Writer() throw();
+    ~VirgilAsn1Writer() noexcept;
     /**
      * @name Start and Finish writing
      */
@@ -190,6 +190,18 @@ private:
      */
     static void makeOrderedSet(std::vector<virgil::crypto::VirgilByteArray>& set);
 
+public:
+    /**
+     * @brief Use default move constructor
+     */
+    VirgilAsn1Writer(VirgilAsn1Writer&& other) = default;
+
+    /**
+     * @brief Use default move operator
+     */
+    VirgilAsn1Writer& operator=(VirgilAsn1Writer&& rhs) = default;
+
+
 private:
     /**
      * @brief Check internal state before methods call.
@@ -200,7 +212,7 @@ private:
     /**
      * @brief Dispose internal resources.
      */
-    void dispose() throw();
+    void dispose() noexcept;
 
     /**
      * @brief Reserve additional space for ASN.1 buffer.
@@ -216,16 +228,6 @@ private:
      *     buffer will be relocated with more capacity.
      */
     void ensureBufferEnough(size_t len);
-
-    /**
-     * @brief Deny copy constructor
-     */
-    VirgilAsn1Writer(const VirgilAsn1Writer& other);
-
-    /**
-     * @brief Deny assignment operator
-     */
-    VirgilAsn1Writer& operator=(const VirgilAsn1Writer& rhs);
 
 private:
     unsigned char* p_;

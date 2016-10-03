@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,7 +37,8 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_PBE_H
 #define VIRGIL_CRYPTO_VIRGIL_PBE_H
 
-#include <cstddef>
+#include <cstdlib>
+#include <memory>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
@@ -45,43 +46,30 @@
 namespace virgil { namespace crypto { namespace foundation {
 
 /**
- * @name Forward declarations
- */
-///@{
-class VirgilPBEImpl;
-///@}
-
-/**
  * @brief Provides Password-Based Cryptography. Now PKCS#5 and PKCS#12 are partially supported.
+ * @ingroup Cipher
  */
-class VirgilPBE : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
+class VirgilPBE : public asn1::VirgilAsn1Compatible {
 public:
+    /**
+     * @brief Enumerates possible Password Based Encryption algorithms.
+     */
+    enum class Algorithm {
+        PKCS5, ///< PBE Algorithm: from the standard PKCS#5
+        PKCS12 ///< PBE Algorithm: from the standard PKCS#12
+    };
+
     /**
      * @name Constants
      */
     ///@{
-    enum {
-        kIterationCountMin = 1024
-    };
+    /**
+     * @property kIterationCountMin
+     * @brief Recommended iteration count that is used for key derivation.
+     */
+    static constexpr size_t kIterationCountMin = 1024;
     ///@}
 public:
-    /**
-     * @name Creation methods
-     * @brief Object creation with specific hash function.
-     */
-    ///@{
-    /**
-     * @brief Create object with PKCS#5 parameters for PBE encryption or decryption.
-     * @note Recommended PKCS#5 parameters are set.
-     */
-    static VirgilPBE pkcs5(const virgil::crypto::VirgilByteArray& salt, size_t iterationCount = kIterationCountMin);
-
-    /**
-     * @brief Create object with PKCS#12 parameters for PBE encryption or decryption.
-     * @note Recommended PKCS#12 parameters are set.
-     */
-    static VirgilPBE pkcs12(const virgil::crypto::VirgilByteArray& salt, size_t iterationCount = kIterationCountMin);
-    ///@}
     /**
      * @name Constructor / Destructor
      */
@@ -89,14 +77,19 @@ public:
     /**
      * @brief Create object with undefined algorithm.
      * @warning SHOULD be used in conjunction with VirgilAsn1Compatible interface,
-     *     i.e. VirgilPBE pbe = VirgilPBE().fromAsn1(asn1);
+     *     i.e. VirgilPBE pbe; pbe.fromAsn1(asn1);
      */
     VirgilPBE();
 
     /**
-     * @brief Polymorphic destructor.
+     * @brief reate object with specific algorithm type.
+     * @param alg Specific PBE algorithm.
+     * @param salt Salt, it is recommended to use random value for security reasons.
+     * @param iterationCount Iteration count for the key derivation,
+     *     it is recommended to use random value for security reasons.
      */
-    virtual ~VirgilPBE() throw();
+    VirgilPBE(Algorithm alg, const VirgilByteArray& salt, size_t iterationCount = kIterationCountMin);
+
     ///@}
     /**
      * @name Encryption / Decryption
@@ -123,17 +116,6 @@ public:
             const virgil::crypto::VirgilByteArray& pwd) const;
     ///@}
     /**
-     * @name Copy constructor / assignment operator
-     * @warning Copy constructor and assignment operator create copy of the object as it was created
-     *          by on of the creation methods. All changes in the internal state,
-     *          that was made after creation, are not copied!
-     */
-    ///@{
-    VirgilPBE(const VirgilPBE& other);
-
-    VirgilPBE& operator=(const VirgilPBE& rhs);
-    ///@}
-    /**
      * @name VirgilAsn1Compatible implementation
      * @code
      * Marshalling format:
@@ -145,19 +127,20 @@ public:
      * @endcode
      */
     ///@{
-    virtual size_t asn1Write(
-            virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
-            size_t childWrittenBytes = 0) const;
+    size_t asn1Write(asn1::VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const override;
 
-    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
+    void asn1Read(asn1::VirgilAsn1Reader& asn1Reader) override;
     ///@}
-private:
-    /**
-     * @brief Creates and initialize PBKDF with specified type.
-     * @warning Constructor CAN NOT be used directly, use one of factory methods to create apropriate cipher.
-     */
-    explicit VirgilPBE(int type, const virgil::crypto::VirgilByteArray& salt, size_t iterationCount);
+public:
+    //! @cond Doxygen_Suppress
+    VirgilPBE(VirgilPBE&& rhs) noexcept;
 
+    VirgilPBE& operator=(VirgilPBE&& rhs) noexcept;
+
+    virtual ~VirgilPBE() noexcept;
+    //! @endcond
+
+private:
     /**
      * @brief If internal state is not initialized with specific algorithm exception will be thrown.
      */
@@ -171,7 +154,9 @@ private:
             const virgil::crypto::VirgilByteArray& pwd, int mode) const;
 
 private:
-    VirgilPBEImpl* impl_;
+    class Impl;
+
+    std::unique_ptr<Impl> impl_;
 };
 
 }}}

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2015 Virgil Security Inc.
+# Copyright (C) 2015-2016 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -74,7 +74,6 @@ function show_usage {
     echo -e "    * net_android      - build .NET library under Android platform, requirements: Mono, \$ANDROID_NDK;"
     echo -e "    * asmjs            - build AsmJS library, requirements: \$EMSDK_HOME;"
     echo -e "    * nodejs           - build NodeJS module;"
-    echo -e "    * as3              - build ActionScript library, requirements: \$CROSSBRIDGE_HOME, \$FLEX_HOME;"
     echo -e "    * pnacl            - build Portable Native library for Google Chrome, requirements: \$NACL_SDK_ROOT."
     echo -e "  - <src_dir>     - (default = .) path to the directory where root CMakeLists.txt file is located"
     echo -e "  - <build_dir>   - (default = build/<target>) path to the directory where temp files will be stored"
@@ -240,11 +239,7 @@ show_info "<install_dir>: ${INSTALL_DIR}"
 CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
 
 if [[ ${TARGET_NAME} =~ ^(cpp|osx|java|net|php|python|ruby|nodejs)$ ]]; then
-    if [ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "darwin" ]; then
-        CMAKE_ARGS+=" -DPLATFORM_ARCH=universal -DCMAKE_OSX_ARCHITECTURES=i386;x86_64"
-    else
-        CMAKE_ARGS+=" -DPLATFORM_ARCH=$(uname -m)"
-    fi
+    CMAKE_ARGS+=" -DPLATFORM_ARCH=$(uname -m)"
 fi
 
 if [ ! -z "${TARGET_VERSION}" ]; then
@@ -270,7 +265,7 @@ if [ "${TARGET_NAME}" == "osx" ]; then
     cmake ${CMAKE_ARGS} -DLANG=cpp -DPLATFORM=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
     make -j4 install
     # Create framework
-    make_bundle VirgilCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
+    make_bundle VSCCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
     rm -fr "${INSTALL_DIR:?}/include"
     rm -fr "${INSTALL_DIR:?}/lib"
 fi
@@ -286,7 +281,7 @@ if [ "${TARGET_NAME}" == "ios" ] || [ "${TARGET_NAME}" == "appletvos" ] || [ "${
     cmake ${CMAKE_ARGS} -DLANG=cpp -DINSTALL_LIB_DIR_NAME=lib/sim -DSIMULATOR=ON -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
     make -j4 install
     # Create framework
-    make_bundle VirgilCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
+    make_bundle VSCCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
     rm -fr "${INSTALL_DIR:?}/include"
     rm -fr "${INSTALL_DIR:?}/lib"
 fi
@@ -333,17 +328,6 @@ if [ "${TARGET_NAME}" == "asmjs" ]; then
     fi
     source "${EMSDK_HOME}/emsdk_env.sh"
     cmake ${CMAKE_ARGS} -DLANG=asmjs -DCMAKE_TOOLCHAIN_FILE="$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake" "${SRC_DIR}"
-    make -j4 install
-fi
-
-if [ "${TARGET_NAME}" == "as3" ]; then
-    if [ ! -d "$CROSSBRIDGE_HOME" ]; then
-        show_usage "Enviroment \$CROSSBRIDGE_HOME is not defined!" 1
-    fi
-    if [ ! -d "$FLEX_HOME" ]; then
-        show_usage "Enviroment \$FLEX_HOME is not defined!" 1
-    fi
-    cmake ${CMAKE_ARGS} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/as3.toolchain.cmake" "${SRC_DIR}"
     make -j4 install
 fi
 

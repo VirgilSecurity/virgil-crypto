@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -96,11 +96,6 @@ public:
 
     virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
-public:
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilCMSKeyTransRecipient() throw();
 };
 
 }}}}

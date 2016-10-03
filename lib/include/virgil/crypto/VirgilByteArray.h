@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -55,7 +55,7 @@ typedef std::vector<unsigned char> VirgilByteArray;
 }}
 
 /**
- * @name ByteArray convertion utilities
+ * @name ByteArray conversation utilities
  */
 /// @{
 #define VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(array) reinterpret_cast<const unsigned char *>(array.data()), array.size()

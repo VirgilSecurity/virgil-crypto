@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 Virgil Security Inc.
+# Copyright (C) 2015-2016 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -89,10 +89,10 @@ endif ()
 
 ExternalProject_Add (${PROJECT_NAME}
     DOWNLOAD_DIR "@VIRGIL_DEPENDS_PACKAGE_DOWNLOAD_DIR@"
-    URL "https://github.com/VirgilSecurity/mbedtls/archive/mbedtls-2.2.1-virgil-1.0.0.tar.gz"
-    URL_HASH SHA1=b92e8558a355cbb45eda5a17f2dba13bd148ad38
+    URL "https://github.com/VirgilSecurity/mbedtls/archive/mbedtls-2.3.0-virgil-2.0.0.tar.gz"
+    URL_HASH SHA1=99b30c425dbc409e6dfa05948d132b40f517028a
     PREFIX "@VIRGIL_DEPENDS_PACKAGE_BUILD_DIR@"
-    CMAKE_ARGS "@VIRGIL_DEPENDS_CMAKE_ARGS@"
+    CMAKE_ARGS "@VIRGIL_DEPENDS_CMAKE_ARGS@" "${MBEDTLS_CMAKE_ARGS}"
     UPDATE_COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_CURRENT_BINARY_DIR}/configs
             ${CMAKE_CURRENT_BINARY_DIR}/src/${PROJECT_NAME}/include/mbedtls

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -51,12 +51,6 @@ namespace virgil { namespace crypto {
 class VirgilStreamCipher : public VirgilCipherBase {
 public:
     /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilStreamCipher() throw();
-
-public:
-    /**
      * @brief Encrypt data read from given source and write it the sink.
      * @param source - source of the data to be encrypted.
      * @param sink - target sink for encrypted data.
@@ -65,7 +59,7 @@ public:
      * @see getContentInfo()
      * @return encrypted data.
      */
-    void encrypt(VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo = false);
+    void encrypt(VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo = true);
 
     /**
      * @brief Decrypt data read from given source for recipient defined by id and private key,

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 Virgil Security Inc.
+# Copyright (C) 2015-2016 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -49,6 +49,16 @@ if (NOT EMSCRIPTEN)
         " See http://kripken.github.io/emscripten-site/docs/getting_started/downloads.html")
 endif ()
 
+# Patch emscripten to supprt handle exceptions
+set (ORIGINAL_EMBIND_FILE "${EMSCRIPTEN}/system/include/emscripten/bind.h")
+set (VIRGIL_EMBIND_FILE "${CMAKE_CURRENT_BINARY_DIR}/virgil_bind.h")
+
+execute_process (
+    COMMAND perl "${CMAKE_CURRENT_SOURCE_DIR}/patch_embind.pl" "${ORIGINAL_EMBIND_FILE}" "${VIRGIL_EMBIND_FILE}"
+    RESULT_VARIABLE EMBIND_PATCH_RESULT
+    OUTPUT_VARIABLE EMBIND_PATCH_OUTPUT
+)
+
 set (WRAPPER_SRC wrapper.cxx)
 configure_file (
     ${CMAKE_CURRENT_SOURCE_DIR}/${WRAPPER_SRC}
@@ -62,13 +72,15 @@ configure_file (
 )
 
 # Build
-add_executable (${WRAPPER_TARGET} ${WRAPPER_SRC})
+add_executable (${WRAPPER_TARGET} "${CMAKE_CURRENT_BINARY_DIR}/${WRAPPER_SRC}")
 target_link_libraries (${WRAPPER_TARGET} ${WRAPPED_LIB_NAME})
-set_property (TARGET ${WRAPPER_TARGET} APPEND_STRING PROPERTY COMPILE_FLAGS " -std=c++11")
-set_property (TARGET ${WRAPPER_TARGET} APPEND_STRING PROPERTY LINK_FLAGS " --bind")
+set_property (TARGET ${WRAPPER_TARGET} APPEND_STRING PROPERTY COMPILE_FLAGS " -std=c++11 -s DISABLE_EXCEPTION_CATCHING=0")
+set_property (TARGET ${WRAPPER_TARGET} APPEND_STRING PROPERTY LINK_FLAGS " --bind -s DISABLE_EXCEPTION_CATCHING=0")
+
 if (NOT EMIT_MEM_FILE)
     set_property (TARGET ${WRAPPER_TARGET} APPEND_STRING PROPERTY LINK_FLAGS " --memory-init-file 0")
 endif ()
+em_link_js_library (${WRAPPER_TARGET} ${CMAKE_CURRENT_SOURCE_DIR}/error.js)
 em_link_post_js (${WRAPPER_TARGET} ${CMAKE_CURRENT_SOURCE_DIR}/helpers.js)
 
 # Install

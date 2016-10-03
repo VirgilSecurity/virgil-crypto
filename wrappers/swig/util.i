@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -52,6 +52,7 @@ DEFINE_NAMESPACE(className, package)
 %insert("header") %{
 #include <includePath/className.h>
 %}
+%ignore package::className::className(className&&);
 %include <includePath/className.h>
 %enddef
 

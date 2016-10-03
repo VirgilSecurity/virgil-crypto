@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -36,7 +36,49 @@
 
 #include <virgil/crypto/VirgilCryptoException.h>
 
+#include <sstream>
+#include <tinyformat/tinyformat.h>
+
 using virgil::crypto::VirgilCryptoException;
 
-VirgilCryptoException::VirgilCryptoException(const std::string& what) : std::logic_error(what) {
+namespace virgil { namespace crypto { namespace internal {
+
+static std::string format_message(const std::error_condition& condition) noexcept {
+    try {
+        return tfm::format("Module: %s. Error code: %s. %s",
+                condition.category().name(), condition.value(), condition.message());
+    } catch (...) {
+        return std::string();
+    }
+}
+
+static std::string format_message(const std::error_condition& condition, const std::string& what) noexcept {
+    return tfm::format("%s %s", format_message(condition), what);
+}
+
+}}}
+
+VirgilCryptoException::VirgilCryptoException(int ev, const std::error_category& ecat)
+        : condition_(ev, ecat), what_(internal::format_message(condition_)) {
+}
+
+VirgilCryptoException::VirgilCryptoException(int ev, const std::error_category& ecat, const std::string& what)
+        : condition_(ev, ecat), what_(internal::format_message(condition_, what)) {}
+
+VirgilCryptoException::VirgilCryptoException(int ev, const std::error_category& ecat, const char* what)
+        : condition_(ev, ecat), what_(internal::format_message(condition_, what)) {}
+
+const char* VirgilCryptoException::what() const noexcept {
+    return what_.c_str();
+}
+
+std::string virgil::crypto::backtrace_exception(const std::exception& exception, size_t level) {
+    std::ostringstream sstr;
+    sstr << std::string(4 * level, ' ') << exception.what();
+    try {
+        std::rethrow_if_nested(exception);
+    } catch(const std::exception& nested) {
+        sstr << "\n" << backtrace_exception(nested, level + 1);
+    } catch(...) {}
+    return sstr.str();
 }

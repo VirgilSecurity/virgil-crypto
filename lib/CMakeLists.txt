@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 Virgil Security Inc.
+# Copyright (C) 2015-2016 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -40,9 +40,9 @@ project (virgil_crypto VERSION ${VIRGIL_VERSION})
 
 # Define sources list
 aux_source_directory ("src" src)
+aux_source_directory ("src/internal" src)
 if (LIB_FILE_IO)
-    aux_source_directory ("src/stream" stream_src)
-    list (APPEND src ${stream_src})
+    aux_source_directory ("src/stream" src)
 endif()
 
 configure_file (
@@ -62,12 +62,16 @@ set_property (TARGET ${PROJECT_NAME} PROPERTY DEBUG_POSTFIX "_d")
 if (BUILD_SHARED_LIBS)
     set_target_properties (${PROJECT_NAME} PROPERTIES VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
 endif (BUILD_SHARED_LIBS)
+if (CMAKE_CROSSCOMPILING)
+    set_property (TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY COMPILE_FLAGS " -std=c++11")
+endif ()
 
 target_include_directories (${PROJECT_NAME}
     PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
 )
 target_link_libraries (${PROJECT_NAME} mbedtls::mbedcrypto mbedtls::ed25519)
 target_compile_definitions (${PROJECT_NAME} PUBLIC "LIB_FILE_IO=$<BOOL:${LIB_FILE_IO}>" "UCLIBC=$<BOOL:${UCLIBC}>")
+target_compile_definitions (${PROJECT_NAME} PRIVATE "FMT_HEADER_ONLY")
 
 if (INSTALL_CORE_LIBS)
     # Define names for configuration files
@@ -140,8 +144,9 @@ find_host_package (Doxygen)
 if (DOXYGEN_FOUND)
     if (DOXYGEN_EXCLUDE_PRIVATE)
         set (DOXYGEN_EXCLUDE
-            "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/priv/*"
-            "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/asn1/priv/*"
+             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/internal/*"
+             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/internal/*"
+             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/asn1/internal/*"
         )
         string (REPLACE ";" " " DOXYGEN_EXCLUDE "${DOXYGEN_EXCLUDE}")
         set (DOXYGEN_EXTRACT_PRIVATE "NO")

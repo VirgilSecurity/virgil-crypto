@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2015 Virgil Security Inc.
+# Copyright (C) 2015-2016 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -37,7 +37,7 @@
 
 set -ev
 
-if [ "${PUBLISH_DOCS}" != "ON" ] || [ "${TRAVIS_BRANCH}" != "${DOC_BRANCH}" ] || [ "${CC}" != "gcc" ]; then exit; fi
+if [ "${PUBLISH_DOCS}" != "ON" ] || [ "${TRAVIS_BRANCH}" != "${DOC_BRANCH}" ] || [[ "${CC}" != "gcc"* ]]; then exit; fi
 
 # Settings
 REPO_PATH=git@github.com:VirgilSecurity/virgil-crypto.git

@@ -1,25 +1,65 @@
+/**
+ * Copyright (C) 2015-2016 Virgil Security Inc.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     (1) Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *     (2) Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in
+ *     the documentation and/or other materials provided with the
+ *     distribution.
+ *
+ *     (3) Neither the name of the copyright holder nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include <virgil/crypto/VirgilTinyCipher.h>
 
+#include <map>
+#include <cmath>
+
 #include <virgil/crypto/VirgilByteArrayUtils.h>
-#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/VirgilCryptoError.h>
 #include <virgil/crypto/VirgilKeyPair.h>
 #include <virgil/crypto/foundation/VirgilKDF.h>
 #include <virgil/crypto/foundation/VirgilHash.h>
-#include <virgil/crypto/foundation/PolarsslException.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
-#include <map>
-#include <cmath>
+#include <virgil/crypto/internal/utils.h>
+
 
 using virgil::crypto::VirgilTinyCipher;
 using virgil::crypto::VirgilTinyCipherImpl;
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
-using virgil::crypto::VirgilCryptoException;
 using virgil::crypto::VirgilKeyPair;
+using virgil::crypto::VirgilCryptoError;
+using virgil::crypto::make_error;
+
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
 using virgil::crypto::foundation::VirgilSymmetricCipher;
 using virgil::crypto::foundation::VirgilKDF;
@@ -30,7 +70,9 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 static const unsigned char kPackageCount_Max = 0x0F; ///< Defines maximum package count
 
-typedef std::map<size_t, VirgilByteArray> PackageMap; ///< { PackageNo -> PackageData }
+constexpr VirgilHash::Algorithm kHashAlgorithm_Default = VirgilHash::Algorithm::SHA384;
+
+using PackageMap = std::map<size_t, VirgilByteArray>; ///< { PackageNo -> PackageData }
 
 /**
  *
@@ -231,32 +273,32 @@ static unsigned char pk_type_to_code(VirgilKeyPair::Type pkType);
  */
 static VirgilKeyPair::Type pk_type_from_code(unsigned char pkCode);
 
+/**
+ * @brief Create cipher for common symmetric crypto operations.
+ */
+static VirgilSymmetricCipher create_shared_cipher();
 
-namespace virgil { namespace crypto {
-
-struct VirgilTinyCipherImpl {
-    VirgilTinyCipherImpl() : packageSize(0), packageCount(0), packageMap(), packageSignBits(), ephemeralPublicKey() { }
-
-    size_t packageSize;
-    size_t packageCount;
+class VirgilTinyCipher::Impl {
+public:
+    size_t packageSize = 0;
+    size_t packageCount = 0;
     PackageMap packageMap;
     VirgilByteArray packageSignBits;
     VirgilByteArray ephemeralPublicKey;
 };
 
-} // crypto
-} // virgil
-
-VirgilTinyCipher::VirgilTinyCipher(size_t packageSize) : impl_(new VirgilTinyCipherImpl()) {
+VirgilTinyCipher::VirgilTinyCipher(size_t packageSize) : impl_(std::make_unique<Impl>()) {
     if (packageSize < PackageSize_Min) {
-        throw std::logic_error("VirgilTinyCipher: given packageSize less then minimum value required");
+        throw make_error(VirgilCryptoError::InvalidArgument, "Given package size less then minimum value required.");
     }
     impl_->packageSize = packageSize;
 }
 
-VirgilTinyCipher::~VirgilTinyCipher() throw() {
-    delete impl_;
-}
+VirgilTinyCipher::VirgilTinyCipher(VirgilTinyCipher&& rhs) noexcept = default;
+
+VirgilTinyCipher& VirgilTinyCipher::operator=(VirgilTinyCipher&& rhs) noexcept = default;
+
+VirgilTinyCipher::~VirgilTinyCipher() noexcept = default;
 
 void VirgilTinyCipher::reset() {
     impl_->packageMap.clear();
@@ -271,7 +313,7 @@ VirgilByteArray VirgilTinyCipher::getPackage(size_t index) const {
     if (found != impl_->packageMap.end()) {
         return found->second;
     } else {
-        throw std::out_of_range("VirgilTinyCipher: requested package not found");
+        throw make_error(VirgilCryptoError::InvalidArgument, "Requested package is not found.");
     }
 }
 
@@ -316,7 +358,7 @@ void VirgilTinyCipher::encryptAndSign(
 
     VirgilByteArray sharedSecret = VirgilAsymmetricCipher::computeShared(recipientContext, ephemeralContext);
 
-    VirgilSymmetricCipher sharedCipher = VirgilSymmetricCipher::aes256();
+    VirgilSymmetricCipher sharedCipher = create_shared_cipher();
 
     const bool doSign = !senderPrivateKey.empty();
     size_t signLength = doSign ? get_sign_size(ephemeralContext.getKeyType()) : 0;
@@ -325,7 +367,7 @@ void VirgilTinyCipher::encryptAndSign(
             get_public_key_size(recipientContext.getKeyType()), signLength);
 
     if (packageCount > kPackageCount_Max) {
-        throw VirgilCryptoException("VirgilTinyCipher: given data is too big to be encrypted");
+        throw make_error(VirgilCryptoError::InvalidArgument, "Given data is too big to be encrypted.");
     }
 
     VirgilByteArray authData = make_auth_data(packageCount, ephemeralContext, doSign);
@@ -341,11 +383,10 @@ void VirgilTinyCipher::encryptAndSign(
         VirgilAsymmetricCipher senderContext;
         senderContext.setPrivateKey(senderPrivateKey, senderPrivateKeyPassword);
 
-        VirgilHash hash = VirgilHash::sha384();
+        VirgilHash hash(kHashAlgorithm_Default);
         VirgilByteArray digest = hash.hash(encryptedData);
 
-        VirgilByteArray sign = senderContext.sign(digest, hash.type());
-        signBits = senderContext.signToBits(sign);
+        signBits = senderContext.sign(digest, hash.type());
     }
 
     // 3. Pack
@@ -368,17 +409,17 @@ void VirgilTinyCipher::encryptAndSign(
         }
 
         if (package.size() > impl_->packageSize) {
-            throw std::logic_error("VirgilTinyCipher: package size overflow");
+            throw make_error(VirgilCryptoError::InvalidState, "Package size overflow.");
         }
 
         const size_t spaceLeft = impl_->packageSize - package.size();
-        const ptrdiff_t payloadAvailable = encryptedData.end() - payloadIt;
+        const std::ptrdiff_t payloadAvailable = encryptedData.end() - payloadIt;
         const size_t payloadSize = spaceLeft > payloadAvailable ? (size_t) payloadAvailable : spaceLeft;
         package.insert(package.end(), payloadIt, payloadIt + payloadSize);
         payloadIt += payloadSize;
 
         if (package.size() > impl_->packageSize) {
-            throw std::logic_error("VirgilTinyCipher: package size overflow (post condition)");
+            throw make_error(VirgilCryptoError::InvalidState, "Package size overflow.");
         }
 
         impl_->packageMap[packageNo] = package;
@@ -400,7 +441,7 @@ VirgilByteArray VirgilTinyCipher::verifyAndDecrypt(
         const VirgilByteArray& recipientPrivateKeyPassword) {
 
     if (!isPackagesAccumulated()) {
-        throw VirgilCryptoException("VirgilTinyCipher: not all packages was received");
+        throw make_error(VirgilCryptoError::InvalidState, "Not all packages was received.");
     }
 
     // 1. Configure contexts for asymmetric operations
@@ -415,7 +456,7 @@ VirgilByteArray VirgilTinyCipher::verifyAndDecrypt(
 
     // 2. Verify data
     if (doVerify) {
-        VirgilHash hash = VirgilHash::sha384();
+        VirgilHash hash(kHashAlgorithm_Default);
         hash.start();
         for (PackageMap::const_iterator packageIt = impl_->packageMap.begin(); packageIt != impl_->packageMap.end();
              ++packageIt) {
@@ -425,17 +466,17 @@ VirgilByteArray VirgilTinyCipher::verifyAndDecrypt(
 
         VirgilAsymmetricCipher senderContext;
         senderContext.setPublicKey(senderPublicKey);
-        VirgilByteArray sign = senderContext.signFromBits(impl_->packageSignBits);
+        const VirgilByteArray& sign = impl_->packageSignBits;
 
         if (!senderContext.verify(digest, sign, hash.type())) {
-            throw VirgilCryptoException("VirgilTinyCipher: data is malformed (sign validation failed)");
+            throw make_error(VirgilCryptoError::MismatchSignature);
         }
     }
 
     // 3. Decrypt data
     VirgilByteArray sharedSecret = VirgilAsymmetricCipher::computeShared(ephemeralContext, recipientContext);
 
-    VirgilSymmetricCipher sharedCipher = VirgilSymmetricCipher::aes256();
+    VirgilSymmetricCipher sharedCipher = create_shared_cipher();
 
     sharedCipher.setDecryptionKey(sharedSecret);
     sharedCipher.setAuthData(authData);
@@ -461,27 +502,32 @@ VirgilByteArray VirgilTinyCipher::verifyAndDecrypt(
 static VirgilKeyPair::Type pk_type_from_code(unsigned char pkCode) {
     switch (pkCode) {
         case 0x00:
-            return VirgilKeyPair::Type_EC_Curve25519;
+            return VirgilKeyPair::Type::FAST_EC_X25519;
+        case 0x01:
+            return VirgilKeyPair::Type::FAST_EC_ED25519;
         default:
-            throw VirgilCryptoException("VirgilTinyCipher: unsupported key type was given");
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
     }
 }
 
 static unsigned char pk_type_to_code(VirgilKeyPair::Type pkType) {
     switch (pkType) {
-        case VirgilKeyPair::Type_EC_Curve25519:
+        case VirgilKeyPair::Type::FAST_EC_X25519:
             return 0x00;
+        case VirgilKeyPair::Type::FAST_EC_ED25519:
+            return 0x01;
         default:
-            throw VirgilCryptoException("VirgilTinyCipher: unsupported key was given");
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
     }
 }
 
 static size_t get_public_key_size(VirgilKeyPair::Type pkType) {
     switch (pkType) {
-        case VirgilKeyPair::Type_EC_Curve25519:
+        case VirgilKeyPair::Type::FAST_EC_X25519:
+        case VirgilKeyPair::Type::FAST_EC_ED25519:
             return 32;
         default:
-            return 0;
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
     }
 }
 
@@ -491,10 +537,10 @@ static size_t get_public_key_size(unsigned char pkCode) {
 
 static size_t get_sign_size(VirgilKeyPair::Type pkType) {
     switch (pkType) {
-        case VirgilKeyPair::Type_EC_Curve25519:
+        case VirgilKeyPair::Type::FAST_EC_ED25519:
             return 64;
         default:
-            return 0;
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
     }
 }
 
@@ -505,7 +551,7 @@ static size_t get_sign_size(unsigned char pkCode) {
 static unsigned char write_package_header(
         bool isMaster, bool isSigned, unsigned char pkCode, size_t packageCount) {
     if (packageCount > kPackageCount_Max) {
-        throw std::logic_error("VirgilTinyCipher: package count / package number greater then maximum allowed (15)");
+        throw make_error(VirgilCryptoError::InvalidArgument, "Packages count greater then maximum allowed (15).");
     }
 
     unsigned char header = 0x0;
@@ -525,7 +571,7 @@ static void read_package_header(
         VirgilByteArray::const_iterator& packageIt, VirgilByteArray::const_iterator end,
         bool* isMaster, bool* isSigned, unsigned char* pkCode, size_t* packageCount) {
     if (packageIt == end) {
-        throw VirgilCryptoException("VirgilTinyCipher: package is malformed (empty package)");
+        throw make_error(VirgilCryptoError::InvalidFormat, "No header in the package.");
     }
     unsigned char header = *packageIt++;
     *isMaster = (header & 0x80) != 0;
@@ -546,7 +592,7 @@ static VirgilByteArray read_package_ephemeral_public_key(
     }
 
     if (ephemeralPublicKeyBits.size() != get_public_key_size(pkCode)) {
-        throw VirgilCryptoException("VirgilTinyCipher: package is malformed (ephemeral public key is corrupted)");
+        throw make_error(VirgilCryptoError::InvalidFormat, "Ephemeral public key size mismatch.");
     }
     ephemeralPublicKeyContext.setPublicKeyBits(ephemeralPublicKeyBits);
 
@@ -560,7 +606,7 @@ static VirgilByteArray read_package_sign_bits(
         signBits.push_back(*packageIt++);
     }
     if (signBits.size() != signLength) {
-        throw VirgilCryptoException("VirgilTinyCipher: package is malformed (sign is corrupted)");
+        throw make_error(VirgilCryptoError::InvalidFormat, "Signature size mismatch.");
     }
     return signBits;
 }
@@ -568,7 +614,7 @@ static VirgilByteArray read_package_sign_bits(
 static VirgilByteArray make_auth_data(
         size_t packageCount, const VirgilAsymmetricCipher& ephemeralContext, bool isSigned) {
     if (packageCount > kPackageCount_Max) {
-        throw std::logic_error("VirgilTinyCipher: package count greater then maximum allowed (15)");
+        throw make_error(VirgilCryptoError::InvalidArgument, "Packages count greater then maximum allowed (15).");
     }
     VirgilByteArray authData;
     const VirgilByteArray ephemeralKey = ephemeralContext.getPublicKeyBits();
@@ -594,5 +640,9 @@ static size_t calc_package_count(size_t dataSize, size_t packageSize, size_t pub
 }
 
 static VirgilByteArray auth_to_iv(const VirgilByteArray& data, size_t ivSize) {
-    return VirgilKDF::kdf2().derive(data, ivSize);
+    return VirgilKDF(VirgilKDF::Algorithm::KDF2).derive(data, ivSize);
+}
+
+static VirgilSymmetricCipher create_shared_cipher() {
+    return VirgilSymmetricCipher(VirgilSymmetricCipher::Algorithm::AES_256_GCM);
 }

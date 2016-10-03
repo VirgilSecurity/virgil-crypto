@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -57,6 +57,12 @@ public:
      * @brief Transform given base64 string to the bytes.
      */
     static virgil::crypto::VirgilByteArray decode(const std::string& base64str);
+public:
+    /**
+     * @brief Deny object creation.
+     */
+    VirgilBase64() = delete;
+
 };
 
 }}}

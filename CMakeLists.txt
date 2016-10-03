@@ -75,6 +75,10 @@
 #
 #     - CMAKE_ARGS           - list of CMake parameters in form -DVAR:TYPE=VAL
 #
+# Optimizations:
+#     - ED25519_AMD64_OPTIMIZATION - boolean value that defines whether to enable AMD64 optimization
+#                                   for Ed25519 algorithms, or not.
+#
 # Define platform specific variables (that are defined only if build for this platform):
 #     - ANDROID_INSTALL_JNI_DIR_NAME - name of the directory where JNI libraries will be installed
 #                                      for Android platform
@@ -82,16 +86,20 @@
 
 cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
+# Enable C++11
+set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Set project name
 project (VirgilSecurity)
 
 # Set library version
-set (VIRGIL_VERSION_MAJOR 1)
-set (VIRGIL_VERSION_MINOR 8)
-set (VIRGIL_VERSION_PATCH 2)
+set (VIRGIL_VERSION_MAJOR 2)
+set (VIRGIL_VERSION_MINOR 0)
+set (VIRGIL_VERSION_PATCH 0)
 set (VIRGIL_VERSION_FEATURE)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
-set (VIRGIL_SOVERSION 1)
+set (VIRGIL_SOVERSION 2)
 
 if (VIRGIL_VERSION_FEATURE)
     set (VIRGIL_VERSION_FULL_NAME ${VIRGIL_VERSION}-${VIRGIL_VERSION_FEATURE})
@@ -144,13 +152,28 @@ if (NOT CMAKE_CROSSCOMPILING)
     endif ()
 endif (NOT CMAKE_CROSSCOMPILING)
 
+# Define optimization features
+set (ED25519_AMD64_OPTIMIZATION ON CACHE BOOL "Defines whether to enable AMD64 optimization for Ed25519 algorithms")
+
+# Configure optimizations
+set (MBEDTLS_CMAKE_ARGS "")
+if (NOT CMAKE_CROSSCOMPILING AND ED25519_AMD64_OPTIMIZATION AND UNIX)
+    if (NOT DEFINED CMAKE_OSX_ARCHITECTURES OR
+            CMAKE_OSX_ARCHITECTURES STREQUAL "" OR CMAKE_OSX_ARCHITECTURES STREQUAL "x86_64")
+        execute_process (COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE MACHINE_ARCHITECTURE)
+        if (${MACHINE_ARCHITECTURE} STREQUAL "x86_64")
+            set (MBEDTLS_CMAKE_ARGS "-DUSE_ED25519_AMD64_RADIX_64_24K_OPTIMIZATION:BOOL=ON")
+        endif ()
+    endif ()
+endif()
+
 # Include and build external libraries
 include (virgil_depends)
 
 virgil_depends (
     PACKAGE_NAME "MbedTLS"
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/mbedtls"
-    CMAKE_ARGS "${CMAKE_ARGS}"
+    CMAKE_ARGS "${CMAKE_ARGS}" "${MBEDTLS_CMAKE_ARGS}"
 )
 virgil_find_package (MbedTLS 2.2)
 
@@ -160,6 +183,13 @@ virgil_depends (
     CMAKE_ARGS "${CMAKE_ARGS}"
 )
 virgil_find_package (RapidJSON 1.0)
+
+virgil_depends (
+    PACKAGE_NAME "tinyformat"
+    CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/tinyformat"
+    CMAKE_ARGS "${CMAKE_ARGS}"
+)
+virgil_find_package (tinyformat 2.0.1)
 
 # Define enviroment parameters
 if (NOT DEFINED POINTER_SIZE)

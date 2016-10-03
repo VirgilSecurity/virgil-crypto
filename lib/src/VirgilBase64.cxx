@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -38,11 +38,11 @@
 
 #include <mbedtls/base64.h>
 
-#include <virgil/crypto/foundation/PolarsslException.h>
+#include <virgil/crypto/VirgilByteArrayUtils.h>
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::foundation::VirgilBase64;
-using virgil::crypto::foundation::PolarsslException;
 
 std::string VirgilBase64::encode(const VirgilByteArray& data) {
     if (data.empty()) {
@@ -50,28 +50,45 @@ std::string VirgilBase64::encode(const VirgilByteArray& data) {
     }
     // Define output length
     size_t bufLen = 0;
-    mbedtls_base64_encode(NULL, 0, &bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data));
+    const int returnCode = mbedtls_base64_encode(NULL, 0, &bufLen, data.data(), data.size());
+    if (returnCode != MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL) {
+        system_crypto_handler(returnCode,
+                [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidArgument)); }
+        );
+    }
     // Encode
-    unsigned char* buf = new unsigned char[bufLen];
-    mbedtls_base64_encode(buf, bufLen, &bufLen, VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data));
+    VirgilByteArray buf(bufLen, '\0');
+    system_crypto_handler(
+            mbedtls_base64_encode(buf.data(), buf.size(), &bufLen, data.data(), data.size()),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidArgument)); }
+    );
     // Return result
-    std::string result(reinterpret_cast<const char*>(buf), bufLen);
-    delete[] buf;
-    return result;
+    buf.resize(bufLen);
+    return VirgilByteArrayUtils::bytesToString(buf);
 }
 
 VirgilByteArray VirgilBase64::decode(const std::string& base64str) {
     if (base64str.empty()) {
         return VirgilByteArray();
     }
+    const VirgilByteArray base64data = VirgilByteArrayUtils::stringToBytes(base64str);
     // Define output length
     size_t bufLen = 0;
-    mbedtls_base64_decode(NULL, 0, &bufLen, reinterpret_cast<const unsigned char*>(base64str.data()),
-            base64str.size());
+
+    const int returnCode = mbedtls_base64_decode(NULL, 0, &bufLen, base64data.data(), base64data.size());
+    if (returnCode != MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL) {
+        system_crypto_handler(returnCode,
+                [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidArgument)); }
+        );
+    }
+
     // Decode
     VirgilByteArray result(bufLen);
-    mbedtls_base64_decode(result.data(), bufLen, &bufLen,
-            reinterpret_cast<const unsigned char*>(base64str.data()), base64str.size());
+    system_crypto_handler(
+            mbedtls_base64_decode(result.data(), bufLen, &bufLen, base64data.data(), base64data.size()),
+            [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidArgument)); }
+    );
     // Return result
+    result.resize(bufLen);
     return result;
 }

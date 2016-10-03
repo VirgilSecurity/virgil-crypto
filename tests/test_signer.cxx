@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -52,22 +52,20 @@ using virgil::crypto::VirgilSigner;
 using virgil::crypto::VirgilKeyPair;
 using virgil::crypto::VirgilCryptoException;
 
-TEST_CASE("sign-ec", "[signer]") {
+static void test_sign_verify(const VirgilKeyPair& keyPair, const VirgilByteArray& keyPassword = VirgilByteArray()) {
     VirgilByteArray testData = str2bytes("this string will be signed");
     VirgilByteArray malformedData = str2bytes("this string will is malformed");
     VirgilByteArray malformedSign = str2bytes("I am malformed sign");
-    VirgilByteArray keyPassword = str2bytes("password");
-    VirgilKeyPair keyPair(keyPassword);
 
     VirgilSigner signer;
     VirgilByteArray sign = signer.sign(testData, keyPair.privateKey(), keyPassword);
 
     SECTION("and verify with original data and correspond sign") {
-        REQUIRE(signer.verify(testData, sign, keyPair.publicKey()) == true);
+        REQUIRE(signer.verify(testData, sign, keyPair.publicKey()));
     }
 
     SECTION("and verify with malformed data") {
-        REQUIRE(signer.verify(malformedData, sign, keyPair.publicKey()) == false);
+        REQUIRE(!signer.verify(malformedData, sign, keyPair.publicKey()));
     }
 
     SECTION("and verify with malformed sign") {
@@ -75,58 +73,39 @@ TEST_CASE("sign-ec", "[signer]") {
     }
 }
 
-TEST_CASE("sign-rsa", "[signer]") {
+#define TEST_CASE_SIGN_VERIFY(KeyType) \
+    TEST_CASE("VirgilSigner: " #KeyType, "[signer]") { \
+        test_sign_verify(VirgilKeyPair::generate(VirgilKeyPair::Type::KeyType)); \
+    }
+
+TEST_CASE_SIGN_VERIFY(RSA_2048)
+
+TEST_CASE_SIGN_VERIFY(EC_BP384R1)
+
+TEST_CASE_SIGN_VERIFY(EC_SECP256K1)
+
+TEST_CASE_SIGN_VERIFY(EC_SECP256R1)
+
+TEST_CASE_SIGN_VERIFY(EC_CURVE25519)
+
+TEST_CASE_SIGN_VERIFY(FAST_EC_ED25519)
+
+#undef TEST_CASE_SIGN_VERIFY
+
+TEST_CASE("VirgilSigner: RSA with small key", "[signer]") {
     VirgilByteArray testData = str2bytes("this string will be signed");
-    VirgilByteArray malformedData = str2bytes("this string will is malformed");
-    VirgilByteArray malformedSign = str2bytes("I am malformed sign");
     VirgilByteArray keyPassword = str2bytes("password");
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_RSA_2048, keyPassword);
-
-    VirgilSigner signer;
-    VirgilByteArray sign = signer.sign(testData, keyPair.privateKey(), keyPassword);
-
-    SECTION("and verify with original data and correspond sign") {
-        REQUIRE(signer.verify(testData, sign, keyPair.publicKey()) == true);
-    }
-
-    SECTION("and verify with malformed data") {
-        REQUIRE(signer.verify(malformedData, sign, keyPair.publicKey()) == false);
-    }
-
-    SECTION("and verify with malformed sign") {
-        REQUIRE_THROWS_AS(signer.verify(testData, malformedSign, keyPair.publicKey()), VirgilCryptoException);
-    }
-}
-
-TEST_CASE("sign-rsa with small key", "[signer]") {
-    VirgilByteArray testData = str2bytes("this string will be signed");
-    VirgilByteArray malformedData = str2bytes("this string will is malformed");
-    VirgilByteArray malformedSign = str2bytes("I am malformed sign");
-    VirgilByteArray keyPassword = str2bytes("password");
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_RSA_256, keyPassword);
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::RSA_256, keyPassword);
 
     REQUIRE_THROWS(VirgilSigner().sign(testData, keyPair.privateKey(), keyPassword));
 }
 
-TEST_CASE("sign-curve25519", "[signer]") {
+TEST_CASE("VirgilSigner: sign with wrong key password", "[signer]") {
     VirgilByteArray testData = str2bytes("this string will be signed");
-    VirgilByteArray malformedData = str2bytes("this string will is malformed");
-    VirgilByteArray malformedSign = str2bytes("I am malformed sign");
     VirgilByteArray keyPassword = str2bytes("password");
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_M255, keyPassword);
+    VirgilByteArray wrongKeyPassword = str2bytes("wrong password");
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::FAST_EC_X25519, keyPassword);
 
     VirgilSigner signer;
-    VirgilByteArray sign = signer.sign(testData, keyPair.privateKey(), keyPassword);
-
-    SECTION("and verify with original data and correspond sign") {
-        REQUIRE(signer.verify(testData, sign, keyPair.publicKey()) == true);
-    }
-
-    SECTION("and verify with malformed data") {
-        REQUIRE(signer.verify(malformedData, sign, keyPair.publicKey()) == false);
-    }
-
-    SECTION("and verify with malformed sign") {
-        REQUIRE_THROWS_AS(signer.verify(testData, malformedSign, keyPair.publicKey()), VirgilCryptoException);
-    }
+    REQUIRE_THROWS_AS(signer.sign(testData, keyPair.privateKey(), wrongKeyPassword), VirgilCryptoException);
 }

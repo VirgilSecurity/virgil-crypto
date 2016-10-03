@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -53,16 +53,31 @@ using virgil::crypto::VirgilCipher;
 
 static const char* const kPrivateKey =
         "-----BEGIN ENCRYPTED PRIVATE KEY-----\n"
-                "MIIBKTA0BgoqhkiG9w0BDAEDMCYEIJ2CZ9XD79se4sWO8zaB8ooKkf1IR/cymmox\n"
-                "NH0pe2zCAgIgAASB8HPqZNMejdzjsPeLJrLj1SXdES8FOUgWDbIhFLm/6G3leCNi\n"
-                "/7scgIOwook/f5qEL3ydHobXcYrr5Ltlr5o5BsSBELBAJKoUKcWmu8Aub03v/wIe\n"
-                "TNsVhxA/4mn5kgs6BwJp59oODv0YqpRAFsMQsXJaXjePVWpKLsDAooT8Wa0s5cfP\n"
-                "tURNzUUQG7COakN4PF01MXgHYEsvc/ygXI/QUHIBPwBVV7bx3lIV1xDy5WCNgBfd\n"
-                "EEd8luTaIzd15Y7ahooAA9K1WDPEhtq0gl8jG5vSbZ+BCaMNd43+Gksno4c9oBkZ\n"
-                "sMaFiu8OBbyVfjhr9g==\n"
+                "MIGhMF0GCSqGSIb3DQEFDTBQMC8GCSqGSIb3DQEFDDAiBBDXDqM+Uj5o3+7pa2Xo\n"
+                "6PAkAgIWojAKBggqhkiG9w0CCjAdBglghkgBZQMEASoEELDgwtEuhySH70wD6RFI\n"
+                "G3EEQBNKQxiwmOrX8vsFmLQfhu5momj7hEQ8WZhu4LEmnVbsXJKcxOUX6QCU1QH/\n"
+                "OzbvnCIlAWTCxCdzkqYuelBnNac=\n"
                 "-----END ENCRYPTED PRIVATE KEY-----\n";
 
+
 static const char* const kPrivateKeyPwd = "strong_pwd";
+
+static const char kPublicKeyPEM[] =
+        "-----BEGIN PUBLIC KEY-----\n"
+                "MCowBQYDK2VwAyEAg4boYkLfd4NRIQeDPfL8+73qk098mKXNerM9Qjpo9iY=\n"
+                "-----END PUBLIC KEY-----\n";
+
+static const char kPrivateKeyPEM[] =
+        "-----BEGIN PRIVATE KEY-----\n"
+                "MC4CAQAwBQYDK2VwBCIEIEJXChwWLuA0M3jgyhzic6BXD248kBRANysvBBI3d1/G\n"
+                "-----END PRIVATE KEY-----\n";
+
+static const char kPublicKeyDER[] =
+        "302a300506032b65700321008386e86242df7783512107833df2fcfbbdea934f7c98a5cd7ab33d423a68f626";
+
+static const char kPrivateKeyDER[] =
+        "302e020100300506032b65700422042042570a1c162ee0343378e0ca1ce273a0570f6e3c901440372b2f041237775fc6";
+
 
 TEST_CASE("Reset Private Key password", "[key-pair]") {
     VirgilByteArray oldPwd = VirgilByteArrayUtils::stringToBytes(kPrivateKeyPwd);
@@ -86,7 +101,7 @@ TEST_CASE("Reset Private Key password", "[key-pair]") {
 TEST_CASE("Generate ephemeral key pair and compute shared", "[key-pair]") {
 
     SECTION("with plain private key") {
-        VirgilKeyPair donorPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519);
+        VirgilKeyPair donorPair = VirgilKeyPair::generate(VirgilKeyPair::Type::FAST_EC_X25519);
 
         VirgilKeyPair ephemeralKeyPair = VirgilKeyPair::generateFrom(donorPair);
 
@@ -103,7 +118,7 @@ TEST_CASE("Generate ephemeral key pair and compute shared", "[key-pair]") {
 
     SECTION("with encrypted private key") {
         VirgilByteArray donorKeyPassword = VirgilByteArrayUtils::stringToBytes("donor password");
-        VirgilKeyPair donorPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_BP256R1, donorKeyPassword);
+        VirgilKeyPair donorPair = VirgilKeyPair::generate(VirgilKeyPair::Type::EC_BP256R1, donorKeyPassword);
 
         VirgilByteArray ephemeralKeyPassword = VirgilByteArrayUtils::stringToBytes("ephemeral password");
         VirgilKeyPair ephemeralKeyPair = VirgilKeyPair::generateFrom(donorPair, donorKeyPassword, ephemeralKeyPassword);
@@ -132,12 +147,58 @@ TEST_CASE("Extract public key from private key", "[key-pair]") {
 TEST_CASE("Generate private key with long password", "[key-pair]") {
     VirgilByteArray keyPassword = VirgilByteArrayUtils::stringToBytes(
             "m5I&8~@Rohh+7B0-iL`Sf6Se\"7A=8i!oQhIDNhk,q25RwoY2vF"
-            "Lrx8XJ0]WIO5k#B=liHk&!iTj,42CsBrt|UePW*753r^w\"X06p"
-            "EoJ,2DIj{rfrZ2c]1L!L_45[]1KPGY6Mqy-jFY3Q$5PHkFKx5("
-            "yR$N5B,MC#]6Rw3C]q1;-xs33szYC5XDk#YvP=mhnN7kgPp4}0"
-            "PtImqC2mT#=M85axZw8cPo6TUD0Ba,_HN^5E4v`R\"@8e>Xp]y6"
-            "X&#8g0~FHG5qFI67&PM`3u8{>lVxZ7!q-t9jVUHcv|d3OGxpxB"
+                    "Lrx8XJ0]WIO5k#B=liHk&!iTj,42CsBrt|UePW*753r^w\"X06p"
+                    "EoJ,2DIj{rfrZ2c]1L!L_45[]1KPGY6Mqy-jFY3Q$5PHkFKx5("
+                    "yR$N5B,MC#]6Rw3C]q1;-xs33szYC5XDk#YvP=mhnN7kgPp4}0"
+                    "PtImqC2mT#=M85axZw8cPo6TUD0Ba,_HN^5E4v`R\"@8e>Xp]y6"
+                    "X&#8g0~FHG5qFI67&PM`3u8{>lVxZ7!q-t9jVUHcv|d3OGxpxB"
     );
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_EC_Curve25519, keyPassword);
+    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type::FAST_EC_X25519, keyPassword);
     REQUIRE(VirgilKeyPair::isKeyPairMatch(keyPair.publicKey(), keyPair.privateKey(), keyPassword));
+}
+
+
+TEST_CASE("Encrypt/Decrypt Private Key", "[key-pair]") {
+    VirgilByteArray keyPwd = VirgilByteArrayUtils::stringToBytes("key password");
+    VirgilByteArray wrongKeyPwd = VirgilByteArrayUtils::stringToBytes("wrong key password");
+
+    VirgilByteArray initialPrivateKey = VirgilKeyPair::generateRecommended().privateKey();
+    VirgilByteArray encryptedPrivateKey = VirgilKeyPair::encryptPrivateKey(initialPrivateKey, keyPwd);
+    VirgilByteArray decryptedPrivateKey = VirgilKeyPair::decryptPrivateKey(encryptedPrivateKey, keyPwd);
+
+    REQUIRE(VirgilByteArrayUtils::bytesToString(initialPrivateKey) ==
+            VirgilByteArrayUtils::bytesToString(decryptedPrivateKey));
+
+    REQUIRE_THROWS(VirgilKeyPair::encryptPrivateKey(initialPrivateKey, VirgilByteArray()));
+    REQUIRE_THROWS(VirgilKeyPair::decryptPrivateKey(encryptedPrivateKey, wrongKeyPwd));
+}
+
+TEST_CASE("Export Public Key", "[key-pair]") {
+    VirgilByteArray basePublicKeyPEM = VirgilByteArrayUtils::stringToBytes(kPublicKeyPEM);
+    VirgilByteArray basePublicKeyDER = VirgilByteArrayUtils::hexToBytes(kPublicKeyDER);
+
+    SECTION("to DER format") {
+        VirgilByteArray publicKeyDER = VirgilKeyPair::publicKeyToDER(basePublicKeyPEM);
+        REQUIRE(kPublicKeyDER == VirgilByteArrayUtils::bytesToHex(publicKeyDER));
+    }
+
+    SECTION("to PEM format") {
+        VirgilByteArray publicKeyPEM = VirgilKeyPair::publicKeyToPEM(basePublicKeyDER);
+        REQUIRE(kPublicKeyPEM == VirgilByteArrayUtils::bytesToString(publicKeyPEM));
+    }
+}
+
+TEST_CASE("Export Private Key", "[key-pair]") {
+    VirgilByteArray basePrivateKeyPEM = VirgilByteArrayUtils::stringToBytes(kPrivateKeyPEM);
+    VirgilByteArray basePrivateKeyDER = VirgilByteArrayUtils::hexToBytes(kPrivateKeyDER);
+
+    SECTION("to DER format") {
+        VirgilByteArray privateKeyDER = VirgilKeyPair::privateKeyToDER(basePrivateKeyPEM);
+        REQUIRE(kPrivateKeyDER == VirgilByteArrayUtils::bytesToHex(privateKeyDER));
+    }
+
+    SECTION("to PEM format") {
+        VirgilByteArray privateKeyPEM = VirgilKeyPair::privateKeyToPEM(basePrivateKeyDER);
+        REQUIRE(kPrivateKeyPEM == VirgilByteArrayUtils::bytesToString(privateKeyPEM));
+    }
 }

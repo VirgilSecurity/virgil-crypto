@@ -2,7 +2,7 @@
 stage 'Grab SCM'
 
 node('master') {
-    sh 'rm -fr -- *'
+    clearContentUnix()
     checkout scm
     sh 'mkdir -p install'
     sh 'cp -f VERSION install/'
@@ -36,8 +36,8 @@ node('master') {
 def createNativeUnixBuild(slave) {
     return {
         node(slave) {
+            clearContentUnix()
             unstash 'src'
-            sh 'rm -fr build install'
             // C++
             sh './utils/build.sh cpp'
             // Ruby
@@ -86,9 +86,8 @@ def createNativeUnixBuild(slave) {
 def createNativeWindowsBuild(slave) {
     return {
         node(slave) {
+            clearContentWindows()
             unstash 'src'
-            bat 'if exist build rmdir /s/q build'
-            bat 'if exist install rmdir /s/q install'
             withEnv(['MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio 14.0',
                      'JAVA_HOME=C:\\Program Files\\Java\\jdk1.8.0_65']) {
                 bat 'utils\\build.bat cpp'
@@ -136,14 +135,10 @@ def createNativeWindowsBuild(slave) {
 def createCrossplatfromBuild(slave) {
     return {
         node(slave) {
+            clearContentUnix()
             unstash 'src'
-            sh 'rm -fr build install'
             withEnv(['EMSDK_HOME=/Users/virgil/Library/VirgilEnviroment/emsdk_portable']) {
                 sh './utils/build.sh asmjs'
-            }
-            withEnv(['CROSSBRIDGE_HOME=/Users/virgil/Library/VirgilEnviroment/CrossBridge_15.0.0.3',
-                     'FLEX_HOME=/Users/virgil/Library/VirgilEnviroment/flex_sdk_4.6']) {
-                sh './utils/build.sh as3'
             }
             withEnv(['NACL_SDK_ROOT=/Users/virgil/Library/VirgilEnviroment/nacl_sdk/pepper_46']) {
                 sh './utils/build.sh pnacl . build/cpp install/cpp'
@@ -156,6 +151,7 @@ def createCrossplatfromBuild(slave) {
 def createDarwinBuild(slave) {
     return {
         node(slave) {
+            clearContentUnix()
             unstash 'src'
             sh 'rm -fr build install'
             sh './utils/build.sh osx . build/cpp/osx install/cpp/osx'
@@ -176,8 +172,8 @@ def createDarwinBuild(slave) {
 def createAndroidBuild(slave) {
     return {
         node(slave) {
+            clearContentUnix()
             unstash 'src'
-            sh 'rm -fr build install'
             withEnv(['ANDROID_NDK=/Users/virgil/Library/VirgilEnviroment/android-ndk']) {
                 sh './utils/build.sh java_android . build/java/android install/java/android'
                 sh './utils/build.sh net_android . build/net/android install/net/android'
@@ -195,12 +191,16 @@ def organizeFilesUnix(where) {
 }
 
 def organizeFilesWindows(where) {
-    bat "for /r \"${where}\" %%f in (*.zip) do move /y \"%%f\" \"${where}\" >nul"
-    try {
-        bat "for /f \"delims=\" %%d in ('dir /s /b /a:d \"${where}\" ^^^| sort /r 2^>nul') do rmdir \"%%d\""
-    } catch(Exception exception) {
-        // Ignore, because 'sort' can exit with error if no empty folders was found.
-    }
+    bat "for /r \"${where}\" %%f in (*.zip) do move /y \"%%f\" \"${where}\""
+    bat "(for /f \"delims=\" %%d in ('dir /s /b /a:d \"${where}\" ^^^| sort /r') do rmdir \"%%d\") || rem"
+}
+
+def clearContentWindows() {
+    bat "(for /F \"delims=\" %%i in ('dir /b') do (rmdir \"%%i\" /s/q >nul 2>&1 || del \"%%i\" /s/q >nul 2>&1 )) || rem"
+}
+
+def clearContentUnix() {
+    sh "rm -fr -- *"
 }
 
 def archiveArtifacts(pattern) {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -53,9 +53,7 @@ public:
      * @brief Create signer with predefined hash function.
      * @note Specified hash function algorithm is used only during signing.
      */
-    explicit VirgilSigner(
-            const virgil::crypto::foundation::VirgilHash& hash =
-            virgil::crypto::foundation::VirgilHash::sha384());
+    explicit VirgilSigner(foundation::VirgilHash::Algorithm hashAlgorithm = foundation::VirgilHash::Algorithm::SHA384);
 
     /**
      * @brief Sign data with given private key.
@@ -71,8 +69,14 @@ public:
      */
     bool verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
 
+public:
+    //! @cond Doxygen_Suppress
+    VirgilSigner& operator=(VirgilSigner&& rhs) noexcept;
+
+    VirgilSigner(VirgilSigner&& rhs) noexcept;
+    //! @endcond
 private:
-    virgil::crypto::foundation::VirgilHash hash_;
+    foundation::VirgilHash hash_;
 };
 
 }}

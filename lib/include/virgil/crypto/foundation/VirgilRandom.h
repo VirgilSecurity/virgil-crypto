@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,18 +37,12 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_RANDOM_H
 #define VIRGIL_CRYPTO_VIRGIL_RANDOM_H
 
-#include <cstddef>
+#include <cstdlib>
+#include <memory>
 
 #include <virgil/crypto/VirgilByteArray.h>
 
 namespace virgil { namespace crypto { namespace foundation {
-
-/**
- * @name Forward declarations
- */
-///@{
-class VirgilRandomImpl;
-///@}
 
 /**
  * @brief Provides randomization algorithm.
@@ -66,6 +60,13 @@ public:
      * @return Random bytes.
      */
     explicit VirgilRandom(const virgil::crypto::VirgilByteArray& personalInfo);
+    /**
+     * @brief Initialize randomization module with personalization data.
+     *
+     * @param personalInfo (@see section 8.7.1 of NIST Special Publication 800-90A).
+     * @return Random bytes.
+     */
+    explicit VirgilRandom(const std::string& personalInfo);
     ///@}
 
     /**
@@ -100,16 +101,19 @@ public:
     size_t randomize(size_t min, size_t max);
     ///@}
 
-private:
-    VirgilRandom(const VirgilRandom& other);
-
-    VirgilRandom& operator=(const VirgilRandom& other);
-
 public:
-    virtual ~VirgilRandom() throw();
+    //! @cond Doxygen_Suppress
+    VirgilRandom(VirgilRandom&& rhs) noexcept;
+
+    VirgilRandom& operator=(VirgilRandom&& rhs) noexcept;
+
+    virtual ~VirgilRandom() noexcept;
+    //! @endcond
 
 private:
-    VirgilRandomImpl* impl_;
+    class Impl;
+
+    std::unique_ptr<Impl> impl_;
 };
 
 }}}

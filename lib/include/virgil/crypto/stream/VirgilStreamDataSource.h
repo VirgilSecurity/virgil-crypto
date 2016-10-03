@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -62,7 +62,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilStreamDataSource() throw();
+    virtual ~VirgilStreamDataSource() noexcept;
 
     /**
      * @brief Overriding of @link VirgilDataSource::hasData() @endlink method.

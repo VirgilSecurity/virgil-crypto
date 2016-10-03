@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 Virgil Security Inc.
+# Copyright (C) 2015-2016 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -43,7 +43,7 @@ set (PHP_MODULE_NAME ${PROJECT_NAME})
 set (SWIG_MODULE_NAME ${PHP_MODULE_NAME})
 
 find_host_package (PHPLibs REQUIRED)
-include_directories (${PHP_INCLUDE_DIRS})
+include_directories (SYSTEM ${PHP_INCLUDE_DIRS})
 
 if (PHP_VERSION_STRING)
     string (REPLACE "." ";" PHP_VERSION_LIST ${PHP_VERSION_STRING})

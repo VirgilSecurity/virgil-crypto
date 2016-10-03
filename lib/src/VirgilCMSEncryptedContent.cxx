@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,9 +37,11 @@
 #include <virgil/crypto/foundation/cms/VirgilCMSEncryptedContent.h>
 
 #include <virgil/crypto/VirgilCryptoException.h>
-#include <virgil/crypto/foundation/priv/VirgilOID.h>
+#include <virgil/crypto/foundation/internal/VirgilOID.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+
+#include <virgil/crypto/internal/utils.h>
 
 using virgil::crypto::VirgilCryptoException;
 using virgil::crypto::foundation::cms::VirgilCMSEncryptedContent;
@@ -53,9 +55,6 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 static const unsigned char kCMS_EncryptedContentTag = 0;
 ///@}
 
-VirgilCMSEncryptedContent::~VirgilCMSEncryptedContent() throw() {
-}
-
 size_t VirgilCMSEncryptedContent::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t len = 0;
     if (!encryptedContent.empty()) {
@@ -64,7 +63,7 @@ size_t VirgilCMSEncryptedContent::asn1Write(VirgilAsn1Writer& asn1Writer, size_t
         len += asn1Writer.writeContextTag(kCMS_EncryptedContentTag, encryptedContentLen);
     }
 
-    checkAsn1ParamNotEmpty(contentEncryptionAlgorithm, "contentEncryptionAlgorithm");
+    checkRequiredField(contentEncryptionAlgorithm);
     len += asn1Writer.writeData(contentEncryptionAlgorithm);
 
     len += asn1Writer.writeOID(OID_TO_STD_STRING(OID_PKCS7_DATA));

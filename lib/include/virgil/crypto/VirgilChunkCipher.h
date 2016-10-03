@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,10 +37,12 @@
 #ifndef VIRGIL_CHUNK_CIPHER_H
 #define VIRGIL_CHUNK_CIPHER_H
 
-#include <cstddef>
+#include <cstdlib>
 
 #include <virgil/crypto/VirgilCipherBase.h>
 #include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilDataSource.h>
+#include <virgil/crypto/VirgilDataSink.h>
 
 namespace virgil { namespace crypto {
 
@@ -55,47 +57,43 @@ public:
      * @name Constants
      */
     ///@{
-    enum {
-        kPreferredChunkSize = 1024 * 1024 - 1 ///< 1MiB - 1b for padding
-    };
+    /**
+     * @property kPreferredChunkSize
+     * @brief Recommended chunk size.
+     */
+    static constexpr size_t kPreferredChunkSize = 1024 * 1024;
     ///@}
 public:
     /**
-     * @brief Initialize data chunk encryption with given chunk size.
-     * @return Actual chunk size.
+     * @brief Encrypt data read from given source and write it the sink.
+     * @param source - source of the data to be encrypted.
+     * @param sink - target sink for encrypted data.
+     * @param preferredChunkSize - chunk size that will appropriate.
+     * @param embedContentInfo - determines whether to embed content info the the encrypted data, or not.
+     * @note Store content info to use it for before decription process in future,
+     *     if embedContentInfo parameter is false @link getContentInfo() @endlink.
      */
-    size_t startEncryption(size_t preferredChunkSize = kPreferredChunkSize);
+    void encrypt(
+            VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo = true,
+            size_t preferredChunkSize = kPreferredChunkSize);
 
     /**
-     * @brief Initialize multipart decryption with given private key.
-     * @return Actual chunk size.
+     * @brief Decrypt data read from given source for recipient defined by id and private key,
+     *     and write it to the sink.
+     * @note Content info MUST be defined, if it was not embedded to the encrypted data.
+     * @see method setContentInfo().
      */
-    size_t startDecryptionWithKey(
-            const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
-            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    void decryptWithKey(
+            VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& recipientId,
+            const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
 
     /**
-     * @brief Initialize multipart decryption with given private key.
-     * @return Actual chunk size.
+     * @brief Decrypt data read from given source for recipient defined by password,
+     *     and write it to the sink.
+     * @note Content info MUST be defined, if it was not embedded to the encrypted data.
+     * @see method setContentInfo().
      */
-    size_t startDecryptionWithPassword(const VirgilByteArray& pwd);
-
-    /**
-     * @brief Encrypt / Decrypt given data chunk.
-     * @return Encrypted / Decrypted data chunk.
-     */
-    VirgilByteArray process(const VirgilByteArray& data);
-
-    /**
-     * @brief Finalize encryption or decryption process.
-     * @note Call this method after encryption or decryption are done to prevent security issues.
-     */
-    void finish();
-
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilChunkCipher() throw();
+    void decryptWithPassword(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& pwd);
 
 private:
     /**
@@ -107,6 +105,11 @@ private:
      * @brief Retrieve actual chunk size from the custom parameters.
      */
     size_t retrieveChunkSize() const;
+    /**
+     * @brief Attempt to read content info from the data source.
+     * @return Data that was read from the source and is not content info.
+     */
+    VirgilByteArray tryReadContentInfo(VirgilDataSource& source);
 };
 
 }}

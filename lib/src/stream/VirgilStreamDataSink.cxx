@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -53,5 +53,5 @@ void VirgilStreamDataSink::write(const VirgilByteArray& data) {
     out_.write(reinterpret_cast<const std::ostream::char_type*>(data.data()), data.size());
 }
 
-VirgilStreamDataSink::~VirgilStreamDataSink() throw() {
+VirgilStreamDataSink::~VirgilStreamDataSink() noexcept {
 }

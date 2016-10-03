@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -50,7 +50,7 @@ namespace virgil { namespace crypto { namespace foundation { namespace cms {
 /**
  * @brief Data object that represent ASN.1 structure: VirgilCMSContentInfo.
  */
-class VirgilCMSContentInfo : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
+class VirgilCMSContentInfo : public asn1::VirgilAsn1Compatible {
 public:
     /**
      * @property cmsContent
@@ -80,17 +80,10 @@ public:
      * @endcode
      */
     ///@{
-    virtual size_t asn1Write(
-            virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
-            size_t childWrittenBytes = 0) const;
+    size_t asn1Write(asn1::VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes = 0) const override;
 
-    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
+    void asn1Read(asn1::VirgilAsn1Reader& asn1Reader) override;
     ///@}
-public:
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilCMSContentInfo() throw();
 };
 
 }}}}

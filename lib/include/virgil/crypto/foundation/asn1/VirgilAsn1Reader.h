@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,7 +37,7 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_ASN1_READER_H
 #define VIRGIL_CRYPTO_VIRGIL_ASN1_READER_H
 
-#include <cstddef>
+#include <cstdlib>
 #include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -66,7 +66,7 @@ public:
     /**
      * @brief Dispose internal resources.
      */
-    ~VirgilAsn1Reader() throw();
+    ~VirgilAsn1Reader() noexcept;
     /**
      * @name Configure reading
      */
@@ -120,6 +120,7 @@ public:
     /**
      * @brief Read ASN.1 type: OID.
      * @return OID.
+     * TODO: Change return type to VirgilByteArray
      */
     std::string readOID();
     ///@}
@@ -139,22 +140,33 @@ public:
      */
     size_t readSet();
     ///@}
+public:
+    /**
+     * @brief Delete copy constructor
+     */
+    VirgilAsn1Reader(const VirgilAsn1Reader& other) = delete;
+
+    /**
+     * @brief Delete assignment operator
+     */
+    VirgilAsn1Reader& operator=(const VirgilAsn1Reader& rhs) = delete;
+
+    /**
+     * @brief Use default move constructor
+     */
+    VirgilAsn1Reader(VirgilAsn1Reader&& other) = default;
+
+    /**
+     * @brief Use default move operator
+     */
+    VirgilAsn1Reader& operator=(VirgilAsn1Reader&& rhs) = default;
+
 private:
     /**
      * @brief Check internal state before methods call.
      * @throw VirgilCryptoException - if internal state is not consistent.
      */
     void checkState();
-
-    /**
-     * @brief Deny copy constructor
-     */
-    VirgilAsn1Reader(const VirgilAsn1Reader& other);
-
-    /**
-     * @brief Deny assignment operator
-     */
-    VirgilAsn1Reader& operator=(const VirgilAsn1Reader& rhs);
 
 private:
     unsigned char* p_;

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -50,7 +50,7 @@ VirgilStreamDataSource::VirgilStreamDataSource(std::istream& in, size_t chunkSiz
         : in_(in), chunkSize_(std::max(chunkSize, kChunkSizeMin)) {
 }
 
-VirgilStreamDataSource::~VirgilStreamDataSource() throw() {
+VirgilStreamDataSource::~VirgilStreamDataSource() noexcept {
 }
 
 bool VirgilStreamDataSource::hasData() {

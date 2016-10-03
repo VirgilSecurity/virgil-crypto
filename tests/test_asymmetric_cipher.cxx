@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -68,6 +68,15 @@ static const char* const kPrivateKey1 =
                 "qS/jikzHqj7JwTOgmgSMhVzzOsJhXTD5Tp4M1gbz\n"
                 "-----END EC PRIVATE KEY-----\n";
 
+static const char* const kMalformedPrivateKey1 =
+        "-----BEGIN EC PRIVATE KEY-----\n"
+                "MIHbAgEBBEEAnhfPmR0k5L45J5m2WaEjQcZ5rmbJPLcrth3X59oL2bJ9PZs+ZZ7F\n"
+                "C0mScOlnzvseb4rg2P2k3o93d+fNacu84KALBgkrJAMDAggBAQ2hgYUDgYIABFlV\n"
+                "4OZ2SaxaaJkks7mRPLzbP9z7K0GskyrgcOnT3coPDWTFA042ocZueD9eLzlugsOj\n"
+                "7a19Gud02akEwtIBEEaWT8d+/K2VZjJ5LMGPpy3GK13wRnZh7BG4JXogzIkhYiTK\n"
+                "qS/jikzHqj7JwTOgmgSMhVzzOsJhXTD5Tp4M1gbz\n"
+                "-----END EC PRIVATE KEY-----\n";
+
 static const char* const kPublicKey2 =
         "-----BEGIN PUBLIC KEY-----\n"
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEICO4EYlqUNc7YvjI4WkebcQ4\n"
@@ -86,6 +95,17 @@ static const char* const kPrivateKey2 =
                 "EEd8luTaIzd15Y7ahooAA9K1WDPEhtq0gl8jG5vSbZ+BCaMNd43+Gksno4c9oBkZ\n"
                 "sMaFiu8OBbyVfjhr9g==\n"
                 "-----END ENCRYPTED PRIVATE KEY-----\n";
+
+static const char* const kMalformedPrivateKey2 =
+        "-----BEGIN ENC PRIVATE KEY-----\n"
+                "MIIBKTA0BgoqhkiG9w0BDAEDMCYEIJ2CZ9XD79se4sWO8zaB8ooKkf1IR/cymmox\n"
+                "NH0pe2zCAgIgAASB8HPqZNMejdzjsseLJrLj1SXdES8FOUgWDbIhFLm/6G3leCNi\n"
+                "/7scgIOwook/f5qEL3ydHobXcYrr5Ltlr5o5BsSBELBAJKoUKcWmu8Aub03v/wIe\n"
+                "TNsVhxA/4mn5kgs6BwJp59oODv0YqpRAFsMQsXJaXjePVWpKLsDAooT8Wa0s5cfP\n"
+                "tURNzUUQG7COakN4PF01MXgHYEsvc/ygXI/QsHIBPwBVV7bx3lIV1xDy5WCNgBfd\n"
+                "EEd8luTaIzd15Y7ahooAA9K1WDPEhtq0gl8jG5vSbZ+BCaMNd43+Gksno4c9oBkZ\n"
+                "sMaFiu8OBbyVfjhr9g==\n"
+                "-----END ENC PRIVATE KEY-----\n";
 
 static const char* const kPwdPrivateKey2 = "strong_pwd";
 static const char* const kWrongPwdPrivateKey2 = "wrong_strong_pwd";
@@ -110,5 +130,11 @@ TEST_CASE("Asymmetric Cipher - Keys Validation", "[asymmetric-cipher]") {
     SECTION("check if private key is encrypted") {
         REQUIRE(VirgilAsymmetricCipher::isPrivateKeyEncrypted(str2bytes(kPrivateKey2)));
         REQUIRE_FALSE(VirgilAsymmetricCipher::isPrivateKeyEncrypted(str2bytes(kPrivateKey1)));
+    }
+    SECTION("check malformed private key throws") {
+        REQUIRE_THROWS(VirgilAsymmetricCipher::checkPrivateKeyPassword(str2bytes(kMalformedPrivateKey2),
+                str2bytes(kPwdPrivateKey2)));
+        REQUIRE_THROWS(VirgilAsymmetricCipher::isPrivateKeyEncrypted(str2bytes(kMalformedPrivateKey1)));
+        REQUIRE_THROWS(VirgilAsymmetricCipher::isPrivateKeyEncrypted(str2bytes(kMalformedPrivateKey2)));
     }
 }

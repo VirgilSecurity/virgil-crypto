@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,23 +37,81 @@
 #ifndef VIRGIL_CRYPTO_EXCEPTION_H
 #define VIRGIL_CRYPTO_EXCEPTION_H
 
-#include <stdexcept>
 #include <string>
+#include <stdexcept>
+#include <system_error>
 
 namespace virgil { namespace crypto {
 
 /**
- * @brief Encapsulates logic errors of module 'crypto'
+ * @brief This only exception that crypto library can produce.
+ *
+ * To determine the real exception reason, error codes with conjuction with error category are used.
+ * Error codes can be found in the enumeration @link VirgilCryptoError @endlink.
+ *
+ * @ingroup Error
  */
-class VirgilCryptoException : public std::logic_error {
+class VirgilCryptoException : public std::exception {
 public:
     /**
-     * @brief Construct exception with detailed information about it.
+     * @brief Initialize Exception with specific error code and correspond error category.
+     * @param ev Error value (code).
+     * @param ecat Error category.
      */
-    explicit VirgilCryptoException(const std::string& what);
+    VirgilCryptoException(int ev, const std::error_category& ecat);
+
+    /**
+     * @brief Initialize Exception with specific error code, correspond error category, and error description.
+     * @param ev Error value (code).
+     * @param ecat Error category.
+     * @param what Additional error description.
+     */
+    VirgilCryptoException(int ev, const std::error_category& ecat, const std::string& what);
+
+    /**
+     * @brief Initialize Exception with specific error code, correspond error category, and error description.
+     * @param ev Error value (code).
+     * @param ecat Error category.
+     * @param what Additional error description.
+     */
+    VirgilCryptoException(int ev, const std::error_category& ecat, const char* what);
+
+    /**
+     * Get string identifying exception.
+     *
+     * @return null terminated character sequence that may be used to identify the exception.
+     */
+    const char* what() const noexcept override;
+private:
+    std::error_condition condition_;
+    std::string what_;
 };
+
+/**
+ * @brief Unwind information about nested excpetions.
+ * @param exception - Top level exception.
+ * @param level - initial identation level.
+ * @return Formatted message of top level exception and all nested exceptions.
+ */
+std::string backtrace_exception(const std::exception& exception, size_t level = 0);
 
 }}
 
-#endif /* VIRGIL_CRYPTO_EXCEPTION_H */
+//! @cond Doxygen_Suppress
+// TODO: Remove this when Clang compiler will be used from the Android NDK, possible in the release r13.
+#if defined(ANDROID) && defined(__GCC_ATOMIC_INT_LOCK_FREE) && __GCC_ATOMIC_INT_LOCK_FREE < 2
+namespace std {
+template<typename T>
+void throw_with_nested(const T& ex) {
+    throw ex;
+}
+template<typename T>
+void rethrow_if_nested(const T&) {
+    // Do nothing
+}
+}
+#endif
+//! @endcond
 
+
+#endif /* VIRGIL_CRYPTO_EXCEPTION_H */

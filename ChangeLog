@@ -1,5 +1,53 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.0.0 released 2016-10-03
+
+## Bugfix
+
+  * Fix: Use of the same Nonce for chunks is insecure (VirgilChunkCipher)
+
+## Features
+
+  * [Lib] Implement Ed25519 and X25519 key parse and key write [draft-ietf-curdle-pkix-01]
+  * [Lib] Implement EdDSA [draft-irtf-cfrg-eddsa-08]
+  * [Lib] Implement X25519 [RFC7748]
+
+## Changes
+
+  * [Lib] Move codebase to the C++11 standard
+  * [Lib] Implement new error handling model
+  * [Lib] VirgilPBE -> replace named constructors with constructor that accepts enumeration
+  * [Lib] VirgilKDF -> replace named constructors with constructor that accepts enumeration
+  * [Lib] VirgilHash -> replace named constructors with constructor that accepts enumeration
+  * [Lib] VirgilSymmetricCipher -> replace named constructors with constructor that accepts enumeration
+  * [Lib] Replace enums with scoped enums
+  * [Lib] Remove AS3 support
+  * [Lib] Drop C# class CryptoHelper
+  * [Lib] Remove unimplemented elliptic curves
+  * [Lib] Remove enumeration value: VirgilKeyPair::Type::Default
+  * [Lib] Add functions: 'encryptPrivateKey()' and 'decryptPrivateKey()' (VirgilKeyPair)
+  * [Lib] Embed ContentInfo to the cryptogram by default
+  * [Lib] Use enum VirgilHash::Algorithm in VirgilPBKDF
+  * [Lib] Generate Ed25519 keys as recommended
+  * [Lib] Make wrappers compatible with C++11 and API v2.0
+  * [Lib] Convert C++ exceptions to JS exceptions
+  * [Lib] Add keys format converter PEM to DER and vice versa
+  * [Lib] Change minimum required chunk size for VirgilBytesDataSource
+  * [Lib] Redesign VirgilChunkCipher interface
+  * [Lib] Change name for Apple frameworks: VirgilCrypto.framework to VSCCrypto.framework
+  * [Build] Set CMake option: ANDROID_DEFAULT_NDK_API_LEVEL to 9
+  * [Build] Remove support of OS X universal binaries
+  * [Doc] Created migration guide from version 1.8 to 2.0
+  * [CI] Use gcc-5 on Travis CI
+  * [CI] Use clang-3.6 on Travis CI
+
+## Improvements
+
+  * [Lib] Add AMD64 optimizations for Ed25519 library for *nix systems
+  * [Build] Fix GCC warning: specialization in different namespace [-fpermissive]
+  * [Build] Add wrapper's include directories as SYSTEM
+  * [CI] Minimize build matrix in Travis CI
+
 = Version 1.8.2 released 2016-08-09
 
 ## Bugfix

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -36,11 +36,12 @@
 
 #include <virgil/crypto/foundation/cms/VirgilCMSKeyTransRecipient.h>
 
-#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
-using virgil::crypto::VirgilCryptoException;
+#include <virgil/crypto/internal/utils.h>
+
 using virgil::crypto::foundation::cms::VirgilCMSKeyTransRecipient;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
@@ -53,19 +54,16 @@ static const unsigned char kCMS_SubjectKeyTag = 0;
 static const int kCMS_KeyTransRecipientVersion = 2;
 ///@}
 
-VirgilCMSKeyTransRecipient::~VirgilCMSKeyTransRecipient() throw() {
-}
-
 size_t VirgilCMSKeyTransRecipient::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenBytes) const {
     size_t len = 0;
 
-    checkAsn1ParamNotEmpty(encryptedKey, "encryptedKey");
+    checkRequiredField(encryptedKey);
     len += asn1Writer.writeOctetString(encryptedKey);
 
-    checkAsn1ParamNotEmpty(keyEncryptionAlgorithm, "keyEncryptionAlgorithm");
+    checkRequiredField(keyEncryptionAlgorithm);
     len += asn1Writer.writeData(keyEncryptionAlgorithm);
 
-    checkAsn1ParamNotEmpty(recipientIdentifier, "recipientIdentifier");
+    checkRequiredField(recipientIdentifier);
     size_t recipientIdentifierLen = asn1Writer.writeOctetString(recipientIdentifier);
     len += recipientIdentifierLen;
     len += asn1Writer.writeContextTag(kCMS_SubjectKeyTag, recipientIdentifierLen);
@@ -80,14 +78,14 @@ void VirgilCMSKeyTransRecipient::asn1Read(VirgilAsn1Reader& asn1Reader) {
     (void) asn1Reader.readSequence();
     int version = asn1Reader.readInteger();
     if (version != kCMS_KeyTransRecipientVersion) {
-        throw VirgilCryptoException(std::string("VirgilCMSKeyTransRecipient: ") +
+        throw make_error(VirgilCryptoError::InvalidFormat,
                 "KeyTransRecipientInfo structure is malformed. Incorrect CMS version number.");
     }
 
     if (asn1Reader.readContextTag(kCMS_SubjectKeyTag) > 0) {
         recipientIdentifier = asn1Reader.readOctetString();
     } else {
-        throw VirgilCryptoException(std::string("VirgilCMSKeyTransRecipient: ") +
+        throw make_error(VirgilCryptoError::InvalidFormat,
                 "KeyTransRecipientInfo structure is malformed. Parameter 'rid' is not defined.");
     }
 

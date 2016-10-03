@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -42,24 +42,13 @@ include_once "StringSource.php";
  * @coversDefaultClass VirgilSigner
  */
 class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
-
-    protected static $cipher;
-
-    public static function setUpBeforeClass() {
-        self::$cipher = new VirgilCipher();
-    }
-
-    public static function tearDownAfterClass() {
-        self::$cipher = NULL;
-    }
-
     /**
      * @covers VirgilSigner::sign
      * @covers VirgilSigner::verify
      */
     public function test_data_sign_verify_with_generated_keys() {
         $initialString = "very long string to be signed";
-        $key = new VirgilKeyPair();
+        $key = VirgilKeyPair::generateRecommended();
 
         $signer = new VirgilSigner();
         $sign = $signer->sign($initialString, $key->privateKey());
@@ -75,7 +64,7 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
     public function test_data_sign_verify_with_generated_keys_with_password() {
         $initialString = "very long string to be signed";
         $privateKeyPassword = "password";
-        $key = new VirgilKeyPair($privateKeyPassword);
+        $key = VirgilKeyPair::generateRecommended($privateKeyPassword);
 
         $signer = new VirgilSigner();
         $sign = $signer->sign($initialString, $key->privateKey(), $privateKeyPassword);
@@ -93,13 +82,10 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
     public function test_data_sign_verify_with_generated_keys_and_wrong_password() {
         $initialString = "very long string to be signed";
         $privateKeyPassword = "password";
-        $key = new VirgilKeyPair($privateKeyPassword);
+        $key = VirgilKeyPair::generateRecommended($privateKeyPassword);
 
         $signer = new VirgilSigner();
         $sign = $signer->sign($initialString, $key->privateKey(), $privateKeyPassword . "Wrong password");
-        $verifyResult = $signer->verify($initialString, $sign, $key->publicKey());
-
-        $this->assertEquals($verifyResult, True);
     }
 
     /**
@@ -135,7 +121,6 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
      * @covers VirgilSigner::sign
      * @covers VirgilSigner::verify
      * @expectedException Exception
-     * @expectedExceptionMessage RSA - Bad input parameters to function
      */
     public function test_data_sign_verify_with_rsa_keys_small_size() {
         $publicKeyPem128 =
@@ -211,7 +196,7 @@ class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
             "    \"type\": \"email\"".
             "}";
 
-        $key = new VirgilKeyPair();
+        $key = VirgilKeyPair::generateRecommended();
 
         $signer = new VirgilSigner();
         $sign = $signer->sign(VirgilByteArrayUtils::jsonToBytes($prettyJson),

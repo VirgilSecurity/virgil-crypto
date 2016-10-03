@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -55,12 +55,12 @@ public:
      * @param chunkSize - size of the data that will be returned by @link read() @endlink method.
      *                    Note, the real value may be different from the given value, it is only recommendation.
      */
-    explicit VirgilBytesDataSource(const virgil::crypto::VirgilByteArray& in, size_t chunkSize = 5);
+    explicit VirgilBytesDataSource(const virgil::crypto::VirgilByteArray& in, size_t chunkSize = 1);
 
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilBytesDataSource() throw();
+    virtual ~VirgilBytesDataSource() noexcept;
 
     /**
      * @brief Overriding of @link VirgilDataSource::hasData() @endlink method.

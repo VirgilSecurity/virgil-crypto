@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -49,7 +49,7 @@ using virgil::crypto::foundation::VirgilAsymmetricCipher;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
-VirgilStreamSigner::VirgilStreamSigner(const VirgilHash& hash) : hash_(hash) {
+VirgilStreamSigner::VirgilStreamSigner(VirgilHash::Algorithm hashAlgorithm) : hash_(hashAlgorithm) {
 }
 
 VirgilByteArray VirgilStreamSigner::sign(

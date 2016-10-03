@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -71,7 +71,7 @@ public:
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilAsn1Compatible() throw() { }
+    virtual ~VirgilAsn1Compatible() noexcept { }
 
     /**
      * @brief Write object state to the writer.
@@ -92,7 +92,7 @@ protected:
      * @brief If given parameter is empty exception will be thrown.
      * @throw virgil::crypto::VirgilCryptoException.
      */
-    virtual void checkAsn1ParamNotEmpty(const virgil::crypto::VirgilByteArray& param, const char* paramName = 0) const;
+    virtual void checkRequiredField(const VirgilByteArray& param) const;
 };
 
 }}}}

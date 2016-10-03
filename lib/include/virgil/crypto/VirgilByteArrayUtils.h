@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -51,12 +51,16 @@ public:
     /**
      * @brief Represents given JSON object as byte array in canonical form.
      *
+     * @throw VirgilCryptoException with VirgilCryptoError::InvalidFormat, if JSON is invalid.
+     * @throw VirgilCryptoException with VirgilCryptoError::InvalidArgument,
+     *     if JSON contains unsupported data types: i.e. double.
+     *
      * @note Conversion it to canonical form, ensure the same digest of JSON object,
      *     that can be differently formatted.
      *
      * @note This method SHOULD be used before sign of JSON data object.
      *
-     * @note Underlying canonical representation is ASN.1, but it can be changed in future.
+     * @note Underlying canonical representation is ASN.1, but it can be changed in the future.
      */
     static VirgilByteArray jsonToBytes(const std::string& json);
 
@@ -92,6 +96,18 @@ public:
      * This method SHOULD be used to securely delete sensitive data.
      */
     static void zeroize(VirgilByteArray& array);
+
+    /**
+     * @brief Append given bytes to the existing one.
+     * @param dst - destination.
+     * @param src - source.
+     */
+    static void append(VirgilByteArray& dst, const VirgilByteArray& src);
+
+    /**
+     * @brief Return first num bytes and remove it from the src
+     */
+    static VirgilByteArray popBytes(VirgilByteArray& src, size_t num);
 
 private:
     /**

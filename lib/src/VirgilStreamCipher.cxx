@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -48,9 +48,6 @@ using virgil::crypto::VirgilDataSink;
 using virgil::crypto::foundation::VirgilKDF;
 using virgil::crypto::foundation::VirgilSymmetricCipher;
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
-
-VirgilStreamCipher::~VirgilStreamCipher() throw() {
-}
 
 void VirgilStreamCipher::encrypt(VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo) {
 
@@ -122,6 +119,5 @@ void VirgilStreamCipher::decrypt(
     if (sink.isGood()) {
         sink.write(cipher.finish());
     }
-
     clearCipherInfo();
 }

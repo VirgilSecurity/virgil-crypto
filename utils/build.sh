@@ -265,7 +265,7 @@ if [ "${TARGET_NAME}" == "osx" ]; then
     cmake ${CMAKE_ARGS} -DLANG=cpp -DPLATFORM=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
     make -j4 install
     # Create framework
-    make_bundle VirgilCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
+    make_bundle VSCCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
     rm -fr "${INSTALL_DIR:?}/include"
     rm -fr "${INSTALL_DIR:?}/lib"
 fi
@@ -281,7 +281,7 @@ if [ "${TARGET_NAME}" == "ios" ] || [ "${TARGET_NAME}" == "appletvos" ] || [ "${
     cmake ${CMAKE_ARGS} -DLANG=cpp -DINSTALL_LIB_DIR_NAME=lib/sim -DSIMULATOR=ON -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
     make -j4 install
     # Create framework
-    make_bundle VirgilCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
+    make_bundle VSCCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
     rm -fr "${INSTALL_DIR:?}/include"
     rm -fr "${INSTALL_DIR:?}/lib"
 fi

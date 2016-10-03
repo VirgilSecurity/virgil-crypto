@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,7 +37,7 @@
 #ifndef VIRGIL_VERSION_H
 #define VIRGIL_VERSION_H
 
-#include <cstddef>
+#include <cstdlib>
 #include <string>
 
 namespace virgil { namespace crypto {
@@ -52,22 +52,27 @@ public:
      *
      */
     static size_t asNumber();
+
     /**
      * Return the version number as string.
      */
     static std::string asString();
+
     /**
      * Return the major version number.
      */
     static size_t majorVersion();
+
     /**
      * Return the minor version number.
      */
-    static size_t  minorVersion();
+    static size_t minorVersion();
+
     /**
      * Return the minor version number.
      */
     static size_t patchVersion();
+
     /**
      * Return version full name.
      *

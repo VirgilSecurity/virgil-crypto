@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -52,11 +52,13 @@ public:
      * @brief Return true if target object is able to write data.
      */
     virtual bool isGood() = 0;
+
     /**
      * @brief Write data to the target object.
      */
     virtual void write(const VirgilByteArray& data) = 0;
-    virtual ~VirgilDataSink() throw() {}
+
+    virtual ~VirgilDataSink() noexcept = default;
 };
 
 }}

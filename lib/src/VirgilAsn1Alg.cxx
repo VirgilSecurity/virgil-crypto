@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,43 +34,45 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/foundation/asn1/priv/VirgilAsn1Alg.h>
+#include <virgil/crypto/foundation/asn1/internal/VirgilAsn1Alg.h>
 
+#include <limits>
 #include <mbedtls/oid.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilByteArrayUtils.h>
-#include <virgil/crypto/VirgilCryptoException.h>
 #include <virgil/crypto/foundation/VirgilRandom.h>
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
-#include <virgil/crypto/foundation/PolarsslException.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::VirgilCryptoException;
 using virgil::crypto::foundation::VirgilRandom;
-using virgil::crypto::foundation::asn1::priv::VirgilAsn1Alg;
+using virgil::crypto::foundation::asn1::internal::VirgilAsn1Alg;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 VirgilByteArray VirgilAsn1Alg::buildPKCS5(const VirgilByteArray& salt, size_t iterationCount) {
+    if (iterationCount > std::numeric_limits<int>::max()) {
+        throw make_error(VirgilCryptoError::InvalidArgument, "Iteration count is too big.");
+    }
     VirgilRandom random(VirgilByteArrayUtils::stringToBytes("pkcs5_seed"));
     VirgilAsn1Writer asn1Writer;
-    const char *oid = 0;
+    const char* oid = 0;
     size_t oidLen;
     // Write PBES2-params
     size_t pbesLen = 0;
     {
         // Write PBES2-Enc
         const mbedtls_cipher_type_t cipherType = MBEDTLS_CIPHER_AES_256_CBC;
-        const mbedtls_md_type_t mdType = MBEDTLS_MD_SHA384;
-        MBEDTLS_ERROR_HANDLER(
-            ::mbedtls_oid_get_oid_by_cipher_alg(cipherType, &oid, &oidLen)
+        system_crypto_handler(
+                mbedtls_oid_get_oid_by_cipher_alg(cipherType, &oid, &oidLen),
+                [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
         );
-        const mbedtls_cipher_info_t *cipherInfo = mbedtls_cipher_info_from_type(cipherType);
-        if (cipherInfo == 0) {
-            throw VirgilCryptoException("VirgilPBE: Given cipher is not supported.");
+        const mbedtls_cipher_info_t* cipherInfo = mbedtls_cipher_info_from_type(cipherType);
+        if (cipherInfo == nullptr) {
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
         }
         size_t encLen = 0;
         encLen += asn1Writer.writeOctetString(random.randomize(cipherInfo->iv_size));
@@ -83,10 +85,11 @@ VirgilByteArray VirgilAsn1Alg::buildPKCS5(const VirgilByteArray& salt, size_t it
         prfLen += asn1Writer.writeSequence(prfLen);
 
         size_t kdfLen = prfLen;
-        kdfLen += asn1Writer.writeInteger(iterationCount);
+        kdfLen += asn1Writer.writeInteger(static_cast<int>(iterationCount));
         kdfLen += asn1Writer.writeOctetString(salt);
         kdfLen += asn1Writer.writeSequence(kdfLen);
-        kdfLen += asn1Writer.writeOID(std::string(MBEDTLS_OID_PKCS5_PBKDF2, MBEDTLS_OID_SIZE(MBEDTLS_OID_PKCS5_PBKDF2)));
+        kdfLen +=
+                asn1Writer.writeOID(std::string(MBEDTLS_OID_PKCS5_PBKDF2, MBEDTLS_OID_SIZE(MBEDTLS_OID_PKCS5_PBKDF2)));
         kdfLen += asn1Writer.writeSequence(kdfLen);
 
         pbesLen += encLen + kdfLen;
@@ -100,16 +103,19 @@ VirgilByteArray VirgilAsn1Alg::buildPKCS5(const VirgilByteArray& salt, size_t it
 }
 
 VirgilByteArray VirgilAsn1Alg::buildPKCS12(const VirgilByteArray& salt, size_t iterationCount) {
+    if (iterationCount > std::numeric_limits<int>::max()) {
+        throw make_error(VirgilCryptoError::InvalidArgument, "Iteration count is too big.");
+    }
     VirgilAsn1Writer asn1Writer;
-    const char *oid = 0;
     // Write PBE-params
     size_t pbesLen = 0;
-    pbesLen += asn1Writer.writeInteger(iterationCount);
+    pbesLen += asn1Writer.writeInteger(static_cast<int>(iterationCount));
     pbesLen += asn1Writer.writeOctetString(salt);
     pbesLen += asn1Writer.writeSequence(pbesLen);
     // Write id-PBE OBJECT IDENTIFIER
     pbesLen += asn1Writer.writeOID(
-            std::string(MBEDTLS_OID_PKCS12_PBE_SHA1_DES3_EDE_CBC, MBEDTLS_OID_SIZE(MBEDTLS_OID_PKCS12_PBE_SHA1_DES3_EDE_CBC)));
+            std::string(MBEDTLS_OID_PKCS12_PBE_SHA1_DES3_EDE_CBC,
+                    MBEDTLS_OID_SIZE(MBEDTLS_OID_PKCS12_PBE_SHA1_DES3_EDE_CBC)));
     asn1Writer.writeSequence(pbesLen);
 
     return asn1Writer.finish();

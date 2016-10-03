@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -36,9 +36,6 @@
 
 #include <virgil/crypto/VirgilStreamSigner.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilDataSource.h>
-#include <virgil/crypto/foundation/VirgilHash.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
@@ -52,10 +49,11 @@ using virgil::crypto::foundation::VirgilAsymmetricCipher;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
-VirgilStreamSigner::VirgilStreamSigner(const VirgilHash& hash) : hash_(hash) {
+VirgilStreamSigner::VirgilStreamSigner(VirgilHash::Algorithm hashAlgorithm) : hash_(hashAlgorithm) {
 }
 
-VirgilByteArray VirgilStreamSigner::sign(VirgilDataSource& source, const VirgilByteArray& privateKey,
+VirgilByteArray VirgilStreamSigner::sign(
+        VirgilDataSource& source, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
     // Calculate data digest
     hash_.start();
@@ -78,7 +76,8 @@ VirgilByteArray VirgilStreamSigner::sign(VirgilDataSource& source, const VirgilB
     return asn1Writer.finish();
 }
 
-bool VirgilStreamSigner::verify(VirgilDataSource& source, const VirgilByteArray& sign, const VirgilByteArray& publicKey) {
+bool VirgilStreamSigner::verify(
+        VirgilDataSource& source, const VirgilByteArray& sign, const VirgilByteArray& publicKey) {
     // Read sign
     VirgilAsn1Reader asn1Reader(sign);
     asn1Reader.readSequence();

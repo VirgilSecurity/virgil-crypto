@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -50,11 +50,6 @@ namespace virgil { namespace crypto {
 class VirgilCipher : public VirgilCipherBase {
 public:
     /**
-     * @brief Dispose used resources.
-     */
-    virtual ~VirgilCipher() throw();
-public:
-    /**
      * @brief Encrypt given data.
      * @param data - data to be encrypted.
      * @param embedContentInfo - determines whether to embed content info the the encrypted data, or not.
@@ -62,16 +57,19 @@ public:
      * @see getContentInfo()
      * @return encrypted data.
      */
-    VirgilByteArray encrypt(const VirgilByteArray& data, bool embedContentInfo = false);
+    VirgilByteArray encrypt(const VirgilByteArray& data, bool embedContentInfo = true);
+
     /**
      * @brief Decrypt given data for recipient defined by id and private key.
      * @note Content info MUST be defined, if it was not embedded to the encrypted data.
      * @see method setContentInfo().
      * @return Decrypted data.
      */
-    VirgilByteArray decryptWithKey(const VirgilByteArray& encryptedData,
+    VirgilByteArray decryptWithKey(
+            const VirgilByteArray& encryptedData,
             const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
             const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+
     /**
      * @brief Decrypt given data for recipient defined by password.
      * @note Content info MUST be defined, if it was not embedded to the encrypted data.
@@ -79,12 +77,14 @@ public:
      * @return Decrypted data.
      */
     VirgilByteArray decryptWithPassword(const VirgilByteArray& encryptedData, const VirgilByteArray& pwd);
+
 private:
     /**
      * @brief Decrypt given data.
      * @return Decrypted data.
      */
-    VirgilByteArray decrypt(const VirgilByteArray& encryptedData,
+    VirgilByteArray decrypt(
+            const VirgilByteArray& encryptedData,
             virgil::crypto::foundation::VirgilSymmetricCipher& cipher);
 };
 

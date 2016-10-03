@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,7 +37,7 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_ASN1_READER_H
 #define VIRGIL_CRYPTO_VIRGIL_ASN1_READER_H
 
-#include <cstddef>
+#include <cstdlib>
 #include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -56,15 +56,17 @@ public:
      * @brief Initialize internal state.
      */
     VirgilAsn1Reader();
+
     /**
      * @brief Initialize internal state with given ASN.1 structure.
      * @note The same as sequence VirgilAsn1Reader() and reset().
      */
     explicit VirgilAsn1Reader(const virgil::crypto::VirgilByteArray& data);
+
     /**
      * @brief Dispose internal resources.
      */
-    ~VirgilAsn1Reader() throw();
+    ~VirgilAsn1Reader() noexcept;
     /**
      * @name Configure reading
      */
@@ -83,34 +85,42 @@ public:
      * @brief Read ASN.1 type: INTEGER.
      */
     int readInteger();
+
     /**
      * @brief Read ASN.1 type: BOOLEAN.
      */
     bool readBool();
+
     /**
      * @brief Read ASN.1 type: NULL.
      */
     void readNull();
+
     /**
      * @brief Read ASN.1 type: OCTET STRING.
      */
     virgil::crypto::VirgilByteArray readOctetString();
+
     /**
      * @brief Read ASN.1 type: UTF8String.
      */
     virgil::crypto::VirgilByteArray readUTF8String();
+
     /**
      * @brief Read preformatted ASN.1 structure.
      */
     virgil::crypto::VirgilByteArray readData();
+
     /**
      * @brief Read ASN.1 type: TAG.
      * @return Tag length if given tag exist, 0 - otherwise.
      */
     size_t readContextTag(unsigned char tag);
+
     /**
      * @brief Read ASN.1 type: OID.
      * @return OID.
+     * TODO: Change return type to VirgilByteArray
      */
     std::string readOID();
     ///@}
@@ -123,29 +133,44 @@ public:
      * @return Sequence size in bytes.
      */
     size_t readSequence();
+
     /**
      * @brief Read ASN.1 type: SET.
      * @return Set size in bytes.
      */
     size_t readSet();
     ///@}
+public:
+    /**
+     * @brief Delete copy constructor
+     */
+    VirgilAsn1Reader(const VirgilAsn1Reader& other) = delete;
+
+    /**
+     * @brief Delete assignment operator
+     */
+    VirgilAsn1Reader& operator=(const VirgilAsn1Reader& rhs) = delete;
+
+    /**
+     * @brief Use default move constructor
+     */
+    VirgilAsn1Reader(VirgilAsn1Reader&& other) = default;
+
+    /**
+     * @brief Use default move operator
+     */
+    VirgilAsn1Reader& operator=(VirgilAsn1Reader&& rhs) = default;
+
 private:
     /**
      * @brief Check internal state before methods call.
      * @throw VirgilCryptoException - if internal state is not consistent.
      */
     void checkState();
-    /**
-     * @brief Deny copy constructor
-     */
-    VirgilAsn1Reader(const VirgilAsn1Reader& other);
-    /**
-     * @brief Deny assignment operator
-     */
-    VirgilAsn1Reader& operator=(const VirgilAsn1Reader& rhs);
+
 private:
-    unsigned char *p_;
-    const unsigned char *end_;
+    unsigned char* p_;
+    const unsigned char* end_;
     virgil::crypto::VirgilByteArray data_;
 };
 

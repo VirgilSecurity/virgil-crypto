@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -52,24 +52,29 @@ public:
      * @brief Creates data sink based on byte array.
      */
     explicit VirgilBytesDataSink(virgil::crypto::VirgilByteArray& out);
+
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilBytesDataSink() throw();
+    virtual ~VirgilBytesDataSink() noexcept;
+
     /**
      * @brief Overriding of @link VirgilDataSink::isGood() @endlink method.
      */
     virtual bool isGood();
+
     /**
      * @brief Overriding of @link VirgilDataSink::write() @endlink method.
      */
     virtual void write(const virgil::crypto::VirgilByteArray& data);
+
     /**
      * @brief Reset internal state to initial.
      *
      * Erase all data from the output byte array.
      */
     virtual void reset();
+
 private:
     virgil::crypto::VirgilByteArray& out_;
 };

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016 Virgil Security Inc.
+# Copyright (C) 2015-2016 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -42,9 +42,6 @@ set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Define variables
 set (VIRGIL_CRYPTO_LIB_NAME virgil_crypto)
-
-# Add include directory of wrapped module
-include_directories (${VIRGIL_INCLUDE_DIR})
 
 aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR} SRC_LIST)
 

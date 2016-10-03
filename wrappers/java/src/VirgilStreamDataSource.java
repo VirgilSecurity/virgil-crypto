@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -38,10 +38,17 @@ package com.virgilsecurity.crypto;
 
 public class VirgilStreamDataSource extends VirgilDataSource implements java.io.Closeable {
     private java.io.InputStream stream;
-    private byte[] buffer;
+    private int chunkSize;
+    private static int CHUNK_SIZE_DEFAULT = 1024 * 1024;
 
     public VirgilStreamDataSource(java.io.InputStream stream) {
         this.stream = stream;
+        this.chunkSize = CHUNK_SIZE_DEFAULT;
+    }
+
+    public VirgilStreamDataSource(java.io.InputStream stream, int chunkSize) {
+        this.stream = stream;
+        this.chunkSize = chunkSize;
     }
 
     @Override
@@ -51,7 +58,7 @@ public class VirgilStreamDataSource extends VirgilDataSource implements java.io.
 
     @Override
     public byte[] read() throws java.io.IOException {
-        final int bytesToReadNum = Math.min(this.stream.available(), 1024);
+        final int bytesToReadNum = Math.min(this.stream.available(), this.chunkSize);
         byte[] result = new byte[bytesToReadNum];
         this.stream.read(result, 0, bytesToReadNum);
         return result;

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 Virgil Security Inc.
+# Copyright (C) 2015-2016 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -48,6 +48,7 @@ set (TEST_FILES
     VirgilSigner_Test.php
     VirgilVersion_Test.php
     VirgilCustomParams_Test.php
+    VirgilPBKDF_Test.php
 
     StringSource.php
     StringSink.php

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -36,179 +36,138 @@
 
 #include <virgil/crypto/foundation/VirgilPBE.h>
 
-#include <cstring>
 #include <map>
-#include <string>
-#include <sstream>
-#include <algorithm>
 
 #include <mbedtls/asn1.h>
 #include <mbedtls/oid.h>
 #include <mbedtls/pkcs5.h>
 #include <mbedtls/pkcs12.h>
-#include <mbedtls/cipher.h>
-#include <mbedtls/md.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilCryptoException.h>
-#include <virgil/crypto/foundation/PolarsslException.h>
+#include <virgil/crypto/VirgilByteArrayUtils.h>
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 #include <virgil/crypto/foundation/VirgilRandom.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
-#include <virgil/crypto/foundation/asn1/priv/VirgilAsn1Alg.h>
+#include <virgil/crypto/foundation/asn1/internal/VirgilAsn1Alg.h>
 
-using virgil::crypto::str2bytes;
+#include <virgil/crypto/internal/utils.h>
+
 using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::VirgilCryptoException;
 
 using virgil::crypto::foundation::VirgilPBE;
 using virgil::crypto::foundation::VirgilRandom;
-using virgil::crypto::foundation::PolarsslException;
 using virgil::crypto::foundation::asn1::VirgilAsn1Compatible;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
-using virgil::crypto::foundation::asn1::priv::VirgilAsn1Alg;
+using virgil::crypto::foundation::asn1::internal::VirgilAsn1Alg;
 
-typedef enum {
-    VIRGIL_PBE_NONE = 0,
-    VIRGIL_PBE_PKCS5,
-    VIRGIL_PBE_PKCS12,
-    VIRGIL_PBE_PKCS12_SHA1_RC4_128
-} VirgilPBEType;
+namespace virgil { namespace crypto { namespace foundation { namespace internal {
 
 /**
  * @brief Throw exception if password is too long.
  * @note MbedTLS PKCS#12 restriction.
  */
-static void checkPasswordLen(size_t pwdLen) {
+static inline void check_pkcs12_pwd_len(size_t pwdLen) {
     const size_t kPasswordLengthMax = 31;
     if (pwdLen > kPasswordLengthMax) {
-        std::ostringstream errMsg;
-        errMsg << "Password is too long. Max length is " << kPasswordLengthMax << " bytes.";
-        throw VirgilCryptoException(errMsg.str());
+        throw make_error(VirgilCryptoError::InvalidArgument, "Password too long. Max size is 31 bytes.");
     }
 }
 
-namespace virgil { namespace crypto { namespace foundation {
+}}}}
 
-class VirgilPBEImpl {
+class VirgilPBE::Impl {
 public:
-    VirgilPBEType type;
+    bool initialized = false;
+    VirgilPBE::Algorithm algorithm;
     VirgilByteArray algId;
     mbedtls_asn1_buf pbeAlgOID;
     mbedtls_asn1_buf pbeParams;
     mbedtls_md_type_t mdType;
     mbedtls_cipher_type_t cipherType;
 public:
-    VirgilPBEImpl() : type(VIRGIL_PBE_NONE),
-            algId(), pbeAlgOID(), pbeParams(), mdType(MBEDTLS_MD_NONE), cipherType(MBEDTLS_CIPHER_NONE) {
-    }
+    Impl() : initialized(false) {}
 
-    explicit VirgilPBEImpl(VirgilPBEType pbeType, const VirgilByteArray& salt, size_t iterationCount) : type(pbeType) {
+    Impl(VirgilPBE::Algorithm pbeType, const VirgilByteArray& salt, size_t iterationCount)
+            : initialized(false), algorithm(pbeType) {
         const size_t adjustedIterationCount =
-                iterationCount < VirgilPBE::kIterationCountMin ? VirgilPBE::kIterationCountMin : iterationCount;
+                iterationCount < VirgilPBE::kIterationCountMin ? iterationCount + VirgilPBE::kIterationCountMin
+                                                               : iterationCount;
         switch (pbeType) {
-            case VIRGIL_PBE_PKCS5:
+            case VirgilPBE::Algorithm::PKCS5:
                 init_(VirgilAsn1Alg::buildPKCS5(salt, adjustedIterationCount));
                 break;
-            case VIRGIL_PBE_PKCS12:
+            case VirgilPBE::Algorithm::PKCS12:
                 init_(VirgilAsn1Alg::buildPKCS12(salt, adjustedIterationCount));
                 break;
-            default:
-                throw VirgilCryptoException("VirgilPBE: Given algorithm is not supported.");
         }
-
     }
-    explicit VirgilPBEImpl(const VirgilByteArray& pbeAlgId) : type(VIRGIL_PBE_NONE) {
+
+    Impl(const VirgilByteArray& pbeAlgId) : initialized(false) {
         init_(pbeAlgId);
     }
+
 private:
     /**
      * @brief Parse given PBE algorithm identifier and stores parsed data as local object state.
-     * @note Algorithm identifier is distrubuted in ASN.1 DER encoded structure:
+     * @note Algorithm identifier is distributed in ASN.1 DER encoded structure:
      *     AlgorithmIdentifier ::= SEQUENCE {
      *         algorithm OBJECT IDENTIFIER,
      *         parameters ANY DEFINED BY algorithm OPTIONAL }
      * @throw VirgilCryptoException if algorithm identifier is not supported or ASN.1 structure is corrupted.
      */
     void init_(const VirgilByteArray& pbeAlgId) {
-        unsigned char *p, *end;
 
         // Initial init
-        type = VIRGIL_PBE_NONE;
+        initialized = false;
         algId = pbeAlgId;
         mdType = MBEDTLS_MD_NONE;
         cipherType = MBEDTLS_CIPHER_NONE;
-        memset (&pbeAlgOID, 0x00, sizeof(pbeAlgOID));
-        memset (&pbeParams, 0x00, sizeof(pbeParams));
+        std::memset(&pbeAlgOID, 0x00, sizeof(pbeAlgOID));
+        std::memset(&pbeParams, 0x00, sizeof(pbeParams));
 
         // Parse ASN.1
-        p = const_cast<unsigned char *>(algId.data());
-        end = p + algId.size();
+        unsigned char* p = algId.data();
+        unsigned char* end = p + algId.size();
 
-        MBEDTLS_ERROR_HANDLER(
-            ::mbedtls_asn1_get_alg(&p, end, &pbeAlgOID, &pbeParams)
+        system_crypto_handler(
+                mbedtls_asn1_get_alg(&p, end, &pbeAlgOID, &pbeParams),
+                [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidArgument)); }
         );
 
         if (mbedtls_oid_get_pkcs12_pbe_alg(&pbeAlgOID, &mdType, &cipherType) == 0) {
-            type = VIRGIL_PBE_PKCS12;
-        } else if (MBEDTLS_OID_CMP(MBEDTLS_OID_PKCS12_PBE_SHA1_RC4_128, &pbeAlgOID) == 0) {
-            type = VIRGIL_PBE_PKCS12_SHA1_RC4_128;
+            algorithm = VirgilPBE::Algorithm::PKCS12;
         } else if (MBEDTLS_OID_CMP(MBEDTLS_OID_PKCS5_PBES2, &pbeAlgOID) == 0) {
-            type = VIRGIL_PBE_PKCS5;
+            algorithm = VirgilPBE::Algorithm::PKCS5;
         } else {
-            throw VirgilCryptoException("VirgilPBE: Given algorithm is not supported.");
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
         }
+        initialized = true;
     }
 };
 
-}}}
+VirgilPBE::VirgilPBE() : impl_(std::make_unique<Impl>()) {}
 
-VirgilPBE VirgilPBE::pkcs5(const VirgilByteArray& salt, size_t iterationCount) {
-    return VirgilPBE(VIRGIL_PBE_PKCS5, salt, iterationCount);
+VirgilPBE::VirgilPBE(Algorithm alg, const VirgilByteArray& salt, size_t iterationCount)
+        : impl_(std::make_unique<Impl>(alg, salt, iterationCount)) {
+
 }
 
-VirgilPBE VirgilPBE::pkcs12(const VirgilByteArray& salt, size_t iterationCount) {
-    return VirgilPBE(VIRGIL_PBE_PKCS12, salt, iterationCount);
-}
+VirgilPBE::VirgilPBE(VirgilPBE&& rhs) noexcept = default;
 
-VirgilPBE::VirgilPBE() : impl_(new VirgilPBEImpl()) {
-}
+VirgilPBE& VirgilPBE::operator=(VirgilPBE&& rhs) noexcept = default;
 
-VirgilPBE::VirgilPBE(int type, const VirgilByteArray& salt, size_t iterationCount)
-        : impl_(new VirgilPBEImpl(static_cast<VirgilPBEType>(type), salt, iterationCount)) {
-}
-
-VirgilPBE::~VirgilPBE() throw() {
-    if (impl_) {
-        delete impl_;
-        impl_ = 0;
-    }
-}
-
-VirgilPBE::VirgilPBE(const VirgilPBE& other) : impl_(new VirgilPBEImpl(other.impl_->algId)) {
-}
-
-VirgilPBE& VirgilPBE::operator=(const VirgilPBE& rhs) {
-    if (this == &rhs) {
-        return *this;
-    }
-    VirgilPBEImpl *newImpl = new VirgilPBEImpl(rhs.impl_->algId);
-    if (impl_) {
-        delete impl_;
-    }
-    impl_ = newImpl;
-    return *this;
-}
+VirgilPBE::~VirgilPBE() noexcept = default;
 
 VirgilByteArray VirgilPBE::encrypt(const VirgilByteArray& data, const VirgilByteArray& pwd) const {
-    int mode = (impl_->type == VIRGIL_PBE_PKCS5) ? MBEDTLS_PKCS5_ENCRYPT : MBEDTLS_PKCS12_PBE_ENCRYPT;
+    int mode = (impl_->algorithm == VirgilPBE::Algorithm::PKCS5) ? MBEDTLS_PKCS5_ENCRYPT : MBEDTLS_PKCS12_PBE_ENCRYPT;
     return process(data, pwd, mode);
 }
 
 VirgilByteArray VirgilPBE::decrypt(const VirgilByteArray& data, const VirgilByteArray& pwd) const {
-    int mode = (impl_->type == VIRGIL_PBE_PKCS5) ? MBEDTLS_PKCS5_DECRYPT : MBEDTLS_PKCS12_PBE_DECRYPT;
+    int mode = (impl_->algorithm == VirgilPBE::Algorithm::PKCS5) ? MBEDTLS_PKCS5_DECRYPT : MBEDTLS_PKCS12_PBE_DECRYPT;
     return process(data, pwd, mode);
 }
 
@@ -216,46 +175,32 @@ VirgilByteArray VirgilPBE::process(const VirgilByteArray& data, const VirgilByte
     checkState();
     VirgilByteArray output(data.size() + MBEDTLS_MAX_BLOCK_LENGTH);
     mbedtls_asn1_buf pbeParams = impl_->pbeParams;
-    size_t olen = data.size(); // For RC4: output lenght = input length
-    switch (impl_->type) {
-        case VIRGIL_PBE_PKCS5:
-            MBEDTLS_ERROR_HANDLER(
-                ::mbedtls_pkcs5_pbes2_ext(&pbeParams, mode,
-                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
-                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
-                        output.data(), &olen)
+    size_t olen = data.size(); // For RC4: output length = input length
+    switch (impl_->algorithm) {
+        case VirgilPBE::Algorithm::PKCS5:
+            system_crypto_handler(
+                    mbedtls_pkcs5_pbes2_ext(&pbeParams, mode, pwd.data(), pwd.size(), data.data(), data.size(),
+                            output.data(), &olen),
+                    [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidArgument)); }
             );
             break;
-        case VIRGIL_PBE_PKCS12:
-            checkPasswordLen(pwd.size());
-            MBEDTLS_ERROR_HANDLER(
-                ::mbedtls_pkcs12_pbe_ext(&pbeParams, mode,
-                        impl_->cipherType, impl_->mdType,
-                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
-                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
-                        output.data(), &olen)
+        case VirgilPBE::Algorithm::PKCS12:
+            internal::check_pkcs12_pwd_len(pwd.size());
+            system_crypto_handler(
+                    mbedtls_pkcs12_pbe_ext(&pbeParams, mode,
+                            impl_->cipherType, impl_->mdType, pwd.data(), pwd.size(), data.data(), data.size(),
+                            output.data(), &olen),
+                    [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidArgument)); }
             );
             break;
-        case VIRGIL_PBE_PKCS12_SHA1_RC4_128:
-            checkPasswordLen(pwd.size());
-            MBEDTLS_ERROR_HANDLER(
-                ::mbedtls_pkcs12_pbe_sha1_rc4_128(&pbeParams, mode,
-                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(pwd),
-                        VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(data),
-                        output.data())
-            );
-            break;
-        default:
-            throw VirgilCryptoException("VirgilPBE: Given algorithm is not supported.");
     }
     output.resize(olen);
     return output;
 }
 
 void VirgilPBE::checkState() const {
-    if (impl_->type == VIRGIL_PBE_NONE) {
-        throw VirgilCryptoException(std::string("VirgilPBE: object has undefined algorithm.") +
-                std::string(" Use one of the factory methods or method 'fromAsn1' to define hash algorithm."));
+    if (!impl_->initialized) {
+        throw make_error(VirgilCryptoError::NotInitialized);
     }
 }
 
@@ -266,8 +211,5 @@ size_t VirgilPBE::asn1Write(VirgilAsn1Writer& asn1Writer, size_t childWrittenByt
 }
 
 void VirgilPBE::asn1Read(VirgilAsn1Reader& asn1Reader) {
-    if (impl_) {
-        delete impl_;
-    }
-    impl_ = new VirgilPBEImpl(asn1Reader.readData());
+    impl_ = std::make_unique<Impl>(asn1Reader.readData());
 }

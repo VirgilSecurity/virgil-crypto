@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -36,25 +36,19 @@
 
 #include <virgil/crypto/VirgilByteArrayUtils.h>
 
-#include <string>
-#include <vector>
-#include <algorithm>
-
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/VirgilCryptoError.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
 #include <rapidjson/document.h>
-#include <rapidjson/reader.h>
 
 using virgil::crypto::VirgilByteArray;
-using virgil::crypto::VirgilCryptoException;
 using virgil::crypto::VirgilByteArrayUtils;
+using virgil::crypto::VirgilCryptoError;
+using virgil::crypto::make_error;
 
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
-
-typedef rapidjson::Value json;
+using json = rapidjson::Value;
 
 /**
  * @brief Write json value as ASN.1 structure.
@@ -84,15 +78,15 @@ static size_t asn1_write_json_primitive(VirgilAsn1Writer& asn1Writer, const json
  * @brief JSON to ASN.1 mapping
  */
 VirgilByteArray VirgilByteArrayUtils::jsonToBytes(const std::string& jsonString) {
+    rapidjson::Document jsonObj;
     try {
-        rapidjson::Document jsonObj;
         jsonObj.Parse(jsonString.c_str());
-        VirgilAsn1Writer asn1Writer;
-        (void)asn1_write_json_value(asn1Writer, jsonObj);
-        return asn1Writer.finish();
     } catch (const std::exception& exception) {
-        throw VirgilCryptoException(exception.what());
+        throw make_error(VirgilCryptoError::InvalidFormat, exception.what());
     }
+    VirgilAsn1Writer asn1Writer;
+    (void) asn1_write_json_value(asn1Writer, jsonObj);
+    return asn1Writer.finish();
 }
 
 VirgilByteArray VirgilByteArrayUtils::stringToBytes(const std::string& str) {
@@ -100,7 +94,7 @@ VirgilByteArray VirgilByteArrayUtils::stringToBytes(const std::string& str) {
 }
 
 std::string VirgilByteArrayUtils::bytesToString(const VirgilByteArray& array) {
-    return std::string(reinterpret_cast<const char *>(array.data()), array.size());
+    return std::string(reinterpret_cast<const char*>(array.data()), array.size());
 }
 
 VirgilByteArray VirgilByteArrayUtils::hexToBytes(const std::string& hexStr) {
@@ -110,7 +104,7 @@ VirgilByteArray VirgilByteArrayUtils::hexToBytes(const std::string& hexStr) {
     while (istr.read(hexChars, 2)) {
         int byte = 0;
         std::istringstream(hexChars) >> std::hex >> byte;
-        result.push_back((unsigned char)byte);
+        result.push_back((unsigned char) byte);
     }
     return result;
 }
@@ -118,8 +112,8 @@ VirgilByteArray VirgilByteArrayUtils::hexToBytes(const std::string& hexStr) {
 std::string VirgilByteArrayUtils::bytesToHex(const VirgilByteArray& array, bool formatted) {
     std::ostringstream hexStream;
     hexStream << std::setfill('0');
-    for(size_t i = 0; i < array.size(); ++i) {
-        hexStream << std::hex << std::setw(2) << (int)array[i];
+    for (size_t i = 0; i < array.size(); ++i) {
+        hexStream << std::hex << std::setw(2) << (int) array[i];
         if (formatted) {
             hexStream << (((i + 1) % 16 == 0) ? "\n" : " ");
         }
@@ -129,6 +123,21 @@ std::string VirgilByteArrayUtils::bytesToHex(const VirgilByteArray& array, bool 
 
 void VirgilByteArrayUtils::zeroize(VirgilByteArray& array) {
     virgil::crypto::bytes_zeroize(array);
+}
+
+void VirgilByteArrayUtils::append(VirgilByteArray& dst, const VirgilByteArray& src) {
+    dst.insert(dst.end(), src.begin(), src.end());
+}
+
+VirgilByteArray VirgilByteArrayUtils::popBytes(VirgilByteArray& src, size_t num) {
+    if (src.size() < num) {
+        VirgilByteArray result;
+        result.swap(src);
+        return result;
+    }
+    VirgilByteArray result(src.begin(), src.begin() + num);
+    src.erase(src.begin(), src.begin() + num);
+    return result;
 }
 
 size_t asn1_write_json_value(VirgilAsn1Writer& asn1Writer, const json& json, const std::string& key) {
@@ -141,24 +150,24 @@ size_t asn1_write_json_value(VirgilAsn1Writer& asn1Writer, const json& json, con
     return asn1_write_json_primitive(asn1Writer, json, key);
 }
 
-static bool compare_c_str(const char * a, const char * b) {
+static bool compare_c_str(const char* a, const char* b) {
     return std::strcmp(a, b) < 0;
 }
 
 size_t asn1_write_json_object(VirgilAsn1Writer& asn1Writer, const json& json, const std::string& key) {
     if (!json.IsObject()) {
-        throw std::logic_error("Json: Expected object type.");
+        throw make_error(VirgilCryptoError::InvalidArgument, "Json: expected object type.");
     }
     size_t len = 0;
     // Get object keys
-    std::vector<const char *> keys;
+    std::vector<const char*> keys;
     for (json::ConstMemberIterator it = json.MemberBegin(); it != json.MemberEnd(); ++it) {
         keys.push_back(it->name.GetString());
     }
     // Sort object keys
     std::sort(keys.begin(), keys.end(), compare_c_str);
     // Process object values
-    for (std::vector<const char *>::const_reverse_iterator it = keys.rbegin(); it != keys.rend(); ++it) {
+    for (std::vector<const char*>::const_reverse_iterator it = keys.rbegin(); it != keys.rend(); ++it) {
         len += asn1_write_json_value(asn1Writer, json[*it], *it);
     }
     len += asn1Writer.writeSequence(len);
@@ -171,7 +180,7 @@ size_t asn1_write_json_object(VirgilAsn1Writer& asn1Writer, const json& json, co
 
 size_t asn1_write_json_array(VirgilAsn1Writer& asn1Writer, const json& json, const std::string& key) {
     if (!json.IsArray()) {
-        throw std::logic_error("Json: Expected array type.");
+        throw make_error(VirgilCryptoError::InvalidArgument, "Json: expected array type.");
     }
     size_t len = 0;
     std::reverse_iterator<json::ConstValueIterator> jsonCurr(json.End());
@@ -189,13 +198,13 @@ size_t asn1_write_json_array(VirgilAsn1Writer& asn1Writer, const json& json, con
 
 size_t asn1_write_json_primitive(VirgilAsn1Writer& asn1Writer, const json& json, const std::string& key) {
     if (json.IsObject() || json.IsArray()) {
-        throw std::logic_error("Json: Expected primitive type.");
+        throw make_error(VirgilCryptoError::InvalidArgument, "Json: expected primitive type.");
     }
     size_t len = 0;
     if (json.IsInt()) {
         len += asn1Writer.writeInteger(json.GetInt());
     } else if (json.IsDouble()) {
-        throw VirgilCryptoException("VirgilByteArrayUtils: not supported float values in JSON.");
+        throw make_error(VirgilCryptoError::InvalidArgument, "Json: float values is not supported.");
     } else if (json.IsBool()) {
         len += asn1Writer.writeBool(json.GetBool());
     } else if (json.IsString()) {
@@ -203,7 +212,7 @@ size_t asn1_write_json_primitive(VirgilAsn1Writer& asn1Writer, const json& json,
     } else if (json.IsNull()) {
         len += asn1Writer.writeNull();
     } else {
-        throw std::logic_error("Json: Unknown object type.");
+        throw make_error(VirgilCryptoError::InvalidArgument, "Json: unknown type.");
     }
     if (!key.empty()) {
         len += asn1Writer.writeUTF8String(VirgilByteArrayUtils::stringToBytes(key));

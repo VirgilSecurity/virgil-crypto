@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -36,9 +36,7 @@
 
 #include <virgil/crypto/VirgilKeyPair.h>
 
-#include <string>
-
-#include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/VirgilCryptoError.h>
 #include <virgil/crypto/foundation/VirgilRandom.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 
@@ -53,76 +51,36 @@ VirgilKeyPair VirgilKeyPair::generate(VirgilKeyPair::Type type, const VirgilByte
     return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
 }
 
-VirgilKeyPair VirgilKeyPair::ecNist192(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP192R1);
+VirgilKeyPair VirgilKeyPair::generateRecommended(const VirgilByteArray& pwd) {
+    VirgilAsymmetricCipher cipher;
+    cipher.genKeyPair(Type::FAST_EC_ED25519);
+    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
 }
 
-VirgilKeyPair VirgilKeyPair::ecNist224(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP224R1);
+VirgilKeyPair VirgilKeyPair::generateFrom(
+        const VirgilKeyPair& donorKeyPair, const VirgilByteArray& donorPrivateKeyPassword,
+        const VirgilByteArray& newKeyPairPassword) {
+
+    VirgilAsymmetricCipher donorCipher;
+    if (!donorKeyPair.publicKey_.empty()) {
+        donorCipher.setPublicKey(donorKeyPair.publicKey_);
+    } else if (!donorKeyPair.privateKey_.empty()) {
+        donorCipher.setPrivateKey(donorKeyPair.privateKey_, donorPrivateKeyPassword);
+    }
+
+    VirgilAsymmetricCipher cipher;
+    cipher.genKeyPairFrom(donorCipher);
+    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(newKeyPairPassword));
 }
 
-VirgilKeyPair VirgilKeyPair::ecNist256(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP256R1);
-}
-
-VirgilKeyPair VirgilKeyPair::ecNist384(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP384R1);
-}
-
-VirgilKeyPair VirgilKeyPair::ecNist521(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP521R1);
-}
-
-VirgilKeyPair VirgilKeyPair::ecBrainpool256(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_BP256R1);
-}
-
-VirgilKeyPair VirgilKeyPair::ecBrainpool384(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_BP384R1);
-}
-
-VirgilKeyPair VirgilKeyPair::ecBrainpool512(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_BP512R1);
-}
-
-VirgilKeyPair VirgilKeyPair::ecKoblitz192(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP192K1);
-}
-
-VirgilKeyPair VirgilKeyPair::ecKoblitz224(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP224K1);
-}
-
-VirgilKeyPair VirgilKeyPair::ecKoblitz256(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_EC_SECP256K1);
-}
-
-VirgilKeyPair VirgilKeyPair::rsa256(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_RSA_256);
-}
-
-VirgilKeyPair VirgilKeyPair::rsa512(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_RSA_512);
-}
-
-VirgilKeyPair VirgilKeyPair::rsa1024(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_RSA_1024);
-}
-
-VirgilKeyPair VirgilKeyPair::rsa2048(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_RSA_2048);
-}
-
-VirgilKeyPair VirgilKeyPair::rsa4096(const VirgilByteArray& pwd) {
-    return generate(VirgilKeyPair::Type_RSA_4096);
-}
-
-bool VirgilKeyPair::isKeyPairMatch(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey,
+bool VirgilKeyPair::isKeyPairMatch(
+        const VirgilByteArray& publicKey, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
     return VirgilAsymmetricCipher::isKeyPairMatch(publicKey, privateKey, privateKeyPassword);
 }
 
-bool VirgilKeyPair::checkPrivateKeyPassword(const VirgilByteArray& key,
+bool VirgilKeyPair::checkPrivateKeyPassword(
+        const VirgilByteArray& key,
         const VirgilByteArray& pwd) {
     return VirgilAsymmetricCipher::checkPrivateKeyPassword(key, pwd);
 }
@@ -131,7 +89,8 @@ bool VirgilKeyPair::isPrivateKeyEncrypted(const VirgilByteArray& privateKey) {
     return VirgilAsymmetricCipher::isPrivateKeyEncrypted(privateKey);
 }
 
-VirgilByteArray VirgilKeyPair::resetPrivateKeyPassword(const VirgilByteArray& privateKey,
+VirgilByteArray VirgilKeyPair::resetPrivateKeyPassword(
+        const VirgilByteArray& privateKey,
         const VirgilByteArray& oldPassword, const VirgilByteArray& newPassword) {
     VirgilAsymmetricCipher cipher;
     cipher.setPrivateKey(privateKey, oldPassword);
@@ -143,10 +102,54 @@ VirgilByteArray VirgilKeyPair::resetPrivateKeyPassword(const VirgilByteArray& pr
     }
 }
 
-VirgilKeyPair::VirgilKeyPair(const VirgilByteArray& pwd) {
-    VirgilKeyPair keyPair = VirgilKeyPair::generate(VirgilKeyPair::Type_Default, pwd);
-    this->publicKey_ = keyPair.publicKey();
-    this->privateKey_ = keyPair.privateKey();
+VirgilByteArray VirgilKeyPair::encryptPrivateKey(
+        const virgil::crypto::VirgilByteArray& privateKey, const virgil::crypto::VirgilByteArray& privateKeyPassword) {
+    if (privateKeyPassword.empty()) {
+        throw virgil::crypto::make_error(VirgilCryptoError::InvalidArgument);
+    }
+    return VirgilKeyPair::resetPrivateKeyPassword(privateKey, VirgilByteArray(), privateKeyPassword);
+}
+
+VirgilByteArray VirgilKeyPair::decryptPrivateKey(
+        const virgil::crypto::VirgilByteArray& privateKey, const virgil::crypto::VirgilByteArray& privateKeyPassword) {
+    return VirgilKeyPair::resetPrivateKeyPassword(privateKey, privateKeyPassword, VirgilByteArray());
+}
+
+VirgilByteArray VirgilKeyPair::extractPublicKey(
+        const virgil::crypto::VirgilByteArray& privateKey,
+        const virgil::crypto::VirgilByteArray& privateKeyPassword) {
+    VirgilAsymmetricCipher cipher;
+    cipher.setPrivateKey(privateKey, privateKeyPassword);
+    const bool isPEM = privateKey.front() == 0x2D;
+    if (isPEM) {
+        return cipher.exportPublicKeyToPEM();
+    } else {
+        return cipher.exportPublicKeyToDER();
+    }
+}
+
+VirgilByteArray VirgilKeyPair::publicKeyToPEM(const VirgilByteArray& publicKey) {
+    VirgilAsymmetricCipher cipher;
+    cipher.setPublicKey(publicKey);
+    return cipher.exportPublicKeyToPEM();
+}
+
+VirgilByteArray VirgilKeyPair::publicKeyToDER(const VirgilByteArray& publicKey) {
+    VirgilAsymmetricCipher cipher;
+    cipher.setPublicKey(publicKey);
+    return cipher.exportPublicKeyToDER();
+}
+
+VirgilByteArray VirgilKeyPair::privateKeyToPEM(const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
+    VirgilAsymmetricCipher cipher;
+    cipher.setPrivateKey(privateKey, privateKeyPassword);
+    return cipher.exportPrivateKeyToPEM(privateKeyPassword);
+}
+
+VirgilByteArray VirgilKeyPair::privateKeyToDER(const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
+    VirgilAsymmetricCipher cipher;
+    cipher.setPrivateKey(privateKey, privateKeyPassword);
+    return cipher.exportPrivateKeyToDER(privateKeyPassword);
 }
 
 VirgilKeyPair::VirgilKeyPair(const VirgilByteArray& publicKey, const VirgilByteArray& privateKey)
@@ -160,4 +163,3 @@ VirgilByteArray VirgilKeyPair::publicKey() const {
 VirgilByteArray VirgilKeyPair::privateKey() const {
     return privateKey_;
 }
-

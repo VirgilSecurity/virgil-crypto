@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 Virgil Security Inc.
+# Copyright (C) 2015-2016 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -40,14 +40,11 @@ cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 set (VIRGIL_CRYPTO_LIB_NAME virgil_crypto)
 set (TEST_RUNNER test_runner)
 
-# Add include directory of wrapped module
-include_directories (${VIRGIL_INCLUDE_DIR})
-
 aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR} SRC_LIST)
 add_executable(${TEST_RUNNER} ${SRC_LIST})
 target_link_libraries (${TEST_RUNNER} ${VIRGIL_CRYPTO_LIB_NAME})
 
 add_test (
     NAME ${TEST_RUNNER}
-    COMMAND ./${TEST_RUNNER}
+    COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${TEST_RUNNER}"
 )

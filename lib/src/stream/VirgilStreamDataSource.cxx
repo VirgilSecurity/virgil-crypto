@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -35,9 +35,11 @@
  */
 
 #include <virgil/crypto/stream/VirgilStreamDataSource.h>
+
 using virgil::crypto::stream::VirgilStreamDataSource;
 
 #include <virgil/crypto/VirgilByteArray.h>
+
 using virgil::crypto::VirgilByteArray;
 
 #include <algorithm>
@@ -48,7 +50,7 @@ VirgilStreamDataSource::VirgilStreamDataSource(std::istream& in, size_t chunkSiz
         : in_(in), chunkSize_(std::max(chunkSize, kChunkSizeMin)) {
 }
 
-VirgilStreamDataSource::~VirgilStreamDataSource() throw() {
+VirgilStreamDataSource::~VirgilStreamDataSource() noexcept {
 }
 
 bool VirgilStreamDataSource::hasData() {
@@ -57,7 +59,7 @@ bool VirgilStreamDataSource::hasData() {
 
 VirgilByteArray VirgilStreamDataSource::read() {
     VirgilByteArray result(chunkSize_);
-    in_.read(reinterpret_cast<std::istream::char_type *>(result.data()), chunkSize_);
+    in_.read(reinterpret_cast<std::istream::char_type*>(result.data()), chunkSize_);
     if (!in_) {
         // Only part of chunk was read, so result MUST be trimmed.
         result.resize(in_.gcount());

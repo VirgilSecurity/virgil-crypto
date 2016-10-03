@@ -3,6 +3,7 @@ build*/
 install/
 docs/html/
 docs/latex/
+.depends_cache/
 
 #####
 # OS X temporary files that should never be committed

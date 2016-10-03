@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -46,52 +46,101 @@ class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
 
     /**
      * @covers VirgilChunkCipher::addKeyRecipient
-     * @covers VirgilChunkCipher::startEncryption
-     * @covers VirgilChunkCipher::process
+     * @covers VirgilChunkCipher::addPasswordRecipient
+     * @covers VirgilChunkCipher::encrypt
+     * @covers VirgilChunkCipher::decryptWithKey
+     * @covers VirgilChunkCipher::decryptWithPassword
+     * @covers VirgilChunkCipher::decryptWithPassword
+     * @covers VirgilChunkCipher::getContentInfo
+     * @covers VirgilChunkCipher::setContentInfo
      */
-    public function test_encryption() {
-        $initialText = "This is very long string will be encoded. And some more.";
-        $recipientId = "842602ff-9713-4184-8176-f54ac7efe14e";
-        $publicKeyPem512 =
+    public function test_encryption_decryption_with_generated_keys() {
+        $this->check_encryption_decryption_with_generated_keys(false);
+    }
+
+    /**
+     * @covers VirgilChunkCipher::addKeyRecipient
+     * @covers VirgilChunkCipher::addPasswordRecipient
+     * @covers VirgilChunkCipher::encrypt
+     * @covers VirgilChunkCipher::decryptWithKey
+     * @covers VirgilChunkCipher::decryptWithPassword
+     * @covers VirgilChunkCipher::decryptWithPassword
+     */
+    public function test_encryption_decryption_with_generated_keys_and_embedded_content_info() {
+        $this->check_encryption_decryption_with_generated_keys(true);
+    }
+
+    private function check_encryption_decryption_with_generated_keys($embedContentInfo) {
+        $initialString = "very long string to be encrypted";
+        // Key recipient - Bob
+        $bobCertificateId = "BOB-CERT-1234";
+        $bobKey = VirgilKeyPair::generateRecommended();
+        // Key recipient - Ted
+        $tedCertificateId = "TED-CERT-1234";
+        $tedKeyPassword = "ted-private-key-password";
+        $tedKey = VirgilKeyPair::generateRecommended($tedKeyPassword);
+        // Password recipient - Alice
+        $alicePassword = "alice-password";
+        // Create cipher
+        $cipher = new VirgilChunkCipher();
+        $this->assertNotNull($cipher, "Cipher was not created.");
+        $this->assertNotNull($cipher->_cPtr, "Underlying cipher was not created.");
+        // Add recipients to the cipher
+        $cipher->addKeyRecipient($bobCertificateId, $bobKey->publicKey());
+        $cipher->addKeyRecipient($tedCertificateId, $tedKey->publicKey());
+        $cipher->addPasswordRecipient($alicePassword);
+        // Encrypt data
+        $encryptSource = new StringSource($initialString);
+        $encryptSink = new StringSink();
+        $cipher->encrypt($encryptSource, $encryptSink, $embedContentInfo);
+        if ($embedContentInfo == false) {
+            $encryptedContentInfo = $cipher->getContentInfo();
+        }
+        // Create new cipher
+        $cipher = new VirgilChunkCipher();
+        if ($embedContentInfo == false) {
+            // Set content info
+            $cipher->setContentInfo($encryptedContentInfo);
+        }
+        // Decrypt encrypted data
+        $bobDecryptSource = new StringSource($encryptSink->getResult());
+        $bobDecryptSink = new StringSink();
+
+        $tedDecryptSource = new StringSource($encryptSink->getResult());
+        $tedDecryptSink = new StringSink();
+
+        $aliceDecryptSource = new StringSource($encryptSink->getResult());
+        $aliceDecryptSink = new StringSink();
+
+        $cipher->decryptWithKey($bobDecryptSource, $bobDecryptSink, $bobCertificateId, $bobKey->privateKey());
+        $cipher->decryptWithKey($tedDecryptSource, $tedDecryptSink, $tedCertificateId, $tedKey->privateKey(),
+                $tedKeyPassword);
+        $cipher->decryptWithPassword($aliceDecryptSource, $aliceDecryptSink, $alicePassword);
+        // Check decrypted data
+        $this->assertEquals($initialString, $bobDecryptSink->getResult());
+        $this->assertEquals($initialString, $tedDecryptSink->getResult());
+        $this->assertEquals($initialString, $aliceDecryptSink->getResult());
+    }
+
+    /**
+     * @covers VirgilChunkCipher::addKeyRecipient
+     * @covers VirgilChunkCipher::addPasswordRecipient
+     * @covers VirgilChunkCipher::encrypt
+     * @covers VirgilChunkCipher::decryptWithKey
+     * @covers VirgilChunkCipher::decryptWithPassword
+     */
+    public function test_encryption_decryption_with_known_keys() {
+        $initialString = "very long string to be encrypted";
+        // Key recipient - Bob (EC)
+        $bobCertificateId = "BOB-CERT-1234";
+        $bobPublicKey =
                 "-----BEGIN PUBLIC KEY-----\n".
                 "MIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEA8GVpzCcTiISVsHjuMZg4gvS\n".
                 "nIT5ubLZ6TZ8LRzPjYah5h71TrHOgJVXkPtzpFbHdWdvcSsAMbLCnvEnTlXFMDn5\n".
                 "3a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8WcxSreTlVGkE/TZvCZEes\n".
                 "o+yIBPaohqMzfjvj4Yw=\n".
                 "-----END PUBLIC KEY-----\n";
-        $password = "password-recipient";
-        // Create cipher
-        $cipher = new VirgilChunkCipher();
-        // Add recipients
-        $cipher->addKeyRecipient($recipientId, $publicKeyPem512);
-        $cipher->addPasswordRecipient($password);
-        // Init encryption.
-        $preferredChunkSize = 7;
-        $actualChunkSize = $cipher->startEncryption($preferredChunkSize);
-        // Split string to chunks.
-        $chunks = str_split($initialText, $actualChunkSize);
-        // Encode.
-        $encryptedData = "";
-        foreach ($chunks as $chunk) {
-            $encryptedData .= $cipher->process($chunk);
-        }
-        // Finalize encryption to avoid security issues.
-        $cipher->finish();
-        // Store content info.
-        $contentInfo = $cipher->getContentInfo();
-
-        return array($contentInfo, $encryptedData, $initialText);
-    }
-
-    /**
-     * @covers VirgilChunkCipher::addKeyRecipient
-     * @covers VirgilChunkCipher::startDecryptionWithKey
-     * @covers VirgilChunkCipher::process
-     * @depends test_encryption
-     */
-    public function test_decryption_with_key(array $encryptionDatagram) {
-        $recipientId = "842602ff-9713-4184-8176-f54ac7efe14e";
-        $privateKeyPem512 =
+        $bobPrivateKey =
                 "-----BEGIN EC PRIVATE KEY-----\n".
                 "MIHaAgEBBEBbGZvQqVS+z9QGVlef12ogHS+cGjICfR8oyhBySZTadhRqGmgkWNiS\n".
                 "b+IcSjzaw8xEZuIkT/wG/yVlx4Zimk0XoAsGCSskAwMCCAEBDaGBhQOBggAEA8GV\n".
@@ -99,59 +148,59 @@ class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
                 "cSsAMbLCnvEnTlXFMDn53a3YhN+cTdWZCgleKQCc2keY/alCRdgtjL3po90DuT8W\n".
                 "cxSreTlVGkE/TZvCZEeso+yIBPaohqMzfjvj4Yw=\n".
                 "-----END EC PRIVATE KEY-----\n";
-
-        // Get public parameters
-        $contentInfo = $encryptionDatagram[0];
-        $encryptedData = $encryptionDatagram[1];
-        $initialText = $encryptionDatagram[2];
+        // Key recipient - Ted (RSA)
+        $tedCertificateId = "TED-CERT-1234";
+        $tedPublicKey =
+                "-----BEGIN PUBLIC KEY-----\n".
+                "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaro\n".
+                "K+GG5ZcLA9AnA2Fwkx8hFozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQ==\n".
+                "-----END PUBLIC KEY-----\n";
+        $tedPrivateKey =
+                "-----BEGIN RSA PRIVATE KEY-----\n".
+                "MIIBOQIBAAJBAMk/B8TlOOwNnxpOBGUo0bW9HbNuiaroK+GG5ZcLA9AnA2Fwkx8h\n".
+                "FozP0hQp97kbA/RS96/NdbreSjVqltlotc0CAwEAAQJAYML8olAwoVcfU8+FT3pj\n".
+                "8sU+faK9cL53MtXgmFJEgBUWlg0aGq67an8vgReCdIK6F3500f6Yf9LhjkoZ4ZBl\n".
+                "QQIhAPvyiVFhizURqzZHn4cQtKR2bgGJsARdvlg6KKHP/XXRAiEAzHu3uJ1mIFHH\n".
+                "MGMrpKC4mcnyvM4UEETIINUA+pabMz0CIGeJQA0FfOOOI0HnJROoNdPwJzzSjFb+\n".
+                "/x3aqJ/2jT5BAiBTLEtpY1Rj9v9/VgctelY776G1XFla2K9Sc3FnfBT6vQIgJlqb\n".
+                "tFCwQZczpa/OtOqYKHHpFevnLEVWrlHvCRgJeJU=\n".
+                "-----END RSA PRIVATE KEY-----\n";
+        // Password recipient - Alice
+        $alicePassword = "alice-password";
         // Create cipher
         $cipher = new VirgilChunkCipher();
-        // Set content info
-        $cipher->setContentInfo($contentInfo);
-        // Init decryption.
-        $actualChunkSize = $cipher->startDecryptionWithKey($recipientId, $privateKeyPem512);
-        // Split string to chunks.
-        $chunks = str_split($encryptedData, $actualChunkSize);
-        // Decode.
-        $plainText = "";
-        foreach ($chunks as $chunk) {
-            $plainText .= $cipher->process($chunk);
-        }
-        // Finalize decryption to avoid security issues.
-        $cipher->finish();
-        // Validate results
-        $this->assertEquals($initialText, $plainText);
-    }
-
-    /**
-     * @covers VirgilChunkCipher::addKeyRecipient
-     * @covers VirgilChunkCipher::startDecryptionWithPassword
-     * @covers VirgilChunkCipher::process
-     * @depends test_encryption
-     */
-    public function test_decryption_with_password(array $encryptionDatagram) {
-        $password = "password-recipient";
-        // Get public parameters
-        $contentInfo = $encryptionDatagram[0];
-        $encryptedData = $encryptionDatagram[1];
-        $initialText = $encryptionDatagram[2];
-        // Create cipher
+        $this->assertNotNull($cipher, "Cipher was not created.");
+        $this->assertNotNull($cipher->_cPtr, "Underlying cipher was not created.");
+        // Add recipients to the cipher
+        $cipher->addKeyRecipient($bobCertificateId, $bobPublicKey);
+        $cipher->addKeyRecipient($tedCertificateId, $tedPublicKey);
+        $cipher->addPasswordRecipient($alicePassword);
+        // Encrypt data
+        $encryptSource = new StringSource($initialString);
+        $encryptSink = new StringSink();
+        $cipher->encrypt($encryptSource, $encryptSink, false);
+        $encryptedContentInfo = $cipher->getContentInfo();
+        // Create new cipher
         $cipher = new VirgilChunkCipher();
         // Set content info
-        $cipher->setContentInfo($contentInfo);
-        // Init decryption.
-        $actualChunkSize = $cipher->startDecryptionWithPassword($password);
-        // Split string to chunks.
-        $chunks = str_split($encryptedData, $actualChunkSize);
-        // Decode.
-        $plainText = "";
-        foreach ($chunks as $chunk) {
-            $plainText .= $cipher->process($chunk);
-        }
-        // Finalize decryption to avoid security issues.
-        $cipher->finish();
-        // Validate results
-        $this->assertEquals($initialText, $plainText);
+        $cipher->setContentInfo($encryptedContentInfo);
+        // Decrypt encrypted data
+        $bobDecryptSource = new StringSource($encryptSink->getResult());
+        $bobDecryptSink = new StringSink();
+
+        $tedDecryptSource = new StringSource($encryptSink->getResult());
+        $tedDecryptSink = new StringSink();
+
+        $aliceDecryptSource = new StringSource($encryptSink->getResult());
+        $aliceDecryptSink = new StringSink();
+
+        $cipher->decryptWithKey($bobDecryptSource, $bobDecryptSink, $bobCertificateId, $bobPrivateKey);
+        $cipher->decryptWithKey($tedDecryptSource, $tedDecryptSink, $tedCertificateId, $tedPrivateKey);
+        $cipher->decryptWithPassword($aliceDecryptSource, $aliceDecryptSink, $alicePassword);
+        // Check decrypted data
+        $this->assertEquals($initialString, $bobDecryptSink->getResult());
+        $this->assertEquals($initialString, $tedDecryptSink->getResult());
+        $this->assertEquals($initialString, $aliceDecryptSink->getResult());
     }
 }
 

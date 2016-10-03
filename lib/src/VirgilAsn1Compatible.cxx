@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -36,13 +36,10 @@
 
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 
-#include <sstream>
-
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilCryptoException.h>
-
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
@@ -53,7 +50,7 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
 VirgilByteArray VirgilAsn1Compatible::toAsn1() const {
     VirgilAsn1Writer asn1Writer;
-    (void)asn1Write(asn1Writer);
+    (void) asn1Write(asn1Writer);
     return asn1Writer.finish();
 }
 
@@ -63,14 +60,8 @@ void VirgilAsn1Compatible::fromAsn1(const VirgilByteArray& asn1) {
 }
 
 
-void VirgilAsn1Compatible::checkAsn1ParamNotEmpty(const VirgilByteArray& param,  const char *paramName) const {
+void VirgilAsn1Compatible::checkRequiredField(const VirgilByteArray& param) const {
     if (param.empty()) {
-        std::ostringstream ostr;
-        ostr << "VirgilAsn1Compatible: ";
-        ostr << "Required ASN.1 parameter is not specified.";
-        if (paramName != 0) {
-            ostr << " Parameter name: " << paramName << ".";
-        }
-        throw VirgilCryptoException(ostr.str());
+        throw make_error(VirgilCryptoError::InvalidState);
     }
 }

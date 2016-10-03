@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -35,9 +35,11 @@
  */
 
 #include <virgil/crypto/stream/VirgilBytesDataSink.h>
+
 using virgil::crypto::stream::VirgilBytesDataSink;
 
 #include <virgil/crypto/VirgilByteArray.h>
+
 using virgil::crypto::VirgilByteArray;
 
 VirgilBytesDataSink::VirgilBytesDataSink(VirgilByteArray& out) : out_(out) {
@@ -55,5 +57,5 @@ void VirgilBytesDataSink::reset() {
     out_.clear();
 }
 
-VirgilBytesDataSink::~VirgilBytesDataSink() throw() {
+VirgilBytesDataSink::~VirgilBytesDataSink() noexcept {
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -40,8 +40,6 @@
  */
 
 #include "catch.hpp"
-
-#include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilByteArrayUtils.h>
@@ -186,12 +184,12 @@ TEST_CASE("ASN.1 write: use small buffer", "[asn1-writer]") {
         asn1Writer.writeSet(set);
         VirgilByteArray asn1 = asn1Writer.finish();
         REQUIRE(VirgilByteArrayUtils::bytesToHex(asn1) ==
-            "315f"
-            "30110c0f4142434445464748494a4b4c4d4e4f"
-            "30110c0f4142434445464748494a4b4c4d4e4f"
-            "30110c0f4142434445464748494a4b4c4d4e4f"
-            "30110c0f4142434445464748494a4b4c4d4e4f"
-            "30110c0f4142434445464748494a4b4c4d4e4f"
+                "315f"
+                        "30110c0f4142434445464748494a4b4c4d4e4f"
+                        "30110c0f4142434445464748494a4b4c4d4e4f"
+                        "30110c0f4142434445464748494a4b4c4d4e4f"
+                        "30110c0f4142434445464748494a4b4c4d4e4f"
+                        "30110c0f4142434445464748494a4b4c4d4e4f"
         );
     }
 
@@ -266,5 +264,5 @@ TEST_CASE("ASN.1 write: check overflows ", "[asn1-writer]") {
 TEST_CASE("ASN.1 write: check step by step ASN.1 buffer grows", "[asn1-writer]") {
     VirgilAsn1Writer asn1Writer(1);
     size_t len = 0;
-    REQUIRE_THROWS(for(;;) { len += asn1Writer.writeSequence(len); });
+    REQUIRE_THROWS(for (; ;) { len += asn1Writer.writeSequence(len); });
 }

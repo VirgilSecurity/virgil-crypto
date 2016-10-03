@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -39,6 +39,7 @@
 
 #include <map>
 #include <set>
+#include <memory>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilCustomParams.h>
@@ -47,12 +48,9 @@
  * @name Forward declaration
  */
 /// @{
-namespace virgil { namespace crypto {
-    class VirgilCipherBaseImpl;
-    namespace foundation {
-        class VirgilSymmetricCipher;
-    }
-}}
+namespace virgil { namespace crypto { namespace foundation {
+class VirgilSymmetricCipher;
+}}}
 /// @}
 
 namespace virgil { namespace crypto {
@@ -63,13 +61,10 @@ namespace virgil { namespace crypto {
 class VirgilCipherBase {
 public:
     /**
-     * @brief Initialize randomization module used by encryption.
+     * @brief Initialize submodules.
      */
     VirgilCipherBase();
-    /**
-     * @brief Dispose used resources.
-     */
-    virtual ~VirgilCipherBase() throw();
+
 public:
     /**
      * @name Recipent management
@@ -77,22 +72,58 @@ public:
     ///@{
     /**
      * @brief Add recipient defined with id and public key.
+     * @param recipientId Recipient's unique identifier, MUST not be empty.
+     * @param publicKey Recipient's public key, MUST not be empty.
+     * @throw VirgilCryptoException with VirgilCryptoErrorCode::InvalidArgument, if invalid arguments are given.
      */
     void addKeyRecipient(const VirgilByteArray& recipientId, const VirgilByteArray& publicKey);
+
     /**
-     * @brief Remove recipient with given id.
-     * @note If recipient with given id is absent - do nothing.
+     * @brief Remove recipient with given identifier.
+     * @param recipientId Recipient's unique identifier.
+     * @note If recipient with given identifier is absent - do nothing.
      */
     void removeKeyRecipient(const VirgilByteArray& recipientId);
+
+    /**
+     * @brief Check whether recipient with given identifier exists.
+     *
+     * Search order:
+     *     1. Local structures - useful when cipher is used for encryption.
+     *     2. ContentInfo structure - useful when cipher is used for decryption.
+     *
+     * @param recipientId Recipient's unique identifier.
+     * @return true if recipient with given identifier exists, false - otherwise.
+     */
+    bool keyRecipientExists(const VirgilByteArray& recipientId) const;
+
     /**
      * @brief Add recipient defined with password.
+     *
+     * Use it for password based encryption.
+     *
+     * @param pwd Recipient's password, MUST not be empty.
+     * @throw VirgilCryptoException with VirgilCryptoErrorCode::InvalidArgument, if empty argument are given.
      */
     void addPasswordRecipient(const VirgilByteArray& pwd);
+
     /**
      * @brief Remove recipient with given password.
      * @note If recipient with given password is absent - do nothing.
      */
     void removePasswordRecipient(const VirgilByteArray& pwd);
+
+    /**
+     * @brief Check whether recipient with given password exists.
+     *
+     * Search order:
+     *     1. Local structures - useful when cipher is used for encryption.
+     *
+     * @param password Recipient's unique identifier.
+     * @return true if recipient with given password exists, false - otherwise.
+     */
+    bool passwordRecipientExists(const VirgilByteArray& password) const;
+
     /**
      * @brief Remove all recipients.
      */
@@ -110,24 +141,28 @@ public:
      */
     /**
      * @brief Return content info.
+     *
+     * Return Virgil Security Cryptogram, that contains public algorithm parameters that was used for encryption.
+     *
      * @note Call this method after encryption process.
+     * @throw VirgilCryptoException with VirgilCryptoErrorCode::InvalidOperation,
+     *     if this function is used before any encryption operation.
      */
     VirgilByteArray getContentInfo() const;
+
     /**
      * @brief Create content info object from ASN.1 structure.
+     * @param contentInfo Virgil Security Cryptogram.
      * @note Call this method before decryption process.
+     * @throw VirgilCryptoException with VirgilCryptoErrorCode::InvalidFormat, if content info can not be parsed.
      */
     void setContentInfo(const VirgilByteArray& contentInfo);
+
     /**
      * @brief Read content info size as part of the data.
      * @return Size of the content info if it is exist as part of the data, 0 - otherwise.
      */
     static size_t defineContentInfoSize(const VirgilByteArray& data);
-    /**
-     * @brief Provide access to the object that handles custom parameters.
-     * @note Use this method to add custom parameters to the content info object.
-     * @note Use this method before encryption process.
-     */
     ///@}
     /**
      * @name Custom parameters Access / Management
@@ -137,13 +172,41 @@ public:
      * @note This information is stored as part of the content info in unencrypted format.
      */
     ///@{
+    /**
+     * @brief Provide access to the object that handles custom parameters.
+     * @note Use this method to add custom parameters to the content info object.
+     * @note Use this method before encryption process.
+     */
     VirgilCustomParams& customParams();
+
     /**
      * @brief Provide readonly access to the object that handles custom parameters.
      * @note Use this method to read custom parameters from the content info object.
      */
     const VirgilCustomParams& customParams() const;
     ///@}
+    /**
+     * @name Helpers to create shared key with Diffie–Hellman algorithms
+     */
+    ///@{
+    /**
+     * @brief Compute shared secret key on a given keys
+     *
+     * @param publicKey - alice public key.
+     * @param privateKey - bob private key.
+     * @param privateKeyPassword - bob private key password.
+     *
+     * @throw VirgilCryptoException - if keys are invalid or keys are not compatible.
+     *
+     * @warning Keys SHOULD be of the identical type, i.e. both of type Curve25519.
+     *
+     * @see VirgilKeyPair::generate(const VirgilKeyPair&, const VirgilByteArray&, const VirgilByteArray&)
+     */
+    static VirgilByteArray computeShared(
+            const VirgilByteArray& publicKey,
+            const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    ///@}
+
 protected:
     /**
      * @brief Make attempt to read content info from the encrypted data.
@@ -154,6 +217,7 @@ protected:
      * return Encrypted data without content info.
      */
     VirgilByteArray tryReadContentInfo(const VirgilByteArray& encryptedData);
+
     /**
      * @brief Configures symmetric cipher for encryption.
      * @return Configured cipher.
@@ -172,15 +236,18 @@ protected:
      * @param privateKeyPassword - user's private key password.
      * @return Configured cipher.
      */
-    virgil::crypto::foundation::VirgilSymmetricCipher& initDecryption(const VirgilByteArray& encryptedDataInfo,
+    virgil::crypto::foundation::VirgilSymmetricCipher& initDecryption(
+            const VirgilByteArray& encryptedDataInfo,
             const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
             const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+
     /**
      * @brief Configures symmetric cipher for decryption based on the recipient's password.
      * @param pwd - recipient's password.
      * @return Configured cipher.
      */
     virgil::crypto::foundation::VirgilSymmetricCipher& initDecryptionWithPassword(const VirgilByteArray& pwd);
+
     /**
      * @brief Configures symmetric cipher for decryption based on the recipient's id and private key.
      * @param recipientId - recipient's id.
@@ -188,13 +255,16 @@ protected:
      * @param privateKeyPassword - recipient's private key password.
      * @return Configured cipher.
      */
-    virgil::crypto::foundation::VirgilSymmetricCipher& initDecryptionWithKey(const VirgilByteArray& recipientId,
+    virgil::crypto::foundation::VirgilSymmetricCipher& initDecryptionWithKey(
+            const VirgilByteArray& recipientId,
             const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword);
+
     /**
      * @brief Return symmetric cipher configure by one of the methods:
      *     initEncryption(), initDecryptionWithPassword(), initDecryptionWithKey.
      */
     virgil::crypto::foundation::VirgilSymmetricCipher& getSymmetricCipher();
+
     /**
      * @brief Build VirgilContentInfo object.
      *
@@ -202,20 +272,29 @@ protected:
      * @note This method SHOULD be called after encryption process is finished.
      */
     void buildContentInfo();
-     /**
-      * @brief Clear all information related to the cipher.
-      *
-      * Clear symmetric cipher and correspond internal states.
-      * @note This method SHOULD be called after encryption or decryption process is finished.
-      * @note You CAN not use symmetric cipher returned by the method @link getSymmetricCipher () @endlink,
-      *     after this method call.
-      */
+
+    /**
+     * @brief Clear all information related to the cipher.
+     *
+     * Clear symmetric cipher and correspond internal states.
+     * @note This method SHOULD be called after encryption or decryption process is finished.
+     * @note You CAN not use symmetric cipher returned by the method @link getSymmetricCipher () @endlink,
+     *     after this method call.
+     */
     void clearCipherInfo();
+
+public:
+    //! @cond Doxygen_Suppress
+    VirgilCipherBase(VirgilCipherBase&& rhs) noexcept;
+
+    VirgilCipherBase& operator=(VirgilCipherBase&& rhs) noexcept;
+
+    virtual ~VirgilCipherBase() noexcept;
+    //! @endcond
 private:
-    VirgilCipherBase(const VirgilCipherBase& other);
-    VirgilCipherBase& operator=(const VirgilCipherBase& rhs);
-private:
-    VirgilCipherBaseImpl *impl_;
+    class Impl;
+
+    std::unique_ptr<Impl> impl_;
 };
 
 }}

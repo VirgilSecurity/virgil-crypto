@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -71,8 +71,10 @@ public:
      * @endcode
      */
     ///@{
-    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+    virtual size_t asn1Write(
+            virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
             size_t childWrittenBytes = 0) const;
+
     virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
 public:
@@ -94,53 +96,58 @@ public:
      * @brief Set parameter with type: Integer.
      */
     void setInteger(const VirgilByteArray& key, int value);
+
     /**
      * @brief Get parameter with type: Integer.
      * @throw VirgilCryptoException if given key is absent.
      */
     int getInteger(const VirgilByteArray& key) const;
+
     /**
      * @brief Remove parameter with type: Integer.
      * @note Do nothing if given key is absent.
      */
     void removeInteger(const VirgilByteArray& key);
+
     /**
      * @brief Set parameter with type: String.
      */
     void setString(const VirgilByteArray& key, const VirgilByteArray& value);
+
     /**
      * @brief Get parameter with type: String.
      * @throw VirgilCryptoException if given key is absent.
      */
     VirgilByteArray getString(const VirgilByteArray& key) const;
+
     /**
      * @brief Remove parameter with type: String.
      * @note Do nothing if given key is absent.
      */
     void removeString(const VirgilByteArray& key);
+
     /**
      * @brief Set parameter with type: Data.
      */
     void setData(const VirgilByteArray& key, const VirgilByteArray& value);
+
     /**
      * @brief Get parameter with type: Data.
      * @throw VirgilCryptoException if given key is absent.
      */
     VirgilByteArray getData(const VirgilByteArray& key) const;
+
     /**
      * @brief Remove parameter with type: Data.
      * @note Do nothing if given key is absent.
      */
     void removeData(const VirgilByteArray& key);
+
     /**
      * @brief Remove all parameters.
      */
     void clear();
     ///@}
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilCustomParams() throw();
 private:
     std::map<VirgilByteArray, int> intValues_;
     std::map<VirgilByteArray, VirgilByteArray> stringValues_;

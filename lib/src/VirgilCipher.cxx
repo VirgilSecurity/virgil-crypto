@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -36,16 +36,11 @@
 
 #include <virgil/crypto/VirgilCipher.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
 
 using virgil::crypto::VirgilCipher;
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::foundation::VirgilSymmetricCipher;
-
-
-VirgilCipher::~VirgilCipher() throw() {
-}
 
 VirgilByteArray VirgilCipher::encrypt(const VirgilByteArray& data, bool embedContentInfo) {
     VirgilSymmetricCipher& symmetricCipher = initEncryption();
@@ -67,7 +62,8 @@ VirgilByteArray VirgilCipher::encrypt(const VirgilByteArray& data, bool embedCon
     return encryptedData;
 }
 
-VirgilByteArray VirgilCipher::decryptWithKey(const VirgilByteArray& encryptedData,
+VirgilByteArray VirgilCipher::decryptWithKey(
+        const VirgilByteArray& encryptedData,
         const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
 

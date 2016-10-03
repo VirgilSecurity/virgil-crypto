@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -54,18 +54,22 @@ public:
      * @brief Creates data sink based on std::ostream object.
      */
     explicit VirgilStreamDataSink(std::ostream& out);
+
     /**
      * @brief Polymorphic destructor.
      */
-    virtual ~VirgilStreamDataSink() throw();
+    virtual ~VirgilStreamDataSink() noexcept;
+
     /**
      * @brief Overriding of @link VirgilDataSink::isGood() @endlink method.
      */
     virtual bool isGood();
+
     /**
      * @brief Overriding of @link VirgilDataSink::write() @endlink method.
      */
     virtual void write(const virgil::crypto::VirgilByteArray& data);
+
 private:
     std::ostream& out_;
 };

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -35,6 +35,7 @@
  */
 
 
+
 // Module name
 %module(directors="1") @SWIG_MODULE_NAME@
 
@@ -45,7 +46,7 @@
 #cmakedefine LIB_LOW_LEVEL_API
 
 %insert ("begin") %{
-#include <cstddef>
+#include <cstdlib>
 %}
 
 #if defined(LIB_LOW_LEVEL_API)
@@ -63,6 +64,9 @@
 // Custom includes
 %include "common.i"
 %include "util.i"
+
+// Package std
+%ignore std::to_string;
 
 // Package: virgil::crypto
 %ignore virgil::crypto::str2bytes;
@@ -82,11 +86,18 @@ INCLUDE_CLASS(VirgilVersion, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::crypto, virgil/crypto)
 
+// Package: virgil::crypto::foundation
+%ignore *::VirgilHash(const char *);
+%ignore *::VirgilKDF(char const *);
+%ignore *::VirgilSymmetricCipher(char const *);
+%ignore *::VirgilRandom(virgil::crypto::VirgilByteArray const &);
+
 // Package: virgil::crypto::foundation::asn1
 %ignore *::asn1Write;
 %ignore *::asn1Read;
 %ignore *::jsonWrite;
 %ignore *::jsonRead;
+
 #if defined(LIB_LOW_LEVEL_API)
     INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto::foundation::asn1, virgil/crypto/foundation/asn1)
     INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto::foundation::asn1, virgil/crypto/foundation/asn1)
@@ -104,12 +115,12 @@ INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::foundation::asn1, virgil/cry
     INCLUDE_CLASS(VirgilKDF, virgil::crypto::foundation, virgil/crypto/foundation)
     INCLUDE_CLASS(VirgilSymmetricCipher, virgil::crypto::foundation, virgil/crypto/foundation)
     INCLUDE_CLASS(VirgilAsymmetricCipher, virgil::crypto::foundation, virgil/crypto/foundation)
-    INCLUDE_CLASS(VirgilRandom, virgil::crypto::foundation, virgil/crypto/foundation)
     INCLUDE_CLASS(VirgilPBE, virgil::crypto::foundation, virgil/crypto/foundation)
 #endif /* defined(LIB_LOW_LEVEL_API) */
 INCLUDE_CLASS(VirgilHash, virgil::crypto::foundation, virgil/crypto/foundation)
 INCLUDE_CLASS(VirgilBase64, virgil::crypto::foundation, virgil/crypto/foundation)
 INCLUDE_CLASS(VirgilPBKDF, virgil::crypto::foundation, virgil/crypto/foundation)
+INCLUDE_CLASS(VirgilRandom, virgil::crypto::foundation, virgil/crypto/foundation)
 
 // Package: virgil::crypto
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCustomParams, virgil::crypto, virgil/crypto)
@@ -120,7 +131,10 @@ INCLUDE_CLASS(VirgilChunkCipher, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilSigner, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilStreamSigner, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilStreamCipher, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilTinyCipher, virgil::crypto, virgil/crypto)
 %ignore virgil::crypto::VirgilByteArrayUtils::zeroize;
+%ignore virgil::crypto::VirgilByteArrayUtils::append;
+%ignore virgil::crypto::VirgilByteArrayUtils::popBytes;
 INCLUDE_CLASS(VirgilByteArrayUtils, virgil::crypto, virgil/crypto)
 
 // Package: virgil::crypto::foundation::cms

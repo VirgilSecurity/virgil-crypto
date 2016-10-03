@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -36,74 +36,77 @@
 
 #include <virgil/crypto/foundation/VirgilRandom.h>
 
-#include <algorithm>
+#include <array>
+#include <atomic>
 
 #include <mbedtls/entropy.h>
 #include <mbedtls/ctr_drbg.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/foundation/PolarsslException.h>
+#include <virgil/crypto/VirgilByteArrayUtils.h>
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
+
+#include <virgil/crypto/internal/utils.h>
+#include <virgil/crypto/foundation/internal/mbedtls_context.h>
 
 
 using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilByteArrayUtils;
 
 using virgil::crypto::foundation::VirgilRandom;
-using virgil::crypto::foundation::VirgilRandomImpl;
-using virgil::crypto::foundation::PolarsslException;
 
-namespace virgil { namespace crypto { namespace foundation {
-
-class VirgilRandomImpl {
+class VirgilRandom::Impl {
 public:
-    mbedtls_ctr_drbg_context ctr_drbg;
-    mbedtls_entropy_context entropy;
+    std::atomic<bool> is_init{ false };
+    VirgilByteArray personalInfo;
+    internal::mbedtls_context <mbedtls_ctr_drbg_context> ctr_drbg_ctx;
+    internal::mbedtls_context <mbedtls_entropy_context> entropy_ctx;
 };
 
-}}}
-
-VirgilRandom::VirgilRandom(const VirgilByteArray& personalInfo) : impl_(new VirgilRandomImpl()) {
-    mbedtls_entropy_init(&impl_->entropy);
-
-    ::mbedtls_ctr_drbg_init(&impl_->ctr_drbg);
-    MBEDTLS_ERROR_HANDLER_DISPOSE(
-        ::mbedtls_ctr_drbg_seed(&impl_->ctr_drbg, mbedtls_entropy_func, &impl_->entropy,
-                VIRGIL_BYTE_ARRAY_TO_PTR_AND_LEN(personalInfo)),
-        {
-            ::mbedtls_entropy_free(&impl_->entropy);
-            delete impl_;
-        }
-    );
+VirgilRandom::VirgilRandom(const VirgilByteArray& personalInfo) : impl_(std::make_unique<Impl>()) {
+    impl_->personalInfo = personalInfo;
 }
 
+VirgilRandom::VirgilRandom(const std::string& personalInfo) : impl_(std::make_unique<Impl>()) {
+    impl_->personalInfo = VirgilByteArrayUtils::stringToBytes(personalInfo);
+}
+
+VirgilRandom::VirgilRandom(VirgilRandom&& rhs) noexcept = default;
+
+VirgilRandom& VirgilRandom::operator=(VirgilRandom&& rhs) noexcept = default;
+
+VirgilRandom::~VirgilRandom() noexcept = default;
+
 VirgilByteArray VirgilRandom::randomize(size_t bytesNum) {
-    unsigned char buf[MBEDTLS_CTR_DRBG_MAX_REQUEST] = {0x0};
+
+    if (!impl_->is_init) {
+        impl_->ctr_drbg_ctx.setup(mbedtls_entropy_func, impl_->entropy_ctx.get(), impl_->personalInfo);
+        VirgilByteArrayUtils::zeroize(impl_->personalInfo);
+        impl_->personalInfo.clear();
+        impl_->is_init = true;
+    }
+
+    std::array<unsigned char, MBEDTLS_CTR_DRBG_MAX_REQUEST> buf;
 
     VirgilByteArray randomBytes;
     randomBytes.reserve(bytesNum);
     while (randomBytes.size() < bytesNum) {
-        const size_t randomChunkSize = std::min(bytesNum, (size_t)MBEDTLS_CTR_DRBG_MAX_REQUEST);
-        MBEDTLS_ERROR_HANDLER(
-            ::mbedtls_ctr_drbg_random(&impl_->ctr_drbg, buf, randomChunkSize)
+        const size_t randomChunkSize = std::min(bytesNum, (size_t) MBEDTLS_CTR_DRBG_MAX_REQUEST);
+        system_crypto_handler(
+                mbedtls_ctr_drbg_random(impl_->ctr_drbg_ctx.get(), buf.data(), randomChunkSize)
         );
-        randomBytes.insert(randomBytes.end(), buf, buf + randomChunkSize);
+        randomBytes.insert(randomBytes.end(), buf.begin(), buf.begin() + randomChunkSize);
     }
     return randomBytes;
 }
 
 size_t VirgilRandom::randomize() {
     VirgilByteArray randomBytes = randomize(sizeof(size_t));
-    return *((size_t *)&randomBytes[0]);
+    return *((size_t*) &randomBytes[0]);
 }
 
 size_t VirgilRandom::randomize(size_t min, size_t max) {
-    if (min > max) {
-        throw std::logic_error("VirgilRandom: wrong range - min is greater than max");
+    if (min >= max) {
+        throw make_error(VirgilCryptoError::InvalidArgument, "MIN value is greater or equal to MAX.");
     }
     return min + (randomize() % size_t(max - min));
-}
-
-VirgilRandom::~VirgilRandom() throw() {
-    ::mbedtls_ctr_drbg_free(&impl_->ctr_drbg);
-    ::mbedtls_entropy_free(&impl_->entropy);
-    delete impl_;
 }

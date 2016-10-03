@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 Virgil Security Inc.
+# Copyright (C) 2015-2016 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -43,7 +43,7 @@ set (RUBY_MODULE_NAME ${PROJECT_NAME})
 set (SWIG_MODULE_NAME ${RUBY_MODULE_NAME})
 
 find_host_package (Ruby REQUIRED)
-include_directories (${RUBY_INCLUDE_DIRS})
+include_directories (SYSTEM ${RUBY_INCLUDE_DIRS})
 
 if (RUBY_VERSION)
     string (REPLACE "." ";" RUBY_VERSION_LIST ${RUBY_VERSION})

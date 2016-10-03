@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -37,6 +37,7 @@
 #ifndef VIRGIL_CRYPTO_SYMMETRIC_SIPHER_H
 #define VIRGIL_CRYPTO_SYMMETRIC_SIPHER_H
 
+#include <memory>
 #include <string>
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -45,14 +46,8 @@
 namespace virgil { namespace crypto { namespace foundation {
 
 /**
- * @name Forward declarations
- */
-///@{
-class VirgilSymmetricCipherImpl;
-///@}
-
-/**
  * @brief Provides symmetric ciphers algorithms.
+ * @ingroup Cipher
  */
 class VirgilSymmetricCipher : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
@@ -60,34 +55,51 @@ public:
      * @name Additional types
      */
     ///@{
-    typedef enum {
-        VirgilSymmetricCipherPadding_PKCS7,
-        VirgilSymmetricCipherPadding_OneAndZeros,
-        VirgilSymmetricCipherPadding_ZerosAndLen,
-        VirgilSymmetricCipherPadding_Zeros
-    } VirgilSymmetricCipherPadding;
+    /**
+     * @brief Padding modes for the symmetric cipher.
+     */
+    enum class Padding {
+        PKCS7 = 0,   ///< Padding mode: PKCS7 padding (default)
+        OneAndZeros, ///< Padding mode: ISO/IEC 7816-4 padding
+        ZerosAndLen, ///< Padding mode: ANSI X.923 padding
+        Zeros,       ///< Padding mode: zero padding (not reversible!)
+        None         ///< Padding mode: never pad (full blocks only)
+    };
+
+    /**
+     * Enumerates possible Symmetric Cipher algorithms.
+     */
+    enum class Algorithm {
+        AES_256_CBC, ///< Cipher algorithm: AES-256, mode: CBC
+        AES_256_GCM  ///< Cipher algorithm: AES-256, mode: GCM
+    };
     ///@}
 
 public:
-    /**
-     * @name Creation methods
-     */
-    ///@{
-    /**
-     * @brief Creates object that handles AES-256 encryption / decription algorithms.
-     */
-    static VirgilSymmetricCipher aes256();
-    ///@}
+
     /**
      * @brief Create object with undefined algorithm.
      * @warning SHOULD be used in conjunction with VirgilAsn1Compatible interface,
-     *     i.e. VirgilSymmetricCipher cipher = VirgilSymmetricCipher().fromAsn1(asn1);
+     *     i.e. VirgilSymmetricCipher cipher; cipher.fromAsn1(asn1);
      */
     VirgilSymmetricCipher();
+
     /**
-     * @brief Polymorphic destructor.
+     * @brief Create object with specific algorithm type.
      */
-    virtual ~VirgilSymmetricCipher() throw();
+    explicit VirgilSymmetricCipher(Algorithm algorithm);
+
+    /**
+     * @brief Create object with given algorithm name.
+     * @note Name format: {ALG}-{LEN}-{MODE}, i.e AES-256-GCM.
+     */
+    explicit VirgilSymmetricCipher(const std::string& name);
+
+    /**
+     * @brief Create object with given algorithm name.
+     * @note Name format: {ALG}-{LEN}-{MODE}, i.e AES-256-GCM.
+     */
+    explicit VirgilSymmetricCipher(const char* name);
     ///@}
     /**
      * @name Info
@@ -97,46 +109,60 @@ public:
      * @brief Returns the name of the given cipher, as a string.
      */
     std::string name() const;
+
     /**
      * @brief Returns the block size of the current cipher.
      * @return block size, in octets.
      */
     size_t blockSize() const;
+
     /**
      * @brief Returns the size of the cipher's IV in octets.
      */
     size_t ivSize() const;
+
     /**
      * @brief Returns the key length of the cipher.
      * @return key length, in bits.
      */
     size_t keySize() const;
+
     /**
      * @brief Returns the key length of the cipher.
      * @return key length, in octets.
      */
     size_t keyLength() const;
+
     /**
      * @brief Returns the authentication tag length of the cipher.
      * @return tag length, in octets.
      */
     size_t authTagLength() const;
+
     /**
      * @brief Returns true if cipher is in the encryption mode.
      */
     bool isEncryptionMode() const;
+
     /**
      * @brief Returns true if cipher is in the decryption mode.
      */
     bool isDecryptionMode() const;
+
     /**
      * @brief Returns true if cipher is configured to support authenticated encryption and decryption.
      */
     bool isAuthMode() const;
+
     /**
      * @brief Returns true if cipher support padding.
      */
     bool isSupportPadding() const;
+
+    /**
+     * @brief Return cipher IV, or NONCE_COUNTER for CTR-mode ciphers
+     */
+    VirgilByteArray iv() const;
     ///@}
 
     /**
@@ -150,6 +176,7 @@ public:
      * @warning Only one key CAN be set.
      */
     void setEncryptionKey(const virgil::crypto::VirgilByteArray& key);
+
     /**
      * @brief Configures decryption key.
      *
@@ -157,6 +184,7 @@ public:
      * @warning Only one key CAN be set.
      */
     void setDecryptionKey(const virgil::crypto::VirgilByteArray& key);
+
     /**
      * @brief Defines padding mode.
      *
@@ -164,15 +192,26 @@ public:
      * @note This parameter is used only for cipher modes that use padding.
      * @see isSupportPadding()
      */
-    void setPadding(VirgilSymmetricCipherPadding padding);
+    void setPadding(VirgilSymmetricCipher::Padding padding);
+
     /**
      * @brief Configures the initialization vector.
      */
     void setIV(const virgil::crypto::VirgilByteArray& iv);
+
+    /**
+     * @brief Add additional data (for AEAD ciphers).
+     * @note Currently only supported with GCM.
+     * @note Must be called before reset().
+     * @see isAuthMode()
+     */
+    void setAuthData(const virgil::crypto::VirgilByteArray& authData);
+
     /**
      * @brief Finish preparation before encryption / decryption.
      */
     void reset();
+
     /**
      * @brief Clear all configuration settings.
      * @note This method SHOULD be used if class instance was used for encryption
@@ -192,7 +231,8 @@ public:
      * @param iv - initialization vector.
      * @return Encrypted or decrypted bytes (rely on the current mode).
      */
-    virgil::crypto::VirgilByteArray crypt(const virgil::crypto::VirgilByteArray& input,
+    virgil::crypto::VirgilByteArray crypt(
+            const virgil::crypto::VirgilByteArray& input,
             const virgil::crypto::VirgilByteArray& iv);
     ///@}
     /**
@@ -209,6 +249,7 @@ public:
      * @return Encrypted or decrypted bytes (rely on the current mode).
      */
     virgil::crypto::VirgilByteArray update(const virgil::crypto::VirgilByteArray& input);
+
     /**
      * @brief Cipher finalization method.
      *
@@ -220,37 +261,45 @@ public:
     virgil::crypto::VirgilByteArray finish();
     ///@}
     /**
-     * @name Copy constructor / assignment operator
-     * @warning Copy constructor and assignment operator create copy of the object as it was created
-     *          by on of the creation methods. All changes in the internal state,
-     *          that was made after creation, are not copied!
-     */
-    ///@{
-    VirgilSymmetricCipher(const VirgilSymmetricCipher& other);
-    VirgilSymmetricCipher& operator=(const VirgilSymmetricCipher& rhs);
-    ///@}
-    /**
      * @name VirgilAsn1Compatible implementation
      */
     ///@{
-    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
-            size_t childWrittenBytes = 0) const;
-    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
+    size_t asn1Write(
+            virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+            size_t childWrittenBytes = 0) const override;
+
+    void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader) override;
     ///@}
+public:
+    //! @cond Doxygen_Suppress
+    VirgilSymmetricCipher(VirgilSymmetricCipher&& rhs) noexcept;
+
+    VirgilSymmetricCipher& operator=(VirgilSymmetricCipher&& rhs) noexcept;
+
+    virtual ~VirgilSymmetricCipher() noexcept;
+    //! @endcond
+
 private:
-    /**
-     * @brief Creates and initialize cipher with specified type.
-     * @warning Constructor CAN NOT be used directly, use one of factory methods to create apropriate cipher.
-     */
-    explicit VirgilSymmetricCipher(int type);
     /**
      * @brief If internal state is not initialized with specific algorithm exception will be thrown.
      */
     void checkState() const;
+
 private:
-    VirgilSymmetricCipherImpl *impl_;
+    class Impl;
+
+    std::unique_ptr<Impl> impl_;
 };
 
 }}}
+
+namespace std {
+/**
+ * @brief Returns string representation of the Hash algorithm.
+ * @return Symmetric cipher algorithm as string.
+ * @ingroup Cipher
+ */
+string to_string(virgil::crypto::foundation::VirgilSymmetricCipher::Algorithm alg);
+}
 
 #endif /* VIRGIL_CRYPTO_SYMMETRIC_SIPHER_H */

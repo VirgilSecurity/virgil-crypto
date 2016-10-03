@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -41,8 +41,6 @@
 
 #include "catch.hpp"
 
-#include <string>
-
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
 #include <virgil/crypto/foundation/VirgilRandom.h>
@@ -56,7 +54,7 @@ using virgil::crypto::foundation::VirgilSymmetricCipher;
 using virgil::crypto::foundation::VirgilRandom;
 
 TEST_CASE("Symmetric Cipher", "[symmetric-cipher]") {
-    VirgilSymmetricCipher cipher = VirgilSymmetricCipher::aes256();
+    VirgilSymmetricCipher cipher(VirgilSymmetricCipher::Algorithm::AES_256_GCM);
     VirgilByteArray plainData = str2bytes("data to be encrypted with symmetric cipher");
 
     SECTION("with known KEY and IV") {
@@ -68,14 +66,14 @@ TEST_CASE("Symmetric Cipher", "[symmetric-cipher]") {
         // Encrypt
         cipher.setEncryptionKey(key);
         if (cipher.isSupportPadding()) {
-            cipher.setPadding(VirgilSymmetricCipher::VirgilSymmetricCipherPadding_PKCS7);
+            cipher.setPadding(VirgilSymmetricCipher::Padding::PKCS7);
         }
         VirgilByteArray encryptedData = cipher.crypt(plainData, iv);
         // Decrypt
         cipher.clear();
         cipher.setDecryptionKey(key);
         if (cipher.isSupportPadding()) {
-            cipher.setPadding(VirgilSymmetricCipher::VirgilSymmetricCipherPadding_PKCS7);
+            cipher.setPadding(VirgilSymmetricCipher::Padding::PKCS7);
         }
         VirgilByteArray decryptedData = cipher.crypt(encryptedData, iv);
         // Check
@@ -91,14 +89,14 @@ TEST_CASE("Symmetric Cipher", "[symmetric-cipher]") {
         // Encrypt
         cipher.setEncryptionKey(key);
         if (cipher.isSupportPadding()) {
-            cipher.setPadding(VirgilSymmetricCipher::VirgilSymmetricCipherPadding_PKCS7);
+            cipher.setPadding(VirgilSymmetricCipher::Padding::PKCS7);
         }
         VirgilByteArray encryptedData = cipher.crypt(plainData, iv);
         // Decrypt
         cipher.clear();
         cipher.setDecryptionKey(key);
         if (cipher.isSupportPadding()) {
-            cipher.setPadding(VirgilSymmetricCipher::VirgilSymmetricCipherPadding_PKCS7);
+            cipher.setPadding(VirgilSymmetricCipher::Padding::PKCS7);
         }
         VirgilByteArray decryptedData = cipher.crypt(encryptedData, iv);
         // Check

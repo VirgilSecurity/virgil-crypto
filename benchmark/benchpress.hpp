@@ -34,6 +34,20 @@
 #include <thread>      // thread
 #include <vector>      // vector
 
+#if UCLIBC
+/*!
+@brief Implemented standard methods that uClibc++ not implemented yet
+*/
+namespace std
+{
+  static inline string to_string(unsigned val) {
+      stringstream val_stream;
+      val_stream << val;
+      return val_stream.str();
+  }
+}
+#endif // UCLIBC
+
 namespace benchpress {
 
 /*
@@ -152,16 +166,16 @@ public:
  * This function can be used to keep variables on the stack that would normally be optimised away
  * by the compiler, without introducing any additional instructions or changing the behaviour of
  * the program.
- * 
- * This function uses the Extended Asm syntax of GCC. The volatile keyword indicates that the 
- * following instructions have some unknowable side-effect, and ensures that the code will neither 
+ *
+ * This function uses the Extended Asm syntax of GCC. The volatile keyword indicates that the
+ * following instructions have some unknowable side-effect, and ensures that the code will neither
  * be moved, nor optimised away.
  *
  * AssemblerTemplate: No operands.
  *
  * OutputOperands: None.
  *
- * InputOperands: The "g" is a wildcard constraint which tells the compiler that it may choose what 
+ * InputOperands: The "g" is a wildcard constraint which tells the compiler that it may choose what
  * to use for p (eg. a register OR a memory reference).
  *
  * Clobbers: The "memory" clobber tells the compiler that the assembly code performs reads or writes

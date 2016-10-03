@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -52,11 +52,13 @@ public:
      * @brief Return true if target source still contains unread data.
      */
     virtual bool hasData() = 0;
+
     /**
      * @brief Return next portion of read data from target source.
      */
     virtual VirgilByteArray read() = 0;
-    virtual ~VirgilDataSource() throw() {}
+
+    virtual ~VirgilDataSource() noexcept = default;
 };
 
 }}

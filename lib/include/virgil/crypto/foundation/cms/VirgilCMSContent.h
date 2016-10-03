@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -45,29 +45,32 @@
 namespace virgil { namespace crypto { namespace foundation { namespace cms {
 
 /**
- * @brief Enumeration of possible CMS Content Types
- * @see RFC 5652 section 3.
- */
-typedef enum {
-    VirgilCMSContentType_Data = 0,
-    VirgilCMSContentType_SignedData,
-    VirgilCMSContentType_EnvelopedData,
-    VirgilCMSContentType_DigestedData,
-    VirgilCMSContentType_EncryptedData,
-    VirgilCMSContentType_AuthenticatedData
-} VirgilCMSContentType;
-
-/**
  * @brief Data object that represent CMS structure: ContentInfo.
  * @see RFC 5652 section 3.
  */
 class VirgilCMSContent : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
     /**
+     * @brief Enumeration of possible CMS Content Types
+     * @see RFC 5652 section 3.
+     */
+    enum class Type {
+        Data = 0,
+        SignedData,
+        EnvelopedData,
+        DigestedData,
+        EncryptedData,
+        AuthenticatedData,
+        SignedAndEnvelopedData,
+        DataWithAttributes,
+        EncryptedPrivateKeyInfo
+    };
+
+    /**
      * @property contentType
      * @brief Indicates the type of the associated content.
      */
-    VirgilCMSContentType contentType;
+    VirgilCMSContent::Type contentType;
     /**
      * @property content
      * @brief Associated data.
@@ -87,24 +90,22 @@ public:
      * @endcode
      */
     ///@{
-    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+    virtual size_t asn1Write(
+            virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
             size_t childWrittenBytes = 0) const;
+
     virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
     ///@}
-public:
-    /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilCMSContent() throw();
 private:
     /**
      * @brief Convert given content type to the appropriate OID.
      */
-    static std::string contentTypeToOID(VirgilCMSContentType contentType);
+    static std::string contentTypeToOID(VirgilCMSContent::Type contentType);
+
     /**
      * @brief Convert given OID to the appropriate content type.
      */
-    static VirgilCMSContentType oidToContentType(const std::string& oid);
+    static VirgilCMSContent::Type oidToContentType(const std::string& oid);
 };
 
 }}}}

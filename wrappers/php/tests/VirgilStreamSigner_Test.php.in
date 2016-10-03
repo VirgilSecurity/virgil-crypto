@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -60,7 +60,7 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
     public function test_data_sign_verify_with_generated_keys() {
         $initialString = "very long string to be signed";
         $dataSource = new StringSource($initialString);
-        $key = new VirgilKeyPair();
+        $key = VirgilKeyPair::generateRecommended();
 
         $signer = new VirgilStreamSigner();
         $dataSource->reset();
@@ -78,7 +78,7 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
     public function test_data_sign_verify_with_generated_keys_with_password() {
         $initialString = "very long string to be signed";
         $privateKeyPassword = "password";
-        $key = new VirgilKeyPair($privateKeyPassword);
+        $key = VirgilKeyPair::generateRecommended($privateKeyPassword);
 
         $signer = new VirgilStreamSigner();
         $dataSource = new StringSource($initialString);
@@ -98,7 +98,7 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
     public function test_data_sign_verify_with_generated_keys_and_wrong_password() {
         $initialString = "very long string to be signed";
         $privateKeyPassword = "password";
-        $key = new VirgilKeyPair($privateKeyPassword);
+        $key = VirgilKeyPair::generateRecommended($privateKeyPassword);
 
         $signer = new VirgilStreamSigner();
         $dataSource = new StringSource($initialString);
@@ -147,7 +147,6 @@ class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
      * @covers VirgilStreamSigner::sign
      * @covers VirgilStreamSigner::verify
      * @expectedException Exception
-     * @expectedExceptionMessage RSA - Bad input parameters to function
      */
     public function test_data_sign_verify_with_rsa_keys_small_size() {
         $publicKeyPem128 =

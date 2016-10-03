@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 Virgil Security Inc.
+# Copyright (C) 2015-2016 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -36,68 +36,100 @@
 
 cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 
-project (virgil_crypto)
-
-# Include and build external libraries
-include (ExternalProject)
-include (${CMAKE_CURRENT_SOURCE_DIR}/mbedtls/mbedtls_ext.cmake)
-include (${CMAKE_CURRENT_SOURCE_DIR}/rapidjson/rapidjson.cmake)
-
-set (VIRGIL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
-include_directories (${VIRGIL_INCLUDE_DIR})
-include_directories (${MBEDTLS_INCLUDE_DIR})
-include_directories (${RAPIDJSON_INCLUDE_DIRS})
+project (virgil_crypto VERSION ${VIRGIL_VERSION})
 
 # Define sources list
 aux_source_directory ("src" src)
+aux_source_directory ("src/internal" src)
 if (LIB_FILE_IO)
-    aux_source_directory ("src/stream" stream_src)
-    list (APPEND src ${stream_src})
+    aux_source_directory ("src/stream" src)
 endif()
 
-foreach (src_file ${src})
-    configure_file (
-        "${CMAKE_CURRENT_SOURCE_DIR}/${src_file}"
-        "${CMAKE_CURRENT_BINARY_DIR}/${src_file}"
-        @ONLY
-    )
-endforeach ()
-set (src "")
-aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src src)
-aux_source_directory(${CMAKE_CURRENT_BINARY_DIR}/src/stream src)
+configure_file (
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/VirgilVersion.cxx.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/src/VirgilVersion.cxx"
+    @ONLY
+)
 
-# Build
-add_library (${PROJECT_NAME} STATIC ${src})
+aux_source_directory("${CMAKE_CURRENT_BINARY_DIR}/src" src)
+
+add_library (${PROJECT_NAME} ${src})
+
 set_property (TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME ${PROJECT_NAME})
 set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
-set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${VIRGIL_INCLUDE_DIR})
-
-target_link_libraries (${PROJECT_NAME} ${MBEDTLS_LIBRARIES})
-add_dependencies (${PROJECT_NAME} mbedtls)
-
-add_custom_command (TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy_if_different
-            $<TARGET_FILE:${PROJECT_NAME}>
-            ${EXTERNAL_LIBS_DIR}/$<TARGET_FILE_NAME:${PROJECT_NAME}>
-)
-
-# Export includes
-set (VIRGIL_INCLUDE_DIR ${VIRGIL_INCLUDE_DIR} PARENT_SCOPE)
-
-# Install
-if (INSTALL_CORE_LIBS)
-    install (TARGETS ${PROJECT_NAME} DESTINATION "${INSTALL_LIB_DIR_NAME}")
-    if (INSTALL_EXT_LIBS)
-        install (FILES ${MBEDTLS_LIBRARIES} DESTINATION "${INSTALL_LIB_DIR_NAME}")
-    endif (INSTALL_EXT_LIBS)
-    add_subdirectory (include)
+set_property (TARGET ${PROJECT_NAME} PROPERTY DEBUG_POSTFIX "_d")
+if (BUILD_SHARED_LIBS)
+    set_target_properties (${PROJECT_NAME} PROPERTIES VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
+endif (BUILD_SHARED_LIBS)
+if (CMAKE_CROSSCOMPILING)
+    set_property (TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY COMPILE_FLAGS " -std=c++11")
 endif ()
 
-if (INSTALL_EXT_HEADERS)
-    install (DIRECTORY ${MBEDTLS_INCLUDE_DIR}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
-    install (DIRECTORY ${RAPIDJSON_INCLUDE_DIRS}/ DESTINATION "${INSTALL_INC_DIR_NAME}")
+target_include_directories (${PROJECT_NAME}
+    PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+)
+target_link_libraries (${PROJECT_NAME} mbedtls::mbedcrypto mbedtls::ed25519)
+target_compile_definitions (${PROJECT_NAME} PUBLIC "LIB_FILE_IO=$<BOOL:${LIB_FILE_IO}>" "UCLIBC=$<BOOL:${UCLIBC}>")
+target_compile_definitions (${PROJECT_NAME} PRIVATE "FMT_HEADER_ONLY")
+
+if (INSTALL_CORE_LIBS)
+    # Define names for configuration files
+    set (INSTALL_CFG_DIR_NAME
+        "${INSTALL_LIB_DIR_NAME}/cmake/${PROJECT_NAME}" CACHE STRING
+        "Path to the CMake configuration files be installed"
+    )
+    set (generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+    set (version_config "${generated_dir}/${PROJECT_NAME}-config-version.cmake")
+    set (project_config "${generated_dir}/${PROJECT_NAME}-config.cmake")
+    set (targets_export_name "${PROJECT_NAME}-targets")
+    set (namespace "virgil::security::")
+
+    # Create configuration files
+    include (CMakePackageConfigHelpers)
+
+    # Write Version Config
+    write_basic_package_version_file (
+        "${version_config}" COMPATIBILITY SameMajorVersion
+    )
+
+    # Write  Project Config
+    configure_package_config_file (
+        "cmake/config.cmake.in"
+        "${project_config}"
+        INSTALL_DESTINATION "${INSTALL_CFG_DIR_NAME}"
+    )
+
+    # Install targets
+    install (TARGETS ${PROJECT_NAME}
+        EXPORT "${targets_export_name}"
+        LIBRARY DESTINATION "${INSTALL_LIB_DIR_NAME}"
+        ARCHIVE DESTINATION "${INSTALL_LIB_DIR_NAME}"
+        RUNTIME DESTINATION "${INSTALL_BIN_DIR_NAME}"
+        INCLUDES DESTINATION "include"
+    )
+
+    if (INSTALL_EXT_LIBS)
+        install (DIRECTORY "${VIRGIL_DEPENDS_PREFIX}/lib/" DESTINATION "${INSTALL_LIB_DIR_NAME}")
+    endif (INSTALL_EXT_LIBS)
+
+    # Install headers
+    add_subdirectory (include)
+    if (INSTALL_EXT_HEADERS)
+        install (DIRECTORY "${VIRGIL_DEPENDS_PREFIX}/include/" DESTINATION "${INSTALL_INC_DIR_NAME}")
+    endif ()
+
+    # Install configurations
+    install (
+        FILES "${project_config}" "${version_config}"
+        DESTINATION "${INSTALL_CFG_DIR_NAME}"
+    )
+
+    install (
+        EXPORT "${targets_export_name}"
+        NAMESPACE "${namespace}"
+        DESTINATION "${INSTALL_CFG_DIR_NAME}"
+    )
 endif ()
 
 # add a target to generate API documentation with Doxygen
@@ -112,8 +144,9 @@ find_host_package (Doxygen)
 if (DOXYGEN_FOUND)
     if (DOXYGEN_EXCLUDE_PRIVATE)
         set (DOXYGEN_EXCLUDE
-            "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/priv/*"
-            "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/asn1/priv/*"
+             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/internal/*"
+             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/internal/*"
+             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/asn1/internal/*"
         )
         string (REPLACE ";" " " DOXYGEN_EXCLUDE "${DOXYGEN_EXCLUDE}")
         set (DOXYGEN_EXTRACT_PRIVATE "NO")

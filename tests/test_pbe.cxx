@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -41,8 +41,6 @@
 
 #include "catch.hpp"
 
-#include <string>
-
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/VirgilPBE.h>
 #include <virgil/crypto/foundation/VirgilRandom.h>
@@ -61,7 +59,7 @@ TEST_CASE("PBES PKCS#5", "[pbe]") {
 
     SECTION ("encrypt and decrypt - OK") {
         const VirgilByteArray password = str2bytes("password");
-        VirgilPBE pbe = VirgilPBE::pkcs5(salt, iterationCount);
+        VirgilPBE pbe(VirgilPBE::Algorithm::PKCS5, salt, iterationCount);
         VirgilByteArray encryptedData = pbe.encrypt(testData, password);
         VirgilByteArray decryptedData = pbe.decrypt(encryptedData, password);
         REQUIRE(decryptedData == testData);
@@ -69,7 +67,7 @@ TEST_CASE("PBES PKCS#5", "[pbe]") {
 
     SECTION ("encrypt and decrypt with very long password - OK") {
         const VirgilByteArray password = VirgilRandom(str2bytes("rng seed")).randomize(2048);
-        VirgilPBE pbe = VirgilPBE::pkcs5(salt, iterationCount);
+        VirgilPBE pbe(VirgilPBE::Algorithm::PKCS5, salt, iterationCount);
         VirgilByteArray encryptedData = pbe.encrypt(testData, password);
         VirgilByteArray decryptedData = pbe.decrypt(encryptedData, password);
         REQUIRE(decryptedData == testData);
@@ -83,15 +81,15 @@ TEST_CASE("PBES PKCS#12", "[pbe]") {
     const size_t iterationCount = 4096;
 
     SECTION ("encrypt and decrypt - OK") {
-        VirgilPBE pbe = VirgilPBE::pkcs12(salt, iterationCount);
+        VirgilPBE pbe(VirgilPBE::Algorithm::PKCS12, salt, iterationCount);
         VirgilByteArray encryptedData = pbe.encrypt(testData, password);
         VirgilByteArray decryptedData = pbe.decrypt(encryptedData, password);
         REQUIRE(decryptedData == testData);
     }
 
     SECTION ("encrypt and decrypt with very long password - Failed") {
-        const VirgilByteArray password = VirgilRandom(str2bytes("rng seed")).randomize(256);
-        VirgilPBE pbe = VirgilPBE::pkcs12(salt, iterationCount);
-        REQUIRE_THROWS_AS(pbe.encrypt(testData, password), VirgilCryptoException);
+        const VirgilByteArray veryLongPassword = VirgilRandom(str2bytes("rng seed")).randomize(256);
+        VirgilPBE pbe(VirgilPBE::Algorithm::PKCS12, salt, iterationCount);
+        REQUIRE_THROWS_AS(pbe.encrypt(testData, veryLongPassword), VirgilCryptoException);
     }
 }

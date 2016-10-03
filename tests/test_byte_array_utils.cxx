@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -41,7 +41,6 @@
 
 #include "catch.hpp"
 
-#include <string>
 #include <iostream>
 
 #include <virgil/crypto/VirgilByteArray.h>
@@ -52,44 +51,44 @@ using virgil::crypto::VirgilByteArrayUtils;
 
 TEST_CASE("Json -> bytes", "[byte-array]") {
     std::string pretty_json =
-        "{"
-        "    \"object\" : {"
-        "        \"number_integer\" : 123,"
-        "        \"bool_true\" : true,"
-        "        \"bool_false\" : false,"
-        "        \"string\" : \"test string\""
-        "    },"
-        "    \"array\" : ["
-        "        1, true, false, \"test string\""
-        "    ],"
-        "    \"bool_true\" : true,"
-        "    \"null\" : null,"
-        "    \"bool_false\" : false,"
-        "    \"number_integer\" : 123,"
-        "    \"string\" : \"test_string\""
-        "}";
+            "{"
+                    "    \"object\" : {"
+                    "        \"number_integer\" : 123,"
+                    "        \"bool_true\" : true,"
+                    "        \"bool_false\" : false,"
+                    "        \"string\" : \"test string\""
+                    "    },"
+                    "    \"array\" : ["
+                    "        1, true, false, \"test string\""
+                    "    ],"
+                    "    \"bool_true\" : true,"
+                    "    \"null\" : null,"
+                    "    \"bool_false\" : false,"
+                    "    \"number_integer\" : 123,"
+                    "    \"string\" : \"test_string\""
+                    "}";
     std::string minified_json =
             "{\"object\":{\"number_integer\":123,\"bool_true\":true,\"bool_false\":false,\""
-            "string\":\"test string\"},\"array\":[1,true,false,\"test string\"],\"bool_true"
-            "\":true,\"bool_false\":false,\"number_integer\":123,\"string\":\"test_string\","
-            "\"null\" : null}";
+                    "string\":\"test string\"},\"array\":[1,true,false,\"test string\"],\"bool_true"
+                    "\":true,\"bool_false\":false,\"number_integer\":123,\"string\":\"test_string\","
+                    "\"null\" : null}";
     std::string rearranged_json =
-        "{"
-        "    \"bool_false\" : false,"
-        "    \"null\" : null,"
-        "    \"number_integer\" : 123,"
-        "    \"array\" : ["
-        "        1, true, false, \"test string\""
-        "    ],"
-        "    \"string\" : \"test_string\","
-        "    \"bool_true\" : true,"
-        "    \"object\" : {"
-        "        \"bool_false\" : false,"
-        "        \"string\" : \"test string\","
-        "        \"bool_true\" : true,"
-        "        \"number_integer\" : 123"
-        "    }"
-        "}";
+            "{"
+                    "    \"bool_false\" : false,"
+                    "    \"null\" : null,"
+                    "    \"number_integer\" : 123,"
+                    "    \"array\" : ["
+                    "        1, true, false, \"test string\""
+                    "    ],"
+                    "    \"string\" : \"test_string\","
+                    "    \"bool_true\" : true,"
+                    "    \"object\" : {"
+                    "        \"bool_false\" : false,"
+                    "        \"string\" : \"test string\","
+                    "        \"bool_true\" : true,"
+                    "        \"number_integer\" : 123"
+                    "    }"
+                    "}";
 
     SECTION("Test JSON to bytes convertion") {
         VirgilByteArray pretty_json_bytes = VirgilByteArrayUtils::jsonToBytes(pretty_json);

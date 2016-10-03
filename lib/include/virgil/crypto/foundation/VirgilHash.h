@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -38,6 +38,7 @@
 #define VIRGIL_CRYPTO_HASH_H
 
 #include <string>
+#include <memory>
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
@@ -45,28 +46,23 @@
 namespace virgil { namespace crypto { namespace foundation {
 
 /**
- * @name Forward declarations
- */
-///@{
-class VirgilHashImpl;
-///@}
-
-/**
  * @brief Provides hashing (message digest) algorithms.
+ * @ingroup Hash
  */
 class VirgilHash : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
     /**
-     * @name Creation methods
-     * @brief Object creation with specific hash function.
+     * @brief Enumerates possible Hash algorithms.
      */
-    ///@{
-    static VirgilHash md5();
-    static VirgilHash sha256();
-    static VirgilHash sha384();
-    static VirgilHash sha512();
-    static VirgilHash withName(const virgil::crypto::VirgilByteArray& name);
-    ///@}
+    enum class Algorithm {
+        MD5,    ///< Hash Algorithm: MD5
+        SHA1,   ///< Hash Algorithm: SHA1
+        SHA224, ///< Hash Algorithm: SHA224
+        SHA256, ///< Hash Algorithm: SHA256
+        SHA384, ///< Hash Algorithm: SHA384
+        SHA512  ///< Hash Algorithm: SHA512
+    };
+
     /**
      * @name Constructor / Destructor
      */
@@ -74,13 +70,26 @@ public:
     /**
      * @brief Create object with undefined algorithm.
      * @warning SHOULD be used in conjunction with VirgilAsn1Compatible interface,
-     *     i.e. VirgilHash hash = VirgilHash().fromAsn1(asn1);
+     *     i.e. VirgilHash hash; hash.fromAsn1(asn1);
      */
     VirgilHash();
+
     /**
-     * @brief Polymorphic destructor.
+     * @brief Create object with specific algorithm type.
      */
-    virtual ~VirgilHash() throw();
+    explicit VirgilHash(Algorithm alg);
+
+    /**
+     * @brief Create object with given algorithm name.
+     * @note Names SHOULD be the identical to the VirgilHash::Algorithm enumeration.
+     */
+    explicit VirgilHash(const std::string& name);
+
+    /**
+     * @brief Create object with given algorithm name.
+     * @note Names SHOULD be the identical to the VirgilHash::Algorithm enumeration.
+     */
+    explicit VirgilHash(const char* name);
     ///@}
     /**
      * @brief
@@ -95,6 +104,7 @@ public:
      * @return Name of the hash function.
      */
     std::string name() const;
+
     /**
      * @brief Return underlying hash type
      * @note Used for internal purposes only
@@ -112,10 +122,10 @@ public:
      *
      * Process the given message immediately and return it's hash.
      *
-     * @param bytes - message to be hashed.
+     * @param data - message to be hashed.
      * @return Hash of the given message.
      */
-    virgil::crypto::VirgilByteArray hash(const virgil::crypto::VirgilByteArray& bytes) const;
+    virgil::crypto::VirgilByteArray hash(const virgil::crypto::VirgilByteArray& data) const;
     ///@}
 
     /**
@@ -129,16 +139,18 @@ public:
      * @brief Initialize hashing for the new message hash.
      */
     void start();
+
     /**
      * @brief Update / process message hash.
      *
      * This method MUST be used after @link start() @endlink method only.
      * This method MAY be called multiple times to process long message splitted to a shorter chunks.
      *
-     * @param bytes - message to be hashed.
+     * @param data - message to be hashed.
      * @see @link start() @endlink
      */
-    void update(const virgil::crypto::VirgilByteArray& bytes);
+    void update(const virgil::crypto::VirgilByteArray& data);
+
     /**
      * @brief Return final message hash.
      * @return Message hash processed by series of @link update() @endlink method.
@@ -159,11 +171,12 @@ public:
      * Process the given message immediately and return it's HMAC hash.
      *
      * @param key - secret key.
-     * @param bytes - message to be hashed.
+     * @param data - message to be hashed.
      * @return HMAC hash of the given message.
      */
-    virgil::crypto::VirgilByteArray hmac(const virgil::crypto::VirgilByteArray& key,
-            const virgil::crypto::VirgilByteArray& bytes) const;
+    virgil::crypto::VirgilByteArray hmac(
+            const virgil::crypto::VirgilByteArray& key,
+            const virgil::crypto::VirgilByteArray& data) const;
     ///@}
 
     /**
@@ -178,21 +191,24 @@ public:
      * @param key - secret key.
      */
     void hmacStart(const virgil::crypto::VirgilByteArray& key);
+
     /**
      * @brief Reset HMAC hashing for the new message hash.
      */
     void hmacReset();
+
     /**
      * @brief Update / process message HMAC hash.
      *
      * This method MUST be used after @link hmacStart() @endlink or @link hmacReset() @endlink methods only.
      * This method MAY be called multiple times to process long message splitted to a shorter chunks.
      *
-     * @param bytes - message to be hashed.
+     * @param data - message to be hashed.
      * @see @link hmacStart() @endlink
      * @see @link hmacReset() @endlink
      */
-    void hmacUpdate(const virgil::crypto::VirgilByteArray& bytes);
+    void hmacUpdate(const virgil::crypto::VirgilByteArray& data);
+
     /**
      * @brief Return final message HMAC hash.
      * @return Message HMAC hash processed by series of @link hmacUpdate() @endlink method.
@@ -203,31 +219,43 @@ public:
     virgil::crypto::VirgilByteArray hmacFinish();
     ///@}
     /**
-     * @name Copy constructor / assignment operator
-     * @warning Copy constructor and assignment operator create copy of the object as it was created
-     *          by on of the creation methods. All changes in the internal state,
-     *          that was made after creation, are not copied!
-     */
-    ///@{
-    VirgilHash(const VirgilHash& other);
-    VirgilHash& operator=(const VirgilHash& rhs);
-    ///@}
-    /**
      * @name VirgilAsn1Compatible implementation
      */
     ///@{
-    virtual size_t asn1Write(virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
-            size_t childWrittenBytes = 0) const;
-    virtual void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader);
+    size_t asn1Write(
+            virgil::crypto::foundation::asn1::VirgilAsn1Writer& asn1Writer,
+            size_t childWrittenBytes = 0) const override;
+
+    void asn1Read(virgil::crypto::foundation::asn1::VirgilAsn1Reader& asn1Reader) override;
     ///@}
+
+public:
+    //! @cond Doxygen_Suppress
+    VirgilHash(VirgilHash&& rhs) noexcept;
+
+    VirgilHash& operator=(VirgilHash&& rhs) noexcept;
+
+    virtual ~VirgilHash() noexcept;
+    //! @endcond
+
 private:
-    explicit VirgilHash(int type);
-    explicit VirgilHash(const char * name);
     void checkState() const;
+
 private:
-    VirgilHashImpl *impl_;
+    class Impl;
+
+    std::unique_ptr<Impl> impl_;
 };
 
 }}}
+
+namespace std {
+/**
+ * @brief Returns string representation of the Hash algorithm.
+ * @return Hash algorithm as string.
+ * @ingroup Hash
+ */
+string to_string(virgil::crypto::foundation::VirgilHash::Algorithm alg);
+}
 
 #endif /* VIRGIL_CRYPTO_HASH_H */

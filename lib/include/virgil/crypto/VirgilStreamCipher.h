@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -51,11 +51,6 @@ namespace virgil { namespace crypto {
 class VirgilStreamCipher : public VirgilCipherBase {
 public:
     /**
-     * @brief Polymorphic destructor.
-     */
-    virtual ~VirgilStreamCipher() throw();
-public:
-    /**
      * @brief Encrypt data read from given source and write it the sink.
      * @param source - source of the data to be encrypted.
      * @param sink - target sink for encrypted data.
@@ -64,15 +59,18 @@ public:
      * @see getContentInfo()
      * @return encrypted data.
      */
-    void encrypt(VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo = false);
+    void encrypt(VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo = true);
+
     /**
      * @brief Decrypt data read from given source for recipient defined by id and private key,
      *     and write it to the sink.
      * @note Content info MUST be defined, if it was not embedded to the encrypted data.
      * @see method setContentInfo().
      */
-    void decryptWithKey(VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& recipientId,
+    void decryptWithKey(
+            VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& recipientId,
             const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+
     /**
      * @brief Decrypt data read from given source for recipient defined by password,
      *     and write it to the sink.
@@ -87,10 +85,12 @@ private:
      * @return Data that was read from the source and is not content info.
      */
     VirgilByteArray tryReadContentInfo(VirgilDataSource& source);
+
     /**
      * @brief Decrypt data read from given source, and write it to the sink.
      */
-    void decrypt(VirgilDataSource& source, VirgilDataSink& sink,
+    void decrypt(
+            VirgilDataSource& source, VirgilDataSink& sink,
             virgil::crypto::foundation::VirgilSymmetricCipher& cipher, const VirgilByteArray& firstChunk);
 };
 

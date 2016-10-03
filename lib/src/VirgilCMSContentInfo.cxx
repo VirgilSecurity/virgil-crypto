@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015 Virgil Security Inc.
+ * Copyright (C) 2015-2016 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -36,18 +36,13 @@
 
 #include <virgil/crypto/foundation/cms/VirgilCMSContentInfo.h>
 
-#include <cstddef>
-#include <string>
-
 #include <mbedtls/asn1.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilCryptoException.h>
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
 using virgil::crypto::VirgilByteArray;
-using virgil::crypto::VirgilCryptoException;
 using virgil::crypto::foundation::cms::VirgilCMSContentInfo;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
@@ -59,9 +54,6 @@ using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 static const unsigned char kAsn1_CustomParamsTag = 0;
 static const int kAsn1_ContentInfoVersion = 0;
 ///@}
-
-VirgilCMSContentInfo::~VirgilCMSContentInfo() throw() {
-}
 
 size_t VirgilCMSContentInfo::defineSize(const VirgilByteArray& data) {
     if (data.empty()) {
@@ -77,7 +69,7 @@ size_t VirgilCMSContentInfo::defineSize(const VirgilByteArray& data) {
     ++p;
     // Read length
     size_t size = 0;
-    int result = ::mbedtls_asn1_get_len(&p, p_end, &size);
+    int result = mbedtls_asn1_get_len(&p, p_end, &size);
     if (result == 0 || result == MBEDTLS_ERR_ASN1_OUT_OF_DATA) {
         size += p - p_begin;
     } else {
@@ -85,7 +77,7 @@ size_t VirgilCMSContentInfo::defineSize(const VirgilByteArray& data) {
     }
     // Validate ContentInfo version
     int version = 0;
-    result = ::mbedtls_asn1_get_int(&p, p_end, &version);
+    result = mbedtls_asn1_get_int(&p, p_end, &version);
     if (result != 0 || version != kAsn1_ContentInfoVersion) {
         return 0;
     }
@@ -107,10 +99,10 @@ size_t VirgilCMSContentInfo::asn1Write(VirgilAsn1Writer& asn1Writer, size_t chil
 }
 
 void VirgilCMSContentInfo::asn1Read(VirgilAsn1Reader& asn1Reader) {
-    (void)asn1Reader.readSequence();
-    if (asn1Reader.readInteger() != kAsn1_ContentInfoVersion) {
-        throw VirgilCryptoException(std::string("VirgilCMSContentInfo: ") +
-                "Unsupported content info version was given.");
+    (void) asn1Reader.readSequence();
+    const int version = asn1Reader.readInteger();
+    if (version != kAsn1_ContentInfoVersion) {
+        throw make_error(VirgilCryptoError::UnsupportedAlgorithm, "Unsupported version of CMS Content Info.");
     }
     cmsContent.asn1Read(asn1Reader);
     if (asn1Reader.readContextTag(kAsn1_CustomParamsTag) > 0) {

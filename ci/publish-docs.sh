@@ -58,6 +58,10 @@ VIRGIL_CRYPTO_HTML_PATH_DST="${HTML_PATH_DST}/${VIRGIL_CRYPTO_VERSION}"
 # Prepare destination folders
 rm -fr "${VIRGIL_CRYPTO_HTML_PATH_DST}" && mkdir -p "${VIRGIL_CRYPTO_HTML_PATH_DST}"
 
+# Generate the HTML documentation.
+cd "${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}" && make doc
+cd -
+
 # Copy new documentation
 cp -af "${TRAVIS_BUILD_DIR}/docs/html/." "${VIRGIL_CRYPTO_HTML_PATH_DST}"
 

@@ -39,7 +39,7 @@ set -ev
 
 cd "${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}"
 
-if [ "${PUBLISH_COVERITY_SCAN}" == "ON" ] && [ "${TRAVIS_BRANCH}" == "coverity_scan" ] && [ "${CC}" == "gcc" ]; then
+if [ "${PUBLISH_COVERITY_SCAN}" == "ON" ] && [ "${TRAVIS_BRANCH}" == "coverity_scan" ] && [[ "${CC}" == "gcc"* ]]; then
     export COVERITY_SCAN_PROJECT_NAME="VirgilSecurity/virgil-crypto"
     export COVERITY_SCAN_BRANCH_PATTERN="coverity_scan"
     export COVERITY_SCAN_NOTIFICATION_EMAIL="sergey.seroshtan@gmail.com"

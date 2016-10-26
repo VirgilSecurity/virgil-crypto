@@ -36,6 +36,7 @@
 
 #include <virgil/crypto/VirgilDataSink.h>
 
+using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilDataSink;
 
 void VirgilDataSink::safeWrite(VirgilDataSink& sink, const VirgilByteArray& data) {

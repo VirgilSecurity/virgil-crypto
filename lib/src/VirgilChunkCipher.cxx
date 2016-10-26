@@ -125,9 +125,7 @@ static void process(
             VirgilByteArrayUtils::append(processedChunk, symmetricCipher.update(chunk));
             VirgilByteArrayUtils::append(processedChunk, symmetricCipher.finish());
             internal::increment_octets(nonceCounter);
-            if (sink.isGood()) {
-                sink.write(processedChunk);
-            }
+            VirgilDataSink::safeWrite(sink, processedChunk);
         }
     }
 }
@@ -143,8 +141,8 @@ void VirgilChunkCipher::encrypt(
     storeChunkSize(actualChunkSize);
     buildContentInfo();
 
-    if (embedContentInfo && sink.isGood()) {
-        sink.write(getContentInfo());
+    if (embedContentInfo) {
+        VirgilDataSink::safeWrite(sink, getContentInfo());
     }
 
     internal::process(source, sink, symmetricCipher, actualChunkSize);

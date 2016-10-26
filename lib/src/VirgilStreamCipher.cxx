@@ -54,16 +54,13 @@ void VirgilStreamCipher::encrypt(VirgilDataSource& source, VirgilDataSink& sink,
     VirgilSymmetricCipher& symmetricCipher = initEncryption();
     buildContentInfo();
 
-    if (embedContentInfo && sink.isGood()) {
-        sink.write(getContentInfo());
+    if (embedContentInfo) {
+        VirgilDataSink::safeWrite(sink, getContentInfo());
     }
-
     while (source.hasData() && sink.isGood()) {
-        sink.write(symmetricCipher.update(source.read()));
+        VirgilDataSink::safeWrite(sink, symmetricCipher.update(source.read()));
     }
-    if (sink.isGood()) {
-        sink.write(symmetricCipher.finish());
-    }
+    VirgilDataSink::safeWrite(sink, symmetricCipher.finish());
 
     clearCipherInfo();
 }
@@ -110,14 +107,10 @@ void VirgilStreamCipher::decrypt(
         VirgilDataSource& source, VirgilDataSink& sink,
         VirgilSymmetricCipher& cipher, const VirgilByteArray& firstChunk) {
 
-    if (sink.isGood()) {
-        sink.write(cipher.update(firstChunk));
-    }
+    VirgilDataSink::safeWrite(sink, cipher.update(firstChunk));
     while (source.hasData() && sink.isGood()) {
-        sink.write(cipher.update(source.read()));
+        VirgilDataSink::safeWrite(sink, cipher.update(source.read()));
     }
-    if (sink.isGood()) {
-        sink.write(cipher.finish());
-    }
+    VirgilDataSink::safeWrite(sink, cipher.finish());
     clearCipherInfo();
 }

@@ -83,6 +83,7 @@ INCLUDE_CLASS(VirgilByteArray, virgil::crypto, virgil/crypto)
 %ignore VIRGIL_VERSION_PATCH;
 INCLUDE_CLASS(VirgilVersion, virgil::crypto, virgil/crypto)
 
+%ignore virgil::crypto::VirgilDataSink::safeWrite;
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSource, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::crypto, virgil/crypto)
 

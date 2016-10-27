@@ -34,44 +34,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_VIRGIL_DATA_SINK_H
-#define VIRGIL_CRYPTO_VIRGIL_DATA_SINK_H
+#include <virgil/crypto/VirgilDataSink.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilDataSink;
 
-namespace virgil { namespace crypto {
-
-/**
- * @brief This is base class for output streams.
- *
- * Defines interface that allows write data to the output stream.
- */
-class VirgilDataSink {
-public:
-    /**
-     * @brief Return true if target object is able to write data.
-     */
-    virtual bool isGood() = 0;
-
-    /**
-     * @brief Write data to the target object.
-     * @param data data to be written, SHOULD NOT be empty.
-     */
-    virtual void write(const VirgilByteArray& data) = 0;
-
-    /**
-     * @brief Write data to the sink in a safe way.
-     *
-     * Write only if data is not empty and sink is good, otherwise - do nothing
-     *
-     * @param sink sink to be written to.
-     * @param data data to be written.
-     */
-    static void safeWrite(VirgilDataSink& sink, const VirgilByteArray& data);
-
-    virtual ~VirgilDataSink() noexcept = default;
-};
-
-}}
-
-#endif /* VIRGIL_CRYPTO_VIRGIL_DATA_SINK_H */
+void VirgilDataSink::safeWrite(VirgilDataSink& sink, const VirgilByteArray& data) {
+    if (!data.empty() && sink.isGood()) {
+        sink.write(data);
+    }
+}

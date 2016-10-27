@@ -1,5 +1,11 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.0.1 released 2016-10-27
+
+## Bugfix
+
+  * Fix: Send empty data to VirgilDataSink can lead to an unpredictable behavior
+
 = Version 2.0.0 released 2016-10-03
 
 ## Bugfix

@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['safewrite',['safeWrite',['../classvirgil_1_1crypto_1_1_virgil_data_sink.html#af146f064a98880f257f389c73ca2ff7d',1,'virgil::crypto::VirgilDataSink']]],
   ['setalgorithm',['setAlgorithm',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_k_d_f.html#aebc11f4f386aaf86714bf02d55e18ebe',1,'virgil::crypto::foundation::VirgilPBKDF']]],
   ['setauthdata',['setAuthData',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a8a5d27de88473d8b2a0d8285846099a2',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
   ['setcontentinfo',['setContentInfo',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a51d98aadf6d6c20b6c1ea4b26d6ce6ca',1,'virgil::crypto::VirgilCipherBase']]],

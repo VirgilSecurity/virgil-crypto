@@ -75,8 +75,8 @@ static void VirgilByteArray_assign(VirgilByteArray& byteArray, val data) {
     byteArray = vecFromJSArray<VirgilByteArray::value_type>(data);
 }
 
-static std::shared_ptr<VirgilCustomParams> VirgilCipherBase_customParams(VirgilCipherBase& cipher) {
-    return std::shared_ptr<VirgilCustomParams>(&cipher.customParams());
+static VirgilCustomParams* VirgilCipherBase_customParams(VirgilCipherBase& cipher) {
+    return &cipher.customParams();
 }
 
 static VirgilByteArray VirgilSigner_sign_1(VirgilSigner& signer, const VirgilByteArray& data,
@@ -186,7 +186,7 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .function("removeAllRecipients", &VirgilCipherBase::removeAllRecipients)
         .function("getContentInfo", &VirgilCipherBase::getContentInfo)
         .function("setContentInfo", &VirgilCipherBase::setContentInfo)
-        .function("customParams", &VirgilCipherBase_customParams)
+        .function("customParams", &VirgilCipherBase_customParams, allow_raw_pointers())
         .class_function("defineContentInfoSize", &VirgilCipherBase::defineContentInfoSize)
         .class_function("computeShared", &VirgilCipherBase::computeShared)
     ;

@@ -1,5 +1,12 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.0.2 released 2016-11-02
+
+## Bugfix
+
+  * [Lib] Fix: VirgilChunkCipher decryption returns no data, if data was read by one pass
+  * [Lib] Fix: Call to VirgilCipherBase::customParams() leads to exception (AsmJS)
+
 = Version 2.0.1 released 2016-10-27
 
 ## Bugfix

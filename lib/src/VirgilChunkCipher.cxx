@@ -110,7 +110,7 @@ static void process(
     const VirgilByteArray nonce = symmetricCipher.iv();
 
     VirgilByteArray data(firstChunk);
-    while (source.hasData()) {
+    do {
         // Collect data for full chunk
         while (source.hasData() && data.size() < actualChunkSize) {
             VirgilByteArrayUtils::append(data, source.read());
@@ -127,7 +127,7 @@ static void process(
             internal::increment_octets(nonceCounter);
             VirgilDataSink::safeWrite(sink, processedChunk);
         }
-    }
+    } while (source.hasData());
 }
 
 }}}

@@ -48,14 +48,17 @@
 #include <virgil/crypto/VirgilKeyPair.h>
 #include <virgil/crypto/stream/VirgilBytesDataSource.h>
 #include <virgil/crypto/stream/VirgilBytesDataSink.h>
+#include <virgil/crypto/foundation/VirgilBase64.h>
 
 using virgil::crypto::str2bytes;
 using virgil::crypto::bytes2hex;
+using virgil::crypto::bytes2str;
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilChunkCipher;
 using virgil::crypto::VirgilKeyPair;
 using virgil::crypto::stream::VirgilBytesDataSource;
 using virgil::crypto::stream::VirgilBytesDataSink;
+using virgil::crypto::foundation::VirgilBase64;
 
 TEST_CASE("VirgilChunkCipher: encrypt and decrypt with generated keys", "[chunk-cipher]") {
     VirgilByteArray password = str2bytes("password");
@@ -266,6 +269,36 @@ TEST_CASE("VirgilChunkCipher: generated keys", "[chunk-cipher]") {
             REQUIRE(testData == decryptedData);
         }
     }
+}
+
+TEST_CASE("VirgilChunkCipher: data read from a source by one pass", "[chunk-cipher]") {
+    VirgilByteArray encryptedData = VirgilBase64::decode(
+            "MIIBegIBADCCAVsGCSqGSIb3DQEHA6CCAUwwggFIAgECMYIBGTCCARUCAQKgIgQg3OSMIJkPbdDdMCZ8"
+                    "62YN1WZgdwQFX1dt7c2ZCMM9su4wBwYDK2VwBQAEgeIwgd8CAQAwKjAFBgMrZXADIQAILc51E+qsD5zb"
+                    "H56fzjYvaSsGndig3WrMvdlpjAF7YzAYBgcogYxxAgUCMA0GCWCGSAFlAwQCAgUAMEEwDQYJYIZIAWUD"
+                    "BAICBQAEMEW1RpGN0v6BUfTCERATacq+SjktHcD4CuNXCkXKeCD5wzco4firwgNJnj3yO/A9lTBRMB0G"
+                    "CWCGSAFlAwQBKgQQDzZ6ZT9Zlp+tZwPL5KpCiwQw6DkOg8QCf1mTzVst7GNj9i39C6cudIx5rozoOPLD"
+                    "5zKvA94YLM6f3tdnhyvh10auMCYGCSqGSIb3DQEHATAZBglghkgBZQMEAS4EDMYL9mftkelU8Vg4s6AW"
+                    "MRQwEgwJY2h1bmtTaXploAUCAxAAADn8INszCuazHwo8OBEQzNDp6HQAVXsmpsVrnMqapQs+XPxV7pW1"
+                    "QNc+vYCDsMY5V2HUApE=");
+    VirgilByteArray publicKey = VirgilBase64::decode(
+            "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUNvd0JRWURLMlZ3QXlFQTBmN1J1K2k1REdpSFRRVFlX"
+                    "d3dUTllBbVVQK2x3U2VhbXdoS29wUFNBV009Ci0tLS0tRU5EIFBVQkxJQyBLRVktLS0tLQo=");
+    VirgilByteArray privateKey = VirgilBase64::decode(
+            "LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1DNENBUUF3QlFZREsyVndCQ0lFSUwrR2tCTjJnelNH"
+                    "Mkp0azdsQWtDRit5SDBxZUoxMDRPR1JHcTNDQjVBSWMKLS0tLS1FTkQgUFJJVkFURSBLRVktLS0tLQo=");
+    VirgilByteArray recipientId = VirgilBase64::decode("3OSMIJkPbdDdMCZ862YN1WZgdwQFX1dt7c2ZCMM9su4=");
+
+    VirgilByteArray decryptedData;
+    VirgilBytesDataSource encryptedSource(encryptedData, encryptedData.size());
+    VirgilBytesDataSink decryptedSink(decryptedData);
+
+    VirgilChunkCipher cipher;
+
+    REQUIRE(VirgilKeyPair::isKeyPairMatch(publicKey, privateKey));
+    REQUIRE_NOTHROW(cipher.decryptWithKey(encryptedSource, decryptedSink, recipientId, privateKey));
+    REQUIRE(decryptedData.size() > 0);
+    REQUIRE(bytes2str(decryptedData) == "538DF736-57A0-4B39-B695-73681E59EAAC");
 }
 
 #else

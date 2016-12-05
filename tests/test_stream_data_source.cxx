@@ -34,35 +34,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @file test_stream_data_source.cxx
+ * @brief Covers class VirgilDataSreamSource
+ */
+
+#if LIB_FILE_IO
+
+#include "catch.hpp"
+
 #include <virgil/crypto/stream/VirgilStreamDataSource.h>
+
+#include <fstream>
 
 using virgil::crypto::stream::VirgilStreamDataSource;
 
-#include <virgil/crypto/VirgilByteArray.h>
-
-using virgil::crypto::VirgilByteArray;
-
-#include <algorithm>
-
-static const size_t kChunkSizeMin = 32;
-
-VirgilStreamDataSource::VirgilStreamDataSource(std::istream& in, size_t chunkSize)
-        : in_(in), chunkSize_(std::max(chunkSize, kChunkSizeMin)) {
+TEST_CASE("VirgilStreamDataSource: check data existence in the bad stream", "[stream-data-source]") {
+    std::fstream nonExistingFile("invalid_path_to_file");
+    VirgilStreamDataSource dataSource(nonExistingFile);
+    REQUIRE_FALSE(dataSource.hasData());
 }
 
-VirgilStreamDataSource::~VirgilStreamDataSource() noexcept {
-}
-
-bool VirgilStreamDataSource::hasData() {
-    return in_.good();
-}
-
-VirgilByteArray VirgilStreamDataSource::read() {
-    VirgilByteArray result(chunkSize_);
-    in_.read(reinterpret_cast<std::istream::char_type*>(result.data()), chunkSize_);
-    if (!in_) {
-        // Only part of chunk was read, so result MUST be trimmed.
-        result.resize(in_.gcount());
-    }
-    return result;
-}
+#endif // LIB_FILE_IO

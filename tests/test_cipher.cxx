@@ -400,3 +400,23 @@ TEST_CASE("VirgilCipher: check recipient existence", "[cipher]") {
         REQUIRE_FALSE(restoredCipher.keyRecipientExists(aliceId));
     }
 }
+
+TEST_CASE("VirgilCipher: add 512 recipients", "[cipher]") {
+    VirgilCipher cipher;
+    VirgilKeyPair commonKeyPair = VirgilKeyPair::generateRecommended();
+    VirgilByteArray testData =
+            VirgilByteArrayUtils::stringToBytes("this string will be encrypted for a lot of recipients");
+
+    for (auto i = 0; i < 512; ++i) {
+        std::string recipientId = "recipient-" + std::to_string(i);
+        cipher.addKeyRecipient(VirgilByteArrayUtils::stringToBytes(recipientId), commonKeyPair.publicKey());
+    }
+    VirgilByteArray lastRecipientId = VirgilByteArrayUtils::stringToBytes("recipient-511");
+
+    VirgilByteArray encryptedData;
+    VirgilByteArray decryptedData;
+    REQUIRE_NOTHROW(encryptedData = cipher.encrypt(testData));
+    cipher = VirgilCipher(); // Make new cipher
+    REQUIRE_NOTHROW(decryptedData = cipher.decryptWithKey(encryptedData, lastRecipientId, commonKeyPair.privateKey()));
+    REQUIRE(testData == decryptedData);
+}

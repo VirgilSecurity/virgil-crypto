@@ -57,7 +57,7 @@ static const size_t kAsn1LengthValueSize = 3;
 static const size_t kAsn1IntegerValueSize = kAsn1TagValueSize + kAsn1LengthValueSize + 8;
 static const size_t kAsn1BoolValueSize = 3;
 static const size_t kAsn1NullValueSize = kAsn1TagValueSize + 1;
-static const size_t kAsn1SizeMax = 65535 + kAsn1TagValueSize + 3; // According to MbedTLS restriction on TAG: LENGTH
+static const size_t kAsn1SizeMax = 0xFFFFFFFF + kAsn1TagValueSize + 3; //According to MbedTLS restriction on TAG: LENGTH
 static const size_t kAsn1ContextTagMax = 0x1E;
 
 #define RETURN_POINTER_DIFF_AFTER_INVOCATION(pointer, invocation) \
@@ -307,9 +307,9 @@ void VirgilAsn1Writer::ensureBufferEnough(size_t len) {
     if (len > unusedSpace) {
         const size_t usedSpace = bufLen_ - unusedSpace;
         const size_t requiredLenMin = len + usedSpace;
-        if (requiredLenMin > kAsn1SizeMax) {
-            throw make_error(VirgilCryptoError::ExceededMaxSize, "ASN.1 structure size limit was exceeded.");
-        }
+       if (requiredLenMin > kAsn1SizeMax) {
+           throw make_error(VirgilCryptoError::ExceededMaxSize, "ASN.1 structure size limit was exceeded.");
+       }
         const size_t requiredLenMax =
                 (size_t) 1 << (size_t) (std::ceil(std::log((double) requiredLenMin) / std::log(2.0)));
         const size_t adjustedLen = requiredLenMax > kAsn1SizeMax ? kAsn1SizeMax : requiredLenMax;

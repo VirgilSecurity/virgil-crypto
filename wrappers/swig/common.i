@@ -51,6 +51,10 @@
     %include "java/common.i"
 #endif
 
+#if defined(SWIGGO)
+    %include "go/common.i"
+#endif
+
 // Define VirgilByteArray typemap if was not defined yet
 #ifndef SWIG_VIRGIL_BYTE_ARRAY
 #define SWIG_VIRGIL_BYTE_ARRAY

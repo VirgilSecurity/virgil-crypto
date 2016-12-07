@@ -74,7 +74,8 @@ function show_usage {
     echo -e "    * net_android      - build .NET library under Android platform, requirements: Mono, \$ANDROID_NDK;"
     echo -e "    * asmjs            - build AsmJS library, requirements: \$EMSDK_HOME;"
     echo -e "    * nodejs           - build NodeJS module;"
-    echo -e "    * pnacl            - build Portable Native library for Google Chrome, requirements: \$NACL_SDK_ROOT."
+    echo -e "    * pnacl            - build Portable Native library for Google Chrome, requirements: \$NACL_SDK_ROOT;"
+    echo -e "    * go               - build Golang library."
     echo -e "  - <src_dir>     - (default = .) path to the directory where root CMakeLists.txt file is located"
     echo -e "  - <build_dir>   - (default = build/<target>) path to the directory where temp files will be stored"
     echo -e "  - <install_dir> - (default = install/<target>) path to the directory where library files will be installed".
@@ -238,8 +239,12 @@ show_info "<install_dir>: ${INSTALL_DIR}"
 # Define common build parameters
 CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
 
-if [[ ${TARGET_NAME} =~ ^(cpp|osx|java|net|php|python|ruby|nodejs)$ ]]; then
+if [[ ${TARGET_NAME} =~ ^(cpp|osx|java|net|php|python|ruby|nodejs|go)$ ]]; then
     CMAKE_ARGS+=" -DPLATFORM_ARCH=$(uname -m)"
+fi
+
+if [ "${TARGET_NAME}" == "go" ]; then
+    CMAKE_ARGS+=" -DINSTALL_CORE_LIBS=ON"
 fi
 
 if [ ! -z "${TARGET_VERSION}" ]; then
@@ -255,7 +260,7 @@ cd "${INSTALL_DIR}" && rm -fr ./*
 cd "${BUILD_DIR}" && rm -fr ./*
 
 # Build for native platforms
-if [[ ${TARGET_NAME} =~ ^(cpp|java|net|php|python|ruby|nodejs)$ ]]; then
+if [[ ${TARGET_NAME} =~ ^(cpp|java|net|php|python|ruby|nodejs|go)$ ]]; then
     cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
     make -j4 install
 fi

@@ -1,4 +1,3 @@
-#region "Copyright (C) 2015-2016 Virgil Security Inc."
 /**
  * Copyright (C) 2015-2016 Virgil Security Inc.
  *
@@ -34,39 +33,34 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#endregion
 
-namespace Virgil.Crypto {
+#cmakedefine SWIG_TARGET_LINUX
 
-public class VirgilStreamDataSource : VirgilDataSource
-{
-    private readonly System.IO.Stream stream;
-    private readonly byte[] buffer;
+%insert(cgo_comment_typedefs) %{
+#cgo CPPFLAGS: -I${SRCDIR}/include
+#cgo LDFLAGS: -L${SRCDIR}/lib -lvirgil_crypto_go -lvirgil_crypto -lmbedcrypto -led25519 -lstdc++
+%}
+#if defined(SWIG_TARGET_LINUX)
+%insert(cgo_comment_typedefs) %{
+#cgo LDFLAGS: -lm
+%}
+#endif
 
-    public VirgilStreamDataSource(System.IO.Stream source)
-    {
-        this.stream = source;
-        this.buffer = new byte[1024];
-    }
-
-    public override bool HasData()
-    {
-        return this.stream.CanRead && this.stream.Position < this.stream.Length;
-    }
-
-    public override byte[] Read()
-    {
-        int bytesRead = this.stream.Read(buffer, 0, buffer.Length);
-
-        if (bytesRead == buffer.Length)
-        {
-            return buffer;
-        }
-
-        byte[] result = new byte[bytesRead];
-        System.Array.Copy(buffer, result, bytesRead);
-        return result;
-    }
-}
-
-}
+%define SWIG_CATCH_STDEXCEPT
+  /* catching std::exception  */
+  catch (std::invalid_argument& e) {
+    SWIG_exception(SWIG_ValueError, e.what() );
+  } catch (std::domain_error& e) {
+    SWIG_exception(SWIG_ValueError, e.what() );
+  } catch (std::overflow_error& e) {
+    SWIG_exception(SWIG_OverflowError, e.what() );
+  } catch (std::out_of_range& e) {
+    SWIG_exception(SWIG_IndexError, e.what() );
+  } catch (std::length_error& e) {
+    SWIG_exception(SWIG_IndexError, e.what() );
+  } catch (std::runtime_error& e) {
+    SWIG_exception(SWIG_RuntimeError, e.what() );
+  } catch (std::exception& e) {
+    SWIG_exception(SWIG_SystemError, e.what() );
+  }
+%enddef

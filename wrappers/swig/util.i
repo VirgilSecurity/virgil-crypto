@@ -53,6 +53,7 @@ DEFINE_NAMESPACE(className, package)
 #include <includePath/className.h>
 %}
 %ignore package::className::className(className&&);
+%ignore package::className::operator=(className&&);
 %include <includePath/className.h>
 %enddef
 

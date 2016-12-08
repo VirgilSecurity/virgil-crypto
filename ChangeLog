@@ -1,5 +1,22 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.0.3 released 2016-12-08
+
+## Bugfix
+
+  * [.NET] Fix namespaces in the .NET wrapper's addons
+  * [Lib] Fix VirgilStreamDataSource::hasData() infinite if closed file stream is given
+
+## Changes
+
+  * [Build] Use static linkage to windows runtime libraries for wrappers
+  * [Lib] Remove restriction for ASN.1 length
+  * [Lib] Update mbed TLS dependency to version 2.4.0
+
+## Features
+
+  * [GO] Add Go to the wrappers
+
 = Version 2.0.2 released 2016-11-02
 
 ## Bugfix

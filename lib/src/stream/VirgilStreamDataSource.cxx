@@ -54,7 +54,7 @@ VirgilStreamDataSource::~VirgilStreamDataSource() noexcept {
 }
 
 bool VirgilStreamDataSource::hasData() {
-    return !in_.eof();
+    return in_.good();
 }
 
 VirgilByteArray VirgilStreamDataSource::read() {

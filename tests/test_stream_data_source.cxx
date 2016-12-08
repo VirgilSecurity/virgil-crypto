@@ -1,4 +1,3 @@
-#region "Copyright (C) 2015-2016 Virgil Security Inc."
 /**
  * Copyright (C) 2015-2016 Virgil Security Inc.
  *
@@ -34,39 +33,26 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#endregion
 
-namespace Virgil.Crypto {
+/**
+ * @file test_stream_data_source.cxx
+ * @brief Covers class VirgilDataSreamSource
+ */
 
-public class VirgilStreamDataSource : VirgilDataSource
-{
-    private readonly System.IO.Stream stream;
-    private readonly byte[] buffer;
+#if LIB_FILE_IO
 
-    public VirgilStreamDataSource(System.IO.Stream source)
-    {
-        this.stream = source;
-        this.buffer = new byte[1024];
-    }
+#include "catch.hpp"
 
-    public override bool HasData()
-    {
-        return this.stream.CanRead && this.stream.Position < this.stream.Length;
-    }
+#include <virgil/crypto/stream/VirgilStreamDataSource.h>
 
-    public override byte[] Read()
-    {
-        int bytesRead = this.stream.Read(buffer, 0, buffer.Length);
+#include <fstream>
 
-        if (bytesRead == buffer.Length)
-        {
-            return buffer;
-        }
+using virgil::crypto::stream::VirgilStreamDataSource;
 
-        byte[] result = new byte[bytesRead];
-        System.Array.Copy(buffer, result, bytesRead);
-        return result;
-    }
+TEST_CASE("VirgilStreamDataSource: check data existence in the bad stream", "[stream-data-source]") {
+    std::fstream nonExistingFile("invalid_path_to_file");
+    VirgilStreamDataSource dataSource(nonExistingFile);
+    REQUIRE_FALSE(dataSource.hasData());
 }
 
-}
+#endif // LIB_FILE_IO

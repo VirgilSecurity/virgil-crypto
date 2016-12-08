@@ -51,8 +51,8 @@ using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::VirgilCryptoException;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
-const size_t kAsn1LengthMax = 65535; // According to MbedTLS restriction on TAG: LENGTH
-const size_t kAsn1SizeMax = kAsn1LengthMax + 1 + 3;
+constexpr size_t kAsn1SizeMax = 10 * 1024 * 1024; // 10MB, really not maximum but good enough
+constexpr size_t kAsn1LengthMax = kAsn1SizeMax - 2 /* minus 2 tags size */;
 
 TEST_CASE("ASN.1 write: use small buffer", "[asn1-writer]") {
     VirgilAsn1Writer asn1Writer(1);
@@ -97,7 +97,7 @@ TEST_CASE("ASN.1 write: use small buffer", "[asn1-writer]") {
 
     SECTION ("with max octet string") {
         VirgilByteArray octetString = VirgilByteArray(kAsn1LengthMax, 0xAB);
-        VirgilByteArray asn1Expected = VirgilByteArrayUtils::hexToBytes("0482ffff");
+        VirgilByteArray asn1Expected = VirgilByteArrayUtils::hexToBytes("04839ffffe");
         asn1Expected.insert(asn1Expected.end(), octetString.begin(), octetString.end());
         asn1Writer.writeOctetString(octetString);
         VirgilByteArray asn1 = asn1Writer.finish();
@@ -112,16 +112,11 @@ TEST_CASE("ASN.1 write: use small buffer", "[asn1-writer]") {
 
     SECTION ("with max UTF8 string") {
         VirgilByteArray utf8String = VirgilByteArray(kAsn1LengthMax, 0x41);
-        VirgilByteArray asn1Expected = VirgilByteArrayUtils::hexToBytes("0c82ffff");
+        VirgilByteArray asn1Expected = VirgilByteArrayUtils::hexToBytes("0c839ffffe");
         asn1Expected.insert(asn1Expected.end(), utf8String.begin(), utf8String.end());
         asn1Writer.writeUTF8String(utf8String);
         VirgilByteArray asn1 = asn1Writer.finish();
         REQUIRE(VirgilByteArrayUtils::bytesToHex(asn1) == VirgilByteArrayUtils::bytesToHex(asn1Expected));
-    }
-
-    SECTION ("with oversized UTF8 string") {
-        VirgilByteArray utf8String = VirgilByteArray(kAsn1SizeMax + 1, 0x41);
-        REQUIRE_THROWS(asn1Writer.writeUTF8String(utf8String));
     }
 
     SECTION ("with context tag over UTF8 string") {
@@ -142,11 +137,6 @@ TEST_CASE("ASN.1 write: use small buffer", "[asn1-writer]") {
         REQUIRE(VirgilByteArrayUtils::bytesToHex(asn1) == VirgilByteArrayUtils::bytesToHex(data));
     }
 
-    SECTION ("with oversized RAW buffer") {
-        VirgilByteArray data = VirgilByteArray(kAsn1SizeMax + 1, 0x41);
-        REQUIRE_THROWS(asn1Writer.writeData(data));
-    }
-
     SECTION ("with OID") {
         std::string oid =
                 VirgilByteArrayUtils::bytesToString(VirgilByteArrayUtils::hexToBytes("4142434445464748494a4b4c4d4e4f"));
@@ -157,16 +147,11 @@ TEST_CASE("ASN.1 write: use small buffer", "[asn1-writer]") {
 
     SECTION ("with max OID") {
         std::string oid = VirgilByteArrayUtils::bytesToString(VirgilByteArray(kAsn1LengthMax, 0x41));
-        VirgilByteArray asn1Expected = VirgilByteArrayUtils::hexToBytes("0682ffff");
+        VirgilByteArray asn1Expected = VirgilByteArrayUtils::hexToBytes("06839ffffe");
         asn1Expected.insert(asn1Expected.end(), oid.begin(), oid.end());
         asn1Writer.writeOID(oid);
         VirgilByteArray asn1 = asn1Writer.finish();
         REQUIRE(VirgilByteArrayUtils::bytesToHex(asn1) == VirgilByteArrayUtils::bytesToHex(asn1Expected));
-    }
-
-    SECTION ("with oversized OID") {
-        std::string oid = VirgilByteArrayUtils::bytesToString(VirgilByteArray(kAsn1SizeMax + 1, 0x41));
-        REQUIRE_THROWS(asn1Writer.writeOID(oid));
     }
 
     SECTION ("with sequence over UTF8 string") {
@@ -200,7 +185,7 @@ TEST_CASE("ASN.1 write: use small buffer", "[asn1-writer]") {
         utf8String.insert(utf8String.end(), utf8StringHead.begin(), utf8StringHead.end());
         utf8String.insert(utf8String.end(), utf8StringBody.begin(), utf8StringBody.end());
 
-        VirgilByteArray asn1Expected = VirgilByteArrayUtils::hexToBytes("3182ffff");
+        VirgilByteArray asn1Expected = VirgilByteArrayUtils::hexToBytes("31839ffffe");
         asn1Expected.insert(asn1Expected.end(), utf8String.begin(), utf8String.end());
 
         std::vector<VirgilByteArray> set;
@@ -209,55 +194,6 @@ TEST_CASE("ASN.1 write: use small buffer", "[asn1-writer]") {
         asn1Writer.writeSet(set);
         VirgilByteArray asn1 = asn1Writer.finish();
         REQUIRE(VirgilByteArrayUtils::bytesToHex(asn1) == VirgilByteArrayUtils::bytesToHex(asn1Expected));
-    }
-}
-
-TEST_CASE("ASN.1 write: check overflows ", "[asn1-writer]") {
-    VirgilAsn1Writer asn1Writer;
-
-    VirgilByteArray data(kAsn1SizeMax);
-    asn1Writer.writeData(data);
-
-    SECTION("with integer") {
-        REQUIRE_THROWS(asn1Writer.writeInteger(1));
-    }
-
-    SECTION("with bool") {
-        REQUIRE_THROWS(asn1Writer.writeBool(true));
-    }
-
-    SECTION("with NULL") {
-        REQUIRE_THROWS(asn1Writer.writeNull());
-    }
-
-    SECTION("with octet string") {
-        REQUIRE_THROWS(asn1Writer.writeOctetString(VirgilByteArray(1, 0xff)));
-    }
-
-    SECTION("with UTF8 string") {
-        REQUIRE_THROWS(asn1Writer.writeUTF8String(VirgilByteArray(1, 0x41)));
-    }
-
-    SECTION("with context tag") {
-        REQUIRE_THROWS(asn1Writer.writeContextTag(1, data.size()));
-    }
-
-    SECTION("with RAW buffer") {
-        REQUIRE_THROWS(asn1Writer.writeData(VirgilByteArray(1, 0xff)));
-    }
-
-    SECTION("with OID") {
-        REQUIRE_THROWS(asn1Writer.writeOID(std::string("\x2A")));
-    }
-
-    SECTION("with sequence") {
-        REQUIRE_THROWS(asn1Writer.writeSequence(data.size()));
-    }
-
-    SECTION("with set") {
-        std::vector<VirgilByteArray> set;
-        set.push_back(VirgilByteArrayUtils::hexToBytes("0500"));
-        REQUIRE_THROWS(asn1Writer.writeSet(set));
     }
 }
 

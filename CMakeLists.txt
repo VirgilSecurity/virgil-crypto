@@ -45,6 +45,7 @@
 #     - LIB_LOW_LEVEL_API   - boolean value that defines whether to include low-level API or not.
 #     - LIB_FILE_IO         - boolean value that defines whether to include module depends on file IO or not.
 #                             or separate utilities.
+#     - LIB_STATIC_RUNTIME  - сauses library to use the static version of the run-time library.
 #     - INSTALL_CORE_LIBS   - boolean value that defines whether install core library and it's dependencies or not,
 #                             if this value is NO or undefined - only wrapped library will be installed.
 #     - INSTALL_EXT_HEADERS - boolean value that defines whether install third-party library headers or not.
@@ -116,6 +117,13 @@ set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 # Build shared library if defined
 set (BUILD_SHARED_LIBS OFF CACHE BOOL "Force to create shared libraries")
 
+# Configure redefine compiler options if requested
+if (NOT CMAKE_CROSSCOMPILING AND WIN32 AND NOT CYGWIN)
+    set (LIB_STATIC_RUNTIME ON CACHE BOOL "Causes library to use the static version of the run-time library.")
+else ()
+    set (LIB_STATIC_RUNTIME OFF CACHE BOOL "Causes library to use the static version of the run-time library.")
+endif ()
+
 # Add find_host_* utilities
 include (find_host_utils)
 
@@ -151,6 +159,20 @@ if (NOT CMAKE_CROSSCOMPILING)
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
     endif ()
 endif (NOT CMAKE_CROSSCOMPILING)
+
+if (LIB_STATIC_RUNTIME)
+    foreach (compile_flags
+            CMAKE_C_FLAGS
+            CMAKE_C_FLAGS_DEBUG
+            CMAKE_C_FLAGS_RELEASE
+            CMAKE_CXX_FLAGS
+            CMAKE_CXX_FLAGS_DEBUG
+            CMAKE_CXX_FLAGS_RELEASE
+            )
+        string (REPLACE "/MD" "/MT" ${compile_flags} "${${compile_flags}}")
+        string (REPLACE "/MDd" "/MTd" ${compile_flags} "${${compile_flags}}")
+    endforeach ()
+endif (LIB_STATIC_RUNTIME)
 
 # Define optimization features
 set (ED25519_AMD64_OPTIMIZATION ON CACHE BOOL "Defines whether to enable AMD64 optimization for Ed25519 algorithms")

@@ -36,9 +36,7 @@
  */
 #endregion
 
-using virgil.crypto;
-
-namespace virgil.crypto {
+namespace Virgil.Crypto {
 
 public class VirgilStreamDataSource : VirgilDataSource
 {

@@ -34,6 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+// Define type map for size_t
+%apply unsigned int { size_t };
+
 // Ignore C++ operators
 %ignore operator=;
 %ignore operator==;

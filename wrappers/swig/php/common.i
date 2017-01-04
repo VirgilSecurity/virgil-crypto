@@ -56,35 +56,3 @@
 // VirgilByteArray typemap
 #define SWIG_VIRGIL_BYTE_ARRAY
 %include "VirgilByteArray.i"
-
-// Redefine typemap for enums
-%typemap(in)  VirgilKeyPair::Type = int;
-%typemap(out) VirgilKeyPair::Type = int;
-
-%typemap(in)  VirgilPBKDF::Algorithm = int;
-%typemap(out) VirgilPBKDF::Algorithm = int;
-
-%typemap(in)  VirgilHash::Algorithm = int;
-%typemap(out) VirgilHash::Algorithm = int;
-
-%typemap(in)  VirgilTinyCipher::PackageSize = size_t;
-%typemap(out) VirgilTinyCipher::PackageSize = size_t;
-
-#if defined(LIB_LOW_LEVEL_API)
-
-%typemap(in)  VirgilSymmetricCipher::Padding = int;
-%typemap(out) VirgilSymmetricCipher::Padding = int;
-
-%typemap(in)  VirgilSymmetricCipher::Algorithm = int;
-%typemap(out) VirgilSymmetricCipher::Algorithm = int;
-
-%typemap(in)  VirgilPBE::Algorithm = int;
-%typemap(out) VirgilPBE::Algorithm = int;
-
-%typemap(in)  VirgilKDF::Algorithm = int;
-%typemap(out) VirgilKDF::Algorithm = int;
-
-%typemap(in)  VirgilCMSContentType = int;
-%typemap(out) VirgilCMSContentType = int;
-
-#endif

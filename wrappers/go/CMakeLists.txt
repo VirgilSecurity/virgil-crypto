@@ -60,7 +60,7 @@ endif ()
 
 configure_file (
     "${wrappers_SOURCE_DIR}/swig/go/common.i.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/common.i"
+    "${CMAKE_CURRENT_BINARY_DIR}/go/common.i"
     @ONLY
 )
 

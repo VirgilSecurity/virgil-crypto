@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">2.0.3</span>
+   &#160;<span id="projectnumber">2.0.4</span>
    </div>
   </td>
  </tr>
@@ -108,36 +108,39 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <a class="code" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html#a671d582e676e71ba4cc115f4cbbda063">VirgilCryptoException</a>(<span class="keywordtype">int</span> ev, <span class="keyword">const</span> std::error_category&amp; ecat, <span class="keyword">const</span> <span class="keywordtype">char</span>* what);</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html#aa9e60daa87eb2992844d6216772cffd4">what</a>() <span class="keyword">const</span> noexcept <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    std::error_condition condition_;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    std::string what_;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;};</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;std::string <a class="code" href="namespacevirgil_1_1crypto.html#a5d54a90db8b2eaa52dd23ea20f8710fa">backtrace_exception</a>(<span class="keyword">const</span> std::exception&amp; exception, <span class="keywordtype">size_t</span> level = 0);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;}}</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">// TODO: Remove this when Clang compiler will be used from the Android NDK, possible in the release r13.</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="preprocessor">#if defined(ANDROID) &amp;&amp; defined(__GCC_ATOMIC_INT_LOCK_FREE) &amp;&amp; __GCC_ATOMIC_INT_LOCK_FREE &lt; 2</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacestd.html">std</a> {</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="keywordtype">void</span> throw_with_nested(<span class="keyword">const</span> T&amp; ex) {</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keywordflow">throw</span> ex;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;}</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="keywordtype">void</span> rethrow_if_nested(<span class="keyword">const</span> T&amp;) {</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="comment">// Do nothing</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;}</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;}</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_EXCEPTION_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keyword">const</span> std::error_condition&amp; <a class="code" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html#a561cf356af4146eec7a6cccd5b1f8399">condition</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html#aa9e60daa87eb2992844d6216772cffd4">what</a>() <span class="keyword">const</span> noexcept <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    std::error_condition condition_;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    std::string what_;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;};</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;std::string <a class="code" href="namespacevirgil_1_1crypto.html#a5d54a90db8b2eaa52dd23ea20f8710fa">backtrace_exception</a>(<span class="keyword">const</span> std::exception&amp; exception, <span class="keywordtype">size_t</span> level = 0);</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;}}</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">// TODO: Remove this when Clang compiler will be used from the Android NDK, possible in the release r13.</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="preprocessor">#if defined(ANDROID) &amp;&amp; defined(__GCC_ATOMIC_INT_LOCK_FREE) &amp;&amp; __GCC_ATOMIC_INT_LOCK_FREE &lt; 2</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacestd.html">std</a> {</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="keywordtype">void</span> throw_with_nested(<span class="keyword">const</span> T&amp; ex) {</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">throw</span> ex;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;}</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="keywordtype">void</span> rethrow_if_nested(<span class="keyword">const</span> T&amp;) {</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="comment">// Do nothing</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;}</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;}</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* VIRGIL_CRYPTO_EXCEPTION_H */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="namespacestd_html"><div class="ttname"><a href="namespacestd.html">std</a></div><div class="ttdef"><b>Definition:</b> VirgilHash.h:252</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_crypto_exception_html_a671d582e676e71ba4cc115f4cbbda063"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html#a671d582e676e71ba4cc115f4cbbda063">virgil::crypto::VirgilCryptoException::VirgilCryptoException</a></div><div class="ttdeci">VirgilCryptoException(int ev, const std::error_category &amp;ecat)</div><div class="ttdoc">Initialize Exception with specific error code and correspond error category. </div></div>
 <div class="ttc" id="namespacevirgil_html"><div class="ttname"><a href="namespacevirgil.html">virgil</a></div><div class="ttdoc">Root namespace for all Virgil Security libraries. </div><div class="ttdef"><b>Definition:</b> VirgilAsn1Compatible.h:46</div></div>
 <div class="ttc" id="namespacevirgil_1_1crypto_html_a5d54a90db8b2eaa52dd23ea20f8710fa"><div class="ttname"><a href="namespacevirgil_1_1crypto.html#a5d54a90db8b2eaa52dd23ea20f8710fa">virgil::crypto::backtrace_exception</a></div><div class="ttdeci">std::string backtrace_exception(const std::exception &amp;exception, size_t level=0)</div><div class="ttdoc">Unwind information about nested excpetions. </div></div>
+<div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_crypto_exception_html_a561cf356af4146eec7a6cccd5b1f8399"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html#a561cf356af4146eec7a6cccd5b1f8399">virgil::crypto::VirgilCryptoException::condition</a></div><div class="ttdeci">const std::error_condition &amp; condition() const </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_crypto_exception_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html">virgil::crypto::VirgilCryptoException</a></div><div class="ttdoc">This only exception that crypto library can produce. </div><div class="ttdef"><b>Definition:</b> VirgilCryptoException.h:54</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1_virgil_crypto_exception_html_aa9e60daa87eb2992844d6216772cffd4"><div class="ttname"><a href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html#aa9e60daa87eb2992844d6216772cffd4">virgil::crypto::VirgilCryptoException::what</a></div><div class="ttdeci">const char * what() const  noexcept override</div></div>
 </div><!-- fragment --></div><!-- contents -->

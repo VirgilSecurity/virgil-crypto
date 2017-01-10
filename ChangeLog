@@ -1,5 +1,18 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.0.4 released 2017-01-10
+
+## Bugfix
+
+  * [GO] Fix: VirgilByteArray is missed in Golang wrapper
+  * [Lib] Fix: Got exception when encrypt data in 32 bit architecture
+  * [PHP] Fix: Some constants are missed in the PHP wrapper
+
+## Changes
+
+  * [Lib] Add getter VirgilCryptoException::condition()
+  * [Build] Add compiler version to the built archive name (optional)
+
 = Version 2.0.3 released 2016-12-08
 
 ## Bugfix

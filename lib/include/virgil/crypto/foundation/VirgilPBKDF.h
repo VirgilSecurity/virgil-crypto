@@ -55,7 +55,7 @@ public:
      * @property kIterationCount_Default
      * @brief Default iteration count.
      */
-    static const unsigned int kIterationCount_Default = 2048;
+    static constexpr unsigned int kIterationCount_Default = 2048;
 public:
     /**
      * @brief Defines specific password based key derivation function algorithm

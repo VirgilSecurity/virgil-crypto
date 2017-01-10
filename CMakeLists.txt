@@ -41,6 +41,7 @@
 #     - PLATFORM            - name of target platform (optional).
 #     - PLATFORM_VERSION    - minimum supported version of the target platform (optional).
 #     - PLATFORM_ARCH       - target platform processor architecture (optional).
+#     - ADD_COMPILER_INFO   - define whether to add compiler info to the library full name (optional).
 #
 #     - LIB_LOW_LEVEL_API   - boolean value that defines whether to include low-level API or not.
 #     - LIB_FILE_IO         - boolean value that defines whether to include module depends on file IO or not.
@@ -97,7 +98,7 @@ project (VirgilSecurity)
 # Set library version
 set (VIRGIL_VERSION_MAJOR 2)
 set (VIRGIL_VERSION_MINOR 0)
-set (VIRGIL_VERSION_PATCH 3)
+set (VIRGIL_VERSION_PATCH 4)
 set (VIRGIL_VERSION_FEATURE)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 2)
@@ -122,6 +123,27 @@ if (NOT CMAKE_CROSSCOMPILING AND WIN32 AND NOT CYGWIN)
     set (LIB_STATIC_RUNTIME ON CACHE BOOL "Causes library to use the static version of the run-time library.")
 else ()
     set (LIB_STATIC_RUNTIME OFF CACHE BOOL "Causes library to use the static version of the run-time library.")
+endif ()
+
+# Configure additional parameters for library full name
+set (ADD_COMPILER_INFO OFF CACHE BOOL "Define whether to add compiler info to the library full name")
+
+# Define COMPILER
+string (TOLOWER "${CMAKE_CXX_COMPILER_ID}" COMPILER_ID)
+if (COMPILER_ID STREQUAL "gnu")
+    set (COMPILER "gcc")
+else ()
+    set (COMPILER "${COMPILER_ID}")
+endif ()
+set (COMPILER_ID)
+
+# Define COMPILER_VERSION
+if (CMAKE_CXX_COMPILER_VERSION)
+    string (
+        REGEX REPLACE
+        "([0-9]+)([.][0-9]+)?([.][0-9]+)?([.][0-9]+)?" "\\1\\2"
+        COMPILER_VERSION "${CMAKE_CXX_COMPILER_VERSION}"
+    )
 endif ()
 
 # Add find_host_* utilities
@@ -339,6 +361,14 @@ file (WRITE "${CMAKE_CURRENT_BINARY_DIR}/lib_name.txt" "${LIB_NAME_FULL}")
 if (PLATFORM_ARCH)
     set (LIB_NAME_FULL "${LIB_NAME_FULL}-${PLATFORM_ARCH}")
 endif (PLATFORM_ARCH)
+
+if (ADD_COMPILER_INFO)
+    if (COMPILER AND COMPILER_VERSION)
+        set (LIB_NAME_FULL "${LIB_NAME_FULL}-${COMPILER}-${COMPILER_VERSION}")
+    else ()
+        message (FATAL_ERROR "ADD_COMPILER_INFO defined, but can not deduce compiler version.")
+    endif ()
+endif ()
 
 message (STATUS "Library full name: ${LIB_NAME_FULL}")
 

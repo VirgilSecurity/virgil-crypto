@@ -77,6 +77,13 @@ public:
     VirgilCryptoException(int ev, const std::error_category& ecat, const char* what);
 
     /**
+     * Get underlying error condition.
+     *
+     * @return Error condition.
+     */
+    const std::error_condition& condition() const;
+
+    /**
      * Get string identifying exception.
      *
      * @return null terminated character sequence that may be used to identify the exception.

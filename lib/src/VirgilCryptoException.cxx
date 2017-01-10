@@ -72,6 +72,10 @@ const char* VirgilCryptoException::what() const noexcept {
     return what_.c_str();
 }
 
+const std::error_condition& VirgilCryptoException::condition() const {
+    return condition_;
+}
+
 std::string virgil::crypto::backtrace_exception(const std::exception& exception, size_t level) {
     std::ostringstream sstr;
     sstr << std::string(4 * level, ' ') << exception.what();

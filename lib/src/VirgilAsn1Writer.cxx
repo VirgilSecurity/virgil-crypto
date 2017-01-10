@@ -57,7 +57,7 @@ static const size_t kAsn1LengthValueSize = 3;
 static const size_t kAsn1IntegerValueSize = kAsn1TagValueSize + kAsn1LengthValueSize + 8;
 static const size_t kAsn1BoolValueSize = 3;
 static const size_t kAsn1NullValueSize = kAsn1TagValueSize + 1;
-static const size_t kAsn1SizeMax = 0xFFFFFFFF + kAsn1TagValueSize + 3; //According to MbedTLS restriction on TAG: LENGTH
+static const size_t kAsn1SizeMax = 0xFFFFFFFF; // According to MbedTLS restriction on TAG: LENGTH
 static const size_t kAsn1ContextTagMax = 0x1E;
 
 #define RETURN_POINTER_DIFF_AFTER_INVOCATION(pointer, invocation) \

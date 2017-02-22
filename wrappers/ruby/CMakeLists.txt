@@ -42,7 +42,36 @@ set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 set (RUBY_MODULE_NAME ${PROJECT_NAME})
 set (SWIG_MODULE_NAME ${RUBY_MODULE_NAME})
 
-find_host_package (Ruby REQUIRED)
+# Find Ruby package
+if (LANG_VERSION)
+    find_host_package (Ruby "${LANG_VERSION}" EXACT REQUIRED)
+else ()
+    find_host_package (Ruby REQUIRED)
+endif (LANG_VERSION)
+
+# Find Ruby headers in given path - not system
+find_host_path (RUBY_INCLUDE_DIR_LOCAL
+    NAMES ruby.h
+    HINTS
+    ${RUBY_HDR_DIR}
+    ${RUBY_ARCH_DIR}
+    NO_DEFAULT_PATH
+)
+
+find_host_path (RUBY_CONFIG_INCLUDE_DIR_LOCAL
+    NAMES ruby/config.h  config.h
+    HINTS
+    ${RUBY_HDR_DIR}/${RUBY_ARCH}
+    ${RUBY_ARCH_DIR}
+    ${RUBY_ARCHHDR_DIR}
+    NO_DEFAULT_PATH
+)
+
+# Replace system ruby include dirs with found within RbConfig
+set (RUBY_INCLUDE_DIRS
+    "${RUBY_INCLUDE_DIR_LOCAL}" "${RUBY_CONFIG_INCLUDE_DIR_LOCAL}"
+    CACHE STRING "Ruby include directories" FORCE
+)
 include_directories (SYSTEM ${RUBY_INCLUDE_DIRS})
 
 if (RUBY_VERSION)

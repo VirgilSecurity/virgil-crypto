@@ -1,5 +1,12 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.0.7 released 2017-03-06
+
+## Bugfix
+
+  * [Doc] Fix doxygen warnings
+
+
 = Version 2.0.6 released 2017-02-24
 
 ## Features

@@ -47,7 +47,7 @@ namespace virgil { namespace crypto { namespace foundation {
 
 /**
  * @brief Provides symmetric ciphers algorithms.
- * @ingroup Cipher
+ * @ingroup cipher
  */
 class VirgilSymmetricCipher : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
@@ -297,7 +297,7 @@ namespace std {
 /**
  * @brief Returns string representation of the Hash algorithm.
  * @return Symmetric cipher algorithm as string.
- * @ingroup Cipher
+ * @ingroup cipher
  */
 string to_string(virgil::crypto::foundation::VirgilSymmetricCipher::Algorithm alg);
 }

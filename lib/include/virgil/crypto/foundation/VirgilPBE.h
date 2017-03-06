@@ -47,7 +47,7 @@ namespace virgil { namespace crypto { namespace foundation {
 
 /**
  * @brief Provides Password-Based Cryptography. Now PKCS#5 and PKCS#12 are partially supported.
- * @ingroup Cipher
+ * @ingroup cipher
  */
 class VirgilPBE : public asn1::VirgilAsn1Compatible {
 public:

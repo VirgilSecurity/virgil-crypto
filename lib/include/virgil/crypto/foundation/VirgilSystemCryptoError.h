@@ -45,7 +45,7 @@ namespace virgil { namespace crypto { namespace foundation {
 
 /**
  * @brief Error category that handles error codes from the system crypto library.
- * @ingroup Error
+ * @ingroup error
  */
 class VirgilSystemCryptoErrorCategory : public std::error_category {
 public:
@@ -66,7 +66,7 @@ public:
 /**
  * @brief Return singleton instance of the system crypto error category.
  * @return Instance of the syste, crypto error categoty.
- * @ingroup Error
+ * @ingroup error
  */
 const VirgilSystemCryptoErrorCategory& system_crypto_category() noexcept;
 
@@ -79,7 +79,7 @@ const VirgilSystemCryptoErrorCategory& system_crypto_category() noexcept;
  * @param result Value returned by system crypto library.
  * @return Value if it's not an error.
  * @throw VirgilCryptoException with given error code and correspond category, if given value represents an error.
- * @ingroup Error
+ * @ingroup error
  */
 inline int system_crypto_handler_get_result(int result) {
     if (result >= 0) { return result; }
@@ -94,7 +94,7 @@ inline int system_crypto_handler_get_result(int result) {
  *
  * @param result Value returned by system crypto library.
  * @throw VirgilCryptoException with given error code and correspond category, if given value represents an error.
- * @ingroup Error
+ * @ingroup error
  */
 inline void system_crypto_handler(int result) {
     (void) system_crypto_handler_get_result(result);
@@ -113,7 +113,7 @@ inline void system_crypto_handler(int result) {
  * @param catch_handler Function that can handle the error in a different way.
  *
  * @return Value if it's not an error.
- * @ingroup Error
+ * @ingroup error
  */
 template<typename CatchHandler>
 inline int system_crypto_handler_get_result(int result, CatchHandler catch_handler) {
@@ -137,7 +137,7 @@ inline int system_crypto_handler_get_result(int result, CatchHandler catch_handl
  *
  * @param result Value returned by system crypto library.
  * @param catch_handler Function that can handle the error in a different way.
- * @ingroup Error
+ * @ingroup error
  */
 template<typename CatchHandler>
 inline void system_crypto_handler(int result, CatchHandler catch_handler) {

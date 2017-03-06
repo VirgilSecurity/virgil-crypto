@@ -49,7 +49,7 @@ namespace virgil { namespace crypto {
  * To determine the real exception reason, error codes with conjuction with error category are used.
  * Error codes can be found in the enumeration @link VirgilCryptoError @endlink.
  *
- * @ingroup Error
+ * @ingroup error
  */
 class VirgilCryptoException : public std::exception {
 public:

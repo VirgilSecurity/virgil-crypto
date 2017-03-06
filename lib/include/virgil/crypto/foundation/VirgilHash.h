@@ -47,7 +47,7 @@ namespace virgil { namespace crypto { namespace foundation {
 
 /**
  * @brief Provides hashing (message digest) algorithms.
- * @ingroup Hash
+ * @ingroup hash
  */
 class VirgilHash : public virgil::crypto::foundation::asn1::VirgilAsn1Compatible {
 public:
@@ -253,7 +253,7 @@ namespace std {
 /**
  * @brief Returns string representation of the Hash algorithm.
  * @return Hash algorithm as string.
- * @ingroup Hash
+ * @ingroup hash
  */
 string to_string(virgil::crypto::foundation::VirgilHash::Algorithm alg);
 }

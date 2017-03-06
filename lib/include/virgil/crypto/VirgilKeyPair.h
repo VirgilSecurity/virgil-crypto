@@ -228,7 +228,8 @@ public:
     /**
      * @brief Convert given private key to the PEM format.
      *
-     * @param publicKey - Private Key to be converted.
+     * @param privateKey - Private Key to be converted.
+     * @param privateKeyPassword - password for the Private Key.
      * @return Private Key in the PEM fromat.
      * @throw VirgilCryptoException, with VirgilCryptoError::InvalidPrivateKeyPassword if password is wrong.
      * @throw VirgilCryptoException, with VirgilCryptoError::InvalidFormat if key has invalid format.
@@ -239,7 +240,8 @@ public:
     /**
      * @brief Convert given private key to the DER format.
      *
-     * @param publicKey - Private Key to be converted.
+     * @param privateKey - Private Key to be converted.
+     * @param privateKeyPassword - password for the Private Key.
      * @return Private Key in the DER fromat.
      * @throw VirgilCryptoException, with VirgilCryptoError::InvalidPrivateKeyPassword if password is wrong.
      * @throw VirgilCryptoException, with VirgilCryptoError::InvalidFormat if key has invalid format.

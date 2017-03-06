@@ -47,7 +47,7 @@ namespace virgil { namespace crypto { namespace foundation {
 
 /**
  * @brief Provides key derivation function algorithms.
- * @ingroup KDF
+ * @ingroup kdf
  */
 class VirgilKDF : public asn1::VirgilAsn1Compatible {
 public:
@@ -167,7 +167,7 @@ namespace std {
 /**
  * @brief Returns string representation of the KDF algorithm.
  * @return KDF algorithm as string.
- * @ingroup KDF
+ * @ingroup kdf
  */
 string to_string(virgil::crypto::foundation::VirgilKDF::Algorithm alg);
 }

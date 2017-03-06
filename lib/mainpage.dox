@@ -36,25 +36,25 @@
  */
 
 /**
- * @defgroup Error
+ * @defgroup error Error
  *
  * @brief This group contains interfaces for error handling mechanism that is used in the library.
  */
 
 /**
- * @defgroup Hash
+ * @defgroup hash Hash
  *
  * @brief This group contains interfaces for producing cryptographic hashes.
  */
 
 /**
- * @defgroup KDF
+ * @defgroup kdf KDF
  *
  * @brief This group contains interfaces to Key Derivation Function algorithms.
  */
 
 /**
- * @defgroup Cipher
+ * @defgroup cipher Cipher
  *
  * @brief This group contains interfaces to encryption and to decryption algorithms.
  */

@@ -46,7 +46,7 @@ namespace virgil { namespace crypto {
 
 /**
  * @brief Specific error codes for the crypto library.
- * @ingroup Error
+ * @ingroup error
 */
 enum class VirgilCryptoError  {
     Reserved = 0, ///< Should not be used.
@@ -71,7 +71,7 @@ enum class VirgilCryptoError  {
 
 /**
  * @brief This is specific error category that contains information about crypto library errors.
- * @ingroup Error
+ * @ingroup error
  */
 class VirgilCryptoErrorCategory : public std::error_category {
 public:
@@ -92,7 +92,7 @@ public:
 /**
  * @brief Return singleton instance of the crypto error category.
  * @return Instance of the crypto error categoty.
- * @ingroup Error
+ * @ingroup error
  */
 const VirgilCryptoErrorCategory& crypto_category() noexcept;
 
@@ -101,7 +101,7 @@ const VirgilCryptoErrorCategory& crypto_category() noexcept;
  * @param ev Error value.
  * @return Exception with given error value and corresond error category.
  * @see VirgilCryptoError for specific error values.
- * @ingroup Error
+ * @ingroup error
  */
 inline VirgilCryptoException make_error(VirgilCryptoError ev) {
     return VirgilCryptoException(static_cast<int>(ev), crypto_category());
@@ -113,7 +113,7 @@ inline VirgilCryptoException make_error(VirgilCryptoError ev) {
  * @param what Additional error description.
  * @return Exception with given error value and corresond error category.
  * @see VirgilCryptoError for specific error values.
- * @ingroup Error
+ * @ingroup error
  */
 inline VirgilCryptoException make_error(VirgilCryptoError ev, const std::string& what) {
     return VirgilCryptoException(static_cast<int>(ev), crypto_category(), what);
@@ -125,7 +125,7 @@ inline VirgilCryptoException make_error(VirgilCryptoError ev, const std::string&
  * @param what Additional error description.
  * @return Exception with given error value and corresond error category.
  * @see VirgilCryptoError for specific error values.
- * @ingroup Error
+ * @ingroup error
  */
 inline VirgilCryptoException make_error(VirgilCryptoError ev, const char* what) {
     return VirgilCryptoException(static_cast<int>(ev), crypto_category(), what);

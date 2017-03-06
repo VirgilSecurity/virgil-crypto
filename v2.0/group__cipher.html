@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.10"/>
-<title>Virgil Security Crypto library: virgil::crypto::stream Namespace Reference</title>
+<title>Virgil Security Crypto library: Cipher</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -40,7 +40,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="modules.html"><span>Modules</span></a></li>
-      <li class="current"><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -61,12 +61,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </li>
     </ul>
   </div>
-  <div id="navrow2" class="tabs2">
-    <ul class="tablist">
-      <li><a href="namespaces.html"><span>Namespace&#160;List</span></a></li>
-      <li><a href="namespacemembers.html"><span>Namespace&#160;Members</span></a></li>
-    </ul>
-  </div>
+</div><!-- top -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -81,40 +76,56 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="namespacevirgil.html">virgil</a></li><li class="navelem"><a class="el" href="namespacevirgil_1_1crypto.html">crypto</a></li><li class="navelem"><a class="el" href="namespacevirgil_1_1crypto_1_1stream.html">stream</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
-<div class="title">virgil::crypto::stream Namespace Reference</div>  </div>
+<div class="title">Cipher</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>This namespace contains interfaces for stream data processing in crypto algorithms.  
+<p>This group contains interfaces to encryption and to decryption algorithms.  
 <a href="#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1stream_1_1_virgil_bytes_data_sink.html">VirgilBytesDataSink</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">C++ Byte Array implementation of the <a class="el" href="classvirgil_1_1crypto_1_1_virgil_data_sink.html" title="This is base class for output streams. ">VirgilDataSink</a> class.  <a href="classvirgil_1_1crypto_1_1stream_1_1_virgil_bytes_data_sink.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_e.html">virgil::crypto::foundation::VirgilPBE</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides Password-Based Cryptography. Now PKCS#5 and PKCS#12 are partially supported.  <a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_e.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1stream_1_1_virgil_bytes_data_source.html">VirgilBytesDataSource</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">C++ Byte Array implementation of the <a class="el" href="classvirgil_1_1crypto_1_1_virgil_data_source.html" title="This is base class for input streams. ">VirgilDataSource</a> class.  <a href="classvirgil_1_1crypto_1_1stream_1_1_virgil_bytes_data_source.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html">virgil::crypto::foundation::VirgilSymmetricCipher</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Provides symmetric ciphers algorithms.  <a href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1stream_1_1_virgil_stream_data_sink.html">VirgilStreamDataSink</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">C++ stream implementation of the <a class="el" href="classvirgil_1_1crypto_1_1_virgil_data_sink.html" title="This is base class for output streams. ">VirgilDataSink</a> class.  <a href="classvirgil_1_1crypto_1_1stream_1_1_virgil_stream_data_sink.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1stream_1_1_virgil_stream_data_source.html">VirgilStreamDataSource</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">C++ stream implementation of the <a class="el" href="classvirgil_1_1crypto_1_1_virgil_data_source.html" title="This is base class for input streams. ">VirgilDataSource</a> class.  <a href="classvirgil_1_1crypto_1_1stream_1_1_virgil_stream_data_source.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:gaedfd991970f624da33ea80c323db6057"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__cipher.html#gaedfd991970f624da33ea80c323db6057">std::to_string</a> (<a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a6ef9c5c28781f37ab72b5b1674318f13">virgil::crypto::foundation::VirgilSymmetricCipher::Algorithm</a> alg)</td></tr>
+<tr class="memdesc:gaedfd991970f624da33ea80c323db6057"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns string representation of the Hash algorithm.  <a href="group__cipher.html#gaedfd991970f624da33ea80c323db6057">More...</a><br /></td></tr>
+<tr class="separator:gaedfd991970f624da33ea80c323db6057"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This namespace contains interfaces for stream data processing in crypto algorithms. </p>
-</div></div><!-- contents -->
+<p>This group contains interfaces to encryption and to decryption algorithms. </p>
+<h2 class="groupheader">Function Documentation</h2>
+<a class="anchor" id="gaedfd991970f624da33ea80c323db6057"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">string std::to_string </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a6ef9c5c28781f37ab72b5b1674318f13">virgil::crypto::foundation::VirgilSymmetricCipher::Algorithm</a>&#160;</td>
+          <td class="paramname"><em>alg</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns string representation of the Hash algorithm. </p>
+<dl class="section return"><dt>Returns</dt><dd>Symmetric cipher algorithm as string. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

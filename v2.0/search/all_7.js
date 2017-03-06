@@ -1,7 +1,7 @@
 var searchData=
 [
   ['hasdata',['hasData',['../classvirgil_1_1crypto_1_1stream_1_1_virgil_bytes_data_source.html#a665e710f783a00424f50080a8233f587',1,'virgil::crypto::stream::VirgilBytesDataSource::hasData()'],['../classvirgil_1_1crypto_1_1stream_1_1_virgil_stream_data_source.html#ad8c04a1ce4f3b9337e285590ad6cacef',1,'virgil::crypto::stream::VirgilStreamDataSource::hasData()'],['../classvirgil_1_1crypto_1_1_virgil_data_source.html#aa034f7c2fb70c391e0b27b39f78d908d',1,'virgil::crypto::VirgilDataSource::hasData()']]],
-  ['hash',['hash',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#aa6e2b15aaf1836fb3e4ed957f7adc5b8',1,'virgil::crypto::foundation::VirgilHash::hash()'],['../group___hash.html',1,'(Global Namespace)']]],
+  ['hash',['hash',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#aa6e2b15aaf1836fb3e4ed957f7adc5b8',1,'virgil::crypto::foundation::VirgilHash::hash()'],['../group__hash.html',1,'(Global Namespace)']]],
   ['hex2bytes',['hex2bytes',['../namespacevirgil_1_1crypto.html#aa666b6a7d6364eb46d4aff969acdcac6',1,'virgil::crypto']]],
   ['hextobytes',['hexToBytes',['../classvirgil_1_1crypto_1_1_virgil_byte_array_utils.html#ad12b4ceda7573da0fbd72c958c47b74d',1,'virgil::crypto::VirgilByteArrayUtils']]],
   ['hmac',['hmac',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#a032096c3922101b1f78160634b75c561',1,'virgil::crypto::foundation::VirgilHash']]],

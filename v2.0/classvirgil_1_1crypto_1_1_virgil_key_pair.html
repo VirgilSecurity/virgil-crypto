@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">2.0.6</span>
+   &#160;<span id="projectnumber">2.0.7</span>
    </div>
   </td>
  </tr>
@@ -378,8 +378,8 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group___error.html#ggadde75c3db40120e9e64e386b3eaa7389ab65ccbf6b5e47f3a1dacfb7dc775344d" title="Private Key password mismatch. ">VirgilCryptoError::InvalidPrivateKeyPassword</a> if password is wrong. </td></tr>
-    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group___error.html#ggadde75c3db40120e9e64e386b3eaa7389ade236a235b4e8ffc9141676624753b2d" title="Data format is invalid. ">VirgilCryptoError::InvalidFormat</a> if key has invalid format.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group__error.html#ggadde75c3db40120e9e64e386b3eaa7389ab65ccbf6b5e47f3a1dacfb7dc775344d" title="Private Key password mismatch. ">VirgilCryptoError::InvalidPrivateKeyPassword</a> if password is wrong. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group__error.html#ggadde75c3db40120e9e64e386b3eaa7389ade236a235b4e8ffc9141676624753b2d" title="Data format is invalid. ">VirgilCryptoError::InvalidFormat</a> if key has invalid format.</td></tr>
   </table>
   </dd>
 </dl>
@@ -431,9 +431,9 @@ Static Public Member Functions</h2></td></tr>
 </dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group___error.html#ggadde75c3db40120e9e64e386b3eaa7389a253ca7dd096ee0956cccee4d376cab8b" title="Argument given to a function is invalid. ">VirgilCryptoError::InvalidArgument</a> if key is empty. </td></tr>
-    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group___error.html#ggadde75c3db40120e9e64e386b3eaa7389ab65ccbf6b5e47f3a1dacfb7dc775344d" title="Private Key password mismatch. ">VirgilCryptoError::InvalidPrivateKeyPassword</a> if key is already encrypted. </td></tr>
-    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group___error.html#ggadde75c3db40120e9e64e386b3eaa7389ade236a235b4e8ffc9141676624753b2d" title="Data format is invalid. ">VirgilCryptoError::InvalidFormat</a> if key has invalid format.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group__error.html#ggadde75c3db40120e9e64e386b3eaa7389a253ca7dd096ee0956cccee4d376cab8b" title="Argument given to a function is invalid. ">VirgilCryptoError::InvalidArgument</a> if key is empty. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group__error.html#ggadde75c3db40120e9e64e386b3eaa7389ab65ccbf6b5e47f3a1dacfb7dc775344d" title="Private Key password mismatch. ">VirgilCryptoError::InvalidPrivateKeyPassword</a> if key is already encrypted. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group__error.html#ggadde75c3db40120e9e64e386b3eaa7389ade236a235b4e8ffc9141676624753b2d" title="Data format is invalid. ">VirgilCryptoError::InvalidFormat</a> if key has invalid format.</td></tr>
   </table>
   </dd>
 </dl>
@@ -729,15 +729,16 @@ Static Public Member Functions</h2></td></tr>
 <p>Convert given private key to the DER format. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">publicKey</td><td>- Private Key to be converted. </td></tr>
+    <tr><td class="paramname">privateKey</td><td>- Private Key to be converted. </td></tr>
+    <tr><td class="paramname">privateKeyPassword</td><td>- password for the Private Key. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Private Key in the DER fromat. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group___error.html#ggadde75c3db40120e9e64e386b3eaa7389ab65ccbf6b5e47f3a1dacfb7dc775344d" title="Private Key password mismatch. ">VirgilCryptoError::InvalidPrivateKeyPassword</a> if password is wrong. </td></tr>
-    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group___error.html#ggadde75c3db40120e9e64e386b3eaa7389ade236a235b4e8ffc9141676624753b2d" title="Data format is invalid. ">VirgilCryptoError::InvalidFormat</a> if key has invalid format. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group__error.html#ggadde75c3db40120e9e64e386b3eaa7389ab65ccbf6b5e47f3a1dacfb7dc775344d" title="Private Key password mismatch. ">VirgilCryptoError::InvalidPrivateKeyPassword</a> if password is wrong. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group__error.html#ggadde75c3db40120e9e64e386b3eaa7389ade236a235b4e8ffc9141676624753b2d" title="Data format is invalid. ">VirgilCryptoError::InvalidFormat</a> if key has invalid format. </td></tr>
   </table>
   </dd>
 </dl>
@@ -779,15 +780,16 @@ Static Public Member Functions</h2></td></tr>
 <p>Convert given private key to the PEM format. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">publicKey</td><td>- Private Key to be converted. </td></tr>
+    <tr><td class="paramname">privateKey</td><td>- Private Key to be converted. </td></tr>
+    <tr><td class="paramname">privateKeyPassword</td><td>- password for the Private Key. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Private Key in the PEM fromat. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group___error.html#ggadde75c3db40120e9e64e386b3eaa7389ab65ccbf6b5e47f3a1dacfb7dc775344d" title="Private Key password mismatch. ">VirgilCryptoError::InvalidPrivateKeyPassword</a> if password is wrong. </td></tr>
-    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group___error.html#ggadde75c3db40120e9e64e386b3eaa7389ade236a235b4e8ffc9141676624753b2d" title="Data format is invalid. ">VirgilCryptoError::InvalidFormat</a> if key has invalid format. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group__error.html#ggadde75c3db40120e9e64e386b3eaa7389ab65ccbf6b5e47f3a1dacfb7dc775344d" title="Private Key password mismatch. ">VirgilCryptoError::InvalidPrivateKeyPassword</a> if password is wrong. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group__error.html#ggadde75c3db40120e9e64e386b3eaa7389ade236a235b4e8ffc9141676624753b2d" title="Data format is invalid. ">VirgilCryptoError::InvalidFormat</a> if key has invalid format. </td></tr>
   </table>
   </dd>
 </dl>
@@ -826,7 +828,7 @@ Static Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Public Key in the DER fromat. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group___error.html#ggadde75c3db40120e9e64e386b3eaa7389ade236a235b4e8ffc9141676624753b2d" title="Data format is invalid. ">VirgilCryptoError::InvalidFormat</a> if key has invalid format. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group__error.html#ggadde75c3db40120e9e64e386b3eaa7389ade236a235b4e8ffc9141676624753b2d" title="Data format is invalid. ">VirgilCryptoError::InvalidFormat</a> if key has invalid format. </td></tr>
   </table>
   </dd>
 </dl>
@@ -865,7 +867,7 @@ Static Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>Public Key in the PEM fromat. </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group___error.html#ggadde75c3db40120e9e64e386b3eaa7389ade236a235b4e8ffc9141676624753b2d" title="Data format is invalid. ">VirgilCryptoError::InvalidFormat</a> if key has invalid format. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a>,with</td><td><a class="el" href="group__error.html#ggadde75c3db40120e9e64e386b3eaa7389ade236a235b4e8ffc9141676624753b2d" title="Data format is invalid. ">VirgilCryptoError::InvalidFormat</a> if key has invalid format. </td></tr>
   </table>
   </dd>
 </dl>

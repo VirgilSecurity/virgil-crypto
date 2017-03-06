@@ -8,6 +8,6 @@ var searchData=
   ['computeshared',['computeShared',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#ad909d31f08f8ec738fb801639822e780',1,'virgil::crypto::foundation::VirgilAsymmetricCipher::computeShared()'],['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a39b4aedcd7b6d78ca18b39f367257912',1,'virgil::crypto::VirgilCipherBase::computeShared()']]],
   ['condition',['condition',['../classvirgil_1_1crypto_1_1_virgil_crypto_exception.html#a561cf356af4146eec7a6cccd5b1f8399',1,'virgil::crypto::VirgilCryptoException']]],
   ['crypt',['crypt',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a11678ded499ab8c879b6505eb55c21e6',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
-  ['crypto_5fcategory',['crypto_category',['../group___error.html#gaa706e2fcd7540b7a2b0faed5f2fa76dd',1,'virgil::crypto']]],
+  ['crypto_5fcategory',['crypto_category',['../group__error.html#gaa706e2fcd7540b7a2b0faed5f2fa76dd',1,'virgil::crypto']]],
   ['customparams',['customParams',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a752e2e66f9017d4373ad9760b4dbb21a',1,'virgil::crypto::VirgilCipherBase::customParams()'],['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#ae8d5b7b0297551101dcd6b879efecd84',1,'virgil::crypto::VirgilCipherBase::customParams() const ']]]
 ];

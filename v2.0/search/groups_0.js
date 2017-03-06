@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['cipher',['Cipher',['../group___cipher.html',1,'']]]
+  ['cipher',['Cipher',['../group__cipher.html',1,'']]]
 ];

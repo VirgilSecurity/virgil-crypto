@@ -12,6 +12,6 @@ var searchData=
   ['ec_5fsecp256r1',['EC_SECP256R1',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907ae03f671212d719d8666b6f01444a11d3',1,'virgil::crypto::VirgilKeyPair']]],
   ['ec_5fsecp384r1',['EC_SECP384R1',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907adeb025ac73b22a0238be178e5f9b872c',1,'virgil::crypto::VirgilKeyPair']]],
   ['ec_5fsecp521r1',['EC_SECP521R1',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907ade2ae46ffe498f8ec6397ed442889ca7',1,'virgil::crypto::VirgilKeyPair']]],
-  ['emptyparameter',['EmptyParameter',['../group___error.html#ggadde75c3db40120e9e64e386b3eaa7389a2510b109deeb35d5ad7a530c7ee69854',1,'virgil::crypto']]],
-  ['exceededmaxsize',['ExceededMaxSize',['../group___error.html#ggadde75c3db40120e9e64e386b3eaa7389ae8be19d90c083c88bae3cacc211ea2c2',1,'virgil::crypto']]]
+  ['emptyparameter',['EmptyParameter',['../group__error.html#ggadde75c3db40120e9e64e386b3eaa7389a2510b109deeb35d5ad7a530c7ee69854',1,'virgil::crypto']]],
+  ['exceededmaxsize',['ExceededMaxSize',['../group__error.html#ggadde75c3db40120e9e64e386b3eaa7389ae8be19d90c083c88bae3cacc211ea2c2',1,'virgil::crypto']]]
 ];

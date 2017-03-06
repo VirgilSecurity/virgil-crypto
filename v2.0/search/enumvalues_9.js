@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['reserved',['Reserved',['../group___error.html#ggadde75c3db40120e9e64e386b3eaa7389a942d4e37dd5607ab68e54755540d4a47',1,'virgil::crypto']]],
+  ['reserved',['Reserved',['../group__error.html#ggadde75c3db40120e9e64e386b3eaa7389a942d4e37dd5607ab68e54755540d4a47',1,'virgil::crypto']]],
   ['rsa_5f1024',['RSA_1024',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907a220b13172b72ab8f3ff237d9a23e0ea4',1,'virgil::crypto::VirgilKeyPair']]],
   ['rsa_5f2048',['RSA_2048',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907a5b3bf47dace955c9874047820a78d5b8',1,'virgil::crypto::VirgilKeyPair']]],
   ['rsa_5f256',['RSA_256',['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907aa7ef17a80e0b6dd08712574e0b175073',1,'virgil::crypto::VirgilKeyPair']]],

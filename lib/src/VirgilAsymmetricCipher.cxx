@@ -226,7 +226,7 @@ static VirgilByteArray fixKey(const VirgilByteArray& key) {
     if (std::search(key.begin(), key.end(), pemHeaderBegin.begin(), pemHeaderBegin.end()) != key.end()) {
         VirgilByteArray fixedKey(key.begin(), key.end());
         fixedKey.push_back(0);
-        return std::move(fixedKey);
+        return fixedKey;
     }
     return key;
 }

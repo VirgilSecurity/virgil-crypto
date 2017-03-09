@@ -412,9 +412,9 @@ void VirgilTinyCipher::encryptAndSign(
             throw make_error(VirgilCryptoError::InvalidState, "Package size overflow.");
         }
 
-        const size_t spaceLeft = impl_->packageSize - package.size();
+        const std::ptrdiff_t spaceLeft = impl_->packageSize - package.size();
         const std::ptrdiff_t payloadAvailable = encryptedData.end() - payloadIt;
-        const size_t payloadSize = spaceLeft > payloadAvailable ? (size_t) payloadAvailable : spaceLeft;
+        const std::ptrdiff_t payloadSize = spaceLeft > payloadAvailable ? payloadAvailable : spaceLeft;
         package.insert(package.end(), payloadIt, payloadIt + payloadSize);
         payloadIt += payloadSize;
 

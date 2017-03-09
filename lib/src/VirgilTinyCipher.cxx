@@ -178,7 +178,7 @@ static size_t calc_master_package_payload_size(size_t packageSize, size_t public
 /**
  * @brief Produce additional authenticated data for AEAD cipher.
  *
- * @param packageCount- package count
+ * @param packageCount - package count
  * @param ephemeralContext - asymmetric cipher context that handles ephemeral public key
  * @param isSigned - defines that package is signed
  */
@@ -188,7 +188,7 @@ static VirgilByteArray
 /**
  * @brief Read header from the package and parse it.
  *
- * @param[inout] packageIt - current parse position in the package
+ * @param[in,out] packageIt - current parse position in the package
  * @param[in] end - end of the package
  * @param[out] isMaster - defines that package is master
  * @param[out] isSigned - defines that package is signed

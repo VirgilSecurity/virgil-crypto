@@ -83,11 +83,8 @@ public:
     VirgilPBKDF(const virgil::crypto::VirgilByteArray& salt, unsigned int iterationCount = kIterationCount_Default);
     ///@}
     /**
-     * @brief
-     */
-    /**
      * @name Configuration / Info
-     * @brief Provide methods that allow precise algorithm configuration and get information about it.
+     * Provide methods that allow precise algorithm configuration and get information about it.
      */
     ///@{
     /**

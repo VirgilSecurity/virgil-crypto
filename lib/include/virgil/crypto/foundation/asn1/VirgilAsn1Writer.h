@@ -55,14 +55,14 @@ class VirgilAsn1Writer {
 public:
     /**
      * @brief Initialize internal state for the first use.
-     * @see @link reset @endlink method for reusing this class to create new ASN.1 stucture.
+     * @see reset() method for reusing this class to create new ASN.1 stucture.
      */
     VirgilAsn1Writer();
 
     /**
      * @brief Initialize internal state for the first use.
      * @param capacity - expected ASN.1 final size
-     * @see @link reset @endlink method for reusing this class to create new ASN.1 stucture.
+     * @see reset() method for reusing this class to create new ASN.1 stucture.
      */
     VirgilAsn1Writer(size_t capacity);
 

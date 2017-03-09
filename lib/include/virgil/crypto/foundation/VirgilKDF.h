@@ -87,11 +87,8 @@ public:
     explicit VirgilKDF(const char* name);
     ///@}
     /**
-     * @brief
-     */
-    /**
      * @name Info
-     * @brief Provide detail information about object.
+     * Provide detail information about object.
      */
     ///@{
     /**

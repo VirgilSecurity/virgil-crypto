@@ -57,7 +57,6 @@ public:
      * @param embedContentInfo - determines whether to embed content info the the encrypted data, or not.
      * @note Store content info to use it for decription process, if embedContentInfo parameter is false.
      * @see getContentInfo()
-     * @return encrypted data.
      */
     void encrypt(VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo = true);
 

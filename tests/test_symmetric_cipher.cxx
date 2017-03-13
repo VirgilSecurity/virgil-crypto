@@ -53,9 +53,10 @@ using virgil::crypto::VirgilByteArray;
 using virgil::crypto::foundation::VirgilSymmetricCipher;
 using virgil::crypto::foundation::VirgilRandom;
 
-TEST_CASE("Symmetric Cipher", "[symmetric-cipher]") {
-    VirgilSymmetricCipher cipher(VirgilSymmetricCipher::Algorithm::AES_256_GCM);
+static void test_symmetric_cipher(VirgilSymmetricCipher::Algorithm algorithm) {
     VirgilByteArray plainData = str2bytes("data to be encrypted with symmetric cipher");
+
+    VirgilSymmetricCipher cipher(algorithm);
 
     SECTION("with known KEY and IV") {
         // Init keys
@@ -102,4 +103,21 @@ TEST_CASE("Symmetric Cipher", "[symmetric-cipher]") {
         // Check
         REQUIRE(bytes2str(plainData) == bytes2str(decryptedData));
     }
+}
+
+TEST_CASE("Symmetric Cipher", "[symmetric-cipher]") {
+
+    SECTION("AES-128-CBC") {
+        test_symmetric_cipher(VirgilSymmetricCipher::Algorithm::AES_128_CBC);
+    }
+    SECTION("AES-256-CBC") {
+        test_symmetric_cipher(VirgilSymmetricCipher::Algorithm::AES_256_CBC);
+    }
+    SECTION("AES-128-GCM") {
+        test_symmetric_cipher(VirgilSymmetricCipher::Algorithm::AES_128_GCM);
+    }
+    SECTION("AES-256-GCM") {
+        test_symmetric_cipher(VirgilSymmetricCipher::Algorithm::AES_256_GCM);
+    }
+
 }

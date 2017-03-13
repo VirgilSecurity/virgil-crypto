@@ -342,6 +342,10 @@ void VirgilSymmetricCipher::asn1Read(VirgilAsn1Reader& asn1Reader) {
 
 std::string std::to_string(virgil::crypto::foundation::VirgilSymmetricCipher::Algorithm alg) {
     switch (alg) {
+        case VirgilSymmetricCipher::Algorithm::AES_128_CBC:
+            return "AES-128-CBC";
+        case VirgilSymmetricCipher::Algorithm::AES_128_GCM:
+            return "AES-128-GCM";
         case VirgilSymmetricCipher::Algorithm::AES_256_CBC:
             return "AES-256-CBC";
         case VirgilSymmetricCipher::Algorithm::AES_256_GCM:

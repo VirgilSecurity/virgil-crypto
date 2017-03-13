@@ -70,6 +70,8 @@ public:
      * Enumerates possible Symmetric Cipher algorithms.
      */
     enum class Algorithm {
+        AES_128_CBC, ///< Cipher algorithm: AES-128, mode: CBC
+        AES_128_GCM, ///< Cipher algorithm: AES-128, mode: GCM
         AES_256_CBC, ///< Cipher algorithm: AES-256, mode: CBC
         AES_256_GCM  ///< Cipher algorithm: AES-256, mode: GCM
     };

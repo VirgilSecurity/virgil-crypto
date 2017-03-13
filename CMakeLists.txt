@@ -109,7 +109,7 @@ else (VIRGIL_VERSION_FEATURE)
     set (VIRGIL_VERSION_FULL_NAME ${VIRGIL_VERSION})
 endif (VIRGIL_VERSION_FEATURE)
 
-message (STATUS "Virgil version: " ${VIRGIL_VERSION})
+message (STATUS "Virgil version: " ${VIRGIL_VERSION_FULL_NAME})
 message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 
 # Configure path to custom modules

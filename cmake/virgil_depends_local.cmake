@@ -128,7 +128,7 @@ function (virgil_depends_create_cache_file cache_path)
     # Pass compiler flags if not toolchain case
     if (NOT CMAKE_CROSSCOMPILING)
         string (TOUPPER "${CMAKE_BUILD_TYPE}" configuration)
-        foreach (lang C CXX)
+        foreach (lang ASM C CXX)
             virgil_depends_write_cache_var ("${cache_path}" "CMAKE_${lang}_COMPILER")
             virgil_depends_write_cache_var ("${cache_path}" "CMAKE_${lang}_FLAGS")
             virgil_depends_write_cache_var ("${cache_path}" "CMAKE_${lang}_FLAGS_${configuration}")

@@ -273,6 +273,7 @@ fi
 if [ "${TARGET_NAME}" == "osx" ]; then
     # Add minimim OSX version flag
     osx_version_min="10.10" # Yosemite
+    CMAKE_ARGS+=" -DCMAKE_ASM_FLAGS=-mmacosx-version-min=${osx_version_min}"
     CMAKE_ARGS+=" -DCMAKE_C_FLAGS=-mmacosx-version-min=${osx_version_min}"
     CMAKE_ARGS+=" -DCMAKE_CXX_FLAGS=-mmacosx-version-min=${osx_version_min}"
     # Build

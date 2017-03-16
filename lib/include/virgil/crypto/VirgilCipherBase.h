@@ -137,9 +137,6 @@ public:
      */
     ///@{
     /**
-     * @brief Returns encrypted data info.
-     */
-    /**
      * @brief Return content info.
      *
      * Return Virgil Security Cryptogram, that contains public algorithm parameters that was used for encryption.
@@ -225,9 +222,6 @@ protected:
      * @note cipher's input vector is randomly generated.
      */
     virgil::crypto::foundation::VirgilSymmetricCipher& initEncryption();
-    /**
-     * @brief Configures symmetric cipher for encryption.
-     */
     /**
      * @brief Configures symmetric cipher for decryption.
      * @param encryptedDataInfo - serialized encrypted data info.

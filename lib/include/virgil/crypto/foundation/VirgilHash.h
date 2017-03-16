@@ -92,11 +92,8 @@ public:
     explicit VirgilHash(const char* name);
     ///@}
     /**
-     * @brief
-     */
-    /**
      * @name Info
-     * @brief Provide detail information about object.
+     * Provide detail information about object.
      */
     ///@{
     /**
@@ -114,7 +111,7 @@ public:
 
     /**
      * @name Immediate Hashing
-     * @brief This methods can be used to get the message hash immediately.
+     * This methods can be used to get the message hash immediately.
      */
     ///@{
     /**
@@ -131,7 +128,7 @@ public:
     /**
      * @name Chain Hashing
      *
-     * @brief This methods provide mechanism to hash long message,
+     * This methods provide mechanism to hash long message,
      *     that can be splitted to a shorter chunks and be processed separately.
      */
     ///@{
@@ -147,22 +144,22 @@ public:
      * This method MAY be called multiple times to process long message splitted to a shorter chunks.
      *
      * @param data - message to be hashed.
-     * @see @link start() @endlink
+     * @see start()
      */
     void update(const virgil::crypto::VirgilByteArray& data);
 
     /**
      * @brief Return final message hash.
      * @return Message hash processed by series of @link update() @endlink method.
-     * @see @link start() @endlink
-     * @see @link update() @endlink
+     * @see start()
+     * @see update()
      */
     virgil::crypto::VirgilByteArray finish();
     ///@}
 
     /**
      * @name HMAC Immediate Hashing
-     * @brief This methods can be used to get the message HMAC hash immediately.
+     * This methods can be used to get the message HMAC hash immediately.
      */
     ///@{
     /**
@@ -182,7 +179,7 @@ public:
     /**
      * @name HMAC Chain Hashing
      *
-     * @brief This methods provide mechanism to get HMAC hash of the long message,
+     * This methods provide mechanism to get HMAC hash of the long message,
      *     that can be splitted to a shorter chunks and be processed separately.
      */
     ///@{

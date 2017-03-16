@@ -239,6 +239,11 @@ show_info "<install_dir>: ${INSTALL_DIR}"
 # Define common build parameters
 CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
 
+if [[ ${TARGET_NAME} =~ ^(cpp|osx|ios|appletvos|applewatchos)$ ]]; then
+    # Expose low level API for targets that use C/C++ headers
+    CMAKE_ARGS+=" -DLIB_LOW_LEVEL_API=ON"
+fi
+
 if [[ ${TARGET_NAME} =~ ^(cpp|osx|java|net|php|python|ruby|nodejs|go)$ ]]; then
     CMAKE_ARGS+=" -DPLATFORM_ARCH=$(uname -m)"
 fi
@@ -266,6 +271,11 @@ if [[ ${TARGET_NAME} =~ ^(cpp|java|net|php|python|ruby|nodejs|go)$ ]]; then
 fi
 
 if [ "${TARGET_NAME}" == "osx" ]; then
+    # Add minimim OSX version flag
+    osx_version_min="10.10" # Yosemite
+    CMAKE_ARGS+=" -DCMAKE_ASM_FLAGS=-mmacosx-version-min=${osx_version_min}"
+    CMAKE_ARGS+=" -DCMAKE_C_FLAGS=-mmacosx-version-min=${osx_version_min}"
+    CMAKE_ARGS+=" -DCMAKE_CXX_FLAGS=-mmacosx-version-min=${osx_version_min}"
     # Build
     cmake ${CMAKE_ARGS} -DLANG=cpp -DPLATFORM=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
     make -j4 install

@@ -178,7 +178,7 @@ static size_t calc_master_package_payload_size(size_t packageSize, size_t public
 /**
  * @brief Produce additional authenticated data for AEAD cipher.
  *
- * @param packageCount- package count
+ * @param packageCount - package count
  * @param ephemeralContext - asymmetric cipher context that handles ephemeral public key
  * @param isSigned - defines that package is signed
  */
@@ -188,7 +188,7 @@ static VirgilByteArray
 /**
  * @brief Read header from the package and parse it.
  *
- * @param[inout] packageIt - current parse position in the package
+ * @param[in,out] packageIt - current parse position in the package
  * @param[in] end - end of the package
  * @param[out] isMaster - defines that package is master
  * @param[out] isSigned - defines that package is signed
@@ -412,9 +412,9 @@ void VirgilTinyCipher::encryptAndSign(
             throw make_error(VirgilCryptoError::InvalidState, "Package size overflow.");
         }
 
-        const size_t spaceLeft = impl_->packageSize - package.size();
+        const std::ptrdiff_t spaceLeft = impl_->packageSize - package.size();
         const std::ptrdiff_t payloadAvailable = encryptedData.end() - payloadIt;
-        const size_t payloadSize = spaceLeft > payloadAvailable ? (size_t) payloadAvailable : spaceLeft;
+        const std::ptrdiff_t payloadSize = spaceLeft > payloadAvailable ? payloadAvailable : spaceLeft;
         package.insert(package.end(), payloadIt, payloadIt + payloadSize);
         payloadIt += payloadSize;
 

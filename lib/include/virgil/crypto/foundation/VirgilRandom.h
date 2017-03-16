@@ -57,14 +57,12 @@ public:
      * @brief Initialize randomization module with personalization data.
      *
      * @param personalInfo (@see section 8.7.1 of NIST Special Publication 800-90A).
-     * @return Random bytes.
      */
     explicit VirgilRandom(const virgil::crypto::VirgilByteArray& personalInfo);
     /**
      * @brief Initialize randomization module with personalization data.
      *
      * @param personalInfo (@see section 8.7.1 of NIST Special Publication 800-90A).
-     * @return Random bytes.
      */
     explicit VirgilRandom(const std::string& personalInfo);
     ///@}

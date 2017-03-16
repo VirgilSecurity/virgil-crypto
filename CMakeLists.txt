@@ -97,8 +97,8 @@ project (VirgilSecurity)
 
 # Set library version
 set (VIRGIL_VERSION_MAJOR 2)
-set (VIRGIL_VERSION_MINOR 0)
-set (VIRGIL_VERSION_PATCH 7)
+set (VIRGIL_VERSION_MINOR 1)
+set (VIRGIL_VERSION_PATCH 0)
 set (VIRGIL_VERSION_FEATURE)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 2)
@@ -109,7 +109,7 @@ else (VIRGIL_VERSION_FEATURE)
     set (VIRGIL_VERSION_FULL_NAME ${VIRGIL_VERSION})
 endif (VIRGIL_VERSION_FEATURE)
 
-message (STATUS "Virgil version: " ${VIRGIL_VERSION})
+message (STATUS "Virgil version: " ${VIRGIL_VERSION_FULL_NAME})
 message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 
 # Configure path to custom modules

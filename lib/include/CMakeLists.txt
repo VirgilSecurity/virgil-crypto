@@ -53,11 +53,9 @@ else ()
         PATTERN "*.h"
         PATTERN "cms" EXCLUDE
         PATTERN "internal" EXCLUDE
-        PATTERN "VirgilOID.h" EXCLUDE
         PATTERN "VirgilAsn1Reader.h" EXCLUDE
         PATTERN "VirgilAsn1Writer.h" EXCLUDE
         PATTERN "VirgilKDF.h" EXCLUDE
-        PATTERN "PolarsslException.h" EXCLUDE
         PATTERN "VirgilKeyPairGenerator.h" EXCLUDE
         PATTERN "VirgilSymmetricCipher.h" EXCLUDE
         PATTERN "VirgilAsymmetricCipher.h" EXCLUDE

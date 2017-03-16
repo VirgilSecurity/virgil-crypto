@@ -1,5 +1,23 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.1.0 released 2017-03-16
+
+## Bugfix
+
+  [OSX] Add minimum required OSX version (Yosemite)
+  [Lib] Fix extra compiler warnings and documentation warnings
+
+## Changes
+
+  [OSX] Add minimum required OSX version (Yosemite)
+
+## Features
+
+  [CI] Add Dockerfile with Golang environment
+  [Lib] Expose low level API for targets that use C/C++ headers
+  [Lib] Add AES-128 to the symmetric cipher
+
+
 = Version 2.0.7 released 2017-03-06
 
 ## Bugfix

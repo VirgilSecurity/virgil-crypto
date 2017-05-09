@@ -103,6 +103,12 @@ public:
     std::string name() const;
 
     /**
+     * @brief Returns algorithm of the hash function.
+     * @return Algorithm of the hash function.
+     */
+    Algorithm algorithm() const;
+
+    /**
      * @brief Return underlying hash type
      * @note Used for internal purposes only
      */

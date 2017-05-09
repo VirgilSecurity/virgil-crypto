@@ -169,6 +169,14 @@ public:
     ///@}
 
     /**
+     * @name Helpers
+     */
+    ///@{
+    static size_t defineSize(const VirgilByteArray& contentInfoData);
+    ///@}
+
+private:
+    /**
      * @name Encrypted content management
      *
      * @note Designed for internal use only.
@@ -179,7 +187,8 @@ public:
      */
     VirgilByteArray decryptKeyRecipient(
             const VirgilByteArray& recipientId,
-            std::function<VirgilByteArray(const VirgilByteArray& encryptedKey)> decrypt) const;
+            std::function<VirgilByteArray(
+                    const VirgilByteArray& algorithm, const VirgilByteArray& encryptedKey)> decrypt) const;
 
     /**
      * @brief Iterate over password recipients.
@@ -200,29 +209,23 @@ public:
     void setContentEncryptionAlgorithm(const VirgilByteArray& contentEncryptionAlgorithm);
 
     VirgilByteArray getContentEncryptionAlgorithm() const;
-    ///@}
 
-    /**
-     * @name Helpers
-     */
-    ///@{
-    static size_t defineSize(const VirgilByteArray& contentInfoData);
+    friend class VirgilCipherBase;
     ///@}
-
 
 public:
-//! @cond Doxygen_Suppress
-VirgilContentInfo(VirgilContentInfo&& rhs) noexcept;
+    //! @cond Doxygen_Suppress
+    VirgilContentInfo(VirgilContentInfo&& rhs) noexcept;
 
-VirgilContentInfo& operator=(VirgilContentInfo&& rhs) noexcept;
+    VirgilContentInfo& operator=(VirgilContentInfo&& rhs) noexcept;
 
-~VirgilContentInfo() noexcept;
-//! @endcond
+    ~VirgilContentInfo() noexcept;
+    //! @endcond
 
 private:
-class Impl;
+    class Impl;
 
-std::unique_ptr<Impl> impl_;
+    std::unique_ptr<Impl> impl_;
 };
 
 }}

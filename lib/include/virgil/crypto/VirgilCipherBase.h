@@ -273,6 +273,16 @@ public:
 
     virtual ~VirgilCipherBase() noexcept;
     //! @endcond
+
+private:
+    virtual VirgilByteArray doDecryptWithKey(
+            const VirgilByteArray& algorithm, const VirgilByteArray& encryptedKey,
+            const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) const;
+
+    virtual VirgilByteArray doDecryptWithPassword(
+            const VirgilByteArray& encryptedKey, const VirgilByteArray& encryptionAlgorithm,
+            const VirgilByteArray& password) const;
+
 private:
     class Impl;
 

@@ -185,10 +185,10 @@ VirgilSymmetricCipher& VirgilCipherBase::initEncryption() {
 
 VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithPassword(const VirgilByteArray& pwd) {
     VirgilByteArray contentEncryptionKey = impl_->contentInfo.decryptPasswordRecipient(
-            [&](const VirgilByteArray& keyEncryptionAlgorithm, const VirgilByteArray& encryptedKey) -> VirgilByteArray {
-                VirgilPBE pbe;
-                pbe.fromAsn1(keyEncryptionAlgorithm);
-                return pbe.decrypt(encryptedKey, pwd);
+            [&, this](
+                    const VirgilByteArray& keyEncryptionAlgorithm,
+                    const VirgilByteArray& encryptedKey) -> VirgilByteArray {
+                return doDecryptWithPassword(encryptedKey, keyEncryptionAlgorithm, pwd);
             }
     );
     if (contentEncryptionKey.empty()) {
@@ -210,10 +210,8 @@ VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithKey(
 
     VirgilByteArray contentEncryptionKey = impl_->contentInfo.decryptKeyRecipient(
             recipientId,
-            [&](const VirgilByteArray& encryptedKey) -> VirgilByteArray {
-                VirgilAsymmetricCipher asymmetricCipher;
-                asymmetricCipher.setPrivateKey(privateKey, privateKeyPassword);
-                return asymmetricCipher.decrypt(encryptedKey);
+            [&, this](const VirgilByteArray& algorithm, const VirgilByteArray& encryptedKey) -> VirgilByteArray {
+                return doDecryptWithKey(algorithm, encryptedKey, privateKey, privateKeyPassword);
             }
     );
     if (contentEncryptionKey.empty()) {
@@ -259,4 +257,22 @@ void VirgilCipherBase::clearCipherInfo() {
 
 VirgilSymmetricCipher& VirgilCipherBase::getSymmetricCipher() {
     return impl_->symmetricCipher;
+}
+
+VirgilByteArray VirgilCipherBase::doDecryptWithKey(
+        const VirgilByteArray& algorithm, const VirgilByteArray& encryptedKey,
+        const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) const {
+
+    VirgilAsymmetricCipher asymmetricCipher;
+    asymmetricCipher.setPrivateKey(privateKey, privateKeyPassword);
+    return asymmetricCipher.decrypt(encryptedKey);
+}
+
+VirgilByteArray VirgilCipherBase::doDecryptWithPassword(
+        const VirgilByteArray& encryptedKey, const VirgilByteArray& encryptionAlgorithm,
+        const VirgilByteArray& password) const {
+
+    VirgilPBE pbe;
+    pbe.fromAsn1(encryptionAlgorithm);
+    return pbe.decrypt(encryptedKey, password);
 }

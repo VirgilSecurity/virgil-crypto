@@ -178,15 +178,15 @@ const VirgilCustomParams& VirgilContentInfo::customParams() const {
     return impl_->cmsContentInfo.customParams;
 }
 
-VirgilByteArray VirgilContentInfo::decryptKeyRecipient(
-        const VirgilByteArray& recipientId, std::function<VirgilByteArray(const VirgilByteArray&)> decrypt) const {
+VirgilByteArray VirgilContentInfo::decryptKeyRecipient(const VirgilByteArray& recipientId,
+        std::function<VirgilByteArray(const VirgilByteArray&, const VirgilByteArray&)> decrypt) const {
 
     if (!decrypt) {
         throw make_error(VirgilCryptoError::InvalidArgument);
     }
     for (const auto& keyRecipient: impl_->cmsEnvelopedData.keyTransRecipients) {
         if (keyRecipient.recipientIdentifier == recipientId) {
-            return decrypt(keyRecipient.encryptedKey);
+            return decrypt(keyRecipient.keyEncryptionAlgorithm, keyRecipient.encryptedKey);
         }
     }
     return VirgilByteArray();

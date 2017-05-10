@@ -71,7 +71,6 @@ def createNativeUnixBuild(slave) {
             // Java
             sh './utils/build.sh java'
             // NodeJS
-            sh './utils/build.sh nodejs-0.12.7'
             sh './utils/build.sh nodejs-4.1.0'
             sh './utils/build.sh nodejs-4.4.4'
             sh './utils/build.sh nodejs-5.9.1'
@@ -104,7 +103,6 @@ def createNativeWindowsBuild(slave) {
                 bat 'utils\\build.bat cpp'
                 bat 'utils\\build.bat net'
                 bat 'utils\\build.bat java'
-                bat 'utils\\build.bat nodejs-0.12.7'
                 bat 'utils\\build.bat nodejs-4.1.0'
                 bat 'utils\\build.bat nodejs-4.4.4'
                 bat 'utils\\build.bat nodejs-5.9.1'

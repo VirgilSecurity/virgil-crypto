@@ -121,13 +121,14 @@ void VirgilContentInfo::removeKeyRecipient(const VirgilByteArray& recipientId) {
     impl_->keyRecipients.erase(recipientId);
     // Remove from the CMS representation
     auto found = std::find_if(
-            impl_->cmsEnvelopedData.keyTransRecipients.cbegin(),
-            impl_->cmsEnvelopedData.keyTransRecipients.cend(),
+            // Use non const iterators, it's cause an error for vector::erase() in gcc 4.8.5
+            impl_->cmsEnvelopedData.keyTransRecipients.begin(),
+            impl_->cmsEnvelopedData.keyTransRecipients.end(),
             [&recipientId](const VirgilCMSKeyTransRecipient& recipient) {
                 return recipient.recipientIdentifier == recipientId;
             }
     );
-    if (found != impl_->cmsEnvelopedData.keyTransRecipients.cend()) {
+    if (found != impl_->cmsEnvelopedData.keyTransRecipients.end()) {
         impl_->cmsEnvelopedData.keyTransRecipients.erase(found);
     }
 }

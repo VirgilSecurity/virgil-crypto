@@ -40,6 +40,7 @@
 #include <virgil/crypto/VirgilCustomParams.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
 
+#include <memory>
 #include <functional>
 
 namespace virgil { namespace crypto {

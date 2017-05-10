@@ -419,7 +419,7 @@ static inline VirgilHash::Algorithm hash_algorithm_from_md_type(mbedtls_md_type_
         case MBEDTLS_MD_SHA512:
             return VirgilHash::Algorithm::SHA512;
         default:
-            throw make_error(VirgilCryptoError::UnsupportedAlgorithm, std::to_string(type));
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm, to_string(type));
     }
 }
 

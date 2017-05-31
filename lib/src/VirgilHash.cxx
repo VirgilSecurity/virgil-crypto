@@ -129,6 +129,11 @@ int VirgilHash::type() const {
     return static_cast<int>(impl_->info.type());
 }
 
+size_t VirgilHash::size() const {
+    checkState();
+    return impl_->info.size();
+}
+
 void VirgilHash::start() {
     checkState();
     system_crypto_handler(

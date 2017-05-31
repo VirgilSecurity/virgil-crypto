@@ -107,6 +107,12 @@ public:
      * @note Used for internal purposes only
      */
     int type() const;
+
+    /**
+     * @brief Return size of the message digest output.
+     * @return Size in octets.
+     */
+    size_t size() const;
     ///@}
 
     /**

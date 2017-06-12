@@ -45,9 +45,14 @@ namespace virgil { namespace crypto { namespace foundation {
 /**
  * @brief Implements HMAC-based Extract-and-Expand Key Derivation Function (RFC 5869)
  * @see https://tools.ietf.org/html/rfc5869
+ * @ingroup kdf
  */
 class VirgilHKDF {
 public:
+    /**
+     * @brief Define parameters for HKDF algorithm.
+     * @param hashAlgorithm - underlying hash algorithm.
+     */
     VirgilHKDF(VirgilHash::Algorithm hashAlgorithm);
 
     /**

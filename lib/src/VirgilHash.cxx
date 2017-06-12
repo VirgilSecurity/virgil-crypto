@@ -114,6 +114,16 @@ VirgilHash::VirgilHash(const char* name) : impl_(std::make_unique<Impl>()) {
     impl_->setup(name);
 }
 
+VirgilHash::VirgilHash(const VirgilHash& rhs) : impl_(std::make_unique<Impl>()) {
+    impl_->setup(rhs.name().c_str());
+}
+
+VirgilHash& VirgilHash::operator=(const VirgilHash& rhs) {
+    auto tmp = VirgilHash(rhs);
+    *this = std::move(tmp);
+    return *this;
+}
+
 VirgilHash::VirgilHash(VirgilHash&& other) noexcept = default;
 
 VirgilHash& VirgilHash::operator=(VirgilHash&& rhs) noexcept = default;

@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_HASH_H
-#define VIRGIL_CRYPTO_HASH_H
+#ifndef VIRGIL_CRYPTO_FOUNDATION_VIRGIL_HASH_H
+#define VIRGIL_CRYPTO_FOUNDATION_VIRGIL_HASH_H
 
 #include <string>
 #include <memory>
@@ -239,6 +239,10 @@ public:
     VirgilHash& operator=(VirgilHash&& rhs) noexcept;
 
     virtual ~VirgilHash() noexcept;
+
+    VirgilHash(const VirgilHash& rhs);
+
+    VirgilHash& operator=(const VirgilHash& rhs);
     //! @endcond
 
 private:
@@ -261,4 +265,4 @@ namespace std {
 string to_string(virgil::crypto::foundation::VirgilHash::Algorithm alg);
 }
 
-#endif /* VIRGIL_CRYPTO_HASH_H */
+#endif /* VIRGIL_CRYPTO_FOUNDATION_VIRGIL_HASH_H */

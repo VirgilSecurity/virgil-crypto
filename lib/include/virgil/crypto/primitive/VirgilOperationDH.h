@@ -39,6 +39,8 @@
 
 #include <virgil/crypto/VirgilByteArray.h>
 
+#include <memory>
+
 namespace virgil { namespace crypto { inline namespace primitive {
 
 class VirgilOperationDH {

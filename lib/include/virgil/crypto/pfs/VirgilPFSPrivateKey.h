@@ -41,16 +41,38 @@
 
 namespace virgil { namespace crypto { namespace pfs {
 
+/**
+ * @brief This is model object that handles private key.
+ *
+ * @see VirgilPFS
+ * @ingroup pfs
+ */
 class VirgilPFSPrivateKey {
 public:
-    explicit VirgilPFSPrivateKey(VirgilByteArray key = {}, VirgilByteArray password = {});
+    /**
+     * @param key - private key.
+     * @param password - private key password.
+     */
+    explicit VirgilPFSPrivateKey(VirgilByteArray key = VirgilByteArray(), VirgilByteArray password = VirgilByteArray());
 
+    /**
+     * @return True if underlying key is not defined.
+     */
     bool isEmpty() const;
 
+    /**
+     * @brief Getter.
+     * @see VirgilPFSPrivateKey()
+     */
     const VirgilByteArray& getKey() const;
 
+    /**
+     * @brief Getter.
+     * @see VirgilPFSPrivateKey()
+     */
     const VirgilByteArray& getPassword() const;
 
+    //! @cond Doxygen_Suppress
     VirgilPFSPrivateKey(const VirgilPFSPrivateKey& other);
 
     VirgilPFSPrivateKey& operator=(const VirgilPFSPrivateKey& other);
@@ -60,6 +82,7 @@ public:
     VirgilPFSPrivateKey& operator=(VirgilPFSPrivateKey&& other) noexcept;
 
     ~VirgilPFSPrivateKey() noexcept;
+    //! @endcond
 
 private:
     VirgilByteArray key_;

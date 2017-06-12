@@ -41,12 +41,28 @@
 
 namespace virgil { namespace crypto { namespace pfs {
 
+/**
+ * @brief This is model object that handles public key.
+ *
+ * @see VirgilPFS
+ * @ingroup pfs
+ */
 class VirgilPFSPublicKey {
 public:
-    explicit VirgilPFSPublicKey(VirgilByteArray key = {});
+    /**
+     * @param key - public key.
+     */
+    explicit VirgilPFSPublicKey(VirgilByteArray key = VirgilByteArray());
 
+    /**
+     * @return True if underlying key is not defined.
+     */
     bool isEmpty() const;
 
+    /**
+     * @brief Getter.
+     * @see VirgilPFSPublicKey()
+     */
     const VirgilByteArray& getKey() const;
 
 private:

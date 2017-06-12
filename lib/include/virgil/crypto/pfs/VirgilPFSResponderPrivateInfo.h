@@ -43,30 +43,55 @@
 namespace virgil { namespace crypto { namespace pfs {
 
 /**
- * @brief Represent private information of a PFS Responder.
+ * @brief This is model object that represent private information of a PFS Responder.
+ *
+ * Responder is a side that accept incoming communication.
  *
  * @see VirgilPFS
+ * @ingroup pfs
  */
 class VirgilPFSResponderPrivateInfo {
 public:
+    /**
+     * @param identifier - Responder unique identifier.
+     * @param identityPrivateKey - private key that is connected to the Responder's identity.
+     * @param longTermPrivateKey - private key that can be alive few weeks.
+     * @param oneTimePrivateKey - private key that is used once for new communication.
+     */
     VirgilPFSResponderPrivateInfo(
-        std::string identifier,
-        VirgilPFSPrivateKey identityPrivateKey, VirgilPFSPrivateKey longTermPrivateKey,
-        VirgilPFSPrivateKey oneTimePrivateKey = VirgilPFSPrivateKey());
+            std::string identifier,
+            VirgilPFSPrivateKey identityPrivateKey, VirgilPFSPrivateKey longTermPrivateKey,
+            VirgilPFSPrivateKey oneTimePrivateKey = VirgilPFSPrivateKey());
+
+    /**
+     * @brief Getter.
+     * @see VirgilPFSResponderPrivateInfo()
+     */
+    const std::string& getIdentifier() const;
+
+    /**
+     * @brief Getter.
+     * @see VirgilPFSResponderPrivateInfo()
+     */
+    const VirgilPFSPrivateKey& getIdentityPrivateKey() const;
+
+    /**
+     * @brief Getter.
+     * @see VirgilPFSResponderPrivateInfo()
+     */
+    const VirgilPFSPrivateKey& getLongTermPrivateKey() const;
+
+    /**
+     * @brief Getter.
+     * @see VirgilPFSResponderPrivateInfo()
+     */
+    const VirgilPFSPrivateKey& getOneTimePrivateKey() const;
 
 private:
     std::string identifier_;
     VirgilPFSPrivateKey identityPrivateKey_;
     VirgilPFSPrivateKey longTermPrivateKey_;
     VirgilPFSPrivateKey oneTimePrivateKey_;
-public:
-    const std::string& getIdentifier() const;
-
-    const VirgilPFSPrivateKey& getIdentityPrivateKey() const;
-
-    const VirgilPFSPrivateKey& getLongTermPrivateKey() const;
-
-    const VirgilPFSPrivateKey& getOneTimePrivateKey() const;
 };
 
 }}}

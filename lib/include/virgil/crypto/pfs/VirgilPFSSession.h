@@ -46,26 +46,57 @@ namespace virgil { namespace crypto { namespace pfs {
 class VirgilPFS;
 
 /**
- * @brief Represent session for PFS connection.
+ * @brief This is model object that represent session in PFS communication.
+ *
+ * Session is a set of parameters that is unique for each communication.
  *
  * @see VirgilPFS
+ * @ingroup pfs
  */
 class VirgilPFSSession {
 public:
+    /**
+     * @brief Create empty session.
+     */
     VirgilPFSSession();
 
+    /**
+     * @param identifier - session unique identifier.
+     * @param encryptionSecretKey - key that is used for encryption.
+     * @param decryptionSecretKey - key that is used for decryption.
+     * @param additionalData - data that is associated with both sides that is used in communication.
+     */
     VirgilPFSSession(
         VirgilByteArray identifier, VirgilByteArray encryptionSecretKey,
         VirgilByteArray decryptionSecretKey, VirgilByteArray additionalData);
 
+    /**
+     * @return True if session is not defined.
+     */
     bool isEmpty() const;
 
+    /**
+     * @brief Getter.
+     * @see VirgilPFSSession()
+     */
     const VirgilByteArray& getIdentifier() const;
 
+    /**
+     * @brief Getter.
+     * @see VirgilPFSSession()
+     */
     const VirgilByteArray& getEncryptionSecretKey() const;
 
+    /**
+     * @brief Getter.
+     * @see VirgilPFSSession()
+     */
     const VirgilByteArray& getDecryptionSecretKey() const;
 
+    /**
+     * @brief Getter.
+     * @see VirgilPFSSession()
+     */
     const VirgilByteArray& getAdditionalData() const;
 
 private:

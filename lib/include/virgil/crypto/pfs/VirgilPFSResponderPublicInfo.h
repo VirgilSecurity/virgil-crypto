@@ -43,23 +43,48 @@
 namespace virgil { namespace crypto { namespace pfs {
 
 /**
- * @brief Represent public information of a PFS Responder.
+ * @brief This is model object that represent public information of a PFS Responder.
+ *
+ * Responder is a side that accept incoming communication.
  *
  * @see VirgilPFS
+ * @ingroup pfs
  */
 class VirgilPFSResponderPublicInfo {
 public:
+    /**
+     * @param identifier - Responder unique identifier.
+     * @param identityPublicKey - public key that is connected to the Responder's identity.
+     * @param longTermPublicKey - public key that can be alive few weeks.
+     * @param oneTimePublicKey - public key that is used once for new communication.
+     */
     VirgilPFSResponderPublicInfo(
         std::string identifier,
         VirgilPFSPublicKey identityPublicKey, VirgilPFSPublicKey longTermPublicKey,
         VirgilPFSPublicKey oneTimePublicKey = VirgilPFSPublicKey());
 
+    /**
+     * @brief Getter.
+     * @see VirgilPFSResponderPublicInfo()
+     */
     const std::string& getIdentifier() const;
 
+    /**
+     * @brief Getter.
+     * @see VirgilPFSResponderPublicInfo()
+     */
     const VirgilPFSPublicKey& getIdentityPublicKey() const;
 
+    /**
+     * @brief Getter.
+     * @see VirgilPFSResponderPublicInfo()
+     */
     const VirgilPFSPublicKey& getLongTermPublicKey() const;
 
+    /**
+     * @brief Getter.
+     * @see VirgilPFSResponderPublicInfo()
+     */
     const VirgilPFSPublicKey& getOneTimePublicKey() const;
 
 private:

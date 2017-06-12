@@ -43,19 +43,39 @@
 namespace virgil { namespace crypto { namespace pfs {
 
 /**
- * @brief Represent private information of a PFS Initiator.
+ * @brief This is model object that represent private information of a PFS Initiator.
+ *
+ * Initiator ia a side that starts communication.
  *
  * @see VirgilPFS
+ * @ingroup pfs
  */
 class VirgilPFSInitiatorPrivateInfo {
 public:
+    /**
+     * @param identifier - Initiator unique identifier.
+     * @param identityPrivateKey - private key that is connected to the Initiator's identity.
+     * @param ephemeralPrivateKey - ephemeral private key.
+     */
     VirgilPFSInitiatorPrivateInfo(
-        std::string identifier, VirgilPFSPrivateKey identityPrivateKey, VirgilPFSPrivateKey ephemeralPrivateKey);
+            std::string identifier, VirgilPFSPrivateKey identityPrivateKey, VirgilPFSPrivateKey ephemeralPrivateKey);
 
+    /**
+     * @brief Getter.
+     * @see VirgilPFSInitiatorPrivateInfo()
+     */
     const std::string& getIdentifier() const;
 
+    /**
+     * @brief Getter.
+     * @see VirgilPFSInitiatorPrivateInfo()
+     */
     const VirgilPFSPrivateKey& getIdentityPrivateKey() const;
 
+    /**
+     * @brief Getter.
+     * @see VirgilPFSInitiatorPrivateInfo()
+     */
     const VirgilPFSPrivateKey& getEphemeralPrivateKey() const;
 
 private:

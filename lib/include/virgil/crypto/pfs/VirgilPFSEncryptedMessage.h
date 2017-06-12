@@ -41,21 +41,42 @@
 
 namespace virgil { namespace crypto { namespace pfs {
 
+/**
+ * @brief This is model object that represent encrypted message produced by VirgilPFS.
+ *
+ * @ingroup pfs
+ * @see VirgilPFS
+ */
 class VirgilPFSEncryptedMessage {
 public:
+    /**
+     * @param sessionIdentifier - session identifier, that was used for encryption.
+     * @param salt - random salt, that was used during encryption.
+     * @param cipherText - encrypted data.
+     */
     VirgilPFSEncryptedMessage(VirgilByteArray sessionIdentifier, VirgilByteArray salt, VirgilByteArray cipherText);
+
+    /**
+     * @brief Getter.
+     * @see VirgilPFSEncryptedMessage()
+     */
+    const VirgilByteArray& getSessionIdentifier() const;
+
+    /**
+     * @brief Getter.
+     * @see VirgilPFSEncryptedMessage()
+     */
+    const VirgilByteArray& getSalt() const;
+
+    /**
+     * @brief Getter.
+     * @see VirgilPFSEncryptedMessage()
+     */
+    const VirgilByteArray& getCipherText() const;
 
 private:
     VirgilByteArray sessionIdentifier_;
     VirgilByteArray salt_;
-public:
-    const VirgilByteArray& getSessionIdentifier() const;
-
-    const VirgilByteArray& getSalt() const;
-
-    const VirgilByteArray& getCipherText() const;
-
-private:
     VirgilByteArray cipherText_;
 };
 

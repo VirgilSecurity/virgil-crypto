@@ -57,58 +57,115 @@ namespace virgil { namespace crypto { namespace pfs {
 /**
  * @brief This is the main entry for the all Perfect Forward Secrecy (PFS) Modules.
  *
- * @defgroup PFS
- * @addtogroup PFS
- *
- * @see https://github.com/noisesocket/spec
+ * @ingroup pfs
  */
 class VirgilPFS {
 public:
+    /**
+     * @brief Configures PFS module with default underlying algorithms.
+     *
+     * Each underlying algorithm can be changed with correspond setter.
+     */
     VirgilPFS();
 
+    /**
+     * @brief Start session from the Initiator side.
+     * @param initiatorPrivateInfo - initiator private keys and related information.
+     * @param responderPublicInfo - responder public keys and related information.
+     * @return Created session (can be ignored).
+     * @note Function has side effect: created session is stored in the object state.
+     */
     VirgilPFSSession startInitiatorSession(
-        const VirgilPFSInitiatorPrivateInfo& initiatorPrivateInfo,
-        const VirgilPFSResponderPublicInfo& responderPublicInfo);
+            const VirgilPFSInitiatorPrivateInfo& initiatorPrivateInfo,
+            const VirgilPFSResponderPublicInfo& responderPublicInfo);
 
+    /**
+     * @brief Start session from the Responder side.
+     * @param responderPrivateInfo - responder private keys and related information.
+     * @param initiatorPublicInfo - initiator public keys and related information.
+     * @return Created session (can be ignored).
+     * @note Function has side effect: created session is stored in the object state.
+     */
     VirgilPFSSession startResponderSession(
-        const VirgilPFSResponderPrivateInfo& responderPrivateInfo,
-        const VirgilPFSInitiatorPublicInfo& initiatorPublicInfo);
+            const VirgilPFSResponderPrivateInfo& responderPrivateInfo,
+            const VirgilPFSInitiatorPublicInfo& initiatorPublicInfo);
 
+    /**
+     * @brief Encrypt given data.
+     * @param data - data to be encrypted.
+     * @return Encrypted message.
+     * @note Stored session is used for encryption.
+     * @note Function has side effect: random_ internal state is changed.
+     */
     VirgilPFSEncryptedMessage encrypt(const VirgilByteArray& data);
 
+    /**
+     * @brief Decrypt given message.
+     * @param encryptedMessage - message to be decrypted.
+     * @return Plain text.
+     * @note Stored session is used for decryption.
+     */
     VirgilByteArray decrypt(const VirgilPFSEncryptedMessage& encryptedMessage) const;
 
+    /**
+     * @brief Set custom implementation for algorithm: random.
+     * @param random - new algorithm implementation.
+     */
     void setRandom(VirgilOperationRandom random);
 
+    /**
+     * @brief Set custom implementation for algorithm: hash.
+     * @param hash - new algorithm implementation.
+     */
     void setHash(VirgilOperationHash hash);
 
+    /**
+     * @brief Set custom implementation for algorithm: Diffie–Hellman.
+     * @param dh - new algorithm implementation.
+     */
     void setDH(VirgilOperationDH dh);
 
+    /**
+     * @brief Set custom implementation for algorithm: Key Dervation Function.
+     * @param kdf - new algorithm implementation.
+     */
     void setKDF(VirgilOperationKDF kdf);
 
+    /**
+     * @brief Set custom implementation for algorithm: Symmetric Cipher.
+     * @param cipher - new algorithm implementation.
+     */
     void setCipher(VirgilOperationCipher cipher);
 
+    /**
+     * @brief Return current session.
+     * @return Session.
+     */
     VirgilPFSSession getSession() const;
 
+    /**
+     * @brief Set new session.
+     * @param session - new session.
+     */
     void setSession(VirgilPFSSession session);
 
 private:
     VirgilByteArray calculateSharedKey(
-        const VirgilPFSInitiatorPrivateInfo& initiatorPrivateInfo,
-        const VirgilPFSResponderPublicInfo& responderPublicInfo) const;
+            const VirgilPFSInitiatorPrivateInfo& initiatorPrivateInfo,
+            const VirgilPFSResponderPublicInfo& responderPublicInfo) const;
 
     VirgilByteArray calculateSharedKey(
-        const VirgilPFSResponderPrivateInfo& responderPrivateInfo,
-        const VirgilPFSInitiatorPublicInfo& initiatorPublicInfo) const;
+            const VirgilPFSResponderPrivateInfo& responderPrivateInfo,
+            const VirgilPFSInitiatorPublicInfo& initiatorPublicInfo) const;
 
     VirgilByteArray calculateSecretKey(const VirgilByteArray& keyMaterial, size_t size);
 
     VirgilByteArray calculateAdditionalData(
-        const std::string& initiatorIdentifier,
-        const std::string& responderIdentifier) const;
+            const std::string& initiatorIdentifier,
+            const std::string& responderIdentifier) const;
 
     VirgilByteArray calculateSessionIdentifier(
-        const VirgilByteArray& secretKey, const VirgilByteArray& additionalData) const;
+            const VirgilByteArray& secretKey, const VirgilByteArray& additionalData) const;
 
 private:
     VirgilOperationRandom random_;

@@ -161,7 +161,7 @@ inline std::tuple<VirgilByteArray, VirgilByteArray> bytes_split(const VirgilByte
     return std::make_tuple(
             VirgilByteArray(src.cbegin(), src.cbegin() + pos),
             VirgilByteArray(src.cbegin() + pos, src.cend()));
-};
+}
 
 /**
  * @brief Split given bytes to two sequences of the same size.
@@ -171,7 +171,7 @@ inline std::tuple<VirgilByteArray, VirgilByteArray> bytes_split(const VirgilByte
 inline std::tuple<VirgilByteArray, VirgilByteArray> bytes_split_half(const VirgilByteArray& src) {
     const auto halfPos = src.size() >> 1;
     return bytes_split(src, halfPos);
-};
+}
 
 }}
 #endif /* VIRGIL_BYTE_ARRAY_H */

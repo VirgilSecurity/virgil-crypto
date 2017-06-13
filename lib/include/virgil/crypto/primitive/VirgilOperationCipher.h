@@ -43,22 +43,49 @@
 
 namespace virgil { namespace crypto { inline namespace primitive {
 
+/**
+ * @brief Define proxy interface for the Symmetric Cipher functionality.
+ *
+ * @note This is experimental feature.
+ */
 class VirgilOperationCipher {
 private:
     template<class Impl>
-    struct Model;;
+    struct Model;
 public:
+    /**
+     * @brief Captures implementation object.
+     * @tparam Impl - class that contains functions that has identical signature to this class functions.
+     * @param impl - object that implements interface.
+     */
     template<class Impl>
     VirgilOperationCipher(Impl impl) : self_(std::make_shared<Model<Impl>>(std::move(impl))) {}
 
+    /**
+     * @brief Return size of the encryption/decryption key.
+     * @return Key size of in octets.
+     */
     size_t getKeySize() const {
         return self_->doGetKeySize();
     }
 
+    /**
+     * @brief Return size of the nonce.
+     * @return None size in octets.
+     */
     size_t getNonceSize() const {
         return self_->doGetNonceSize();
     }
 
+    /**
+     * @brief Encrypt given plain text.
+     *
+     * @param plainText - data to be encrypted.
+     * @param key - encryption key.
+     * @param nonce - Nonce or IV.
+     * @param authData - additional data that participate in an authentication.
+     * @return Encrypted data (cipher text).
+     */
     VirgilByteArray encrypt(
             const VirgilByteArray& plainText, const VirgilByteArray& key, const VirgilByteArray& nonce,
             const VirgilByteArray& authData = VirgilByteArray()) const {
@@ -66,13 +93,25 @@ public:
         return self_->doEncrypt(plainText, key, nonce, authData);
     }
 
+    /**
+     * @brief Decrypt given cipher text.
+     *
+     * @param cipherText - encrypted data to be decrypted.
+     * @param key - decryption key.
+     * @param nonce - Nonce or IV (same as for encryption).
+     * @param authData - additional data that participate in an authentication (same as for encryption).
+     * @return Plain text.
+     */
     VirgilByteArray decrypt(
-            const VirgilByteArray& plainText, const VirgilByteArray& key, const VirgilByteArray& nonce,
+            const VirgilByteArray& cipherText, const VirgilByteArray& key, const VirgilByteArray& nonce,
             const VirgilByteArray& authData = VirgilByteArray()) const {
 
-        return self_->doDecrypt(plainText, key, nonce, authData);
+        return self_->doDecrypt(cipherText, key, nonce, authData);
     }
 
+    /**
+     * @brief Return default implementation.
+     */
     static VirgilOperationCipher getDefault();
 
 private:

@@ -43,15 +43,65 @@
 
 namespace virgil { namespace crypto { inline namespace primitive {
 
+/**
+ * @brief Define proxy interface for the Hash (Message Digest) functionality.
+ *
+ * @note This is experimental feature.
+ */
 class VirgilOperationHash {
 private:
     template<class Impl>
-    struct Model;;
+    struct Model;
 
 public:
+    /**
+     * @brief Captures implementation object.
+     * @tparam Impl - class that contains functions that has identical signature to this class functions.
+     * @param impl - object that implements interface.
+     */
     template<class Impl>
     VirgilOperationHash(Impl impl) : self_(new Model<Impl>(std::move(impl))) {}
 
+    /**
+     * @brief Calculate digest for given data.
+     * @param data - data to be hashed.
+     * @return Data's hash (message digest).
+     */
+    VirgilByteArray hash(const VirgilByteArray& data) {
+        self_->doStart();
+        self_->doUpdate(data);
+        return self_->doFinish();
+    }
+
+    /**
+     * @brief Prepare internal state for the new hashing.
+     */
+    void start() {
+        self_->doStart();
+    }
+
+    /**
+     * @brief Hash new portion of the data.
+     * @param data - next portion of data to be hashed.
+     */
+    void update(const VirgilByteArray& data) {
+        self_->doUpdate(data);
+    }
+
+    /**
+     * @brief Finalize hashing.
+     * @return Data's hash (message digest).
+     */
+    VirgilByteArray finish() {
+        return self_->doFinish();
+    }
+
+    /**
+     * @brief Return default implementation.
+     */
+    static VirgilOperationHash getDefault();
+
+    //! @cond Doxygen_Suppress
     VirgilOperationHash(const VirgilOperationHash& other) : self_(other.self_->doCopy()) {}
 
     VirgilOperationHash(VirgilOperationHash&& other)noexcept = default;
@@ -62,29 +112,10 @@ public:
         return *this;
     }
 
-    VirgilOperationHash& operator=(VirgilOperationHash&& other)noexcept= default;
+    VirgilOperationHash& operator=(VirgilOperationHash&& other) noexcept= default;
 
-    ~VirgilOperationHash()noexcept = default;;
-
-    VirgilByteArray hash(const VirgilByteArray& data) {
-        self_->doStart();
-        self_->doUpdate(data);
-        return self_->doFinish();
-    }
-
-    void start() {
-        self_->doStart();
-    }
-
-    void update(const VirgilByteArray& data) {
-        self_->doUpdate(data);
-    }
-
-    VirgilByteArray finish() {
-        return self_->doFinish();
-    }
-
-    static VirgilOperationHash getDefault();
+    ~VirgilOperationHash() noexcept = default;
+    //! @endcond
 
 private:
     struct Concept {

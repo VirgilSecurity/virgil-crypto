@@ -43,21 +43,42 @@
 
 namespace virgil { namespace crypto { inline namespace primitive {
 
+/**
+ * @brief Define proxy interface for the Diffie-Hellman functionality.
+ *
+ * @note This is experimental feature.
+ */
 class VirgilOperationDH {
 private:
     template<class Impl>
     struct Model;
 
 public:
+    /**
+     * @brief Captures implementation object.
+     * @tparam Impl - class that contains functions that has identical signature to this class functions.
+     * @param impl - object that implements interface.
+     */
     template<class Impl>
     VirgilOperationDH(Impl impl) : self_(std::make_shared<Model<Impl>>(std::move(impl))) {}
 
+    /**
+     * @brief Compute shared key by using Diffie-Hellman algorithm.
+     *
+     * @param publicKey - public key of the side 1.
+     * @param privateKey - private key of the side 2.
+     * @param privateKeyPassword - private key password of the side 2.
+     * @return Shared key.
+     */
     VirgilByteArray calculate(
             const VirgilByteArray& publicKey, const VirgilByteArray& privateKey,
             const VirgilByteArray& privateKeyPassword = VirgilByteArray()) const {
         return self_->doCalculate(publicKey, privateKey, privateKeyPassword);
     }
 
+    /**
+     * @brief Return default implementation.
+     */
     static VirgilOperationDH getDefault();
 
 private:

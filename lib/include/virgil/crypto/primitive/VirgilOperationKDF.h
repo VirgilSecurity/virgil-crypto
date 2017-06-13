@@ -43,21 +43,43 @@
 
 namespace virgil { namespace crypto { inline namespace primitive {
 
+/**
+ * @brief Define proxy interface for the Key Derivation Function functionality.
+ *
+ * @note This is experimental feature.
+ */
 class VirgilOperationKDF {
 private:
     template<class Impl>
     struct Model;
 
 public:
+    /**
+     * @brief Captures implementation object.
+     * @tparam Impl - class that contains functions that has identical signature to this class functions.
+     * @param impl - object that implements interface.
+     */
     template<class Impl>
     VirgilOperationKDF(Impl impl):self_(std::make_shared<Model<Impl>>(std::move(impl))) {}
 
+    /**
+     * @brief Derive key from the given key material and additional options.
+     *
+     * @param keyMaterial - input sequence (key material).
+     * @param salt - optional salt value (a non-secret random value).
+     * @param info - optional context and application specific information.
+     * @param size - size of the output sequence.
+     * @return Output sequence.
+     */
     VirgilByteArray derive(
         const VirgilByteArray& keyMaterial, const VirgilByteArray& salt,
         const VirgilByteArray& info, size_t size) const {
         return self_->doDerive(keyMaterial, salt, info, size);
     }
 
+    /**
+     * @brief Return default implementation.
+     */
     static VirgilOperationKDF getDefault();
 
 private:

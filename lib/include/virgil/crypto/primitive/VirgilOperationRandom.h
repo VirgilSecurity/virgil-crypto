@@ -43,19 +43,40 @@
 
 namespace virgil { namespace crypto { inline namespace primitive {
 
+/**
+ * @brief Define proxy interface for the Randomization functionality.
+ *
+ * @note This is experimental feature.
+ */
 class VirgilOperationRandom {
 private:
-    template<class Random>
+    template<class Impl>
     struct Model;
 
 public:
-    template<class Random>
-    VirgilOperationRandom(Random random) : self_(new Model<Random>(std::move(random))) {}
+    /**
+     * @brief Captures implementation object.
+     * @tparam Impl - class that contains functions that has identical signature to this class functions.
+     * @param impl - object that implements interface.
+     */
+    template<class Impl>
+    VirgilOperationRandom(Impl impl) : self_(new Model<Impl>(std::move(impl))) {}
 
+    /**
+     * @brief Return random sequence.
+     * @param bytesNum - octets number to be randomized.
+     * @return Random sequence.
+     */
     VirgilByteArray randomize(size_t bytesNum) {
         return self_->doRandomize(bytesNum);
     }
 
+    /**
+     * @brief Return default implementation.
+     */
+    static VirgilOperationRandom getDefault();
+
+    //! @cond Doxygen_Suppress
     VirgilOperationRandom(const VirgilOperationRandom& other) : self_(other.self_->doCopy()) {}
 
     VirgilOperationRandom(VirgilOperationRandom&& other) noexcept = default;
@@ -69,8 +90,7 @@ public:
     VirgilOperationRandom& operator=(VirgilOperationRandom&& other) noexcept = default;
 
     ~VirgilOperationRandom() noexcept = default;
-
-    static VirgilOperationRandom getDefault();
+    //! @endcond
 
 private:
     struct Concept {

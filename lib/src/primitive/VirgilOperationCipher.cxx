@@ -78,7 +78,7 @@ public:
     }
 
     VirgilByteArray decrypt(
-            const VirgilByteArray& plainText, const VirgilByteArray& key, const VirgilByteArray& nonce,
+            const VirgilByteArray& cipherText, const VirgilByteArray& key, const VirgilByteArray& nonce,
             const VirgilByteArray& authData) const {
 
         VirgilSymmetricCipher cipher(cipherAlgorithm_);
@@ -87,10 +87,10 @@ public:
         cipher.setAuthData(authData);
         cipher.reset();
 
-        auto cipherText = VirgilByteArray();
-        virgil::crypto::bytes_append(cipherText, cipher.update(plainText));
-        virgil::crypto::bytes_append(cipherText, cipher.finish());
-        return cipherText;
+        auto plainText = VirgilByteArray();
+        virgil::crypto::bytes_append(plainText, cipher.update(cipherText));
+        virgil::crypto::bytes_append(plainText, cipher.finish());
+        return plainText;
     }
 
 private:

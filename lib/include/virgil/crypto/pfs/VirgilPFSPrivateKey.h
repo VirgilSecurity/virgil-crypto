@@ -77,9 +77,9 @@ public:
 
     VirgilPFSPrivateKey& operator=(const VirgilPFSPrivateKey& other) = default;
 
-    VirgilPFSPrivateKey(VirgilPFSPrivateKey&& other) noexcept = default;
+    VirgilPFSPrivateKey(VirgilPFSPrivateKey&& other) = default;
 
-    VirgilPFSPrivateKey& operator=(VirgilPFSPrivateKey&& other) noexcept = default;
+    VirgilPFSPrivateKey& operator=(VirgilPFSPrivateKey&& other) = default;
 
     ~VirgilPFSPrivateKey() noexcept;
     //! @endcond

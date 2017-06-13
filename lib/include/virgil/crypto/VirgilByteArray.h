@@ -146,8 +146,8 @@ inline void string_zeroize(std::string& str) {
  * @param src - bytes append from.
  * @return Reference to destination (dst).
  */
-inline VirgilByteArray& bytes_append(VirgilByteArray& dst, VirgilByteArray src) {
-    dst.insert(dst.cend(), std::make_move_iterator(src.begin()), std::make_move_iterator(src.end()));
+inline VirgilByteArray& bytes_append(VirgilByteArray& dst, const VirgilByteArray& src) {
+    dst.insert(dst.cend(), src.cbegin(), src.cend());
     return dst;
 }
 

@@ -147,7 +147,7 @@ inline void string_zeroize(std::string& str) {
  * @return Reference to destination (dst).
  */
 inline VirgilByteArray& bytes_append(VirgilByteArray& dst, const VirgilByteArray& src) {
-    dst.insert(dst.cend(), src.cbegin(), src.cend());
+    dst.insert(dst.end(), src.cbegin(), src.cend());
     return dst;
 }
 

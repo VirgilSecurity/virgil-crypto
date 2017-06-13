@@ -75,6 +75,9 @@
 %ignore virgil::crypto::bytes2hex;
 %ignore virgil::crypto::bytes_zeroize;
 %ignore virgil::crypto::string_zeroize;
+%ignore virgil::crypto::bytes_append;
+%ignore virgil::crypto::bytes_split;
+%ignore virgil::crypto::bytes_split_half;
 INCLUDE_CLASS(VirgilByteArray, virgil::crypto, virgil/crypto)
 
 %ignore VIRGIL_VERSION;
@@ -117,6 +120,7 @@ INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::foundation::asn1, virgil/cry
     INCLUDE_CLASS(VirgilSymmetricCipher, virgil::crypto::foundation, virgil/crypto/foundation)
     INCLUDE_CLASS(VirgilAsymmetricCipher, virgil::crypto::foundation, virgil/crypto/foundation)
     INCLUDE_CLASS(VirgilPBE, virgil::crypto::foundation, virgil/crypto/foundation)
+    INCLUDE_CLASS(VirgilHKDF, virgil::crypto::foundation, virgil/crypto/foundation)
 #endif /* defined(LIB_LOW_LEVEL_API) */
 INCLUDE_CLASS(VirgilHash, virgil::crypto::foundation, virgil/crypto/foundation)
 INCLUDE_CLASS(VirgilBase64, virgil::crypto::foundation, virgil/crypto/foundation)
@@ -138,6 +142,23 @@ INCLUDE_CLASS(VirgilTinyCipher, virgil::crypto, virgil/crypto)
 %ignore virgil::crypto::VirgilByteArrayUtils::popBytes;
 INCLUDE_CLASS(VirgilByteArrayUtils, virgil::crypto, virgil/crypto)
 
+// Package: virgil::crypto::pfs
+%ignore virgil::crypto::pfs::VirgilPFS::setRandom;
+%ignore virgil::crypto::pfs::VirgilPFS::setHash;
+%ignore virgil::crypto::pfs::VirgilPFS::setDH;
+%ignore virgil::crypto::pfs::VirgilPFS::setKDF;
+%ignore virgil::crypto::pfs::VirgilPFS::setCipher;
+
+INCLUDE_CLASS(VirgilPFSEncryptedMessage, virgil::crypto::pfs, virgil/crypto/pfs)
+INCLUDE_CLASS(VirgilPFSPublicKey, virgil::crypto::pfs, virgil/crypto/pfs)
+INCLUDE_CLASS(VirgilPFSPrivateKey, virgil::crypto::pfs, virgil/crypto/pfs)
+INCLUDE_CLASS(VirgilPFSInitiatorPublicInfo, virgil::crypto::pfs, virgil/crypto/pfs)
+INCLUDE_CLASS(VirgilPFSInitiatorPrivateInfo, virgil::crypto::pfs, virgil/crypto/pfs)
+INCLUDE_CLASS(VirgilPFSResponderPublicInfo, virgil::crypto::pfs, virgil/crypto/pfs)
+INCLUDE_CLASS(VirgilPFSResponderPrivateInfo, virgil::crypto::pfs, virgil/crypto/pfs)
+INCLUDE_CLASS(VirgilPFSSession, virgil::crypto::pfs, virgil/crypto/pfs)
+INCLUDE_CLASS(VirgilPFS, virgil::crypto::pfs, virgil/crypto/pfs)
+
 // Package: virgil::crypto::foundation::cms
 #if defined(LIB_LOW_LEVEL_API)
     INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSKeyTransRecipient, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
@@ -156,3 +177,4 @@ INCLUDE_CLASS(VirgilByteArrayUtils, virgil::crypto, virgil/crypto)
 
 // Add using statement for inner classes or enums
 DEFINE_USING(VirgilKeyPair, virgil::crypto)
+DEFINE_USING(VirgilHash, virgil::crypto::foundation)

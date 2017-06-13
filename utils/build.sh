@@ -239,8 +239,8 @@ show_info "<install_dir>: ${INSTALL_DIR}"
 # Define common build parameters
 CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
 
-if [[ ${TARGET_NAME} =~ ^(cpp|osx|ios|appletvos|applewatchos)$ ]]; then
-    # Expose low level API for targets that use C/C++ headers
+if [[ ! ${TARGET_NAME} =~ ^(asmjs|pnacl)$ ]]; then
+    # Expose low level API for native targets
     CMAKE_ARGS+=" -DLIB_LOW_LEVEL_API=ON"
 fi
 

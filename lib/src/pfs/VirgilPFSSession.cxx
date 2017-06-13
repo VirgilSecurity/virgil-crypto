@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
+ * Copyright (C) 2015-2017 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,45 +34,43 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SIGNER_H
-#define VIRGIL_SIGNER_H
+#include <virgil/crypto/pfs/VirgilPFSSession.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/foundation/VirgilHash.h>
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::pfs::VirgilPFSSession;
 
-namespace virgil { namespace crypto {
+VirgilPFSSession::VirgilPFSSession()
+    : identifier_(),
+      encryptionSecretKey_(),
+      decryptionSecretKey_(),
+      additionalData_() {}
 
-/**
- * @brief This class provides high-level interface to sign and verify data using Virgil Security keys.
- *
- * This module can sign / verify as raw data and Virgil Security tickets.
- */
-class VirgilSigner {
-public:
-    /**
-     * @brief Create signer with predefined hash function.
-     * @note Specified hash function algorithm is used only during signing.
-     */
-    explicit VirgilSigner(foundation::VirgilHash::Algorithm hashAlgorithm = foundation::VirgilHash::Algorithm::SHA384);
+VirgilPFSSession::VirgilPFSSession(
+    VirgilByteArray identifier, VirgilByteArray encryptionSecretKey, VirgilByteArray decryptionSecretKey,
+    VirgilByteArray additionalData)
+    : identifier_(std::move(identifier)),
+      encryptionSecretKey_(std::move(encryptionSecretKey)),
+      decryptionSecretKey_(std::move(decryptionSecretKey)),
+      additionalData_(std::move(additionalData)) {
+    // TODO: Add precondition check, possibly assert will be good (only if constructor will be closed).
+}
 
-    /**
-     * @brief Sign data with given private key.
-     * @return Virgil Security sign.
-     */
-    VirgilByteArray sign(
-            const VirgilByteArray& data, const VirgilByteArray& privateKey,
-            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+bool VirgilPFSSession::isEmpty() const {
+    return identifier_.empty() || encryptionSecretKey_.empty() || decryptionSecretKey_.empty();
+}
 
-    /**
-     * @brief Verify sign and data to be conformed to the given public key.
-     * @return true if sign is valid and data was not malformed.
-     */
-    bool verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
+const VirgilByteArray& VirgilPFSSession::getIdentifier() const {
+    return identifier_;
+}
 
-private:
-    foundation::VirgilHash hash_;
-};
+const VirgilByteArray& VirgilPFSSession::getEncryptionSecretKey() const {
+    return encryptionSecretKey_;
+}
 
-}}
+const VirgilByteArray& VirgilPFSSession::getDecryptionSecretKey() const {
+    return decryptionSecretKey_;
+}
 
-#endif /* VIRGIL_SIGNER_H */
+const VirgilByteArray& VirgilPFSSession::getAdditionalData() const {
+    return additionalData_;
+}

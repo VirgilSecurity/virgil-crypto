@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
+ * Copyright (C) 2015-2017 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,45 +34,54 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SIGNER_H
-#define VIRGIL_SIGNER_H
+#ifndef VIRGIL_CRYPTO_FOUNDATION_VIRGIL_HKDF_H
+#define VIRGIL_CRYPTO_FOUNDATION_VIRGIL_HKDF_H
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/VirgilHash.h>
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace foundation {
 
 /**
- * @brief This class provides high-level interface to sign and verify data using Virgil Security keys.
- *
- * This module can sign / verify as raw data and Virgil Security tickets.
+ * @brief Implements HMAC-based Extract-and-Expand Key Derivation Function (RFC 5869)
+ * @see https://tools.ietf.org/html/rfc5869
+ * @ingroup kdf
  */
-class VirgilSigner {
+class VirgilHKDF {
 public:
     /**
-     * @brief Create signer with predefined hash function.
-     * @note Specified hash function algorithm is used only during signing.
+     * @brief Define parameters for HKDF algorithm.
+     * @param hashAlgorithm - underlying hash algorithm.
      */
-    explicit VirgilSigner(foundation::VirgilHash::Algorithm hashAlgorithm = foundation::VirgilHash::Algorithm::SHA384);
+    VirgilHKDF(VirgilHash::Algorithm hashAlgorithm);
 
     /**
-     * @brief Sign data with given private key.
-     * @return Virgil Security sign.
+     * @brief Derive key from the given key material and additional options.
+     *
+     * @param in - input sequence (key material).
+     * @param salt - optional salt value (a non-secret random value).
+     * @param info - optional context and application specific information.
+     * @param outSize - size of the output sequence.
+     * @return Output sequence.
+     *
+     * @note This function make sense only for HKDF algorithm.
      */
-    VirgilByteArray sign(
-            const VirgilByteArray& data, const VirgilByteArray& privateKey,
-            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
-
-    /**
-     * @brief Verify sign and data to be conformed to the given public key.
-     * @return true if sign is valid and data was not malformed.
-     */
-    bool verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
+    virgil::crypto::VirgilByteArray derive(
+            const virgil::crypto::VirgilByteArray& in, const virgil::crypto::VirgilByteArray& salt,
+            const virgil::crypto::VirgilByteArray& info, size_t outSize) const;
 
 private:
-    foundation::VirgilHash hash_;
+    virgil::crypto::VirgilByteArray extract(
+            const virgil::crypto::VirgilByteArray& keyMaterial, const virgil::crypto::VirgilByteArray& salt) const;
+
+    virgil::crypto::VirgilByteArray expand(
+            const virgil::crypto::VirgilByteArray& pseudoRandomKey, const virgil::crypto::VirgilByteArray& info,
+            size_t outSize) const;
+
+private:
+    const VirgilHash::Algorithm hashAlgorithm_;
 };
 
-}}
+}}}
 
-#endif /* VIRGIL_SIGNER_H */
+#endif //VIRGIL_CRYPTO_FOUNDATION_VIRGIL_HKDF_H

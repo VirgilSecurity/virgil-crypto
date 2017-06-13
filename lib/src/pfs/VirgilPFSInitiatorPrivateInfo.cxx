@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
+ * Copyright (C) 2015-2017 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,45 +34,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SIGNER_H
-#define VIRGIL_SIGNER_H
+#include <virgil/crypto/pfs/VirgilPFSInitiatorPrivateInfo.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/foundation/VirgilHash.h>
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::pfs::VirgilPFSInitiatorPrivateInfo;
+using virgil::crypto::pfs::VirgilPFSPrivateKey;
 
-namespace virgil { namespace crypto {
+VirgilPFSInitiatorPrivateInfo::VirgilPFSInitiatorPrivateInfo(
+    std::string identifier, VirgilPFSPrivateKey identityPrivateKey, VirgilPFSPrivateKey ephemeralPrivateKey)
+    : identifier_(std::move(identifier)),
+      identityPrivateKey_(std::move(identityPrivateKey)),
+      ephemeralPrivateKey_(std::move(ephemeralPrivateKey)) {}
 
-/**
- * @brief This class provides high-level interface to sign and verify data using Virgil Security keys.
- *
- * This module can sign / verify as raw data and Virgil Security tickets.
- */
-class VirgilSigner {
-public:
-    /**
-     * @brief Create signer with predefined hash function.
-     * @note Specified hash function algorithm is used only during signing.
-     */
-    explicit VirgilSigner(foundation::VirgilHash::Algorithm hashAlgorithm = foundation::VirgilHash::Algorithm::SHA384);
+const std::string& VirgilPFSInitiatorPrivateInfo::getIdentifier() const {
+    return identifier_;
+}
 
-    /**
-     * @brief Sign data with given private key.
-     * @return Virgil Security sign.
-     */
-    VirgilByteArray sign(
-            const VirgilByteArray& data, const VirgilByteArray& privateKey,
-            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+const VirgilPFSPrivateKey& VirgilPFSInitiatorPrivateInfo::getIdentityPrivateKey() const {
+    return identityPrivateKey_;
+}
 
-    /**
-     * @brief Verify sign and data to be conformed to the given public key.
-     * @return true if sign is valid and data was not malformed.
-     */
-    bool verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
-
-private:
-    foundation::VirgilHash hash_;
-};
-
-}}
-
-#endif /* VIRGIL_SIGNER_H */
+const VirgilPFSPrivateKey& VirgilPFSInitiatorPrivateInfo::getEphemeralPrivateKey() const {
+    return ephemeralPrivateKey_;
+}

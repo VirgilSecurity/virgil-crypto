@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
+ * Copyright (C) 2015-2017 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,45 +34,61 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SIGNER_H
-#define VIRGIL_SIGNER_H
+#ifndef VIRGIL_CRYPTO_PFS_VIRGIL_PFS_PRIVATE_KEY_H
+#define VIRGIL_CRYPTO_PFS_VIRGIL_PFS_PRIVATE_KEY_H
 
 #include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/foundation/VirgilHash.h>
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace pfs {
 
 /**
- * @brief This class provides high-level interface to sign and verify data using Virgil Security keys.
+ * @brief This is model object that handles private key.
  *
- * This module can sign / verify as raw data and Virgil Security tickets.
+ * @see VirgilPFS
+ * @ingroup pfs
  */
-class VirgilSigner {
+class VirgilPFSPrivateKey {
 public:
     /**
-     * @brief Create signer with predefined hash function.
-     * @note Specified hash function algorithm is used only during signing.
+     * @param key - private key.
+     * @param password - private key password.
      */
-    explicit VirgilSigner(foundation::VirgilHash::Algorithm hashAlgorithm = foundation::VirgilHash::Algorithm::SHA384);
+    explicit VirgilPFSPrivateKey(VirgilByteArray key = VirgilByteArray(), VirgilByteArray password = VirgilByteArray());
 
     /**
-     * @brief Sign data with given private key.
-     * @return Virgil Security sign.
+     * @return True if underlying key is not defined.
      */
-    VirgilByteArray sign(
-            const VirgilByteArray& data, const VirgilByteArray& privateKey,
-            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    bool isEmpty() const;
 
     /**
-     * @brief Verify sign and data to be conformed to the given public key.
-     * @return true if sign is valid and data was not malformed.
+     * @brief Getter.
+     * @see VirgilPFSPrivateKey()
      */
-    bool verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
+    const VirgilByteArray& getKey() const;
+
+    /**
+     * @brief Getter.
+     * @see VirgilPFSPrivateKey()
+     */
+    const VirgilByteArray& getPassword() const;
+
+    //! @cond Doxygen_Suppress
+    VirgilPFSPrivateKey(const VirgilPFSPrivateKey& other) = default;
+
+    VirgilPFSPrivateKey& operator=(const VirgilPFSPrivateKey& other) = default;
+
+    VirgilPFSPrivateKey(VirgilPFSPrivateKey&& other) = default;
+
+    VirgilPFSPrivateKey& operator=(VirgilPFSPrivateKey&& other) = default;
+
+    ~VirgilPFSPrivateKey() noexcept;
+    //! @endcond
 
 private:
-    foundation::VirgilHash hash_;
+    VirgilByteArray key_;
+    VirgilByteArray password_;
 };
 
-}}
+}}}
 
-#endif /* VIRGIL_SIGNER_H */
+#endif //VIRGIL_CRYPTO_PFS_VIRGIL_PFS_PRIVATE_KEY_H

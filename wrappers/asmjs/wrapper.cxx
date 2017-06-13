@@ -59,11 +59,22 @@
 #include <virgil/crypto/VirgilStreamSigner.h>
 #include <virgil/crypto/VirgilChunkCipher.h>
 
+#include <virgil/crypto/pfs/VirgilPFSSession.h>
+#include <virgil/crypto/pfs/VirgilPFSEncryptedMessage.h>
+#include <virgil/crypto/pfs/VirgilPFSPublicKey.h>
+#include <virgil/crypto/pfs/VirgilPFSPrivateKey.h>
+#include <virgil/crypto/pfs/VirgilPFSInitiatorPublicInfo.h>
+#include <virgil/crypto/pfs/VirgilPFSInitiatorPrivateInfo.h>
+#include <virgil/crypto/pfs/VirgilPFSResponderPublicInfo.h>
+#include <virgil/crypto/pfs/VirgilPFSResponderPrivateInfo.h>
+#include <virgil/crypto/pfs/VirgilPFS.h>
+
 #include "@VIRGIL_EMBIND_FILE@"
 
 using namespace emscripten;
 using namespace virgil::crypto;
 using namespace virgil::crypto::foundation;
+using namespace virgil::crypto::pfs;
 
 namespace virgil { namespace crypto {
 
@@ -337,4 +348,80 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_foundation) {
         .function("randomizeNumber", select_overload<size_t()>(&VirgilRandom::randomize))
         .function("randomizeNumberInRange", select_overload<size_t(size_t, size_t)>(&VirgilRandom::randomize))
     ;
+}
+
+EMSCRIPTEN_BINDINGS(virgil_crypto_pfs) {
+        class_<VirgilPFSSession>("VirgilPFSSession")
+            .constructor<VirgilByteArray, VirgilByteArray, VirgilByteArray, VirgilByteArray>()
+            .function("isEmpty", &VirgilPFSSession::isEmpty)
+            .function("getIdentifier", &VirgilPFSSession::getIdentifier)
+            .function("getEncryptionSecretKey", &VirgilPFSSession::getEncryptionSecretKey)
+            .function("getDecryptionSecretKey", &VirgilPFSSession::getDecryptionSecretKey)
+            .function("getAdditionalData", &VirgilPFSSession::getAdditionalData)
+        ;
+
+        class_<VirgilPFSPublicKey>("VirgilPFSPublicKey")
+            .constructor<>()
+            .constructor<VirgilByteArray>()
+            .function("isEmpty", &VirgilPFSPublicKey::isEmpty)
+            .function("getKey", &VirgilPFSPublicKey::getKey)
+        ;
+
+        class_<VirgilPFSPrivateKey>("VirgilPFSPrivateKey")
+            .constructor<>()
+            .constructor<VirgilByteArray>()
+            .constructor<VirgilByteArray, VirgilByteArray>()
+            .function("isEmpty", &VirgilPFSPrivateKey::isEmpty)
+            .function("getKey", &VirgilPFSPrivateKey::getKey)
+            .function("getPassword", &VirgilPFSPrivateKey::getPassword)
+        ;
+
+        class_<VirgilPFSEncryptedMessage>("VirgilPFSEncryptedMessage")
+            .constructor<VirgilByteArray, VirgilByteArray, VirgilByteArray>()
+            .function("getSessionIdentifier", &VirgilPFSEncryptedMessage::getSessionIdentifier)
+            .function("getSalt", &VirgilPFSEncryptedMessage::getSalt)
+            .function("getCipherText", &VirgilPFSEncryptedMessage::getCipherText)
+        ;
+
+        class_<VirgilPFSInitiatorPublicInfo>("VirgilPFSInitiatorPublicInfo")
+            .constructor<std::string, VirgilPFSPublicKey, VirgilPFSPublicKey>()
+            .function("getIdentifier", &VirgilPFSInitiatorPublicInfo::getIdentifier)
+            .function("getIdentityPublicKey", &VirgilPFSInitiatorPublicInfo::getIdentityPublicKey)
+            .function("getEphemeralPublicKey", &VirgilPFSInitiatorPublicInfo::getEphemeralPublicKey)
+        ;
+        
+        class_<VirgilPFSInitiatorPrivateInfo>("VirgilPFSInitiatorPrivateInfo")
+            .constructor<std::string, VirgilPFSPrivateKey, VirgilPFSPrivateKey>()
+            .function("getIdentifier", &VirgilPFSInitiatorPrivateInfo::getIdentifier)
+            .function("getIdentityPrivateKey", &VirgilPFSInitiatorPrivateInfo::getIdentityPrivateKey)
+            .function("getEphemeralPrivateKey", &VirgilPFSInitiatorPrivateInfo::getEphemeralPrivateKey)
+        ;
+
+        class_<VirgilPFSResponderPublicInfo>("VirgilPFSResponderPublicInfo")
+            .constructor<std::string, VirgilPFSPublicKey, VirgilPFSPublicKey>()
+            .constructor<std::string, VirgilPFSPublicKey, VirgilPFSPublicKey, VirgilPFSPublicKey>()
+            .function("getIdentifier", &VirgilPFSResponderPublicInfo::getIdentifier)
+            .function("getIdentityPublicKey", &VirgilPFSResponderPublicInfo::getIdentityPublicKey)
+            .function("getLongTermPublicKey", &VirgilPFSResponderPublicInfo::getLongTermPublicKey)
+            .function("getOneTimePublicKey", &VirgilPFSResponderPublicInfo::getOneTimePublicKey)
+        ;
+
+        class_<VirgilPFSResponderPrivateInfo>("VirgilPFSResponderPrivateInfo")
+            .constructor<std::string, VirgilPFSPrivateKey, VirgilPFSPrivateKey>()
+            .constructor<std::string, VirgilPFSPrivateKey, VirgilPFSPrivateKey, VirgilPFSPrivateKey>()
+            .function("getIdentifier", &VirgilPFSResponderPrivateInfo::getIdentifier)
+            .function("getIdentityPrivateKey", &VirgilPFSResponderPrivateInfo::getIdentityPrivateKey)
+            .function("getLongTermPrivateKey", &VirgilPFSResponderPrivateInfo::getLongTermPrivateKey)
+            .function("getOneTimePrivateKey", &VirgilPFSResponderPrivateInfo::getOneTimePrivateKey)
+        ;
+
+        class_<VirgilPFS>("VirgilPFS")
+            .constructor<>()
+            .function("startInitiatorSession", &VirgilPFS::startInitiatorSession)
+            .function("startResponderSession", &VirgilPFS::startResponderSession)
+            .function("encrypt", &VirgilPFS::encrypt)
+            .function("decrypt", &VirgilPFS::decrypt)
+            .function("getSession", &VirgilPFS::getSession)
+            .function("setSession", &VirgilPFS::setSession)
+        ;
 }

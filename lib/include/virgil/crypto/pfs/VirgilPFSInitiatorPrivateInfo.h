@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
+ * Copyright (C) 2015-2017 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,45 +34,56 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_SIGNER_H
-#define VIRGIL_SIGNER_H
+#ifndef VIRGIL_CRYPTO_PFS_VIRGIL_PFS_INITIATOR_PRIVATE_INFO_H
+#define VIRGIL_CRYPTO_PFS_VIRGIL_PFS_INITIATOR_PRIVATE_INFO_H
 
 #include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/foundation/VirgilHash.h>
+#include <virgil/crypto/pfs/VirgilPFSPrivateKey.h>
 
-namespace virgil { namespace crypto {
+namespace virgil { namespace crypto { namespace pfs {
 
 /**
- * @brief This class provides high-level interface to sign and verify data using Virgil Security keys.
+ * @brief This is model object that represent private information of a PFS Initiator.
  *
- * This module can sign / verify as raw data and Virgil Security tickets.
+ * Initiator ia a side that starts communication.
+ *
+ * @see VirgilPFS
+ * @ingroup pfs
  */
-class VirgilSigner {
+class VirgilPFSInitiatorPrivateInfo {
 public:
     /**
-     * @brief Create signer with predefined hash function.
-     * @note Specified hash function algorithm is used only during signing.
+     * @param identifier - Initiator unique identifier.
+     * @param identityPrivateKey - private key that is connected to the Initiator's identity.
+     * @param ephemeralPrivateKey - ephemeral private key.
      */
-    explicit VirgilSigner(foundation::VirgilHash::Algorithm hashAlgorithm = foundation::VirgilHash::Algorithm::SHA384);
+    VirgilPFSInitiatorPrivateInfo(
+            std::string identifier, VirgilPFSPrivateKey identityPrivateKey, VirgilPFSPrivateKey ephemeralPrivateKey);
 
     /**
-     * @brief Sign data with given private key.
-     * @return Virgil Security sign.
+     * @brief Getter.
+     * @see VirgilPFSInitiatorPrivateInfo()
      */
-    VirgilByteArray sign(
-            const VirgilByteArray& data, const VirgilByteArray& privateKey,
-            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
+    const std::string& getIdentifier() const;
 
     /**
-     * @brief Verify sign and data to be conformed to the given public key.
-     * @return true if sign is valid and data was not malformed.
+     * @brief Getter.
+     * @see VirgilPFSInitiatorPrivateInfo()
      */
-    bool verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
+    const VirgilPFSPrivateKey& getIdentityPrivateKey() const;
+
+    /**
+     * @brief Getter.
+     * @see VirgilPFSInitiatorPrivateInfo()
+     */
+    const VirgilPFSPrivateKey& getEphemeralPrivateKey() const;
 
 private:
-    foundation::VirgilHash hash_;
+    std::string identifier_;
+    VirgilPFSPrivateKey identityPrivateKey_;
+    VirgilPFSPrivateKey ephemeralPrivateKey_;
 };
 
-}}
+}}}
 
-#endif /* VIRGIL_SIGNER_H */
+#endif //VIRGIL_CRYPTO_PFS_VIRGIL_PFS_INITIATOR_PRIVATE_INFO_H

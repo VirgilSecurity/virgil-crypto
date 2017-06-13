@@ -36,6 +36,11 @@
  */
 
 /**
+ * @namespace virgil::crypto::pfs
+ * @brief This namespace contains interfaces for Perfect Forward Secrecy data and algorithm.
+ */
+
+/**
  * @defgroup error Error
  *
  * @brief This group contains interfaces for error handling mechanism that is used in the library.
@@ -57,4 +62,10 @@
  * @defgroup cipher Cipher
  *
  * @brief This group contains interfaces to encryption and to decryption algorithms.
+ */
+
+/**
+ * @defgroup pfs PFS
+ *
+ * @brief This group contains interfaces for Perfect Forward Secrecy module.
  */

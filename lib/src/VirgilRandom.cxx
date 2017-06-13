@@ -76,6 +76,17 @@ VirgilRandom& VirgilRandom::operator=(VirgilRandom&& rhs) noexcept = default;
 
 VirgilRandom::~VirgilRandom() noexcept = default;
 
+
+VirgilRandom::VirgilRandom(const VirgilRandom& rhs) : impl_(std::make_unique<Impl>()) {
+    impl_->personalInfo = rhs.impl_->personalInfo;
+}
+
+VirgilRandom& VirgilRandom::operator=(const VirgilRandom& rhs) {
+    auto tmp = VirgilRandom(rhs);
+    *this = std::move(tmp);
+    return *this;
+}
+
 VirgilByteArray VirgilRandom::randomize(size_t bytesNum) {
 
     if (!impl_->is_init) {

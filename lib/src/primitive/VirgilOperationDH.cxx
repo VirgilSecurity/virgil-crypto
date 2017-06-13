@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
+ * Copyright (C) 2015-2017 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -33,46 +33,31 @@
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+ 
 
-#ifndef VIRGIL_SIGNER_H
-#define VIRGIL_SIGNER_H
+#include <virgil/crypto/primitive/VirgilOperationDH.h>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/foundation/VirgilHash.h>
+#include <virgil/crypto/VirgilCipherBase.h>
 
-namespace virgil { namespace crypto {
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilCipherBase;
 
-/**
- * @brief This class provides high-level interface to sign and verify data using Virgil Security keys.
- *
- * This module can sign / verify as raw data and Virgil Security tickets.
- */
-class VirgilSigner {
+using virgil::crypto::primitive::VirgilOperationDH;
+
+namespace {
+
+class VirgilDHImplementationDefault {
 public:
-    /**
-     * @brief Create signer with predefined hash function.
-     * @note Specified hash function algorithm is used only during signing.
-     */
-    explicit VirgilSigner(foundation::VirgilHash::Algorithm hashAlgorithm = foundation::VirgilHash::Algorithm::SHA384);
+    VirgilByteArray calculate(
+            const VirgilByteArray& publicKey, const VirgilByteArray& privateKey,
+            const VirgilByteArray& privateKeyPassword) const {
 
-    /**
-     * @brief Sign data with given private key.
-     * @return Virgil Security sign.
-     */
-    VirgilByteArray sign(
-            const VirgilByteArray& data, const VirgilByteArray& privateKey,
-            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
-
-    /**
-     * @brief Verify sign and data to be conformed to the given public key.
-     * @return true if sign is valid and data was not malformed.
-     */
-    bool verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
-
-private:
-    foundation::VirgilHash hash_;
+        return VirgilCipherBase::computeShared(publicKey, privateKey, privateKeyPassword);
+    }
 };
 
-}}
+}
 
-#endif /* VIRGIL_SIGNER_H */
+VirgilOperationDH VirgilOperationDH::getDefault() {
+    return VirgilOperationDH(VirgilDHImplementationDefault());
+}

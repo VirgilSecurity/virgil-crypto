@@ -34,8 +34,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VIRGIL_CRYPTO_VIRGIL_RANDOM_H
-#define VIRGIL_CRYPTO_VIRGIL_RANDOM_H
+#ifndef VIRGIL_CRYPTO_FOUNDATION_VIRGIL_RANDOM_H
+#define VIRGIL_CRYPTO_FOUNDATION_VIRGIL_RANDOM_H
 
 #include <cstdlib>
 #include <memory>
@@ -106,6 +106,11 @@ public:
     VirgilRandom& operator=(VirgilRandom&& rhs) noexcept;
 
     virtual ~VirgilRandom() noexcept;
+
+    VirgilRandom(const VirgilRandom& rhs);
+
+    VirgilRandom& operator=(const VirgilRandom& rhs);
+
     //! @endcond
 
 private:
@@ -116,4 +121,4 @@ private:
 
 }}}
 
-#endif /* VIRGIL_CRYPTO_VIRGIL_RANDOM_H */
+#endif /* VIRGIL_CRYPTO_FOUNDATION_VIRGIL_RANDOM_H */

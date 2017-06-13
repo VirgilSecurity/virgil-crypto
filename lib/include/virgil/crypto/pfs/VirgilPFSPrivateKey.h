@@ -73,13 +73,13 @@ public:
     const VirgilByteArray& getPassword() const;
 
     //! @cond Doxygen_Suppress
-    VirgilPFSPrivateKey(const VirgilPFSPrivateKey& other);
+    VirgilPFSPrivateKey(const VirgilPFSPrivateKey& other) = default;
 
-    VirgilPFSPrivateKey& operator=(const VirgilPFSPrivateKey& other);
+    VirgilPFSPrivateKey& operator=(const VirgilPFSPrivateKey& other) = default;
 
-    VirgilPFSPrivateKey(VirgilPFSPrivateKey&& other) noexcept;
+    VirgilPFSPrivateKey(VirgilPFSPrivateKey&& other) noexcept = default;
 
-    VirgilPFSPrivateKey& operator=(VirgilPFSPrivateKey&& other) noexcept;
+    VirgilPFSPrivateKey& operator=(VirgilPFSPrivateKey&& other) noexcept = default;
 
     ~VirgilPFSPrivateKey() noexcept;
     //! @endcond

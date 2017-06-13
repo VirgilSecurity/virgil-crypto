@@ -59,11 +59,3 @@ const VirgilByteArray& VirgilPFSPrivateKey::getKey() const {
 const VirgilByteArray& VirgilPFSPrivateKey::getPassword() const {
     return password_;
 }
-
-VirgilPFSPrivateKey::VirgilPFSPrivateKey(const VirgilPFSPrivateKey& other) = default;
-
-VirgilPFSPrivateKey& VirgilPFSPrivateKey::operator=(const VirgilPFSPrivateKey& other) = default;
-
-VirgilPFSPrivateKey::VirgilPFSPrivateKey(VirgilPFSPrivateKey&& other) noexcept = default;
-
-VirgilPFSPrivateKey& VirgilPFSPrivateKey::operator=(VirgilPFSPrivateKey&& other) noexcept = default;

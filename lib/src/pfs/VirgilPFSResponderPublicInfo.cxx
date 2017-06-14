@@ -41,16 +41,11 @@ using virgil::crypto::pfs::VirgilPFSResponderPublicInfo;
 using virgil::crypto::pfs::VirgilPFSPublicKey;
 
 VirgilPFSResponderPublicInfo::VirgilPFSResponderPublicInfo(
-    std::string identifier, VirgilPFSPublicKey identityPublicKey,
-    VirgilPFSPublicKey longTermPublicKey, VirgilPFSPublicKey oneTimePublicKey)
-    : identifier_(std::move(identifier)),
-      identityPublicKey_(std::move(identityPublicKey)),
-      longTermPublicKey_(std::move(longTermPublicKey)),
-      oneTimePublicKey_(std::move(oneTimePublicKey)) {}
-
-const std::string& VirgilPFSResponderPublicInfo::getIdentifier() const {
-    return identifier_;
-}
+        VirgilPFSPublicKey identityPublicKey,
+        VirgilPFSPublicKey longTermPublicKey, VirgilPFSPublicKey oneTimePublicKey)
+        : identityPublicKey_(std::move(identityPublicKey)),
+          longTermPublicKey_(std::move(longTermPublicKey)),
+          oneTimePublicKey_(std::move(oneTimePublicKey)) {}
 
 const VirgilPFSPublicKey& VirgilPFSResponderPublicInfo::getIdentityPublicKey() const {
     return identityPublicKey_;

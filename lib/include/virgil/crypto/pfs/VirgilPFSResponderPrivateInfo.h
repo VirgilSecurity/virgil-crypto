@@ -53,21 +53,13 @@ namespace virgil { namespace crypto { namespace pfs {
 class VirgilPFSResponderPrivateInfo {
 public:
     /**
-     * @param identifier - Responder unique identifier.
      * @param identityPrivateKey - private key that is connected to the Responder's identity.
      * @param longTermPrivateKey - private key that can be alive few weeks.
      * @param oneTimePrivateKey - private key that is used once for new communication.
      */
     VirgilPFSResponderPrivateInfo(
-            std::string identifier,
             VirgilPFSPrivateKey identityPrivateKey, VirgilPFSPrivateKey longTermPrivateKey,
             VirgilPFSPrivateKey oneTimePrivateKey = VirgilPFSPrivateKey());
-
-    /**
-     * @brief Getter.
-     * @see VirgilPFSResponderPrivateInfo()
-     */
-    const std::string& getIdentifier() const;
 
     /**
      * @brief Getter.
@@ -88,7 +80,6 @@ public:
     const VirgilPFSPrivateKey& getOneTimePrivateKey() const;
 
 private:
-    std::string identifier_;
     VirgilPFSPrivateKey identityPrivateKey_;
     VirgilPFSPrivateKey longTermPrivateKey_;
     VirgilPFSPrivateKey oneTimePrivateKey_;

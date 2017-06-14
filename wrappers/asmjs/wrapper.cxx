@@ -384,32 +384,28 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_pfs) {
         ;
 
         class_<VirgilPFSInitiatorPublicInfo>("VirgilPFSInitiatorPublicInfo")
-            .constructor<std::string, VirgilPFSPublicKey, VirgilPFSPublicKey>()
-            .function("getIdentifier", &VirgilPFSInitiatorPublicInfo::getIdentifier)
+            .constructor<VirgilPFSPublicKey, VirgilPFSPublicKey>()
             .function("getIdentityPublicKey", &VirgilPFSInitiatorPublicInfo::getIdentityPublicKey)
             .function("getEphemeralPublicKey", &VirgilPFSInitiatorPublicInfo::getEphemeralPublicKey)
         ;
         
         class_<VirgilPFSInitiatorPrivateInfo>("VirgilPFSInitiatorPrivateInfo")
-            .constructor<std::string, VirgilPFSPrivateKey, VirgilPFSPrivateKey>()
-            .function("getIdentifier", &VirgilPFSInitiatorPrivateInfo::getIdentifier)
+            .constructor<VirgilPFSPrivateKey, VirgilPFSPrivateKey>()
             .function("getIdentityPrivateKey", &VirgilPFSInitiatorPrivateInfo::getIdentityPrivateKey)
             .function("getEphemeralPrivateKey", &VirgilPFSInitiatorPrivateInfo::getEphemeralPrivateKey)
         ;
 
         class_<VirgilPFSResponderPublicInfo>("VirgilPFSResponderPublicInfo")
-            .constructor<std::string, VirgilPFSPublicKey, VirgilPFSPublicKey>()
-            .constructor<std::string, VirgilPFSPublicKey, VirgilPFSPublicKey, VirgilPFSPublicKey>()
-            .function("getIdentifier", &VirgilPFSResponderPublicInfo::getIdentifier)
+            .constructor<VirgilPFSPublicKey, VirgilPFSPublicKey>()
+            .constructor<VirgilPFSPublicKey, VirgilPFSPublicKey, VirgilPFSPublicKey>()
             .function("getIdentityPublicKey", &VirgilPFSResponderPublicInfo::getIdentityPublicKey)
             .function("getLongTermPublicKey", &VirgilPFSResponderPublicInfo::getLongTermPublicKey)
             .function("getOneTimePublicKey", &VirgilPFSResponderPublicInfo::getOneTimePublicKey)
         ;
 
         class_<VirgilPFSResponderPrivateInfo>("VirgilPFSResponderPrivateInfo")
-            .constructor<std::string, VirgilPFSPrivateKey, VirgilPFSPrivateKey>()
-            .constructor<std::string, VirgilPFSPrivateKey, VirgilPFSPrivateKey, VirgilPFSPrivateKey>()
-            .function("getIdentifier", &VirgilPFSResponderPrivateInfo::getIdentifier)
+            .constructor<VirgilPFSPrivateKey, VirgilPFSPrivateKey>()
+            .constructor<VirgilPFSPrivateKey, VirgilPFSPrivateKey, VirgilPFSPrivateKey>()
             .function("getIdentityPrivateKey", &VirgilPFSResponderPrivateInfo::getIdentityPrivateKey)
             .function("getLongTermPrivateKey", &VirgilPFSResponderPrivateInfo::getLongTermPrivateKey)
             .function("getOneTimePrivateKey", &VirgilPFSResponderPrivateInfo::getOneTimePrivateKey)

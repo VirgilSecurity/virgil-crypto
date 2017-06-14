@@ -226,7 +226,7 @@ virgil_depends (
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/rapidjson"
     CMAKE_ARGS "${CMAKE_ARGS}"
 )
-virgil_find_package (RapidJSON 1.0)
+virgil_find_package (RapidJSON 1.1)
 
 virgil_depends (
     PACKAGE_NAME "tinyformat"

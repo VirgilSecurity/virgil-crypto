@@ -41,7 +41,8 @@
 #include <virgil/crypto/VirgilKeyPair.h>
 #include <virgil/crypto/foundation/VirgilBase64.h>
 
-#include "json.hpp"
+#include <rapidjson/document.h>
+#include <rapidjson/istreamwrapper.h>
 
 #include <fstream>
 #include <functional>
@@ -50,7 +51,9 @@
 namespace virgil { namespace crypto { namespace pfs { namespace test { namespace data {
 
 using namespace std::placeholders;
-using json = nlohmann::json;
+using JsonDocument = rapidjson::Document;
+using JsonValue = rapidjson::Value;
+using JsonFileStream = rapidjson::IStreamWrapper;
 
 auto base64decode = virgil::crypto::foundation::VirgilBase64::decode;
 auto private2public = std::bind(virgil::crypto::VirgilKeyPair::extractPublicKey, _1, VirgilByteArray());
@@ -83,58 +86,59 @@ struct TestCase {
 };
 
 template<typename R, typename ObtainValueFunc>
-inline R optional_test_data(const json& value, ObtainValueFunc obtainValueFunc) {
-    if (value.is_null()) {
-        return R();
+inline R optional_test_data(const JsonValue& jsonValue, const char* key, ObtainValueFunc obtainValueFunc) {
+    if (jsonValue.HasMember(key)) {
+        return obtainValueFunc(jsonValue[key]);
     }
-    return obtainValueFunc(value);
+    return R();
 }
 
 inline TestCase readTestCase(const char* fileName) {
     assert(fileName && "File name for loading test data is not defined.");
 
     std::ifstream testDataFile(fileName);
-    json testData;
-    testDataFile >> testData;
+    JsonFileStream testDataFileJsonStream(testDataFile);
+    JsonDocument testData;
+    testData.ParseStream(testDataFileJsonStream);
 
     return TestCase {
-            FakeRandom(base64decode(testData["Salt"].get<std::string>())),
+            FakeRandom(base64decode(testData["Salt"].GetString())),
             VirgilPFSInitiatorPublicInfo(
-                    VirgilPFSPublicKey(private2public(base64decode(testData["ICa"].get<std::string>()))),
-                    VirgilPFSPublicKey(private2public(base64decode(testData["EKa"].get<std::string>())))),
+                    VirgilPFSPublicKey(private2public(base64decode(testData["ICa"].GetString()))),
+                    VirgilPFSPublicKey(private2public(base64decode(testData["EKa"].GetString())))),
             VirgilPFSInitiatorPrivateInfo(
-                    VirgilPFSPrivateKey(base64decode(testData["ICa"].get<std::string>())),
-                    VirgilPFSPrivateKey(base64decode(testData["EKa"].get<std::string>()))),
+                    VirgilPFSPrivateKey(base64decode(testData["ICa"].GetString())),
+                    VirgilPFSPrivateKey(base64decode(testData["EKa"].GetString()))),
             VirgilPFSResponderPublicInfo(
-                    VirgilPFSPublicKey(private2public(base64decode(testData["ICb"].get<std::string>()))),
-                    VirgilPFSPublicKey(private2public(base64decode(testData["LTCb"].get<std::string>()))),
+                    VirgilPFSPublicKey(private2public(base64decode(testData["ICb"].GetString()))),
+                    VirgilPFSPublicKey(private2public(base64decode(testData["LTCb"].GetString()))),
                     optional_test_data<VirgilPFSPublicKey>(
-                            testData["OTCb"], [](const json& value) {
-                                    return VirgilPFSPublicKey(private2public(base64decode(value.get<std::string>())));
+                            testData, "OTCb", [](const JsonValue& value) {
+                                    return VirgilPFSPublicKey(private2public(base64decode(value.GetString())));
                             })),
             VirgilPFSResponderPrivateInfo(
-                    VirgilPFSPrivateKey(base64decode(testData["ICb"].get<std::string>())),
-                    VirgilPFSPrivateKey(base64decode(testData["LTCb"].get<std::string>())),
+                    VirgilPFSPrivateKey(base64decode(testData["ICb"].GetString())),
+                    VirgilPFSPrivateKey(base64decode(testData["LTCb"].GetString())),
                     optional_test_data<VirgilPFSPrivateKey>(
-                            testData["OTCb"], [](const json& value) {
-                                    return VirgilPFSPrivateKey(base64decode(value.get<std::string>()));
+                            testData, "OTCb", [](const JsonValue& value) {
+                                    return VirgilPFSPrivateKey(base64decode(value.GetString()));
                             })),
             VirgilPFSSession(
-                    base64decode(testData["SessionID"].get<std::string>()),
-                    base64decode(testData["SKa"].get<std::string>()),
-                    base64decode(testData["SKb"].get<std::string>()),
-                    base64decode(testData["AD"].get<std::string>())),
+                    base64decode(testData["SessionID"].GetString()),
+                    base64decode(testData["SKa"].GetString()),
+                    base64decode(testData["SKb"].GetString()),
+                    base64decode(testData["AD"].GetString())),
             VirgilPFSSession(
-                    base64decode(testData["SessionID"].get<std::string>()),
-                    base64decode(testData["SKb"].get<std::string>()),
-                    base64decode(testData["SKa"].get<std::string>()),
-                    base64decode(testData["AD"].get<std::string>())),
-            base64decode(testData["AdditionalData"].get<std::string>()),
-            base64decode(testData["Plaintext"].get<std::string>()),
+                    base64decode(testData["SessionID"].GetString()),
+                    base64decode(testData["SKb"].GetString()),
+                    base64decode(testData["SKa"].GetString()),
+                    base64decode(testData["AD"].GetString())),
+            base64decode(testData["AdditionalData"].GetString()),
+            base64decode(testData["Plaintext"].GetString()),
             VirgilPFSEncryptedMessage(
-                    base64decode(testData["SessionID"].get<std::string>()),
-                    base64decode(testData["Salt"].get<std::string>()),
-                    base64decode(testData["Ciphertext"].get<std::string>()))
+                    base64decode(testData["SessionID"].GetString()),
+                    base64decode(testData["Salt"].GetString()),
+                    base64decode(testData["Ciphertext"].GetString()))
     };
 }
 

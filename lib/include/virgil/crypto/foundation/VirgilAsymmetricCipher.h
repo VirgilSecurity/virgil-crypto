@@ -384,6 +384,14 @@ private:
      */
     void checkState() const;
 
+    size_t calculateExportedPublicKeySizeMaxDER() const;
+    size_t calculateExportedPublicKeySizeMaxPEM() const;
+    size_t calculateExportedPrivateKeySizeMaxDER(size_t encryptionOverhead) const;
+    size_t calculateExportedPrivateKeySizeMaxPEM(size_t encryptionOverhead) const;
+    VirgilByteArray generateParametersPBES() const;
+    static VirgilByteArray adjustBufferWithPEM(const VirgilByteArray& buffer, int size);
+    static VirgilByteArray adjustBufferWithDER(const VirgilByteArray& buffer, int size);
+
 private:
     class Impl;
 

@@ -132,20 +132,20 @@ BENCHMARK("Generate key pair -> 256-bits NIST curve ",
 BENCHMARK("Generate key pair -> 384-bits NIST curve ",
           std::bind(benchmark_keys_keygen, _1, VirgilKeyPair::Type::EC_SECP384R1));
 
-BENCHMARK("Export Public Key to PEM                 ",
-          std::bind(benchmark_keys_public_export_pem, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
-
 BENCHMARK("Export Public Key to DER                 ",
           std::bind(benchmark_keys_public_export_der, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
 
-BENCHMARK("Export Private Key to PEM (no password)  ",
-          std::bind(benchmark_keys_private_export_pem_no_pwd, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
+BENCHMARK("Export Public Key to PEM                 ",
+          std::bind(benchmark_keys_public_export_pem, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
 
 BENCHMARK("Export Private Key to DER (no password)  ",
           std::bind(benchmark_keys_private_export_der_no_pwd, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
 
-BENCHMARK("Export Private Key to PEM (with password)",
-          std::bind(benchmark_keys_private_export_pem_pwd, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
+BENCHMARK("Export Private Key to PEM (no password)  ",
+          std::bind(benchmark_keys_private_export_pem_no_pwd, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
 
 BENCHMARK("Export Private Key to DER (with password)",
           std::bind(benchmark_keys_private_export_der_pwd, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
+
+BENCHMARK("Export Private Key to PEM (with password)",
+          std::bind(benchmark_keys_private_export_pem_pwd, _1, VirgilKeyPair::Type::FAST_EC_ED25519));

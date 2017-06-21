@@ -73,43 +73,42 @@ using virgil::crypto::foundation::internal::mbedtls_context_policy;
 namespace virgil { namespace crypto { namespace foundation { namespace internal {
 
 void gen_key_pair(
-        mbedtls_context<mbedtls_pk_context>& pk_ctx, unsigned int rsa_size, int rsa_exponent,
+        mbedtls_context<mbedtls_pk_context>& pk_ctx,
+        mbedtls_context<mbedtls_ctr_drbg_context>& ctr_drbg_ctx, unsigned int rsa_size, int rsa_exponent,
         mbedtls_ecp_group_id ecp_group_id, mbedtls_fast_ec_type_t fast_ec_type) {
-
-    mbedtls_context<mbedtls_entropy_context> entropy_ctx;
-    mbedtls_context<mbedtls_ctr_drbg_context> ctr_drbg_ctx;
-
-    constexpr char pers[] = "virgil_gen_keypair";
-    ctr_drbg_ctx.setup(mbedtls_entropy_func, entropy_ctx.get(), pers);
 
     if (rsa_size > 0) {
         pk_ctx.clear().setup(MBEDTLS_PK_RSA);
         system_crypto_handler(
-                mbedtls_rsa_gen_key(mbedtls_pk_rsa(*(pk_ctx.get())), mbedtls_ctr_drbg_random,
+                mbedtls_rsa_gen_key(
+                        mbedtls_pk_rsa(*(pk_ctx.get())), mbedtls_ctr_drbg_random,
                         ctr_drbg_ctx.get(), rsa_size, rsa_exponent),
                 [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
-        );
+                             );
     } else if (ecp_group_id != MBEDTLS_ECP_DP_NONE) {
         pk_ctx.clear().setup(MBEDTLS_PK_ECKEY);
         system_crypto_handler(
-                mbedtls_ecp_gen_key(ecp_group_id, mbedtls_pk_ec(*(pk_ctx.get())),
+                mbedtls_ecp_gen_key(
+                        ecp_group_id, mbedtls_pk_ec(*(pk_ctx.get())),
                         mbedtls_ctr_drbg_random, ctr_drbg_ctx.get()),
                 [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
-        );
+                             );
     } else if (fast_ec_type != MBEDTLS_FAST_EC_NONE) {
         pk_ctx.clear().setup(mbedtls_pk_from_fast_ec_type(fast_ec_type));
         system_crypto_handler(
-                mbedtls_fast_ec_setup(mbedtls_pk_fast_ec(*(pk_ctx.get())),
+                mbedtls_fast_ec_setup(
+                        mbedtls_pk_fast_ec(*(pk_ctx.get())),
                         mbedtls_fast_ec_info_from_type(
                                 mbedtls_pk_fast_ec_type(
                                         mbedtls_pk_get_type(pk_ctx.get())))),
                 [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
-        );
+                             );
         system_crypto_handler(
-                mbedtls_fast_ec_gen_key(mbedtls_pk_fast_ec(*(pk_ctx.get())),
+                mbedtls_fast_ec_gen_key(
+                        mbedtls_pk_fast_ec(*(pk_ctx.get())),
                         mbedtls_ctr_drbg_random, ctr_drbg_ctx.get()),
                 [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
-        );
+                             );
     }
 }
 
@@ -148,14 +147,16 @@ public:
                 if (pwd_.empty()) {
                     return mbedtls_pk_write_key_der(ctx_, buf, bufLen);
                 } else {
-                    return mbedtls_pk_write_key_pkcs8_der(ctx_, buf, bufLen, pwd_.data(), pwd_.size(),
+                    return mbedtls_pk_write_key_pkcs8_der(
+                            ctx_, buf, bufLen, pwd_.data(), pwd_.size(),
                             pbesAlg.data(), pbesAlg.size());
                 }
             case Format::Private_PEM:
                 if (pwd_.empty()) {
                     return mbedtls_pk_write_key_pem(ctx_, buf, bufLen);
                 } else {
-                    return mbedtls_pk_write_key_pkcs8_pem(ctx_, buf, bufLen, pwd_.data(), pwd_.size(),
+                    return mbedtls_pk_write_key_pkcs8_pem(
+                            ctx_, buf, bufLen, pwd_.data(), pwd_.size(),
                             pbesAlg.data(), pbesAlg.size());
                 }
         }
@@ -174,15 +175,16 @@ static VirgilByteArray exportKey(KeyExportHelper& keyExportHelper) {
     do {
         result = keyExportHelper(exportedKey.data(), exportedKey.size());
         isNotEnoughSpace = (result == MBEDTLS_ERR_ASN1_BUF_TOO_SMALL) ||
-                (result == MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL);
+                           (result == MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL);
         if (isNotEnoughSpace) {
             exportedKey.resize(2 * exportedKey.size());
         }
     } while (isNotEnoughSpace);
 
-    system_crypto_handler(result,
+    system_crypto_handler(
+            result,
             [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidState)); }
-    );
+                         );
 
     size_t writtenBytes = 0;
     if (keyExportHelper.isDER() && result > 0) {
@@ -213,10 +215,11 @@ VirgilByteArray processEncryptionDecryption(
     ctr_drbg_ctx.setup(mbedtls_entropy_func, entropy_ctx.get(), pers);
 
     system_crypto_handler(
-            processEncryptionOrDecryption(ctx, in.data(), in.size(), result.data(), &resultLen, result.size(),
+            processEncryptionOrDecryption(
+                    ctx, in.data(), in.size(), result.data(), &resultLen, result.size(),
                     mbedtls_ctr_drbg_random, ctr_drbg_ctx.get()),
             [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
-    );
+                         );
     result.resize(resultLen);
     return result;
 }
@@ -238,6 +241,8 @@ static VirgilByteArray fixKey(const VirgilByteArray& key) {
 class VirgilAsymmetricCipher::Impl {
 public:
     internal::mbedtls_context <mbedtls_pk_context> pk_ctx;
+    mbedtls_context<mbedtls_entropy_context> entropy_ctx;
+    mbedtls_context<mbedtls_ctr_drbg_context> ctr_drbg_ctx;
 };
 
 VirgilAsymmetricCipher::VirgilAsymmetricCipher(VirgilAsymmetricCipher&& other) noexcept = default;
@@ -247,6 +252,8 @@ VirgilAsymmetricCipher& VirgilAsymmetricCipher::operator=(VirgilAsymmetricCipher
 VirgilAsymmetricCipher::~VirgilAsymmetricCipher() noexcept = default;
 
 VirgilAsymmetricCipher::VirgilAsymmetricCipher() : impl_(std::make_unique<Impl>()) {
+    constexpr char pers[] = "virgil_gen_keypair";
+    impl_->ctr_drbg_ctx.setup(mbedtls_entropy_func, impl_->entropy_ctx.get(), pers);
 }
 
 size_t VirgilAsymmetricCipher::keySize() const {
@@ -284,7 +291,7 @@ void VirgilAsymmetricCipher::checkPublicKey(const virgil::crypto::VirgilByteArra
     system_crypto_handler(
             mbedtls_pk_parse_public_key(public_ctx.get(), fixedKey.data(), fixedKey.size()),
             [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidPublicKey)); }
-    );
+                         );
 }
 
 bool VirgilAsymmetricCipher::checkPrivateKeyPassword(const VirgilByteArray& key, const VirgilByteArray& pwd) {
@@ -297,9 +304,10 @@ bool VirgilAsymmetricCipher::checkPrivateKeyPassword(const VirgilByteArray& key,
     } else if (result == MBEDTLS_ERR_PK_PASSWORD_REQUIRED || result == MBEDTLS_ERR_PK_PASSWORD_MISMATCH) {
         return false;
     } else {
-        system_crypto_handler(result,
+        system_crypto_handler(
+                result,
                 [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidPrivateKey)); }
-        );
+                             );
     }
     throw make_error(VirgilCryptoError::InvalidState);
 }
@@ -313,15 +321,15 @@ void VirgilAsymmetricCipher::setPrivateKey(const VirgilByteArray& key, const Vir
     system_crypto_handler(
             mbedtls_pk_parse_key(impl_->pk_ctx.get(), fixedKey.data(), fixedKey.size(), pwd.data(), pwd.size()),
             [](int error) {
-                switch (error) {
-                    case MBEDTLS_ERR_PK_PASSWORD_REQUIRED:
-                    case MBEDTLS_ERR_PK_PASSWORD_MISMATCH:
-                        std::throw_with_nested(make_error(VirgilCryptoError::InvalidPrivateKeyPassword));
-                    default:
-                        std::throw_with_nested(make_error(VirgilCryptoError::InvalidPrivateKey));
-                }
+                    switch (error) {
+                        case MBEDTLS_ERR_PK_PASSWORD_REQUIRED:
+                        case MBEDTLS_ERR_PK_PASSWORD_MISMATCH:
+                            std::throw_with_nested(make_error(VirgilCryptoError::InvalidPrivateKeyPassword));
+                        default:
+                            std::throw_with_nested(make_error(VirgilCryptoError::InvalidPrivateKey));
+                    }
             }
-    );
+                         );
 }
 
 void VirgilAsymmetricCipher::setPublicKey(const VirgilByteArray& key) {
@@ -329,7 +337,7 @@ void VirgilAsymmetricCipher::setPublicKey(const VirgilByteArray& key) {
     system_crypto_handler(
             mbedtls_pk_parse_public_key(impl_->pk_ctx.get(), fixedKey.data(), fixedKey.size()),
             [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidPublicKey)); }
-    );
+                         );
 }
 
 void VirgilAsymmetricCipher::genKeyPair(VirgilKeyPair::Type type) {
@@ -337,21 +345,27 @@ void VirgilAsymmetricCipher::genKeyPair(VirgilKeyPair::Type type) {
     mbedtls_ecp_group_id ecTypeId = MBEDTLS_ECP_DP_NONE;
     mbedtls_fast_ec_type_t fastEcType = MBEDTLS_FAST_EC_NONE;
     internal::key_type_set_params(type, &rsaSize, &ecTypeId, &fastEcType);
-    internal::gen_key_pair(impl_->pk_ctx, rsaSize, 65537, ecTypeId, fastEcType);
+    internal::gen_key_pair(impl_->pk_ctx, impl_->ctr_drbg_ctx, rsaSize, 65537, ecTypeId, fastEcType);
 }
 
 void VirgilAsymmetricCipher::genKeyPairFrom(const VirgilAsymmetricCipher& other) {
     other.checkState();
 
     if (mbedtls_pk_can_do(other.impl_->pk_ctx.get(), MBEDTLS_PK_RSA)) {
-        internal::gen_key_pair(impl_->pk_ctx, mbedtls_pk_get_bitlen(other.impl_->pk_ctx.get()), 65537,
+        internal::gen_key_pair(
+                impl_->pk_ctx, impl_->ctr_drbg_ctx,
+                mbedtls_pk_get_bitlen(other.impl_->pk_ctx.get()), 65537,
                 MBEDTLS_ECP_DP_NONE, MBEDTLS_FAST_EC_NONE);
     } else if (mbedtls_pk_can_do(other.impl_->pk_ctx.get(), MBEDTLS_PK_ECKEY)) {
-        internal::gen_key_pair(impl_->pk_ctx, 0, 0, mbedtls_pk_ec(*(other.impl_->pk_ctx.get()))->grp.id,
+        internal::gen_key_pair(
+                impl_->pk_ctx, impl_->ctr_drbg_ctx,
+                0, 0, mbedtls_pk_ec(*(other.impl_->pk_ctx.get()))->grp.id,
                 MBEDTLS_FAST_EC_NONE);
     } else if (mbedtls_pk_can_do(other.impl_->pk_ctx.get(), MBEDTLS_PK_X25519) ||
-            mbedtls_pk_can_do(other.impl_->pk_ctx.get(), MBEDTLS_PK_ED25519)) {
-        internal::gen_key_pair(impl_->pk_ctx, 0, 0, MBEDTLS_ECP_DP_NONE,
+               mbedtls_pk_can_do(other.impl_->pk_ctx.get(), MBEDTLS_PK_ED25519)) {
+        internal::gen_key_pair(
+                impl_->pk_ctx, impl_->ctr_drbg_ctx,
+                0, 0, MBEDTLS_ECP_DP_NONE,
                 mbedtls_fast_ec_get_type(mbedtls_pk_fast_ec(*(other.impl_->pk_ctx.get()))->info));
     } else {
         throw make_error(VirgilCryptoError::InvalidState, "Algorithm is not defined in the source.");
@@ -365,7 +379,6 @@ VirgilByteArray VirgilAsymmetricCipher::computeShared(
     privateContext.checkState();
 
 
-
     mbedtls_context<mbedtls_entropy_context> entropy_ctx;
     mbedtls_context<mbedtls_ctr_drbg_context> ctr_drbg_ctx;
 
@@ -376,7 +389,7 @@ VirgilByteArray VirgilAsymmetricCipher::computeShared(
     size_t sharedLen = 0;
 
     if (mbedtls_pk_can_do(publicContext.impl_->pk_ctx.get(), MBEDTLS_PK_ECKEY_DH) &&
-            mbedtls_pk_can_do(privateContext.impl_->pk_ctx.get(), MBEDTLS_PK_ECKEY_DH)) {
+        mbedtls_pk_can_do(privateContext.impl_->pk_ctx.get(), MBEDTLS_PK_ECKEY_DH)) {
 
         mbedtls_ecp_keypair* public_keypair = mbedtls_pk_ec(*publicContext.impl_->pk_ctx.get());
         mbedtls_ecp_keypair* private_keypair = mbedtls_pk_ec(*privateContext.impl_->pk_ctx.get());
@@ -390,7 +403,8 @@ VirgilByteArray VirgilAsymmetricCipher::computeShared(
         }
 
         if (public_keypair->grp.id != private_keypair->grp.id) {
-            throw make_error(VirgilCryptoError::InvalidArgument,
+            throw make_error(
+                    VirgilCryptoError::InvalidArgument,
                     "Can not compute shared key if elliptic curve groups are different.");
         }
 
@@ -398,22 +412,23 @@ VirgilByteArray VirgilAsymmetricCipher::computeShared(
 
         system_crypto_handler(
                 mbedtls_ecp_group_copy(&ecdh_ctx.get()->grp, &public_keypair->grp)
-        );
+                             );
         system_crypto_handler(
                 mbedtls_ecp_copy(&ecdh_ctx.get()->Qp, &public_keypair->Q)
-        );
+                             );
         system_crypto_handler(
                 mbedtls_ecp_copy(&ecdh_ctx.get()->Q, &private_keypair->Q)
-        );
+                             );
         system_crypto_handler(
                 mbedtls_mpi_copy(&ecdh_ctx.get()->d, &private_keypair->d)
-        );
+                             );
         system_crypto_handler(
-                mbedtls_ecdh_calc_secret(ecdh_ctx.get(), &sharedLen, shared.data(), shared.size(),
+                mbedtls_ecdh_calc_secret(
+                        ecdh_ctx.get(), &sharedLen, shared.data(), shared.size(),
                         mbedtls_ctr_drbg_random, ctr_drbg_ctx.get())
-        );
+                             );
     } else if (mbedtls_pk_can_do(publicContext.impl_->pk_ctx.get(), MBEDTLS_PK_X25519) &&
-            mbedtls_pk_can_do(privateContext.impl_->pk_ctx.get(), MBEDTLS_PK_X25519)) {
+               mbedtls_pk_can_do(privateContext.impl_->pk_ctx.get(), MBEDTLS_PK_X25519)) {
 
         mbedtls_fast_ec_keypair_t* public_keypair = mbedtls_pk_fast_ec(*publicContext.impl_->pk_ctx.get());
         mbedtls_fast_ec_keypair_t* private_keypair = mbedtls_pk_fast_ec(*privateContext.impl_->pk_ctx.get());
@@ -421,9 +436,10 @@ VirgilByteArray VirgilAsymmetricCipher::computeShared(
         sharedLen = mbedtls_fast_ec_get_shared_len(public_keypair->info);
         system_crypto_handler(
                 mbedtls_fast_ec_compute_shared(public_keypair, private_keypair, shared.data(), sharedLen)
-        );
+                             );
     } else {
-        throw make_error(VirgilCryptoError::UnsupportedAlgorithm,
+        throw make_error(
+                VirgilCryptoError::UnsupportedAlgorithm,
                 "Can not compute shared key on given keys. Only elliptic curve keys are supported.");
     }
     shared.resize(sharedLen);
@@ -484,8 +500,8 @@ VirgilByteArray VirgilAsymmetricCipher::sign(const VirgilByteArray& digest, int 
     bool useRandom =
 #if defined(MBEDTLS_ECDSA_DETERMINISTIC)
             mbedtls_pk_get_type(impl_->pk_ctx.get()) == MBEDTLS_PK_RSA ||
-                    mbedtls_pk_get_type(impl_->pk_ctx.get()) == MBEDTLS_PK_RSA_ALT ||
-                    mbedtls_pk_get_type(impl_->pk_ctx.get()) == MBEDTLS_PK_RSASSA_PSS;
+            mbedtls_pk_get_type(impl_->pk_ctx.get()) == MBEDTLS_PK_RSA_ALT ||
+            mbedtls_pk_get_type(impl_->pk_ctx.get()) == MBEDTLS_PK_RSASSA_PSS;
 #else
     true;
 #endif /* defined(MBEDTLS_ECDSA_DETERMINISTIC) */
@@ -499,17 +515,19 @@ VirgilByteArray VirgilAsymmetricCipher::sign(const VirgilByteArray& digest, int 
     }
 
     system_crypto_handler(
-            mbedtls_pk_sign(impl_->pk_ctx.get(), static_cast<mbedtls_md_type_t>(hashType),
+            mbedtls_pk_sign(
+                    impl_->pk_ctx.get(), static_cast<mbedtls_md_type_t>(hashType),
                     digest.data(), digest.size(), sign, &actualSignLen, f_rng, ctr_drbg_ctx.get()),
             [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
-    );
+                         );
 
     return VirgilByteArray(sign, sign + actualSignLen);
 }
 
 bool VirgilAsymmetricCipher::verify(const VirgilByteArray& digest, const VirgilByteArray& sign, int hashType) const {
     checkState();
-    return mbedtls_pk_verify(impl_->pk_ctx.get(), static_cast<mbedtls_md_type_t>(hashType),
+    return mbedtls_pk_verify(
+            impl_->pk_ctx.get(), static_cast<mbedtls_md_type_t>(hashType),
             digest.data(), digest.size(), sign.data(), sign.size()) == 0;
 }
 
@@ -521,8 +539,9 @@ VirgilKeyPair::Type VirgilAsymmetricCipher::getKeyType() const {
     } else if (mbedtls_pk_can_do(impl_->pk_ctx.get(), MBEDTLS_PK_ECKEY)) {
         return internal::key_type_from_params(0, mbedtls_pk_ec(*impl_->pk_ctx.get())->grp.id, MBEDTLS_FAST_EC_NONE);
     } else if (mbedtls_pk_can_do(impl_->pk_ctx.get(), MBEDTLS_PK_X25519) ||
-            mbedtls_pk_can_do(impl_->pk_ctx.get(), MBEDTLS_PK_ED25519)) {
-        return internal::key_type_from_params(0, MBEDTLS_ECP_DP_NONE,
+               mbedtls_pk_can_do(impl_->pk_ctx.get(), MBEDTLS_PK_ED25519)) {
+        return internal::key_type_from_params(
+                0, MBEDTLS_ECP_DP_NONE,
                 mbedtls_fast_ec_get_type(mbedtls_pk_fast_ec(*impl_->pk_ctx.get())->info));
     }
     throw make_error(VirgilCryptoError::InvalidState);
@@ -537,12 +556,13 @@ void VirgilAsymmetricCipher::setKeyType(VirgilKeyPair::Type keyType) {
     if (fastEcType != MBEDTLS_FAST_EC_NONE) {
         impl_->pk_ctx.clear().setup(mbedtls_pk_from_fast_ec_type(fastEcType));
         system_crypto_handler(
-                mbedtls_fast_ec_setup(mbedtls_pk_fast_ec(*(impl_->pk_ctx.get())),
+                mbedtls_fast_ec_setup(
+                        mbedtls_pk_fast_ec(*(impl_->pk_ctx.get())),
                         mbedtls_fast_ec_info_from_type(
                                 mbedtls_pk_fast_ec_type(
                                         mbedtls_pk_get_type(impl_->pk_ctx.get())))),
                 [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
-        );
+                             );
     } else if (rsaSize > 0) {
         throw make_error(VirgilCryptoError::UnsupportedAlgorithm, internal::to_string(MBEDTLS_PK_RSA));
     } else {
@@ -553,11 +573,12 @@ void VirgilAsymmetricCipher::setKeyType(VirgilKeyPair::Type keyType) {
 VirgilByteArray VirgilAsymmetricCipher::getPublicKeyBits() const {
     checkState();
     if (mbedtls_pk_can_do(impl_->pk_ctx.get(), MBEDTLS_PK_X25519) ||
-            mbedtls_pk_can_do(impl_->pk_ctx.get(), MBEDTLS_PK_ED25519)) {
+        mbedtls_pk_can_do(impl_->pk_ctx.get(), MBEDTLS_PK_ED25519)) {
         mbedtls_fast_ec_keypair_t* fast_ec = mbedtls_pk_fast_ec(*impl_->pk_ctx.get());
         return VirgilByteArray(fast_ec->public_key, fast_ec->public_key + mbedtls_fast_ec_get_key_len(fast_ec->info));
     } else {
-        throw make_error(VirgilCryptoError::UnsupportedAlgorithm,
+        throw make_error(
+                VirgilCryptoError::UnsupportedAlgorithm,
                 internal::to_string(mbedtls_pk_get_type(impl_->pk_ctx.get())));
     }
 }
@@ -565,14 +586,15 @@ VirgilByteArray VirgilAsymmetricCipher::getPublicKeyBits() const {
 void VirgilAsymmetricCipher::setPublicKeyBits(const VirgilByteArray& bits) {
     checkState();
     if (mbedtls_pk_can_do(impl_->pk_ctx.get(), MBEDTLS_PK_X25519) ||
-            mbedtls_pk_can_do(impl_->pk_ctx.get(), MBEDTLS_PK_ED25519)) {
+        mbedtls_pk_can_do(impl_->pk_ctx.get(), MBEDTLS_PK_ED25519)) {
         mbedtls_fast_ec_keypair_t* fast_ec = mbedtls_pk_fast_ec(*impl_->pk_ctx.get());
         if (bits.size() != mbedtls_fast_ec_get_key_len(fast_ec->info)) {
             throw make_error(VirgilCryptoError::InvalidArgument, "Set Fast EC public key with wrong size.");
         }
         std::copy(bits.begin(), bits.end(), fast_ec->public_key);
     } else {
-        throw make_error(VirgilCryptoError::UnsupportedAlgorithm,
+        throw make_error(
+                VirgilCryptoError::UnsupportedAlgorithm,
                 internal::to_string(mbedtls_pk_get_type(impl_->pk_ctx.get())));
     }
 }
@@ -583,11 +605,11 @@ size_t VirgilAsymmetricCipher::asn1Write(VirgilAsn1Writer& asn1Writer, size_t ch
     size_t oidLen;
     size_t len = 0;
     if (mbedtls_pk_get_type(impl_->pk_ctx.get()) == MBEDTLS_PK_ECKEY &&
-            mbedtls_pk_ec(*impl_->pk_ctx.get())->grp.id != MBEDTLS_ECP_DP_NONE) {
+        mbedtls_pk_ec(*impl_->pk_ctx.get())->grp.id != MBEDTLS_ECP_DP_NONE) {
         system_crypto_handler(
                 mbedtls_oid_get_oid_by_ec_grp(mbedtls_pk_ec(*impl_->pk_ctx.get())->grp.id, &oid, &oidLen),
                 [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
-        );
+                             );
         len += asn1Writer.writeOID(std::string(oid, oidLen));
     } else {
         len += asn1Writer.writeNull();
@@ -596,11 +618,11 @@ size_t VirgilAsymmetricCipher::asn1Write(VirgilAsn1Writer& asn1Writer, size_t ch
         system_crypto_handler(
                 mbedtls_oid_get_oid_by_pk_alg(mbedtls_pk_get_type(impl_->pk_ctx.get()), &oid, &oidLen),
                 [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
-        );
+                             );
         system_crypto_handler(
                 mbedtls_oid_get_oid_by_pk_alg(mbedtls_pk_get_type(impl_->pk_ctx.get()), &oid, &oidLen),
                 [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
-        );
+                             );
     } while (0);
     len += asn1Writer.writeOID(std::string(oid, oidLen));
     len += asn1Writer.writeSequence(len);
@@ -620,7 +642,7 @@ void VirgilAsymmetricCipher::asn1Read(VirgilAsn1Reader& asn1Reader) {
     system_crypto_handler(
             mbedtls_oid_get_pk_alg(&oidAsn1Buf, &type),
             [](int) { std::throw_with_nested(make_error(VirgilCryptoError::UnsupportedAlgorithm)); }
-    );
+                         );
 
     impl_->pk_ctx.clear().setup(type);
 }

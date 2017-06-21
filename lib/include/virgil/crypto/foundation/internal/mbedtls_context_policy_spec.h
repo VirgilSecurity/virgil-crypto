@@ -48,6 +48,7 @@
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 #include <virgil/crypto/foundation/internal/mbedtls_type_utils.h>
 
+#include <array>
 
 namespace virgil { namespace crypto { namespace foundation { namespace internal {
 
@@ -225,6 +226,32 @@ public:
         );
     }
 };
+
+inline VirgilByteArray randomize(mbedtls_context<mbedtls_ctr_drbg_context>& ctr_drbg_ctx, size_t bytesNum) {
+    std::array<unsigned char, MBEDTLS_CTR_DRBG_MAX_REQUEST> buf;
+
+    VirgilByteArray randomBytes;
+    randomBytes.reserve(bytesNum);
+    while (randomBytes.size() < bytesNum) {
+        const size_t randomChunkSize = std::min(bytesNum, (size_t) MBEDTLS_CTR_DRBG_MAX_REQUEST);
+        system_crypto_handler(
+                mbedtls_ctr_drbg_random(ctr_drbg_ctx.get(), buf.data(), randomChunkSize));
+        randomBytes.insert(randomBytes.end(), buf.begin(), buf.begin() + randomChunkSize);
+    }
+    return randomBytes;
+};
+
+inline size_t randomize(mbedtls_context<mbedtls_ctr_drbg_context>& ctr_drbg_ctx) {
+    VirgilByteArray randomBytes = randomize(ctr_drbg_ctx, sizeof(size_t));
+    return *((size_t*) &randomBytes[0]);
+}
+
+inline size_t randomize(mbedtls_context<mbedtls_ctr_drbg_context>& ctr_drbg_ctx, size_t min, size_t max) {
+    if (min >= max) {
+        throw make_error(VirgilCryptoError::InvalidArgument, "MIN value is greater or equal to MAX.");
+    }
+    return min + (randomize(ctr_drbg_ctx) % size_t(max - min));
+}
 
 }}}}
 

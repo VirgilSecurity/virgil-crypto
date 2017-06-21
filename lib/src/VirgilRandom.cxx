@@ -36,8 +36,6 @@
 
 #include <virgil/crypto/foundation/VirgilRandom.h>
 
-#include <array>
-
 #include <mbedtls/entropy.h>
 #include <mbedtls/ctr_drbg.h>
 
@@ -89,30 +87,15 @@ VirgilRandom& VirgilRandom::operator=(const VirgilRandom& rhs) {
 }
 
 VirgilByteArray VirgilRandom::randomize(size_t bytesNum) {
-    std::array<unsigned char, MBEDTLS_CTR_DRBG_MAX_REQUEST> buf;
-
-    VirgilByteArray randomBytes;
-    randomBytes.reserve(bytesNum);
-    while (randomBytes.size() < bytesNum) {
-        const size_t randomChunkSize = std::min(bytesNum, (size_t) MBEDTLS_CTR_DRBG_MAX_REQUEST);
-        system_crypto_handler(
-                mbedtls_ctr_drbg_random(impl_->ctr_drbg_ctx.get(), buf.data(), randomChunkSize)
-        );
-        randomBytes.insert(randomBytes.end(), buf.begin(), buf.begin() + randomChunkSize);
-    }
-    return randomBytes;
+    return internal::randomize(impl_->ctr_drbg_ctx, bytesNum);
 }
 
 size_t VirgilRandom::randomize() {
-    VirgilByteArray randomBytes = randomize(sizeof(size_t));
-    return *((size_t*) &randomBytes[0]);
+    return internal::randomize(impl_->ctr_drbg_ctx);
 }
 
 size_t VirgilRandom::randomize(size_t min, size_t max) {
-    if (min >= max) {
-        throw make_error(VirgilCryptoError::InvalidArgument, "MIN value is greater or equal to MAX.");
-    }
-    return min + (randomize() % size_t(max - min));
+    return internal::randomize(impl_->ctr_drbg_ctx, min, max);
 }
 
 void VirgilRandom::init() {

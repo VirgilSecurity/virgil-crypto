@@ -48,7 +48,7 @@ using virgil::crypto::foundation::VirgilAsymmetricCipher;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;
 using virgil::crypto::foundation::asn1::VirgilAsn1Writer;
 
-VirgilSigner::VirgilSigner(VirgilHash::Algorithm hashAlgorithm) : hash_(hashAlgorithm) {
+VirgilSigner::VirgilSigner(VirgilHash::Algorithm hashAlgorithm) : hash_(hashAlgorithm), pk_() {
 }
 
 VirgilByteArray VirgilSigner::sign(
@@ -56,10 +56,9 @@ VirgilByteArray VirgilSigner::sign(
     // Calculate data digest
     VirgilByteArray digest = hash_.hash(data);
     // Prepare cipher
-    VirgilAsymmetricCipher cipher;
-    cipher.setPrivateKey(privateKey, privateKeyPassword);
+    pk_.setPrivateKey(privateKey, privateKeyPassword);
     // Sign digest
-    VirgilByteArray digestSign = cipher.sign(digest, hash_.type());
+    VirgilByteArray digestSign = pk_.sign(digest, hash_.type());
     // Create sign
     VirgilAsn1Writer asn1Writer;
     size_t asn1Len = 0;
@@ -80,8 +79,7 @@ bool VirgilSigner::verify(const VirgilByteArray& data, const VirgilByteArray& si
     // Calculate data digest
     VirgilByteArray digest = hash.hash(data);
     // Prepare cipher
-    VirgilAsymmetricCipher cipher;
-    cipher.setPublicKey(publicKey);
+    pk_.setPublicKey(publicKey);
     // Verify
-    return cipher.verify(digest, digestSign, hash_.type());
+    return pk_.verify(digest, digestSign, hash_.type());
 }

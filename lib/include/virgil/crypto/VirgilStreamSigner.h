@@ -40,6 +40,7 @@
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilDataSource.h>
 #include <virgil/crypto/foundation/VirgilHash.h>
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 
 namespace virgil { namespace crypto {
 
@@ -73,6 +74,7 @@ public:
 
 private:
     foundation::VirgilHash hash_;
+    foundation::VirgilAsymmetricCipher pk_;
 };
 
 }}

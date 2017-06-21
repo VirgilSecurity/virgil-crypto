@@ -37,7 +37,6 @@
 #include <virgil/crypto/foundation/VirgilRandom.h>
 
 #include <array>
-#include <atomic>
 
 #include <mbedtls/entropy.h>
 #include <mbedtls/ctr_drbg.h>
@@ -56,7 +55,6 @@ using virgil::crypto::foundation::VirgilRandom;
 
 class VirgilRandom::Impl {
 public:
-    std::atomic<bool> is_init{ false };
     VirgilByteArray personalInfo;
     internal::mbedtls_context <mbedtls_ctr_drbg_context> ctr_drbg_ctx;
     internal::mbedtls_context <mbedtls_entropy_context> entropy_ctx;
@@ -64,10 +62,12 @@ public:
 
 VirgilRandom::VirgilRandom(const VirgilByteArray& personalInfo) : impl_(std::make_unique<Impl>()) {
     impl_->personalInfo = personalInfo;
+    init();
 }
 
 VirgilRandom::VirgilRandom(const std::string& personalInfo) : impl_(std::make_unique<Impl>()) {
     impl_->personalInfo = VirgilByteArrayUtils::stringToBytes(personalInfo);
+    init();
 }
 
 VirgilRandom::VirgilRandom(VirgilRandom&& rhs) noexcept = default;
@@ -79,6 +79,7 @@ VirgilRandom::~VirgilRandom() noexcept = default;
 
 VirgilRandom::VirgilRandom(const VirgilRandom& rhs) : impl_(std::make_unique<Impl>()) {
     impl_->personalInfo = rhs.impl_->personalInfo;
+    init();
 }
 
 VirgilRandom& VirgilRandom::operator=(const VirgilRandom& rhs) {
@@ -88,14 +89,6 @@ VirgilRandom& VirgilRandom::operator=(const VirgilRandom& rhs) {
 }
 
 VirgilByteArray VirgilRandom::randomize(size_t bytesNum) {
-
-    if (!impl_->is_init) {
-        impl_->ctr_drbg_ctx.setup(mbedtls_entropy_func, impl_->entropy_ctx.get(), impl_->personalInfo);
-        VirgilByteArrayUtils::zeroize(impl_->personalInfo);
-        impl_->personalInfo.clear();
-        impl_->is_init = true;
-    }
-
     std::array<unsigned char, MBEDTLS_CTR_DRBG_MAX_REQUEST> buf;
 
     VirgilByteArray randomBytes;
@@ -120,4 +113,8 @@ size_t VirgilRandom::randomize(size_t min, size_t max) {
         throw make_error(VirgilCryptoError::InvalidArgument, "MIN value is greater or equal to MAX.");
     }
     return min + (randomize() % size_t(max - min));
+}
+
+void VirgilRandom::init() {
+    impl_->ctr_drbg_ctx.setup(mbedtls_entropy_func, impl_->entropy_ctx.get(), impl_->personalInfo);
 }

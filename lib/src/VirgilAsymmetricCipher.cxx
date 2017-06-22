@@ -596,7 +596,7 @@ size_t VirgilAsymmetricCipher::calculateExportedPrivateKeySizeMaxDER(size_t encr
         constexpr auto asn1Overhead = 3 /* top sequence + len */ +
                                       2 /* private key (tag + len) */ +
                                       3 /* version */ +
-                                      9 /* optional OID (tag + len + OID) */ +
+                                      32 /* optional OID (tag + len + OID) */ +
                                       6 /* optional public key (tag + len + tag + len) */;
         return asn1Overhead + 3 * keyLength + encryptionOverhead;
     }

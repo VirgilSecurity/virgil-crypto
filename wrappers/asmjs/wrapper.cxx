@@ -55,6 +55,7 @@
 
 #include <virgil/crypto/VirgilCipherBase.h>
 #include <virgil/crypto/VirgilCipher.h>
+#include <virgil/crypto/VirgilSignerBase.h>
 #include <virgil/crypto/VirgilSigner.h>
 #include <virgil/crypto/VirgilTinyCipher.h>
 #include <virgil/crypto/VirgilDataSink.h>
@@ -213,8 +214,17 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .function("decryptWithPassword", &VirgilCipher::decryptWithPassword)
     ;
 
-    class_<VirgilSigner>("VirgilSigner")
+    class_<VirgilSignerBase>("VirgilSignerBase")
         .constructor<>()
+        .constructor<VirgilHash::Algorithm>()
+        .function("getHashAlgorithm", &VirgilSignerBase::getHashAlgorithm)
+        .function("signHash", &VirgilSignerBase::signHash)
+        .function("verifyHash", &VirgilSignerBase::verifyHash)
+    ;
+
+    class_<VirgilSigner, base<VirgilSignerBase>>("VirgilSigner")
+        .constructor<>()
+        .constructor<VirgilHash::Algorithm>()
         .function("sign", &VirgilSigner_sign_1)
         .function("sign", &VirgilSigner_sign_2)
         .function("verify", &VirgilSigner_verify)

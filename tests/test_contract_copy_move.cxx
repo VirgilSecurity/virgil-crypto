@@ -104,12 +104,11 @@ TEST_CASE("Check contract: move only", "[copy/move]") {
     SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::VirgilStreamCipher);
     SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::VirgilChunkCipher);
     SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::VirgilTinyCipher);
+    SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::VirgilSigner);
+    SECTION_CONTRACT_MOVE_ONLY(virgil::crypto::VirgilStreamSigner);
 }
 
 TEST_CASE("Check contract: copy and move", "[copy/move]") {
-    SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::VirgilSigner);
-    SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::VirgilStreamSigner);
-
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::VirgilHash);
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::VirgilRandom);
 

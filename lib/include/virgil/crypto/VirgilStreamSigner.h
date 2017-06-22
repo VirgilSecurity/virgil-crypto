@@ -37,10 +37,11 @@
 #ifndef VIRGIL_STREAM_SIGNER_H
 #define VIRGIL_STREAM_SIGNER_H
 
+#include <virgil/crypto/VirgilSignerBase.h>
+
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilDataSource.h>
 #include <virgil/crypto/foundation/VirgilHash.h>
-#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 
 namespace virgil { namespace crypto {
 
@@ -49,14 +50,13 @@ namespace virgil { namespace crypto {
  *
  * This module can sign / verify data provided by stream.
  */
-class VirgilStreamSigner {
+class VirgilStreamSigner : public VirgilSignerBase {
 public:
     /**
      * @brief Create signer with predefined hash function.
      * @note Specified hash function algorithm is used only during signing.
      */
-    explicit VirgilStreamSigner(
-            foundation::VirgilHash::Algorithm hashAlgorithm = foundation::VirgilHash::Algorithm::SHA384);
+     using VirgilSignerBase::VirgilSignerBase;
 
     /**
      * @brief Sign data provided by the source with given private key.
@@ -71,10 +71,6 @@ public:
      * @return true if sign is valid and data was not malformed.
      */
     bool verify(VirgilDataSource& source, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
-
-private:
-    foundation::VirgilHash hash_;
-    foundation::VirgilAsymmetricCipher pk_;
 };
 
 }}

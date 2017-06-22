@@ -121,31 +121,106 @@ void benchmark_keys_private_export_der_pwd(benchpress::context* ctx, const Virgi
     }
 }
 
-BENCHMARK("Generate key pair -> curve25519          ",
+void benchmark_keys_public_export_der2pem(benchpress::context* ctx, const VirgilKeyPair::Type& keyType) {
+    auto keyPair = VirgilKeyPair::generate(keyType);
+    auto publicKey = VirgilKeyPair::publicKeyToDER(keyPair.publicKey());
+    ctx->reset_timer();
+    for (size_t i = 0; i < ctx->num_iterations(); ++i) {
+        (void) VirgilKeyPair::publicKeyToPEM(publicKey);
+    }
+}
+
+void benchmark_keys_public_export_pem2der(benchpress::context* ctx, const VirgilKeyPair::Type& keyType) {
+    auto keyPair = VirgilKeyPair::generate(keyType);
+    auto publicKey = VirgilKeyPair::publicKeyToPEM(keyPair.publicKey());
+    ctx->reset_timer();
+    for (size_t i = 0; i < ctx->num_iterations(); ++i) {
+        (void) VirgilKeyPair::publicKeyToDER(publicKey);
+    }
+}
+
+void benchmark_keys_private_export_der2pem_no_pwd(benchpress::context* ctx, const VirgilKeyPair::Type& keyType) {
+    auto keyPair = VirgilKeyPair::generate(keyType);
+    auto privateKey = VirgilKeyPair::privateKeyToDER(keyPair.privateKey());
+    ctx->reset_timer();
+    for (size_t i = 0; i < ctx->num_iterations(); ++i) {
+        (void) VirgilKeyPair::privateKeyToPEM(privateKey);
+    }
+}
+
+void benchmark_keys_private_export_pem2der_no_pwd(benchpress::context* ctx, const VirgilKeyPair::Type& keyType) {
+    auto keyPair = VirgilKeyPair::generate(keyType);
+    auto privateKey = VirgilKeyPair::privateKeyToPEM(keyPair.privateKey());
+    ctx->reset_timer();
+    for (size_t i = 0; i < ctx->num_iterations(); ++i) {
+        (void) VirgilKeyPair::privateKeyToDER(privateKey);
+    }
+}
+
+void benchmark_keys_private_export_der2pem_pwd(benchpress::context* ctx, const VirgilKeyPair::Type& keyType) {
+    auto pwd = VirgilByteArrayUtils::stringToBytes("pwd");
+    auto keyPair = VirgilKeyPair::generate(keyType, pwd);
+    auto privateKey = VirgilKeyPair::privateKeyToDER(keyPair.privateKey(), pwd);
+    ctx->reset_timer();
+    for (size_t i = 0; i < ctx->num_iterations(); ++i) {
+        (void) VirgilKeyPair::privateKeyToPEM(privateKey, pwd);
+    }
+}
+
+void benchmark_keys_private_export_pem2der_pwd(benchpress::context* ctx, const VirgilKeyPair::Type& keyType) {
+    auto pwd = VirgilByteArrayUtils::stringToBytes("pwd");
+    auto keyPair = VirgilKeyPair::generate(keyType, pwd);
+    auto privateKey = VirgilKeyPair::privateKeyToPEM(keyPair.privateKey(), pwd);
+    ctx->reset_timer();
+    for (size_t i = 0; i < ctx->num_iterations(); ++i) {
+        (void) VirgilKeyPair::privateKeyToDER(privateKey, pwd);
+    }
+}
+
+
+BENCHMARK("Generate key pair -> curve25519              ",
           std::bind(benchmark_keys_keygen, _1, VirgilKeyPair::Type::FAST_EC_X25519));
-BENCHMARK("Generate key pair -> ed25519             ",
+BENCHMARK("Generate key pair -> ed25519                 ",
           std::bind(benchmark_keys_keygen, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
-BENCHMARK("Generate key pair -> 224-bits NIST curve ",
+BENCHMARK("Generate key pair -> 224-bits NIST curve     ",
           std::bind(benchmark_keys_keygen, _1, VirgilKeyPair::Type::EC_SECP224R1));
-BENCHMARK("Generate key pair -> 256-bits NIST curve ",
+BENCHMARK("Generate key pair -> 256-bits NIST curve     ",
           std::bind(benchmark_keys_keygen, _1, VirgilKeyPair::Type::EC_SECP256R1));
-BENCHMARK("Generate key pair -> 384-bits NIST curve ",
+BENCHMARK("Generate key pair -> 384-bits NIST curve     ",
           std::bind(benchmark_keys_keygen, _1, VirgilKeyPair::Type::EC_SECP384R1));
 
-BENCHMARK("Export Public Key to DER                 ",
+BENCHMARK("Export Public Key to DER                     ",
           std::bind(benchmark_keys_public_export_der, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
 
-BENCHMARK("Export Public Key to PEM                 ",
+BENCHMARK("Export Public Key to PEM                     ",
           std::bind(benchmark_keys_public_export_pem, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
 
-BENCHMARK("Export Private Key to DER (no password)  ",
+BENCHMARK("Export Private Key to DER (no password)      ",
           std::bind(benchmark_keys_private_export_der_no_pwd, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
 
-BENCHMARK("Export Private Key to PEM (no password)  ",
+BENCHMARK("Export Private Key to PEM (no password)      ",
           std::bind(benchmark_keys_private_export_pem_no_pwd, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
 
-BENCHMARK("Export Private Key to DER (with password)",
+BENCHMARK("Export Private Key to DER (with password)    ",
           std::bind(benchmark_keys_private_export_der_pwd, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
 
-BENCHMARK("Export Private Key to PEM (with password)",
+BENCHMARK("Export Private Key to PEM (with password)    ",
           std::bind(benchmark_keys_private_export_pem_pwd, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
+
+BENCHMARK("Export Public Key DER to PEM                 ",
+          std::bind(benchmark_keys_public_export_der2pem, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
+
+BENCHMARK("Export Public Key PEM to DER                 ",
+          std::bind(benchmark_keys_public_export_pem2der, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
+
+BENCHMARK("Export Private Key PEM to DER (no password)  ",
+          std::bind(benchmark_keys_private_export_der2pem_no_pwd, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
+
+BENCHMARK("Export Private Key DER to PEM (no password)  ",
+          std::bind(benchmark_keys_private_export_pem2der_no_pwd, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
+
+BENCHMARK("Export Private Key DER to PEM (with password)",
+          std::bind(benchmark_keys_private_export_der2pem_pwd, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
+
+BENCHMARK("Export Private Key PEM to DER (with password)",
+          std::bind(benchmark_keys_private_export_pem2der_pwd, _1, VirgilKeyPair::Type::FAST_EC_ED25519));

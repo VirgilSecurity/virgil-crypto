@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
+ * Copyright (C) 2015-2017 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -34,39 +34,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/VirgilSigner.h>
+#define BENCHPRESS_CONFIG_MAIN
 
-#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
+#include "benchpress.hpp"
 
-using virgil::crypto::VirgilSigner;
-using virgil::crypto::VirgilByteArray;
+#include <virgil/crypto/foundation/VirgilRandom.h>
 
-using virgil::crypto::foundation::VirgilHash;
+using virgil::crypto::foundation::VirgilRandom;
 
-VirgilByteArray VirgilSigner::sign(
-        const VirgilByteArray& data, const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
-
-    // Calculate data digest
-    const auto digest = VirgilHash(getHashAlgorithm()).hash(data);
-
-    // Sign digest
-    const auto signature = signHash(digest, privateKey, privateKeyPassword);
-
-    // Pack signature
-    return packSignature(signature);
+void benchmark_random(benchpress::context* ctx, size_t bytes) {
+    VirgilRandom random("seed");
+    ctx->reset_timer();
+    for (size_t i = 0; i < ctx->num_iterations(); ++i) {
+        (void) random.randomize(bytes);
+    }
 }
 
-bool VirgilSigner::verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey) {
-
-    // Unpack signature
-    const auto signature = unpackSignature(sign); // MUST be before getHashAlgorithm()
-
-    // Calculate data digest
-    VirgilHash hash(getHashAlgorithm());
-    const auto digest = hash.hash(data);
-
-    // Verify signature
-    return verifyHash(digest, signature, publicKey);
-}
+BENCHMARK("Random bytes: 32 ", std::bind(benchmark_random, std::placeholders::_1, 32));
+BENCHMARK("Random bytes: 64 ", std::bind(benchmark_random, std::placeholders::_1, 64));
+BENCHMARK("Random bytes: 128", std::bind(benchmark_random, std::placeholders::_1, 128));
+BENCHMARK("Random bytes: 256", std::bind(benchmark_random, std::placeholders::_1, 256));

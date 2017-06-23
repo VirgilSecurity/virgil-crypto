@@ -46,6 +46,7 @@
 
 #include <virgil/crypto/internal/utils.h>
 #include <virgil/crypto/foundation/internal/mbedtls_context.h>
+#include <virgil/crypto/foundation/internal/mbedtls_type_utils.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
@@ -133,6 +134,11 @@ VirgilHash::~VirgilHash() noexcept = default;
 std::string VirgilHash::name() const {
     checkState();
     return std::string(impl_->info.name());
+}
+
+VirgilHash::Algorithm VirgilHash::algorithm() const {
+    checkState();
+    return internal::hash_algorithm_from_md_type(impl_->info.type());
 }
 
 int VirgilHash::type() const {

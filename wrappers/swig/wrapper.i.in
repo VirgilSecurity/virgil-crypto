@@ -133,6 +133,7 @@ INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilKeyPair, virgil::crypto, virgil/crypto
 INCLUDE_CLASS(VirgilCipherBase, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilCipher, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilChunkCipher, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilSignerBase, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilSigner, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilStreamSigner, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilStreamCipher, virgil::crypto, virgil/crypto)

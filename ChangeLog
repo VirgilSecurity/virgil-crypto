@@ -1,5 +1,18 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.2.0 released 2017-06-04
+
+## Features
+
+  [Lib] Add module - Perfect Forward Secrecy
+  [Lib] Expose Low Level API to the wrappers
+
+## Improvements
+
+  [Lib] Speed optimization for sign / verify operations
+  [Lib] Speed optimization for VirgilAsymmetricCipher operations
+
+
 = Version 2.1.2 released 2017-03-22
 
 ## Bugfix

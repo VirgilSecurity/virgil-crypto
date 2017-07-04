@@ -67,7 +67,7 @@ public:
 
 public:
     /**
-     * @name Recipent management
+     * @name Recipient management
      */
     ///@{
     /**
@@ -222,18 +222,6 @@ protected:
      * @note cipher's input vector is randomly generated.
      */
     virgil::crypto::foundation::VirgilSymmetricCipher& initEncryption();
-    /**
-     * @brief Configures symmetric cipher for decryption.
-     * @param encryptedDataInfo - serialized encrypted data info.
-     * @param recipientId - id that corresponds to the user's private key.
-     * @param privateKey - user's private key.
-     * @param privateKeyPassword - user's private key password.
-     * @return Configured cipher.
-     */
-    virgil::crypto::foundation::VirgilSymmetricCipher& initDecryption(
-            const VirgilByteArray& encryptedDataInfo,
-            const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
-            const VirgilByteArray& privateKeyPassword = VirgilByteArray());
 
     /**
      * @brief Configures symmetric cipher for decryption based on the recipient's password.
@@ -285,6 +273,16 @@ public:
 
     virtual ~VirgilCipherBase() noexcept;
     //! @endcond
+
+private:
+    virtual VirgilByteArray doDecryptWithKey(
+            const VirgilByteArray& algorithm, const VirgilByteArray& encryptedKey,
+            const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) const;
+
+    virtual VirgilByteArray doDecryptWithPassword(
+            const VirgilByteArray& encryptedKey, const VirgilByteArray& encryptionAlgorithm,
+            const VirgilByteArray& password) const;
+
 private:
     class Impl;
 

@@ -43,6 +43,7 @@
 #include <iomanip>
 #include <vector>
 #include <algorithm>
+#include <tuple>
 
 namespace virgil { namespace crypto {
 
@@ -138,6 +139,39 @@ inline void string_zeroize(std::string& str) {
     while (n--) { *p++ = '\0'; }
 }
 ///@}
+
+/**
+ * @brief Append given source bytes to the existing destination bytes.
+ * @param dst - bytes append to.
+ * @param src - bytes append from.
+ * @return Reference to destination (dst).
+ */
+inline VirgilByteArray& bytes_append(VirgilByteArray& dst, const VirgilByteArray& src) {
+    dst.insert(dst.end(), src.cbegin(), src.cend());
+    return dst;
+}
+
+/**
+ * @brief Split given bytes to two sequences.
+ * @param src - bytes to be splitted.
+ * @param pos - splitting position.
+ * @return Two sequences: src[0, pos), src[pos, src.size()).
+ */
+inline std::tuple<VirgilByteArray, VirgilByteArray> bytes_split(const VirgilByteArray& src, size_t pos) {
+    return std::make_tuple(
+            VirgilByteArray(src.cbegin(), src.cbegin() + pos),
+            VirgilByteArray(src.cbegin() + pos, src.cend()));
+}
+
+/**
+ * @brief Split given bytes to two sequences of the same size.
+ * @param src - bytes to be splitted.
+ * @return Two sequences: src[0, src.size()/2), src[src.size()/2, src.size()).
+ */
+inline std::tuple<VirgilByteArray, VirgilByteArray> bytes_split_half(const VirgilByteArray& src) {
+    const auto halfPos = src.size() >> 1;
+    return bytes_split(src, halfPos);
+}
 
 }}
 #endif /* VIRGIL_BYTE_ARRAY_H */

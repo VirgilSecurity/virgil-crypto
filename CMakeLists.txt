@@ -97,9 +97,9 @@ project (VirgilSecurity)
 
 # Set library version
 set (VIRGIL_VERSION_MAJOR 2)
-set (VIRGIL_VERSION_MINOR 1)
-set (VIRGIL_VERSION_PATCH 2)
-set (VIRGIL_VERSION_FEATURE)
+set (VIRGIL_VERSION_MINOR 2)
+set (VIRGIL_VERSION_PATCH 0)
+set (VIRGIL_VERSION_FEATURE rc4)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 2)
 
@@ -226,7 +226,7 @@ virgil_depends (
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/rapidjson"
     CMAKE_ARGS "${CMAKE_ARGS}"
 )
-virgil_find_package (RapidJSON 1.0)
+virgil_find_package (RapidJSON 1.1)
 
 virgil_depends (
     PACKAGE_NAME "tinyformat"

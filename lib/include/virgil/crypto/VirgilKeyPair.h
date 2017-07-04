@@ -48,6 +48,8 @@ class VirgilKeyPair {
 public:
     /**
      * @brief Type of the keypair.
+     * @deprecated
+     * @note Use Algorithm instead.
      */
     enum class Type {
         RSA_256, ///< RSA 1024 bit (not recommended)
@@ -72,6 +74,10 @@ public:
         FAST_EC_X25519,  ///< Curve25519
         FAST_EC_ED25519, ///< Ed25519
     };
+    /**
+     * @brief Key algorithm
+     */
+    using Algorithm = Type;
 public:
     /**
      * @brief Generate new key pair given type.

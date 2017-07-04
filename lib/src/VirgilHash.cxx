@@ -46,6 +46,7 @@
 
 #include <virgil/crypto/internal/utils.h>
 #include <virgil/crypto/foundation/internal/mbedtls_context.h>
+#include <virgil/crypto/foundation/internal/mbedtls_type_utils.h>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
@@ -114,6 +115,16 @@ VirgilHash::VirgilHash(const char* name) : impl_(std::make_unique<Impl>()) {
     impl_->setup(name);
 }
 
+VirgilHash::VirgilHash(const VirgilHash& rhs) : impl_(std::make_unique<Impl>()) {
+    impl_->setup(rhs.name().c_str());
+}
+
+VirgilHash& VirgilHash::operator=(const VirgilHash& rhs) {
+    auto tmp = VirgilHash(rhs);
+    *this = std::move(tmp);
+    return *this;
+}
+
 VirgilHash::VirgilHash(VirgilHash&& other) noexcept = default;
 
 VirgilHash& VirgilHash::operator=(VirgilHash&& rhs) noexcept = default;
@@ -125,8 +136,18 @@ std::string VirgilHash::name() const {
     return std::string(impl_->info.name());
 }
 
+VirgilHash::Algorithm VirgilHash::algorithm() const {
+    checkState();
+    return internal::hash_algorithm_from_md_type(impl_->info.type());
+}
+
 int VirgilHash::type() const {
     return static_cast<int>(impl_->info.type());
+}
+
+size_t VirgilHash::size() const {
+    checkState();
+    return impl_->info.size();
 }
 
 void VirgilHash::start() {

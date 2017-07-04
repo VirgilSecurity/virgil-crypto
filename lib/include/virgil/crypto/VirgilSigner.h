@@ -37,6 +37,8 @@
 #ifndef VIRGIL_SIGNER_H
 #define VIRGIL_SIGNER_H
 
+#include <virgil/crypto/VirgilSignerBase.h>
+
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/VirgilHash.h>
 
@@ -47,13 +49,13 @@ namespace virgil { namespace crypto {
  *
  * This module can sign / verify as raw data and Virgil Security tickets.
  */
-class VirgilSigner {
+class VirgilSigner : public VirgilSignerBase {
 public:
     /**
      * @brief Create signer with predefined hash function.
      * @note Specified hash function algorithm is used only during signing.
      */
-    explicit VirgilSigner(foundation::VirgilHash::Algorithm hashAlgorithm = foundation::VirgilHash::Algorithm::SHA384);
+    using VirgilSignerBase::VirgilSignerBase;
 
     /**
      * @brief Sign data with given private key.
@@ -68,15 +70,6 @@ public:
      * @return true if sign is valid and data was not malformed.
      */
     bool verify(const VirgilByteArray& data, const VirgilByteArray& sign, const VirgilByteArray& publicKey);
-
-public:
-    //! @cond Doxygen_Suppress
-    VirgilSigner& operator=(VirgilSigner&& rhs) noexcept;
-
-    VirgilSigner(VirgilSigner&& rhs) noexcept;
-    //! @endcond
-private:
-    foundation::VirgilHash hash_;
 };
 
 }}

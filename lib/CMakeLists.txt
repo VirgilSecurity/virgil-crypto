@@ -39,8 +39,11 @@ cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
 project (virgil_crypto VERSION ${VIRGIL_VERSION})
 
 # Define sources list
+file (GLOB_RECURSE inc "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
 aux_source_directory ("src" src)
 aux_source_directory ("src/internal" src)
+aux_source_directory ("src/primitive" src)
+aux_source_directory ("src/pfs" src)
 if (LIB_FILE_IO)
     aux_source_directory ("src/stream" src)
 endif()
@@ -53,7 +56,7 @@ configure_file (
 
 aux_source_directory("${CMAKE_CURRENT_BINARY_DIR}/src" src)
 
-add_library (${PROJECT_NAME} ${src})
+add_library (${PROJECT_NAME} ${inc} ${src})
 
 set_property (TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME ${PROJECT_NAME})
 set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)

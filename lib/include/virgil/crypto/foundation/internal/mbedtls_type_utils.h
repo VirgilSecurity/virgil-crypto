@@ -45,6 +45,7 @@
 #include <mbedtls/fast_ec.h>
 
 #include <virgil/crypto/VirgilKeyPair.h>
+#include <virgil/crypto/foundation/VirgilHash.h>
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 
 namespace virgil { namespace crypto { namespace foundation { namespace internal {
@@ -399,6 +400,26 @@ static inline std::string to_string(mbedtls_fast_ec_type_t type) noexcept {
             return "FAST_EC_ED25519";
         default:
             return "UNDEFINED";
+    }
+}
+
+
+static inline VirgilHash::Algorithm hash_algorithm_from_md_type(mbedtls_md_type_t type) {
+    switch (type) {
+        case MBEDTLS_MD_MD5:
+            return VirgilHash::Algorithm::MD5;
+        case MBEDTLS_MD_SHA1:
+            return VirgilHash::Algorithm::SHA1;
+        case MBEDTLS_MD_SHA224:
+            return VirgilHash::Algorithm::SHA224;
+        case MBEDTLS_MD_SHA256:
+            return VirgilHash::Algorithm::SHA256;
+        case MBEDTLS_MD_SHA384:
+            return VirgilHash::Algorithm::SHA384;
+        case MBEDTLS_MD_SHA512:
+            return VirgilHash::Algorithm::SHA512;
+        default:
+            throw make_error(VirgilCryptoError::UnsupportedAlgorithm, to_string(type));
     }
 }
 

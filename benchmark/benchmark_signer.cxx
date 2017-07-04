@@ -78,12 +78,32 @@ void benchmark_verify(benchpress::context* ctx, const VirgilKeyPair::Type& keyTy
     }
 }
 
-BENCHMARK("Sign   -> ed25519            ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
-BENCHMARK("Sign   -> 224-bits NIST curve", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::EC_SECP224R1));
-BENCHMARK("Sign   -> 256-bits NIST curve", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::EC_SECP256R1));
-BENCHMARK("Sign   -> 384-bits NIST curve", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::EC_SECP384R1));
+BENCHMARK("Sign -> RSA 2048                  ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::RSA_2048));
+BENCHMARK("Sign -> RSA 3072                  ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::RSA_3072));
+BENCHMARK("Sign -> RSA 4096                  ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::RSA_4096));
+BENCHMARK("Sign -> 224-bits NIST curve       ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::EC_SECP224R1));
+BENCHMARK("Sign -> 256-bits NIST curve       ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::EC_SECP256R1));
+BENCHMARK("Sign -> 384-bits NIST curve       ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::EC_SECP384R1));
+BENCHMARK("Sign -> 521-bits NIST curve       ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::EC_SECP521R1));
+BENCHMARK("Sign -> 256-bits Brainpool curve  ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::EC_BP256R1));
+BENCHMARK("Sign -> 384-bits Brainpool curve  ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::EC_BP384R1));
+BENCHMARK("Sign -> 512-bits Brainpool curve  ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::EC_BP512R1));
+BENCHMARK("Sign -> 192-bits 'Koblitz' curve  ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::EC_SECP192K1));
+BENCHMARK("Sign -> 224-bits 'Koblitz' curve  ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::EC_SECP224K1));
+BENCHMARK("Sign -> 256-bits 'Koblitz' curve  ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::EC_SECP256K1));
+BENCHMARK("Sign -> Ed25519 curve             ", std::bind(benchmark_sign, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
 
-BENCHMARK("Verify -> ed25519            ", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::FAST_EC_ED25519));
-BENCHMARK("Verify -> 224-bits NIST curve", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::EC_SECP224R1));
-BENCHMARK("Verify -> 256-bits NIST curve", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::EC_SECP256R1));
-BENCHMARK("Verify -> 384-bits NIST curve", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::EC_SECP384R1));
+BENCHMARK("Verify -> RSA 2048                ", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::RSA_2048));
+BENCHMARK("Verify -> RSA 3072                ", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::RSA_3072));
+BENCHMARK("Verify -> RSA 4096                ", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::RSA_4096));
+BENCHMARK("Verify -> 224-bits NIST curve     ", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::EC_SECP224R1));
+BENCHMARK("Verify -> 256-bits NIST curve     ", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::EC_SECP256R1));
+BENCHMARK("Verify -> 384-bits NIST curve     ", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::EC_SECP384R1));
+BENCHMARK("Verify -> 521-bits NIST curve     ", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::EC_SECP521R1));
+BENCHMARK("Verify -> 256-bits Brainpool curve", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::EC_BP256R1));
+BENCHMARK("Verify -> 384-bits Brainpool curve", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::EC_BP384R1));
+BENCHMARK("Verify -> 512-bits Brainpool curve", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::EC_BP512R1));
+BENCHMARK("Verify -> 192-bits 'Koblitz' curve", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::EC_SECP192K1));
+BENCHMARK("Verify -> 224-bits 'Koblitz' curve", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::EC_SECP224K1));
+BENCHMARK("Verify -> 256-bits 'Koblitz' curve", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::EC_SECP256K1));
+BENCHMARK("Verify -> Ed25519 curve           ", std::bind(benchmark_verify, _1, VirgilKeyPair::Type::FAST_EC_ED25519));

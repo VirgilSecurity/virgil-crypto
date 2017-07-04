@@ -45,12 +45,17 @@
 #include <virgil/crypto/foundation/VirgilBase64.h>
 #include <virgil/crypto/foundation/VirgilPBKDF.h>
 #include <virgil/crypto/foundation/VirgilRandom.h>
+#include <virgil/crypto/foundation/VirgilPBE.h>
+#include <virgil/crypto/foundation/VirgilHKDF.h>
+#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+#include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
 #include <virgil/crypto/VirgilCustomParams.h>
 
 #include <virgil/crypto/VirgilKeyPair.h>
 
 #include <virgil/crypto/VirgilCipherBase.h>
 #include <virgil/crypto/VirgilCipher.h>
+#include <virgil/crypto/VirgilSignerBase.h>
 #include <virgil/crypto/VirgilSigner.h>
 #include <virgil/crypto/VirgilTinyCipher.h>
 #include <virgil/crypto/VirgilDataSink.h>
@@ -59,11 +64,22 @@
 #include <virgil/crypto/VirgilStreamSigner.h>
 #include <virgil/crypto/VirgilChunkCipher.h>
 
+#include <virgil/crypto/pfs/VirgilPFSSession.h>
+#include <virgil/crypto/pfs/VirgilPFSEncryptedMessage.h>
+#include <virgil/crypto/pfs/VirgilPFSPublicKey.h>
+#include <virgil/crypto/pfs/VirgilPFSPrivateKey.h>
+#include <virgil/crypto/pfs/VirgilPFSInitiatorPublicInfo.h>
+#include <virgil/crypto/pfs/VirgilPFSInitiatorPrivateInfo.h>
+#include <virgil/crypto/pfs/VirgilPFSResponderPublicInfo.h>
+#include <virgil/crypto/pfs/VirgilPFSResponderPrivateInfo.h>
+#include <virgil/crypto/pfs/VirgilPFS.h>
+
 #include "@VIRGIL_EMBIND_FILE@"
 
 using namespace emscripten;
 using namespace virgil::crypto;
 using namespace virgil::crypto::foundation;
+using namespace virgil::crypto::pfs;
 
 namespace virgil { namespace crypto {
 
@@ -198,8 +214,17 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .function("decryptWithPassword", &VirgilCipher::decryptWithPassword)
     ;
 
-    class_<VirgilSigner>("VirgilSigner")
+    class_<VirgilSignerBase>("VirgilSignerBase")
         .constructor<>()
+        .constructor<VirgilHash::Algorithm>()
+        .function("getHashAlgorithm", &VirgilSignerBase::getHashAlgorithm)
+        .function("signHash", &VirgilSignerBase::signHash)
+        .function("verifyHash", &VirgilSignerBase::verifyHash)
+    ;
+
+    class_<VirgilSigner, base<VirgilSignerBase>>("VirgilSigner")
+        .constructor<>()
+        .constructor<VirgilHash::Algorithm>()
         .function("sign", &VirgilSigner_sign_1)
         .function("sign", &VirgilSigner_sign_2)
         .function("verify", &VirgilSigner_verify)
@@ -284,7 +309,6 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
 
 EMSCRIPTEN_BINDINGS(virgil_crypto_foundation) {
     class_<VirgilHash>("VirgilHash")
-        .constructor<>()
         .constructor<VirgilHash::Algorithm>()
         .function("name", &VirgilHash::name)
         .function("hash", &VirgilHash::hash)
@@ -296,6 +320,8 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_foundation) {
         .function("hmacReset", &VirgilHash::hmacReset)
         .function("hmacUpdate", &VirgilHash::hmacUpdate)
         .function("hmacFinish", &VirgilHash::hmacFinish)
+        .function("getSize", &VirgilHash::size)
+        .function("getTypeId", &VirgilHash::type)
     ;
 
     enum_<VirgilHash::Algorithm>("VirgilHashAlgorithm")
@@ -313,7 +339,6 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_foundation) {
     ;
 
     class_<VirgilPBKDF>("VirgilPBKDF")
-        .constructor<>()
         .constructor<const VirgilByteArray&>()
         .constructor<const VirgilByteArray&, unsigned int>()
         .function("getSalt", &VirgilPBKDF::getSalt)
@@ -337,4 +362,159 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_foundation) {
         .function("randomizeNumber", select_overload<size_t()>(&VirgilRandom::randomize))
         .function("randomizeNumberInRange", select_overload<size_t(size_t, size_t)>(&VirgilRandom::randomize))
     ;
+
+    class_<VirgilPBE>("VirgilPBE")
+        .constructor<VirgilPBE::Algorithm, VirgilByteArray>()
+        .constructor<VirgilPBE::Algorithm, VirgilByteArray, size_t>()
+        .function("encrypt", &VirgilPBE::encrypt)
+        .function("decrypt", &VirgilPBE::decrypt)
+    ;
+
+    enum_<VirgilPBE::Algorithm>("VirgilPBEAlgorithm")
+        .value("PKCS5", VirgilPBE::Algorithm::PKCS5)
+        .value("PKCS12", VirgilPBE::Algorithm::PKCS12)
+    ;
+
+    class_<VirgilHKDF>("VirgilHKDF")
+        .constructor<VirgilHash::Algorithm>()
+        .function("derive", &VirgilHKDF::derive)
+    ;
+
+    class_<VirgilSymmetricCipher>("VirgilSymmetricCipher")
+        .constructor<VirgilSymmetricCipher::Algorithm>()
+        .function("getName", &VirgilSymmetricCipher::name)
+        .function("getBlockSize", &VirgilSymmetricCipher::blockSize)
+        .function("getIvSize", &VirgilSymmetricCipher::ivSize)
+        .function("getKeySize", &VirgilSymmetricCipher::keyLength) /* rename keyLength -> getKeySize */
+        .function("getKeySizeBits", &VirgilSymmetricCipher::keySize) /* rename keySize -> getKeySizeBits */
+        .function("getAuthTagSize", &VirgilSymmetricCipher::authTagLength)
+        .function("getIV", &VirgilSymmetricCipher::iv)
+        .function("setIV", &VirgilSymmetricCipher::setIV)
+        .function("setAuthData", &VirgilSymmetricCipher::setAuthData)
+        .function("isEncryptionMode", &VirgilSymmetricCipher::isEncryptionMode)
+        .function("isDecryptionMode", &VirgilSymmetricCipher::isDecryptionMode)
+        .function("isAuthMode", &VirgilSymmetricCipher::isAuthMode)
+        .function("isSupportPadding", &VirgilSymmetricCipher::isSupportPadding)
+        .function("setEncryptionKey", &VirgilSymmetricCipher::setEncryptionKey)
+        .function("setDecryptionKey", &VirgilSymmetricCipher::setDecryptionKey)
+        .function("setPadding", &VirgilSymmetricCipher::setPadding)
+        .function("reset", &VirgilSymmetricCipher::reset)
+        .function("clear", &VirgilSymmetricCipher::clear)
+        .function("update", &VirgilSymmetricCipher::update)
+        .function("finish", &VirgilSymmetricCipher::finish)
+    ;
+
+
+    enum_<VirgilSymmetricCipher::Padding>("VirgilSymmetricCipherPadding")
+        .value("PKCS7", VirgilSymmetricCipher::Padding::PKCS7)
+        .value("OneAndZeros", VirgilSymmetricCipher::Padding::OneAndZeros)
+        .value("ZerosAndLen", VirgilSymmetricCipher::Padding::ZerosAndLen)
+        .value("Zeros", VirgilSymmetricCipher::Padding::Zeros)
+        .value("None", VirgilSymmetricCipher::Padding::None)
+    ;
+
+    enum_<VirgilSymmetricCipher::Algorithm>("VirgilSymmetricCipherAlgorithm")
+        .value("AES_128_CBC", VirgilSymmetricCipher::Algorithm::AES_128_CBC)
+        .value("AES_128_GCM", VirgilSymmetricCipher::Algorithm::AES_128_GCM)
+        .value("AES_256_CBC", VirgilSymmetricCipher::Algorithm::AES_256_CBC)
+        .value("AES_256_GCM", VirgilSymmetricCipher::Algorithm::AES_256_GCM)
+    ;
+
+    class_<VirgilAsymmetricCipher>("VirgilAsymmetricCipher")
+        .constructor<>()
+        .function("getKeySizeBits", &VirgilAsymmetricCipher::keySize)
+        .function("getKeySize", &VirgilAsymmetricCipher::keyLength)
+        .class_function("isKeyPairMatch", &VirgilAsymmetricCipher::isKeyPairMatch)
+        .class_function("isPublicKeyValid", &VirgilAsymmetricCipher::isPublicKeyValid)
+        .class_function("checkPublicKey", &VirgilAsymmetricCipher::checkPublicKey)
+        .class_function("checkPrivateKeyPassword", &VirgilAsymmetricCipher::checkPrivateKeyPassword)
+        .class_function("isPrivateKeyEncrypted", &VirgilAsymmetricCipher::isPrivateKeyEncrypted)
+        .function("setPrivateKey", &VirgilAsymmetricCipher::setPrivateKey)
+        .function("setPublicKey", &VirgilAsymmetricCipher::setPublicKey)
+        .function("genKeyPair", &VirgilAsymmetricCipher::genKeyPair)
+        .function("genKeyPairFrom", &VirgilAsymmetricCipher::genKeyPairFrom)
+        .class_function("computeShared", &VirgilAsymmetricCipher::computeShared)
+        .function("exportPrivateKeyToDER", &VirgilAsymmetricCipher::exportPrivateKeyToDER)
+        .function("exportPublicKeyToDER", &VirgilAsymmetricCipher::exportPublicKeyToDER)
+        .function("exportPrivateKeyToPEM", &VirgilAsymmetricCipher::exportPrivateKeyToPEM)
+        .function("exportPublicKeyToPEM", &VirgilAsymmetricCipher::exportPublicKeyToPEM)
+        .function("encrypt", &VirgilAsymmetricCipher::encrypt)
+        .function("decrypt", &VirgilAsymmetricCipher::decrypt)
+        .function("sign", &VirgilAsymmetricCipher::sign)
+        .function("verify", &VirgilAsymmetricCipher::verify)
+    ;
+
+
+}
+
+EMSCRIPTEN_BINDINGS(virgil_crypto_pfs) {
+        class_<VirgilPFSSession>("VirgilPFSSession")
+            .constructor<VirgilByteArray, VirgilByteArray, VirgilByteArray, VirgilByteArray>()
+            .function("isEmpty", &VirgilPFSSession::isEmpty)
+            .function("getIdentifier", &VirgilPFSSession::getIdentifier)
+            .function("getEncryptionSecretKey", &VirgilPFSSession::getEncryptionSecretKey)
+            .function("getDecryptionSecretKey", &VirgilPFSSession::getDecryptionSecretKey)
+            .function("getAdditionalData", &VirgilPFSSession::getAdditionalData)
+        ;
+
+        class_<VirgilPFSPublicKey>("VirgilPFSPublicKey")
+            .constructor<>()
+            .constructor<VirgilByteArray>()
+            .function("isEmpty", &VirgilPFSPublicKey::isEmpty)
+            .function("getKey", &VirgilPFSPublicKey::getKey)
+        ;
+
+        class_<VirgilPFSPrivateKey>("VirgilPFSPrivateKey")
+            .constructor<>()
+            .constructor<VirgilByteArray>()
+            .constructor<VirgilByteArray, VirgilByteArray>()
+            .function("isEmpty", &VirgilPFSPrivateKey::isEmpty)
+            .function("getKey", &VirgilPFSPrivateKey::getKey)
+            .function("getPassword", &VirgilPFSPrivateKey::getPassword)
+        ;
+
+        class_<VirgilPFSEncryptedMessage>("VirgilPFSEncryptedMessage")
+            .constructor<VirgilByteArray, VirgilByteArray, VirgilByteArray>()
+            .function("getSessionIdentifier", &VirgilPFSEncryptedMessage::getSessionIdentifier)
+            .function("getSalt", &VirgilPFSEncryptedMessage::getSalt)
+            .function("getCipherText", &VirgilPFSEncryptedMessage::getCipherText)
+        ;
+
+        class_<VirgilPFSInitiatorPublicInfo>("VirgilPFSInitiatorPublicInfo")
+            .constructor<VirgilPFSPublicKey, VirgilPFSPublicKey>()
+            .function("getIdentityPublicKey", &VirgilPFSInitiatorPublicInfo::getIdentityPublicKey)
+            .function("getEphemeralPublicKey", &VirgilPFSInitiatorPublicInfo::getEphemeralPublicKey)
+        ;
+        
+        class_<VirgilPFSInitiatorPrivateInfo>("VirgilPFSInitiatorPrivateInfo")
+            .constructor<VirgilPFSPrivateKey, VirgilPFSPrivateKey>()
+            .function("getIdentityPrivateKey", &VirgilPFSInitiatorPrivateInfo::getIdentityPrivateKey)
+            .function("getEphemeralPrivateKey", &VirgilPFSInitiatorPrivateInfo::getEphemeralPrivateKey)
+        ;
+
+        class_<VirgilPFSResponderPublicInfo>("VirgilPFSResponderPublicInfo")
+            .constructor<VirgilPFSPublicKey, VirgilPFSPublicKey>()
+            .constructor<VirgilPFSPublicKey, VirgilPFSPublicKey, VirgilPFSPublicKey>()
+            .function("getIdentityPublicKey", &VirgilPFSResponderPublicInfo::getIdentityPublicKey)
+            .function("getLongTermPublicKey", &VirgilPFSResponderPublicInfo::getLongTermPublicKey)
+            .function("getOneTimePublicKey", &VirgilPFSResponderPublicInfo::getOneTimePublicKey)
+        ;
+
+        class_<VirgilPFSResponderPrivateInfo>("VirgilPFSResponderPrivateInfo")
+            .constructor<VirgilPFSPrivateKey, VirgilPFSPrivateKey>()
+            .constructor<VirgilPFSPrivateKey, VirgilPFSPrivateKey, VirgilPFSPrivateKey>()
+            .function("getIdentityPrivateKey", &VirgilPFSResponderPrivateInfo::getIdentityPrivateKey)
+            .function("getLongTermPrivateKey", &VirgilPFSResponderPrivateInfo::getLongTermPrivateKey)
+            .function("getOneTimePrivateKey", &VirgilPFSResponderPrivateInfo::getOneTimePrivateKey)
+        ;
+
+        class_<VirgilPFS>("VirgilPFS")
+            .constructor<>()
+            .function("startInitiatorSession", &VirgilPFS::startInitiatorSession)
+            .function("startResponderSession", &VirgilPFS::startResponderSession)
+            .function("encrypt", &VirgilPFS::encrypt)
+            .function("decrypt", &VirgilPFS::decrypt)
+            .function("getSession", &VirgilPFS::getSession)
+            .function("setSession", &VirgilPFS::setSession)
+        ;
 }

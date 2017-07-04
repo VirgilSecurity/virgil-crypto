@@ -43,6 +43,7 @@ set (TEST_RUNNER test_runner)
 aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR} SRC_LIST)
 add_executable(${TEST_RUNNER} ${SRC_LIST})
 target_link_libraries (${TEST_RUNNER} ${VIRGIL_CRYPTO_LIB_NAME})
+file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/data" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
 add_test (
     NAME ${TEST_RUNNER}

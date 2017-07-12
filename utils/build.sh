@@ -102,7 +102,79 @@ function abspath() {
   )
 }
 
-function make_bundle {
+function make_fat_library {
+    # Define name of the fat library
+    if [ ! -z "$1" ]; then
+        LIB_FAT_NAME="$1"
+    else
+        show_error "Error. Bundle name is not defined."
+    fi
+
+    # Define install directory
+    if [ ! -z "$2" ]; then
+        INDIR="$2"
+    else
+        show_error "Error. Input directory is not defined."
+    fi
+
+    # Define working directory
+    if [ ! -z "$3" ]; then
+        OUTDIR="$3"
+    else
+        show_error "Error. Output directory is not defined."
+    fi
+
+    # Define wrapper name (optional)
+    if [ ! -z "$4" ]; then
+        WRAPPER_NAME="$4"
+    fi
+
+    LIBMBEDTLS="libmbedcrypto.a"
+    LIBED25519="libed25519.a"
+    LIBVIRGIL="libvirgil_crypto.a"
+    if [ ! -z "${WRAPPER_NAME}" ]; then
+        LIBVIRGIL_WRAPPER="libvirgil_crypto_${WRAPPER_NAME}.a"
+    fi
+
+    # Create working dir
+    mkdir -p "$OUTDIR"
+
+    # Find all archs of library ARM mbedTLS
+    LIBMBEDTLS_LIBS=$(find "${INDIR}" -name "${LIBMBEDTLS}" | tr '\n' ' ')
+
+    # Find all archs of library ed25519
+    LIBED25519_LIBS=$(find "${INDIR}" -name "${LIBED25519}" | tr '\n' ' ')
+
+    # Find all archs of library Virgil Crypto
+    LIBVIRGIL_LIBS=$(find "${INDIR}" -name "${LIBVIRGIL}" | tr '\n' ' ')
+
+    # Find all archs of library Virgil Crypto Wrapper
+    if [ ! -z "${LIBVIRGIL_WRAPPER}" ]; then
+        LIBVIRGIL_WRAPPER_LIBS=$(find "${INDIR}" -name "${LIBVIRGIL_WRAPPER}" | tr '\n' ' ')
+    fi
+
+    xcrun lipo -create ${LIBMBEDTLS_LIBS} -output "$OUTDIR/$LIBMBEDTLS"
+    xcrun lipo -create ${LIBED25519_LIBS} -output "$OUTDIR/$LIBED25519"
+    xcrun lipo -create ${LIBVIRGIL_LIBS} -output "$OUTDIR/$LIBVIRGIL"
+    if [ ! -z "${LIBVIRGIL_WRAPPER_LIBS}" ]; then
+        LIBVIRGIL_WRAPPER_FAT="$OUTDIR/$LIBVIRGIL_WRAPPER"
+        xcrun lipo -create ${LIBVIRGIL_WRAPPER_LIBS} -output "$LIBVIRGIL_WRAPPER_FAT"
+    fi
+
+    # Merge several static libraries in one static library which will actually be framework
+    xcrun libtool -static -o "$OUTDIR/$LIB_FAT_NAME" \
+            "$OUTDIR/$LIBMBEDTLS" "$OUTDIR/$LIBED25519" "$OUTDIR/$LIBVIRGIL" "$LIBVIRGIL_WRAPPER_FAT"
+
+    # Cleanup
+    rm -f "$OUTDIR/$LIBMBEDTLS"
+    rm -f "$OUTDIR/$LIBED25519"
+    rm -f "$OUTDIR/$LIBVIRGIL"
+    if [ -f "${LIBVIRGIL_WRAPPER_FAT}" ]; then
+        rm -f "${LIBVIRGIL_WRAPPER_FAT}"
+    fi
+}
+
+function make_apple_framework {
     # Define name of the framework
     if [ ! -z "$1" ]; then
         FRAMEWORK_NAME="$1"
@@ -178,7 +250,8 @@ SYSTEM_KERNEL_RELEASE_PARTS=(${SYSTEM_KERNEL_RELEASE//-/ })
 SYSTEM_KERNEL_RELEASE_PARTS=(${SYSTEM_KERNEL_RELEASE_PARTS[0]//./ })
 SYSTEM_KERNEL_RELEASE_VERSION="${SYSTEM_KERNEL_RELEASE_PARTS[0]}.${SYSTEM_KERNEL_RELEASE_PARTS[1]}"
 
-if [ "$(uname -s | tr '[:upper:]' '[:lower:]')" == "linux" ]; then
+SYSTEM_NAME=$(uname -s | tr '[:upper:]' '[:lower:]')
+if [ "${SYSTEM_NAME}" == "linux" ]; then
     SYSTEM_KERNEL_RELEASE_VERSION=""
 fi
 
@@ -224,6 +297,7 @@ if [ ! -z "$3" ]; then
 else
     BUILD_DIR="${CURRENT_DIR}/build/${TARGET_NAME}/${TARGET_VERSION}"
     mkdir -p "${BUILD_DIR}"
+    BUILD_DIR=$(abspath "${BUILD_DIR}")
 fi
 show_info "<build_dir>: ${BUILD_DIR}"
 
@@ -233,6 +307,7 @@ if [ ! -z "$4" ]; then
 else
     INSTALL_DIR="${CURRENT_DIR}/install/${TARGET_NAME}/${TARGET_VERSION}"
     mkdir -p "${INSTALL_DIR}"
+    INSTALL_DIR=$(abspath "${INSTALL_DIR}")
 fi
 show_info "<install_dir>: ${INSTALL_DIR}"
 
@@ -263,11 +338,34 @@ cd "${INSTALL_DIR}" && rm -fr ./*
 cd "${BUILD_DIR}" && rm -fr ./*
 
 # Build for native platforms
-if [[ ${TARGET_NAME} =~ ^(cpp|java|net|php|python|ruby|nodejs|go)$ ]]; then
+if [[ ${TARGET_NAME} =~ ^(cpp|java|php|python|ruby|nodejs|go)$ ]]; then
     cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
     make -j4 install
 fi
 
+# Build for Mono
+if [ "${TARGET_NAME}" == "net" ]; then
+    if [ "${SYSTEM_NAME}" == "darwin" ]; then # MacOS
+        osx_version_min="10.10" # Yosemite
+        CMAKE_ARGS+=" -DCMAKE_ASM_FLAGS=-mmacosx-version-min=${osx_version_min}"
+        CMAKE_ARGS+=" -DCMAKE_C_FLAGS=-mmacosx-version-min=${osx_version_min}"
+        CMAKE_ARGS+=" -DCMAKE_CXX_FLAGS=-mmacosx-version-min=${osx_version_min}"
+        CMAKE_ARGS+=" -DINSTALL_CORE_LIBS=ON"
+        cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
+        make -j4 install
+        # Create fat library
+        make_fat_library libVirgilCryptoNet.a "${INSTALL_DIR}" "${INSTALL_DIR}/libs" "net"
+        find "${INSTALL_DIR:?}" -name "*.dll" -exec cp -f {} "${INSTALL_DIR:?}/libs/" \;
+        rm -fr "${INSTALL_DIR:?}/include"
+        rm -fr "${INSTALL_DIR:?}/lib"
+        mv "${INSTALL_DIR:?}/libs" "${INSTALL_DIR:?}/lib"
+    else # Other *nix
+        cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
+        make -j4 install
+    fi
+fi
+
+# Build OSX framewrok
 if [ "${TARGET_NAME}" == "osx" ]; then
     # Add minimim OSX version flag
     osx_version_min="10.10" # Yosemite
@@ -278,7 +376,7 @@ if [ "${TARGET_NAME}" == "osx" ]; then
     cmake ${CMAKE_ARGS} -DLANG=cpp -DPLATFORM=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
     make -j4 install
     # Create framework
-    make_bundle VSCCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
+    make_apple_framework VSCCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
     rm -fr "${INSTALL_DIR:?}/include"
     rm -fr "${INSTALL_DIR:?}/lib"
 fi
@@ -294,7 +392,7 @@ if [ "${TARGET_NAME}" == "ios" ] || [ "${TARGET_NAME}" == "appletvos" ] || [ "${
     cmake ${CMAKE_ARGS} -DLANG=cpp -DINSTALL_LIB_DIR_NAME=lib/sim -DSIMULATOR=ON -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
     make -j4 install
     # Create framework
-    make_bundle VSCCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
+    make_apple_framework VSCCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
     rm -fr "${INSTALL_DIR:?}/include"
     rm -fr "${INSTALL_DIR:?}/lib"
 fi
@@ -323,16 +421,23 @@ if [[ "${TARGET_NAME}" == *"android"* ]]; then
     build_android armeabi
     build_android armeabi-v7a
     build_android arm64-v8a
-    # Pack all JNI libs to jar
-    cd "${INSTALL_DIR}/lib" || show_error "Fail to pack JNI libs to JAR due to missed folder: ${INSTALL_DIR}/lib"
-    zip -r virgil_crypto_java_jni.jar lib
-    rm -fr lib
-    cd - || show_error "Failed to cd -"
 fi
 
 if [[ ${TARGET_NAME} =~ ^net_(ios|appletvos|applewatchos)$ ]]; then
-    cmake ${CMAKE_ARGS} -DLANG=net -DENABLE_BITCODE=NO -DPLATFORM=${TARGET_NAME/net_/} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
+    CMAKE_ARGS+=" -DINSTALL_CORE_LIBS=ON"
+    # Build for device
+    cmake ${CMAKE_ARGS} -DLANG=net -DENABLE_BITCODE=NO -DSIMULATOR=OFF -DINSTALL_LIB_DIR_NAME=lib/dev -DPLATFORM=${TARGET_NAME/net_/} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
     make -j4 install
+    # Build for simulator
+    rm -fr ./*
+    cmake ${CMAKE_ARGS} -DLANG=net -DENABLE_BITCODE=NO -DSIMULATOR=ON -DINSTALL_LIB_DIR_NAME=lib/sim -DPLATFORM=${TARGET_NAME/net_/} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
+    make -j4 install
+    # Create fat library
+    make_fat_library libVirgilCryptoNet.a "${INSTALL_DIR}" "${INSTALL_DIR}/libs" "net"
+    find "${INSTALL_DIR:?}" -name "*.dll" -exec cp -f {} "${INSTALL_DIR:?}/libs/" \;
+    rm -fr "${INSTALL_DIR:?}/include"
+    rm -fr "${INSTALL_DIR:?}/lib"
+    mv "${INSTALL_DIR:?}/libs" "${INSTALL_DIR:?}/lib"
 fi
 
 if [ "${TARGET_NAME}" == "asmjs" ]; then

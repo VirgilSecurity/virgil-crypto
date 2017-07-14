@@ -53,18 +53,10 @@ namespace virgil { namespace crypto { namespace pfs {
 class VirgilPFSInitiatorPrivateInfo {
 public:
     /**
-     * @param identifier - Initiator unique identifier.
      * @param identityPrivateKey - private key that is connected to the Initiator's identity.
      * @param ephemeralPrivateKey - ephemeral private key.
      */
-    VirgilPFSInitiatorPrivateInfo(
-            std::string identifier, VirgilPFSPrivateKey identityPrivateKey, VirgilPFSPrivateKey ephemeralPrivateKey);
-
-    /**
-     * @brief Getter.
-     * @see VirgilPFSInitiatorPrivateInfo()
-     */
-    const std::string& getIdentifier() const;
+    VirgilPFSInitiatorPrivateInfo(VirgilPFSPrivateKey identityPrivateKey, VirgilPFSPrivateKey ephemeralPrivateKey);
 
     /**
      * @brief Getter.
@@ -79,7 +71,6 @@ public:
     const VirgilPFSPrivateKey& getEphemeralPrivateKey() const;
 
 private:
-    std::string identifier_;
     VirgilPFSPrivateKey identityPrivateKey_;
     VirgilPFSPrivateKey ephemeralPrivateKey_;
 };

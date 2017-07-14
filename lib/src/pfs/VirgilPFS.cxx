@@ -72,12 +72,11 @@ VirgilPFS::VirgilPFS()
 
 VirgilPFSSession VirgilPFS::startInitiatorSession(
         const VirgilPFSInitiatorPrivateInfo& initiatorPrivateInfo,
-        const VirgilPFSResponderPublicInfo& responderPublicInfo) {
+        const VirgilPFSResponderPublicInfo& responderPublicInfo, const VirgilByteArray& additionalDataMaterial) {
 
     auto sharedKey = calculateSharedKey(initiatorPrivateInfo, responderPublicInfo);
     auto secretKey = calculateSecretKey(sharedKey, kSecretKeySize);
-    auto additionalData = calculateAdditionalData(
-            initiatorPrivateInfo.getIdentifier(), responderPublicInfo.getIdentifier());
+    auto additionalData = calculateAdditionalData(additionalDataMaterial);
     auto identifier = calculateSessionIdentifier(secretKey, additionalData);
 
     auto splittedSecretKey = bytes_split_half(secretKey);
@@ -92,12 +91,11 @@ VirgilPFSSession VirgilPFS::startInitiatorSession(
 
 VirgilPFSSession VirgilPFS::startResponderSession(
         const VirgilPFSResponderPrivateInfo& responderPrivateInfo,
-        const VirgilPFSInitiatorPublicInfo& initiatorPublicInfo) {
+        const VirgilPFSInitiatorPublicInfo& initiatorPublicInfo, const VirgilByteArray& additionalDataMaterial) {
 
     auto sharedKey = calculateSharedKey(responderPrivateInfo, initiatorPublicInfo);
     auto secretKey = calculateSecretKey(sharedKey, kSecretKeySize);
-    auto additionalData = calculateAdditionalData(
-            initiatorPublicInfo.getIdentifier(), responderPrivateInfo.getIdentifier());
+    auto additionalData = calculateAdditionalData(additionalDataMaterial);
     auto identifier = calculateSessionIdentifier(secretKey, additionalData);
 
     auto splittedSecretKey = bytes_split_half(secretKey);
@@ -152,22 +150,20 @@ VirgilByteArray VirgilPFS::calculateSessionIdentifier(
     auto hash = hash_;
     hash.start();
     hash.update(secretKey);
-    hash.update(additionalData);
+    if (!additionalData.empty()) {
+        hash.update(additionalData);
+    }
     hash.update(str2bytes(kAdditionalData_Virgil));
     auto identifier = hash.finish();
     return identifier;
 }
 
-VirgilByteArray VirgilPFS::calculateAdditionalData(
-        const std::string& initiatorIdentifier,
-        const std::string& responderIdentifier) const {
-    auto hash = hash_;
-    hash.start();
-    hash.update(str2bytes(initiatorIdentifier));
-    hash.update(str2bytes(responderIdentifier));
-    hash.update(str2bytes(kAdditionalData_Virgil));
-    auto additionalData = hash.finish();
-    return additionalData;
+VirgilByteArray VirgilPFS::calculateAdditionalData(const VirgilByteArray& additionalDataMaterial) const {
+    if (!additionalDataMaterial.empty()) {
+        auto hash = hash_;
+        return hash.hash(additionalDataMaterial);
+    }
+    return VirgilByteArray();
 }
 
 

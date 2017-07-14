@@ -101,38 +101,63 @@ INCLUDE_CLASS_WITH_DIRECTOR(VirgilDataSink, virgil::crypto, virgil/crypto)
 %ignore *::asn1Read;
 %ignore *::jsonWrite;
 %ignore *::jsonRead;
-
-#if defined(LIB_LOW_LEVEL_API)
-    INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto::foundation::asn1, virgil/crypto/foundation/asn1)
-    INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto::foundation::asn1, virgil/crypto/foundation/asn1)
-#else
-    %ignore VirgilAsn1Reader;
-    %ignore VirgilAsn1Writer;
-#endif /* LIB_LOW_LEVEL_API */
 INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::foundation::asn1, virgil/crypto/foundation/asn1)
 
-// Package: virgil::crypto::foundation
+// Package: virgil::crypto
+// MUST be before VirgilAsymmetricCipher
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilKeyPair, virgil::crypto, virgil/crypto)
+DEFINE_USING(VirgilKeyPair, virgil::crypto)
+
 #if defined(LIB_LOW_LEVEL_API)
+    // Package: virgil::crypto::foundation::asn1
+    INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto::foundation::asn1, virgil/crypto/foundation/asn1)
+    INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto::foundation::asn1, virgil/crypto/foundation/asn1)
+
+    // Package: virgil::crypto::foundation::cms
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSKeyTransRecipient, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSPasswordRecipient, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEncryptedContent, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEnvelopedData, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSContent, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
+    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSContentInfo, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
+
+    // Package: virgil::crypto::foundation
     DEFINE_NAMESPACE(VirgilSymmetricCipherPadding, virgil::crypto::foundation)
     DEFINE_NAMESPACE(ECKeyGroup, virgil::crypto::foundation)
 
+    INCLUDE_CLASS(VirgilHash, virgil::crypto::foundation, virgil/crypto/foundation)
     INCLUDE_CLASS(VirgilKDF, virgil::crypto::foundation, virgil/crypto/foundation)
+    DEFINE_USING(VirgilKDF, virgil::crypto::foundation)
     INCLUDE_CLASS(VirgilSymmetricCipher, virgil::crypto::foundation, virgil/crypto/foundation)
     INCLUDE_CLASS(VirgilAsymmetricCipher, virgil::crypto::foundation, virgil/crypto/foundation)
     INCLUDE_CLASS(VirgilPBE, virgil::crypto::foundation, virgil/crypto/foundation)
+    DEFINE_USING(VirgilPBE, virgil::crypto::foundation)
     INCLUDE_CLASS(VirgilHKDF, virgil::crypto::foundation, virgil/crypto/foundation)
-#endif /* defined(LIB_LOW_LEVEL_API) */
-INCLUDE_CLASS(VirgilHash, virgil::crypto::foundation, virgil/crypto/foundation)
+#else
+    INCLUDE_CLASS(VirgilHash, virgil::crypto::foundation, virgil/crypto/foundation)
+    %ignore VirgilCMSKeyTransRecipient;
+    %ignore VirgilCMSPasswordRecipient;
+    %ignore VirgilCMSEncryptedContent;
+    %ignore VirgilCMSEnvelopedData;
+    %ignore VirgilCMSContent;
+    %ignore VirgilAsn1Reader;
+    %ignore VirgilAsn1Writer;
+#endif /* LIB_LOW_LEVEL_API */
+
+// Package: virgil::crypto::foundation
 INCLUDE_CLASS(VirgilBase64, virgil::crypto::foundation, virgil/crypto/foundation)
 INCLUDE_CLASS(VirgilPBKDF, virgil::crypto::foundation, virgil/crypto/foundation)
 INCLUDE_CLASS(VirgilRandom, virgil::crypto::foundation, virgil/crypto/foundation)
 
+DEFINE_USING(VirgilHash, virgil::crypto::foundation)
+DEFINE_USING(VirgilPBKDF, virgil::crypto::foundation)
+
 // Package: virgil::crypto
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCustomParams, virgil::crypto, virgil/crypto)
-INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilKeyPair, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilCipherBase, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilCipher, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilChunkCipher, virgil::crypto, virgil/crypto)
+INCLUDE_CLASS(VirgilSignerBase, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilSigner, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilStreamSigner, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilStreamCipher, virgil::crypto, virgil/crypto)
@@ -158,23 +183,3 @@ INCLUDE_CLASS(VirgilPFSResponderPublicInfo, virgil::crypto::pfs, virgil/crypto/p
 INCLUDE_CLASS(VirgilPFSResponderPrivateInfo, virgil::crypto::pfs, virgil/crypto/pfs)
 INCLUDE_CLASS(VirgilPFSSession, virgil::crypto::pfs, virgil/crypto/pfs)
 INCLUDE_CLASS(VirgilPFS, virgil::crypto::pfs, virgil/crypto/pfs)
-
-// Package: virgil::crypto::foundation::cms
-#if defined(LIB_LOW_LEVEL_API)
-    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSKeyTransRecipient, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
-    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSPasswordRecipient, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
-    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEncryptedContent, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
-    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSEnvelopedData, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
-    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSContent, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
-    INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCMSContentInfo, virgil::crypto::foundation::cms, virgil/crypto/foundation/cms)
-#else
-    %ignore VirgilCMSKeyTransRecipient;
-    %ignore VirgilCMSPasswordRecipient;
-    %ignore VirgilCMSEncryptedContent;
-    %ignore VirgilCMSEnvelopedData;
-    %ignore VirgilCMSContent;
-#endif /* LIB_LOW_LEVEL_API */
-
-// Add using statement for inner classes or enums
-DEFINE_USING(VirgilKeyPair, virgil::crypto)
-DEFINE_USING(VirgilHash, virgil::crypto::foundation)

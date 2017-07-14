@@ -72,23 +72,27 @@ public:
      * @brief Start session from the Initiator side.
      * @param initiatorPrivateInfo - initiator private keys and related information.
      * @param responderPublicInfo - responder public keys and related information.
+     * @param additionalData - any identifying information about Initiator and/or Responder.
      * @return Created session (can be ignored).
      * @note Function has side effect: created session is stored in the object state.
      */
     VirgilPFSSession startInitiatorSession(
             const VirgilPFSInitiatorPrivateInfo& initiatorPrivateInfo,
-            const VirgilPFSResponderPublicInfo& responderPublicInfo);
+            const VirgilPFSResponderPublicInfo& responderPublicInfo,
+            const VirgilByteArray& additionalData = VirgilByteArray());
 
     /**
      * @brief Start session from the Responder side.
      * @param responderPrivateInfo - responder private keys and related information.
      * @param initiatorPublicInfo - initiator public keys and related information.
+     * @param additionalData - any identifying information about Initiator and/or Responder.
      * @return Created session (can be ignored).
      * @note Function has side effect: created session is stored in the object state.
      */
     VirgilPFSSession startResponderSession(
             const VirgilPFSResponderPrivateInfo& responderPrivateInfo,
-            const VirgilPFSInitiatorPublicInfo& initiatorPublicInfo);
+            const VirgilPFSInitiatorPublicInfo& initiatorPublicInfo,
+            const VirgilByteArray& additionalData = VirgilByteArray());
 
     /**
      * @brief Encrypt given data.
@@ -160,9 +164,7 @@ private:
 
     VirgilByteArray calculateSecretKey(const VirgilByteArray& keyMaterial, size_t size);
 
-    VirgilByteArray calculateAdditionalData(
-            const std::string& initiatorIdentifier,
-            const std::string& responderIdentifier) const;
+    VirgilByteArray calculateAdditionalData(const VirgilByteArray& additionalDataMaterial) const;
 
     VirgilByteArray calculateSessionIdentifier(
             const VirgilByteArray& secretKey, const VirgilByteArray& additionalData) const;

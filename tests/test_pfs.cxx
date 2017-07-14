@@ -47,7 +47,8 @@ SCENARIO("PFS start Initiator session.", "[pfs]") {
             auto pfs = VirgilPFS();
             auto session = pfs.startInitiatorSession(
                     testData.initiatorPrivateInfo,
-                    testData.responderPublicInfo);
+                    testData.responderPublicInfo,
+                    testData.additionalData);
             auto testSession = testData.initiatorSession;
             REQUIRE(bytes2hex(session.getIdentifier()) == bytes2hex(testSession.getIdentifier()));
             REQUIRE(bytes2hex(session.getEncryptionSecretKey()) == bytes2hex(testSession.getEncryptionSecretKey()));
@@ -70,7 +71,8 @@ SCENARIO("PFS start Responder session.", "[pfs]") {
             auto pfs = VirgilPFS();
             auto session = pfs.startResponderSession(
                     testData.responderPrivateInfo,
-                    testData.initiatorPublicInfo);
+                    testData.initiatorPublicInfo,
+                    testData.additionalData);
             auto testSession = testData.responderSession;
             REQUIRE(bytes2hex(session.getIdentifier()) == bytes2hex(testSession.getIdentifier()));
             REQUIRE(bytes2hex(session.getEncryptionSecretKey()) == bytes2hex(testSession.getEncryptionSecretKey()));
@@ -92,7 +94,10 @@ SCENARIO("PFS encrypt.", "[pfs]") {
     auto testFunction = [](const test::data::TestCase& testData) {
             auto pfs = VirgilPFS();
             pfs.setRandom(testData.random);
-            pfs.startInitiatorSession(testData.initiatorPrivateInfo, testData.responderPublicInfo);
+            pfs.startInitiatorSession(
+                    testData.initiatorPrivateInfo,
+                    testData.responderPublicInfo,
+                    testData.additionalData);
 
             auto encryptedMessage = pfs.encrypt(testData.plainText);
             REQUIRE(bytes2hex(encryptedMessage.getSessionIdentifier()) ==
@@ -117,7 +122,10 @@ SCENARIO("PFS decrypt.", "[pfs]") {
     auto testFunction = [](const test::data::TestCase& testData) {
             auto pfs = VirgilPFS();
             pfs.setRandom(testData.random);
-            pfs.startResponderSession(testData.responderPrivateInfo, testData.initiatorPublicInfo);
+            pfs.startResponderSession(
+                    testData.responderPrivateInfo,
+                    testData.initiatorPublicInfo,
+                    testData.additionalData);
 
             auto plainText = pfs.decrypt(testData.encryptedMessage);
             REQUIRE(bytes2hex(plainText) == bytes2hex(testData.plainText));

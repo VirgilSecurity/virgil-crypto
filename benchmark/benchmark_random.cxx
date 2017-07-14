@@ -34,27 +34,23 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/pfs/VirgilPFSResponderPrivateInfo.h>
+#define BENCHPRESS_CONFIG_MAIN
 
-using virgil::crypto::VirgilByteArray;
-using virgil::crypto::pfs::VirgilPFSResponderPrivateInfo;
-using virgil::crypto::pfs::VirgilPFSPrivateKey;
+#include "benchpress.hpp"
 
-VirgilPFSResponderPrivateInfo::VirgilPFSResponderPrivateInfo(
-        VirgilPFSPrivateKey identityPrivateKey,
-        VirgilPFSPrivateKey longTermPrivateKey, VirgilPFSPrivateKey oneTimePrivateKey)
-        : identityPrivateKey_(std::move(identityPrivateKey)),
-          longTermPrivateKey_(std::move(longTermPrivateKey)),
-          oneTimePrivateKey_(std::move(oneTimePrivateKey)) {}
+#include <virgil/crypto/foundation/VirgilRandom.h>
 
-const VirgilPFSPrivateKey& VirgilPFSResponderPrivateInfo::getIdentityPrivateKey() const {
-    return identityPrivateKey_;
+using virgil::crypto::foundation::VirgilRandom;
+
+void benchmark_random(benchpress::context* ctx, size_t bytes) {
+    VirgilRandom random("seed");
+    ctx->reset_timer();
+    for (size_t i = 0; i < ctx->num_iterations(); ++i) {
+        (void) random.randomize(bytes);
+    }
 }
 
-const VirgilPFSPrivateKey& VirgilPFSResponderPrivateInfo::getLongTermPrivateKey() const {
-    return longTermPrivateKey_;
-}
-
-const VirgilPFSPrivateKey& VirgilPFSResponderPrivateInfo::getOneTimePrivateKey() const {
-    return oneTimePrivateKey_;
-}
+BENCHMARK("Random bytes: 32 ", std::bind(benchmark_random, std::placeholders::_1, 32));
+BENCHMARK("Random bytes: 64 ", std::bind(benchmark_random, std::placeholders::_1, 64));
+BENCHMARK("Random bytes: 128", std::bind(benchmark_random, std::placeholders::_1, 128));
+BENCHMARK("Random bytes: 256", std::bind(benchmark_random, std::placeholders::_1, 256));

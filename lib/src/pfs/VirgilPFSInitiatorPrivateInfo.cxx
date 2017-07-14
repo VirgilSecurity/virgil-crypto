@@ -41,14 +41,9 @@ using virgil::crypto::pfs::VirgilPFSInitiatorPrivateInfo;
 using virgil::crypto::pfs::VirgilPFSPrivateKey;
 
 VirgilPFSInitiatorPrivateInfo::VirgilPFSInitiatorPrivateInfo(
-    std::string identifier, VirgilPFSPrivateKey identityPrivateKey, VirgilPFSPrivateKey ephemeralPrivateKey)
-    : identifier_(std::move(identifier)),
-      identityPrivateKey_(std::move(identityPrivateKey)),
-      ephemeralPrivateKey_(std::move(ephemeralPrivateKey)) {}
-
-const std::string& VirgilPFSInitiatorPrivateInfo::getIdentifier() const {
-    return identifier_;
-}
+        VirgilPFSPrivateKey identityPrivateKey, VirgilPFSPrivateKey ephemeralPrivateKey)
+        : identityPrivateKey_(std::move(identityPrivateKey)),
+          ephemeralPrivateKey_(std::move(ephemeralPrivateKey)) {}
 
 const VirgilPFSPrivateKey& VirgilPFSInitiatorPrivateInfo::getIdentityPrivateKey() const {
     return identityPrivateKey_;

@@ -34,7 +34,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.8 FATAL_ERROR)
 
 project (${WRAPPED_LIB_NAME}_net)
 
@@ -86,10 +86,28 @@ set_property (
     SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing"
 )
 
-swig_add_module (${CSHARP_MODULE_NAME} csharp ${WRAPPER_INTERFACE_FILE})
+if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set (WRAPPER_TYPE STATIC)
+else ()
+    set (WRAPPER_TYPE SHARED)
+endif ()
+
+swig_add_library (${CSHARP_MODULE_NAME} TYPE ${WRAPPER_TYPE} LANGUAGE csharp SOURCES ${WRAPPER_INTERFACE_FILE})
 swig_link_libraries (${CSHARP_MODULE_NAME} ${WRAPPED_LIB_NAME})
 
 set (CSHARP_SWIG_TARGET_NAME ${SWIG_MODULE_${CSHARP_MODULE_NAME}_REAL_NAME})
+
+if (WRAPPER_TYPE STREQUAL "STATIC")
+    add_custom_command (TARGET ${CSHARP_SWIG_TARGET_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND}
+            ARGS
+                -DSRC:PATH="${CSHARP_SWIG_OUTPUT_DIRECTORY}/${CSHARP_MODULE_NAME}PINVOKE.cs"
+                -DREGULAR_EXPRESSION:STRING="DllImport\\\(\\\"${CSHARP_MODULE_NAME}\\\""
+                -DREPLACE_EXPRESSION:STRING="DllImport\(\\\"__Internal\\\""
+                -P ${CMAKE_SOURCE_DIR}/cmake/file_regex_replace.cmake
+            COMMENT "Patch generated source files for mono."
+        )
+endif (WRAPPER_TYPE STREQUAL "STATIC")
 
 add_custom_command (TARGET ${CSHARP_SWIG_TARGET_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND}

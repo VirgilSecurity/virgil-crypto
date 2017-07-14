@@ -41,14 +41,9 @@ using virgil::crypto::pfs::VirgilPFSInitiatorPublicInfo;
 using virgil::crypto::pfs::VirgilPFSPublicKey;
 
 VirgilPFSInitiatorPublicInfo::VirgilPFSInitiatorPublicInfo(
-    std::string identifier, VirgilPFSPublicKey identityPublicKey, VirgilPFSPublicKey ephemeralPublicKey)
-    : identifier_(std::move(identifier)),
-      identityPublicKey_(std::move(identityPublicKey)),
-      ephemeralPublicKey_(std::move(ephemeralPublicKey)) {
-}
-
-const std::string& VirgilPFSInitiatorPublicInfo::getIdentifier() const {
-    return identifier_;
+        VirgilPFSPublicKey identityPublicKey, VirgilPFSPublicKey ephemeralPublicKey)
+        : identityPublicKey_(std::move(identityPublicKey)),
+          ephemeralPublicKey_(std::move(ephemeralPublicKey)) {
 }
 
 const VirgilPFSPublicKey& VirgilPFSInitiatorPublicInfo::getIdentityPublicKey() const {

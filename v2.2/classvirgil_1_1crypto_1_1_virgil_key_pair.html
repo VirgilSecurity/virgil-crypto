@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">2.2.0</span>
+   &#160;<span id="projectnumber">2.2.1</span>
    </div>
   </td>
  </tr>
@@ -135,12 +135,11 @@ Public Types</h2></td></tr>
 <br />
 &#160;&#160;<a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907a3bc80a287678a2c90867bdf8e020b2e4">Type::FAST_EC_ED25519</a>
 <br />
- }<tr class="memdesc:af87c1b54db35dddcde489132c4d5c907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of the keypair.  <a href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907">More...</a><br /></td></tr>
+ }<tr class="memdesc:af87c1b54db35dddcde489132c4d5c907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specific key algorithm type.  <a href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907">More...</a><br /></td></tr>
 <tr class="separator:af87c1b54db35dddcde489132c4d5c907"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </td></tr>
-<tr class="memitem:a1a57b454de2cef8d1450d4b9bd20607b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1a57b454de2cef8d1450d4b9bd20607b"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a1a57b454de2cef8d1450d4b9bd20607b">Algorithm</a> = <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907">Type</a></td></tr>
-<tr class="memdesc:a1a57b454de2cef8d1450d4b9bd20607b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Key algorithm. <br /></td></tr>
+<tr class="memitem:a1a57b454de2cef8d1450d4b9bd20607b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#a1a57b454de2cef8d1450d4b9bd20607b">Algorithm</a> = <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907">Type</a></td></tr>
+<tr class="memdesc:a1a57b454de2cef8d1450d4b9bd20607b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Key algorithm.  <a href="#a1a57b454de2cef8d1450d4b9bd20607b">More...</a><br /></td></tr>
 <tr class="separator:a1a57b454de2cef8d1450d4b9bd20607b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -207,7 +206,24 @@ Static Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class handles information about Virgil Security key pair. </p>
-</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a class="anchor" id="a1a57b454de2cef8d1450d4b9bd20607b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907">virgil::crypto::VirgilKeyPair::Algorithm</a> =  <a class="el" href="classvirgil_1_1crypto_1_1_virgil_key_pair.html#af87c1b54db35dddcde489132c4d5c907">Type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Key algorithm. </p>
+<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd><dl class="section note"><dt>Note</dt><dd>Use Algorithm instead. </dd></dl>
+</dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Enumeration Documentation</h2>
 <a class="anchor" id="af87c1b54db35dddcde489132c4d5c907"></a>
 <div class="memitem">
 <div class="memproto">
@@ -226,21 +242,65 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Type of the keypair. </p>
-<dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd><dl class="section note"><dt>Note</dt><dd>Use Algorithm instead. </dd></dl>
-</dd></dl>
+<p>Specific key algorithm type. </p>
+<table class="doxtable">
+<tr>
+<th>Key Algorithm </th><th>Description </th><th>Notes  </th></tr>
+<tr>
+<td>RSA_256 </td><td>RSA 1024 bit </td><td>weak, not recommended </td></tr>
+<tr>
+<td>RSA_512 </td><td>RSA 1024 bit </td><td>weak, not recommended </td></tr>
+<tr>
+<td>RSA_1024 </td><td>RSA 1024 bit </td><td>weak, not recommended </td></tr>
+<tr>
+<td>RSA_2048 </td><td>RSA 2048 bit </td><td>weak, not recommended </td></tr>
+<tr>
+<td>RSA_3072 </td><td>RSA 3072 bit </td><td></td></tr>
+<tr>
+<td>RSA_4096 </td><td>RSA 4096 bit </td><td></td></tr>
+<tr>
+<td>RSA_8192 </td><td>RSA 8192 bit </td><td></td></tr>
+<tr>
+<td>EC_SECP192R1 </td><td>192-bits NIST curve </td><td></td></tr>
+<tr>
+<td>EC_SECP224R1 </td><td>224-bits NIST curve </td><td></td></tr>
+<tr>
+<td>EC_SECP256R1 </td><td>256-bits NIST curve </td><td></td></tr>
+<tr>
+<td>EC_SECP384R1 </td><td>384-bits NIST curve </td><td></td></tr>
+<tr>
+<td>EC_SECP521R1 </td><td>521-bits NIST curve </td><td></td></tr>
+<tr>
+<td>EC_BP256R1 </td><td>256-bits Brainpool curve </td><td></td></tr>
+<tr>
+<td>EC_BP384R1 </td><td>384-bits Brainpool curve </td><td></td></tr>
+<tr>
+<td>EC_BP512R1 </td><td>512-bits Brainpool curve </td><td></td></tr>
+<tr>
+<td>EC_SECP192K1 </td><td>192-bits "Koblitz" curve </td><td></td></tr>
+<tr>
+<td>EC_SECP224K1 </td><td>224-bits "Koblitz" curve </td><td></td></tr>
+<tr>
+<td>EC_SECP256K1 </td><td>256-bits "Koblitz" curve </td><td></td></tr>
+<tr>
+<td>EC_CURVE25519 </td><td>Curve25519 (deprecated format) </td><td>deprecated </td></tr>
+<tr>
+<td>FAST_EC_X25519 </td><td>Curve25519 </td><td>only encrypt / decrypt </td></tr>
+<tr>
+<td>FAST_EC_ED25519 </td><td>Ed25519 </td><td>recommended, default </td></tr>
+</table>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="af87c1b54db35dddcde489132c4d5c907aa7ef17a80e0b6dd08712574e0b175073"></a>RSA_256&#160;</td><td class="fielddoc">
-<p>RSA 1024 bit (not recommended) </p>
+<p>RSA 1024 bit. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="af87c1b54db35dddcde489132c4d5c907aeb00c9c9e436c928513afd7ee687191f"></a>RSA_512&#160;</td><td class="fielddoc">
-<p>RSA 1024 bit (not recommended) </p>
+<p>RSA 1024 bit. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="af87c1b54db35dddcde489132c4d5c907a220b13172b72ab8f3ff237d9a23e0ea4"></a>RSA_1024&#160;</td><td class="fielddoc">
-<p>RSA 1024 bit (not recommended) </p>
+<p>RSA 1024 bit. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="af87c1b54db35dddcde489132c4d5c907a5b3bf47dace955c9874047820a78d5b8"></a>RSA_2048&#160;</td><td class="fielddoc">
-<p>RSA 2048 bit (not recommended) </p>
+<p>RSA 2048 bit. </p>
 </td></tr>
 <tr><td class="fieldname"><a class="anchor" id="af87c1b54db35dddcde489132c4d5c907a67538512a7a454af72127006a8b7d536"></a>RSA_3072&#160;</td><td class="fielddoc">
 <p>RSA 3072 bit. </p>

@@ -10,6 +10,7 @@
 - [Supported languages and platforms](#supported-languages-and-platforms)
 - [Library purposes](#library-purposes)
 - [Where library can be used](#where-library-can-be-used)
+- [Supported keys](#supported-keys)
 - [Build prerequisites](#build-prerequisites)
 - [Simple build](#simple-build)
 - [Multiarch build](#multiarch-build)
@@ -47,6 +48,33 @@ Virgil Security, Inc., guides software developers into the forthcoming security 
 ## Where library can be used
 * on the client-side application;
 * on the server-side application.
+
+## Supported keys
+
+| Key Algorithm   | Description                    | Notes                  |
+|-----------------|--------------------------------|------------------------|
+| RSA_256         | RSA 1024 bit                   | weak, not recommended  |
+| RSA_512         | RSA 1024 bit                   | weak, not recommended  |
+| RSA_1024        | RSA 1024 bit                   | weak, not recommended  |
+| RSA_2048        | RSA 2048 bit                   | weak, not recommended  |
+| RSA_3072        | RSA 3072 bit                   |                        |
+| RSA_4096        | RSA 4096 bit                   |                        |
+| RSA_8192        | RSA 8192 bit                   |                        |
+| EC_SECP192R1    | 192-bits NIST curve            |                        |
+| EC_SECP224R1    | 224-bits NIST curve            |                        |
+| EC_SECP256R1    | 256-bits NIST curve            |                        |
+| EC_SECP384R1    | 384-bits NIST curve            |                        |
+| EC_SECP521R1    | 521-bits NIST curve            |                        |
+| EC_BP256R1      | 256-bits Brainpool curve       |                        |
+| EC_BP384R1      | 384-bits Brainpool curve       |                        |
+| EC_BP512R1      | 512-bits Brainpool curve       |                        |
+| EC_SECP192K1    | 192-bits "Koblitz" curve       |                        |
+| EC_SECP224K1    | 224-bits "Koblitz" curve       |                        |
+| EC_SECP256K1    | 256-bits "Koblitz" curve       |                        |
+| EC_CURVE25519   | Curve25519 (deprecated format) | deprecated             |
+| FAST_EC_X25519  | Curve25519                     | only encrypt / decrypt |
+| FAST_EC_ED25519 | Ed25519                        | recommended, default   |
+
 
 ## Build prerequisites
 

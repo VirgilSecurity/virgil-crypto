@@ -98,7 +98,7 @@ project (VirgilSecurity)
 # Set library version
 set (VIRGIL_VERSION_MAJOR 2)
 set (VIRGIL_VERSION_MINOR 2)
-set (VIRGIL_VERSION_PATCH 0)
+set (VIRGIL_VERSION_PATCH 1)
 set (VIRGIL_VERSION_FEATURE)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 2)
@@ -116,7 +116,7 @@ message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 # Build shared library if defined
-set (BUILD_SHARED_LIBS OFF CACHE BOOL "Force to create shared libraries")
+set (BUILD_SHARED_LIBS OFF CACHE BOOL "Frce to create shared libraries")
 
 # Configure redefine compiler options if requested
 if (NOT CMAKE_CROSSCOMPILING AND WIN32 AND NOT CYGWIN)

@@ -1,5 +1,16 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.2.1 released 2017-06-14
+
+## Bugfix
+
+  [Lib] Make .NET wrappers library static for iOS, Apple watchOS, Apple tvOS, macOS platforms
+
+## Improvements
+
+  [Doc] Extend documentation of the VirgilKeyPair::Algorithm type
+
+
 = Version 2.2.0 released 2017-06-04
 
 ## Features

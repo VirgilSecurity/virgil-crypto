@@ -113,14 +113,6 @@ EOL
 </html>
 EOL
 
-    # Import credentials
-    openssl aes-256-cbc -K $encrypted_f0ca52e75c0f_key -iv $encrypted_f0ca52e75c0f_iv \
-        -in "${PROJECT_ROOT}/ci/publish-docs-rsa.enc" \
-        -out "${PROJECT_ROOT}/ci/publish-docs-rsa" -d
-    chmod 0600 "${PROJECT_ROOT}/ci/publish-docs-rsa"
-    eval $(ssh-agent -s)
-    ssh-add "${PROJECT_ROOT}/ci/publish-docs-rsa"
-
     # Create and commit the documentation repo.
     cd ${HTML_PATH_DST}
     git add .

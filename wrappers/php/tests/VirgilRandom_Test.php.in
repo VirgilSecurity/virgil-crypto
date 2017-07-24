@@ -41,7 +41,7 @@ include_once "StringSource.php";
 /**
  * @coversDefaultClass VirgilRandom
  */
-class VirgilRandom_Test extends PHPUnit_Framework_TestCase {
+class VirgilRandom_Test extends PHPUnit\Framework\TestCase {
 
     /**
      * @covers VirgilRandom::randomize

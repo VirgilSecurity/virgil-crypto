@@ -40,7 +40,7 @@ include_once "@PHP_MODULE_FILE_NAME@";
 /**
  * @coversDefaultClass VirgilAsymmetricCipher
  */
-class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
+class VirgilAsymmetricCipher_RSA_Test extends PHPUnit\Framework\TestCase {
 
     /**
      * @covers VirgilAsymmetricCipher::genKeyPair
@@ -325,15 +325,6 @@ class VirgilAsymmetricCipher_RSA_Test extends PHPUnit_Framework_TestCase {
         $cipher->genKeyPair(VirgilKeyPair::Type_RSA_512);
         $asn1 = $cipher->toAsn1();
         $this->assertEquals($expectedAsn1, $asn1);
-    }
-
-    /**
-     * @covers VirgilAsymmetricCipher::fromAsn1
-     */
-    public function test_cipher_state_restore() {
-        $asn1 = pack("H*", "300d06092a864886f70d0101010500");
-        $cipher = new VirgilAsymmetricCipher();
-        $cipher->fromAsn1($asn1);
     }
 }
 

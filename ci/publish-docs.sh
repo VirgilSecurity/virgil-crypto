@@ -37,63 +37,61 @@
 
 set -ev
 
-if [ "${PUBLISH_DOCS}" != "ON" ] || [ "${TRAVIS_BRANCH}" != "${DOC_BRANCH}" ] || [[ "${CC}" != "gcc"* ]]; then exit; fi
+if [[ "${PUBLISH_DOCS}" == "ON" ]] && [[ "${TRAVIS_BRANCH}" == "master" ]]; then
+    # Settings
+    REPO_PATH=git@github.com:VirgilSecurity/virgil-crypto.git
+    HTML_PATH_DST="${PROJECT_ROOT}/build/docs/html"
+    COMMIT_USER="Travis CI documentation builder."
+    COMMIT_EMAIL="sergey.seroshtan@gmail.com"
+    CHANGESET=$(git rev-parse --verify HEAD)
 
-# Settings
-REPO_PATH=git@github.com:VirgilSecurity/virgil-crypto.git
-HTML_PATH_DST="${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}/docs/html"
-COMMIT_USER="Travis CI documentation builder."
-COMMIT_EMAIL="sergey.seroshtan@gmail.com"
-CHANGESET=$(git rev-parse --verify HEAD)
+    # Get a clean version of the HTML documentation repo.
+    rm -rf ${HTML_PATH_DST}
+    mkdir -p ${HTML_PATH_DST}
+    git clone -b gh-pages "${REPO_PATH}" --single-branch ${HTML_PATH_DST}
 
-# Get a clean version of the HTML documentation repo.
-rm -rf ${HTML_PATH_DST}
-mkdir -p ${HTML_PATH_DST}
-git clone -b gh-pages "${REPO_PATH}" --single-branch ${HTML_PATH_DST}
+    # Define SDK versions
+    VIRGIL_CRYPTO_VERSION=`cat ${PROJECT_ROOT}/VERSION | awk -F"." '{ printf "v%d.%d",$1,$2 }'`
+    VIRGIL_CRYPTO_HTML_PATH_DST="${HTML_PATH_DST}/${VIRGIL_CRYPTO_VERSION}"
 
-# Define SDK versions
-VIRGIL_CRYPTO_VERSION=`cat ${TRAVIS_BUILD_DIR}/VERSION | awk -F"." '{ printf "v%d.%d",$1,$2 }'`
-VIRGIL_CRYPTO_HTML_PATH_DST="${HTML_PATH_DST}/${VIRGIL_CRYPTO_VERSION}"
+    # Prepare destination folders
+    rm -fr "${VIRGIL_CRYPTO_HTML_PATH_DST}" && mkdir -p "${VIRGIL_CRYPTO_HTML_PATH_DST}"
 
-# Prepare destination folders
-rm -fr "${VIRGIL_CRYPTO_HTML_PATH_DST}" && mkdir -p "${VIRGIL_CRYPTO_HTML_PATH_DST}"
+    # Generate the HTML documentation.
+    cmake --build "${PROJECT_ROOT}/build" --target doc
 
-# Generate the HTML documentation.
-cd "${TRAVIS_BUILD_DIR}/${BUILD_DIR_NAME}" && make doc
-cd -
+    # Copy new documentation
+    cp -af "${PROJECT_ROOT}/docs/html/." "${VIRGIL_CRYPTO_HTML_PATH_DST}"
 
-# Copy new documentation
-cp -af "${TRAVIS_BUILD_DIR}/docs/html/." "${VIRGIL_CRYPTO_HTML_PATH_DST}"
+    # Fix source file names
+    function fix_html_source_file_names {
+        cd "${1}"
+        for f in _*.html; do
+            old_name=$f
+            new_name=${f/${f:0:1}/}
+            mv $old_name $new_name
+            if [ "$(uname -s)" == "Darwin" ]; then
+                sed -i "" -e "s/[[:<:]]$old_name[[:>:]]/$new_name/g" *.html
+            else
+                sed -i"" "s/\b$old_name\b/$new_name/g" *.html
+            fi
+        done
+        cd -
+    }
 
-# Fix source file names
-function fix_html_source_file_names {
-    cd "${1}"
-    for f in _*.html; do
-        old_name=$f
-        new_name=${f/${f:0:1}/}
-        mv $old_name $new_name
-        if [ "$(uname -s)" == "Darwin" ]; then
-            sed -i "" -e "s/[[:<:]]$old_name[[:>:]]/$new_name/g" *.html
-        else
-            sed -i"" "s/\b$old_name\b/$new_name/g" *.html
-        fi
-    done
-    cd -
-}
+    fix_html_source_file_names "${VIRGIL_CRYPTO_HTML_PATH_DST}"
 
-fix_html_source_file_names "${VIRGIL_CRYPTO_HTML_PATH_DST}"
+    # Generate root HTML file
+    function get_dir_names {
+        local DIRS=`find "$1" -maxdepth 1 -type d -name "$2"`
+        local DIR_NAMES=()
+        for dir in ${DIRS}; do
+            DIR_NAMES+=("${dir#${1}/}")
+        done
+        echo ${DIR_NAMES[*]}
+    }
 
-# Generate root HTML file
-function get_dir_names {
-    local DIRS=`find "$1" -maxdepth 1 -type d -name "$2"`
-    local DIR_NAMES=()
-    for dir in ${DIRS}; do
-        DIR_NAMES+=("${dir#${1}/}")
-    done
-    echo ${DIR_NAMES[*]}
-}
-
-cat >"${HTML_PATH_DST}/index.html" <<EOL
+    cat >"${HTML_PATH_DST}/index.html" <<EOL
 <!DOCTYPE HTML>
 <html>
    <head>
@@ -105,21 +103,29 @@ cat >"${HTML_PATH_DST}/index.html" <<EOL
         <ul>
 EOL
 
-for dir in `get_dir_names "${VIRGIL_CRYPTO_HTML_PATH_DST}/.." "v*"`; do
-    echo "<li><p><a href=\"${dir}/index.html\">${dir}</a></p></li>" >> "${HTML_PATH_DST}/index.html"
-done
+    for dir in `get_dir_names "${VIRGIL_CRYPTO_HTML_PATH_DST}/.." "v*"`; do
+        echo "            <li><p><a href=\"${dir}/index.html\">${dir}</a></p></li>" >> "${HTML_PATH_DST}/index.html"
+    done
 
-cat >>"${HTML_PATH_DST}/index.html" <<EOL
+    cat >>"${HTML_PATH_DST}/index.html" <<EOL
         </ul>
    </body>
 </html>
 EOL
 
-# Create and commit the documentation repo.
-cd ${HTML_PATH_DST}
-git add .
-git config user.name "${COMMIT_USER}"
-git config user.email "${COMMIT_EMAIL}"
-git commit -m "Automated documentation build for changeset ${CHANGESET}."
-git push origin gh-pages
-cd -
+    # Import credentials
+    openssl aes-256-cbc -K $encrypted_f0ca52e75c0f_key -iv $encrypted_f0ca52e75c0f_iv \
+        -in "${PROJECT_ROOT}/ci/publish-docs-rsa.enc" \
+        -out "${PROJECT_ROOT}/ci/publish-docs-rsa" -d
+    chmod 0600 "${PROJECT_ROOT}/ci/publish-docs-rsa"
+    cp "${PROJECT_ROOT}/ci/publish-docs-rsa" "$HOME/.ssh/id_rsa"
+
+    # Create and commit the documentation repo.
+    cd ${HTML_PATH_DST}
+    git add .
+    git config user.name "${COMMIT_USER}"
+    git config user.email "${COMMIT_EMAIL}"
+    git commit -m "Automated documentation build for changeset ${CHANGESET}."
+    git push origin gh-pages
+    cd -
+fi

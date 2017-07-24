@@ -40,7 +40,7 @@ include_once "@PHP_MODULE_FILE_NAME@";
 /**
  * @coversDefaultClass VirgilPBE
  */
-class VirgilPBE_Test extends PHPUnit_Framework_TestCase {
+class VirgilPBE_Test extends PHPUnit\Framework\TestCase {
 
     /**
      * @covers VirgilPBE::pkcs5

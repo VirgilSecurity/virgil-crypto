@@ -42,7 +42,7 @@ include_once "StringSink.php";
 /**
  * @coversDefaultClass VirgilChunkCipher
  */
-class VirgilChunkCipher_Test extends PHPUnit_Framework_TestCase {
+class VirgilChunkCipher_Test extends PHPUnit\Framework\TestCase {
 
     /**
      * @covers VirgilChunkCipher::addKeyRecipient

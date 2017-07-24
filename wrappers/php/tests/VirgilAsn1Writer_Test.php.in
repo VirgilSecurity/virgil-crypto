@@ -40,7 +40,7 @@ include_once "@PHP_MODULE_FILE_NAME@";
 /**
  * @coversDefaultClass VirgilAsn1Writer
  */
-class VirgilAsn1Writer_Test extends PHPUnit_Framework_TestCase {
+class VirgilAsn1Writer_Test extends PHPUnit\Framework\TestCase {
 
     /**
      * @covers VirgilAsn1Writer::__construct

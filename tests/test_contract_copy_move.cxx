@@ -113,7 +113,6 @@ TEST_CASE("Check contract: copy and move", "[copy/move]") {
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::VirgilRandom);
 
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSContent);
-    SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSContentInfo);
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSEncryptedContent);
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSEnvelopedData);
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSKeyTransRecipient);
@@ -125,8 +124,9 @@ TEST_CASE("Check contract: copy and move", "[copy/move]") {
     // it means next condition can not by satisfied:
     //      static_assert(std::is_nothrow_move_assignable<VirgilCryptoException>::value, "Fail");
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::VirgilCryptoException);
+    SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSContentInfo);
+    SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::VirgilCustomParams);
 #endif
 
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::VirgilKeyPair);
-    SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::VirgilCustomParams);
 }

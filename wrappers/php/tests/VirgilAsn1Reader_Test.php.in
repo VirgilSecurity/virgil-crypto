@@ -37,10 +37,11 @@
 
 include_once "@PHP_MODULE_FILE_NAME@";
 
+
 /**
  * @coversDefaultClass VirgilAsn1Reader
  */
-class VirgilAsn1Reader_Test extends PHPUnit_Framework_TestCase {
+class VirgilAsn1Reader_Test extends PHPUnit\Framework\TestCase {
 
     /**
      * @covers VirgilAsn1Reader::__construct

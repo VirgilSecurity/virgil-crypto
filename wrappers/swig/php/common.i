@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
+ * Copyright (C) 2015-2017 Virgil Security Inc.
  *
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  *
@@ -55,7 +55,13 @@
 
 // VirgilByteArray typemap
 #define SWIG_VIRGIL_BYTE_ARRAY
-%include "VirgilByteArray.i"
+#if defined(SWIGPHP5)
+%include "php5/VirgilByteArray.i"
+#elif defined(SWIGPHP7)
+%include "php7/VirgilByteArray.i"
+#else
+#error Unsupported version of PHP was given. Only PHP5 and PHP7 currently supported.
+#endif
 
 // Redefine typemap for enums
 %typemap(in)  VirgilKeyPair::Type = int;

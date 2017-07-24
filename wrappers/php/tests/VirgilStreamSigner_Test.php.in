@@ -41,7 +41,7 @@ include_once "StringSource.php";
 /**
  * @coversDefaultClass VirgilStreamSigner
  */
-class VirgilStreamSigner_Test extends PHPUnit_Framework_TestCase {
+class VirgilStreamSigner_Test extends PHPUnit\Framework\TestCase {
 
     protected static $cipher;
 

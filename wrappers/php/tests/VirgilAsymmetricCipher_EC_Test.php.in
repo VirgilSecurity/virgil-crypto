@@ -40,7 +40,7 @@ include_once "@PHP_MODULE_FILE_NAME@";
 /**
  * @coversDefaultClass VirgilAsymmetricCipher
  */
-class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
+class VirgilAssymentricCipher_EC_Test extends PHPUnit\Framework\TestCase {
 
     /**
      * @covers VirgilAsymmetricCipher::genKeyPair
@@ -322,15 +322,6 @@ class VirgilAssymentricCipher_EC_Test extends PHPUnit_Framework_TestCase {
         $cipher->genKeyPair(VirgilKeyPair::Type_EC_BP512R1);
         $asn1 = $cipher->toAsn1();
         $this->assertEquals($expectedAsn1, $asn1);
-    }
-
-    /**
-     * @covers VirgilAsymmetricCipher::fromAsn1
-     */
-    public function test_cipher_state_restore() {
-        $asn1 = pack("H*", "301406072a8648ce3d020106092b240303020801010d");
-        $cipher = new VirgilAsymmetricCipher();
-        $cipher->fromAsn1($asn1);
     }
 }
 

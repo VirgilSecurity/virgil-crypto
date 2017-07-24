@@ -89,6 +89,6 @@ find_host_program (PHPUNIT_MODULE phpunit)
 if (PHP_MODULE AND PHPUNIT_MODULE)
     add_test (
         NAME ${PHP_MODULE_FILE_NAME}
-        COMMAND ${PHP_MODULE} -n -d extension_dir=.. -d safe_mode=Off ${PHPUNIT_MODULE} --include-path .. .
+        COMMAND ${PHP_MODULE} -d extension=../virgil_crypto_php.so -d safe_mode=Off ${PHPUNIT_MODULE} --include-path .. .
     )
 endif (PHP_MODULE AND PHPUNIT_MODULE)

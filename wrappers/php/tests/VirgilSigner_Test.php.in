@@ -41,7 +41,7 @@ include_once "StringSource.php";
 /**
  * @coversDefaultClass VirgilSigner
  */
-class VirgilSigner_Test extends PHPUnit_Framework_TestCase {
+class VirgilSigner_Test extends PHPUnit\Framework\TestCase {
     /**
      * @covers VirgilSigner::sign
      * @covers VirgilSigner::verify

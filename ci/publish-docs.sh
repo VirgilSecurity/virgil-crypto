@@ -118,7 +118,8 @@ EOL
         -in "${PROJECT_ROOT}/ci/publish-docs-rsa.enc" \
         -out "${PROJECT_ROOT}/ci/publish-docs-rsa" -d
     chmod 0600 "${PROJECT_ROOT}/ci/publish-docs-rsa"
-    cp "${PROJECT_ROOT}/ci/publish-docs-rsa" "$HOME/.ssh/id_rsa"
+    eval $(ssh-agent -s)
+    ssh-add "${PROJECT_ROOT}/ci/publish-docs-rsa"
 
     # Create and commit the documentation repo.
     cd ${HTML_PATH_DST}

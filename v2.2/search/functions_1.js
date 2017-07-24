@@ -1,7 +1,7 @@
 var searchData=
 [
   ['backtrace_5fexception',['backtrace_exception',['../namespacevirgil_1_1crypto.html#a5d54a90db8b2eaa52dd23ea20f8710fa',1,'virgil::crypto']]],
-  ['blocksize',['blockSize',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#ae3030ecba2e6b8590b8124104d13df8a',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
+  ['blocksize',['blockSize',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#aac9be0c76123311cbe7ac7fc020ef2dc',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
   ['buildcontentinfo',['buildContentInfo',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a123507f91759f95f9a84edd408e8b0c1',1,'virgil::crypto::VirgilCipherBase']]],
   ['bytes2hex',['bytes2hex',['../namespacevirgil_1_1crypto.html#a0a8cc492433de34bea2adbf7bf3d4298',1,'virgil::crypto']]],
   ['bytes2str',['bytes2str',['../namespacevirgil_1_1crypto.html#a85ba75c18dcb7caafa88683f85bd5ff5',1,'virgil::crypto']]],

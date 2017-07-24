@@ -114,11 +114,14 @@ EOL
 EOL
 
     # Create and commit the documentation repo.
-    cd ${HTML_PATH_DST}
-    git add .
-    git config user.name "${COMMIT_USER}"
-    git config user.email "${COMMIT_EMAIL}"
-    git commit -m "Automated documentation build for changeset ${CHANGESET}."
-    git push origin gh-pages
-    cd -
+    git update-index -q --refresh
+    if ! git diff-index --quiet HEAD --; then
+        cd ${HTML_PATH_DST}
+        git add .
+        git config user.name "${COMMIT_USER}"
+        git config user.email "${COMMIT_EMAIL}"
+        git commit -m "Automated documentation build for changeset ${CHANGESET}."
+        git push origin gh-pages
+        cd -
+    fi
 fi

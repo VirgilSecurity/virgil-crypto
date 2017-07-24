@@ -1,5 +1,21 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.2.2 released 2017-06-24
+
+## Features
+
+  * [FEATURE] Add support for PHP7
+
+## Changes
+
+  * Drop support for PHP versions 5.4, 5.5
+
+## Bugfix
+
+  * Fix test for gcc versions < 5
+  * Run PHP tests more precisely (do not override path to extensions)
+
+
 = Version 2.2.1 released 2017-06-14
 
 ## Bugfix

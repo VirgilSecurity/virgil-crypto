@@ -78,6 +78,7 @@
 %ignore virgil::crypto::bytes_append;
 %ignore virgil::crypto::bytes_split;
 %ignore virgil::crypto::bytes_split_half;
+%ignore virgil::crypto::bytes_split_chunks;
 INCLUDE_CLASS(VirgilByteArray, virgil::crypto, virgil/crypto)
 
 %ignore VIRGIL_VERSION;

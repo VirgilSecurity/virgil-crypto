@@ -65,9 +65,13 @@ using virgil::crypto::pfs::VirgilPFSResponderPrivateInfo;
 static constexpr const char kAdditionalData_Virgil[] = "Virgil";
 static constexpr const size_t kSaltSize = 16;
 static constexpr const size_t kSecretKeySize = 128;
+static constexpr const size_t kSecretKeyChunkLength = 32;
+static constexpr const size_t kSecretKeyChunkNum = 4;
+static constexpr const size_t kSessionIdentifierLength = 32;
+static constexpr const size_t kAdditionalDataLength = 32;
 
 VirgilPFS::VirgilPFS()
-        : random_(VirgilOperationRandom::getDefault()), hash_(VirgilOperationHash::getDefault()), dh_(VirgilOperationDH::getDefault()),
+        : random_(VirgilOperationRandom::getDefault()), dh_(VirgilOperationDH::getDefault()),
           kdf_(VirgilOperationKDF::getDefault()), cipher_(VirgilOperationCipher::getDefault()), session_() {}
 
 VirgilPFSSession VirgilPFS::startInitiatorSession(
@@ -76,14 +80,21 @@ VirgilPFSSession VirgilPFS::startInitiatorSession(
 
     auto sharedKey = calculateSharedKey(initiatorPrivateInfo, responderPublicInfo);
     auto secretKey = calculateSecretKey(sharedKey, kSecretKeySize);
-    auto additionalData = calculateAdditionalData(additionalDataMaterial);
-    auto identifier = calculateSessionIdentifier(secretKey, additionalData);
 
-    auto splittedSecretKey = bytes_split_half(secretKey);
+    auto splittedSecretKey = bytes_split_chunks(secretKey, kSecretKeyChunkLength);
+    assert(splittedSecretKey.size() == kSecretKeyChunkNum);
+    auto&& encryptionSecretKey = splittedSecretKey[0];
+    auto&& decryptionSecretKey = splittedSecretKey[1];
+    auto&& sessionIdSecretKey = splittedSecretKey[2];
+    auto&& adSecretKey = splittedSecretKey[3];
+
+    auto additionalData = calculateAdditionalData(adSecretKey, additionalDataMaterial);
+    auto identifier = calculateSessionIdentifier(sessionIdSecretKey, additionalData);
+
     session_ = VirgilPFSSession(
             std::move(identifier),
-            std::move(std::get<0>(splittedSecretKey)),
-            std::move(std::get<1>(splittedSecretKey)),
+            std::move(encryptionSecretKey),
+            std::move(decryptionSecretKey),
             std::move(additionalData));
     return session_;
 }
@@ -95,14 +106,21 @@ VirgilPFSSession VirgilPFS::startResponderSession(
 
     auto sharedKey = calculateSharedKey(responderPrivateInfo, initiatorPublicInfo);
     auto secretKey = calculateSecretKey(sharedKey, kSecretKeySize);
-    auto additionalData = calculateAdditionalData(additionalDataMaterial);
-    auto identifier = calculateSessionIdentifier(secretKey, additionalData);
 
-    auto splittedSecretKey = bytes_split_half(secretKey);
+    auto splittedSecretKey = bytes_split_chunks(secretKey, kSecretKeyChunkLength);
+    assert(splittedSecretKey.size() == kSecretKeyChunkNum);
+    auto&& decryptionSecretKey = splittedSecretKey[0];
+    auto&& encryptionSecretKey = splittedSecretKey[1];
+    auto&& sessionIdSecretKey = splittedSecretKey[2];
+    auto&& adSecretKey = splittedSecretKey[3];
+
+    auto additionalData = calculateAdditionalData(adSecretKey, additionalDataMaterial);
+    auto identifier = calculateSessionIdentifier(sessionIdSecretKey, additionalData);
+
     session_ = VirgilPFSSession(
             std::move(identifier),
-            std::move(std::get<1>(splittedSecretKey)),
-            std::move(std::get<0>(splittedSecretKey)),
+            std::move(encryptionSecretKey),
+            std::move(decryptionSecretKey),
             std::move(additionalData));
     return session_;
 }
@@ -144,28 +162,18 @@ VirgilByteArray VirgilPFS::decrypt(const VirgilPFSEncryptedMessage& encryptedMes
     return cipher_.decrypt(encryptedMessage.getCipherText(), key, nonce, session_.getAdditionalData());
 }
 
+VirgilByteArray VirgilPFS::calculateAdditionalData(
+        const VirgilByteArray& adSecretKey, const VirgilByteArray& additionalDataMaterial) const {
+
+    return kdf_.derive(
+            adSecretKey, additionalDataMaterial, str2bytes(kAdditionalData_Virgil), kAdditionalDataLength);
+}
+
 VirgilByteArray VirgilPFS::calculateSessionIdentifier(
-        const VirgilByteArray& secretKey, const VirgilByteArray& additionalData) const {
+        const VirgilByteArray& idSecretKey, const VirgilByteArray& additionalData) const {
 
-    auto hash = hash_;
-    hash.start();
-    hash.update(secretKey);
-    if (!additionalData.empty()) {
-        hash.update(additionalData);
-    }
-    hash.update(str2bytes(kAdditionalData_Virgil));
-    auto identifier = hash.finish();
-    return identifier;
+    return kdf_.derive(idSecretKey, additionalData, str2bytes(kAdditionalData_Virgil), kSessionIdentifierLength);
 }
-
-VirgilByteArray VirgilPFS::calculateAdditionalData(const VirgilByteArray& additionalDataMaterial) const {
-    if (!additionalDataMaterial.empty()) {
-        auto hash = hash_;
-        return hash.hash(additionalDataMaterial);
-    }
-    return VirgilByteArray();
-}
-
 
 VirgilByteArray VirgilPFS::calculateSharedKey(
         const VirgilPFSInitiatorPrivateInfo& initiatorPrivateInfo,
@@ -265,10 +273,6 @@ VirgilPFSSession VirgilPFS::getSession() const {
 
 void VirgilPFS::setRandom(VirgilOperationRandom random) {
     random_ = std::move(random);
-}
-
-void VirgilPFS::setHash(VirgilOperationHash hash) {
-    hash_ = std::move(hash);
 }
 
 void VirgilPFS::setDH(VirgilOperationDH dh) {

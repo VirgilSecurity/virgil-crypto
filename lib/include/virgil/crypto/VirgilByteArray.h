@@ -173,5 +173,20 @@ inline std::tuple<VirgilByteArray, VirgilByteArray> bytes_split_half(const Virgi
     return bytes_split(src, halfPos);
 }
 
+/**
+ * @brief Split given bytes to the chuns of the given size.
+ * @param src - bytes to be splitted.
+ * @param chunkSize - size of the chunk.
+ * @return Chunks, each of the chunkSize.
+ */
+inline std::vector<VirgilByteArray> bytes_split_chunks(const VirgilByteArray& src, size_t chunkSize) {
+    std::vector<VirgilByteArray> chunks;
+    for (auto begin = src.cbegin(); begin < src.cend(); begin += chunkSize) {
+        auto end = std::min(begin + chunkSize, src.end());
+        chunks.emplace_back(VirgilByteArray(begin, end));
+    }
+    return chunks;
+}
+
 }}
 #endif /* VIRGIL_BYTE_ARRAY_H */

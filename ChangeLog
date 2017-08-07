@@ -1,5 +1,16 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.2.3 released 2017-08-07
+
+## Changes
+
+  * [Lib] Change the way PFS algorithm derive SessionID and AD
+
+## Improvements
+
+  * [Doc] Remove broken (stale) links from the README.md
+
+
 = Version 2.2.2 released 2017-06-24
 
 ## Features

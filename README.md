@@ -28,16 +28,16 @@ Virgil Security, Inc., guides software developers into the forthcoming security 
 
 ## Supported languages and platforms
 
-| Language | Supported OS               | Usage                                                                                                                                                                                                            |
-|----------|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| C++      | ANY                        | [Tutorial](https://github.com/VirgilSecurity/virgil/tree/master/c-cpp/quickstart),  [Reference API](http://virgilsecurity.github.io/virgil-crypto/)                                                              |
-| PHP      | Unix, Linux, OS X          |                                                                                                                                                                                                                  |
-| Python   | Unix, Linux, OS X          | [Tutorial](https://github.com/VirgilSecurity/virgil/tree/master/python/quickstart)                                                                                                                               |
-| Ruby     | Unix, Linux, OS X          |                                                                                                                                                                                                                  |
-| Java     | Unix, Linux, OS X, Windows | [Tutorial](https://github.com/VirgilSecurity/virgil/tree/master/java-android/quickstart)                                                                                                                         |
-| .NET     | Unix, Linux, OS X, Windows | [Tutorial](https://github.com/VirgilSecurity/virgil/tree/master/dot-net-csharp/quickstart), [Reference API](https://github.com/VirgilSecurity/virgil/blob/master/dot-net-csharp/crypto-library/reference-api.md) |
-| AsmJS    | Unix, Linux, OS X, Windows | [Tutorial](https://github.com/VirgilSecurity/virgil-crypto-javascript)                                                                                                                                           |
-| NodeJS   | Unix, Linux, OS X, Windows | [Tutorial](https://github.com/VirgilSecurity/virgil-crypto-javascript)                                                                                                                                           |
+| Language | Supported OS               |
+|----------|----------------------------|
+| C++      | ANY                        |
+| PHP      | Unix, Linux, OS X          |
+| Python   | Unix, Linux, OS X          |
+| Ruby     | Unix, Linux, OS X          |
+| Java     | Unix, Linux, OS X, Windows |
+| .NET     | Unix, Linux, OS X, Windows |
+| AsmJS    | Unix, Linux, OS X, Windows |
+| NodeJS   | Unix, Linux, OS X, Windows |
 
 ## Library purposes
 * Encrypt data;

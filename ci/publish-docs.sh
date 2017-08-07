@@ -113,19 +113,15 @@ EOL
 </html>
 EOL
 
-    # Import credentials
-    openssl aes-256-cbc -K $encrypted_f0ca52e75c0f_key -iv $encrypted_f0ca52e75c0f_iv \
-        -in "${PROJECT_ROOT}/ci/publish-docs-rsa.enc" \
-        -out "${PROJECT_ROOT}/ci/publish-docs-rsa" -d
-    chmod 0600 "${PROJECT_ROOT}/ci/publish-docs-rsa"
-    cp "${PROJECT_ROOT}/ci/publish-docs-rsa" "$HOME/.ssh/id_rsa"
-
     # Create and commit the documentation repo.
-    cd ${HTML_PATH_DST}
-    git add .
-    git config user.name "${COMMIT_USER}"
-    git config user.email "${COMMIT_EMAIL}"
-    git commit -m "Automated documentation build for changeset ${CHANGESET}."
-    git push origin gh-pages
-    cd -
+    git update-index -q --refresh
+    if ! git diff-index --quiet HEAD --; then
+        cd ${HTML_PATH_DST}
+        git add .
+        git config user.name "${COMMIT_USER}"
+        git config user.email "${COMMIT_EMAIL}"
+        git commit -m "Automated documentation build for changeset ${CHANGESET}."
+        git push origin gh-pages
+        cd -
+    fi
 fi

@@ -118,12 +118,6 @@ public:
     void setRandom(VirgilOperationRandom random);
 
     /**
-     * @brief Set custom implementation for algorithm: hash.
-     * @param hash - new algorithm implementation.
-     */
-    void setHash(VirgilOperationHash hash);
-
-    /**
      * @brief Set custom implementation for algorithm: Diffie–Hellman.
      * @param dh - new algorithm implementation.
      */
@@ -164,14 +158,14 @@ private:
 
     VirgilByteArray calculateSecretKey(const VirgilByteArray& keyMaterial, size_t size);
 
-    VirgilByteArray calculateAdditionalData(const VirgilByteArray& additionalDataMaterial) const;
+    VirgilByteArray calculateAdditionalData(
+            const VirgilByteArray& adSecretKey, const VirgilByteArray& additionalDataMaterial) const;
 
     VirgilByteArray calculateSessionIdentifier(
-            const VirgilByteArray& secretKey, const VirgilByteArray& additionalData) const;
+            const VirgilByteArray& idSecretKey, const VirgilByteArray& additionalData) const;
 
 private:
     VirgilOperationRandom random_;
-    VirgilOperationHash hash_;
     VirgilOperationDH dh_;
     VirgilOperationKDF kdf_;
     VirgilOperationCipher cipher_;

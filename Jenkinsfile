@@ -60,12 +60,17 @@ def createNativeUnixBuild(slave) {
                 sh './utils/build.sh python-3.3'
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python34/enable', ''].join("\n")
                 sh './utils/build.sh python-3.4'
+                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python35/enable', ''].join("\n")
+                sh './utils/build.sh python-3.5'
+                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python36/enable', ''].join("\n")
+                sh './utils/build.sh python-3.6'
                 organizeFilesUnix('install/python')
             }
             if (slave.contains('build-os-x')) {
                 sh './utils/build.sh python-2.7'
                 sh './utils/build.sh python-3.4'
                 sh './utils/build.sh python-3.5'
+                sh './utils/build.sh python-3.6'
                 organizeFilesUnix('install/python')
             }
             // Java
@@ -141,6 +146,12 @@ def createNativeWindowsBuild(slave) {
                 }
                 withEnv(["PATH=C:\\Python35_x64;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.5-x64'
+                }
+                withEnv(["PATH=C:\\Python36_x86;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.6-x86'
+                }
+                withEnv(["PATH=C:\\Python36_x64;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.6-x64'
                 }
             }
             organizeFilesWindows('install\\cpp')

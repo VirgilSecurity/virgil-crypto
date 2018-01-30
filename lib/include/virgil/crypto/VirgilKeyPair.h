@@ -48,6 +48,7 @@ class VirgilKeyPair {
 public:
     /**
      * @brief Specific key algorithm type.
+     * @note This type is deprecated. Use Algorithm instead.
      *
      * | Key Algorithm   | Description                    | Notes                  |
      * |-----------------|--------------------------------|------------------------|
@@ -99,8 +100,6 @@ public:
     };
     /**
      * @brief Key algorithm
-     * @deprecated
-     * @note Use Algorithm instead.
      */
     using Algorithm = Type;
 public:

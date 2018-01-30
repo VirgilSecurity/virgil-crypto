@@ -36,37 +36,21 @@
  */
 #endregion
 
-namespace Virgil.Crypto {
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
-public class VirgilStreamDataSource : VirgilDataSource
-{
-    private readonly System.IO.Stream stream;
-    private readonly byte[] buffer;
-
-    public VirgilStreamDataSource(System.IO.Stream source)
-    {
-        this.stream = source;
-        this.buffer = new byte[1024];
-    }
-
-    public override bool HasData()
-    {
-        return this.stream.CanRead && this.stream.Position < this.stream.Length;
-    }
-
-    public override byte[] Read()
-    {
-        int bytesRead = this.stream.Read(buffer, 0, buffer.Length);
-
-        if (bytesRead == buffer.Length)
-        {
-            return buffer;
-        }
-
-        byte[] result = new byte[bytesRead];
-        System.Array.Copy(buffer, result, bytesRead);
-        return result;
-    }
-}
-
-}
+[assembly: AssemblyVersion("@VIRGIL_VERSION@")]
+[assembly: AssemblyTitle("C# wrapper over '@WRAPPED_LIB_NAME@' library version @VIRGIL_VERSION@")]
+[assembly: AssemblyCopyright("Copyright Virgil Security Inc., GPL, Version 2")]
+[assembly: AssemblyDescription("This assembly provides API to the dynamic loaded module " +
+        "@CMAKE_SHARED_MODULE_PREFIX@@VIRGILCRYPTO_SWIG_TARGET_NAME@@CMAKE_SHARED_MODULE_SUFFIX@")]
+[assembly: AssemblyCompany("Virgil Security Inc.")]
+[assembly: AssemblyFileVersion("@VIRGIL_VERSION@")]
+[assembly: AssemblyCulture("")]
+[assembly: AssemblyTrademark("Virgil Security Inc.")]
+[assembly: AssemblyProduct("@WRAPPED_LIB_NAME@")]
+[assembly: AssemblyInformationalVersion("@VIRGIL_VERSION@")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyDelaySign(false)]
+[assembly: AssemblyKeyName("")]
+[assembly: AssemblyKeyFile("")]

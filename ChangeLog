@@ -1,5 +1,17 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.2.4 released 2018-01-30
+
+## Changes
+
+  * [CI] Dockerfile update golang version to 1.9.2
+
+## Bugfix
+
+  * [Lib] Downgrade C++11 constructor inheritance - SWIG does not support it
+  * [Doc] Fix doxygen warnings
+
+
 = Version 2.2.3 released 2017-08-07
 
 ## Changes

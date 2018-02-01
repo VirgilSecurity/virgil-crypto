@@ -162,7 +162,7 @@ public:
     }
 
     static void free_ctx(context_type* ctx) {
-        mbedtls_md_init(ctx);
+        mbedtls_md_free(ctx);
     }
 
     template<typename Type, typename... Args>

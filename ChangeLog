@@ -1,5 +1,15 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.2.5 released 2018-02-01
+
+## Bugfix
+
+  * [Lib] Fixed memory leaks in the VirgilHash
+  * [Lib] Fix memory leaks by updating underlying MbedTLS library
+    - Fix memory leaks in the ECIES algorithm
+    - Fix memory leaks when parse PKCS#8 encrypted key without password
+
+
 = Version 2.2.4 released 2018-01-30
 
 ## Changes

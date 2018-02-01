@@ -98,7 +98,7 @@ project (VirgilSecurity)
 # Set library version
 set (VIRGIL_VERSION_MAJOR 2)
 set (VIRGIL_VERSION_MINOR 2)
-set (VIRGIL_VERSION_PATCH 4)
+set (VIRGIL_VERSION_PATCH 5)
 set (VIRGIL_VERSION_FEATURE)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 2)
@@ -219,7 +219,7 @@ virgil_depends (
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/mbedtls"
     CMAKE_ARGS "${CMAKE_ARGS}" "${MBEDTLS_CMAKE_ARGS}"
 )
-virgil_find_package (MbedTLS 2.2)
+virgil_find_package (MbedTLS 2.4)
 
 virgil_depends (
     PACKAGE_NAME "RapidJSON"

@@ -34,6 +34,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+
+#if VIRGIL_CRYPTO_FEATURE_STREAM_IMPL
+
 #include <virgil/crypto/stream/VirgilBytesDataSource.h>
 
 #include <algorithm>
@@ -66,3 +69,5 @@ VirgilByteArray VirgilBytesDataSource::read() {
     leftBytes_ -= actualChunkSize;
     return VirgilByteArray(start, end);
 }
+
+#endif /* VIRGIL_CRYPTO_FEATURE_STREAM_IMPL */

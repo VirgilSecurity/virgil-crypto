@@ -38,7 +38,7 @@ matrix:
       dist: trusty
 env:
   global:
-    - LIB_LOW_LEVEL_API=ON
+    - VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP=ON
     - PROJECT_ROOT=${TRAVIS_BUILD_DIR}
 before_install:
   - date -u
@@ -56,10 +56,10 @@ install:
   - ${CXX} --version
 before_script:
   - CMAKE_ARGS="-DLANG=${LANG} -DPLATFORM_ARCH=`uname -m`"
-  - CMAKE_ARGS+=" -DLIB_LOW_LEVEL_API=${LIB_LOW_LEVEL_API}"
+  - CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP=${VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP}"
   - CMAKE_ARGS+=" -DCMAKE_INSTALL_PREFIX=${PROJECT_ROOT}/install"
   - CMAKE_ARGS+=" -DLANG_VERSION=${LANG_VERSION}"
-  - if [ "${LANG}" = "cpp" ]; then CMAKE_ARGS+=" -DLIB_FILE_IO=ON"; fi
+  - if [ "${LANG}" = "cpp" ]; then CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_STREAM_IMPL=ON"; fi
   - cmake -H"${PROJECT_ROOT}" -B"${PROJECT_ROOT}/build" ${CMAKE_ARGS}
 script:
   - cmake --build "${PROJECT_ROOT}/build" -- -j4

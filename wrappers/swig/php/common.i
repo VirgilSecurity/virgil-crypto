@@ -39,7 +39,7 @@
   php_info_print_table_start();
   php_info_print_table_header(2, \"Directive\", \"Value\");
   php_info_print_table_row(2, \"Version\", virgil::crypto::VirgilVersion::fullName().c_str());
-#if defined(LIB_LOW_LEVEL_API)
+#if defined(VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP)
   php_info_print_table_row(2, \"Low-level API support\", \"enabled\");
 #else
   php_info_print_table_row(2, \"Low-level API support\", \"disabled\");
@@ -76,7 +76,7 @@
 %typemap(in)  VirgilTinyCipher::PackageSize = size_t;
 %typemap(out) VirgilTinyCipher::PackageSize = size_t;
 
-#if defined(LIB_LOW_LEVEL_API)
+#if defined(VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP)
 
 %typemap(in)  VirgilSymmetricCipher::Padding = int;
 %typemap(out) VirgilSymmetricCipher::Padding = int;

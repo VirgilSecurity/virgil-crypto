@@ -44,9 +44,7 @@ aux_source_directory ("src" src)
 aux_source_directory ("src/internal" src)
 aux_source_directory ("src/primitive" src)
 aux_source_directory ("src/pfs" src)
-if (LIB_FILE_IO)
-    aux_source_directory ("src/stream" src)
-endif()
+aux_source_directory ("src/stream" src)
 
 configure_file (
     "${CMAKE_CURRENT_SOURCE_DIR}/src/VirgilVersion.cxx.in"
@@ -58,25 +56,38 @@ aux_source_directory("${CMAKE_CURRENT_BINARY_DIR}/src" src)
 
 add_library (${PROJECT_NAME} ${inc} ${src})
 
-set_property (TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME ${PROJECT_NAME})
-set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
-set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
-set_property (TARGET ${PROJECT_NAME} PROPERTY DEBUG_POSTFIX "_d")
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    OUTPUT_NAME ${PROJECT_NAME}
+    POSITION_INDEPENDENT_CODE ON
+    INTERFACE_POSITION_INDEPENDENT_CODE ON
+    DEBUG_POSTFIX "_d"
+)
+
 if (BUILD_SHARED_LIBS)
-    set_target_properties (${PROJECT_NAME} PROPERTIES VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
-endif (BUILD_SHARED_LIBS)
+    set_target_properties (${PROJECT_NAME} PROPERTIES
+        VERSION ${VIRGIL_VERSION}
+        SOVERSION ${VIRGIL_SOVERSION}
+    )
+endif ()
+
 if (CMAKE_CROSSCOMPILING)
     set_property (TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY COMPILE_FLAGS " -std=c++11")
 endif ()
 
 target_include_directories (${PROJECT_NAME}
-    PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-    PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
-    PUBLIC "$<INSTALL_INTERFACE:include>"
+    PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
+        "$<INSTALL_INTERFACE:include>"
 )
 target_link_libraries (${PROJECT_NAME} mbedtls::mbedcrypto mbedtls::ed25519)
-target_compile_definitions (${PROJECT_NAME} PUBLIC "LIB_FILE_IO=$<BOOL:${LIB_FILE_IO}>" "UCLIBC=$<BOOL:${UCLIBC}>")
-target_compile_definitions (${PROJECT_NAME} PRIVATE "FMT_HEADER_ONLY")
+target_compile_definitions (${PROJECT_NAME}
+    PUBLIC
+        "VIRGIL_CRYPTO_FEATURE_STREAM_IMPL=$<BOOL:${VIRGIL_CRYPTO_FEATURE_STREAM_IMPL}>"
+        "UCLIBC=$<BOOL:${UCLIBC}>"
+    PRIVATE
+        "FMT_HEADER_ONLY"
+)
 
 if (INSTALL_CORE_LIBS)
     # Define names for configuration files
@@ -114,12 +125,15 @@ if (INSTALL_CORE_LIBS)
         INCLUDES DESTINATION "include"
     )
 
+    # Install headers
+    if (INSTALL_CORE_HEADERS)
+        install (DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/" DESTINATION "${INSTALL_INC_DIR_NAME}")
+    endif ()
+
     if (INSTALL_EXT_LIBS)
         install (DIRECTORY "${VIRGIL_DEPENDS_PREFIX}/lib/" DESTINATION "${INSTALL_LIB_DIR_NAME}")
     endif (INSTALL_EXT_LIBS)
 
-    # Install headers
-    add_subdirectory (include)
     if (INSTALL_EXT_HEADERS)
         install (DIRECTORY "${VIRGIL_DEPENDS_PREFIX}/include/" DESTINATION "${INSTALL_INC_DIR_NAME}")
     endif ()

@@ -104,7 +104,7 @@ if not "%TARGET_ARCH%" == "" (
 call :show_info INSTALL_DIR: %INSTALL_DIR%
 
 :: Configure common CMake parameters
-set CMAKE_ARGS=-DCMAKE_BUILD_TYPE=Release -G"NMake Makefiles" -DLIB_LOW_LEVEL_API=ON
+set CMAKE_ARGS=-DCMAKE_BUILD_TYPE=Release -G"NMake Makefiles" -DVIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP=ON
 
 :: Prepare build and install directories
 mkdir %BUILD_DIR% %INSTALL_DIR% 2>nul

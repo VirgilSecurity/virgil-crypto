@@ -54,7 +54,7 @@ set (TEST_FILES
     StringSink.php
 )
 
-if (LIB_LOW_LEVEL_API)
+if (VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP)
     list (APPEND TEST_FILES
         VirgilSymmetricCipher_Test.php
         VirgilAsymmetricCipher_EC_Test.php
@@ -65,7 +65,7 @@ if (LIB_LOW_LEVEL_API)
         VirgilPBE_Test.php
         VirgilKDF_Test.php
     )
-endif (LIB_LOW_LEVEL_API)
+endif (VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP)
 
 add_subdirectory (data)
 

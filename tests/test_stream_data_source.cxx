@@ -39,7 +39,7 @@
  * @brief Covers class VirgilDataSreamSource
  */
 
-#if LIB_FILE_IO
+#if VIRGIL_CRYPTO_FEATURE_STREAM_IMPL
 
 #include "catch.hpp"
 
@@ -55,4 +55,4 @@ TEST_CASE("VirgilStreamDataSource: check data existence in the bad stream", "[st
     REQUIRE_FALSE(dataSource.hasData());
 }
 
-#endif // LIB_FILE_IO
+#endif // VIRGIL_CRYPTO_FEATURE_STREAM_IMPL

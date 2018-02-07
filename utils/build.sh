@@ -315,7 +315,7 @@ show_info "<install_dir>: ${INSTALL_DIR}"
 CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
 
 # Expose low level API for all targets
-CMAKE_ARGS+=" -DLIB_LOW_LEVEL_API=ON"
+CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP=ON"
 
 if [[ ${TARGET_NAME} =~ ^(cpp|osx|java|net|php|python|ruby|nodejs|go)$ ]]; then
     CMAKE_ARGS+=" -DPLATFORM_ARCH=$(uname -m)"

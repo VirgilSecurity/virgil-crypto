@@ -34,13 +34,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/stream/VirgilBytesDataSink.h>
 
-using virgil::crypto::stream::VirgilBytesDataSink;
+#if VIRGIL_CRYPTO_FEATURE_STREAM_IMPL
 
 #include <virgil/crypto/VirgilByteArray.h>
+#include <virgil/crypto/stream/VirgilBytesDataSink.h>
 
 using virgil::crypto::VirgilByteArray;
+using virgil::crypto::stream::VirgilBytesDataSink;
+
 
 VirgilBytesDataSink::VirgilBytesDataSink(VirgilByteArray& out) : out_(out) {
 }
@@ -59,3 +61,5 @@ void VirgilBytesDataSink::reset() {
 
 VirgilBytesDataSink::~VirgilBytesDataSink() noexcept {
 }
+
+#endif /* VIRGIL_CRYPTO_FEATURE_STREAM_IMPL */

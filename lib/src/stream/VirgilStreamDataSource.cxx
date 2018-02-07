@@ -34,15 +34,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/stream/VirgilStreamDataSource.h>
 
-using virgil::crypto::stream::VirgilStreamDataSource;
+#if VIRGIL_CRYPTO_FEATURE_STREAM_IMPL
 
 #include <virgil/crypto/VirgilByteArray.h>
-
-using virgil::crypto::VirgilByteArray;
+#include <virgil/crypto/stream/VirgilStreamDataSource.h>
 
 #include <algorithm>
+
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::stream::VirgilStreamDataSource;
 
 static const size_t kChunkSizeMin = 32;
 
@@ -66,3 +67,5 @@ VirgilByteArray VirgilStreamDataSource::read() {
     }
     return result;
 }
+
+#endif /* VIRGIL_CRYPTO_FEATURE_STREAM_IMPL */

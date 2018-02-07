@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2014 Virgil Security Inc.
+# Copyright (C) 2015-2018 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -42,17 +42,15 @@
 #     - PLATFORM_VERSION    - minimum supported version of the target platform (optional).
 #     - PLATFORM_ARCH       - target platform processor architecture (optional).
 #     - ADD_COMPILER_INFO   - define whether to add compiler info to the library full name (optional).
-#
-#     - LIB_LOW_LEVEL_API   - boolean value that defines whether to include low-level API or not.
-#     - LIB_FILE_IO         - boolean value that defines whether to include module depends on file IO or not.
-#                             or separate utilities.
 #     - LIB_STATIC_RUNTIME  - сauses library to use the static version of the run-time library.
-#     - INSTALL_CORE_LIBS   - boolean value that defines whether install core library and it's dependencies or not,
-#                             if this value is NO or undefined - only wrapped library will be installed.
-#     - INSTALL_EXT_HEADERS - boolean value that defines whether install third-party library headers or not.
-#     - INSTALL_EXT_LIBS    - boolean value that defines whether install third-party library binaries or not.
-#     - ENABLE_TESTING      - boolean value that defines whether include unit testing or not.
-#     - ENABLE_BENCHMARK    - boolean value that defines whether include benchmark or not.
+#
+#     - INSTALL_CORE_HEADERS - boolean value that defines whether install core headers not.
+#     - INSTALL_CORE_LIBS    - boolean value that defines whether install core library and it's dependencies or not.
+#                              if this value is NO or undefined - only wrapped library will be installed.
+#     - INSTALL_EXT_HEADERS  - boolean value that defines whether install third-party library headers or not.
+#     - INSTALL_EXT_LIBS     - boolean value that defines whether install third-party library binaries or not.
+#     - ENABLE_TESTING       - boolean value that defines whether include unit testing or not.
+#     - ENABLE_BENCHMARK     - boolean value that defines whether include benchmark or not.
 #
 #     - INSTALL_INC_DIR_NAME  - name of the directory where include will be installed.
 #     - INSTALL_LIB_DIR_NAME  - name of the directory where libraries will be installed.
@@ -61,8 +59,16 @@
 #     - INSTALL_DOC_DIR_NAME  - name of the directory where documentation will be installed.
 #     - INSTALL_API_DIR_NAME  - name of the directory where API source files will be installed.
 #
-#     - DOXYGEN_EXTRACT_PRIVATE - boolean value that defines whether to exclude private API
-#                                 from Doxygen documentation or not
+#     - DOXYGEN_EXTRACT_PRIVATE - boolean value that defines whether to include private API
+#                                 to the Doxygen documentation or not
+#
+# Feature configurable variables:
+#     - VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP -
+#           boolean value that defines whether to wrap low-level API or not.
+#
+#     - VIRGIL_CRYPTO_FEATURE_STREAM_IMPL -
+#           boolean value that defines whether to compile module that is
+#           depends on a C++ streams or not.
 #
 # Define variables:
 #     - VIRGIL_VERSION           - library full version.
@@ -116,7 +122,7 @@ message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 # Build shared library if defined
-set (BUILD_SHARED_LIBS OFF CACHE BOOL "Frce to create shared libraries")
+set (BUILD_SHARED_LIBS OFF CACHE BOOL "Force to create shared libraries")
 
 # Configure redefine compiler options if requested
 if (NOT CMAKE_CROSSCOMPILING AND WIN32 AND NOT CYGWIN)
@@ -259,8 +265,18 @@ set_property (CACHE LANG PROPERTY STRINGS
     "python"
     "ruby"
 )
-set (LIB_LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API or not")
-set (LIB_FILE_IO OFF CACHE BOOL "Defines whether to include module depends on file IO or not")
+
+# Configure features
+set (VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP OFF CACHE BOOL
+        "Defines whether to wrap low-level API or not")
+
+set (VIRGIL_CRYPTO_FEATURE_STREAM_IMPL ON CACHE BOOL
+        "Defines whether to compile module that is depends on a C++ stream or not")
+
+# Configure crosscompiling
+set (UCLIBC OFF CACHE BOOL "Enable pathches if library is build with uClibc++")
+
+# Configure testing
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
 set (ENABLE_BENCHMARK OFF CACHE BOOL "Defines whether include benchmark or not.")
 
@@ -272,9 +288,6 @@ set (INSTALL_MAN_DIR_NAME "share/man" CACHE STRING "Installation directory name 
 set (INSTALL_DOC_DIR_NAME "share/doc" CACHE STRING "Installation directory name for doc pages")
 set (INSTALL_API_DIR_NAME api CACHE STRING "Installation directory name for interface files")
 
-# Configure crosscompiling
-set (UCLIBC OFF CACHE BOOL "Enable pathches if library is build with uClibc++")
-
 # Configure platform specific path variables
 if (ANDROID)
     set (ANDROID_INSTALL_JNI_DIR_NAME "lib/${ANDROID_NDK_ABI_NAME}")
@@ -285,10 +298,16 @@ set (INSTALL_CORE_LIBS_TMP OFF)
 if (LANG STREQUAL "cpp")
     set (INSTALL_CORE_LIBS_TMP ON)
 endif ()
+
 set (INSTALL_CORE_LIBS ${INSTALL_CORE_LIBS_TMP} CACHE BOOL
         "Defines whether install core library and it's dependencies or not")
+
+set (INSTALL_CORE_HEADERS ${INSTALL_CORE_LIBS} CACHE BOOL
+        "Defines whether install core headers or not")
+
 set (INSTALL_EXT_HEADERS OFF CACHE BOOL
         "Defines whether install third-party library headers or not")
+
 set (INSTALL_EXT_LIBS ON CACHE BOOL
         "Defines whether install third-party library binaries or not")
 

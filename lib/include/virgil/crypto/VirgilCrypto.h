@@ -93,9 +93,9 @@
 #include "primitive/VirgilOperationKDF.h"
 #include "primitive/VirgilOperationRandom.h"
 
-#if defined(VIRGIL_CRYPTO_STREAM_IMPL)
+#if VIRGIL_CRYPTO_FEATURE_STREAM_IMPL
     #include "stream/VirgilBytesDataSink.h"
     #include "stream/VirgilBytesDataSource.h"
     #include "stream/VirgilStreamDataSink.h"
     #include "stream/VirgilStreamDataSource.h"
-#endif
+#endif /* VIRGIL_CRYPTO_FEATURE_STREAM_IMPL */

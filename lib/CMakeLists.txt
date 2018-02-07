@@ -71,6 +71,8 @@ endif ()
 
 target_include_directories (${PROJECT_NAME}
     PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
+    PUBLIC "$<INSTALL_INTERFACE:include>"
 )
 target_link_libraries (${PROJECT_NAME} mbedtls::mbedcrypto mbedtls::ed25519)
 target_compile_definitions (${PROJECT_NAME} PUBLIC "LIB_FILE_IO=$<BOOL:${LIB_FILE_IO}>" "UCLIBC=$<BOOL:${UCLIBC}>")
@@ -146,12 +148,6 @@ endif (DOT_PROGRAM)
 find_host_package (Doxygen)
 if (DOXYGEN_FOUND)
     if (DOXYGEN_EXCLUDE_PRIVATE)
-        set (DOXYGEN_EXCLUDE
-             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/internal/*"
-             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/internal/*"
-             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/asn1/internal/*"
-        )
-        string (REPLACE ";" " " DOXYGEN_EXCLUDE "${DOXYGEN_EXCLUDE}")
         set (DOXYGEN_EXTRACT_PRIVATE "NO")
     else ()
         set (DOXYGEN_EXTRACT_PRIVATE "YES")

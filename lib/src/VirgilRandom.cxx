@@ -42,8 +42,8 @@
 #include <virgil/crypto/VirgilByteArrayUtils.h>
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 
-#include <virgil/crypto/internal/utils.h>
-#include <virgil/crypto/foundation/internal/mbedtls_context.h>
+#include "utils.h"
+#include "mbedtls_context.h"
 
 
 using virgil::crypto::VirgilByteArray;

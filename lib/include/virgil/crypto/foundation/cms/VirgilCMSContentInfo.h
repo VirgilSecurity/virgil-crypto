@@ -40,10 +40,12 @@
 #include <map>
 #include <string>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilCustomParams.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
-#include <virgil/crypto/foundation/cms/VirgilCMSContent.h>
+#include "VirgilCMSContent.h"
+
+#include "../asn1/VirgilAsn1Compatible.h"
+
+#include "../../VirgilCustomParams.h"
+#include "../../VirgilByteArray.h"
 
 namespace virgil { namespace crypto { namespace foundation { namespace cms {
 

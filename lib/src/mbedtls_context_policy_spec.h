@@ -46,7 +46,7 @@
 #include <mbedtls/cipher.h>
 
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
-#include <virgil/crypto/foundation/internal/mbedtls_type_utils.h>
+#include "mbedtls_type_utils.h"
 
 #include <array>
 

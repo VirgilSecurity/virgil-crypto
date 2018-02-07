@@ -34,7 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/foundation/internal/VirgilTagFilter.h>
+#include "VirgilTagFilter.h"
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::foundation::internal::VirgilTagFilter;

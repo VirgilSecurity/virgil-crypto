@@ -39,8 +39,8 @@
 
 #include <vector>
 
-#include <virgil/crypto/VirgilCipherBase.h>
-#include <virgil/crypto/VirgilByteArray.h>
+#include "VirgilCipherBase.h"
+#include "VirgilByteArray.h"
 
 namespace virgil { namespace crypto {
 

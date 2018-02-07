@@ -37,8 +37,8 @@
 #ifndef VIRGIL_CRYPTO_CONTENT_INFO_H
 #define VIRGIL_CRYPTO_CONTENT_INFO_H
 
-#include <virgil/crypto/VirgilCustomParams.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+#include "VirgilCustomParams.h"
+#include "foundation/asn1/VirgilAsn1Compatible.h"
 
 #include <memory>
 #include <functional>

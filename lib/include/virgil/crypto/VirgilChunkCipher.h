@@ -39,10 +39,10 @@
 
 #include <cstdlib>
 
-#include <virgil/crypto/VirgilCipherBase.h>
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilDataSource.h>
-#include <virgil/crypto/VirgilDataSink.h>
+#include "VirgilCipherBase.h"
+#include "VirgilByteArray.h"
+#include "VirgilDataSource.h"
+#include "VirgilDataSink.h"
 
 namespace virgil { namespace crypto {
 

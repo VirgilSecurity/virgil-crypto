@@ -34,7 +34,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <virgil/crypto/foundation/asn1/internal/VirgilAsn1Alg.h>
+#include "VirgilAsn1Alg.h"
 
 #include <limits>
 #include <mbedtls/oid.h>

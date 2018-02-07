@@ -39,10 +39,12 @@
 
 #include <vector>
 
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
-#include <virgil/crypto/foundation/cms/VirgilCMSKeyTransRecipient.h>
-#include <virgil/crypto/foundation/cms/VirgilCMSPasswordRecipient.h>
-#include <virgil/crypto/foundation/cms/VirgilCMSEncryptedContent.h>
+#include "../asn1/VirgilAsn1Compatible.h"
+
+#include "VirgilCMSKeyTransRecipient.h"
+#include "VirgilCMSPasswordRecipient.h"
+#include "VirgilCMSEncryptedContent.h"
+
 
 namespace virgil { namespace crypto { namespace foundation { namespace cms {
 

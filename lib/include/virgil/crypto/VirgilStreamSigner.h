@@ -37,11 +37,11 @@
 #ifndef VIRGIL_STREAM_SIGNER_H
 #define VIRGIL_STREAM_SIGNER_H
 
-#include <virgil/crypto/VirgilSignerBase.h>
+#include "VirgilSignerBase.h"
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilDataSource.h>
-#include <virgil/crypto/foundation/VirgilHash.h>
+#include "VirgilByteArray.h"
+#include "VirgilDataSource.h"
+#include "foundation/VirgilHash.h"
 
 namespace virgil { namespace crypto {
 

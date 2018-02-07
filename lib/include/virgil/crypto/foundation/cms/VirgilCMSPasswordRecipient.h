@@ -37,8 +37,8 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_CMS_PASSWORD_RECIPIENT_H
 #define VIRGIL_CRYPTO_VIRGIL_CMS_PASSWORD_RECIPIENT_H
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+#include "../../VirgilByteArray.h"
+#include "../asn1/VirgilAsn1Compatible.h"
 
 namespace virgil { namespace crypto { namespace foundation { namespace cms {
 

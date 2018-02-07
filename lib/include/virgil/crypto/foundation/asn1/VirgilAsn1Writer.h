@@ -41,7 +41,7 @@
 #include <string>
 #include <vector>
 
-#include <virgil/crypto/VirgilByteArray.h>
+#include "../../VirgilByteArray.h"
 
 namespace virgil { namespace crypto { namespace foundation { namespace asn1 {
 

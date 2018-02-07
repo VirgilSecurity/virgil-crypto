@@ -37,8 +37,8 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_BYTES_DATA_SOURCE_H
 #define VIRGIL_CRYPTO_VIRGIL_BYTES_DATA_SOURCE_H
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilDataSource.h>
+#include "../VirgilByteArray.h"
+#include "../VirgilDataSource.h"
 
 namespace virgil { namespace crypto { namespace stream {
 

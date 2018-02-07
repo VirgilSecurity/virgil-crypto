@@ -42,7 +42,7 @@
 #include <mbedtls/asn1.h>
 #include <mbedtls/asn1write.h>
 
-#include <virgil/crypto/internal/utils.h>
+#include "utils.h"
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 
 using virgil::crypto::VirgilByteArray;

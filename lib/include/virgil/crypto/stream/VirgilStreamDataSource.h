@@ -39,8 +39,8 @@
 
 #include <istream>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilDataSource.h>
+#include "../VirgilByteArray.h"
+#include "../VirgilDataSource.h"
 
 namespace virgil { namespace crypto { namespace stream {
 

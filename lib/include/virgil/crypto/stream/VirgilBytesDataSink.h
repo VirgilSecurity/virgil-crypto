@@ -37,7 +37,7 @@
 #ifndef VIRGIL_CRYPTO_VIRGIL_BYTES_DATA_SINK_H
 #define VIRGIL_CRYPTO_VIRGIL_BYTES_DATA_SINK_H
 
-#include <virgil/crypto/VirgilDataSink.h>
+#include "../VirgilDataSink.h"
 
 namespace virgil { namespace crypto { namespace stream {
 

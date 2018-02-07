@@ -44,7 +44,7 @@
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 #include <virgil/crypto/foundation/VirgilPBE.h>
 
-#include <virgil/crypto/internal/utils.h>
+#include "utils.h"
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;

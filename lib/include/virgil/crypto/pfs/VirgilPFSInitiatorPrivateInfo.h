@@ -37,8 +37,8 @@
 #ifndef VIRGIL_CRYPTO_PFS_VIRGIL_PFS_INITIATOR_PRIVATE_INFO_H
 #define VIRGIL_CRYPTO_PFS_VIRGIL_PFS_INITIATOR_PRIVATE_INFO_H
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/pfs/VirgilPFSPrivateKey.h>
+#include "../VirgilByteArray.h"
+#include "VirgilPFSPrivateKey.h"
 
 namespace virgil { namespace crypto { namespace pfs {
 

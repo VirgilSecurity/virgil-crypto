@@ -39,7 +39,7 @@
 
 #include <system_error>
 
-#include <virgil/crypto/VirgilCryptoError.h>
+#include "../VirgilCryptoError.h"
 
 namespace virgil { namespace crypto { namespace foundation {
 

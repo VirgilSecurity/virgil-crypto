@@ -37,11 +37,11 @@
 #include <virgil/crypto/foundation/cms/VirgilCMSContent.h>
 
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
-#include <virgil/crypto/foundation/internal/VirgilOID.h>
+#include "VirgilOID.h"
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
-#include <virgil/crypto/internal/utils.h>
+#include "utils.h"
 
 using virgil::crypto::foundation::cms::VirgilCMSContent;
 using virgil::crypto::foundation::asn1::VirgilAsn1Reader;

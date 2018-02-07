@@ -40,7 +40,7 @@
 #include <limits>
 #include <system_error>
 
-#include <virgil/crypto/VirgilCryptoException.h>
+#include "VirgilCryptoException.h"
 
 namespace virgil { namespace crypto {
 

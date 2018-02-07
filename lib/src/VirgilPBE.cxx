@@ -48,9 +48,9 @@
 #include <virgil/crypto/foundation/VirgilRandom.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
-#include <virgil/crypto/foundation/asn1/internal/VirgilAsn1Alg.h>
+#include "VirgilAsn1Alg.h"
 
-#include <virgil/crypto/internal/utils.h>
+#include "utils.h"
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;

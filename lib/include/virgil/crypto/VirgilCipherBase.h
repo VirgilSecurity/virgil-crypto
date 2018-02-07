@@ -41,8 +41,8 @@
 #include <set>
 #include <memory>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilCustomParams.h>
+#include "VirgilByteArray.h"
+#include "VirgilCustomParams.h"
 
 /**
  * @name Forward declaration

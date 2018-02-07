@@ -45,7 +45,8 @@
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilByteArrayUtils.h>
-#include <virgil/crypto/foundation/internal/VirgilTagFilter.h>
+
+#include "VirgilTagFilter.h"
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;

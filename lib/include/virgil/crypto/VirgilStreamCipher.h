@@ -37,11 +37,11 @@
 #ifndef VIRGIL_STREAM_CIPHER_H
 #define VIRGIL_STREAM_CIPHER_H
 
-#include <virgil/crypto/VirgilCipherBase.h>
+#include "VirgilCipherBase.h"
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilDataSource.h>
-#include <virgil/crypto/VirgilDataSink.h>
+#include "VirgilByteArray.h"
+#include "VirgilDataSource.h"
+#include "VirgilDataSink.h"
 
 namespace virgil { namespace crypto {
 

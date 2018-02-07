@@ -37,8 +37,8 @@
 #ifndef VIRGIL_CRYPTO_FOUNDATION_VIRGIL_HKDF_H
 #define VIRGIL_CRYPTO_FOUNDATION_VIRGIL_HKDF_H
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/foundation/VirgilHash.h>
+#include "../VirgilByteArray.h"
+#include "VirgilHash.h"
 
 namespace virgil { namespace crypto { namespace foundation {
 

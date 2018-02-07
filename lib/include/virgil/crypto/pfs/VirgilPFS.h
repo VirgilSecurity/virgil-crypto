@@ -37,20 +37,20 @@
 #ifndef VIRGIL_CRYPTO_PFS_VIRGIL_PFS_H
 #define VIRGIL_CRYPTO_PFS_VIRGIL_PFS_H
 
-#include <virgil/crypto/VirgilByteArray.h>
+#include "../VirgilByteArray.h"
 
-#include <virgil/crypto/pfs/VirgilPFSSession.h>
-#include <virgil/crypto/pfs/VirgilPFSEncryptedMessage.h>
-#include <virgil/crypto/pfs/VirgilPFSInitiatorPublicInfo.h>
-#include <virgil/crypto/pfs/VirgilPFSInitiatorPrivateInfo.h>
-#include <virgil/crypto/pfs/VirgilPFSResponderPublicInfo.h>
-#include <virgil/crypto/pfs/VirgilPFSResponderPrivateInfo.h>
+#include "VirgilPFSSession.h"
+#include "VirgilPFSEncryptedMessage.h"
+#include "VirgilPFSInitiatorPublicInfo.h"
+#include "VirgilPFSInitiatorPrivateInfo.h"
+#include "VirgilPFSResponderPublicInfo.h"
+#include "VirgilPFSResponderPrivateInfo.h"
 
-#include <virgil/crypto/primitive/VirgilOperationRandom.h>
-#include <virgil/crypto/primitive/VirgilOperationHash.h>
-#include <virgil/crypto/primitive/VirgilOperationDH.h>
-#include <virgil/crypto/primitive/VirgilOperationKDF.h>
-#include <virgil/crypto/primitive/VirgilOperationCipher.h>
+#include "../primitive/VirgilOperationRandom.h"
+#include "../primitive/VirgilOperationHash.h"
+#include "../primitive/VirgilOperationDH.h"
+#include "../primitive/VirgilOperationKDF.h"
+#include "../primitive/VirgilOperationCipher.h"
 
 namespace virgil { namespace crypto { namespace pfs {
 

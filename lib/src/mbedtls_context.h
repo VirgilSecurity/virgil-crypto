@@ -38,7 +38,7 @@
 #define VIRGIL_CRYPTO_MBEDTLS_CONTEXT_H
 
 #include <memory>
-#include <virgil/crypto/internal/utils.h>
+#include "utils.h"
 
 namespace virgil { namespace crypto { namespace foundation { namespace internal {
 

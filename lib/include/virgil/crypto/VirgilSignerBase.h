@@ -37,9 +37,9 @@
 #ifndef VIRGIL_CRYPTO_SIGNER_BASE_H
 #define VIRGIL_CRYPTO_SIGNER_BASE_H
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/foundation/VirgilHash.h>
-#include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
+#include "VirgilByteArray.h"
+#include "foundation/VirgilHash.h"
+#include "foundation/VirgilAsymmetricCipher.h"
 
 namespace virgil { namespace crypto {
 

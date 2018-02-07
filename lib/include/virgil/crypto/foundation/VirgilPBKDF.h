@@ -40,9 +40,9 @@
 #include <string>
 #include <memory>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/foundation/VirgilHash.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+#include "../VirgilByteArray.h"
+#include "asn1/VirgilAsn1Compatible.h"
+#include "VirgilHash.h"
 
 namespace virgil { namespace crypto { namespace foundation {
 

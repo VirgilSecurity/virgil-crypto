@@ -37,7 +37,7 @@
 #ifndef VIRGIL_CRYPTO_PFS_VIRGIL_PFS_ENCRYPTED_MESSAGE_H
 #define VIRGIL_CRYPTO_PFS_VIRGIL_PFS_ENCRYPTED_MESSAGE_H
 
-#include <virgil/crypto/VirgilByteArray.h>
+#include "../VirgilByteArray.h"
 
 namespace virgil { namespace crypto { namespace pfs {
 

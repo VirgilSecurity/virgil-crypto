@@ -44,9 +44,9 @@
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
-#include <virgil/crypto/internal/utils.h>
-#include <virgil/crypto/foundation/internal/mbedtls_context.h>
-#include <virgil/crypto/foundation/internal/mbedtls_type_utils.h>
+#include "utils.h"
+#include "mbedtls_context.h"
+#include "mbedtls_type_utils.h"
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;

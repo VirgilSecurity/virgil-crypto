@@ -40,9 +40,9 @@
 #include <cstdlib>
 #include <memory>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilKeyPair.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
+#include "../VirgilByteArray.h"
+#include "../VirgilKeyPair.h"
+#include "asn1/VirgilAsn1Compatible.h"
 
 namespace virgil { namespace crypto { namespace foundation {
 

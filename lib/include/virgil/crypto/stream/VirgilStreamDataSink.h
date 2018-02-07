@@ -39,7 +39,7 @@
 
 #include <ostream>
 
-#include <virgil/crypto/VirgilDataSink.h>
+#include "../VirgilDataSink.h"
 
 namespace virgil { namespace crypto { namespace stream {
 

@@ -43,7 +43,7 @@
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
-#include <virgil/crypto/internal/utils.h>
+#include "utils.h"
 
 #include <algorithm>
 #include <set>

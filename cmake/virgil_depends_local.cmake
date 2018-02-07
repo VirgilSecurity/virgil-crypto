@@ -75,7 +75,7 @@
 #          virgil_find_package (zzzzz x.y)
 #
 
-cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 
 include (CMakeParseArguments)
 

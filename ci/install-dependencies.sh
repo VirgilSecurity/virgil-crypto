@@ -71,8 +71,8 @@ mkdir -p "${PROJECT_ROOT}/dependencies" && cd "${PROJECT_ROOT}/dependencies"
 ######################################## CMake
 echo "Build & Install CMake ..."
 CMAKE_VERSION_MAJOR=3
-CMAKE_VERSION_MINOR=9
-CMAKE_VERSION_PATCH=0
+CMAKE_VERSION_MINOR=10
+CMAKE_VERSION_PATCH=2
 CMAKE_VERSION="${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}.${CMAKE_VERSION_PATCH}"
 travis_retry wget https://cmake.org/files/v${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}/cmake-${CMAKE_VERSION}.tar.gz
 tar xvfz cmake-${CMAKE_VERSION}.tar.gz

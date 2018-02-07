@@ -42,7 +42,7 @@
 #     - WRAPPED_LIB_NAME - name of the wrapped library.
 #
 
-cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 
 project (wrappers)
 

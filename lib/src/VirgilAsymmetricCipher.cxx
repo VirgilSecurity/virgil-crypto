@@ -605,7 +605,7 @@ size_t VirgilAsymmetricCipher::calculateExportedPrivateKeySizeMaxDER(size_t encr
                                       3 /* version */ +
                                       5 /* modulus */ +
                                       7 * 4 /* (tag + len) * 7 numbers */;
-        return asn1Overhead + 2 * keyLength + 5 * (keyLength >> 1) + encryptionOverhead;
+        return asn1Overhead + 2 * keyLength + 5 * ((keyLength >> 1) + 1) + encryptionOverhead;
     }
     throw make_error(
             VirgilCryptoError::UnsupportedAlgorithm, internal::to_string(mbedtls_pk_get_type(impl_->pk_ctx.get())));

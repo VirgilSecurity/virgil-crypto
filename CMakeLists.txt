@@ -61,7 +61,7 @@
 #     - INSTALL_DOC_DIR_NAME  - name of the directory where documentation will be installed.
 #     - INSTALL_API_DIR_NAME  - name of the directory where API source files will be installed.
 #
-#     - DOXYGEN_EXCLUDE_PRIVATE - boolean value that defines whether to exclude private API
+#     - DOXYGEN_EXTRACT_PRIVATE - boolean value that defines whether to exclude private API
 #                                 from Doxygen documentation or not
 #
 # Define variables:
@@ -294,7 +294,7 @@ set (INSTALL_EXT_LIBS ON CACHE BOOL
 
 
 # Configure Doxygen behaviour
-set (DOXYGEN_EXCLUDE_PRIVATE ON CACHE BOOL "Exclude private API from Doxygen documentation")
+set (DOXYGEN_EXTRACT_PRIVATE NO CACHE BOOL "Include private API to the Doxygen documentation")
 
 # Configure testing
 if (ENABLE_TESTING)

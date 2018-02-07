@@ -147,11 +147,6 @@ endif (DOT_PROGRAM)
 
 find_host_package (Doxygen)
 if (DOXYGEN_FOUND)
-    if (DOXYGEN_EXCLUDE_PRIVATE)
-        set (DOXYGEN_EXTRACT_PRIVATE "NO")
-    else ()
-        set (DOXYGEN_EXTRACT_PRIVATE "YES")
-    endif (DOXYGEN_EXCLUDE_PRIVATE)
     configure_file (${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
     add_custom_target (doc
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile

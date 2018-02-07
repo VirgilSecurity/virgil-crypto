@@ -59,10 +59,10 @@ function show_usage {
     echo -e "${COLOR_BLUE}Usage: ${BASH_SOURCE[0]} [<target>] [<src_dir>] [<build_dir>] [<install_dir>]${COLOR_RESET}"
     echo -e "  - <target> - (default = cpp) target to build wich contains two parts <name>[-<version>], where <name>:"
     echo -e "    * cpp              - build C++ library;"
-    echo -e "    * osx              - build framework for Apple OS X, requirements: OS X, Xcode;"
+    echo -e "    * macos            - build framework for Apple macOSX, requirements: OS X, Xcode;"
     echo -e "    * ios              - build framework for Apple iOS, requirements: OS X, Xcode;"
-    echo -e "    * applewatchos     - build framework for Apple WatchOS, requirements: OS X, Xcode;"
-    echo -e "    * appletvos        - build framework for Apple TVOS, requirements: OS X, Xcode;"
+    echo -e "    * watchos          - build framework for Apple WatchOS, requirements: OS X, Xcode;"
+    echo -e "    * tvos             - build framework for Apple TVOS, requirements: OS X, Xcode;"
     echo -e "    * php              - build PHP library, requirements: php-dev;"
     echo -e "    * python           - build Python library;"
     echo -e "    * ruby             - build Ruby library;"
@@ -85,11 +85,11 @@ function show_usage {
 }
 
 function show_info {
-    echo -e "${COLOR_GREEN}[INFO]${COLOR_RESET} $1"
+    echo -e "${COLOR_GREEN}[INFO] $@${COLOR_RESET}"
 }
 
 function show_error {
-    echo -e "${COLOR_RED}[ERROR] $1${COLOR_RESET}"
+    echo -e "${COLOR_RED}[ERROR] $@${COLOR_RESET}"
     exit 1
 }
 
@@ -101,6 +101,59 @@ function abspath() {
         echo "$(cd "$(dirname "$1")" && pwd -P)/$(basename "$1")"
     fi
   )
+}
+
+function make_fat_framework {
+    # Define name of the fat library
+    if [ ! -z "$1" ]; then
+        FRAMEWORK_NAME="$1"
+    else
+        show_error "Error. Framework name is not defined."
+    fi
+
+    # Define install directory
+    if [ ! -z "$2" ]; then
+        INDIR="$2"
+    else
+        show_error "Error. Input directory is not defined."
+    fi
+
+    # Define output directory
+    if [ ! -z "$3" ]; then
+        OUTDIR="$3"
+    else
+        show_error "Error. Output directory is not defined."
+    fi
+
+    # Create output dir
+    mkdir -p "$OUTDIR"
+
+    # Remove output framework if exists
+    OUTPUT_FRAMEWORK="${OUTDIR}/${FRAMEWORK_NAME}.framework"
+    rm -fr "${OUTPUT_FRAMEWORK}"
+
+    # Find all frameworks with given name
+    FRAMEWORKS=$(find "${INDIR}" -name "${FRAMEWORK_NAME}.framework" | tr '\n' ' ')
+
+    if [ -z "${FRAMEWORKS}" ]; then
+        show_error "Error. Frameworks named'${FRAMEWORK_NAME}.framework'" \
+                "are not found within directory: ${INDIR}."
+    fi
+
+    # Get frameworks binary
+    FRAMEWORKS_BIN=""
+    for framework in ${FRAMEWORKS}; do
+        FRAMEWORKS_BIN+=$(find "${framework}" -type f -perm +111 -name "${FRAMEWORK_NAME}")
+        FRAMEWORKS_BIN+=" "
+    done
+
+    # Copy first framework to the output and remove it's binary
+    rsync --recursive --links "$(echo "${FRAMEWORKS}" | awk '{print $1}')/" "${OUTPUT_FRAMEWORK}"
+    OUTPUT_FRAMEWORK_BIN=$(find "${OUTPUT_FRAMEWORK}" -type f -perm +111 -name "${FRAMEWORK_NAME}")
+    rm "${OUTPUT_FRAMEWORK_BIN}"
+
+    # Merge found framework binaries to the output framework
+    lipo -create ${FRAMEWORKS_BIN} -o ${OUTPUT_FRAMEWORK_BIN}
 }
 
 function make_fat_library {
@@ -173,73 +226,6 @@ function make_fat_library {
     if [ -f "${LIBVIRGIL_WRAPPER_FAT}" ]; then
         rm -f "${LIBVIRGIL_WRAPPER_FAT}"
     fi
-}
-
-function make_apple_framework {
-    # Define name of the framework
-    if [ ! -z "$1" ]; then
-        FRAMEWORK_NAME="$1"
-    else
-        show_error "Error. Bundle name is not defined."
-    fi
-
-    # Define install directory for framework
-    if [ ! -z "$2" ]; then
-        INDIR="$2"
-    else
-        show_error "Error. Input directory is not defined."
-    fi
-
-    # Define working directory for framework
-    if [ ! -z "$3" ]; then
-        OUTDIR="$3"
-    else
-        show_error "Error. Output directory is not defined."
-    fi
-
-    HEADERS_DIR="$INDIR/include"
-
-    LIBMBEDTLS="libmbedcrypto.a"
-    LIBED25519="libed25519.a"
-    LIBVIRGIL="libvirgil_crypto.a"
-
-    # Create working dir
-    mkdir -p "$OUTDIR"
-
-    # Find all archs of library ARM mbedTLS
-    LIBMBEDTLS_LIBS=$(find "${INDIR}" -name "${LIBMBEDTLS}" | tr '\n' ' ')
-
-    # Find all archs of library ed25519
-    LIBED25519_LIBS=$(find "${INDIR}" -name "${LIBED25519}" | tr '\n' ' ')
-
-    # Find all archs of library Virgil Crypto
-    LIBVIRGIL_LIBS=$(find "${INDIR}" -name "${LIBVIRGIL}" | tr '\n' ' ')
-
-    xcrun lipo -create ${LIBMBEDTLS_LIBS} -output "$OUTDIR/$LIBMBEDTLS"
-    xcrun lipo -create ${LIBED25519_LIBS} -output "$OUTDIR/$LIBED25519"
-    xcrun lipo -create ${LIBVIRGIL_LIBS} -output "$OUTDIR/$LIBVIRGIL"
-    # Merge several static libraries in one static library which will actually be framework
-    xcrun libtool -static -o "$OUTDIR/$FRAMEWORK_NAME" \
-            "$OUTDIR/$LIBMBEDTLS" "$OUTDIR/$LIBED25519" "$OUTDIR/$LIBVIRGIL"
-
-    FRAMEWORK_FULL_NAME="$FRAMEWORK_NAME.framework"
-    # Compose framework directory structure
-    mkdir -p "$OUTDIR/$FRAMEWORK_FULL_NAME/Versions/A"
-    mkdir -p "$OUTDIR/$FRAMEWORK_FULL_NAME/Versions/A/Headers"
-
-    # Link the "Current" version to "A"
-    ln -sf A "$OUTDIR/$FRAMEWORK_FULL_NAME/Versions/Current"
-    ln -sf Versions/Current/Headers "$OUTDIR/$FRAMEWORK_FULL_NAME/Headers"
-    ln -sf "Versions/Current/$FRAMEWORK_NAME" "$OUTDIR/$FRAMEWORK_FULL_NAME/$FRAMEWORK_NAME"
-
-    # Locate all files to correspondent places
-    cp -f "$OUTDIR/$FRAMEWORK_NAME" "$OUTDIR/$FRAMEWORK_FULL_NAME/Versions/A/"
-    cp -Rf "$HEADERS_DIR/" "$OUTDIR/$FRAMEWORK_FULL_NAME/Versions/A/Headers/"
-
-    rm -f "$OUTDIR/$LIBMBEDTLS"
-    rm -f "$OUTDIR/$LIBED25519"
-    rm -f "$OUTDIR/$LIBVIRGIL"
-    rm -f "$OUTDIR/$FRAMEWORK_NAME"
 }
 
 # Define environment variables.
@@ -318,7 +304,7 @@ CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
 # Expose low level API for all targets
 CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP=ON"
 
-if [[ ${TARGET_NAME} =~ ^(cpp|osx|java|net|php|python|ruby|nodejs|go)$ ]]; then
+if [[ ${TARGET_NAME} =~ ^(cpp|java|net|php|python|ruby|nodejs|go)$ ]]; then
     CMAKE_ARGS+=" -DPLATFORM_ARCH=$(uname -m)"
 fi
 
@@ -341,7 +327,7 @@ cd "${BUILD_DIR}" && rm -fr ./*
 # Build for native platforms
 if [[ ${TARGET_NAME} =~ ^(cpp|java|php|python|ruby|nodejs|go)$ ]]; then
     cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
-    make -j4 install
+    make -j8 install
 fi
 
 # Build for Mono
@@ -353,7 +339,7 @@ if [ "${TARGET_NAME}" == "net" ]; then
         CMAKE_ARGS+=" -DCMAKE_CXX_FLAGS=-mmacosx-version-min=${osx_version_min}"
         CMAKE_ARGS+=" -DINSTALL_CORE_LIBS=ON"
         cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
-        make -j4 install
+        make -j8 install
         # Create fat library
         make_fat_library libVirgilCryptoNet.a "${INSTALL_DIR}" "${INSTALL_DIR}/libs" "net"
         find "${INSTALL_DIR:?}" -name "*.dll" -exec cp -f {} "${INSTALL_DIR:?}/libs/" \;
@@ -362,38 +348,35 @@ if [ "${TARGET_NAME}" == "net" ]; then
         mv "${INSTALL_DIR:?}/libs" "${INSTALL_DIR:?}/lib"
     else # Other *nix
         cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
-        make -j4 install
+        make -j8 install
     fi
 fi
 
-# Build OSX framewrok
-if [ "${TARGET_NAME}" == "osx" ]; then
-    # Add minimim OSX version flag
-    osx_version_min="10.10" # Yosemite
-    CMAKE_ARGS+=" -DCMAKE_ASM_FLAGS=-mmacosx-version-min=${osx_version_min}"
-    CMAKE_ARGS+=" -DCMAKE_C_FLAGS=-mmacosx-version-min=${osx_version_min}"
-    CMAKE_ARGS+=" -DCMAKE_CXX_FLAGS=-mmacosx-version-min=${osx_version_min}"
-    # Build
-    cmake ${CMAKE_ARGS} -DLANG=cpp -DPLATFORM=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
-    make -j4 install
-    # Create framework
-    make_apple_framework VSCCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
-    rm -fr "${INSTALL_DIR:?}/include"
-    rm -fr "${INSTALL_DIR:?}/lib"
-fi
+# Build for Apple plaforms create Apple Framework
+if [ "${TARGET_NAME}" == "ios" ] || [ "${TARGET_NAME}" == "tvos" ] || \
+   [ "${TARGET_NAME}" == "watchos" ] || [ "${TARGET_NAME}" == "macos" ]; then
 
-# Build for embedded plaforms
-if [ "${TARGET_NAME}" == "ios" ] || [ "${TARGET_NAME}" == "appletvos" ] || [ "${TARGET_NAME}" == "applewatchos" ]; then
-    CMAKE_ARGS+=" -DPLATFORM=${TARGET_NAME}"
+    APPLE_PLATFORM=$(echo "${TARGET_NAME}" | awk '{print toupper($0)}')
+
+    CMAKE_ARGS+=" -LANG=cpp"
+    CMAKE_ARGS+=" -DINSTALL_CORE_HEADERS=NO"
+    CMAKE_ARGS+=" -DINSTALL_EXT_LIBS=NO"
+    CMAKE_ARGS+=" -DINSTALL_EXT_HEADERS=NO"
+    CMAKE_ARGS+=" -DCMAKE_TOOLCHAIN_FILE='${SRC_DIR}/cmake/apple.cmake'"
+
     # Build for device
-    cmake ${CMAKE_ARGS} -DLANG=cpp -DINSTALL_LIB_DIR_NAME=lib/dev -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
-    make -j4 install
-    # Build for simulator
-    rm -fr ./*
-    cmake ${CMAKE_ARGS} -DLANG=cpp -DINSTALL_LIB_DIR_NAME=lib/sim -DSIMULATOR=ON -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
-    make -j4 install
-    # Create framework
-    make_apple_framework VSCCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM} -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
+    make -j8 install
+
+    if [ "${TARGET_NAME}" != "macos" ]; then
+        # Build for simulator
+        rm -fr ./*
+        cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM}_SIM -DINSTALL_LIB_DIR_NAME=lib/sim "${SRC_DIR}"
+        make -j8 install
+    fi
+
+    make_fat_framework VSCCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
+
     rm -fr "${INSTALL_DIR:?}/include"
     rm -fr "${INSTALL_DIR:?}/lib"
 fi
@@ -413,7 +396,7 @@ if [[ "${TARGET_NAME}" == *"android"* ]]; then
         # Build architecture: $1
         rm -fr ./*
         cmake ${CMAKE_ARGS} -DANDROID_ABI="$1" -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/android.toolchain.cmake" "${SRC_DIR}"
-        make -j4 install
+        make -j8 install
     }
     build_android x86
     build_android x86_64
@@ -428,11 +411,11 @@ if [[ ${TARGET_NAME} =~ ^net_(ios|appletvos|applewatchos)$ ]]; then
     CMAKE_ARGS+=" -DINSTALL_CORE_LIBS=ON"
     # Build for device
     cmake ${CMAKE_ARGS} -DLANG=net -DENABLE_BITCODE=NO -DSIMULATOR=OFF -DINSTALL_LIB_DIR_NAME=lib/dev -DPLATFORM=${TARGET_NAME/net_/} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
-    make -j4 install
+    make -j8 install
     # Build for simulator
     rm -fr ./*
     cmake ${CMAKE_ARGS} -DLANG=net -DENABLE_BITCODE=NO -DSIMULATOR=ON -DINSTALL_LIB_DIR_NAME=lib/sim -DPLATFORM=${TARGET_NAME/net_/} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
-    make -j4 install
+    make -j8 install
     # Create fat library
     make_fat_library libVirgilCryptoNet.a "${INSTALL_DIR}" "${INSTALL_DIR}/libs" "net"
     find "${INSTALL_DIR:?}" -name "*.dll" -exec cp -f {} "${INSTALL_DIR:?}/libs/" \;
@@ -447,7 +430,7 @@ if [ "${TARGET_NAME}" == "asmjs" ]; then
     fi
     source "${EMSDK_HOME}/emsdk_env.sh"
     cmake ${CMAKE_ARGS} -DLANG=asmjs -DCMAKE_TOOLCHAIN_FILE="$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake" "${SRC_DIR}"
-    make -j4 install
+    make -j8 install
 fi
 
 if [ "${TARGET_NAME}" == "pnacl" ]; then
@@ -455,10 +438,10 @@ if [ "${TARGET_NAME}" == "pnacl" ]; then
         show_usage "Enviroment \$NACL_SDK_ROOT is not defined!" 1
     fi
     cmake ${CMAKE_ARGS} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/pnacl.toolchain.cmake" "${SRC_DIR}"
-    make -j4 install
+    make -j8 install
 fi
 
-if [[ ${TARGET_NAME} =~ (ios|appletvos|applewatchos|android) ]]; then
+if [[ ${TARGET_NAME} =~ (ios|tvos|watchos|macos|android) ]]; then
     ARCH_NAME=$(cat "${BUILD_DIR}/lib_name.txt")
 else
     ARCH_NAME=$(cat "${BUILD_DIR}/lib_name_full.txt")

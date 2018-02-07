@@ -54,7 +54,11 @@ configure_file (
 
 aux_source_directory("${CMAKE_CURRENT_BINARY_DIR}/src" src)
 
-add_library (${PROJECT_NAME} ${inc} ${src})
+if (CMAKE_CROSSCOMPILING AND APPLE)
+    add_library (${PROJECT_NAME} SHARED ${inc} ${src})
+else()
+    add_library (${PROJECT_NAME} ${inc} ${src})
+endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME ${PROJECT_NAME}
@@ -63,14 +67,14 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     DEBUG_POSTFIX "_d"
 )
 
-if (BUILD_SHARED_LIBS)
+if (BUILD_SHARED_LIBS OR (CMAKE_CROSSCOMPILING AND APPLE))
     set_target_properties (${PROJECT_NAME} PROPERTIES
         VERSION ${VIRGIL_VERSION}
         SOVERSION ${VIRGIL_SOVERSION}
     )
 endif ()
 
-if (CMAKE_CROSSCOMPILING)
+if (CMAKE_CROSSCOMPILING AND NOT APPLE)
     set_property (TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY COMPILE_FLAGS " -std=c++11")
 endif ()
 
@@ -88,6 +92,33 @@ target_compile_definitions (${PROJECT_NAME}
     PRIVATE
         "FMT_HEADER_ONLY"
 )
+
+# ---------------------------------------------------------------------------
+#   Apple specifc library configuration
+# ---------------------------------------------------------------------------
+if (CMAKE_CROSSCOMPILING AND APPLE)
+    # Add includes to the framework
+    foreach (_inc_file ${inc})
+        get_filename_component (_inc_file_path "${_inc_file}" DIRECTORY)
+
+        string (REGEX REPLACE
+            "${CMAKE_CURRENT_LIST_DIR}/include/virgil/crypto" ""
+            _inc_file_path "${_inc_file_path}"
+        )
+
+        set_property (
+            SOURCE ${_inc_file}
+            PROPERTY MACOSX_PACKAGE_LOCATION "Headers${_inc_file_path}"
+        )
+    endforeach ()
+
+    # Convert target to framework
+    target_apple_framework (${PROJECT_NAME}
+        NAME "VSCCrypto"
+        IDENTIFIER "com.virgilsecurity.VSCCrypto"
+    )
+
+endif ()
 
 if (INSTALL_CORE_LIBS)
     # Define names for configuration files
@@ -119,10 +150,10 @@ if (INSTALL_CORE_LIBS)
     # Install targets
     install (TARGETS ${PROJECT_NAME}
         EXPORT "${targets_export_name}"
-        LIBRARY DESTINATION "${INSTALL_LIB_DIR_NAME}"
-        ARCHIVE DESTINATION "${INSTALL_LIB_DIR_NAME}"
-        RUNTIME DESTINATION "${INSTALL_BIN_DIR_NAME}"
-        INCLUDES DESTINATION "include"
+        LIBRARY   DESTINATION "${INSTALL_LIB_DIR_NAME}"
+        ARCHIVE   DESTINATION "${INSTALL_LIB_DIR_NAME}"
+        RUNTIME   DESTINATION "${INSTALL_BIN_DIR_NAME}"
+        FRAMEWORK DESTINATION "${INSTALL_LIB_DIR_NAME}"
     )
 
     # Install headers

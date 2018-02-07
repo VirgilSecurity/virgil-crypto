@@ -118,6 +118,17 @@ endif (VIRGIL_VERSION_FEATURE)
 message (STATUS "Virgil version: " ${VIRGIL_VERSION_FULL_NAME})
 message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 
+# Set PLATFORM and PLATFORM_VERSION for crosscompiling builds
+if (CMAKE_CROSSCOMPILING AND APPLE)
+    string (TOLOWER "${APPLE_PLATFORM}" PLATFORM)
+    string (REPLACE "_sim" "" PLATFORM "${PLATFORM}")
+
+    set (PLATFORM ${PLATFORM} CACHE STRING "Target platform")
+    set (PLATFORM_VERSION ${APPLE_DEPLOYMENT_TARGET} CACHE STRING "Minimum version of the platform")
+    string (REPLACE ";" "-" PLATFORM_ARCH "${CMAKE_OSX_ARCHITECTURES}")
+    set (PLATFORM_ARCH ${PLATFORM_ARCH} CACHE STRING "Target processor architecture(s)")
+endif ()
+
 # Configure path to custom modules
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
@@ -172,8 +183,16 @@ if (ANDROID)
 endif (ANDROID)
 
 if (CMAKE_TOOLCHAIN_FILE AND APPLE)
-    append_cmake_arg (CMAKE_ARGS NAME PLATFORM TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME SIMULATOR TYPE BOOL)
+    append_cmake_arg (CMAKE_ARGS NAME APPLE_PLATFORM TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME APPLE_BITCODE TYPE BOOL)
+    append_cmake_arg (CMAKE_ARGS NAME APPLE_EXTENSION TYPE BOOL)
+    append_cmake_arg (CMAKE_ARGS NAME IOS_DEVICE_FAMILY TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME IOS_DEPLOYMENT_TARGET TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME WATCHOS_DEPLOYMENT_TARGET TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME WATCHOS_DEVICE_FAMILY TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME TVOS_DEPLOYMENT_TARGET TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME TVOS_DEVICE_FAMILY TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME MACOS_DEPLOYMENT_TARGET TYPE STRING)
     append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_PLATFORM_DEVELOPER_ROOT TYPE PATH)
     append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_SDK_ROOT TYPE PATH)
 endif ()
@@ -350,14 +369,13 @@ mark_as_advanced (PLATFORM_EMBEDDED PLATFORM_VERSION)
 unset (PLATFORM_VERSION_LOCAL)
 
 # Enable C++ tests and profiling only for native platforms
-if (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
-    if (ENABLE_TESTING)
-        add_subdirectory (tests)
-    endif (ENABLE_TESTING)
-    if (ENABLE_BENCHMARK)
-        add_subdirectory (benchmark)
-    endif (ENABLE_BENCHMARK)
-endif (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
+if (ENABLE_TESTING AND LANG STREQUAL "cpp" AND NOT CMAKE_CROSSCOMPILING)
+    add_subdirectory (tests)
+endif ()
+
+if (ENABLE_BENCHMARK AND LANG STREQUAL "cpp" AND NOT CMAKE_CROSSCOMPILING)
+    add_subdirectory (benchmark)
+endif ()
 
 
 # Define full platform name

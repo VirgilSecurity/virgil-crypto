@@ -43,15 +43,19 @@
 #cmakedefine SWIG_WRAP_NAMESPACE
 #cmakedefine SWIG_WRAP_COPY_CONSTRUCTOR
 
-#cmakedefine VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP
+#cmakedefine01 VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP
 
 %insert ("begin") %{
 #include <cstdlib>
 %}
 
-#if defined(VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP)
+#if VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP
 %insert ("header") %{
 #define VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP 1
+%}
+#else
+%insert ("header") %{
+#define VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP 0
 %}
 #endif
 

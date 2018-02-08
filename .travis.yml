@@ -40,6 +40,13 @@ env:
   global:
     - VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP=ON
     - PROJECT_ROOT=${TRAVIS_BUILD_DIR}
+    - CMAKE_VERSION=3.10.2
+    - SWIG_VERSION=3.0.12
+    - DOXYGEN_VERSION=1.8.13
+cache:
+  directories:
+    - cmake-${CMAKE_VERSION}
+    - swig-${SWIG_VERSION}
 before_install:
   - date -u
   - uname -a
@@ -54,6 +61,9 @@ install:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then source ./ci/install-dependencies.sh; fi
   - ${CC} --version
   - ${CXX} --version
+  - cmake --version
+  - swig -version
+  - doxygen --version
 before_script:
   - CMAKE_ARGS="-DLANG=${LANG} -DPLATFORM_ARCH=`uname -m`"
   - CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP=${VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP}"

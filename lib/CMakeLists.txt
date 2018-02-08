@@ -38,26 +38,36 @@ cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 
 project (virgil_crypto VERSION ${VIRGIL_VERSION})
 
-# Define sources list
-file (GLOB_RECURSE inc "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
-aux_source_directory ("src" src)
-aux_source_directory ("src/internal" src)
-aux_source_directory ("src/primitive" src)
-aux_source_directory ("src/pfs" src)
-aux_source_directory ("src/stream" src)
-
+# Configure sources
 configure_file (
     "${CMAKE_CURRENT_SOURCE_DIR}/src/VirgilVersion.cxx.in"
     "${CMAKE_CURRENT_BINARY_DIR}/src/VirgilVersion.cxx"
     @ONLY
 )
 
+configure_file (
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/VirgilConfig.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/VirgilConfig.h"
+    @ONLY
+)
+
+
+# Define sources list
+file (GLOB_RECURSE inc_src "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
+file (GLOB_RECURSE inc_bin "${CMAKE_CURRENT_BINARY_DIR}/include/*.h")
+
+aux_source_directory ("src" src)
+aux_source_directory ("src/internal" src)
+aux_source_directory ("src/primitive" src)
+aux_source_directory ("src/pfs" src)
+aux_source_directory ("src/stream" src)
+
 aux_source_directory("${CMAKE_CURRENT_BINARY_DIR}/src" src)
 
 if (CMAKE_CROSSCOMPILING AND APPLE)
-    add_library (${PROJECT_NAME} SHARED ${inc} ${src})
+    add_library (${PROJECT_NAME} SHARED ${inc_src} ${inc_bin} ${src})
 else()
-    add_library (${PROJECT_NAME} ${inc} ${src})
+    add_library (${PROJECT_NAME} ${inc_src} ${inc_bin} ${src})
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -82,6 +92,7 @@ target_include_directories (${PROJECT_NAME}
     PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
         "$<INSTALL_INTERFACE:include>"
 )
 target_link_libraries (${PROJECT_NAME} mbedtls::mbedcrypto mbedtls::ed25519)
@@ -98,11 +109,16 @@ target_compile_definitions (${PROJECT_NAME}
 # ---------------------------------------------------------------------------
 if (CMAKE_CROSSCOMPILING AND APPLE)
     # Add includes to the framework
-    foreach (_inc_file ${inc})
+    foreach (_inc_file ${inc_src} ${inc_bin})
         get_filename_component (_inc_file_path "${_inc_file}" DIRECTORY)
 
         string (REGEX REPLACE
-            "${CMAKE_CURRENT_LIST_DIR}/include/virgil/crypto" ""
+            "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto" ""
+            _inc_file_path "${_inc_file_path}"
+        )
+
+        string (REGEX REPLACE
+            "${CMAKE_CURRENT_BINARY_DIR}/include" ""
             _inc_file_path "${_inc_file_path}"
         )
 
@@ -158,7 +174,13 @@ if (INSTALL_CORE_LIBS)
 
     # Install headers
     if (INSTALL_CORE_HEADERS)
-        install (DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/" DESTINATION "${INSTALL_INC_DIR_NAME}")
+        install (DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+            DESTINATION "${INSTALL_INC_DIR_NAME}"
+        )
+
+        install (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/"
+            DESTINATION "${INSTALL_INC_DIR_NAME}/virgil/crypto"
+        )
     endif ()
 
     if (INSTALL_EXT_LIBS)

@@ -65,19 +65,17 @@ elif [[ "${CC}" == "clang-3.6" ]]; then
     travis_retry sudo apt-get install -y --force-yes -qq clang-3.6 clang++-3.6
 fi
 
-######################################## Build from the sources
-mkdir -p "${PROJECT_ROOT}/dependencies" && cd "${PROJECT_ROOT}/dependencies"
-
 ######################################## CMake
-if [ ! -d "${cmake-${CMAKE_VERSION}}" ]; then
+if [ -d "cmake-${CMAKE_VERSION}" ] && [ "$(ls -A "cmake-${CMAKE_VERSION}")" ]; then
+    echo "Use cached CMake version ${CMAKE_VERSION} ..."
+    cd cmake-${CMAKE_VERSION}
+else
     echo "Download & Build CMake version ${CMAKE_VERSION} ..."
     travis_retry wget https://cmake.org/files/v${CMAKE_VERSION%.*}/cmake-${CMAKE_VERSION}.tar.gz
     tar xvfz cmake-${CMAKE_VERSION}.tar.gz
     cd cmake-${CMAKE_VERSION}
     ./bootstrap
     make -j4
-else
-    cd cmake-${CMAKE_VERSION}
 fi
 
 sudo make install
@@ -85,15 +83,16 @@ sudo make install
 cd -
 
 ######################################## SWIG
-if [ ! -d "swig-${SWIG_VERSION}" ]; then
+if [ -d "swig-${SWIG_VERSION}" ] && [ "$(ls -A "swig-${SWIG_VERSION}")" ]; then
+    echo "Use cached SWIG version ${SWIG_VERSION} ..."
+    cd swig-${SWIG_VERSION}
+else
     echo "Download & Build SWIG version ${SWIG_VERSION} ..."
     travis_retry wget http://downloads.sourceforge.net/swig/swig-${SWIG_VERSION}.tar.gz
     tar -xzf swig-${SWIG_VERSION}.tar.gz
     cd swig-${SWIG_VERSION}
     ./configure
     make -j4
-else
-    cd swig-${SWIG_VERSION}
 fi
 
 sudo make install
@@ -131,7 +130,5 @@ if [[ "${LANG}" == "php" ]]; then
     chmod +x phpunit-${PHPUNIT_VERSION}.phar
     sudo mv phpunit-${PHPUNIT_VERSION}.phar /usr/bin/phpunit
 fi
-
-cd "${PROJECT_ROOT}"
 
 set +e

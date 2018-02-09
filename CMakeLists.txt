@@ -44,6 +44,8 @@
 #     - ADD_COMPILER_INFO   - define whether to add compiler info to the library full name (optional).
 #     - LIB_STATIC_RUNTIME  - сauses library to use the static version of the run-time library.
 #
+#     - BUILD_LIBRARY_FRAMEWORK - build library as Apple Framework.
+#
 #     - INSTALL_CORE_HEADERS - boolean value that defines whether install core headers not.
 #     - INSTALL_CORE_LIBS    - boolean value that defines whether install core library and it's dependencies or not.
 #                              if this value is NO or undefined - only wrapped library will be installed.
@@ -127,6 +129,12 @@ if (CMAKE_CROSSCOMPILING AND APPLE)
     set (PLATFORM_VERSION ${APPLE_DEPLOYMENT_TARGET} CACHE STRING "Minimum version of the platform")
     string (REPLACE ";" "-" PLATFORM_ARCH "${CMAKE_OSX_ARCHITECTURES}")
     set (PLATFORM_ARCH ${PLATFORM_ARCH} CACHE STRING "Target processor architecture(s)")
+
+    if (LANG STREQUAL "cpp")
+        set (BUILD_LIBRARY_FRAMEWORK YES CACHE BOOL "Build library as Apple Framework.")
+    else ()
+        set (BUILD_LIBRARY_FRAMEWORK NO CACHE BOOL "Build library as Apple Framework.")
+    endif ()
 endif ()
 
 # Configure path to custom modules

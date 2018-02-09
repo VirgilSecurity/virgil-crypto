@@ -51,7 +51,6 @@ configure_file (
     @ONLY
 )
 
-
 # Define sources list
 file (GLOB_RECURSE inc_src "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
 file (GLOB_RECURSE inc_bin "${CMAKE_CURRENT_BINARY_DIR}/include/*.h")
@@ -64,8 +63,8 @@ aux_source_directory ("src/stream" src)
 
 aux_source_directory("${CMAKE_CURRENT_BINARY_DIR}/src" src)
 
-if (CMAKE_CROSSCOMPILING AND APPLE)
-    add_library (${PROJECT_NAME} SHARED ${inc_src} ${inc_bin} ${src})
+if (BUILD_LIBRARY_FRAMEWORK)
+    add_library (${PROJECT_NAME} ${inc_src} ${inc_bin} ${src})
 else()
     add_library (${PROJECT_NAME} ${inc_src} ${inc_bin} ${src})
 endif()
@@ -77,7 +76,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     DEBUG_POSTFIX "_d"
 )
 
-if (BUILD_SHARED_LIBS OR (CMAKE_CROSSCOMPILING AND APPLE))
+if (BUILD_SHARED_LIBS OR BUILD_LIBRARY_FRAMEWORK)
     set_target_properties (${PROJECT_NAME} PROPERTIES
         VERSION ${VIRGIL_VERSION}
         SOVERSION ${VIRGIL_SOVERSION}
@@ -85,7 +84,7 @@ if (BUILD_SHARED_LIBS OR (CMAKE_CROSSCOMPILING AND APPLE))
 endif ()
 
 if (CMAKE_CROSSCOMPILING AND NOT APPLE)
-    set_property (TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY COMPILE_FLAGS " -std=c++11")
+    set_property (TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY COMPILE_FLAGS "-std=c++11")
 endif ()
 
 target_include_directories (${PROJECT_NAME}
@@ -107,7 +106,7 @@ target_compile_definitions (${PROJECT_NAME}
 # ---------------------------------------------------------------------------
 #   Apple specifc library configuration
 # ---------------------------------------------------------------------------
-if (CMAKE_CROSSCOMPILING AND APPLE)
+if (BUILD_LIBRARY_FRAMEWORK)
     # Add includes to the framework
     foreach (_inc_file ${inc_src} ${inc_bin})
         get_filename_component (_inc_file_path "${_inc_file}" DIRECTORY)

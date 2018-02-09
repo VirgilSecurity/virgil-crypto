@@ -69,6 +69,7 @@ function show_usage {
     echo -e "    * java             - build Java library, requirements: \$JAVA_HOME;"
     echo -e "    * java_android     - build Java library under Android platform, requirements: \$ANDROID_NDK;"
     echo -e "    * net              - build .NET library, requirements: .NET or Mono;"
+    echo -e "    * net_macos        - build .NET library under Apple macOSX platform, requirements: Mono, OS X, Xcode;"
     echo -e "    * net_ios          - build .NET library under Apple iOS platform, requirements: Mono, OS X, Xcode;"
     echo -e "    * net_applewatchos - build .NET library under WatchOS platform, requirements: Mono, OS X, Xcode;"
     echo -e "    * net_appletvos    - build .NET library under TVOS platform, requirements: Mono, OS X, Xcode;"
@@ -187,7 +188,7 @@ function make_fat_library {
     LIBED25519="libed25519.a"
     LIBVIRGIL="libvirgil_crypto.a"
     if [ ! -z "${WRAPPER_NAME}" ]; then
-        LIBVIRGIL_WRAPPER="libvirgil_crypto_${WRAPPER_NAME}.a"
+        LIBVIRGIL_WRAPPER="virgil_crypto_${WRAPPER_NAME}.a"
     fi
 
     # Create working dir
@@ -330,26 +331,10 @@ if [[ ${TARGET_NAME} =~ ^(cpp|java|php|python|ruby|nodejs|go)$ ]]; then
     make -j8 install
 fi
 
-# Build for Mono
-if [ "${TARGET_NAME}" == "net" ]; then
-    if [ "${SYSTEM_NAME}" == "darwin" ]; then # MacOS
-        osx_version_min="10.10" # Yosemite
-        CMAKE_ARGS+=" -DCMAKE_ASM_FLAGS=-mmacosx-version-min=${osx_version_min}"
-        CMAKE_ARGS+=" -DCMAKE_C_FLAGS=-mmacosx-version-min=${osx_version_min}"
-        CMAKE_ARGS+=" -DCMAKE_CXX_FLAGS=-mmacosx-version-min=${osx_version_min}"
-        CMAKE_ARGS+=" -DINSTALL_CORE_LIBS=ON"
-        cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
-        make -j8 install
-        # Create fat library
-        make_fat_library libVirgilCryptoNet.a "${INSTALL_DIR}" "${INSTALL_DIR}/libs" "net"
-        find "${INSTALL_DIR:?}" -name "*.dll" -exec cp -f {} "${INSTALL_DIR:?}/libs/" \;
-        rm -fr "${INSTALL_DIR:?}/include"
-        rm -fr "${INSTALL_DIR:?}/lib"
-        mv "${INSTALL_DIR:?}/libs" "${INSTALL_DIR:?}/lib"
-    else # Other *nix
-        cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
-        make -j8 install
-    fi
+# Build for Mono Unix/Linux
+if [ "${TARGET_NAME}" == "net" ] && [ "${SYSTEM_NAME}" != "darwin" ]; then
+    cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
+    make -j8 install
 fi
 
 # Build for Apple plaforms create Apple Framework
@@ -407,15 +392,29 @@ if [[ "${TARGET_NAME}" == *"android"* ]]; then
     build_android arm64-v8a
 fi
 
-if [[ ${TARGET_NAME} =~ ^net_(ios|appletvos|applewatchos)$ ]]; then
+if [ "${TARGET_NAME}" == "net_ios" ] || [ "${TARGET_NAME}" == "net_tvos" ] || \
+   [ "${TARGET_NAME}" == "net_watchos" ] || [ "${TARGET_NAME}" == "net_macos" ]; then
+
+    APPLE_PLATFORM=$(echo "${TARGET_NAME/net_/}" | awk '{print toupper($0)}')
+
+    CMAKE_ARGS+=" -DLANG=net"
     CMAKE_ARGS+=" -DINSTALL_CORE_LIBS=ON"
+    CMAKE_ARGS+=" -DINSTALL_CORE_HEADERS=OFF"
+    CMAKE_ARGS+=" -DINSTALL_EXT_LIBS=ON"
+    CMAKE_ARGS+=" -DINSTALL_EXT_HEADERS=OFF"
+    CMAKE_ARGS+=" -DCMAKE_TOOLCHAIN_FILE='${SRC_DIR}/cmake/apple.cmake'"
+
     # Build for device
-    cmake ${CMAKE_ARGS} -DLANG=net -DENABLE_BITCODE=NO -DSIMULATOR=OFF -DINSTALL_LIB_DIR_NAME=lib/dev -DPLATFORM=${TARGET_NAME/net_/} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM} -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
     make -j8 install
-    # Build for simulator
-    rm -fr ./*
-    cmake ${CMAKE_ARGS} -DLANG=net -DENABLE_BITCODE=NO -DSIMULATOR=ON -DINSTALL_LIB_DIR_NAME=lib/sim -DPLATFORM=${TARGET_NAME/net_/} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/apple.toolchain.cmake" "${SRC_DIR}"
-    make -j8 install
+
+    if [ "${TARGET_NAME}" != "net_macos" ]; then
+        # Build for simulator
+        rm -fr ./*
+        cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM}_SIM -DINSTALL_LIB_DIR_NAME=lib/sim "${SRC_DIR}"
+        make -j8 install
+    fi
+
     # Create fat library
     make_fat_library libVirgilCryptoNet.a "${INSTALL_DIR}" "${INSTALL_DIR}/libs" "net"
     find "${INSTALL_DIR:?}" -name "*.dll" -exec cp -f {} "${INSTALL_DIR:?}/libs/" \;

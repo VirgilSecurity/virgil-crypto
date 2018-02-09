@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
- *
- * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ * Copyright (C) 2015-2018 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -32,6 +30,8 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
 /**
@@ -39,7 +39,7 @@
  * @brief Covers class VirgilChunkCipher
  */
 
-#if LIB_FILE_IO
+#if VIRGIL_CRYPTO_FEATURE_STREAM_IMPL
 
 #include "catch.hpp"
 
@@ -303,8 +303,8 @@ TEST_CASE("VirgilChunkCipher: data read from a source by one pass", "[chunk-ciph
 
 #else
 #if defined(_MSC_VER)
-#pragma message("Tests for class VirgilChunkCipher are ignored, because LIB_FILE_IO build parameter is not defined")
+#pragma message("Tests for class VirgilChunkCipher are ignored, because VIRGIL_CRYPTO_FEATURE_STREAM_IMPL build parameter is not defined")
 #else
-#warning "Tests for class VirgilChunkCipher are ignored, because LIB_FILE_IO build parameter is not defined"
+#warning "Tests for class VirgilChunkCipher are ignored, because VIRGIL_CRYPTO_FEATURE_STREAM_IMPL build parameter is not defined"
 #endif /* _MSC_VER */
-#endif /* LIB_FILE_IO */
+#endif /* VIRGIL_CRYPTO_FEATURE_STREAM_IMPL */

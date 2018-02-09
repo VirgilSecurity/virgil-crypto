@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
- *
- * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ * Copyright (C) 2015-2018 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -32,6 +30,8 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
 #ifndef VIRGIL_CRYPTO_VIRGIL_CMS_CONTENT_INFO_H
@@ -40,10 +40,12 @@
 #include <map>
 #include <string>
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilCustomParams.h>
-#include <virgil/crypto/foundation/asn1/VirgilAsn1Compatible.h>
-#include <virgil/crypto/foundation/cms/VirgilCMSContent.h>
+#include "VirgilCMSContent.h"
+
+#include "../asn1/VirgilAsn1Compatible.h"
+
+#include "../../VirgilCustomParams.h"
+#include "../../VirgilByteArray.h"
 
 namespace virgil { namespace crypto { namespace foundation { namespace cms {
 

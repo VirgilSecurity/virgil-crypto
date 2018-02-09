@@ -1,7 +1,5 @@
 #
-# Copyright (C) 2015-2016 Virgil Security Inc.
-#
-# Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+# Copyright (C) 2015-2018 Virgil Security Inc.
 #
 # All rights reserved.
 #
@@ -33,6 +31,8 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
+# Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+#
 
 #
 # Dependent on variables:
@@ -42,7 +42,7 @@
 #     - WRAPPED_LIB_NAME - name of the wrapped library.
 #
 
-cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 
 project (wrappers)
 

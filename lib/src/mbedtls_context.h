@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
- *
- * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ * Copyright (C) 2015-2018 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -32,27 +30,64 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef VIRGIL_CRYPTO_INTERNAL_UTILS_H
-#define VIRGIL_CRYPTO_INTERNAL_UTILS_H
-
-#define VIRGIL_STR(var) #var
-
-// Define custom implemetation of std::make_unique() function
-#if !defined(__cpp_lib_make_unique)
-#if !defined(_MSC_VER) || _MSC_VER < 1800
+#ifndef VIRGIL_CRYPTO_MBEDTLS_CONTEXT_H
+#define VIRGIL_CRYPTO_MBEDTLS_CONTEXT_H
 
 #include <memory>
+#include "utils.h"
 
-namespace std {
-template<typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args&& ... args) {
-    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-}
-}
+namespace virgil { namespace crypto { namespace foundation { namespace internal {
 
-#endif // !defined(_MSC_VER) || _MSC_VER < 1800
-#endif // __cpp_lib_make_unique
+template<typename T>
+class mbedtls_context_policy;
 
-#endif // VIRGIL_CRYPTO_INTERNAL_UTILS_H
+template<typename T, typename Policy = mbedtls_context_policy<T>>
+class mbedtls_context {
+public:
+    mbedtls_context() noexcept : ctx_(std::make_unique<T>()) {
+        Policy::init_ctx(ctx_.get());
+    }
+
+    template<typename... Args>
+    mbedtls_context(Args&& ...args) : ctx_(std::make_unique<T>()) {
+        Policy::init_ctx(ctx_.get(), std::forward(args)...);
+    }
+
+    ~mbedtls_context() noexcept {
+        Policy::free_ctx(ctx_.get());
+    }
+
+    mbedtls_context<T, Policy>& clear() {
+        Policy::free_ctx(ctx_.get());
+        ctx_ = std::make_unique<T>();
+        Policy::init_ctx(ctx_.get());
+        return *this;
+    };
+
+    template<typename... Args>
+    void setup(Args ...args) {
+        Policy::setup_ctx(ctx_.get(), args...);
+    }
+
+    T* get() noexcept { return ctx_.get(); }
+
+    const T* get() const noexcept { return ctx_.get(); }
+
+public:
+    mbedtls_context(mbedtls_context&& rhs) = default;
+
+    mbedtls_context& operator=(mbedtls_context&& rhs) = default;
+
+private:
+    std::unique_ptr<T> ctx_;
+};
+
+}}}}
+
+#include "mbedtls_context_policy_spec.h"
+
+#endif //VIRGIL_CRYPTO_MBEDTLS_CONTEXT_H

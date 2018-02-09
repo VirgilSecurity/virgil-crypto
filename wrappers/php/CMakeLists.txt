@@ -1,7 +1,5 @@
 #
-# Copyright (C) 2015-2016 Virgil Security Inc.
-#
-# Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+# Copyright (C) 2015-2018 Virgil Security Inc.
 #
 # All rights reserved.
 #
@@ -33,8 +31,10 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
+# Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+#
 
-cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 
 project (${WRAPPED_LIB_NAME}_php)
 
@@ -77,7 +77,11 @@ set_property (
     SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing"
 )
 
-swig_add_module (${PHP_MODULE_NAME} php${PHP_VERSION_MAJOR} "${WRAPPER_INTERFACE_FILE}")
+swig_add_library (${PHP_MODULE_NAME}
+    TYPE ${WRAPPER_TYPE}
+    LANGUAGE php${PHP_VERSION_MAJOR}
+    SOURCES "${WRAPPER_INTERFACE_FILE}"
+)
 set (PHP_SWIG_TARGET_NAME ${SWIG_MODULE_${PHP_MODULE_NAME}_REAL_NAME})
 
 # Conform to http://www.php-cpp.com/documentation/install

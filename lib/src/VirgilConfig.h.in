@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
- *
- * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ * Copyright (C) 2015-2018 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -32,62 +30,15 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef VIRGIL_CRYPTO_MBEDTLS_CONTEXT_H
-#define VIRGIL_CRYPTO_MBEDTLS_CONTEXT_H
+/**
+ * Contains conditional macroses, that was used during library build.
+ */
 
-#include <memory>
-#include <virgil/crypto/internal/utils.h>
-
-namespace virgil { namespace crypto { namespace foundation { namespace internal {
-
-template<typename T>
-class mbedtls_context_policy;
-
-template<typename T, typename Policy = mbedtls_context_policy<T>>
-class mbedtls_context {
-public:
-    mbedtls_context() noexcept : ctx_(std::make_unique<T>()) {
-        Policy::init_ctx(ctx_.get());
-    }
-
-    template<typename... Args>
-    mbedtls_context(Args&& ...args) : ctx_(std::make_unique<T>()) {
-        Policy::init_ctx(ctx_.get(), std::forward(args)...);
-    }
-
-    ~mbedtls_context() noexcept {
-        Policy::free_ctx(ctx_.get());
-    }
-
-    mbedtls_context<T, Policy>& clear() {
-        Policy::free_ctx(ctx_.get());
-        ctx_ = std::make_unique<T>();
-        Policy::init_ctx(ctx_.get());
-        return *this;
-    };
-
-    template<typename... Args>
-    void setup(Args ...args) {
-        Policy::setup_ctx(ctx_.get(), args...);
-    }
-
-    T* get() noexcept { return ctx_.get(); }
-
-    const T* get() const noexcept { return ctx_.get(); }
-
-public:
-    mbedtls_context(mbedtls_context&& rhs) = default;
-
-    mbedtls_context& operator=(mbedtls_context&& rhs) = default;
-
-private:
-    std::unique_ptr<T> ctx_;
-};
-
-}}}}
-
-#include "mbedtls_context_policy_spec.h"
-
-#endif //VIRGIL_CRYPTO_MBEDTLS_CONTEXT_H
+/**
+ * On/Off status of the feature : C++ streams.
+ */
+#cmakedefine01 VIRGIL_CRYPTO_FEATURE_STREAM_IMPL

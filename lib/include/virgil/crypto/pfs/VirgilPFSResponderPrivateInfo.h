@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2015-2017 Virgil Security Inc.
- *
- * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ * Copyright (C) 2015-2018 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -32,13 +30,15 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
 #ifndef VIRGIL_CRYPTO_PFS_VIRGIL_PFS_RESPONDER_PRIVATE_INFO_H
 #define VIRGIL_CRYPTO_PFS_VIRGIL_PFS_RESPONDER_PRIVATE_INFO_H
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/pfs/VirgilPFSPrivateKey.h>
+#include "../VirgilByteArray.h"
+#include "VirgilPFSPrivateKey.h"
 
 namespace virgil { namespace crypto { namespace pfs {
 

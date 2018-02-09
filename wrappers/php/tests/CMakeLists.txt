@@ -1,7 +1,5 @@
 #
-# Copyright (C) 2015-2016 Virgil Security Inc.
-#
-# Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+# Copyright (C) 2015-2018 Virgil Security Inc.
 #
 # All rights reserved.
 #
@@ -33,6 +31,8 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
+# Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+#
 
 # Input:
 #     PHP_MODULE_FILE_NAME - PHP file name of the module under test.
@@ -54,7 +54,7 @@ set (TEST_FILES
     StringSink.php
 )
 
-if (LIB_LOW_LEVEL_API)
+if (VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP)
     list (APPEND TEST_FILES
         VirgilSymmetricCipher_Test.php
         VirgilAsymmetricCipher_EC_Test.php
@@ -65,7 +65,7 @@ if (LIB_LOW_LEVEL_API)
         VirgilPBE_Test.php
         VirgilKDF_Test.php
     )
-endif (LIB_LOW_LEVEL_API)
+endif (VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP)
 
 add_subdirectory (data)
 

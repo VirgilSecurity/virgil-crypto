@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
- *
- * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ * Copyright (C) 2015-2018 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -32,6 +30,8 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
 #ifndef VIRGIL_CRYPTO_MBEDTLS_CONTEXT_POLICY_SPEC_H
@@ -46,7 +46,7 @@
 #include <mbedtls/cipher.h>
 
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
-#include <virgil/crypto/foundation/internal/mbedtls_type_utils.h>
+#include "mbedtls_type_utils.h"
 
 #include <array>
 

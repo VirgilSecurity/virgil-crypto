@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
- *
- * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ * Copyright (C) 2015-2018 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -32,6 +30,8 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
 
@@ -43,15 +43,19 @@
 #cmakedefine SWIG_WRAP_NAMESPACE
 #cmakedefine SWIG_WRAP_COPY_CONSTRUCTOR
 
-#cmakedefine LIB_LOW_LEVEL_API
+#cmakedefine01 VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP
 
 %insert ("begin") %{
 #include <cstdlib>
 %}
 
-#if defined(LIB_LOW_LEVEL_API)
+#if VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP
 %insert ("header") %{
-#define LIB_LOW_LEVEL_API
+#define VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP 1
+%}
+#else
+%insert ("header") %{
+#define VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP 0
 %}
 #endif
 
@@ -109,7 +113,7 @@ INCLUDE_CLASS(VirgilAsn1Compatible, virgil::crypto::foundation::asn1, virgil/cry
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilKeyPair, virgil::crypto, virgil/crypto)
 DEFINE_USING(VirgilKeyPair, virgil::crypto)
 
-#if defined(LIB_LOW_LEVEL_API)
+#if VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP
     // Package: virgil::crypto::foundation::asn1
     INCLUDE_CLASS(VirgilAsn1Reader, virgil::crypto::foundation::asn1, virgil/crypto/foundation/asn1)
     INCLUDE_CLASS(VirgilAsn1Writer, virgil::crypto::foundation::asn1, virgil/crypto/foundation/asn1)
@@ -143,7 +147,7 @@ DEFINE_USING(VirgilKeyPair, virgil::crypto)
     %ignore VirgilCMSContent;
     %ignore VirgilAsn1Reader;
     %ignore VirgilAsn1Writer;
-#endif /* LIB_LOW_LEVEL_API */
+#endif /* VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP */
 
 // Package: virgil::crypto::foundation
 INCLUDE_CLASS(VirgilBase64, virgil::crypto::foundation, virgil/crypto/foundation)

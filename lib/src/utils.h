@@ -1,4 +1,3 @@
-
 /**
  * Copyright (C) 2015-2018 Virgil Security Inc.
  *
@@ -35,51 +34,25 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-/**
- * @file benchmark_cipher.cxx
- * @brief Benchmark for encryption operations: encrypt and decrypt
- */
+#ifndef VIRGIL_CRYPTO_INTERNAL_UTILS_H
+#define VIRGIL_CRYPTO_INTERNAL_UTILS_H
 
-#define BENCHPRESS_CONFIG_MAIN
-#include "benchpress.hpp"
+#define VIRGIL_STR(var) #var
 
-#include <functional>
+// Define custom implemetation of std::make_unique() function
+#if !defined(__cpp_lib_make_unique)
+#if !defined(_MSC_VER) || _MSC_VER < 1800
 
-#include <virgil/crypto/VirgilByteArray.h>
-#include <virgil/crypto/VirgilByteArrayUtils.h>
-#include <virgil/crypto/foundation/VirgilHash.h>
-#include <virgil/crypto/foundation/VirgilRandom.h>
+#include <memory>
 
-using std::placeholders::_1;
-
-using virgil::crypto::VirgilByteArray;
-using virgil::crypto::VirgilByteArrayUtils;
-using virgil::crypto::foundation::VirgilHash;
-using virgil::crypto::foundation::VirgilRandom;
-
-void benchmark_hash(benchpress::context* ctx, VirgilHash::Algorithm hashAlg) {
-    VirgilRandom random(VirgilByteArrayUtils::stringToBytes("seed"));
-    VirgilByteArray testData = random.randomize(8192);
-    VirgilHash hash(hashAlg);
-    ctx->reset_timer();
-    for (size_t i = 0; i < ctx->num_iterations(); ++i) {
-        (void)hash.hash(testData);
-    }
+namespace std {
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&& ... args) {
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
 }
 
-BENCHMARK("Hash -> MD5    ", [](benchpress::context* ctx){
-    benchmark_hash(ctx, VirgilHash::Algorithm::MD5);
-});
+#endif // !defined(_MSC_VER) || _MSC_VER < 1800
+#endif // __cpp_lib_make_unique
 
-BENCHMARK("Hash -> SHA-256", [](benchpress::context* ctx){
-    benchmark_hash(ctx, VirgilHash::Algorithm::SHA256);
-});
-
-BENCHMARK("Hash -> SHA-384", [](benchpress::context* ctx){
-    benchmark_hash(ctx, VirgilHash::Algorithm::SHA384);
-});
-
-BENCHMARK("Hash -> SHA-512", [](benchpress::context* ctx){
-    benchmark_hash(ctx, VirgilHash::Algorithm::SHA512);
-});
-
+#endif // VIRGIL_CRYPTO_INTERNAL_UTILS_H

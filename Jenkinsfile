@@ -101,8 +101,10 @@ def createNativeUnixBuild(slave) {
                 sh './utils/build.sh php-7.1'
                 organizeFilesUnix('install/php')
             }
-            //DotNET - Mono
-            sh './utils/build.sh net'
+            //DotNET - Unix/Linux Mono
+            if (! slave.contains('build-os-x')) {
+                sh './utils/build.sh net'
+            }
 
             archiveArtifacts('install/**')
         }
@@ -185,14 +187,14 @@ def createDarwinBuild(slave) {
             clearContentUnix()
             unstash 'src'
             sh 'rm -fr build install'
-            sh './utils/build.sh osx . build/cpp/osx install/cpp/osx'
+            sh './utils/build.sh macos . build/cpp/macos install/cpp/macos'
             sh './utils/build.sh ios . build/cpp/ios install/cpp/ios '
-            sh './utils/build.sh applewatchos . build/cpp/watchos install/cpp/watchos'
-            sh './utils/build.sh appletvos . build/cpp/tvos install/cpp/tvos'
-            sh './utils/build.sh net . build/net/osx install/net/osx'
+            sh './utils/build.sh watchos . build/cpp/watchos install/cpp/watchos'
+            sh './utils/build.sh tvos . build/cpp/tvos install/cpp/tvos'
+            sh './utils/build.sh net_macos . build/net/macos install/net/macos'
             sh './utils/build.sh net_ios . build/net/ios install/net/ios'
-            sh './utils/build.sh net_applewatchos . build/net/watchos install/net/watchos'
-            sh './utils/build.sh net_appletvos . build/net/tvos install/net/tvos'
+            sh './utils/build.sh net_watchos . build/net/watchos install/net/watchos'
+            sh './utils/build.sh net_tvos . build/net/tvos install/net/tvos'
             organizeFilesUnix('install/cpp')
             organizeFilesUnix('install/net')
             archiveArtifacts('install/**')

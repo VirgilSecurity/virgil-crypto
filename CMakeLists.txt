@@ -120,23 +120,6 @@ endif (VIRGIL_VERSION_FEATURE)
 message (STATUS "Virgil version: " ${VIRGIL_VERSION_FULL_NAME})
 message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 
-# Set PLATFORM and PLATFORM_VERSION for crosscompiling builds
-if (CMAKE_CROSSCOMPILING AND APPLE)
-    string (TOLOWER "${APPLE_PLATFORM}" PLATFORM)
-    string (REPLACE "_sim" "" PLATFORM "${PLATFORM}")
-
-    set (PLATFORM ${PLATFORM} CACHE STRING "Target platform")
-    set (PLATFORM_VERSION ${APPLE_DEPLOYMENT_TARGET} CACHE STRING "Minimum version of the platform")
-    string (REPLACE ";" "-" PLATFORM_ARCH "${CMAKE_OSX_ARCHITECTURES}")
-    set (PLATFORM_ARCH ${PLATFORM_ARCH} CACHE STRING "Target processor architecture(s)")
-
-    if (LANG STREQUAL "cpp")
-        set (BUILD_LIBRARY_FRAMEWORK YES CACHE BOOL "Build library as Apple Framework.")
-    else ()
-        set (BUILD_LIBRARY_FRAMEWORK NO CACHE BOOL "Build library as Apple Framework.")
-    endif ()
-endif ()
-
 # Configure path to custom modules
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
@@ -302,6 +285,22 @@ set (VIRGIL_CRYPTO_FEATURE_STREAM_IMPL ON CACHE BOOL
 
 # Configure crosscompiling
 set (UCLIBC OFF CACHE BOOL "Enable pathches if library is build with uClibc++")
+
+if (CMAKE_CROSSCOMPILING AND APPLE)
+    string (TOLOWER "${APPLE_PLATFORM}" PLATFORM)
+    string (REPLACE "_sim" "" PLATFORM "${PLATFORM}")
+
+    set (PLATFORM ${PLATFORM} CACHE STRING "Target platform")
+    set (PLATFORM_VERSION ${APPLE_DEPLOYMENT_TARGET} CACHE STRING "Minimum version of the platform")
+    string (REPLACE ";" "-" PLATFORM_ARCH "${CMAKE_OSX_ARCHITECTURES}")
+    set (PLATFORM_ARCH ${PLATFORM_ARCH} CACHE STRING "Target processor architecture(s)")
+
+    if (LANG STREQUAL "cpp")
+        set (BUILD_LIBRARY_FRAMEWORK YES CACHE BOOL "Build library as Apple Framework.")
+    else ()
+        set (BUILD_LIBRARY_FRAMEWORK NO CACHE BOOL "Build library as Apple Framework.")
+    endif ()
+endif ()
 
 # Configure testing
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")

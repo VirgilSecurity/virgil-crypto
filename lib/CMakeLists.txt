@@ -64,7 +64,7 @@ aux_source_directory ("src/stream" src)
 aux_source_directory("${CMAKE_CURRENT_BINARY_DIR}/src" src)
 
 if (BUILD_LIBRARY_FRAMEWORK)
-    add_library (${PROJECT_NAME} ${inc_src} ${inc_bin} ${src})
+    add_library (${PROJECT_NAME} SHARED ${inc_src} ${inc_bin} ${src})
 else()
     add_library (${PROJECT_NAME} ${inc_src} ${inc_bin} ${src})
 endif()

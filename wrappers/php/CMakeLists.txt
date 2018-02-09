@@ -77,7 +77,11 @@ set_property (
     SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing"
 )
 
-swig_add_module (${PHP_MODULE_NAME} php${PHP_VERSION_MAJOR} "${WRAPPER_INTERFACE_FILE}")
+swig_add_library (${PHP_MODULE_NAME}
+    TYPE ${WRAPPER_TYPE}
+    LANGUAGE php${PHP_VERSION_MAJOR}
+    SOURCES "${WRAPPER_INTERFACE_FILE}"
+)
 set (PHP_SWIG_TARGET_NAME ${SWIG_MODULE_${PHP_MODULE_NAME}_REAL_NAME})
 
 # Conform to http://www.php-cpp.com/documentation/install

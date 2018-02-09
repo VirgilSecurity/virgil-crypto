@@ -277,12 +277,24 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # ---------------------------------------------------------------------------
-#   Define compiler falgs
+#   Define compiler flags
 # ---------------------------------------------------------------------------
 
 # Pass minimum version flag and bitcode flag.
 set(CMAKE_C_FLAGS "${APPLE_VERSION_FLAG} ${APPLE_BITCODE_FLAG} ${APPLE_EXTENSION_FLAG}" CACHE STRING "")
 set(CMAKE_CXX_FLAGS "${APPLE_VERSION_FLAG} ${APPLE_BITCODE_FLAG} ${APPLE_EXTENSION_FLAG}" CACHE STRING "")
+
+# ---------------------------------------------------------------------------
+#   Define naming library conventions
+# ---------------------------------------------------------------------------
+
+# All Apple *OS/Darwin specific settings - some may be redundant
+set (CMAKE_SHARED_LIBRARY_PREFIX "lib")
+set (CMAKE_SHARED_LIBRARY_SUFFIX ".dylib")
+set (CMAKE_SHARED_MODULE_PREFIX "lib")
+set (CMAKE_SHARED_MODULE_SUFFIX ".so")
+set (CMAKE_MODULE_EXISTS 1)
+set (CMAKE_DL_LIBS "")
 
 # ---------------------------------------------------------------------------
 #   Helper functions

@@ -101,8 +101,10 @@ def createNativeUnixBuild(slave) {
                 sh './utils/build.sh php-7.1'
                 organizeFilesUnix('install/php')
             }
-            //DotNET - Mono
-            sh './utils/build.sh net'
+            //DotNET - Unix/Linux Mono
+            if (! slave.contains('build-os-x')) {
+                sh './utils/build.sh net'
+            }
 
             archiveArtifacts('install/**')
         }

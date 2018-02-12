@@ -36,16 +36,16 @@
 
 cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 
-project (${WRAPPED_LIB_NAME}_asmjs)
+project (${WRAPPED_LIB_NAME}_webasm)
 
 # ---------------------------------------------------------------------------
 #   Configure environment
 # ---------------------------------------------------------------------------
-set (LANG "asmjs" CACHE STRING "Language is asmjs" FORCE)
-set (LANG_VERSION "" CACHE STRING "No version for asmjs" FORCE)
+set (LANG "asmjs" CACHE STRING "Language is AsmJS" FORCE)
+set (LANG_VERSION "" CACHE STRING "No version for javascript" FORCE)
 
-set (PLATFORM "" CACHE STRING "No platform name for asmjs, because it's crossplatform" FORCE)
-set (PLATFORM_VERSION "" CACHE STRING "No platform version for asmjs, because it's crossplatform" FORCE)
+set (PLATFORM "webasm" CACHE STRING "WebAssembly" FORCE)
+set (PLATFORM_VERSION "" CACHE STRING "No platform version for WebAssembly" FORCE)
 
 set (WRAPPER_TARGET "${PROJECT_NAME}")
 
@@ -55,13 +55,19 @@ set (WRAPPER_TARGET "${PROJECT_NAME}")
 include ("${WRAPPERS_ROOT}/emsdk/CMakeLists.txt")
 
 # ---------------------------------------------------------------------------
+#   Add specific 'build' options to the target
+# ---------------------------------------------------------------------------
+set_property (TARGET "${WRAPPER_TARGET}" APPEND_STRING PROPERTY COMPILE_FLAGS " -s WASM=1")
+set_property (TARGET "${WRAPPER_TARGET}" APPEND_STRING PROPERTY LINK_FLAGS " -s WASM=1")
+
+# ---------------------------------------------------------------------------
 #   Add specific 'install' options to the target
 # ---------------------------------------------------------------------------
 
-string (TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
+install (FILES "$<TARGET_FILE_DIR:${WRAPPER_TARGET}>/$<TARGET_NAME:${WRAPPER_TARGET}>.wasm"
+    DESTINATION "${INSTALL_LIB_DIR_NAME}"
+)
 
-if ("${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}" MATCHES "(-O2|-O3|-Os|-Oz)")
-
-    install (FILES $<TARGET_FILE:${WRAPPER_TARGET}>.mem DESTINATION "${INSTALL_LIB_DIR_NAME}")
-    install (FILES $<TARGET_FILE:${WRAPPER_TARGET}>.mem DESTINATION "${WRAPPER_DOC_DIR_NAME}/example")
-endif ()
+install (FILES "$<TARGET_FILE_DIR:${WRAPPER_TARGET}>/$<TARGET_NAME:${WRAPPER_TARGET}>.wasm"
+    DESTINATION "${WRAPPER_DOC_DIR_NAME}/example"
+)

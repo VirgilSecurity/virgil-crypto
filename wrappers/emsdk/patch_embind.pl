@@ -108,6 +108,12 @@ while (my $line = <$in_file>) {
             $patched_line = $tab.$line;
         }
     }
+
+    # Fix C++1z -Wextension because of the missing comment in a static_assert().
+    if ($patched_line =~ /(static_assert\s?[^,]+)\);/) {
+        $patched_line = "$1, \"\");"
+    }
+
     $out_file->print($patched_line);
 }
 

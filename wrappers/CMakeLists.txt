@@ -40,6 +40,7 @@
 #
 # Define variables:
 #     - WRAPPED_LIB_NAME - name of the wrapped library.
+#     - WRAPPERS_ROOT - absolute path to the directory of this CMake.
 #
 
 cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
@@ -48,6 +49,7 @@ project (wrappers)
 
 # Define variables
 set (WRAPPED_LIB_NAME virgil_crypto)
+set (WRAPPERS_ROOT "${CMAKE_CURRENT_LIST_DIR}")
 
 # Add include directory of wrapped module
 include_directories (${${WRAPPED_LIB_NAME}_SOURCE_DIR}/include)

@@ -75,8 +75,8 @@ function show_usage {
     echo -e "    * net_appletvos    - build .NET library under TVOS platform, requirements: Mono, OS X, Xcode;"
     echo -e "    * net_android      - build .NET library under Android platform, requirements: Mono, \$ANDROID_NDK;"
     echo -e "    * asmjs            - build AsmJS library, requirements: \$EMSDK_HOME;"
+    echo -e "    * webasm           - build WebAssembly library, requirements: \$EMSDK_HOME;"
     echo -e "    * nodejs           - build NodeJS module;"
-    echo -e "    * pnacl            - build Portable Native library for Google Chrome, requirements: \$NACL_SDK_ROOT;"
     echo -e "    * go               - build Golang library."
     echo -e "  - <src_dir>     - (default = .) path to the directory where root CMakeLists.txt file is located"
     echo -e "  - <build_dir>   - (default = build/<target>) path to the directory where temp files will be stored"
@@ -423,20 +423,16 @@ if [ "${TARGET_NAME}" == "net_ios" ] || [ "${TARGET_NAME}" == "net_tvos" ] || \
     mv "${INSTALL_DIR:?}/libs" "${INSTALL_DIR:?}/lib"
 fi
 
-if [ "${TARGET_NAME}" == "asmjs" ]; then
+if [[ "${TARGET_NAME}" =~ (asmjs|webasm) ]]; then
     if [ ! -d "$EMSDK_HOME" ]; then
         show_usage "Enviroment \$EMSDK_HOME is not defined!" 1
     fi
     source "${EMSDK_HOME}/emsdk_env.sh"
-    cmake ${CMAKE_ARGS} -DLANG=asmjs -DCMAKE_TOOLCHAIN_FILE="$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake" "${SRC_DIR}"
-    make -j8 install
-fi
 
-if [ "${TARGET_NAME}" == "pnacl" ]; then
-    if [ ! -d "$NACL_SDK_ROOT" ]; then
-        show_usage "Enviroment \$NACL_SDK_ROOT is not defined!" 1
-    fi
-    cmake ${CMAKE_ARGS} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/pnacl.toolchain.cmake" "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} \
+        -DCMAKE_TOOLCHAIN_FILE="$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake" \
+        -DCMAKE_CXX_FLAGS_RELEASE="-O3" \
+        "${SRC_DIR}"
     make -j8 install
 fi
 

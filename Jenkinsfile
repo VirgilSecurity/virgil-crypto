@@ -78,6 +78,9 @@ def createNativeUnixBuild(slave) {
             // NodeJS
             sh './utils/build.sh nodejs-4.8.7'
             sh './utils/build.sh nodejs-6.12.3'
+            sh './utils/build.sh nodejs-7.10.1'
+            sh './utils/build.sh nodejs-8.9.4'
+            sh './utils/build.sh nodejs-9.5.0'
             organizeFilesUnix('install/nodejs')
             // PHP
             if (slave.contains('os-x')) {
@@ -121,6 +124,9 @@ def createNativeWindowsBuild(slave) {
                 bat 'utils\\build.bat java'
                 bat 'utils\\build.bat nodejs-4.8.7'
                 bat 'utils\\build.bat nodejs-6.12.3'
+                bat 'utils\\build.bat nodejs-7.10.1'
+                bat 'utils\\build.bat nodejs-8.9.4'
+                bat 'utils\\build.bat nodejs-9.5.0'
                 withEnv(["PATH=C:\\Python27_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-2.7-x86'
                 }

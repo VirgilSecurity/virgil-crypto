@@ -119,8 +119,8 @@ def createNativeWindowsBuild(slave) {
                 bat 'utils\\build.bat cpp'
                 bat 'utils\\build.bat net'
                 bat 'utils\\build.bat java'
-                sh './utils/build.sh nodejs-4.8.7'
-                sh './utils/build.sh nodejs-6.12.3'
+                bat 'utils\\build.bat nodejs-4.8.7'
+                bat 'utils\\build.bat nodejs-6.12.3'
                 withEnv(["PATH=C:\\Python27_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-2.7-x86'
                 }

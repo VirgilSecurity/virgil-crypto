@@ -35,6 +35,7 @@
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
 
+import os
 import urllib
 import json
 import re
@@ -53,9 +54,9 @@ with open('checksum.txt', 'w') as checksum_file:
         if(LooseVersion(version) < LooseVersion("v4.0.0")):
             continue
 
+        print("Loading checksum of version: %s" % version)
         urllib.urlretrieve("https://nodejs.org/download/release/%s/SHASUMS256.txt" % version, "SHASUMS256.txt")
 
-        print("Processing checksum of version: %s" % version)
         with open('SHASUMS256.txt', 'r') as f:
             lines = f.readlines()
 
@@ -64,3 +65,10 @@ with open('checksum.txt', 'w') as checksum_file:
                     checksum_file.write('{:8}  {}'.format(version, line))
 
             checksum_file.flush()
+
+
+if os.path.exists('index.json'):
+    os.remove('index.json')
+
+if os.path.exists('SHASUMS256.txt'):
+    os.remove('SHASUMS256.txt')

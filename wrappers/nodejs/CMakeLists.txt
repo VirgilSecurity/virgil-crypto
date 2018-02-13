@@ -44,6 +44,95 @@ set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set (LANG_VERSION "4.8.7" CACHE STRING "Node.js version")
 
+
+# ---------------------------------------------------------------------------
+#   Utility functions
+# ---------------------------------------------------------------------------
+
+# Check SHA256 <checksum> of the given <file>.
+function (nodejs_file_checksum_sha256 file checksum)
+    file (SHA256 "${file}" checksum_test)
+
+    if (NOT checksum_test STREQUAL checksum)
+        message(FATAL_ERROR
+            "Mismatched checksum for file: ${file}\n"
+            "       [actual]   ${checksum_test}\n"
+            "       [expected] ${checksum}"
+        )
+    endif ()
+endfunction ()
+
+# Download file from the given <url> and stores it in a <file>.
+# SHA256 <hash> is checked.
+function (nodejs_cache_file url file hash)
+    if (NOT EXISTS "${file}")
+        message (STATUS "Download file: ${file}")
+
+        file (DOWNLOAD "${url}" "${file}"
+            SHOW_PROGRESS
+            EXPECTED_HASH SHA256=${hash}
+            STATUS download_status
+        )
+
+        list (GET download_status 0 download_status_code)
+        list (GET download_status 1 download_status_message)
+
+        if (NOT download_status_code EQUAL "0")
+            message (FATAL_ERROR
+                "Fail to upload file. ${download_status_message}.\n"
+                "   [file]  ${file}\n"
+                "   [url ]  ${url}\n"
+                "   [hash]  ${hash}\n"
+            )
+        endif ()
+    else ()
+        message (STATUS "File is already in the cache: ${file}")
+    endif ()
+endfunction ()
+
+# Define V8 engine version from the NodeJS <header> file.
+function (nodejs_define_v8_version file major minor hex)
+
+    file (STRINGS "${file}"
+        v8_major_line REGEX "^#define[\t ]+V8_MAJOR_VERSION[\t ]+[0-9]+"
+    )
+
+    file (STRINGS "${file}"
+        v8_minor_line REGEX "^#define[\t ]+V8_MINOR_VERSION[\t ]+[0-9]+"
+    )
+
+    string (REGEX REPLACE "^#define[\t ]+V8_MAJOR_VERSION[\t ]+([0-9]+)" "\\1"
+        v8_major "${v8_major_line}"
+    )
+
+    string (REGEX REPLACE "^#define[\t ]+V8_MINOR_VERSION[\t ]+([0-9]+)" "\\1"
+        v8_minor "${v8_minor_line}"
+    )
+
+    # Construct HEX representation of the version.
+    set (v8_hex "0x")
+
+    string (LENGTH "${v8_major}" str_len)
+    if (str_len EQUAL 1)
+        set (v8_hex "${v8_hex}0${v8_major}")
+    else ()
+        set (v8_hex "${v8_hex}${v8_major}")
+    endif ()
+
+    string (LENGTH "${v8_minor}" str_len)
+    if (str_len EQUAL 1)
+        set (v8_hex "${v8_hex}0${v8_minor}")
+    else ()
+        set (v8_hex "${v8_hex}${v8_minor}")
+    endif ()
+
+    set (v8_hex "${v8_hex}00")
+
+    set (${major} ${v8_major} PARENT_SCOPE)
+    set (${minor} ${v8_minor} PARENT_SCOPE)
+    set (${hex} ${v8_hex} PARENT_SCOPE)
+endfunction ()
+
 # ---------------------------------------------------------------------------
 #   Load checksum for given version
 # ---------------------------------------------------------------------------
@@ -69,6 +158,17 @@ string (REGEX MATCH
     ${CHECKSUM_FILE}
 )
 
+if (NOT NODEJS_HEADRES_CHECKSUM_STRING)
+    message (FATAL_ERROR
+        "Requested NodeJS version ${LANG_VERSION} is not found in a 'checksum.txt' file.\n"
+        "   Possible reasons:\n"
+        "       - requested version is new and 'checksum.txt' is outdated;\n"
+        "       - requested version is stale and not supported any more;\n"
+        "       - requested version does not exists.\n"
+        "   To update 'checksum.txt' use CMake target 'nodejs_update'."
+    )
+endif ()
+
 string (REGEX REPLACE "[ ]+" ";" NODEJS_HEADRES_CHECKSUM_LIST ${NODEJS_HEADRES_CHECKSUM_STRING})
 string (REGEX REPLACE "[ ]+" ";" NODEJS_WIN_X86_LIB_CHECKSUM_LIST ${NODEJS_WIN_X86_LIB_CHECKSUM_STRING})
 string (REGEX REPLACE "[ ]+" ";" NODEJS_WIN_X64_LIB_CHECKSUM_LIST ${NODEJS_WIN_X64_LIB_CHECKSUM_STRING})
@@ -80,180 +180,137 @@ list (GET NODEJS_WIN_X64_LIB_CHECKSUM_LIST 1  NODEJS_WIN_X64_LIB_CHECKSUM)
 # ---------------------------------------------------------------------------
 #   Download nodejs of the requested version to the cache
 # ---------------------------------------------------------------------------
-
 set (NODEJS_HEADERS_TGZ "${VIRGIL_DEPENDS_CACHE_DIR}/nodejs/v${LANG_VERSION}/headers.tgz")
 set (NODEJS_WIN_X86_LIB "${VIRGIL_DEPENDS_CACHE_DIR}/nodejs/v${LANG_VERSION}/win-x86/node.lib")
 set (NODEJS_WIN_X64_LIB "${VIRGIL_DEPENDS_CACHE_DIR}/nodejs/v${LANG_VERSION}/win-x64/node.lib")
 
-if (NOT EXISTS "${NODEJS_HEADERS_TGZ}")
-    file (
-        DOWNLOAD
-            https://nodejs.org/download/release/v${LANG_VERSION}/node-v${LANG_VERSION}-headers.tar.gz
-            "${NODEJS_HEADERS_TGZ}"
-        SHOW_PROGRESS
-        STATUS NODEJS_HEADERS_STATUS
-    )
-endif ()
+nodejs_cache_file (
+    "https://nodejs.org/download/release/v${LANG_VERSION}/node-v${LANG_VERSION}-headers.tar.gz"
+    "${NODEJS_HEADERS_TGZ}"
+    "${NODEJS_HEADRES_CHECKSUM}"
+)
 
-if (NOT EXISTS "${NODEJS_WIN_X86_LIB}")
-    file (
-        DOWNLOAD
-            https://nodejs.org/download/release/v${LANG_VERSION}/win-x86/node.lib
-            "${NODEJS_WIN_X86_LIB}"
-        SHOW_PROGRESS
-        STATUS NODEJS_WIN_X86_LIB_STATUS
-    )
-endif ()
+nodejs_cache_file (
+    "https://nodejs.org/download/release/v${LANG_VERSION}/win-x86/node.lib"
+    "${NODEJS_WIN_X86_LIB}"
+    "${NODEJS_WIN_X86_LIB_CHECKSUM}"
+)
 
-if (NOT EXISTS "${NODEJS_WIN_X64_LIB}")
-    file (
-        DOWNLOAD
-            https://nodejs.org/download/release/v${LANG_VERSION}/win-x64/node.lib
-            "${NODEJS_WIN_X64_LIB}"
-        SHOW_PROGRESS
-        STATUS NODEJS_WIN_X64_LIB_STATUS
-    )
-endif ()
+nodejs_cache_file (
+    "https://nodejs.org/download/release/v${LANG_VERSION}/win-x64/node.lib"
+    "${NODEJS_WIN_X64_LIB}"
+    "${NODEJS_WIN_X64_LIB_CHECKSUM}"
+)
 
 # ---------------------------------------------------------------------------
-#   Check downloaded files checksum
+#   Check downloaded / cached files checksum
 # ---------------------------------------------------------------------------
-
-file (SHA256 "${NODEJS_HEADERS_TGZ}" NODEJS_HEADRES_CHECKSUM_TEST)
-if (NOT NODEJS_HEADRES_CHECKSUM_TEST STREQUAL NODEJS_HEADRES_CHECKSUM)
-    message(FATAL_ERROR
-        "Mismatched checksum for file: ${NODEJS_HEADERS_TGZ}\n"
-        "       [actual]   ${NODEJS_HEADRES_CHECKSUM_TEST}\n"
-        "       [expected] ${NODEJS_HEADRES_CHECKSUM}"
-    )
-endif ()
-
-file (SHA256 "${NODEJS_WIN_X86_LIB}" NODEJS_WIN_X86_LIB_CHECKSUM_TEST)
-if (NOT NODEJS_WIN_X86_LIB_CHECKSUM_TEST STREQUAL NODEJS_WIN_X86_LIB_CHECKSUM)
-    message(FATAL_ERROR
-        "Mismatched checksum for file: ${NODEJS_WIN_X86_LIB}\n"
-        "       [actual]   ${NODEJS_WIN_X86_LIB_CHECKSUM_TEST}\n"
-        "       [expected] ${NODEJS_WIN_X86_LIB_CHECKSUM}"
-    )
-endif ()
-
-file (SHA256 "${NODEJS_WIN_X64_LIB}" NODEJS_WIN_X64_LIB_CHECKSUM_TEST)
-if (NOT NODEJS_WIN_X64_LIB_CHECKSUM_TEST STREQUAL NODEJS_WIN_X64_LIB_CHECKSUM)
-    message(FATAL_ERROR
-        "Mismatched checksum for file: ${NODEJS_WIN_X64_LIB}\n"
-        "       [actual]   ${NODEJS_WIN_X64_LIB_CHECKSUM_TEST}\n"
-        "       [expected] ${NODEJS_WIN_X64_LIB_CHECKSUM}"
-    )
-endif ()
+nodejs_file_checksum_sha256 ("${NODEJS_HEADERS_TGZ}" "${NODEJS_HEADRES_CHECKSUM}")
+nodejs_file_checksum_sha256 ("${NODEJS_WIN_X86_LIB}" "${NODEJS_WIN_X86_LIB_CHECKSUM}")
+nodejs_file_checksum_sha256 ("${NODEJS_WIN_X64_LIB}" "${NODEJS_WIN_X64_LIB_CHECKSUM}")
 
 # ---------------------------------------------------------------------------
 #   Unpack and copy nodejs of the requested version to the build directory
 # ---------------------------------------------------------------------------
-
-set (NODEJS_TARGET_DIR "${CMAKE_BINARY_DIR}/node-v${LANG_VERSION}")
+set (NODEJS_TARGET_DIR "${CMAKE_CURRENT_BINARY_DIR}/node-v${LANG_VERSION}")
 
 execute_process(
     COMMAND ${CMAKE_COMMAND} -E tar xzf "${NODEJS_HEADERS_TGZ}"
-    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
 execute_process(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${NODEJS_WIN_X86_LIB}"
         "${NODEJS_TARGET_DIR}/lib/win-x86/node.lib"
-
 )
 
 execute_process(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "${NODEJS_WIN_X64_LIB}"
         "${NODEJS_TARGET_DIR}/lib/win-x64/node.lib"
-
 )
 
-if (EXISTS "${NODEJS_TARGET_DIR}/")
-    # Make target for Node
-    add_library (node INTERFACE)
-    target_include_directories (node SYSTEM INTERFACE
-        $<BUILD_INTERFACE:${NODEJS_TARGET_DIR}/include/node>
-    )
-    if (WIN32)
-        if (POINTER_SIZE EQUAL 8)
-            target_link_libraries (node INTERFACE "${NODEJS_TARGET_DIR}/lib/win-x64/node.lib")
-        else ()
-            target_link_libraries (node INTERFACE "${NODEJS_TARGET_DIR}/lib/win-x86/node.lib")
-        endif ()
-    endif (WIN32)
-
-    # Parse V8 version
-    file (STRINGS
-        "${NODEJS_TARGET_DIR}/include/node/v8-version.h"
-        v8_major_version_str REGEX "^#define[\t ]+V8_MAJOR_VERSION[\t ]+[0-9]+"
-    )
-    file (STRINGS
-        "${NODEJS_TARGET_DIR}/include/node/v8-version.h"
-        v8_minor_version_str REGEX "^#define[\t ]+V8_MINOR_VERSION[\t ]+[0-9]+"
-    )
-    string (REGEX REPLACE
-        "^#define[\t ]+V8_MAJOR_VERSION[\t ]+([0-9]+)" "\\1"
-        V8_MAJOR_VERSION_STRING "${v8_major_version_str}"
-    )
-    string (REGEX REPLACE
-        "^#define[\t ]+V8_MINOR_VERSION[\t ]+([0-9]+)" "\\1"
-        V8_MINOR_VERSION_STRING "${v8_minor_version_str}"
-    )
-    unset (v8_major_version_str)
-    unset (v8_minor_version_str)
-    message (STATUS "V8 version: ${V8_MAJOR_VERSION_STRING}.${V8_MINOR_VERSION_STRING}")
-
-    string (LENGTH "${V8_MAJOR_VERSION_STRING}" str_len)
-    if (str_len EQUAL 1)
-        set (V8_MAJOR_VERSION_STRING "0${V8_MAJOR_VERSION_STRING}")
+# ---------------------------------------------------------------------------
+#   Create NodeJS IMPORTED target for the requested version
+# ---------------------------------------------------------------------------
+add_library (node INTERFACE)
+target_include_directories (node SYSTEM INTERFACE
+    $<BUILD_INTERFACE:${NODEJS_TARGET_DIR}/include/node>
+)
+if (WIN32)
+    if (POINTER_SIZE EQUAL 8)
+        target_link_libraries (node INTERFACE "${NODEJS_TARGET_DIR}/lib/win-x64/node.lib")
+    else ()
+        target_link_libraries (node INTERFACE "${NODEJS_TARGET_DIR}/lib/win-x86/node.lib")
     endif ()
-    string (LENGTH "${V8_MINOR_VERSION_STRING}" str_len)
-    if (str_len EQUAL 1)
-        set (V8_MINOR_VERSION_STRING "0${V8_MINOR_VERSION_STRING}")
-    endif ()
-    set (V8_VERSION_HEX "0x${V8_MAJOR_VERSION_STRING}${V8_MINOR_VERSION_STRING}00")
-    message (STATUS "V8 version hex: ${V8_VERSION_HEX}")
-else ()
-    message (FATAL_ERROR
-        "LANG_VERSION contains invalid value - related folder is not found."
-    )
-endif ()
+endif (WIN32)
 
+nodejs_define_v8_version ("${NODEJS_TARGET_DIR}/include/node/v8-version.h"
+    V8_VERSION_MAJOR
+    V8_VERSION_MINOR
+    V8_VERSION_HEX
+)
+
+message (STATUS "V8 version: ${V8_VERSION_MAJOR}.${V8_VERSION_MINOR}")
+message (STATUS "V8 version hex: ${V8_VERSION_HEX}")
+
+# ---------------------------------------------------------------------------
+#   Create helper target 'nodejs_update'
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+#   Configure wrapper environment
+# ---------------------------------------------------------------------------
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-set (JS_MODULE_NAME ${PROJECT_NAME})
-set (SWIG_MODULE_NAME ${JS_MODULE_NAME})
+set (WRAPPER_NAME ${PROJECT_NAME})
 
 find_host_package (SWIG REQUIRED)
 include (${SWIG_USE_FILE})
 
 set (CMAKE_SWIG_FLAGS "")
-
 set (SWIG_WRAP_COPY_CONSTRUCTOR YES)
+set (SWIG_MODULE_NAME ${WRAPPER_NAME})
+
 set (WRAPPER_INTERFACE_FILE "${CMAKE_CURRENT_BINARY_DIR}/wrapper.i")
 configure_file (
     "${wrappers_SOURCE_DIR}/swig/wrapper.i.in"
     "${WRAPPER_INTERFACE_FILE}"
 )
 
+# ---------------------------------------------------------------------------
+#   Configure wrapper build
+# ---------------------------------------------------------------------------
 set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY CPLUSPLUS ON)
+
 set_property (
-    SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing" "-node" "-DV8_VERSION=${V8_VERSION_HEX}"
+    SOURCE "${WRAPPER_INTERFACE_FILE}"
+    PROPERTY SWIG_FLAGS "-ignoremissing" "-node" "-DV8_VERSION=${V8_VERSION_HEX}"
 )
 
-swig_add_library (${JS_MODULE_NAME} LANGUAGE javascript SOURCES "${WRAPPER_INTERFACE_FILE}")
-set_target_properties (${SWIG_MODULE_${JS_MODULE_NAME}_REAL_NAME} PROPERTIES PREFIX "")
-set_target_properties (${SWIG_MODULE_${JS_MODULE_NAME}_REAL_NAME} PROPERTIES SUFFIX ".node")
-target_compile_definitions (${SWIG_MODULE_${JS_MODULE_NAME}_REAL_NAME} PUBLIC "BUILDING_NODE_EXTENSION")
+swig_add_library (${WRAPPER_NAME}
+    LANGUAGE javascript
+    SOURCES "${WRAPPER_INTERFACE_FILE}"
+)
+set (WRAPPER_TARGET "${SWIG_MODULE_${WRAPPER_NAME}_REAL_NAME}")
+
+
+set_target_properties (${WRAPPER_TARGET} PROPERTIES PREFIX "")
+set_target_properties (${WRAPPER_TARGET} PROPERTIES SUFFIX ".node")
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set_property (TARGET ${JS_MODULE_NAME} APPEND_STRING PROPERTY LINK_FLAGS "-undefined dynamic_lookup")
+    set_property (TARGET ${WRAPPER_TARGET}
+        APPEND_STRING PROPERTY LINK_FLAGS " -undefined dynamic_lookup"
+    )
 endif ()
-target_link_libraries (${SWIG_MODULE_${JS_MODULE_NAME}_REAL_NAME} node)
-swig_link_libraries (${JS_MODULE_NAME} ${WRAPPED_LIB_NAME})
 
-install (TARGETS ${JS_MODULE_NAME}
+target_compile_definitions (${WRAPPER_TARGET} PUBLIC "BUILDING_NODE_EXTENSION")
+target_link_libraries (${WRAPPER_TARGET} node)
+swig_link_libraries (${WRAPPER_TARGET} ${WRAPPED_LIB_NAME})
+
+# ---------------------------------------------------------------------------
+#   Configure wrapper install
+# ---------------------------------------------------------------------------
+install (TARGETS ${WRAPPER_TARGET}
         RUNTIME DESTINATION "${INSTALL_BIN_DIR_NAME}"
         LIBRARY DESTINATION "${INSTALL_LIB_DIR_NAME}")

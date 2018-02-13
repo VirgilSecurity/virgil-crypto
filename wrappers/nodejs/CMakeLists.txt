@@ -258,6 +258,11 @@ message (STATUS "V8 version hex: ${V8_VERSION_HEX}")
 # ---------------------------------------------------------------------------
 #   Create helper target 'nodejs_update'
 # ---------------------------------------------------------------------------
+add_custom_target(nodejs_update
+    COMMAND python load_checksum.py
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    COMMENT "Updating file 'wrappers/nodejs/checksum.txt' ..."
+)
 
 # ---------------------------------------------------------------------------
 #   Configure wrapper environment

@@ -169,9 +169,6 @@ def createCrossplatfromBuild(slave) {
             withEnv(['EMSDK_HOME=/Users/virgil/Library/VirgilEnviroment/emsdk_portable']) {
                 sh './utils/build.sh asmjs'
             }
-            withEnv(['NACL_SDK_ROOT=/Users/virgil/Library/VirgilEnviroment/nacl_sdk/pepper_46']) {
-                sh './utils/build.sh pnacl . build/cpp install/cpp'
-            }
             archiveArtifacts('install/**')
         }
     }

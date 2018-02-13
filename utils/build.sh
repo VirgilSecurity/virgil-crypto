@@ -76,7 +76,6 @@ function show_usage {
     echo -e "    * net_android      - build .NET library under Android platform, requirements: Mono, \$ANDROID_NDK;"
     echo -e "    * asmjs            - build AsmJS library, requirements: \$EMSDK_HOME;"
     echo -e "    * nodejs           - build NodeJS module;"
-    echo -e "    * pnacl            - build Portable Native library for Google Chrome, requirements: \$NACL_SDK_ROOT;"
     echo -e "    * go               - build Golang library."
     echo -e "  - <src_dir>     - (default = .) path to the directory where root CMakeLists.txt file is located"
     echo -e "  - <build_dir>   - (default = build/<target>) path to the directory where temp files will be stored"
@@ -429,14 +428,6 @@ if [ "${TARGET_NAME}" == "asmjs" ]; then
     fi
     source "${EMSDK_HOME}/emsdk_env.sh"
     cmake ${CMAKE_ARGS} -DLANG=asmjs -DCMAKE_TOOLCHAIN_FILE="$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake" "${SRC_DIR}"
-    make -j8 install
-fi
-
-if [ "${TARGET_NAME}" == "pnacl" ]; then
-    if [ ! -d "$NACL_SDK_ROOT" ]; then
-        show_usage "Enviroment \$NACL_SDK_ROOT is not defined!" 1
-    fi
-    cmake ${CMAKE_ARGS} -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/pnacl.toolchain.cmake" "${SRC_DIR}"
     make -j8 install
 fi
 

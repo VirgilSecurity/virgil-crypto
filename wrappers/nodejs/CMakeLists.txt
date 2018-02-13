@@ -42,31 +42,156 @@ project (${WRAPPED_LIB_NAME}_nodejs)
 set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set (LANG_VERSION "4.1.0" CACHE STRING "Node.js version")
+set (LANG_VERSION "4.8.7" CACHE STRING "Node.js version")
 
-set (NODEJS_TARGET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/node-v${LANG_VERSION}")
+# ---------------------------------------------------------------------------
+#   Load checksum for given version
+# ---------------------------------------------------------------------------
+file (READ "${CMAKE_CURRENT_LIST_DIR}/checksum.txt" CHECKSUM_FILE)
+
+string (REGEX REPLACE "[.]" "\\\\." LANG_VERSION_REGEX "${LANG_VERSION}")
+
+string (REGEX MATCH
+    "v${LANG_VERSION_REGEX}[ ]+[0-9a-zA-Z]+[ ]+node-v${LANG_VERSION_REGEX}-headers.tar.gz"
+    NODEJS_HEADRES_CHECKSUM_STRING
+    ${CHECKSUM_FILE}
+)
+
+string (REGEX MATCH
+    "v${LANG_VERSION_REGEX}[ ]+[0-9a-zA-Z]+[ ]+win-x86/node.lib"
+    NODEJS_WIN_X86_LIB_CHECKSUM_STRING
+    ${CHECKSUM_FILE}
+)
+
+string (REGEX MATCH
+    "v${LANG_VERSION_REGEX}[ ]+[0-9a-zA-Z]+[ ]+win-x64/node.lib"
+    NODEJS_WIN_X64_LIB_CHECKSUM_STRING
+    ${CHECKSUM_FILE}
+)
+
+string (REGEX REPLACE "[ ]+" ";" NODEJS_HEADRES_CHECKSUM_LIST ${NODEJS_HEADRES_CHECKSUM_STRING})
+string (REGEX REPLACE "[ ]+" ";" NODEJS_WIN_X86_LIB_CHECKSUM_LIST ${NODEJS_WIN_X86_LIB_CHECKSUM_STRING})
+string (REGEX REPLACE "[ ]+" ";" NODEJS_WIN_X64_LIB_CHECKSUM_LIST ${NODEJS_WIN_X64_LIB_CHECKSUM_STRING})
+
+list (GET NODEJS_HEADRES_CHECKSUM_LIST 1  NODEJS_HEADRES_CHECKSUM)
+list (GET NODEJS_WIN_X86_LIB_CHECKSUM_LIST 1  NODEJS_WIN_X86_LIB_CHECKSUM)
+list (GET NODEJS_WIN_X64_LIB_CHECKSUM_LIST 1  NODEJS_WIN_X64_LIB_CHECKSUM)
+
+# ---------------------------------------------------------------------------
+#   Download nodejs of the requested version to the cache
+# ---------------------------------------------------------------------------
+
+set (NODEJS_HEADERS_TGZ "${VIRGIL_DEPENDS_CACHE_DIR}/nodejs/v${LANG_VERSION}/headers.tgz")
+set (NODEJS_WIN_X86_LIB "${VIRGIL_DEPENDS_CACHE_DIR}/nodejs/v${LANG_VERSION}/win-x86/node.lib")
+set (NODEJS_WIN_X64_LIB "${VIRGIL_DEPENDS_CACHE_DIR}/nodejs/v${LANG_VERSION}/win-x64/node.lib")
+
+if (NOT EXISTS "${NODEJS_HEADERS_TGZ}")
+    file (
+        DOWNLOAD
+            https://nodejs.org/download/release/v${LANG_VERSION}/node-v${LANG_VERSION}-headers.tar.gz
+            "${NODEJS_HEADERS_TGZ}"
+        SHOW_PROGRESS
+        STATUS NODEJS_HEADERS_STATUS
+    )
+endif ()
+
+if (NOT EXISTS "${NODEJS_WIN_X86_LIB}")
+    file (
+        DOWNLOAD
+            https://nodejs.org/download/release/v${LANG_VERSION}/win-x86/node.lib
+            "${NODEJS_WIN_X86_LIB}"
+        SHOW_PROGRESS
+        STATUS NODEJS_WIN_X86_LIB_STATUS
+    )
+endif ()
+
+if (NOT EXISTS "${NODEJS_WIN_X64_LIB}")
+    file (
+        DOWNLOAD
+            https://nodejs.org/download/release/v${LANG_VERSION}/win-x64/node.lib
+            "${NODEJS_WIN_X64_LIB}"
+        SHOW_PROGRESS
+        STATUS NODEJS_WIN_X64_LIB_STATUS
+    )
+endif ()
+
+# ---------------------------------------------------------------------------
+#   Check downloaded files checksum
+# ---------------------------------------------------------------------------
+
+file (SHA256 "${NODEJS_HEADERS_TGZ}" NODEJS_HEADRES_CHECKSUM_TEST)
+if (NOT NODEJS_HEADRES_CHECKSUM_TEST STREQUAL NODEJS_HEADRES_CHECKSUM)
+    message(FATAL_ERROR
+        "Mismatched checksum for file: ${NODEJS_HEADERS_TGZ}\n"
+        "       [actual]   ${NODEJS_HEADRES_CHECKSUM_TEST}\n"
+        "       [expected] ${NODEJS_HEADRES_CHECKSUM}"
+    )
+endif ()
+
+file (SHA256 "${NODEJS_WIN_X86_LIB}" NODEJS_WIN_X86_LIB_CHECKSUM_TEST)
+if (NOT NODEJS_WIN_X86_LIB_CHECKSUM_TEST STREQUAL NODEJS_WIN_X86_LIB_CHECKSUM)
+    message(FATAL_ERROR
+        "Mismatched checksum for file: ${NODEJS_WIN_X86_LIB}\n"
+        "       [actual]   ${NODEJS_WIN_X86_LIB_CHECKSUM_TEST}\n"
+        "       [expected] ${NODEJS_WIN_X86_LIB_CHECKSUM}"
+    )
+endif ()
+
+file (SHA256 "${NODEJS_WIN_X64_LIB}" NODEJS_WIN_X64_LIB_CHECKSUM_TEST)
+if (NOT NODEJS_WIN_X64_LIB_CHECKSUM_TEST STREQUAL NODEJS_WIN_X64_LIB_CHECKSUM)
+    message(FATAL_ERROR
+        "Mismatched checksum for file: ${NODEJS_WIN_X64_LIB}\n"
+        "       [actual]   ${NODEJS_WIN_X64_LIB_CHECKSUM_TEST}\n"
+        "       [expected] ${NODEJS_WIN_X64_LIB_CHECKSUM}"
+    )
+endif ()
+
+# ---------------------------------------------------------------------------
+#   Unpack and copy nodejs of the requested version to the build directory
+# ---------------------------------------------------------------------------
+
+set (NODEJS_TARGET_DIR "${CMAKE_BINARY_DIR}/node-v${LANG_VERSION}")
+
+execute_process(
+    COMMAND ${CMAKE_COMMAND} -E tar xzf "${NODEJS_HEADERS_TGZ}"
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+)
+
+execute_process(
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${NODEJS_WIN_X86_LIB}"
+        "${NODEJS_TARGET_DIR}/lib/win-x86/node.lib"
+
+)
+
+execute_process(
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${NODEJS_WIN_X64_LIB}"
+        "${NODEJS_TARGET_DIR}/lib/win-x64/node.lib"
+
+)
 
 if (EXISTS "${NODEJS_TARGET_DIR}/")
     # Make target for Node
     add_library (node INTERFACE)
     target_include_directories (node SYSTEM INTERFACE
-        $<BUILD_INTERFACE:${NODEJS_TARGET_DIR}/include>
+        $<BUILD_INTERFACE:${NODEJS_TARGET_DIR}/include/node>
     )
     if (WIN32)
         if (POINTER_SIZE EQUAL 8)
-            target_link_libraries (node INTERFACE "${NODEJS_TARGET_DIR}/lib/win/x64/node.lib")
+            target_link_libraries (node INTERFACE "${NODEJS_TARGET_DIR}/lib/win-x64/node.lib")
         else ()
-            target_link_libraries (node INTERFACE "${NODEJS_TARGET_DIR}/lib/win/x86/node.lib")
+            target_link_libraries (node INTERFACE "${NODEJS_TARGET_DIR}/lib/win-x86/node.lib")
         endif ()
     endif (WIN32)
 
     # Parse V8 version
     file (STRINGS
-        "${NODEJS_TARGET_DIR}/include/v8-version.h"
+        "${NODEJS_TARGET_DIR}/include/node/v8-version.h"
         v8_major_version_str REGEX "^#define[\t ]+V8_MAJOR_VERSION[\t ]+[0-9]+"
     )
     file (STRINGS
-        "${NODEJS_TARGET_DIR}/include/v8-version.h"
+        "${NODEJS_TARGET_DIR}/include/node/v8-version.h"
         v8_minor_version_str REGEX "^#define[\t ]+V8_MINOR_VERSION[\t ]+[0-9]+"
     )
     string (REGEX REPLACE
@@ -118,7 +243,7 @@ set_property (
     SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing" "-node" "-DV8_VERSION=${V8_VERSION_HEX}"
 )
 
-swig_add_module (${JS_MODULE_NAME} javascript "${WRAPPER_INTERFACE_FILE}")
+swig_add_library (${JS_MODULE_NAME} LANGUAGE javascript SOURCES "${WRAPPER_INTERFACE_FILE}")
 set_target_properties (${SWIG_MODULE_${JS_MODULE_NAME}_REAL_NAME} PROPERTIES PREFIX "")
 set_target_properties (${SWIG_MODULE_${JS_MODULE_NAME}_REAL_NAME} PROPERTIES SUFFIX ".node")
 target_compile_definitions (${SWIG_MODULE_${JS_MODULE_NAME}_REAL_NAME} PUBLIC "BUILDING_NODE_EXTENSION")

@@ -173,7 +173,8 @@ def createCrossplatfromBuild(slave) {
             clearContentUnix()
             unstash 'src'
             withEnv(['EMSDK_HOME=/Users/virgil/Library/VirgilEnviroment/emsdk_portable']) {
-                sh './utils/build.sh asmjs'
+                sh './utils/build.sh asmjs . build/asmjs install/asmjs'
+                sh './utils/build.sh webasm . build/webasm install/webasm'
             }
             archiveArtifacts('install/**')
         }

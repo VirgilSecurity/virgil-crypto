@@ -83,10 +83,6 @@ if (BUILD_SHARED_LIBS OR BUILD_LIBRARY_FRAMEWORK)
     )
 endif ()
 
-if (CMAKE_CROSSCOMPILING AND NOT APPLE)
-    set_property (TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY COMPILE_FLAGS "-std=c++11")
-endif ()
-
 target_include_directories (${PROJECT_NAME}
     PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"

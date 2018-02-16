@@ -35,40 +35,48 @@
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
 
-import os
-import urllib
 import json
-import re
+import sys
+
 from distutils.version import LooseVersion
 
-urllib.urlretrieve("https://nodejs.org/download/release/index.json", "index.json")
+PYTHON_VERSION = sys.version_info[0]
+if PYTHON_VERSION == 3:
+    import urllib.request as urllib2
+    from urllib.error import HTTPError
+else:
+    import urllib2
+    from urllib2 import HTTPError as HTTPError
 
-with open('index.json', 'r') as f:
-    nodejs_index = json.load(f)
 
-with open('checksum.txt', 'w') as checksum_file:
+def get_data_from_url(url):
+    try:
+        return urllib2.urlopen(url).read()
+    except HTTPError as e:
+        print("Cant get data from {url} error: {error}".format(url=url, error=e))
 
-    for nodejs in nodejs_index:
-        version = nodejs['version']
 
-        if(LooseVersion(version) < LooseVersion("v4.0.0")):
+if __name__ == '__main__':
+    nodejs_releases_url = "https://nodejs.org/download/release"
+    raw_nodejs_versions = get_data_from_url(nodejs_releases_url + "/index.json")
+    if not raw_nodejs_versions:
+        sys.exit(1)
+    nodejs_versions = [x['version'] for x in json.loads(raw_nodejs_versions)]
+    result_checksums = list()
+
+    for version in nodejs_versions:
+
+        if LooseVersion(version) < LooseVersion("v4.0.0"):
+            print("Skip checksums for stale version: {}".format(version))
             continue
 
-        print("Loading checksum of version: %s" % version)
-        urllib.urlretrieve("https://nodejs.org/download/release/%s/SHASUMS256.txt" % version, "SHASUMS256.txt")
+        print("Loading checksums for version: {}".format(version))
+        file_checksums = get_data_from_url(nodejs_releases_url + "/{}/SHASUMS256.txt".format(version))
+        if not file_checksums:
+            sys.exit(1)
+        for line in file_checksums.decode().split("\n"):
+            if line.endswith("headers.tar.gz") or line.endswith("node.lib"):
+                result_checksums.append("{:8} {}".format(version, line))
 
-        with open('SHASUMS256.txt', 'r') as f:
-            lines = f.readlines()
+    open('checksum.txt', 'w').write("\n".join(result_checksums))
 
-            for line in lines:
-                if re.search(r"(headers\.tar\.gz|node\.lib)", line):
-                    checksum_file.write('{:8}  {}'.format(version, line))
-
-            checksum_file.flush()
-
-
-if os.path.exists('index.json'):
-    os.remove('index.json')
-
-if os.path.exists('SHASUMS256.txt'):
-    os.remove('SHASUMS256.txt')

@@ -87,14 +87,13 @@ static std::string backtrace_message(const std::exception& exception, int level 
 }
 %}
 
-// This code should be commited until SWIG issue "https://github.com/swig/swig/issues/627" is fixed
-// #ifdef SWIGPHP
-// %feature("director:except") {
-//     if ($error == FAILURE) {
-//         throw Swig::DirectorMethodException();
-//     }
-// }
-// #endif
+#ifdef SWIGPHP
+%feature("director:except") {
+    if ($error == FAILURE) {
+        throw Swig::DirectorMethodException();
+    }
+}
+#endif
 %exception {
     try {
         $action

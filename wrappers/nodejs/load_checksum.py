@@ -76,7 +76,7 @@ if __name__ == '__main__':
             sys.exit(1)
         for line in file_checksums.decode().split("\n"):
             if line.endswith("headers.tar.gz") or line.endswith("node.lib"):
-                result_checksums.append("{:8} {}".format(version, line))
+                result_checksums.append("{:9} {}".format(version, line))
 
     open('checksum.txt', 'w').write("\n".join(result_checksums))
 

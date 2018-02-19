@@ -54,11 +54,11 @@ before_install:
     # Travis overrides CC environment with compiler predefined values
   - if [ -n "${ALT_CC}" ]; then export CC="${ALT_CC}"; fi
   - if [ -n "${ALT_CXX}" ]; then export CXX="${ALT_CXX}"; fi
-  - if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then source ./ci/install-deployment-key.sh; fi
+  - if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then source "${PROJECT_ROOT}/ci/install-deployment-key.sh"; fi
 install:
     # Use clean dependencies installation to avoid versions collision.
   - export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then source ./ci/install-dependencies.sh; fi
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then source "${PROJECT_ROOT}/ci/install-dependencies.sh"; fi
   - ${CC} --version
   - ${CXX} --version
   - cmake --version
@@ -75,5 +75,5 @@ script:
   - cmake --build "${PROJECT_ROOT}/build" -- -j4
   - cd "${PROJECT_ROOT}/build" && ctest --verbose && cd -
 after_success:
-  - source ./ci/publish-docs.sh
+  - source "${PROJECT_ROOT}/ci/publish-docs.sh"
 

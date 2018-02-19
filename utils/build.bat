@@ -1,6 +1,4 @@
-:: Copyright (C) 2015-2016 Virgil Security Inc.
-::
-:: Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+:: Copyright (C) 2015-2018 Virgil Security Inc.
 ::
 :: All rights reserved.
 ::
@@ -31,6 +29,8 @@
 :: STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
 :: IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 :: POSSIBILITY OF SUCH DAMAGE.
+::
+:: Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 
 :: This script helps to build Virgil Security Crypto library under Windows OS with MSVC toolchain.
 
@@ -104,7 +104,7 @@ if not "%TARGET_ARCH%" == "" (
 call :show_info INSTALL_DIR: %INSTALL_DIR%
 
 :: Configure common CMake parameters
-set CMAKE_ARGS=-DCMAKE_BUILD_TYPE=Release -G"NMake Makefiles" -DLIB_LOW_LEVEL_API=ON
+set CMAKE_ARGS=-DCMAKE_BUILD_TYPE=Release -G"NMake Makefiles" -DVIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP=ON
 
 :: Prepare build and install directories
 mkdir %BUILD_DIR% %INSTALL_DIR% 2>nul

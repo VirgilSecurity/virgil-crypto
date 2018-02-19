@@ -1,7 +1,5 @@
 #
-# Copyright (C) 2015-2016 Virgil Security Inc.
-#
-# Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+# Copyright (C) 2015-2018 Virgil Security Inc.
 #
 # All rights reserved.
 #
@@ -32,6 +30,8 @@
 # STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+#
+# Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
 
 #
@@ -75,7 +75,7 @@
 #          virgil_find_package (zzzzz x.y)
 #
 
-cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 
 include (CMakeParseArguments)
 
@@ -144,6 +144,7 @@ function (virgil_depends_create_cache_file cache_path)
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_MACOSX_RPATH")
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_INSTALL_NAME_DIR")
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_INSTALL_RPATH")
+    virgil_depends_write_cache_var ("${cache_path}" "CMAKE_BUILD_RPATH")
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_SKIP_BUILD_RPATH")
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_BUILD_WITH_INSTALL_RPATH")
     virgil_depends_write_cache_var ("${cache_path}" "CMAKE_INSTALL_RPATH_USE_LINK_PATH")

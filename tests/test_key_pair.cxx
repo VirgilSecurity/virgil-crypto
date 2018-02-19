@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
- *
- * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ * Copyright (C) 2015-2018 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -32,6 +30,8 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
 /**
@@ -40,6 +40,7 @@
  */
 
 #include "catch.hpp"
+#include "rsa_keys.h"
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilByteArrayUtils.h>
@@ -200,5 +201,56 @@ TEST_CASE("Export Private Key", "[key-pair]") {
     SECTION("to PEM format") {
         VirgilByteArray privateKeyPEM = VirgilKeyPair::privateKeyToPEM(basePrivateKeyDER);
         REQUIRE(kPrivateKeyPEM == VirgilByteArrayUtils::bytesToString(privateKeyPEM));
+    }
+}
+
+TEST_CASE("Export keys RSA", "[key-pair][key-pair-rsa]") {
+
+    SECTION("8192 encrypted") {
+
+        SECTION("to DER format") {
+            REQUIRE_NOTHROW(VirgilKeyPair::publicKeyToDER(
+                VirgilByteArrayUtils::stringToBytes(kRSA_8192_Public)
+            ));
+
+            REQUIRE_NOTHROW(VirgilKeyPair::privateKeyToDER(
+                VirgilByteArrayUtils::stringToBytes(kRSA_8192_Private),
+                VirgilByteArrayUtils::stringToBytes(kRSA_8192_Password)
+            ));
+        }
+
+        SECTION("to PEM format") {
+            REQUIRE_NOTHROW(VirgilKeyPair::publicKeyToPEM(
+                VirgilByteArrayUtils::stringToBytes(kRSA_8192_Public)
+            ));
+
+            REQUIRE_NOTHROW(VirgilKeyPair::privateKeyToPEM(
+                VirgilByteArrayUtils::stringToBytes(kRSA_8192_Private),
+                VirgilByteArrayUtils::stringToBytes(kRSA_8192_Password)
+            ));
+        }
+    }
+
+    SECTION("8192 plain") {
+
+        SECTION("to DER format") {
+            REQUIRE_NOTHROW(VirgilKeyPair::publicKeyToDER(
+                VirgilByteArrayUtils::stringToBytes(kRSA_8192_Public_Plain)
+            ));
+
+            REQUIRE_NOTHROW(VirgilKeyPair::privateKeyToDER(
+                VirgilByteArrayUtils::stringToBytes(kRSA_8192_Private_Plain)
+            ));
+        }
+
+        SECTION("to PEM format") {
+            REQUIRE_NOTHROW(VirgilKeyPair::publicKeyToPEM(
+                VirgilByteArrayUtils::stringToBytes(kRSA_8192_Public_Plain)
+            ));
+
+            REQUIRE_NOTHROW(VirgilKeyPair::privateKeyToPEM(
+                VirgilByteArrayUtils::stringToBytes(kRSA_8192_Private_Plain)
+            ));
+        }
     }
 }

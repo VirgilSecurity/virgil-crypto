@@ -1,7 +1,5 @@
 #
-# Copyright (C) 2015-2016 Virgil Security Inc.
-#
-# Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+# Copyright (C) 2015-2018 Virgil Security Inc.
 #
 # All rights reserved.
 #
@@ -33,48 +31,105 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
+# Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+#
 
-cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 
 project (virgil_crypto VERSION ${VIRGIL_VERSION})
 
-# Define sources list
-file (GLOB_RECURSE inc "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
-aux_source_directory ("src" src)
-aux_source_directory ("src/internal" src)
-aux_source_directory ("src/primitive" src)
-aux_source_directory ("src/pfs" src)
-if (LIB_FILE_IO)
-    aux_source_directory ("src/stream" src)
-endif()
-
+# Configure sources
 configure_file (
     "${CMAKE_CURRENT_SOURCE_DIR}/src/VirgilVersion.cxx.in"
     "${CMAKE_CURRENT_BINARY_DIR}/src/VirgilVersion.cxx"
     @ONLY
 )
 
+configure_file (
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/VirgilConfig.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/VirgilConfig.h"
+    @ONLY
+)
+
+# Define sources list
+file (GLOB_RECURSE inc_src "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
+file (GLOB_RECURSE inc_bin "${CMAKE_CURRENT_BINARY_DIR}/include/*.h")
+
+aux_source_directory ("src" src)
+aux_source_directory ("src/internal" src)
+aux_source_directory ("src/primitive" src)
+aux_source_directory ("src/pfs" src)
+aux_source_directory ("src/stream" src)
+
 aux_source_directory("${CMAKE_CURRENT_BINARY_DIR}/src" src)
 
-add_library (${PROJECT_NAME} ${inc} ${src})
+if (BUILD_LIBRARY_FRAMEWORK)
+    add_library (${PROJECT_NAME} SHARED ${inc_src} ${inc_bin} ${src})
+else()
+    add_library (${PROJECT_NAME} ${inc_src} ${inc_bin} ${src})
+endif()
 
-set_property (TARGET ${PROJECT_NAME} PROPERTY OUTPUT_NAME ${PROJECT_NAME})
-set_property (TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
-set_property (TARGET ${PROJECT_NAME} PROPERTY INTERFACE_POSITION_INDEPENDENT_CODE ON)
-set_property (TARGET ${PROJECT_NAME} PROPERTY DEBUG_POSTFIX "_d")
-if (BUILD_SHARED_LIBS)
-    set_target_properties (${PROJECT_NAME} PROPERTIES VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
-endif (BUILD_SHARED_LIBS)
-if (CMAKE_CROSSCOMPILING)
-    set_property (TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY COMPILE_FLAGS " -std=c++11")
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    OUTPUT_NAME ${PROJECT_NAME}
+    POSITION_INDEPENDENT_CODE ON
+    INTERFACE_POSITION_INDEPENDENT_CODE ON
+    DEBUG_POSTFIX "_d"
+)
+
+if (BUILD_SHARED_LIBS OR BUILD_LIBRARY_FRAMEWORK)
+    set_target_properties (${PROJECT_NAME} PROPERTIES
+        VERSION ${VIRGIL_VERSION}
+        SOVERSION ${VIRGIL_SOVERSION}
+    )
 endif ()
 
 target_include_directories (${PROJECT_NAME}
-    PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+        "$<INSTALL_INTERFACE:include>"
 )
 target_link_libraries (${PROJECT_NAME} mbedtls::mbedcrypto mbedtls::ed25519)
-target_compile_definitions (${PROJECT_NAME} PUBLIC "LIB_FILE_IO=$<BOOL:${LIB_FILE_IO}>" "UCLIBC=$<BOOL:${UCLIBC}>")
-target_compile_definitions (${PROJECT_NAME} PRIVATE "FMT_HEADER_ONLY")
+target_compile_definitions (${PROJECT_NAME}
+    PUBLIC
+        "VIRGIL_CRYPTO_FEATURE_STREAM_IMPL=$<BOOL:${VIRGIL_CRYPTO_FEATURE_STREAM_IMPL}>"
+        "UCLIBC=$<BOOL:${UCLIBC}>"
+    PRIVATE
+        "FMT_HEADER_ONLY"
+)
+
+# ---------------------------------------------------------------------------
+#   Apple specifc library configuration
+# ---------------------------------------------------------------------------
+if (BUILD_LIBRARY_FRAMEWORK)
+    # Add includes to the framework
+    foreach (_inc_file ${inc_src} ${inc_bin})
+        get_filename_component (_inc_file_path "${_inc_file}" DIRECTORY)
+
+        string (REGEX REPLACE
+            "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto" ""
+            _inc_file_path "${_inc_file_path}"
+        )
+
+        string (REGEX REPLACE
+            "${CMAKE_CURRENT_BINARY_DIR}/include" ""
+            _inc_file_path "${_inc_file_path}"
+        )
+
+        set_property (
+            SOURCE ${_inc_file}
+            PROPERTY MACOSX_PACKAGE_LOCATION "Headers${_inc_file_path}"
+        )
+    endforeach ()
+
+    # Convert target to framework
+    target_apple_framework (${PROJECT_NAME}
+        NAME "VSCCrypto"
+        IDENTIFIER "com.virgilsecurity.VSCCrypto"
+    )
+
+endif ()
 
 if (INSTALL_CORE_LIBS)
     # Define names for configuration files
@@ -106,18 +161,27 @@ if (INSTALL_CORE_LIBS)
     # Install targets
     install (TARGETS ${PROJECT_NAME}
         EXPORT "${targets_export_name}"
-        LIBRARY DESTINATION "${INSTALL_LIB_DIR_NAME}"
-        ARCHIVE DESTINATION "${INSTALL_LIB_DIR_NAME}"
-        RUNTIME DESTINATION "${INSTALL_BIN_DIR_NAME}"
-        INCLUDES DESTINATION "include"
+        LIBRARY   DESTINATION "${INSTALL_LIB_DIR_NAME}"
+        ARCHIVE   DESTINATION "${INSTALL_LIB_DIR_NAME}"
+        RUNTIME   DESTINATION "${INSTALL_BIN_DIR_NAME}"
+        FRAMEWORK DESTINATION "${INSTALL_LIB_DIR_NAME}"
     )
+
+    # Install headers
+    if (INSTALL_CORE_HEADERS)
+        install (DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+            DESTINATION "${INSTALL_INC_DIR_NAME}"
+        )
+
+        install (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/"
+            DESTINATION "${INSTALL_INC_DIR_NAME}/virgil/crypto"
+        )
+    endif ()
 
     if (INSTALL_EXT_LIBS)
         install (DIRECTORY "${VIRGIL_DEPENDS_PREFIX}/lib/" DESTINATION "${INSTALL_LIB_DIR_NAME}")
     endif (INSTALL_EXT_LIBS)
 
-    # Install headers
-    add_subdirectory (include)
     if (INSTALL_EXT_HEADERS)
         install (DIRECTORY "${VIRGIL_DEPENDS_PREFIX}/include/" DESTINATION "${INSTALL_INC_DIR_NAME}")
     endif ()
@@ -145,17 +209,6 @@ endif (DOT_PROGRAM)
 
 find_host_package (Doxygen)
 if (DOXYGEN_FOUND)
-    if (DOXYGEN_EXCLUDE_PRIVATE)
-        set (DOXYGEN_EXCLUDE
-             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/internal/*"
-             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/internal/*"
-             "${CMAKE_CURRENT_SOURCE_DIR}/include/virgil/crypto/foundation/asn1/internal/*"
-        )
-        string (REPLACE ";" " " DOXYGEN_EXCLUDE "${DOXYGEN_EXCLUDE}")
-        set (DOXYGEN_EXTRACT_PRIVATE "NO")
-    else ()
-        set (DOXYGEN_EXTRACT_PRIVATE "YES")
-    endif (DOXYGEN_EXCLUDE_PRIVATE)
     configure_file (${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
     add_custom_target (doc
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile

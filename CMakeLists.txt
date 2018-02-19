@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2014 Virgil Security Inc.
+# Copyright (C) 2015-2018 Virgil Security Inc.
 #
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
@@ -42,17 +42,17 @@
 #     - PLATFORM_VERSION    - minimum supported version of the target platform (optional).
 #     - PLATFORM_ARCH       - target platform processor architecture (optional).
 #     - ADD_COMPILER_INFO   - define whether to add compiler info to the library full name (optional).
-#
-#     - LIB_LOW_LEVEL_API   - boolean value that defines whether to include low-level API or not.
-#     - LIB_FILE_IO         - boolean value that defines whether to include module depends on file IO or not.
-#                             or separate utilities.
 #     - LIB_STATIC_RUNTIME  - сauses library to use the static version of the run-time library.
-#     - INSTALL_CORE_LIBS   - boolean value that defines whether install core library and it's dependencies or not,
-#                             if this value is NO or undefined - only wrapped library will be installed.
-#     - INSTALL_EXT_HEADERS - boolean value that defines whether install third-party library headers or not.
-#     - INSTALL_EXT_LIBS    - boolean value that defines whether install third-party library binaries or not.
-#     - ENABLE_TESTING      - boolean value that defines whether include unit testing or not.
-#     - ENABLE_BENCHMARK    - boolean value that defines whether include benchmark or not.
+#
+#     - BUILD_LIBRARY_FRAMEWORK - build library as Apple Framework.
+#
+#     - INSTALL_CORE_HEADERS - boolean value that defines whether install core headers not.
+#     - INSTALL_CORE_LIBS    - boolean value that defines whether install core library and it's dependencies or not.
+#                              if this value is NO or undefined - only wrapped library will be installed.
+#     - INSTALL_EXT_HEADERS  - boolean value that defines whether install third-party library headers or not.
+#     - INSTALL_EXT_LIBS     - boolean value that defines whether install third-party library binaries or not.
+#     - ENABLE_TESTING       - boolean value that defines whether include unit testing or not.
+#     - ENABLE_BENCHMARK     - boolean value that defines whether include benchmark or not.
 #
 #     - INSTALL_INC_DIR_NAME  - name of the directory where include will be installed.
 #     - INSTALL_LIB_DIR_NAME  - name of the directory where libraries will be installed.
@@ -61,8 +61,16 @@
 #     - INSTALL_DOC_DIR_NAME  - name of the directory where documentation will be installed.
 #     - INSTALL_API_DIR_NAME  - name of the directory where API source files will be installed.
 #
-#     - DOXYGEN_EXCLUDE_PRIVATE - boolean value that defines whether to exclude private API
-#                                 from Doxygen documentation or not
+#     - DOXYGEN_EXTRACT_PRIVATE - boolean value that defines whether to include private API
+#                                 to the Doxygen documentation or not
+#
+# Feature configurable variables:
+#     - VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP -
+#           boolean value that defines whether to wrap low-level API or not.
+#
+#     - VIRGIL_CRYPTO_FEATURE_STREAM_IMPL -
+#           boolean value that defines whether to compile module that is
+#           depends on a C++ streams or not.
 #
 # Define variables:
 #     - VIRGIL_VERSION           - library full version.
@@ -86,7 +94,7 @@
 #                                      for Android platform
 #
 
-cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 
 # Enable C++11
 set (CMAKE_CXX_STANDARD 11)
@@ -97,8 +105,8 @@ project (VirgilSecurity)
 
 # Set library version
 set (VIRGIL_VERSION_MAJOR 2)
-set (VIRGIL_VERSION_MINOR 2)
-set (VIRGIL_VERSION_PATCH 5)
+set (VIRGIL_VERSION_MINOR 3)
+set (VIRGIL_VERSION_PATCH 0)
 set (VIRGIL_VERSION_FEATURE)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 2)
@@ -116,7 +124,7 @@ message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 # Build shared library if defined
-set (BUILD_SHARED_LIBS OFF CACHE BOOL "Frce to create shared libraries")
+set (BUILD_SHARED_LIBS OFF CACHE BOOL "Force to create shared libraries")
 
 # Configure redefine compiler options if requested
 if (NOT CMAKE_CROSSCOMPILING AND WIN32 AND NOT CYGWIN)
@@ -166,8 +174,16 @@ if (ANDROID)
 endif (ANDROID)
 
 if (CMAKE_TOOLCHAIN_FILE AND APPLE)
-    append_cmake_arg (CMAKE_ARGS NAME PLATFORM TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME SIMULATOR TYPE BOOL)
+    append_cmake_arg (CMAKE_ARGS NAME APPLE_PLATFORM TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME APPLE_BITCODE TYPE BOOL)
+    append_cmake_arg (CMAKE_ARGS NAME APPLE_EXTENSION TYPE BOOL)
+    append_cmake_arg (CMAKE_ARGS NAME IOS_DEVICE_FAMILY TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME IOS_DEPLOYMENT_TARGET TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME WATCHOS_DEPLOYMENT_TARGET TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME WATCHOS_DEVICE_FAMILY TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME TVOS_DEPLOYMENT_TARGET TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME TVOS_DEVICE_FAMILY TYPE STRING)
+    append_cmake_arg (CMAKE_ARGS NAME MACOS_DEPLOYMENT_TARGET TYPE STRING)
     append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_PLATFORM_DEVELOPER_ROOT TYPE PATH)
     append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_SDK_ROOT TYPE PATH)
 endif ()
@@ -259,8 +275,34 @@ set_property (CACHE LANG PROPERTY STRINGS
     "python"
     "ruby"
 )
-set (LIB_LOW_LEVEL_API OFF CACHE BOOL "Defines whether to include low-level API or not")
-set (LIB_FILE_IO OFF CACHE BOOL "Defines whether to include module depends on file IO or not")
+
+# Configure features
+set (VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP OFF CACHE BOOL
+        "Defines whether to wrap low-level API or not")
+
+set (VIRGIL_CRYPTO_FEATURE_STREAM_IMPL ON CACHE BOOL
+        "Defines whether to compile module that is depends on a C++ stream or not")
+
+# Configure crosscompiling
+set (UCLIBC OFF CACHE BOOL "Enable pathches if library is build with uClibc++")
+
+if (CMAKE_CROSSCOMPILING AND APPLE)
+    string (TOLOWER "${APPLE_PLATFORM}" PLATFORM)
+    string (REPLACE "_sim" "" PLATFORM "${PLATFORM}")
+
+    set (PLATFORM ${PLATFORM} CACHE STRING "Target platform")
+    set (PLATFORM_VERSION ${APPLE_DEPLOYMENT_TARGET} CACHE STRING "Minimum version of the platform")
+    string (REPLACE ";" "-" PLATFORM_ARCH "${CMAKE_OSX_ARCHITECTURES}")
+    set (PLATFORM_ARCH ${PLATFORM_ARCH} CACHE STRING "Target processor architecture(s)")
+
+    if (LANG STREQUAL "cpp")
+        set (BUILD_LIBRARY_FRAMEWORK YES CACHE BOOL "Build library as Apple Framework.")
+    else ()
+        set (BUILD_LIBRARY_FRAMEWORK NO CACHE BOOL "Build library as Apple Framework.")
+    endif ()
+endif ()
+
+# Configure testing
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
 set (ENABLE_BENCHMARK OFF CACHE BOOL "Defines whether include benchmark or not.")
 
@@ -272,9 +314,6 @@ set (INSTALL_MAN_DIR_NAME "share/man" CACHE STRING "Installation directory name 
 set (INSTALL_DOC_DIR_NAME "share/doc" CACHE STRING "Installation directory name for doc pages")
 set (INSTALL_API_DIR_NAME api CACHE STRING "Installation directory name for interface files")
 
-# Configure crosscompiling
-set (UCLIBC OFF CACHE BOOL "Enable pathches if library is build with uClibc++")
-
 # Configure platform specific path variables
 if (ANDROID)
     set (ANDROID_INSTALL_JNI_DIR_NAME "lib/${ANDROID_NDK_ABI_NAME}")
@@ -285,16 +324,22 @@ set (INSTALL_CORE_LIBS_TMP OFF)
 if (LANG STREQUAL "cpp")
     set (INSTALL_CORE_LIBS_TMP ON)
 endif ()
+
 set (INSTALL_CORE_LIBS ${INSTALL_CORE_LIBS_TMP} CACHE BOOL
         "Defines whether install core library and it's dependencies or not")
+
+set (INSTALL_CORE_HEADERS ${INSTALL_CORE_LIBS} CACHE BOOL
+        "Defines whether install core headers or not")
+
 set (INSTALL_EXT_HEADERS OFF CACHE BOOL
         "Defines whether install third-party library headers or not")
+
 set (INSTALL_EXT_LIBS ON CACHE BOOL
         "Defines whether install third-party library binaries or not")
 
 
 # Configure Doxygen behaviour
-set (DOXYGEN_EXCLUDE_PRIVATE ON CACHE BOOL "Exclude private API from Doxygen documentation")
+set (DOXYGEN_EXTRACT_PRIVATE NO CACHE BOOL "Include private API to the Doxygen documentation")
 
 # Configure testing
 if (ENABLE_TESTING)
@@ -331,14 +376,13 @@ mark_as_advanced (PLATFORM_EMBEDDED PLATFORM_VERSION)
 unset (PLATFORM_VERSION_LOCAL)
 
 # Enable C++ tests and profiling only for native platforms
-if (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
-    if (ENABLE_TESTING)
-        add_subdirectory (tests)
-    endif (ENABLE_TESTING)
-    if (ENABLE_BENCHMARK)
-        add_subdirectory (benchmark)
-    endif (ENABLE_BENCHMARK)
-endif (LANG STREQUAL "cpp" AND NOT PLATFORM_EMBEDDED)
+if (ENABLE_TESTING AND LANG STREQUAL "cpp" AND NOT CMAKE_CROSSCOMPILING)
+    add_subdirectory (tests)
+endif ()
+
+if (ENABLE_BENCHMARK AND LANG STREQUAL "cpp" AND NOT CMAKE_CROSSCOMPILING)
+    add_subdirectory (benchmark)
+endif ()
 
 
 # Define full platform name

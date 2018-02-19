@@ -1,5 +1,37 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.3.0 released 2018-02-19
+
+## Bugfix
+
+  * [Lib] Fix fail when export plain RSA 4096 private key to DER format
+  * [CI] Fix Travis CI fails on a pull requests
+
+## Changes
+
+  * [Build] Update CMake Apple toolchain file
+  * [Build] Build Apple dynamic framework instead of static
+  * [Build] Add CMake variable BUILD_LIBRARY_FRAMEWORK
+  * [Build] Change required CMake version to 3.10
+  * [Build] Replace CMake option DOXYGEN_EXCLUDE_PRIVATE with reverse option DOXYGEN_EXTRACT_PRIVATE
+  * [Build] Replace deprecated CMake macros 'SWIG_ADD_MODULE' within PHP
+  * [PNaCl] Drop of Google PNaCl platform support (replaced with WebAssembly)
+  * [CI] Dockerfile update golang version to 1.10
+  * [PHP] Restore SWIG feature 'director:except'
+  * [Lib] Update license across all files
+
+## Features
+
+  * [JS] Add support for the WebAssembly platform
+  * [JS] Add support for NodeJS versions 7.x, 8.x, 9.x
+  * [Build] Add ability to build any NodeJS version supported by SWIG
+  * [Lib] Add file 'VirgilConfig.h'
+
+## Improvements
+
+  * [CI] Improve Travis CI build time by using caches
+
+
 = Version 2.2.5 released 2018-02-01
 
 ## Bugfix

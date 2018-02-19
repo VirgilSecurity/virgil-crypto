@@ -1,7 +1,5 @@
 #
-# Copyright (C) 2015-2016 Virgil Security Inc.
-#
-# Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+# Copyright (C) 2015-2018 Virgil Security Inc.
 #
 # All rights reserved.
 #
@@ -33,8 +31,10 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
+# Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+#
 
-cmake_minimum_required (VERSION 3.8 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 
 project (${WRAPPED_LIB_NAME}_net)
 
@@ -52,7 +52,7 @@ set (SWIG_MODULE_NAME ${CSHARP_MODULE_NAME})
 
 # Find C#
 find_host_package( CSharp REQUIRED )
-include( ${CSHARP_USE_FILE} )
+include (${CSHARP_USE_FILE})
 
 # Make sure the nested directory structure exists
 set (CSHARP_SOURCE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/src CACHE INTERNAL "")
@@ -86,57 +86,53 @@ set_property (
     SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing"
 )
 
-if (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+if (CMAKE_CROSSCOMPILING AND APPLE)
     set (WRAPPER_TYPE STATIC)
 else ()
     set (WRAPPER_TYPE SHARED)
 endif ()
 
-swig_add_library (${CSHARP_MODULE_NAME} TYPE ${WRAPPER_TYPE} LANGUAGE csharp SOURCES ${WRAPPER_INTERFACE_FILE})
-swig_link_libraries (${CSHARP_MODULE_NAME} ${WRAPPED_LIB_NAME})
-
+swig_add_library (${CSHARP_MODULE_NAME}
+    TYPE ${WRAPPER_TYPE}
+    LANGUAGE csharp
+    SOURCES ${WRAPPER_INTERFACE_FILE}
+)
 set (CSHARP_SWIG_TARGET_NAME ${SWIG_MODULE_${CSHARP_MODULE_NAME}_REAL_NAME})
 
 if (WRAPPER_TYPE STREQUAL "STATIC")
     add_custom_command (TARGET ${CSHARP_SWIG_TARGET_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND}
-            ARGS
-                -DSRC:PATH="${CSHARP_SWIG_OUTPUT_DIRECTORY}/${CSHARP_MODULE_NAME}PINVOKE.cs"
-                -DREGULAR_EXPRESSION:STRING="DllImport\\\(\\\"${CSHARP_MODULE_NAME}\\\""
-                -DREPLACE_EXPRESSION:STRING="DllImport\(\\\"__Internal\\\""
-                -P ${CMAKE_SOURCE_DIR}/cmake/file_regex_replace.cmake
-            COMMENT "Patch generated source files for mono."
-        )
-endif (WRAPPER_TYPE STREQUAL "STATIC")
-
-add_custom_command (TARGET ${CSHARP_SWIG_TARGET_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND}
         ARGS
-            -DSRC_DIR:PATH=${CSHARP_SWIG_OUTPUT_DIRECTORY}
-            -DDST_DIR:PATH=${CSHARP_SOURCE_DIRECTORY}
-            -DGLOBBING_EXPRESSION:STRING="*.cs"
-            -P ${CMAKE_SOURCE_DIR}/cmake/copy_all_files.cmake
-        COMMENT "Copy generated source files from ${CSHARP_SWIG_OUTPUT_DIRECTORY} to ${CSHARP_SOURCE_DIRECTORY}."
+            -DSRC:PATH="${CSHARP_SWIG_OUTPUT_DIRECTORY}/${CSHARP_MODULE_NAME}PINVOKE.cs"
+            -DREGULAR_EXPRESSION:STRING="DllImport\\\(\\\"${CSHARP_MODULE_NAME}\\\""
+            -DREPLACE_EXPRESSION:STRING="DllImport\(\\\"__Internal\\\""
+            -P ${CMAKE_SOURCE_DIR}/cmake/file_regex_replace.cmake
+        COMMENT "Patch generated source files for mono."
     )
+endif ()
+
+swig_link_libraries (${CSHARP_SWIG_TARGET_NAME} ${WRAPPED_LIB_NAME})
 
 add_custom_command (TARGET ${CSHARP_SWIG_TARGET_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND}
-        ARGS
-            -DSRC_DIR:PATH=${CSHARP_SOURCE_DIRECTORY}
-            -DGLOBBING_EXPRESSION:STRING="*.cs"
-            -P ${CMAKE_SOURCE_DIR}/cmake/uppercase_namespaces.cmake
-        COMMENT "Uppercase C# namespaces for ${CSHARP_SOURCE_DIRECTORY}/*.cs"
-    )
+    COMMAND ${CMAKE_COMMAND}
+    ARGS
+        -DSRC_DIR:PATH=${CSHARP_SWIG_OUTPUT_DIRECTORY}
+        -DDST_DIR:PATH=${CSHARP_SOURCE_DIRECTORY}
+        -DGLOBBING_EXPRESSION:STRING="*.cs"
+        -P ${CMAKE_SOURCE_DIR}/cmake/copy_all_files.cmake
+    COMMENT "Copy generated source files from ${CSHARP_SWIG_OUTPUT_DIRECTORY} to ${CSHARP_SOURCE_DIRECTORY}."
+)
 
-# Configure assembly
-set_target_properties (${CSHARP_SWIG_TARGET_NAME}
-        PROPERTIES OUTPUT_NAME ${CSHARP_MODULE_NAME})
-set_target_properties (${CSHARP_SWIG_TARGET_NAME}
-        PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CSHARP_BINARY_DIRECTORY})
-set_target_properties (${CSHARP_SWIG_TARGET_NAME}
-        PROPERTIES POSITION_INDEPENDENT_CODE ON)
+add_custom_command (TARGET ${CSHARP_SWIG_TARGET_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND}
+    ARGS
+        -DSRC_DIR:PATH=${CSHARP_SOURCE_DIRECTORY}
+        -DGLOBBING_EXPRESSION:STRING="*.cs"
+        -P ${CMAKE_SOURCE_DIR}/cmake/uppercase_namespaces.cmake
+    COMMENT "Uppercase C# namespaces for ${CSHARP_SOURCE_DIRECTORY}/*.cs"
+)
 
-if (UNIX AND NOT (CMAKE_SYSTEM_NAME MATCHES "Darwin"))
+if (UNIX AND NOT APPLE)
     if (CMAKE_SYSTEM_NAME MATCHES "Android")
         string(REPLACE "<CMAKE_SHARED_LIBRARY_SONAME_CXX_FLAG><TARGET_SONAME>" ""
                 CMAKE_CXX_CREATE_SHARED_MODULE "${CMAKE_CXX_CREATE_SHARED_MODULE}")
@@ -145,6 +141,14 @@ if (UNIX AND NOT (CMAKE_SYSTEM_NAME MATCHES "Darwin"))
                 PROPERTIES NO_SONAME OFF VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
     endif ()
 endif ()
+
+# Configure assembly
+set_target_properties (${CSHARP_SWIG_TARGET_NAME}
+        PROPERTIES OUTPUT_NAME ${CSHARP_MODULE_NAME})
+set_target_properties (${CSHARP_SWIG_TARGET_NAME}
+        PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CSHARP_BINARY_DIRECTORY})
+set_target_properties (${CSHARP_SWIG_TARGET_NAME}
+        PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 file (GLOB_RECURSE ASSEMBLY_SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cs")
 foreach (CS_FILE ${ASSEMBLY_SRC})

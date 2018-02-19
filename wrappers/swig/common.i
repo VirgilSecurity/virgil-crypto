@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
- *
- * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ * Copyright (C) 2015-2018 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -32,6 +30,8 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
 // Define type map for size_t
@@ -87,14 +87,13 @@ static std::string backtrace_message(const std::exception& exception, int level 
 }
 %}
 
-// This code should be commited until SWIG issue "https://github.com/swig/swig/issues/627" is fixed
-// #ifdef SWIGPHP
-// %feature("director:except") {
-//     if ($error == FAILURE) {
-//         throw Swig::DirectorMethodException();
-//     }
-// }
-// #endif
+#ifdef SWIGPHP
+%feature("director:except") {
+    if ($error == FAILURE) {
+        throw Swig::DirectorMethodException();
+    }
+}
+#endif
 %exception {
     try {
         $action

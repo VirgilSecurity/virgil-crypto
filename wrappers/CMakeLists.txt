@@ -1,7 +1,5 @@
 #
-# Copyright (C) 2015-2016 Virgil Security Inc.
-#
-# Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+# Copyright (C) 2015-2018 Virgil Security Inc.
 #
 # All rights reserved.
 #
@@ -33,6 +31,8 @@
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
+# Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+#
 
 #
 # Dependent on variables:
@@ -40,14 +40,16 @@
 #
 # Define variables:
 #     - WRAPPED_LIB_NAME - name of the wrapped library.
+#     - WRAPPERS_ROOT - absolute path to the directory of this CMake.
 #
 
-cmake_minimum_required (VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 
 project (wrappers)
 
 # Define variables
 set (WRAPPED_LIB_NAME virgil_crypto)
+set (WRAPPERS_ROOT "${CMAKE_CURRENT_LIST_DIR}")
 
 # Add include directory of wrapped module
 include_directories (${${WRAPPED_LIB_NAME}_SOURCE_DIR}/include)

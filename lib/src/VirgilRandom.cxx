@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
- *
- * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ * Copyright (C) 2015-2018 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -32,6 +30,8 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
 #include <virgil/crypto/foundation/VirgilRandom.h>
@@ -42,8 +42,8 @@
 #include <virgil/crypto/VirgilByteArrayUtils.h>
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 
-#include <virgil/crypto/internal/utils.h>
-#include <virgil/crypto/foundation/internal/mbedtls_context.h>
+#include "utils.h"
+#include "mbedtls_context.h"
 
 
 using virgil::crypto::VirgilByteArray;

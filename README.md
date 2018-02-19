@@ -85,7 +85,7 @@ The page lists the prerequisite packages which need to be installed on the diffe
   - ```clang++``` (version >= 3.6), or
   - ```msvc++``` (version >= 14.0)
 * Build tools:
-  - ```cmake``` (version >= 3.2)
+  - ```cmake``` (version >= 3.10)
   - ```make```
 * Other tools:
   - ```git```

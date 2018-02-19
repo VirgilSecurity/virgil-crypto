@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
- *
- * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ * Copyright (C) 2015-2018 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -32,6 +30,8 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
@@ -51,10 +51,10 @@
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Reader.h>
-#include <virgil/crypto/foundation/asn1/internal/VirgilAsn1Alg.h>
+#include "VirgilAsn1Alg.h"
 
-#include <virgil/crypto/internal/utils.h>
-#include <virgil/crypto/foundation/internal/mbedtls_context.h>
+#include "utils.h"
+#include "mbedtls_context.h"
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
@@ -605,7 +605,7 @@ size_t VirgilAsymmetricCipher::calculateExportedPrivateKeySizeMaxDER(size_t encr
                                       3 /* version */ +
                                       5 /* modulus */ +
                                       7 * 4 /* (tag + len) * 7 numbers */;
-        return asn1Overhead + 2 * keyLength + 5 * (keyLength >> 1) + encryptionOverhead;
+        return asn1Overhead + 2 * keyLength + 5 * ((keyLength >> 1) + 1) + encryptionOverhead;
     }
     throw make_error(
             VirgilCryptoError::UnsupportedAlgorithm, internal::to_string(mbedtls_pk_get_type(impl_->pk_ctx.get())));

@@ -1,7 +1,5 @@
 /**
- * Copyright (C) 2015-2016 Virgil Security Inc.
- *
- * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ * Copyright (C) 2015-2018 Virgil Security Inc.
  *
  * All rights reserved.
  *
@@ -32,17 +30,20 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#include <virgil/crypto/stream/VirgilStreamDataSource.h>
 
-using virgil::crypto::stream::VirgilStreamDataSource;
+#if VIRGIL_CRYPTO_FEATURE_STREAM_IMPL
 
 #include <virgil/crypto/VirgilByteArray.h>
-
-using virgil::crypto::VirgilByteArray;
+#include <virgil/crypto/stream/VirgilStreamDataSource.h>
 
 #include <algorithm>
+
+using virgil::crypto::VirgilByteArray;
+using virgil::crypto::stream::VirgilStreamDataSource;
 
 static const size_t kChunkSizeMin = 32;
 
@@ -66,3 +67,5 @@ VirgilByteArray VirgilStreamDataSource::read() {
     }
     return result;
 }
+
+#endif /* VIRGIL_CRYPTO_FEATURE_STREAM_IMPL */

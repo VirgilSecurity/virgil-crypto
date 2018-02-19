@@ -76,10 +76,11 @@ def createNativeUnixBuild(slave) {
             // Java
             sh './utils/build.sh java'
             // NodeJS
-            sh './utils/build.sh nodejs-4.1.0'
-            sh './utils/build.sh nodejs-4.4.4'
-            sh './utils/build.sh nodejs-5.9.1'
-            sh './utils/build.sh nodejs-6.1.0'
+            sh './utils/build.sh nodejs-4.8.7'
+            sh './utils/build.sh nodejs-6.13.0'
+            sh './utils/build.sh nodejs-7.10.1'
+            sh './utils/build.sh nodejs-8.9.4'
+            sh './utils/build.sh nodejs-9.5.0'
             organizeFilesUnix('install/nodejs')
             // PHP
             if (slave.contains('os-x')) {
@@ -101,8 +102,10 @@ def createNativeUnixBuild(slave) {
                 sh './utils/build.sh php-7.1'
                 organizeFilesUnix('install/php')
             }
-            //DotNET - Mono
-            sh './utils/build.sh net'
+            //DotNET - Unix/Linux Mono
+            if (! slave.contains('build-os-x')) {
+                sh './utils/build.sh net'
+            }
 
             archiveArtifacts('install/**')
         }
@@ -119,10 +122,11 @@ def createNativeWindowsBuild(slave) {
                 bat 'utils\\build.bat cpp'
                 bat 'utils\\build.bat net'
                 bat 'utils\\build.bat java'
-                bat 'utils\\build.bat nodejs-4.1.0'
-                bat 'utils\\build.bat nodejs-4.4.4'
-                bat 'utils\\build.bat nodejs-5.9.1'
-                bat 'utils\\build.bat nodejs-6.1.0'
+                bat 'utils\\build.bat nodejs-4.8.7'
+                bat 'utils\\build.bat nodejs-6.13.0'
+                bat 'utils\\build.bat nodejs-7.10.1'
+                bat 'utils\\build.bat nodejs-8.9.4'
+                bat 'utils\\build.bat nodejs-9.5.0'
                 withEnv(["PATH=C:\\Python27_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-2.7-x86'
                 }
@@ -169,10 +173,8 @@ def createCrossplatfromBuild(slave) {
             clearContentUnix()
             unstash 'src'
             withEnv(['EMSDK_HOME=/Users/virgil/Library/VirgilEnviroment/emsdk_portable']) {
-                sh './utils/build.sh asmjs'
-            }
-            withEnv(['NACL_SDK_ROOT=/Users/virgil/Library/VirgilEnviroment/nacl_sdk/pepper_46']) {
-                sh './utils/build.sh pnacl . build/cpp install/cpp'
+                sh './utils/build.sh asmjs . build/asmjs install/asmjs'
+                sh './utils/build.sh webasm . build/webasm install/webasm'
             }
             archiveArtifacts('install/**')
         }
@@ -185,14 +187,14 @@ def createDarwinBuild(slave) {
             clearContentUnix()
             unstash 'src'
             sh 'rm -fr build install'
-            sh './utils/build.sh osx . build/cpp/osx install/cpp/osx'
+            sh './utils/build.sh macos . build/cpp/macos install/cpp/macos'
             sh './utils/build.sh ios . build/cpp/ios install/cpp/ios '
-            sh './utils/build.sh applewatchos . build/cpp/watchos install/cpp/watchos'
-            sh './utils/build.sh appletvos . build/cpp/tvos install/cpp/tvos'
-            sh './utils/build.sh net . build/net/osx install/net/osx'
+            sh './utils/build.sh watchos . build/cpp/watchos install/cpp/watchos'
+            sh './utils/build.sh tvos . build/cpp/tvos install/cpp/tvos'
+            sh './utils/build.sh net_macos . build/net/macos install/net/macos'
             sh './utils/build.sh net_ios . build/net/ios install/net/ios'
-            sh './utils/build.sh net_applewatchos . build/net/watchos install/net/watchos'
-            sh './utils/build.sh net_appletvos . build/net/tvos install/net/tvos'
+            sh './utils/build.sh net_watchos . build/net/watchos install/net/watchos'
+            sh './utils/build.sh net_tvos . build/net/tvos install/net/tvos'
             organizeFilesUnix('install/cpp')
             organizeFilesUnix('install/net')
             archiveArtifacts('install/**')

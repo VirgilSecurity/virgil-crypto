@@ -204,7 +204,55 @@ TEST_CASE("Export Private Key", "[key-pair]") {
     }
 }
 
-TEST_CASE("Export keys RSA", "[key-pair][key-pair-rsa]") {
+TEST_CASE("Export keys RSA", "[key-pair]") {
+
+    SECTION("4096 encrypted") {
+
+        SECTION("to DER format") {
+            REQUIRE_NOTHROW(VirgilKeyPair::publicKeyToDER(
+                VirgilByteArrayUtils::stringToBytes(kRSA_4096_Public)
+            ));
+
+            REQUIRE_NOTHROW(VirgilKeyPair::privateKeyToDER(
+                VirgilByteArrayUtils::stringToBytes(kRSA_4096_Private),
+                VirgilByteArrayUtils::stringToBytes(kRSA_4096_Password)
+            ));
+        }
+
+        SECTION("to PEM format") {
+            REQUIRE_NOTHROW(VirgilKeyPair::publicKeyToPEM(
+                VirgilByteArrayUtils::stringToBytes(kRSA_4096_Public)
+            ));
+
+            REQUIRE_NOTHROW(VirgilKeyPair::privateKeyToPEM(
+                VirgilByteArrayUtils::stringToBytes(kRSA_4096_Private),
+                VirgilByteArrayUtils::stringToBytes(kRSA_4096_Password)
+            ));
+        }
+    }
+
+    SECTION("4096 plain") {
+
+        SECTION("to DER format") {
+            REQUIRE_NOTHROW(VirgilKeyPair::publicKeyToDER(
+                VirgilByteArrayUtils::stringToBytes(kRSA_4096_Public)
+            ));
+
+            REQUIRE_NOTHROW(VirgilKeyPair::privateKeyToDER(
+                VirgilByteArrayUtils::stringToBytes(kRSA_4096_Private_Plain)
+            ));
+        }
+
+        SECTION("to PEM format") {
+            REQUIRE_NOTHROW(VirgilKeyPair::publicKeyToPEM(
+                VirgilByteArrayUtils::stringToBytes(kRSA_4096_Public)
+            ));
+
+            REQUIRE_NOTHROW(VirgilKeyPair::privateKeyToPEM(
+                VirgilByteArrayUtils::stringToBytes(kRSA_4096_Private_Plain)
+            ));
+        }
+    }
 
     SECTION("8192 encrypted") {
 
@@ -235,7 +283,7 @@ TEST_CASE("Export keys RSA", "[key-pair][key-pair-rsa]") {
 
         SECTION("to DER format") {
             REQUIRE_NOTHROW(VirgilKeyPair::publicKeyToDER(
-                VirgilByteArrayUtils::stringToBytes(kRSA_8192_Public_Plain)
+                VirgilByteArrayUtils::stringToBytes(kRSA_8192_Public)
             ));
 
             REQUIRE_NOTHROW(VirgilKeyPair::privateKeyToDER(
@@ -245,7 +293,7 @@ TEST_CASE("Export keys RSA", "[key-pair][key-pair-rsa]") {
 
         SECTION("to PEM format") {
             REQUIRE_NOTHROW(VirgilKeyPair::publicKeyToPEM(
-                VirgilByteArrayUtils::stringToBytes(kRSA_8192_Public_Plain)
+                VirgilByteArrayUtils::stringToBytes(kRSA_8192_Public)
             ));
 
             REQUIRE_NOTHROW(VirgilKeyPair::privateKeyToPEM(

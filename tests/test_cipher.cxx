@@ -175,11 +175,15 @@ TEST_CASE_ENCRYPT_DECRYPT(RSA_2048)
 
 TEST_CASE_ENCRYPT_DECRYPT(RSA_3072)
 
-TEST_CASE_ENCRYPT_DECRYPT(RSA_4096)
-
-TEST_CASE_ENCRYPT_DECRYPT(RSA_8192)
-
 #undef TEST_CASE_ENCRYPT_DECRYPT
+
+TEST_CASE("VirgilCipher: encrypt and decrypt with RSA_4096 keys", "[cipher]") {
+    test_encrypt_decrypt(VirgilKeyPair(
+            VirgilByteArrayUtils::stringToBytes(kRSA_4096_Public),
+            VirgilByteArrayUtils::stringToBytes(kRSA_4096_Private)),
+            VirgilByteArrayUtils::stringToBytes(kRSA_4096_Password)
+    );
+}
 
 TEST_CASE("VirgilCipher: encrypt and decrypt with RSA_8192 keys", "[cipher]") {
     test_encrypt_decrypt(VirgilKeyPair(

@@ -19,10 +19,9 @@
 ## Introduction
 Welcome to Virgil!
 
-Virgil is a stack of security libraries (ECIES with Crypto Agility wrapped in Virgil Cryptogram) and all the necessary
-infrastructure to enable seamless, end-to-end encryption for any application, platform or device.
-See below for currently available languages and platforms.
-Get in touch with us to get preview access to our key infrastructure.
+Virgil is a stack of security libraries (ECIES with Crypto Agility wrapped in Virgil Cryptogram) and all the necessary infrastructure to enable seamless, end-to-end encryption for any application, platform or device. See below for currently available languages and platforms. Get in touch with us to get preview access to our key infrastructure.
+
+Our library allows developers to add full end-to-end security to their existing digital solutions to become HIPAA and GDPR compliant and more.
 
 Virgil Security, Inc., guides software developers into the forthcoming security world in which everything will be encrypted (and passwords will be eliminated).  In this world, the days of developers having to raise millions of dollars to build a secure chat, secure email, secure file-sharing, or a secure anything have come to an end.  Now developers can instead focus on building features that give them a competitive market advantage while end-users can enjoy the privacy and security they increasingly demand.
 
@@ -39,7 +38,15 @@ Virgil Security, Inc., guides software developers into the forthcoming security 
 | AsmJS    | Unix, Linux, OS X, Windows |
 | NodeJS   | Unix, Linux, OS X, Windows |
 
+Virgil also has special wrappers for simplifying Crypto Library implementation in your digital solutions. We support wrappers for the following programming languages:
+* [Go](https://github.com/VirgilSecurity/virgil-crypto-go)
+* [Objective-C/Swift](https://github.com/VirgilSecurity/virgil-foundation-x)
+* [C#/.NET](https://github.com/VirgilSecurity/virgil-sdk-crypto-net)
+
+
+
 ## Library purposes
+* Generate key pair;
 * Encrypt data;
 * Decrypt data;
 * Sign data;
@@ -53,8 +60,8 @@ Virgil Security, Inc., guides software developers into the forthcoming security 
 
 | Key Algorithm   | Description                    | Notes                  |
 |-----------------|--------------------------------|------------------------|
-| RSA_256         | RSA 1024 bit                   | weak, not recommended  |
-| RSA_512         | RSA 1024 bit                   | weak, not recommended  |
+| RSA_256         | RSA 256 bit                    | weak, not recommended  |
+| RSA_512         | RSA 512 bit                    | weak, not recommended  |
 | RSA_1024        | RSA 1024 bit                   | weak, not recommended  |
 | RSA_2048        | RSA 2048 bit                   | weak, not recommended  |
 | RSA_3072        | RSA 3072 bit                   |                        |
@@ -220,4 +227,8 @@ Windows OS:
 
 
 ## Support
-Email to: <support@VirgilSecurity.com>
+Our developer support team is here to help you.
+
+You can find us on [Twitter](https://twitter.com/VirgilSecurity) or send us email support@VirgilSecurity.com.
+
+Also, get extra help from our support team on [Slack](https://join.slack.com/t/VirgilSecurity/shared_invite/enQtMjg4MDE4ODM3ODA4LTc2OWQwOTQ3YjNhNTQ0ZjJiZDc2NjkzYjYxNTI0YzhmNTY2ZDliMGJjYWQ5YmZiOGU5ZWEzNmJiMWZhYWVmYTM).

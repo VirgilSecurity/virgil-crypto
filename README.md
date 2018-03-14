@@ -27,12 +27,13 @@ Virgil Security, Inc., guides software developers into the forthcoming security 
 
 ### Supported platforms
 Crypto Library is suitable for the following platforms:
-* Desktop;
-* Mobile;
-* Web Browser
+* Desktop (Windows, Linux, MacOS, );
+* Mobile (iOS, Adroid, WatchOS, TVOS);
+* Web Browser (WebAssembly, AsmJS) 
 
 ### Supported languages
 Crypto Library is written in C++ and supports bindings with the following programming languages:
+* Go
 * PHP	
 * Python
 * Ruby
@@ -85,9 +86,6 @@ The page lists the prerequisite packages which need to be installed on the diffe
 
 
 ### Build the Library
-
-Usage: ./utils/build.sh [<target>] [<src_dir>] [<build_dir>] [<install_dir>]
-
 This section describes how to build Virgil Crypto Library for а particular OS.
 
 #### Step 1 - Get source code
@@ -115,6 +113,62 @@ Windows OS:
 > ./utils/build.bat
 ```
 
+#### Step - Build the Library
+
+| cpp              | build C++ library;                                                               |
+| macos            | build framework for Apple macOSX, requirements: OS X, Xcode;                     |
+| ios              | - build framework for Apple iOS, requirements: OS X, Xcode;                        |
+| watchos          | - build framework for Apple WatchOS, requirements: OS X, Xcode;                    |
+| tvos             | - build framework for Apple TVOS, requirements: OS X, Xcode;                       |
+| php              | - build PHP library, requirements: php-dev;                                        |
+| python           | - build Python library;                                                            |
+| ruby             | - build Ruby library;                                                              |
+| java             | - build Java library, requirements: $JAVA_HOME;                                    |
+| java_android     | - build Java library under Android platform, requirements: $ANDROID_NDK;           |
+| net              | - build .NET library, requirements: .NET or Mono;                                  |
+| net_macos        | - build .NET library under Apple macOSX platform, requirements: Mono, OS X, Xcode; |
+| net_ios          | - build .NET library under Apple iOS platform, requirements: Mono, OS X, Xcode;    |
+| net_applewatchos | - build .NET library under WatchOS platform, requirements: Mono, OS X, Xcode;      |
+| net_appletvos    | - build .NET library under TVOS platform, requirements: Mono, OS X, Xcode;         |
+| net_android      | - build .NET library under Android platform, requirements: Mono, $ANDROID_NDK;     |
+| asmjs            | - build AsmJS library, requirements: $EMSDK_HOME;                                  |
+| webasm           | - build WebAssembly library, requirements: $EMSDK_HOME;                            |
+| nodejs           | - build NodeJS module;                                                             |
+| go               | - build Golang library.                                                            |
+Run the build script with the option `-h` to get help on how to build a library for a necessary OS, Platforms or languages. 
+
+Build command has the following syntax:
+```shell
+ ./utils/build.sh [<target>] [<src_dir>] [<build_dir>] [<install_dir>]
+```
+
+<target> - (default = cpp) target to build wich contains two parts <name>[-<version>], where <name>:
+  
+| cpp              | build C++ library;                                                               |
+| macos            | build framework for Apple macOSX, requirements: OS X, Xcode;                     |
+| ios              | - build framework for Apple iOS, requirements: OS X, Xcode;                        |
+| watchos          | - build framework for Apple WatchOS, requirements: OS X, Xcode;                    |
+| tvos             | - build framework for Apple TVOS, requirements: OS X, Xcode;                       |
+| php              | - build PHP library, requirements: php-dev;                                        |
+| python           | - build Python library;                                                            |
+| ruby             | - build Ruby library;                                                              |
+| java             | - build Java library, requirements: $JAVA_HOME;                                    |
+| java_android     | - build Java library under Android platform, requirements: $ANDROID_NDK;           |
+| net              | - build .NET library, requirements: .NET or Mono;                                  |
+| net_macos        | - build .NET library under Apple macOSX platform, requirements: Mono, OS X, Xcode; |
+| net_ios          | - build .NET library under Apple iOS platform, requirements: Mono, OS X, Xcode;    |
+| net_applewatchos | - build .NET library under WatchOS platform, requirements: Mono, OS X, Xcode;      |
+| net_appletvos    | - build .NET library under TVOS platform, requirements: Mono, OS X, Xcode;         |
+| net_android      | - build .NET library under Android platform, requirements: Mono, $ANDROID_NDK;     |
+| asmjs            | - build AsmJS library, requirements: $EMSDK_HOME;                                  |
+| webasm           | - build WebAssembly library, requirements: $EMSDK_HOME;                            |
+| nodejs           | - build NodeJS module;                                                             |
+| go               | - build Golang library.                                                            |
+
+- <src_dir>     - (default = .) path to the directory where root CMakeLists.txt file is located
+- <build_dir>   - (default = build/<target>) path to the directory where temp files will be stored
+- <install_dir> - (default = install/<target>) path to the directory where library files will be installed.
+  
 ## Docs
 We always try to make cryptography closer to the programmers, and the documentation below can get you started today.
 * [Crypto Library API](http://virgilsecurity.github.io/virgil-crypto/)

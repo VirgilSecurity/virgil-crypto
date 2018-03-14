@@ -125,7 +125,7 @@ Build command has the following syntax:
 
 where the command options are:
 
-- &lt;target&gt; - (default = cpp) target to build wich contains two parts <name>[-<version>], where <name>:
+- &lt;target&gt; - (default = cpp) target to build wich contains two parts &lt;name&gt;[-&lt;version&gt;], where &ltname&gt;:
   
 | &lt;name&gt;     | build information                                                                |
 |------------------|----------------------------------------------------------------------------------|
@@ -150,9 +150,10 @@ where the command options are:
 | nodejs           | build NodeJS module;                                                             |
 | go               | build Golang library.                                                            |  
 
-- <src_dir>     - (default = .) path to the directory where root CMakeLists.txt file is located
-- <build_dir>   - (default = build/<target>) path to the directory where temp files will be stored
-- <install_dir> - (default = install/<target>) path to the directory where library files will be installed.
+> All avaliable Crypto Library versions you can find [here](http://virgilsecurity.github.io/virgil-crypto/).
+- <src_dir>     - a path to the directory where a root CMakeLists.txt file is located (default = .).
+- <build_dir>   - a path to the directory where temp files will be stored (default = build/&lt;target&gt;). 
+- <install_dir> - a path to the directory where library files will be installed (default = install/&lt;target&gt;).
 
 
 

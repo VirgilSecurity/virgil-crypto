@@ -44,11 +44,13 @@ Crypto Library is written in C++ and supports bindings with the following progra
 * WebAsm
 
 **Swift/Objective_C** language can use the Virgil Crypto Library directly, without any bind.
-### Available extra Wrappers 
+
+### Available Wrappers 
 Virgil also has special wrappers for simplifying Crypto Library implementation in your digital solutions. We support wrappers for the following programming languages:
 * [Go](https://github.com/VirgilSecurity/virgil-crypto-go)
 * [Objective-C/Swift](https://github.com/VirgilSecurity/virgil-foundation-x)
 * [C#/.NET](https://github.com/VirgilSecurity/virgil-sdk-crypto-net)
+
 
 ## Supported algorithms
 

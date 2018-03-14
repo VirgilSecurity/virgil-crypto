@@ -5,7 +5,7 @@
 
 # Library: Virgil Crypto
 
-[Library features](#library-features) | [Supported algorithms](#supported-algorithms) | [Build](#build) | [Docs](#docs) | [Support](#support)
+[Library features](#library-features) | [Supported algorithms](#supported-algorithms) | [Build](#build) | [Benchmark tests](#benchmark-tests) | [Docs](#docs) | [Support](#support)
 
 ## Introduction
 Welcome to Virgil!
@@ -131,7 +131,7 @@ Build command has the following syntax:
 
 where the command options are:
 
-- &lt;target&gt; - (default = cpp) target to build wich contains two parts &lt;name&gt;[-&lt;version&gt;], where &ltname&gt;:
+- &lt;target&gt; - (default = cpp) target to build wich contains two parts &lt;name&gt;[-&lt;version&gt;], where &lt;name&gt;:
   
 | &lt;name&gt;     | build information                                                                |
 |------------------|----------------------------------------------------------------------------------|
@@ -162,6 +162,8 @@ where the command options are:
 - <install_dir> - a path to the directory where library files will be installed (default = install/&lt;target&gt;).
 
 
+## Benchmark tests
+You can find out benchmark tests of the Crypto Library in [benchmark.md](benchmark.md) file.
 
 ## Docs
 We always try to make cryptography closer to the programmers, and the documentation below can get you started today.

@@ -1,13 +1,11 @@
 [![Build Status](https://travis-ci.org/VirgilSecurity/virgil-crypto.svg?branch=master)](https://travis-ci.org/VirgilSecurity/virgil-crypto)
 [![GitHub license](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](https://raw.githubusercontent.com/VirgilSecurity/virgil-crypto/master/LICENSE)
 [![Documentation Developers](https://img.shields.io/badge/docs-developers-green.svg)](https://developer.virgilsecurity.com)
-[![Documentation Doxygen](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://VirgilSecurity.github.io/virgil-crypto)
-
+[![Open source](https://img.shields.io/badge/open-source-green.svg)](http://virgilsecurity.github.io/virgil-crypto/)
 
 # Library: Virgil Crypto
 
-[Supported languages and platforms](#supported-languages-and-platforms) | [Library features](#library-features) | [Supported keys](#supported-algorithms) | [Build](#build) | [Docs](#docs)
-| [Support](#support)
+[Supported languages and platforms](#supported-languages-and-platforms) | [Library features](#library-features) | [Supported algorithms](#supported-algorithms) | [Build](#build) | [Docs](#docs) | [Support](#support)
 
 ## Introduction
 Welcome to Virgil!
@@ -52,36 +50,24 @@ Virgil also has special wrappers for simplifying Crypto Library implementation i
 * Sign data;
 * Verify data.
 
-Crypto Library can be used on the following platforms:
+### Crypto Library can be used on the following platforms:
 * Desktop;
 * Mobile;
 * Web Browser
 
 ## Supported algorithms
 
-| Key Algorithm   | Description                    | Notes                  |
-|-----------------|--------------------------------|------------------------|
-| RSA_256         | RSA 256 bit                    | weak, not recommended  |
-| RSA_512         | RSA 512 bit                    | weak, not recommended  |
-| RSA_1024        | RSA 1024 bit                   | weak, not recommended  |
-| RSA_2048        | RSA 2048 bit                   | weak, not recommended  |
-| RSA_3072        | RSA 3072 bit                   |                        |
-| RSA_4096        | RSA 4096 bit                   |                        |
-| RSA_8192        | RSA 8192 bit                   |                        |
-| EC_SECP192R1    | 192-bits NIST curve            |                        |
-| EC_SECP224R1    | 224-bits NIST curve            |                        |
-| EC_SECP256R1    | 256-bits NIST curve            |                        |
-| EC_SECP384R1    | 384-bits NIST curve            |                        |
-| EC_SECP521R1    | 521-bits NIST curve            |                        |
-| EC_BP256R1      | 256-bits Brainpool curve       |                        |
-| EC_BP384R1      | 384-bits Brainpool curve       |                        |
-| EC_BP512R1      | 512-bits Brainpool curve       |                        |
-| EC_SECP192K1    | 192-bits "Koblitz" curve       |                        |
-| EC_SECP224K1    | 224-bits "Koblitz" curve       |                        |
-| EC_SECP256K1    | 256-bits "Koblitz" curve       |                        |
-| EC_CURVE25519   | Curve25519 (deprecated format) | deprecated             |
-| FAST_EC_X25519  | Curve25519                     | only encrypt / decrypt |
-| FAST_EC_ED25519 | Ed25519                        | recommended, default   |
+| Purpose              | Algorithm, Source                                                                                                                                                                                                  |
+|----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------|
+| Key Generation, PRNG | [NIST SP 800-90A](http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90Ar1.pdf)                                                                                                                      |       
+| Key Derivation       | [KDF2\*](https://www.ietf.org/rfc/rfc2898),<br>  [HKDF](https://tools.ietf.org/html/rfc5869)                                                                                                                              |
+| Key Exchange         | [X25519\*](https://tools.ietf.org/html/rfc7748),<br> [ECDH](http://csrc.nist.gov/groups/ST/toolkit/documents/SP800-56Arev1_3-8-07.pdf),<br> [RSA](http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-56Br1.pdf) |
+| Hashing              | [SHA-2 (256\*/384\*/512)](https://tools.ietf.org/html/rfc4634),<br> [Blake2](https://tools.ietf.org/html/rfc7693)                                                                                                                                                           |
+| Digital Signature    | [Ed25519\*](https://tools.ietf.org/html/rfc8032),<br> [ECDSA](http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf),<br> [RSASSA-PSS](https://tools.ietf.org/html/rfc4056)                                                                                                                                                                                                  |
+| Entropy Source       | Linux [/dev/urandom](https://tls.mbed.org/module-level-design-rng),<br> Windows [CryptGenRandom()](https://tls.mbed.org/module-level-design-rng)                                                                                                                                                                                |
+| Symmetric Algorithms | [AES GCM\*](http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf),<br> [AES CBC](https://tools.ietf.org/html/rfc3602),<br> [Chacha20-Poly1305](https://tools.ietf.org/html/rfc7539)                                                                                                                                                                                                         |
+| Elliptic Curves      | [X25519\*](https://tools.ietf.org/html/rfc7748),<br> [Ed25519](https://tools.ietf.org/html/rfc8032),<br> [Koblitz](https://www.ietf.org/rfc/rfc4492) (secp192k1, secp224k1, secp256k1),<br> [Brainpool](https://tools.ietf.org/html/rfc5639) (bp256r1, bp384r1, bp512r1), <br> [NIST](https://www.ietf.org/rfc/rfc5480.txt) (secp256r1, secp192r1, secp224r1, secp384r1, secp521r1)                                                                                                                                                                                          |       | 
+
 
 
 ## Build
@@ -131,6 +117,18 @@ Windows OS:
 > cd virgil-crypto
 > ./utils/build.bat
 ```
+
+## Docs
+We always try to make cryptography closer to the programmers, and the documentation below can get you started today.
+* [Crypto Library API](http://virgilsecurity.github.io/virgil-crypto/)
+* [Library usage examples](https://developer.virgilsecurity.com/docs/how-to#cryptography)
+  * [Generate a key pair](https://developer.virgilsecurity.com/docs/cs/how-to/cryptography/generate-keypair)
+  * [import and export keys](https://developer.virgilsecurity.com/docs/cs/how-to/cryptography/import-export-keys)
+  * [generate and verify signature](https://developer.virgilsecurity.com/docs/cs/how-to/cryptography/generate-verify-signature)
+  * [encrypt and decrypt data](https://developer.virgilsecurity.com/docs/cs/how-to/cryptography/encrypt-decrypt-data)
+* [Virgil CLI for the Crypto Library](https://developer.virgilsecurity.com/docs/sdk-and-tools/virgil-cli/generate-keypair)
+
+
 
 ## Support
 Our developer support team is here to help you.

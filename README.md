@@ -5,7 +5,7 @@
 
 # Library: Virgil Crypto
 
-[Library features](#library-features) | [Supported algorithms](#supported-algorithms) | [Build](#build) | [Benchmark tests](#benchmark-tests) | [Docs](#docs) | [Support](#support)
+[Library features](#library-features) | [Supported algorithms](#supported-algorithms) | [Build](#build) | [Benchmark](#benchmark) | [Docs](#docs) | [Support](#support)
 
 ## Introduction
 Welcome to Virgil!
@@ -29,12 +29,12 @@ Virgil Security, Inc., guides software developers into the forthcoming security 
 Crypto Library is suitable for the following platforms:
 * Desktop (Windows, Linux, MacOS);
 * Mobile (iOS, Android, WatchOS, TVOS);
-* Web (WebAssembly, AsmJS) 
+* Web (WebAssembly, AsmJS)
 
 ### Supported languages
 Crypto Library is written in C++ and supports bindings for the following programming languages:
 * Go
-* PHP	
+* PHP
 * Python
 * Ruby
 * Java
@@ -45,7 +45,7 @@ Crypto Library is written in C++ and supports bindings for the following program
 
 **Swift/Objective_C** language can use the Virgil Crypto Library directly, without any bind.
 
-### Available Wrappers 
+### Available Wrappers
 Virgil also has special wrappers for simplifying Crypto Library implementation in your digital solutions. We support wrappers for the following programming languages:
 * [Go](https://github.com/VirgilSecurity/virgil-crypto-go)
 * [Objective-C/Swift](https://github.com/VirgilSecurity/virgil-foundation-x)
@@ -121,7 +121,7 @@ Windows OS:
 
 #### Step 3 - Build the Library
 
-Run the build script with the option `-h` to get help on how to build a library for a necessary OS, Platforms or languages. 
+Run the build script with the option `-h` to get help on how to build a library for a necessary OS, Platforms or languages.
 
 Build command has the following syntax:
 
@@ -131,8 +131,8 @@ Build command has the following syntax:
 
 where the command options are:
 
-- &lt;target&gt; - (default = cpp) target to build wich contains two parts &lt;name&gt;[-&lt;version&gt;], where &lt;name&gt;:
-  
+- &lt;target&gt; - (default = cpp) target to build which contains two parts &lt;name&gt;[-&lt;version&gt;], where &lt;name&gt;:
+
 | &lt;name&gt;     | build information                                                                |
 |------------------|----------------------------------------------------------------------------------|
 | cpp              | build C++ library;                                                               |
@@ -156,14 +156,15 @@ where the command options are:
 | nodejs           | build NodeJS module;                                                             |
 | go               | build Golang library.                                                            |  
 
-> All avaliable Crypto Library versions you can find [here](http://virgilsecurity.github.io/virgil-crypto/).
+> All available Crypto Library versions you can find [here](http://virgilsecurity.github.io/virgil-crypto/).
+
 - <src_dir>     - a path to the directory where a root CMakeLists.txt file is located (default = .).
-- <build_dir>   - a path to the directory where temp files will be stored (default = build/&lt;target&gt;). 
+- <build_dir>   - a path to the directory where temp files will be stored (default = build/&lt;target&gt;).
 - <install_dir> - a path to the directory where library files will be installed (default = install/&lt;target&gt;).
 
 
-## Benchmark tests
-You can find out benchmark tests of the Crypto Library in [benchmark.md](benchmark.md) file.
+## Benchmark
+You can find out benchmark of the Crypto Library in the [benchmark.md](benchmark.md) file.
 
 ## Docs
 We always try to make cryptography closer to the programmers, and the documentation below can get you started today.

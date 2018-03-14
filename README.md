@@ -27,12 +27,12 @@ Virgil Security, Inc., guides software developers into the forthcoming security 
 
 ### Supported platforms
 Crypto Library is suitable for the following platforms:
-* Desktop (Windows, Linux, MacOS, );
-* Mobile (iOS, Adroid, WatchOS, TVOS);
-* Web Browser (WebAssembly, AsmJS) 
+* Desktop (Windows, Linux, MacOS);
+* Mobile (iOS, Android, WatchOS, TVOS);
+* Web (WebAssembly, AsmJS) 
 
 ### Supported languages
-Crypto Library is written in C++ and supports bindings with the following programming languages:
+Crypto Library is written in C++ and supports bindings for the following programming languages:
 * Go
 * PHP	
 * Python
@@ -41,7 +41,7 @@ Crypto Library is written in C++ and supports bindings with the following progra
 * C#
 * AsmJS
 * NodeJS
-* WebAsm
+* WebAssembly
 
 **Swift/Objective_C** language can use the Virgil Crypto Library directly, without any bind.
 
@@ -50,6 +50,10 @@ Virgil also has special wrappers for simplifying Crypto Library implementation i
 * [Go](https://github.com/VirgilSecurity/virgil-crypto-go)
 * [Objective-C/Swift](https://github.com/VirgilSecurity/virgil-foundation-x)
 * [C#/.NET](https://github.com/VirgilSecurity/virgil-sdk-crypto-net)
+* [Ruby](https://github.com/VirgilSecurity/virgil-crypto-ruby)
+* [Python](https://github.com/VirgilSecurity/virgil-crypto-python)
+* [PHP](https://github.com/VirgilSecurity/virgil-sdk-crypto-php)
+* [JS](https://github.com/VirgilSecurity/virgil-crypto-javascript)
 
 
 ## Supported algorithms
@@ -115,7 +119,7 @@ Windows OS:
 > ./utils/build.bat
 ```
 
-#### Step - Build the Library
+#### Step 3 - Build the Library
 
 Run the build script with the option `-h` to get help on how to build a library for a necessary OS, Platforms or languages. 
 

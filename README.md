@@ -5,7 +5,7 @@
 
 # Library: Virgil Crypto
 
-[Supported languages and platforms](#supported-languages-and-platforms) | [Library features](#library-features) | [Supported algorithms](#supported-algorithms) | [Build](#build) | [Docs](#docs) | [Support](#support)
+[Library features](#library-features) | [Supported algorithms](#supported-algorithms) | [Build](#build) | [Docs](#docs) | [Support](#support)
 
 ## Introduction
 Welcome to Virgil!
@@ -16,44 +16,38 @@ Our library allows developers to add full end-to-end security to their existing 
 
 Virgil Security, Inc., guides software developers into the forthcoming security world in which everything will be encrypted (and passwords will be eliminated).  In this world, the days of developers having to raise millions of dollars to build a secure chat, secure email, secure file-sharing, or a secure anything have come to an end.  Now developers can instead focus on building features that give them a competitive market advantage while end-users can enjoy the privacy and security they increasingly demand.
 
-## Supported languages and platforms
-
-Crypto Library is written in C++, suitable for mobile and server platforms and supports bindings with the following programming languages:
-
-| Language | Supported OS, platforms               |
-|----------|----------------------------|
-| C++      | ANY                        |
-| PHP      | Unix, Linux, OS X          |
-| Python   | Unix, Linux, OS X          |
-| Ruby     | Unix, Linux, OS X          |
-| Java     | Unix, Linux, OS X, Windows, Android |
-| C#       | .NET, Mono                 |
-| AsmJS    | Unix, Linux, OS X, Windows |
-| NodeJS   | Unix, Linux, OS X, Windows |
-| GO       | ..                           |
-
-If you develop in a **Swift/Objective_C** language you can use the Virgil Crypto Library directly, without any bind.
-
-Virgil also has special wrappers for simplifying Crypto Library implementation in your digital solutions. We support wrappers for the following programming languages:
-* [Go](https://github.com/VirgilSecurity/virgil-crypto-go)
-* [Objective-C/Swift](https://github.com/VirgilSecurity/virgil-foundation-x)
-* [C#/.NET](https://github.com/VirgilSecurity/virgil-sdk-crypto-net)
-
-
-
 ## Library Features
 
-### With the Virgil Crypto Library you can:
+### Supported crypto operations
 * Generate keys;
 * Encrypt data;
 * Decrypt data;
 * Sign data;
 * Verify data.
 
-### Crypto Library can be used on the following platforms:
+### Supported platforms
+Crypto Library is suitable for the following platforms:
 * Desktop;
 * Mobile;
 * Web Browser
+
+### Supported languages
+Crypto Library is written in C++ and supports bindings with the following programming languages:
+* PHP	
+* Python
+* Ruby
+* Java
+* C#
+* AsmJS
+* NodeJS
+* WebAsm
+
+**Swift/Objective_C** language can use the Virgil Crypto Library directly, without any bind.
+### Available extra Wrappers 
+Virgil also has special wrappers for simplifying Crypto Library implementation in your digital solutions. We support wrappers for the following programming languages:
+* [Go](https://github.com/VirgilSecurity/virgil-crypto-go)
+* [Objective-C/Swift](https://github.com/VirgilSecurity/virgil-foundation-x)
+* [C#/.NET](https://github.com/VirgilSecurity/virgil-sdk-crypto-net)
 
 ## Supported algorithms
 
@@ -91,6 +85,8 @@ The page lists the prerequisite packages which need to be installed on the diffe
 
 
 ### Build the Library
+
+Usage: ./utils/build.sh [<target>] [<src_dir>] [<build_dir>] [<install_dir>]
 
 This section describes how to build Virgil Crypto Library for а particular OS.
 

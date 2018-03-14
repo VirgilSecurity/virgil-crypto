@@ -44,7 +44,7 @@ These tests were made on MacBook Pro with the next specifications:
 | 224-bits Koblitz curve   | 1000    | 1935883    |
 | 256-bits Koblitz curve   | 500     | 2119124    |
 
-### Export
+### Key Export
 
 | operation                              | samples | ns/op    |
 |----------------------------------------|---------|----------|

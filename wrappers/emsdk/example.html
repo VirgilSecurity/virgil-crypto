@@ -2,6 +2,8 @@
 <html>
     <head>
         <title>VirgilCrypto browser test</title>
+        <script src="https://unpkg.com/lodash@4.17.5/lodash.js"></script>
+        <script src="https://unpkg.com/benchmark@2.1.4/benchmark.js"></script>
         <script src="@WRAPPER_TARGET@.js"></script>
     </head>
     <body>
@@ -76,6 +78,35 @@
             console.timeEnd("sign/verify");
         };
 
+        function encrypt(lib, data, publicKey, certId) {
+            var cipher = new lib.VirgilCipher();
+            cipher.addKeyRecipient(certId, publicKey);
+            var ciphertext = cipher.encrypt(data, true);
+            cipher.delete();
+            return ciphertext;
+        }
+
+        function decrypt(lib, ciphertext, privateKey, certId) {
+            var cipher = new lib.VirgilCipher();
+            var decrypted = cipher.decryptWithKey(ciphertext, certId, privateKey, lib.VirgilByteArray.fromUTF8(''));
+            cipher.delete();
+            return decrypted;
+        }
+
+        function calcSignature(lib, data, privateKey) {
+            var signer = new lib.VirgilSigner();
+            var signature = signer.sign(data, privateKey, lib.VirgilByteArray.fromUTF8(""));
+            signer.delete();
+            return signature;
+        }
+
+        function verifySignature(lib, data, signature, publicKey) {
+            var signer = new lib.VirgilSigner();
+            var verified = signer.verify(data, signature, publicKey);
+            signer.delete();
+            return verified;
+        }
+
         function runTests(instance) {
             console.log('Starting tests');
 
@@ -84,9 +115,89 @@
             test_sign(instance);
         }
 
+        function runBenchmarks(instance) {
+            console.log('Starting benchmarks');
+            var suite = new Benchmark.Suite();
+
+            // key pair for encryption / decryption
+            var eKeypair = instance.VirgilKeyPair.generateRecommended(
+                instance.VirgilByteArray.fromUTF8('')
+            );
+
+            // key pair for generating / verifying signature
+            var sKeypair = instance.VirgilKeyPair.generateRecommended(
+                instance.VirgilByteArray.fromUTF8('')
+            );
+
+            // 32 random bytes to be used as RECIPIENT_ID
+            var eCertId = instance.VirgilByteArray.fromUint8Array(
+                window.crypto.getRandomValues(new Uint8Array(32))
+            );
+
+            // 1kB of data to encrypt / decrypt
+            var eData = instance.VirgilByteArray.fromUint8Array(
+                window.crypto.getRandomValues(new Uint8Array(1024))
+            );
+            var eCiphertext = encrypt(instance, eData, eKeypair.publicKey(), eCertId);
+
+            // 1kB of data to sign / verify
+            var sData = instance.VirgilByteArray.fromUint8Array(
+                window.crypto.getRandomValues(new Uint8Array(1024))
+            );
+            var sSignature = calcSignature(instance, sData, sKeypair.privateKey());
+
+            suite.add('KeyPair#generateRecommended without password', function () {
+                var keypair = instance.VirgilKeyPair.generateRecommended(
+                    instance.VirgilByteArray.fromUTF8('')
+                );
+                keypair.delete();
+            })
+            .add('KeyPair#generateRecommended with password', function () {
+                var keypair = instance.VirgilKeyPair.generateRecommended(
+                    instance.VirgilByteArray.fromUTF8('passphrase')
+                );
+                keypair.delete();
+            })
+            .add('KeyPair#generate NIST-256 without password', function() {
+                var keypair = instance.VirgilKeyPair.generate(
+                    instance.VirgilKeyPair.Type.EC_SECP256R1,
+                    instance.VirgilByteArray.fromUTF8('')
+                );
+                keypair.delete();
+            })
+            .add('KeyPair#generate NIST-256 with password', function() {
+                var keypair = instance.VirgilKeyPair.generate(
+                    instance.VirgilKeyPair.Type.EC_SECP256R1,
+                    instance.VirgilByteArray.fromUTF8('passphrase')
+                );
+                keypair.delete();
+            })
+            .add('Cipher#encrypt', function () {
+                encrypt(instance, eData, eKeypair.publicKey(), eCertId).delete();
+            })
+            .add('Cipher#decryptWithKey', function () {
+                decrypt(instance, eCiphertext, eKeypair.privateKey(), eCertId).delete();
+            })
+            .add('Signer#sign', function () {
+                calcSignature(instance, sData, sKeypair.privateKey()).delete();
+            })
+            .add('Signer#verify', function () {
+                verifySignature(instance, sData, sSignature, sKeypair.publicKey());
+            })
+            .on('cycle', function (event) {
+              console.log(String(event.target));
+            })
+            .on('complete', function () {
+              console.log('Done');
+            })
+            .run();
+        }
+
         __virgilCrypto().then(function (instance) {
             console.log(instance.VirgilVersion.asString());
             runTests(instance);
+            console.log('');
+            runBenchmarks(instance);
         });
     </script>
     </body>

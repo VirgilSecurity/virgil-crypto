@@ -57,8 +57,8 @@ include ("${WRAPPERS_ROOT}/emsdk/CMakeLists.txt")
 # ---------------------------------------------------------------------------
 #   Add specific 'build' options to the target
 # ---------------------------------------------------------------------------
-set_property (TARGET "${WRAPPER_TARGET}" APPEND_STRING PROPERTY COMPILE_FLAGS " -s WASM=1")
-set_property (TARGET "${WRAPPER_TARGET}" APPEND_STRING PROPERTY LINK_FLAGS " -s WASM=1")
+set_property (TARGET "${WRAPPER_TARGET}" APPEND_STRING PROPERTY
+              LINK_FLAGS " -s WASM=1 -s 'BINARYEN_TRAP_MODE=\"clamp\"'")
 
 # ---------------------------------------------------------------------------
 #   Add specific 'install' options to the target

@@ -1,13 +1,18 @@
 <!doctype html>
 <html>
+    <head>
+        <title>VirgilCrypto browser test</title>
+        <script src="@WRAPPER_TARGET@.js"></script>
+    </head>
+    <body>
     <script type="text/javascript">
-        function test_encryption() {
+        function test_encryption(lib) {
             console.time("encryption/decryption");
-            var pwd = Module.VirgilByteArray.fromUTF8("password");
-            var keys = Module.VirgilKeyPair.generateRecommended(pwd);
-            var certId = Module.VirgilByteArray.fromUTF8("17648c7e-9ca3-4707-bdc6-a5c57b7a18fc");
-            var data = Module.VirgilByteArray.fromUTF8("data to be encrypted");
-            var cipher = new Module.VirgilCipher();
+            var pwd = lib.VirgilByteArray.fromUTF8("password");
+            var keys = lib.VirgilKeyPair.generateRecommended(pwd);
+            var certId = lib.VirgilByteArray.fromUTF8("17648c7e-9ca3-4707-bdc6-a5c57b7a18fc");
+            var data = lib.VirgilByteArray.fromUTF8("data to be encrypted");
+            var cipher = new lib.VirgilCipher();
             cipher.addKeyRecipient(certId, keys.publicKey());
             var encryptedData = cipher.encrypt(data, true);
             var decryptedData = cipher.decryptWithKey(encryptedData, certId, keys.privateKey(), pwd);
@@ -21,25 +26,25 @@
             decryptedData.delete();
             console.timeEnd("encryption/decryption");
         };
-        function test_stream_encryption() {
+        function test_stream_encryption(lib) {
             console.time("stream encryption/decryption");
-            var pwd = Module.VirgilByteArray.fromUTF8("password");
-            var keys = Module.VirgilKeyPair.generateRecommended(pwd);
-            var certId = Module.VirgilByteArray.fromUTF8("17648c7e-9ca3-4707-bdc6-a5c57b7a18fc");
-            var data = Module.VirgilByteArray.fromUTF8("data to be encrypted");
-            var cipher = new Module.VirgilStreamCipher();
+            var pwd = lib.VirgilByteArray.fromUTF8("password");
+            var keys = lib.VirgilKeyPair.generateRecommended(pwd);
+            var certId = lib.VirgilByteArray.fromUTF8("17648c7e-9ca3-4707-bdc6-a5c57b7a18fc");
+            var data = lib.VirgilByteArray.fromUTF8("data to be encrypted");
+            var cipher = new lib.VirgilStreamCipher();
             cipher.addKeyRecipient(certId, keys.publicKey());
 
-            var dataSource = new Module.VirgilStreamDataSource(data.toUint8Array(), 1);
-            var dataSink = new Module.VirgilStreamDataSink();
+            var dataSource = new lib.VirgilStreamDataSource(data.toUint8Array(), 1);
+            var dataSink = new lib.VirgilStreamDataSink();
             cipher.encrypt(dataSource, dataSink, true);
 
-            var encrypedDataSource = new Module.VirgilStreamDataSource(dataSink.getBytes(), 2);
-            var decryptedDataSink = new Module.VirgilStreamDataSink();
+            var encrypedDataSource = new lib.VirgilStreamDataSource(dataSink.getBytes(), 2);
+            var decryptedDataSink = new lib.VirgilStreamDataSink();
 
             cipher.decryptWithKey(encrypedDataSource, decryptedDataSink, certId, keys.privateKey(), pwd);
 
-            var decryptedData = Module.VirgilByteArray.fromUint8Array(decryptedDataSink.getBytes());
+            var decryptedData = lib.VirgilByteArray.fromUint8Array(decryptedDataSink.getBytes());
 
             console.log(decryptedData.toUTF8());
             pwd.delete();
@@ -54,30 +59,35 @@
             decryptedDataSink.delete();
             console.timeEnd("stream encryption/decryption");
         };
-        function test_sign() {
+        function test_sign(lib) {
             console.time("sign/verify");
-            var pwd = Module.VirgilByteArray.fromUTF8("");
-            var keys = Module.VirgilKeyPair.generateRecommended(pwd);
-            var certId = Module.VirgilByteArray.fromUTF8("17648c7e-9ca3-4707-bdc6-a5c57b7a18fc");
-            var data = Module.VirgilByteArray.fromUTF8("data to be signed");
-            var signer = new Module.VirgilSigner();
+            var pwd = lib.VirgilByteArray.fromUTF8("");
+            var keys = lib.VirgilKeyPair.generateRecommended(pwd);
+            var data = lib.VirgilByteArray.fromUTF8("data to be signed");
+            var signer = new lib.VirgilSigner();
             var sign = signer.sign(data, keys.privateKey(), pwd);
             var verified = signer.verify(data, sign, keys.publicKey());
             console.log("Data verification " + (verified ? "passed" : "failed"));
             pwd.delete();
             keys.delete();
-            certId.delete();
             data.delete();
             signer.delete();
             sign.delete();
             console.timeEnd("sign/verify");
         };
-        var Module = {
-            onRuntimeInitialized: function() {
-                console.log(Module.VirgilVersion.asString())
-            }
-        };
+
+        function runTests(instance) {
+            console.log('Starting tests');
+
+            test_encryption(instance);
+            test_stream_encryption(instance);
+            test_sign(instance);
+        }
+
+        __virgilCrypto().then(function (instance) {
+            console.log(instance.VirgilVersion.asString());
+            runTests(instance);
+        });
     </script>
-    <script async type="text/javascript" src="@WRAPPER_TARGET@.js"></script>
-</body>
+    </body>
 </html>

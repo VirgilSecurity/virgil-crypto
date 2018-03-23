@@ -402,19 +402,20 @@ if [ "${TARGET_NAME}" == "net_ios" ] || [ "${TARGET_NAME}" == "net_tvos" ] || \
     CMAKE_ARGS+=" -DINSTALL_CORE_HEADERS=OFF"
     CMAKE_ARGS+=" -DINSTALL_EXT_LIBS=ON"
     CMAKE_ARGS+=" -DINSTALL_EXT_HEADERS=OFF"
+    CMAKE_ARGS+=" -DCMAKE_CROSSCOMPILING=ON"
     CMAKE_ARGS+=" -DCMAKE_TOOLCHAIN_FILE='${SRC_DIR}/cmake/apple.cmake'"
 
     # Build for device
     cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM} -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
     make -j8 install
-
+ 
     if [ "${TARGET_NAME}" != "net_macos" ]; then
         # Build for simulator
         rm -fr ./*
+
         cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM}_SIM -DINSTALL_LIB_DIR_NAME=lib/sim "${SRC_DIR}"
         make -j8 install
     fi
-
     # Create fat library
     make_fat_library libVirgilCryptoNet.a "${INSTALL_DIR}" "${INSTALL_DIR}/libs" "net"
     find "${INSTALL_DIR:?}" -name "*.dll" -exec cp -f {} "${INSTALL_DIR:?}/libs/" \;

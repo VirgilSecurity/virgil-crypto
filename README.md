@@ -8,13 +8,15 @@
 [Library features](#library-features) | [Supported algorithms](#supported-algorithms) | [Build](#build) | [Benchmark](#benchmark) | [Docs](#docs) | [Support](#support)
 
 ## Introduction
-Welcome to Virgil!
+Welcome to Virgil Security!
 
-Virgil is a stack of security libraries (ECIES with Crypto Agility wrapped in Virgil Cryptogram) and all the necessary infrastructure to enable seamless, end-to-end encryption for any application, platform or device. See below for currently available languages and platforms. Get in touch with us to get preview access to our key infrastructure.
+Virgil Security guides software developers into the forthcoming security world in which everything will be encrypted (and passwords will be eliminated).  In this world, the days of developers having to raise millions of dollars to build a secure chat, secure email, secure file-sharing, or a secure anything have come to an end.  Now developers can instead focus on building features that give them a competitive market advantage while end-users can enjoy the privacy and security they increasingly demand.
 
-Our library allows developers to add full end-to-end security to their existing digital solutions to become HIPAA and GDPR compliant and more.
+Virgil Security offers this security via a stack of security libraries (ECIES with Crypto Agility wrapped in Virgil Cryptogram) and all the necessary infrastructure to enable seamless, end-to-end encryption for any application, platform or device. End-to-end encryption can be used for a variety of important reasons: compliance with regulations like HIPAA and GDPR, the transfer and storage of PII, general user privacy as a feature, breach risk mitigation and more.
 
-Virgil Security, Inc., guides software developers into the forthcoming security world in which everything will be encrypted (and passwords will be eliminated).  In this world, the days of developers having to raise millions of dollars to build a secure chat, secure email, secure file-sharing, or a secure anything have come to an end.  Now developers can instead focus on building features that give them a competitive market advantage while end-users can enjoy the privacy and security they increasingly demand.
+ADD IN A SENTENCE HERE ANSWERING THESE QUESTIONS: 1) IS THE CRYPTO LIBRARY ALL THEY NEED? 2) DOES IT WORK WITH ANYTHING ELSE LIKE THE KEY SERVICES? AND 3) VERY BRIEF OVERVIEW OF WHAT THEY NEED TO DO TO INSTALL IT. (BASICALLY, IF A DEVELOPER WANTS TO MAKE THEIR APP END-TO-END ENCRYPTED, WHAT ROLE DOES THE CRYPTO LIBRARY PLAY IN THAT PROCESS AND WHAT OTHER STEPS ARE THERE?)
+
+See below for currently available languages and platforms. Get in touch with us to get beta access to our Key infrastructure.
 
 ## Library Features
 
@@ -28,7 +30,7 @@ Virgil Security, Inc., guides software developers into the forthcoming security 
 ### Supported platforms
 Crypto Library is suitable for the following platforms:
 * Desktop (Windows, Linux, MacOS);
-* Mobile (iOS, Android, WatchOS, TVOS);
+* Mobile (iOS, Android, watchOS, tvOS);
 * Web (WebAssembly, AsmJS)
 
 ### Supported languages
@@ -167,7 +169,7 @@ where the command options are:
 You can find out benchmark of the Crypto Library in the [benchmark.md](benchmark.md) file.
 
 ## Docs
-We always try to make cryptography closer to the programmers, and the documentation below can get you started today.
+We always try to make cryptography accessible for programmers, and the documentation below can get you started today.
 * [Crypto Library API](http://virgilsecurity.github.io/virgil-crypto/)
 * [Library usage examples](https://developer.virgilsecurity.com/docs/how-to#cryptography)
   * [Generate a key pair](https://developer.virgilsecurity.com/docs/cs/how-to/cryptography/generate-keypair)

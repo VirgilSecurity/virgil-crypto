@@ -14,8 +14,6 @@ Virgil Security guides software developers into the forthcoming security world i
 
 Virgil Security offers this security via a stack of security libraries (ECIES with Crypto Agility wrapped in Virgil Cryptogram) and all the necessary infrastructure to enable seamless, end-to-end encryption for any application, platform or device. End-to-end encryption can be used for a variety of important reasons: compliance with regulations like HIPAA and GDPR, the transfer and storage of PII, general user privacy as a feature, breach risk mitigation and more.
 
-ADD IN A SENTENCE HERE ANSWERING THESE QUESTIONS: 1) IS THE CRYPTO LIBRARY ALL THEY NEED? 2) DOES IT WORK WITH ANYTHING ELSE LIKE THE KEY SERVICES? AND 3) VERY BRIEF OVERVIEW OF WHAT THEY NEED TO DO TO INSTALL IT. (BASICALLY, IF A DEVELOPER WANTS TO MAKE THEIR APP END-TO-END ENCRYPTED, WHAT ROLE DOES THE CRYPTO LIBRARY PLAY IN THAT PROCESS AND WHAT OTHER STEPS ARE THERE?)
-
 See below for currently available languages and platforms. Get in touch with us to get beta access to our Key infrastructure.
 
 ## Library Features

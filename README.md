@@ -64,11 +64,11 @@ Virgil also has special wrappers for simplifying Crypto Library implementation i
 | Key Generation, PRNG | [NIST SP 800-90A](http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90Ar1.pdf)                                                                                                                                                                                                                                                                                       |
 | Key Derivation       | [KDF2\*](https://www.ietf.org/rfc/rfc2898),<br>  [HKDF](https://tools.ietf.org/html/rfc5869)                                                                                                                                                                                                                                                                                        |
 | Key Exchange         | [X25519\*](https://tools.ietf.org/html/rfc7748),<br> [ECDH](http://csrc.nist.gov/groups/ST/toolkit/documents/SP800-56Arev1_3-8-07.pdf),<br> [RSA](http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-56Br1.pdf)                                                                                                                                                       |
-| Hashing              | [SHA-2 (256\*/384\*/512)](https://tools.ietf.org/html/rfc4634),<br> [Blake2](https://tools.ietf.org/html/rfc7693)                                                                                                                                                                                                                                                                   |
+| Hashing              | [SHA-2 (256/384\*/512)](https://tools.ietf.org/html/rfc4634),<br> [Blake2](https://tools.ietf.org/html/rfc7693)                                                                                                                                                                                                                                                                   |
 | Digital Signature    | [Ed25519\*](https://tools.ietf.org/html/rfc8032),<br> [ECDSA](http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf),<br> [RSASSA-PSS](https://tools.ietf.org/html/rfc4056)                                                                                                                                                                                                     |
 | Entropy Source       | Linux [/dev/urandom](https://tls.mbed.org/module-level-design-rng),<br> Windows [CryptGenRandom()](https://tls.mbed.org/module-level-design-rng)                                                                                                                                                                                                                                    |
 | Symmetric Algorithms | [AES GCM\*](http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf),<br> [AES CBC](https://tools.ietf.org/html/rfc3602)                                                                                                                                                                         |
-| Elliptic Curves      | [X25519\*](https://tools.ietf.org/html/rfc7748),<br> [Ed25519](https://tools.ietf.org/html/rfc8032),<br> [Koblitz](https://www.ietf.org/rfc/rfc4492) (secp192k1, secp224k1, secp256k1),<br> [Brainpool](https://tools.ietf.org/html/rfc5639) (bp256r1, bp384r1, bp512r1), <br> [NIST](https://www.ietf.org/rfc/rfc5480.txt) (secp256r1, secp192r1, secp224r1, secp384r1, secp521r1) |
+| Elliptic Curves      | [X25519](https://tools.ietf.org/html/rfc7748),<br> [Ed25519\*](https://tools.ietf.org/html/rfc8032),<br> [Koblitz](https://www.ietf.org/rfc/rfc4492) (secp192k1, secp224k1, secp256k1),<br> [Brainpool](https://tools.ietf.org/html/rfc5639) (bp256r1, bp384r1, bp512r1), <br> [NIST](https://www.ietf.org/rfc/rfc5480.txt) (secp256r1, secp192r1, secp224r1, secp384r1, secp521r1) |
 
 > **\*** - used by default.
 
@@ -119,8 +119,6 @@ Windows OS:
 > ./utils/build.bat
 ```
 
-#### Step 3 - Build the Library
-
 Run the build script with the option `-h` to get help on how to build a library for a necessary OS, Platforms or languages.
 
 Build command has the following syntax:
@@ -133,28 +131,28 @@ where the command options are:
 
 - &lt;target&gt; - (default = cpp) target to build which contains two parts &lt;name&gt;[-&lt;version&gt;], where &lt;name&gt;:
 
-| &lt;name&gt;     | build information                                                                |
-|------------------|----------------------------------------------------------------------------------|
-| cpp              | build C++ library;                                                               |
-| macos            | build framework for Apple macOSX, requirements: OS X, Xcode;                     |
-| ios              | build framework for Apple iOS, requirements: OS X, Xcode;                        |
-| watchos          | build framework for Apple WatchOS, requirements: OS X, Xcode;                    |
-| tvos             | build framework for Apple TVOS, requirements: OS X, Xcode;                       |
-| php              | build PHP library, requirements: php-dev;                                        |
-| python           | build Python library;                                                            |
-| ruby             | build Ruby library;                                                              |
-| java             | build Java library, requirements: $JAVA_HOME;                                    |
-| java_android     | build Java library under Android platform, requirements: $ANDROID_NDK;           |
-| net              | build .NET library, requirements: .NET or Mono;                                  |
-| net_macos        | build .NET library under Apple macOSX platform, requirements: Mono, OS X, Xcode; |
-| net_ios          | build .NET library under Apple iOS platform, requirements: Mono, OS X, Xcode;    |
-| net_applewatchos | build .NET library under WatchOS platform, requirements: Mono, OS X, Xcode;      |
-| net_appletvos    | build .NET library under TVOS platform, requirements: Mono, OS X, Xcode;         |
-| net_android      | build .NET library under Android platform, requirements: Mono, $ANDROID_NDK;     |
-| asmjs            | build AsmJS library, requirements: $EMSDK_HOME;                                  |
-| webasm           | build WebAssembly library, requirements: $EMSDK_HOME;                            |
-| nodejs           | build NodeJS module;                                                             |
-| go               | build Golang library.                                                            |  
+| &lt;name&gt;     | build information                                                               |
+|------------------|---------------------------------------------------------------------------------|
+| cpp              | build C++ library                                                               |
+| macos            | build framework for Apple macOSX, requirements: OS X, Xcode                     |
+| ios              | build framework for Apple iOS, requirements: OS X, Xcode                        |
+| watchos          | build framework for Apple WatchOS, requirements: OS X, Xcode                    |
+| tvos             | build framework for Apple TVOS, requirements: OS X, Xcode                       |
+| php              | build PHP library, requirements: php-dev                                        |
+| python           | build Python library                                                            |
+| ruby             | build Ruby library                                                              |
+| java             | build Java library, requirements: $JAVA_HOME                                    |
+| java_android     | build Java library under Android platform, requirements: $ANDROID_NDK           |
+| net              | build .NET library, requirements: .NET or Mono                                  |
+| net_macos        | build .NET library under Apple macOSX platform, requirements: Mono, OS X, Xcode |
+| net_ios          | build .NET library under Apple iOS platform, requirements: Mono, OS X, Xcode    |
+| net_applewatchos | build .NET library under WatchOS platform, requirements: Mono, OS X, Xcode      |
+| net_appletvos    | build .NET library under TVOS platform, requirements: Mono, OS X, Xcode         |
+| net_android      | build .NET library under Android platform, requirements: Mono, $ANDROID_NDK     |
+| asmjs            | build AsmJS library, requirements: $EMSDK_HOME                                  |
+| webasm           | build WebAssembly library, requirements: $EMSDK_HOME                            |
+| nodejs           | build NodeJS module                                                             |
+| go               | build Golang library                                                            |  
 
 > All available Crypto Library versions you can find [here](http://virgilsecurity.github.io/virgil-crypto/).
 

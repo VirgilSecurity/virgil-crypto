@@ -46,14 +46,6 @@ if (NOT EXISTS ${SRC})
     message (FATAL_ERROR "Given source file does not exists: " ${SRC})
 endif ()
 
-if (NOT DLL_IMPORT_REGEXP)
-    message (FATAL_ERROR "Regular expression is not defined. Please define variable REGEXP.")
-endif ()
-
-if (NOT DLL_IMPORT_REPLACE_EXPR)
-    message (FATAL_ERROR "Regular expression is not defined. Please define variable REPLACE_EXPR.")
-endif ()
-
 file (READ ${SRC} content)
 
 # replace .DllImport("...." to .DllImport("__Internal" 

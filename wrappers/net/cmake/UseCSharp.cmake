@@ -48,23 +48,19 @@ endmacro( CSHARP_ADD_EXECUTABLE )
 
 # Private macro
 macro( CSHARP_ADD_PROJECT type name )
-  set( refs /reference:System.dll )
+  set( refs "/reference:System.dll" )
   
 
   if( APPLE_PLATFORM STREQUAL "IOS" OR APPLE_PLATFORM STREQUAL "IOS_SIM" )
      if ( CSHARP_MONO_FOUND )
-        find_library(XAMARIN_FRAMEWORK_PATH "Xamarin.iOS" PATHS "/Library")
-        if (XAMARIN_FRAMEWORK_PATH STREQUAL "XAMARIN_FRAMEWORK_PATH-NOTFOUND")
-          message (FATAL_ERROR "Can't find Xamarin.iOS library!")
-        else( )
-           list( APPEND refs "/reference:${XAMARIN_FRAMEWORK_PATH}/Versions/Current/lib/mono/Xamarin.iOS/Xamarin.iOS.dll" )
-            message( STATUS "Use Xamarin.iOS.dll" )
-        endif()  
+      find_library(XAMARIN_FRAMEWORK_PATH "Xamarin.iOS")
+      if (XAMARIN_FRAMEWORK_PATH STREQUAL "XAMARIN_FRAMEWORK_PATH-NOTFOUND")
+        message (FATAL_ERROR "Can't find Xamarin.iOS library!")
       else( )
-      # find xamarin.ios for windows CSharp compiler
+        list( APPEND refs "/reference:${XAMARIN_FRAMEWORK_PATH}/Versions/Current/lib/mono/Xamarin.iOS/Xamarin.iOS.dll" )
+        message( STATUS "Use Xamarin.iOS.dll" )
+      endif()  
      endif()  
-
-    
   endif( APPLE_PLATFORM STREQUAL "IOS" OR APPLE_PLATFORM STREQUAL "IOS_SIM" )
 
   set( sources )

@@ -316,7 +316,7 @@ macro(find_host_package)
 
     set(APPLE TRUE)
     set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM ONLY)
-    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
     set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 endmacro(find_host_package)
 

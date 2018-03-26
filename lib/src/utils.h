@@ -44,11 +44,12 @@
 #if !defined(_MSC_VER) || _MSC_VER < 1800
 
 #include <memory>
+#include <utility>
 
 namespace std {
 template<typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args&& ... args) {
-    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+unique_ptr<T> make_unique(Args&& ... args) {
+    return unique_ptr<T>(new T(forward<Args>(args)...));
 }
 }
 

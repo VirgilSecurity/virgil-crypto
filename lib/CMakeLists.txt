@@ -90,10 +90,15 @@ target_include_directories (${PROJECT_NAME}
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
         "$<INSTALL_INTERFACE:include>"
 )
-target_link_libraries (${PROJECT_NAME} mbedtls::mbedcrypto mbedtls::ed25519)
+target_link_libraries (${PROJECT_NAME} PUBLIC mbedtls::mbedcrypto mbedtls::ed25519)
+if (VIRGIL_CRYPTO_FEATURE_PYTHIA)
+    target_link_libraries (${PROJECT_NAME} PUBLIC pythia)
+endif ()
+
 target_compile_definitions (${PROJECT_NAME}
     PUBLIC
         "VIRGIL_CRYPTO_FEATURE_STREAM_IMPL=$<BOOL:${VIRGIL_CRYPTO_FEATURE_STREAM_IMPL}>"
+        "VIRGIL_CRYPTO_FEATURE_PYTHIA=$<BOOL:${VIRGIL_CRYPTO_FEATURE_PYTHIA}>"
         "UCLIBC=$<BOOL:${UCLIBC}>"
     PRIVATE
         "FMT_HEADER_ONLY"

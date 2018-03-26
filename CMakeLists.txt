@@ -72,6 +72,9 @@
 #           boolean value that defines whether to compile module that is
 #           depends on a C++ streams or not.
 #
+#     - VIRGIL_CRYPTO_FEATURE_PYTHIA -
+#           boolean value that defines whether to enable module Pythia or not.
+#
 # Define variables:
 #     - VIRGIL_VERSION           - library full version.
 #     - VIRGIL_VERSION_MAJOR     - library major version number.
@@ -212,10 +215,19 @@ if (LIB_STATIC_RUNTIME)
     endforeach ()
 endif (LIB_STATIC_RUNTIME)
 
-# Define optimization features
-set (ED25519_AMD64_OPTIMIZATION ON CACHE BOOL "Defines whether to enable AMD64 optimization for Ed25519 algorithms")
+# Configure features
+set (VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP OFF CACHE BOOL
+        "Defines whether to wrap low-level API or not")
+
+set (VIRGIL_CRYPTO_FEATURE_STREAM_IMPL ON CACHE BOOL
+        "Defines whether to compile module that is depends on a C++ stream or not")
+
+set (VIRGIL_CRYPTO_FEATURE_PYTHIA ON CACHE BOOL
+        "Defines whether to enable module Pythia or not")
 
 # Configure optimizations
+set (ED25519_AMD64_OPTIMIZATION ON CACHE BOOL "Defines whether to enable AMD64 optimization for Ed25519 algorithms")
+
 set (MBEDTLS_CMAKE_ARGS "")
 if (NOT CMAKE_CROSSCOMPILING AND ED25519_AMD64_OPTIMIZATION AND UNIX)
     if (NOT DEFINED CMAKE_OSX_ARCHITECTURES OR
@@ -251,6 +263,16 @@ virgil_depends (
 )
 virgil_find_package (tinyformat 2.0.1)
 
+if (VIRGIL_CRYPTO_FEATURE_PYTHIA)
+    virgil_depends (
+        PACKAGE_NAME "pythia"
+        CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/pythia"
+        CMAKE_ARGS "${CMAKE_ARGS}"
+    )
+    virgil_find_package (pythia 0.0.1)
+    virgil_find_package (relic 0.4.0)
+endif ()
+
 # Define enviroment parameters
 if (NOT DEFINED POINTER_SIZE)
     include (check_pointer_size)
@@ -275,13 +297,6 @@ set_property (CACHE LANG PROPERTY STRINGS
     "python"
     "ruby"
 )
-
-# Configure features
-set (VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP OFF CACHE BOOL
-        "Defines whether to wrap low-level API or not")
-
-set (VIRGIL_CRYPTO_FEATURE_STREAM_IMPL ON CACHE BOOL
-        "Defines whether to compile module that is depends on a C++ stream or not")
 
 # Configure crosscompiling
 set (UCLIBC OFF CACHE BOOL "Enable pathches if library is build with uClibc++")

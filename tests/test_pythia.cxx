@@ -35,15 +35,21 @@
  */
 
 /**
- * Contains conditional macroses, that was used during library build.
+ * @file test_pythia_c.cxx
+ * @brief Test C implementation of the Pythia algorithm
  */
 
-/**
- * On/Off status of the feature: C++ streams.
- */
-#cmakedefine01 VIRGIL_CRYPTO_FEATURE_STREAM_IMPL
+#include "catch.hpp"
 
-/**
- * On/Off status of the feature: Pythia.
- */
-#cmakedefine01 VIRGIL_CRYPTO_FEATURE_PYTHIA
+#if VIRGIL_CRYPTO_FEATURE_PYTHIA
+
+#include <pythia/pythia_init.h>
+#include <pythia/pythia_wrapper.h>
+
+SCENARIO("Init Pythia.", "[pythia]") {
+
+    REQUIRE (pythia_init() == 0);
+    REQUIRE (pythia_deinit() == 0);
+}
+
+#endif // VIRGIL_CRYPTO_FEATURE_PYTHIA

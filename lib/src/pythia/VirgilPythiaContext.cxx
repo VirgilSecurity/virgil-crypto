@@ -34,33 +34,63 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef VIRGIL_CRYPTO_PYTHIA_CONTEXT
-#define VIRGIL_CRYPTO_PYTHIA_CONTEXT
 
-#include <memory>
+#if VIRGIL_CRYPTO_FEATURE_PYTHIA
 
-namespace virgil { namespace crypto {
+#include <virgil/crypto/pythia/VirgilPythiaContext.h>
 
-/**
- * @brief This class encapsulates Pythia initialization routine.
- *
- * Motivation:
- *      Pythia context locates in a global storage or a thread storage
- *      duration, so it's initialization must be handled properly.
- *
- * Usage:
- *      This class object must be defined as a function local variable, or
- *      non-static class member.
- */
-class VirgilPythiaContext {
+#include <virgil/crypto/VirgilCryptoError.h>
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
+
+#include "utils.h"
+#include "mbedtls_context.h"
+
+#include <mbedtls/entropy.h>
+#include <mbedtls/ctr_drbg.h>
+
+#include <pythia/pythia.h>
+
+using virgil::crypto::pythia::VirgilPythiaContext;
+using virgil::crypto::VirgilCryptoError;
+using virgil::crypto::make_error;
+using virgil::crypto::foundation::system_crypto_handler;
+using virgil::crypto::foundation::internal::mbedtls_context;
+
+
+namespace virgil { namespace crypto { namespace pythia { namespace internal {
+
+class Context {
 public:
-    /**
-     * @brief Initialize Pythia context.
-     *
-     */
-    VirgilPythiaContext();
+    Context() {
+        constexpr const char pers[] = "VirgilPythiaContext";
+        ctr_drbg_ctx.setup(mbedtls_entropy_func, entropy_ctx.get(), pers);
+
+        pythia_init_args_t rng_ctx;
+        rng_ctx.callback = Context::random_handler;
+        rng_ctx.args = &ctr_drbg_ctx;
+
+        system_crypto_handler(
+            pythia_init(&rng_ctx)
+        );
+    }
+
+private:
+    static void random_handler(uint8_t *out, int out_len, void *rng_ctx) {
+        system_crypto_handler(
+            mbedtls_ctr_drbg_random(rng_ctx, (unsigned char *)out, out_len)
+        );
+    }
+
+private:
+    mbedtls_context<mbedtls_entropy_context> entropy_ctx;
+    mbedtls_context<mbedtls_ctr_drbg_context> ctr_drbg_ctx;
 };
 
-}}
+}}}}
 
-#endif /* VIRGIL_CRYPTO_PYTHIA_CONTEXT */
+
+VirgilPythiaContext::VirgilPythiaContext() {
+    static thread_local internal::Context context;
+}
+
+#endif /* VIRGIL_CRYPTO_FEATURE_PYTHIA */

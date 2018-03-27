@@ -42,9 +42,9 @@
 #if VIRGIL_CRYPTO_FEATURE_PYTHIA
 
 
-#include <virgil/crypto/VirgilPythia.h>
+#include <virgil/crypto/pythia/VirgilPythia.h>
 
-using virgil::crypto::VirgilPythia;
+using virgil::crypto::pythia::VirgilPythia;
 
 BENCHMARK("pythia init", [](benchpress::context* ctx) {
 

@@ -60,6 +60,7 @@ aux_source_directory ("src/internal" src)
 aux_source_directory ("src/primitive" src)
 aux_source_directory ("src/pfs" src)
 aux_source_directory ("src/stream" src)
+aux_source_directory ("src/pythia" src)
 
 aux_source_directory("${CMAKE_CURRENT_BINARY_DIR}/src" src)
 

@@ -34,21 +34,33 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
+#ifndef VIRGIL_CRYPTO_PYTHIA_CONTEXT
+#define VIRGIL_CRYPTO_PYTHIA_CONTEXT
+
+#include <memory>
+
+namespace virgil { namespace crypto {
+
 /**
- * @file test_pythia_c.cxx
- * @brief Test C implementation of the Pythia algorithm
+ * @brief This class encapsulates Pythia initialization routine.
+ *
+ * Motivation:
+ *      Pythia context locates in a global storage or a thread storage
+ *      duration, so it's initialization must be handled properly.
+ *
+ * Usage:
+ *      This class object must be defined as a function local variable, or
+ *      non-static class member.
  */
+class VirgilPythiaContext {
+public:
+    /**
+     * @brief Initialize Pythia context.
+     *
+     */
+    VirgilPythiaContext();
+};
 
-#include "catch.hpp"
+}}
 
-#if VIRGIL_CRYPTO_FEATURE_PYTHIA
-
-#include "virgil/crypto/VirgilPythia.h"
-
-using virgil::crypto::VirgilPythia;
-
-SCENARIO("Init Pythia.", "[pythia]") {
-    VirgilPythia pythia;
-}
-
-#endif // VIRGIL_CRYPTO_FEATURE_PYTHIA
+#endif /* VIRGIL_CRYPTO_PYTHIA_CONTEXT */

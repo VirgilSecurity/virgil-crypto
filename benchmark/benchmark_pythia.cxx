@@ -34,21 +34,27 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-/**
- * @file test_pythia_c.cxx
- * @brief Test C implementation of the Pythia algorithm
- */
+#define BENCHPRESS_CONFIG_MAIN
 
-#include "catch.hpp"
+#include "benchpress.hpp"
+
 
 #if VIRGIL_CRYPTO_FEATURE_PYTHIA
 
-#include "virgil/crypto/VirgilPythia.h"
+
+#include <virgil/crypto/VirgilPythia.h>
 
 using virgil::crypto::VirgilPythia;
 
-SCENARIO("Init Pythia.", "[pythia]") {
-    VirgilPythia pythia;
-}
+BENCHMARK("pythia init", [](benchpress::context* ctx) {
 
-#endif // VIRGIL_CRYPTO_FEATURE_PYTHIA
+    ctx->run_parallel([](benchpress::parallel_context* pctx) {
+        while (pctx->next()) {
+            VirgilPythia();
+            VirgilPythia();
+            VirgilPythia();
+        }
+    });
+})
+
+#endif /* VIRGIL_CRYPTO_FEATURE_PYTHIA */

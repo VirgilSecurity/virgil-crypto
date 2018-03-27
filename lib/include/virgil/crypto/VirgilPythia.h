@@ -38,8 +38,7 @@
 #define VIRGIL_PYTHIA_H
 
 #include "VirgilByteArray.h"
-
-#include <memory>
+#include "VirgilPythiaContext.h"
 
 namespace virgil { namespace crypto {
 
@@ -53,24 +52,9 @@ namespace virgil { namespace crypto {
  */
 class VirgilPythia {
 public:
-    /**
-     * @brief Init inetrnal state.
-     * @note Initialization is a time expensive operation.
-     */
-    VirgilPythia();
-
-    //! @cond Doxygen_Suppress
-    VirgilPythia(VirgilPythia&& rhs) noexcept;
-
-    VirgilPythia& operator=(VirgilPythia&& rhs) noexcept;
-
-    virtual ~VirgilPythia() noexcept;
-    //! @endcond
 
 private:
-    class Impl;
-
-    std::unique_ptr<Impl> impl_;
+   VirgilPythiaContext pythiaContext;
 };
 
 }}

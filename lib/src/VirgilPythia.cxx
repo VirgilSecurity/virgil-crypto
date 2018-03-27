@@ -34,40 +34,18 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#if VIRGIL_CRYPTO_FEATURE_STREAM_IMPL
+#if VIRGIL_CRYPTO_FEATURE_PYTHIA
 
 #include <virgil/crypto/VirgilPythia.h>
 
-#include "utils.h"
-#include "mbedtls_context.h"
+#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 
-#include <mbedtls/entropy.h>
-#include <mbedtls/ctr_drbg.h>
+#include <pythia/pythia.h>
+#include <iostream>
 
 using virgil::crypto::VirgilPythia;
-using virgil::crypto::foundation::internal::mbedtls_context;
+using virgil::crypto::VirgilPythiaContext;
+using virgil::crypto::foundation::system_crypto_handler;
 
 
-namespace virgil { namespace crypto {
-
-class VirgilPythia::Impl {
-public:
-    mbedtls_context<mbedtls_entropy_context> entropy_ctx;
-    mbedtls_context<mbedtls_ctr_drbg_context> ctr_drbg_ctx;
-};
-
-}}
-
-VirgilPythia::VirgilPythia(VirgilPythia&& rhs) noexcept = default;
-
-VirgilPythia& VirgilPythia::operator=(VirgilPythia&& rhs) noexcept = default;
-
-VirgilPythia::~VirgilPythia() noexcept = default;
-
-VirgilPythia::VirgilPythia() : impl_(std::make_unique<Impl>()) {
-    constexpr const char pers[] = "VirgilPythia";
-    impl_->ctr_drbg_ctx.setup(mbedtls_entropy_func, impl_->entropy_ctx.get(), pers);
-}
-
-#endif /* VIRGIL_CRYPTO_FEATURE_STREAM_IMPL */
-
+#endif /* VIRGIL_CRYPTO_FEATURE_PYTHIA */

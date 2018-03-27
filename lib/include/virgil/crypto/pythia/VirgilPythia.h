@@ -34,18 +34,29 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#if VIRGIL_CRYPTO_FEATURE_PYTHIA
+#ifndef VIRGIL_PYTHIA_H
+#define VIRGIL_PYTHIA_H
 
-#include <virgil/crypto/VirgilPythia.h>
+#include "../VirgilByteArray.h"
+#include "VirgilPythiaContext.h"
 
-#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
+namespace virgil { namespace crypto { namespace pythia {
 
-#include <pythia/pythia.h>
-#include <iostream>
+/**
+ * @brief This class provides PYTHIA cryptographic functions and primitives.
+ *
+ *  PYTHIA is a verifiable, cryptographic protocol that hardens passwords
+ *  with the help of a remote service.
+ *
+ *  This module contains
+ */
+class VirgilPythia {
+public:
 
-using virgil::crypto::VirgilPythia;
-using virgil::crypto::VirgilPythiaContext;
-using virgil::crypto::foundation::system_crypto_handler;
+private:
+   VirgilPythiaContext pythiaContext;
+};
 
+}}}
 
-#endif /* VIRGIL_CRYPTO_FEATURE_PYTHIA */
+#endif /* VIRGIL_PYTHIA_H */

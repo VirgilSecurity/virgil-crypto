@@ -1,82 +1,80 @@
 [![Build Status](https://travis-ci.org/VirgilSecurity/virgil-crypto.svg?branch=master)](https://travis-ci.org/VirgilSecurity/virgil-crypto)
 [![GitHub license](https://img.shields.io/badge/license-BSD%203--Clause-blue.svg)](https://raw.githubusercontent.com/VirgilSecurity/virgil-crypto/master/LICENSE)
 [![Documentation Developers](https://img.shields.io/badge/docs-developers-green.svg)](https://developer.virgilsecurity.com)
-[![Documentation Doxygen](https://img.shields.io/badge/docs-doxygen-blue.svg)](http://VirgilSecurity.github.io/virgil-crypto)
-[![Coverity Scan Build Status](https://scan.coverity.com/projects/4943/badge.svg)](https://scan.coverity.com/projects/virgilsecurity-virgil-crypto)
+
 
 # Library: Virgil Crypto
 
-- [Introduction](#introduction)
-- [Supported languages and platforms](#supported-languages-and-platforms)
-- [Library purposes](#library-purposes)
-- [Where library can be used](#where-library-can-be-used)
-- [Supported keys](#supported-keys)
-- [Build prerequisites](#build-prerequisites)
-- [Simple build](#simple-build)
-- [Multiarch build](#multiarch-build)
-- [Support](#support)
+[Library features](#library-features) | [Supported algorithms](#supported-algorithms) | [Build](#build) | [Benchmark](#benchmark) | [Docs](#docs) | [Support](#support)
 
 ## Introduction
-Welcome to Virgil!
+Welcome to Virgil Security!
 
-Virgil is a stack of security libraries (ECIES with Crypto Agility wrapped in Virgil Cryptogram) and all the necessary
-infrastructure to enable seamless, end-to-end encryption for any application, platform or device.
-See below for currently available languages and platforms.
-Get in touch with us to get preview access to our key infrastructure.
+Virgil Security guides software developers into the forthcoming security world in which everything will be encrypted (and passwords will be eliminated).  In this world, the days of developers having to raise millions of dollars to build a secure chat, secure email, secure file-sharing, or a secure anything have come to an end.  Now developers can instead focus on building features that give them a competitive market advantage while end-users can enjoy the privacy and security they increasingly demand.
 
-Virgil Security, Inc., guides software developers into the forthcoming security world in which everything will be encrypted (and passwords will be eliminated).  In this world, the days of developers having to raise millions of dollars to build a secure chat, secure email, secure file-sharing, or a secure anything have come to an end.  Now developers can instead focus on building features that give them a competitive market advantage while end-users can enjoy the privacy and security they increasingly demand.
+Virgil Security offers this security via a stack of security libraries (ECIES with Crypto Agility wrapped in Virgil Cryptogram) and all the necessary infrastructure to enable seamless, end-to-end encryption for any application, platform or device. End-to-end encryption can be used for a variety of important reasons: compliance with regulations like HIPAA and GDPR, the transfer and storage of PII, general user privacy as a feature, breach risk mitigation and more.
 
-## Supported languages and platforms
+See below for currently available languages and platforms. Get in touch with us to get beta access to our Key infrastructure.
 
-| Language | Supported OS               |
-|----------|----------------------------|
-| C++      | ANY                        |
-| PHP      | Unix, Linux, OS X          |
-| Python   | Unix, Linux, OS X          |
-| Ruby     | Unix, Linux, OS X          |
-| Java     | Unix, Linux, OS X, Windows |
-| .NET     | Unix, Linux, OS X, Windows |
-| AsmJS    | Unix, Linux, OS X, Windows |
-| NodeJS   | Unix, Linux, OS X, Windows |
+## Library Features
 
-## Library purposes
+### Supported crypto operations
+* Generate keys;
 * Encrypt data;
 * Decrypt data;
 * Sign data;
 * Verify data.
 
-## Where library can be used
-* on the client-side application;
-* on the server-side application.
+### Supported platforms
+Crypto Library is suitable for the following platforms:
+* Desktop (Windows, Linux, MacOS);
+* Mobile (iOS, Android, watchOS, tvOS);
+* Web (WebAssembly, AsmJS)
 
-## Supported keys
+### Supported languages
+Crypto Library is written in C++ and supports bindings for the following programming languages:
+* Go
+* PHP
+* Python
+* Ruby
+* Java
+* C#
+* AsmJS
+* NodeJS
+* WebAssembly
 
-| Key Algorithm   | Description                    | Notes                  |
-|-----------------|--------------------------------|------------------------|
-| RSA_256         | RSA 1024 bit                   | weak, not recommended  |
-| RSA_512         | RSA 1024 bit                   | weak, not recommended  |
-| RSA_1024        | RSA 1024 bit                   | weak, not recommended  |
-| RSA_2048        | RSA 2048 bit                   | weak, not recommended  |
-| RSA_3072        | RSA 3072 bit                   |                        |
-| RSA_4096        | RSA 4096 bit                   |                        |
-| RSA_8192        | RSA 8192 bit                   |                        |
-| EC_SECP192R1    | 192-bits NIST curve            |                        |
-| EC_SECP224R1    | 224-bits NIST curve            |                        |
-| EC_SECP256R1    | 256-bits NIST curve            |                        |
-| EC_SECP384R1    | 384-bits NIST curve            |                        |
-| EC_SECP521R1    | 521-bits NIST curve            |                        |
-| EC_BP256R1      | 256-bits Brainpool curve       |                        |
-| EC_BP384R1      | 384-bits Brainpool curve       |                        |
-| EC_BP512R1      | 512-bits Brainpool curve       |                        |
-| EC_SECP192K1    | 192-bits "Koblitz" curve       |                        |
-| EC_SECP224K1    | 224-bits "Koblitz" curve       |                        |
-| EC_SECP256K1    | 256-bits "Koblitz" curve       |                        |
-| EC_CURVE25519   | Curve25519 (deprecated format) | deprecated             |
-| FAST_EC_X25519  | Curve25519                     | only encrypt / decrypt |
-| FAST_EC_ED25519 | Ed25519                        | recommended, default   |
+**Swift/Objective_C** language can use the Virgil Crypto Library directly, without any bind.
+
+### Available Wrappers
+Virgil also has special wrappers for simplifying Crypto Library implementation in your digital solutions. We support wrappers for the following programming languages:
+* [Go](https://github.com/VirgilSecurity/virgil-crypto-go)
+* [Objective-C/Swift](https://github.com/VirgilSecurity/virgil-foundation-x)
+* [C#/.NET](https://github.com/VirgilSecurity/virgil-sdk-crypto-net)
+* [Ruby](https://github.com/VirgilSecurity/virgil-crypto-ruby)
+* [Python](https://github.com/VirgilSecurity/virgil-crypto-python)
+* [PHP](https://github.com/VirgilSecurity/virgil-sdk-crypto-php)
+* [JS](https://github.com/VirgilSecurity/virgil-crypto-javascript)
 
 
-## Build prerequisites
+## Supported algorithms
+
+
+| Purpose              | Algorithm, Source                                                                                                                                                                                                                                                                                                                                                                   |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Key Generation, PRNG | [NIST SP 800-90A](http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-90Ar1.pdf)                                                                                                                                                                                                                                                                                       |
+| Key Derivation       | [KDF2\*](https://www.ietf.org/rfc/rfc2898),<br>  [HKDF](https://tools.ietf.org/html/rfc5869)                                                                                                                                                                                                                                                                                        |
+| Key Exchange         | [X25519\*](https://tools.ietf.org/html/rfc7748),<br> [ECDH](http://csrc.nist.gov/groups/ST/toolkit/documents/SP800-56Arev1_3-8-07.pdf),<br> [RSA](http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-56Br1.pdf)                                                                                                                                                       |
+| Hashing              | [SHA-2 (256/384\*/512)](https://tools.ietf.org/html/rfc4634),<br> [Blake2](https://tools.ietf.org/html/rfc7693)                                                                                                                                                                                                                                                                   |
+| Digital Signature    | [Ed25519\*](https://tools.ietf.org/html/rfc8032),<br> [ECDSA](http://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-4.pdf),<br> [RSASSA-PSS](https://tools.ietf.org/html/rfc4056)                                                                                                                                                                                                     |
+| Entropy Source       | Linux [/dev/urandom](https://tls.mbed.org/module-level-design-rng),<br> Windows [CryptGenRandom()](https://tls.mbed.org/module-level-design-rng)                                                                                                                                                                                                                                    |
+| Symmetric Algorithms | [AES GCM\*](http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf),<br> [AES CBC](https://tools.ietf.org/html/rfc3602)                                                                                                                                                                         |
+| Elliptic Curves      | [X25519](https://tools.ietf.org/html/rfc7748),<br> [Ed25519\*](https://tools.ietf.org/html/rfc8032),<br> [Koblitz](https://www.ietf.org/rfc/rfc4492) (secp192k1, secp224k1, secp256k1),<br> [Brainpool](https://tools.ietf.org/html/rfc5639) (bp256r1, bp384r1, bp512r1), <br> [NIST](https://www.ietf.org/rfc/rfc5480.txt) (secp256r1, secp192r1, secp224r1, secp384r1, secp521r1) |
+
+> **\*** - used by default.
+
+## Build
+
+### Prerequisites
 
 The page lists the prerequisite packages which need to be installed on the different platforms to be able to configure and to build Virgil Crypto Library.
 
@@ -89,135 +87,102 @@ The page lists the prerequisite packages which need to be installed on the diffe
   - ```make```
 * Other tools:
   - ```git```
-  - ```swig``` (version >= 3.0.7), optional for C++ build
+  - ```swig``` (version >= 3.0.12), optional for C++ build
   - ```doxygen``` (optional)
 
 
-## Simple build
+### Build the Library
+This section describes how to build Virgil Crypto Library for а particular OS.
 
-This section describes how to build Virgil Crypto Library for а particular language.
+#### Step 1 - Get source code
 
-### Step 1 - Choose target language
-
-<a name="table1"></a>
-Table 1 - Supported languages
-
-| Language | Supported OS                 | Dependencies          | Build parameters | Environment | Binary                                                      |
-|----------|------------------------------|-----------------------|------------------|-------------|-------------------------------------------------------------|
-| C++      | ANY                          |                       | LANG=cpp         |             | [CDN](https://cdn.virgilsecurity.com/virgil-crypto/cpp/)    |
-| PHP      | Unix, Linux, OS X            | php, php5-dev         | LANG=php         |             | [CDN](https://cdn.virgilsecurity.com/virgil-crypto/php/)    |
-| Python   | Unix, Linux, OS X            | python                | LANG=python      |             | [CDN](https://cdn.virgilsecurity.com/virgil-crypto/python/) |
-| Ruby     | Unix, Linux, OS X            | ruby, ruby-dev        | LANG=ruby        |             | [CDN](https://cdn.virgilsecurity.com/virgil-crypto/ruby/)   |
-| Java     | Unix, Linux, OS X, Windows\* | Java JDK 1.6          | LANG=java        | JAVA_HOME   | [CDN](https://cdn.virgilsecurity.com/virgil-crypto/java/)   |
-| .NET     | Unix, Linux, OS X, Windows\* | .NET 2.0, or mono 2.0 | LANG=net         |             | [CDN](https://cdn.virgilsecurity.com/virgil-crypto/net/)    |
-| AsmJS    | Unix, Linux, OS X, Windows\* | Emscripten 1.35       | LANG=asmjs       | EMSDK_HOME  | [CDN](https://cdn.virgilsecurity.com/virgil-crypto/asmjs/)  |
-| NodeJS   | Unix, Linux, OS X, Windows\* |                       | LANG=nodejs      |             | [CDN](https://cdn.virgilsecurity.com/virgil-crypto/nodejs/) |
-
->\* External dependencies for Windows binaries:
->	- msvcp140.dll
->	- vcruntime140.dll
-
->These dependencies can be installed as a part of [Visual C++ Redistributable for Visual Studio 2015](https://www.microsoft.com/en-us/download/details.aspx?id=48145)
-
-### Step 2 - Configure environment
-
-1. Open Terminal.
-1. Check that all the tools which are listed in the [build prerequisite](#build-prerequisite) are available there.
-1. Set environment variables according to the [table above](#table1).
-
-### Step 3 - Get source code
-
+- Open Terminal.
+- Get the source code:
 ```shell
 > git clone https://github.com/VirgilSecurity/virgil-crypto.git
 ```
 
-### Step 4 - Build
 
-Replace ```{{LANG}}``` placeholder to the corresponding value from the [table above](#table1).
-
-```shell
-> cd virgil-crypto
-> cmake -H. -B_build -DCMAKE_INSTALL_PREFIX=_install -DLANG={{LANG}}
-> cmake --build _build --target install
-```
-
-> Note, if you are using ```-DLANG=nodejs```, one of the next parameters can be appended:
->
-> * ```-DLANG_VERSION=0.12.7```
-> * ```-DLANG_VERSION=4.1.0```
-
-## Multiarch build
-
-This section describes how to build Virgil Crypto Library for multi architecture targets, which are packed inside the specific package:
-
-* Apple OS X Framework
-* Apple iOS Framework
-* Apple WatchOS Framework
-* Apple TVOS Framework
-* Android Bundle as Jar archive
-* Windows Bundle, as structured
-
-### Step 1 - Choose target language and platform
-
-<a name="table2"></a>
-Table 2 - Supported languages and platforms
-
-| Language    | Platform | Host OS | Dependencies                                 | Build parameters         | Environment |
-|-------------|----------|---------|----------------------------------------------|--------------------------|-------------|
-| C++         | OS X     | OS X    |                                              | TARGET=osx               |             |
-| C++         | iOS      | OS X    |                                              | TARGET=ios               |             |
-| C++         | WatchOS  | OS X    |                                              | TARGET=applewatchos      |             |
-| C++         | TVOS     | OS X    |                                              | TARGET=appletvos         |             |
-| C++         | Windows  | Windows | msvcp140.dll\*, vcruntime140.dll\*           | TARGET=cpp               |             |
-| .NET        | iOS      | OS X    | mono 2.0                                     | TARGET=net_ios           |             |
-| .NET        | WatchOS  | OS X    | mono 2.0                                     | TARGET= net_applewatchos |             |
-| .NET        | TVOS     | OS X    | mono 2.0                                     | TARGET=net_appletvos     |             |
-| .NET        | Android  | *nix    | Android NDK, mono 2.0                        | TARGET=net_android       | ANDROID_NDK |
-| .NET        | Windows  | Windows | .NET 2.0, msvcp140.dll\*, vcruntime140.dll\* | TARGET=net               |             |
-| Java        | Android  | *nix    | Android NDK                                  | TARGET=java_android      | ANDROID_NDK |
-| Java        | Windows  | Windows | Java JDK, msvcp140.dll\*, vcruntime140.dll\* | TARGET=java              | JAVA_HOME   |
-| NodeJS 0.12 | Windows  | Windows | msvcp140.dll\*, vcruntime140.dll\*           | TARGET=nodejs-0.12.7     |             |
-| NodeJS 4.1  | Windows  | Windows | msvcp140.dll\*, vcruntime140.dll\*           | TARGET=nodejs-4.1.0      |             |
-
->These dependencies can be installed as a part of [Visual C++ Redistributable for Visual Studio 2015](https://www.microsoft.com/en-us/download/details.aspx?id=48145)
-
-### Step 2 - Configure environment
-
-1. Open Terminal.
-1. Check that all tools which are listed in the [build prerequisites](#build-prerequisites) are available there.
-  * for Windows compiler should be MSVC;
-  * for OS X build toolchain should be Xcode Toolchain.
-1. Check that all dependencies from the [table above](#table2) are accessible.
-1. Set environment variables according to the [table above](#table2).
-
-### Step 3 - Get source code
-
-```shell
-> git clone https://github.com/VirgilSecurity/virgil-crypto.git
-```
-
-### Step 4 - Build
-
-Replace ```{{TARGET}}``` placeholder to the corresponding value from the [table above](#table2).
+#### Step 2 - Run a build Script
 
 Unix-like OS:
 
 ```shell
 > cd virgil-crypto
-> ./utils/build.sh {{TARGET}}
-> ls ./install/{{TARGET}}
+> ./utils/build.sh
 ```
 
 Windows OS:
 
 ```shell
-> set MSVC_ROOT=c:\path\to\msvc\root
-> set JAVA_HOME=c:\path\to\jdk
 > cd virgil-crypto
-> .\utils\build.bat {{TARGET}}
-> dir .\install\{{TARGET}}
+> ./utils/build.bat
 ```
+
+Run the build script with the option `-h` to get help on how to build a library for a necessary OS, Platforms or languages.
+
+Build command has the following syntax:
+
+```shell
+ ./utils/build.sh [<target>] [<src_dir>] [<build_dir>] [<install_dir>]
+```
+
+where the command options are:
+
+- &lt;target&gt; - (default = cpp) target to build which contains two parts &lt;name&gt;[-&lt;version&gt;], where &lt;name&gt;:
+
+| &lt;name&gt;     | build information                                                               |
+|------------------|---------------------------------------------------------------------------------|
+| cpp              | build C++ library                                                               |
+| macos            | build framework for Apple macOSX, requirements: OS X, Xcode                     |
+| ios              | build framework for Apple iOS, requirements: OS X, Xcode                        |
+| watchos          | build framework for Apple WatchOS, requirements: OS X, Xcode                    |
+| tvos             | build framework for Apple TVOS, requirements: OS X, Xcode                       |
+| php              | build PHP library, requirements: php-dev                                        |
+| python           | build Python library                                                            |
+| ruby             | build Ruby library                                                              |
+| java             | build Java library, requirements: $JAVA_HOME                                    |
+| java_android     | build Java library under Android platform, requirements: $ANDROID_NDK           |
+| net              | build .NET library, requirements: .NET or Mono                                  |
+| net_macos        | build .NET library under Apple macOSX platform, requirements: Mono, OS X, Xcode |
+| net_ios          | build .NET library under Apple iOS platform, requirements: Mono, OS X, Xcode    |
+| net_applewatchos | build .NET library under WatchOS platform, requirements: Mono, OS X, Xcode      |
+| net_appletvos    | build .NET library under TVOS platform, requirements: Mono, OS X, Xcode         |
+| net_android      | build .NET library under Android platform, requirements: Mono, $ANDROID_NDK     |
+| asmjs            | build AsmJS library, requirements: $EMSDK_HOME                                  |
+| webasm           | build WebAssembly library, requirements: $EMSDK_HOME                            |
+| nodejs           | build NodeJS module                                                             |
+| go               | build Golang library                                                            |  
+
+> All available Crypto Library versions you can find [here](http://virgilsecurity.github.io/virgil-crypto/).
+
+- <src_dir>     - a path to the directory where a root CMakeLists.txt file is located (default = .).
+- <build_dir>   - a path to the directory where temp files will be stored (default = build/&lt;target&gt;).
+- <install_dir> - a path to the directory where library files will be installed (default = install/&lt;target&gt;).
+
+
+## Benchmark
+You can find out benchmark of the Crypto Library in the [benchmark.md](benchmark.md) file.
+
+## Docs
+We always try to make cryptography accessible for programmers, and the documentation below can get you started today.
+* [Crypto Library API](http://virgilsecurity.github.io/virgil-crypto/)
+* [Library usage examples](https://developer.virgilsecurity.com/docs/how-to#cryptography)
+  * [Generate a key pair](https://developer.virgilsecurity.com/docs/cs/how-to/cryptography/generate-keypair)
+  * [import and export keys](https://developer.virgilsecurity.com/docs/cs/how-to/cryptography/import-export-keys)
+  * [generate and verify signature](https://developer.virgilsecurity.com/docs/cs/how-to/cryptography/generate-verify-signature)
+  * [encrypt and decrypt data](https://developer.virgilsecurity.com/docs/cs/how-to/cryptography/encrypt-decrypt-data)
+* [Virgil CLI for the Crypto Library](https://developer.virgilsecurity.com/docs/sdk-and-tools/virgil-cli/generate-keypair)
+
 
 
 ## Support
-Email to: <support@VirgilSecurity.com>
+Our developer support team is here to help you.
+
+You can find us on [Twitter](https://twitter.com/VirgilSecurity) or send us email support@VirgilSecurity.com.
+
+Also, get extra help from our support team on [Slack](https://join.slack.com/t/VirgilSecurity/shared_invite/enQtMjg4MDE4ODM3ODA4LTc2OWQwOTQ3YjNhNTQ0ZjJiZDc2NjkzYjYxNTI0YzhmNTY2ZDliMGJjYWQ5YmZiOGU5ZWEzNmJiMWZhYWVmYTM).
+
+## License
+
+BSD 3-Clause. See [LICENSE](LICENSE) for details.

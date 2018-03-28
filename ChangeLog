@@ -4,8 +4,8 @@ virgil ChangeLog (Sorted per date)
 
 ## Bugfix
 
-  * [Lib] Fix fail when export plain RSA 4096 private key to DER format
-  * [CI] Fix Travis CI fails on a pull requests
+  * [Lib] Fix error when export plain RSA 4096 private key to DER format
+  * [CI] Fix Travis CI fails on a pull request
 
 ## Changes
 

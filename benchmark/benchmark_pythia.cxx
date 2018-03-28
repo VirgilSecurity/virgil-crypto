@@ -42,17 +42,18 @@
 #if VIRGIL_CRYPTO_FEATURE_PYTHIA
 
 
+#include <virgil/crypto/VirgilByteArrayUtils.h>
 #include <virgil/crypto/pythia/VirgilPythia.h>
 
+using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::pythia::VirgilPythia;
 
 BENCHMARK("pythia init", [](benchpress::context* ctx) {
 
     ctx->run_parallel([](benchpress::parallel_context* pctx) {
         while (pctx->next()) {
-            VirgilPythia();
-            VirgilPythia();
-            VirgilPythia();
+            VirgilPythia pythia;
+            auto result = pythia.blind(VirgilByteArrayUtils::stringToBytes("password"));
         }
     });
 })

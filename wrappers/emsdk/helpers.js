@@ -37,7 +37,7 @@
 (function() {
     function virgil_init () {
       Module['VirgilByteArray']['fromUTF8'] = function(string) {
-          var ba = new Module.VirgilByteArray();
+          var ba = new Module['VirgilByteArray']();
           ba.fromUTF8(string);
           return ba;
       };
@@ -58,7 +58,7 @@
       };
 
       Module['VirgilByteArray']['fromUint8Array'] = function(uint8Array) {
-          var byteArray = new Module.VirgilByteArray;
+          var byteArray = new Module['VirgilByteArray'];
           byteArray.assign(uint8Array);
           return byteArray;
       };
@@ -76,7 +76,7 @@
           return array;
       };
 
-      Module['VirgilStreamDataSource'] = Module.VirgilDataSource.extend("VirgilDataSource", {
+      Module['VirgilStreamDataSource'] = Module['VirgilDataSource'].extend("VirgilDataSource", {
           __construct: function(uint8Array, chunkSize) {
               this.__parent.__construct.call(this);
               this.position = 0;
@@ -91,7 +91,7 @@
               var end = start + this.chunkSize;
               var chunk = this._slice(start, end);
               var bytesRead = chunk.length;
-              var byteArray = Module.VirgilByteArray.fromUint8Array(chunk);
+              var byteArray = Module['VirgilByteArray'].fromUint8Array(chunk);
 
               this.seek(this.position + bytesRead);
               return byteArray;
@@ -124,7 +124,7 @@
           }
       });
 
-      Module['VirgilStreamDataSink'] = Module.VirgilDataSink.extend("VirgilDataSink", {
+      Module['VirgilStreamDataSink'] = Module['VirgilDataSink'].extend("VirgilDataSink", {
           __construct: function() {
               this.__parent.__construct.call(this);
               this.bytes = new Uint8Array(0);
@@ -161,11 +161,17 @@
       Module['VirgilSymmetricCipher']['Padding'] = Module['VirgilSymmetricCipherPadding']
     }
 
-    var originalOnInit = Module['onRuntimeInitialized'];
-    Module['onRuntimeInitialized'] = function onRuntimeInitialized() {
+    if (Module['VirgilVersion']) {
+      // initialized synchronously (asmjs)
       virgil_init();
-      if (typeof originalOnInit === 'function') {
-        originalOnInit();
-      }
-    };
+    } else {
+      // initialized asynchronously (wasm)
+      var originalOnInit = Module['onRuntimeInitialized'];
+      Module['onRuntimeInitialized'] = function onRuntimeInitialized() {
+        virgil_init();
+        if (typeof originalOnInit === 'function') {
+          originalOnInit();
+        }
+      };
+    }
 })();

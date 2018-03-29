@@ -90,7 +90,7 @@ target_link_libraries (${WRAPPER_TARGET} ${WRAPPED_LIB_NAME})
 target_compile_options (${WRAPPER_TARGET} PUBLIC -s DISABLE_EXCEPTION_CATCHING=0)
 
 set_property (TARGET ${WRAPPER_TARGET} APPEND_STRING PROPERTY
-        LINK_FLAGS " --bind -s DISABLE_EXCEPTION_CATCHING=0 -s MODULARIZE=1 -s 'EXPORT_NAME=\"__virgilCrypto\"'")
+        LINK_FLAGS " --bind -s SINGLE_FILE=1 -s DISABLE_EXCEPTION_CATCHING=0 -s MODULARIZE=1 -s 'EXPORT_NAME=\"__virgilCrypto\"'")
 
 em_link_js_library (${WRAPPER_TARGET} ${CMAKE_CURRENT_LIST_DIR}/error.js)
 em_link_post_js (${WRAPPER_TARGET} ${CMAKE_CURRENT_LIST_DIR}/helpers.js)

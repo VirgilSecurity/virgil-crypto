@@ -38,15 +38,14 @@
 
 #include <virgil/crypto/pythia/VirgilPythia.h>
 
-#include <virgil/crypto/VirgilCryptoError.h>
-#include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
+#include <virgil/crypto/pythia/VirgilPythiaError.h>
 
 #include <pythia/pythia.h>
 
 using virgil::crypto::make_error;
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoError;
-using virgil::crypto::foundation::system_crypto_handler;
+using virgil::crypto::pythia::pythia_handler;
 using virgil::crypto::pythia::VirgilPythia;
 using virgil::crypto::pythia::VirgilPythiaBlindResult;
 using virgil::crypto::pythia::VirgilPythiaContext;
@@ -100,9 +99,7 @@ VirgilPythiaBlindResult VirgilPythia::blind(const VirgilByteArray& password) {
     VirgilByteArray blindedPassword(kPythia_BufferSize);
     VirgilByteArray blindingSecret(kPythia_BufferSize);
 
-    VirgilPythiaIn passwordIn(password);
-
-    system_crypto_handler(pythia_w_blind(
+    pythia_handler(pythia_w_blind(
             buffer_bind_in(password), buffer_bind_out(blindedPassword),
             buffer_bind_out(blindingSecret)));
 
@@ -112,29 +109,66 @@ VirgilPythiaBlindResult VirgilPythia::blind(const VirgilByteArray& password) {
 VirgilPythiaTransformResult VirgilPythia::transform(
         const VirgilByteArray& blindedPassword, const VirgilByteArray& transformationKeyID,
         const VirgilByteArray& tweak, const VirgilByteArray& pythiaSecret,
-        const VirgilByteArray& pythiaScopeSecret) { // pythia_w_transform();
-    throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
+        const VirgilByteArray& pythiaScopeSecret) {
+
+    VirgilByteArray transformedPassword(kPythia_BufferSize);
+    VirgilByteArray transformationPrivateKey(kPythia_BufferSize);
+    VirgilByteArray transformedTweak(kPythia_BufferSize);
+
+    pythia_handler(pythia_w_transform(
+            buffer_bind_in(blindedPassword), buffer_bind_in(transformationKeyID),
+            buffer_bind_in(tweak), buffer_bind_in(pythiaSecret), buffer_bind_in(pythiaScopeSecret),
+            buffer_bind_out(transformedPassword), buffer_bind_out(transformationPrivateKey),
+            buffer_bind_out(transformedTweak)));
+
+    return VirgilPythiaTransformResult(
+            std::move(transformedPassword), std::move(transformationPrivateKey),
+            std::move(transformedTweak));
 }
 
 VirgilPythiaDeblindResult VirgilPythia::deblind(
-        const VirgilByteArray& transformedPassword,
-        const VirgilByteArray& blindingSecret) { // pythia_w_deblind();
-    throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
+        const VirgilByteArray& transformedPassword, const VirgilByteArray& blindingSecret) {
+
+    VirgilByteArray deblindedPassword(kPythia_BufferSize);
+
+    pythia_handler(pythia_w_deblind(
+            buffer_bind_in(transformedPassword), buffer_bind_in(blindingSecret),
+            buffer_bind_out(deblindedPassword)));
+
+    return VirgilPythiaDeblindResult(std::move(deblindedPassword));
 }
 
 VirgilPythiaProveResult VirgilPythia::prove(
         const VirgilByteArray& transformedPassword, const VirgilByteArray& blindedPassword,
-        const VirgilByteArray& transformedTweak,
-        const VirgilByteArray& transformationPrivateKey) { // pythia_w_prove();
-    throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
+        const VirgilByteArray& transformedTweak, const VirgilByteArray& transformationPrivateKey) {
+
+    VirgilByteArray transformationPublicKey(kPythia_BufferSize);
+    VirgilByteArray proofValueC(kPythia_BufferSize);
+    VirgilByteArray proofValueU(kPythia_BufferSize);
+
+    pythia_handler(pythia_w_prove(
+            buffer_bind_in(transformedPassword), buffer_bind_in(blindedPassword),
+            buffer_bind_in(transformedTweak), buffer_bind_in(transformationPrivateKey),
+            buffer_bind_out(transformationPublicKey), buffer_bind_out(proofValueC),
+            buffer_bind_out(proofValueU)));
+
+    return VirgilPythiaProveResult(
+            std::move(transformationPublicKey), std::move(proofValueC), std::move(proofValueU));
 }
 
 VirgilPythiaVerifyResult VirgilPythia::verify(
         const VirgilByteArray& transformedPassword, const VirgilByteArray& blindedPassword,
         const VirgilByteArray& tweak, const VirgilByteArray& transformationPublicKey,
-        const VirgilByteArray& proofValueC,
-        const VirgilByteArray& proofValueU) { // pythia_w_verify();
-    throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
+        const VirgilByteArray& proofValueC, const VirgilByteArray& proofValueU) {
+
+    int verified = 0;
+
+    pythia_handler(pythia_w_verify(
+            buffer_bind_in(transformedPassword), buffer_bind_in(blindedPassword),
+            buffer_bind_in(tweak), buffer_bind_in(transformationPublicKey),
+            buffer_bind_in(proofValueC), buffer_bind_in(proofValueU), &verified));
+
+    return VirgilPythiaVerifyResult(verified != 0);
 }
 
 VirgilPythiaGetPasswordUpdateTokenResult VirgilPythia::getPasswordUpdateToken(
@@ -143,14 +177,30 @@ VirgilPythiaGetPasswordUpdateTokenResult VirgilPythia::getPasswordUpdateToken(
         const VirgilByteArray& previousPythiaScopeSecret,
         const VirgilByteArray& newTransformationKeyID, const VirgilByteArray& newPythiaSecret,
         const VirgilByteArray& newPythiaScopeSecret) {
-    // pythia_w_get_password_update_token();
-    throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
+
+    VirgilByteArray passwordUpdateToken(kPythia_BufferSize);
+    VirgilByteArray updatedTransformationPublicKey(kPythia_BufferSize);
+
+    pythia_handler(pythia_w_get_password_update_token(
+            buffer_bind_in(previousTransformationKeyID), buffer_bind_in(previousPythiaSecret),
+            buffer_bind_in(previousPythiaScopeSecret), buffer_bind_in(newTransformationKeyID),
+            buffer_bind_in(newPythiaSecret), buffer_bind_in(newPythiaScopeSecret),
+            buffer_bind_out(passwordUpdateToken), buffer_bind_out(updatedTransformationPublicKey)));
+
+    return VirgilPythiaGetPasswordUpdateTokenResult(
+            std::move(passwordUpdateToken), std::move(updatedTransformationPublicKey));
 }
 
 VirgilPythiaUpdateDeblindedWithTokenResult VirgilPythia::updateDeblindedWithToken(
         const VirgilByteArray& deblindedPassword, const VirgilByteArray& passwordUpdateToken) {
-    // pythia_w_update_deblinded_with_token();
-    throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
+
+    VirgilByteArray updatedDeblindedPassword(kPythia_BufferSize);
+
+    pythia_handler(pythia_w_update_deblinded_with_token(
+            buffer_bind_in(deblindedPassword), buffer_bind_in(passwordUpdateToken),
+            buffer_bind_out(updatedDeblindedPassword)));
+
+    return VirgilPythiaUpdateDeblindedWithTokenResult(std::move(updatedDeblindedPassword));
 }
 
 #endif /* VIRGIL_CRYPTO_FEATURE_PYTHIA */

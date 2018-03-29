@@ -45,8 +45,9 @@ namespace pythia {
 
 class VirgilPythiaTransformResult {
 public:
-    explicit VirgilPythiaTransformResult(VirgilByteArray transformedPassword,
-            VirgilByteArray transformationPrivateKey, VirgilByteArray transformedTweak)
+    explicit VirgilPythiaTransformResult(
+            VirgilByteArray transformedPassword, VirgilByteArray transformationPrivateKey,
+            VirgilByteArray transformedTweak)
             : transformedPassword_(std::move(transformedPassword)),
               transformationPrivateKey_(std::move(transformationPrivateKey)),
               transformedTweak_(std::move(transformedTweak)) {

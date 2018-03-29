@@ -34,39 +34,25 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef VIRGIL_PYTHIA_GET_PASSWORD_UPDATE_TOKEN_RESULT_H
-#define VIRGIL_PYTHIA_GET_PASSWORD_UPDATE_TOKEN_RESULT_H
+#include <virgil/crypto/pythia/VirgilPythiaError.h>
 
-#include "../VirgilByteArray.h"
+#include <array>
+#include <mbedtls/error.h>
 
-namespace virgil {
-namespace crypto {
-namespace pythia {
+using virgil::crypto::pythia::VirgilPythiaErrorCategory;
 
-class VirgilPythiaGetPasswordUpdateTokenResult {
-public:
-    explicit VirgilPythiaGetPasswordUpdateTokenResult(
-            VirgilByteArray passwordUpdateToken, VirgilByteArray updatedTransformationPublicKey)
-            : passwordUpdateToken_(std::move(passwordUpdateToken)),
-              updatedTransformationPublicKey_(std::move(updatedTransformationPublicKey)) {
-    }
 
-public:
-    const VirgilByteArray& passwordUpdateToken() const {
-        return passwordUpdateToken_;
-    }
+const VirgilPythiaErrorCategory& virgil::crypto::pythia::pythia_error_category() noexcept {
+    static VirgilPythiaErrorCategory inst;
+    return inst;
+}
 
-    const VirgilByteArray& updatedTransformationPublicKey() const {
-        return updatedTransformationPublicKey_;
-    }
+const char* VirgilPythiaErrorCategory::name() const noexcept {
+    return "virgil/crypto/pythia";
+}
 
-private:
-    const VirgilByteArray passwordUpdateToken_;
-    const VirgilByteArray updatedTransformationPublicKey_;
-};
-
-} // namespace pythia
-} // namespace crypto
-} // namespace virgil
-
-#endif /* VIRGIL_PYTHIA_GET_PASSWORD_UPDATE_TOKEN_RESULT_H */
+std::string VirgilPythiaErrorCategory::message(int ev) const noexcept {
+    return std::string(
+            "Pythia library has return error. This is unexpected behaviour, please contact "
+            "support team.");
+}

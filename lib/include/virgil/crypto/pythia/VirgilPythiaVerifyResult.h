@@ -44,6 +44,7 @@ namespace crypto {
 namespace pythia {
 
 class VirgilPythiaVerifyResult {
+public:
     explicit VirgilPythiaVerifyResult(bool verified) : verified_(verified) {
     }
 

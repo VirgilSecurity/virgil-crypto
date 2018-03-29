@@ -34,37 +34,38 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef VIRGIL_PYTHIA_CONTEXT_H
-#define VIRGIL_PYTHIA_CONTEXT_H
+#ifndef VIRGIL_PYTHIA_GET_PASSWORD_UPDATE_TOKEN_RESULT_H
+#define VIRGIL_PYTHIA_GET_PASSWORD_UPDATE_TOKEN_RESULT_H
 
-#include <memory>
+#include "../VirgilByteArray.h"
 
 namespace virgil {
 namespace crypto {
 namespace pythia {
 
-/**
- * @brief This class encapsulates Pythia initialization routine.
- *
- * Motivation:
- *      Pythia context locates in a global storage or a thread storage
- *      duration, so it's initialization must be handled properly.
- *
- * Usage:
- *      This class object must be defined as a function local variable, or
- *      non-static class member.
- */
-class VirgilPythiaContext {
+class VirgilPythiaGetPasswordUpdateTokenResult {
+    explicit VirgilPythiaGetPasswordUpdateTokenResult(
+            VirgilByteArray passwordUpdateToken, VirgilByteArray updatedTransformationPublicKey)
+            : passwordUpdateToken_(std::move(passwordUpdateToken)),
+              updatedTransformationPublicKey_(std::move(updatedTransformationPublicKey)) {
+    }
+
 public:
-    /**
-     * @brief Initialize Pythia context.
-     *
-     */
-    VirgilPythiaContext();
+    const VirgilByteArray& passwordUpdateToken() const {
+        return passwordUpdateToken_;
+    }
+
+    const VirgilByteArray& updatedTransformationPublicKey() const {
+        return updatedTransformationPublicKey_;
+    }
+
+private:
+    const VirgilByteArray passwordUpdateToken_;
+    const VirgilByteArray updatedTransformationPublicKey_;
 };
 
 } // namespace pythia
 } // namespace crypto
 } // namespace virgil
 
-#endif /* VIRGIL_PYTHIA_CONTEXT_H */
+#endif /* VIRGIL_PYTHIA_GET_PASSWORD_UPDATE_TOKEN_RESULT_H */

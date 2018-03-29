@@ -38,15 +38,14 @@
 #define VIRGIL_PYTHIA_H
 
 #include "../VirgilByteArray.h"
-#include "VirgilPythiaArgs.h"
+#include "VirgilPythiaBlindResult.h"
 #include "VirgilPythiaContext.h"
-//#include "VirgilPythiaBlindResult.h"
-//#include "VirgilPythiaTransformResult.h"
-//#include "VirgilPythiaDeblindResult.h"
-//#include "VirgilPythiaProveResult.h"
-//#include "VirgilPythiaVerifyResult.h"
-//#include "VirgilPythiaGetPasswordUpdateTokenResult.h"
-//#include "VirgilPythiaUpdateDeblindedWithTokenResult.h"
+#include "VirgilPythiaDeblindResult.h"
+#include "VirgilPythiaGetPasswordUpdateTokenResult.h"
+#include "VirgilPythiaProveResult.h"
+#include "VirgilPythiaTransformResult.h"
+#include "VirgilPythiaUpdateDeblindedWithTokenResult.h"
+#include "VirgilPythiaVerifyResult.h"
 
 namespace virgil {
 namespace crypto {
@@ -62,44 +61,36 @@ namespace pythia {
  */
 class VirgilPythia {
 public:
-  VirgilPythiaBlindResult blind(const VirgilByteArray &password);
+    VirgilPythiaBlindResult blind(const VirgilByteArray& password);
 
-  VirgilPythiaTransformResult
-  transform(const VirgilByteArray &blindedPassword,
-            const VirgilByteArray &transformationKeyID,
-            const VirgilByteArray &tweak, const VirgilByteArray &pythiaSecret,
-            const VirgilByteArray &pythiaScopeSecret);
+    VirgilPythiaTransformResult transform(const VirgilByteArray& blindedPassword,
+            const VirgilByteArray& transformationKeyID, const VirgilByteArray& tweak,
+            const VirgilByteArray& pythiaSecret, const VirgilByteArray& pythiaScopeSecret);
 
-  VirgilPythiaDeblindResult deblind(const VirgilByteArray &transformedPassword,
-                                    const VirgilByteArray &blindingSecret);
+    VirgilPythiaDeblindResult deblind(
+            const VirgilByteArray& transformedPassword, const VirgilByteArray& blindingSecret);
 
-  VirgilPythiaProveResult
-  prove(const VirgilByteArray &transformedPassword,
-        const VirgilByteArray &blindedPassword,
-        const VirgilByteArray &transformedTweak,
-        const VirgilByteArray &transformationPrivateKey);
+    VirgilPythiaProveResult prove(const VirgilByteArray& transformedPassword,
+            const VirgilByteArray& blindedPassword, const VirgilByteArray& transformedTweak,
+            const VirgilByteArray& transformationPrivateKey);
 
-  VirgilPythiaVerifyResult
-  verify(const VirgilByteArray &transformedPassword,
-         const VirgilByteArray &blindedPassword, const VirgilByteArray &tweak,
-         const VirgilByteArray &transformationPublicKey,
-         const VirgilByteArray &proofValueC,
-         const VirgilByteArray &proofValueU);
+    VirgilPythiaVerifyResult verify(const VirgilByteArray& transformedPassword,
+            const VirgilByteArray& blindedPassword, const VirgilByteArray& tweak,
+            const VirgilByteArray& transformationPublicKey, const VirgilByteArray& proofValueC,
+            const VirgilByteArray& proofValueU);
 
-  VirgilPythiaGetPasswordUpdateTokenResult
-  getPasswordUpdateToken(const VirgilByteArray &previousTransformationKeyID,
-                         const VirgilByteArray &previousPythiaSecret,
-                         const VirgilByteArray &previousPythiaScopeSecret,
-                         const VirgilByteArray &newTransformationKeyID,
-                         const VirgilByteArray &newPythiaSecret,
-                         const VirgilByteArray &newPythiaScopeSecret);
+    VirgilPythiaGetPasswordUpdateTokenResult getPasswordUpdateToken(
+            const VirgilByteArray& previousTransformationKeyID,
+            const VirgilByteArray& previousPythiaSecret,
+            const VirgilByteArray& previousPythiaScopeSecret,
+            const VirgilByteArray& newTransformationKeyID, const VirgilByteArray& newPythiaSecret,
+            const VirgilByteArray& newPythiaScopeSecret);
 
-  VirgilPythiaUpdateDeblindedWithTokenResult
-  updateDeblindedWithToken(const VirgilByteArray &deblindedPassword,
-                           const VirgilByteArray &passwordUpdateToken);
+    VirgilPythiaUpdateDeblindedWithTokenResult updateDeblindedWithToken(
+            const VirgilByteArray& deblindedPassword, const VirgilByteArray& passwordUpdateToken);
 
 private:
-  VirgilPythiaContext pythiaContext;
+    VirgilPythiaContext pythiaContext;
 };
 
 } // namespace pythia

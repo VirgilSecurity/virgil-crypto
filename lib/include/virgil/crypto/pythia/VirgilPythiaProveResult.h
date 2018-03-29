@@ -34,37 +34,42 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef VIRGIL_PYTHIA_CONTEXT_H
-#define VIRGIL_PYTHIA_CONTEXT_H
+#ifndef VIRGIL_PYTHIA_PROVE_RESULT_H
+#define VIRGIL_PYTHIA_PROVE_RESULT_H
 
-#include <memory>
+#include "../VirgilByteArray.h"
 
 namespace virgil {
 namespace crypto {
 namespace pythia {
 
-/**
- * @brief This class encapsulates Pythia initialization routine.
- *
- * Motivation:
- *      Pythia context locates in a global storage or a thread storage
- *      duration, so it's initialization must be handled properly.
- *
- * Usage:
- *      This class object must be defined as a function local variable, or
- *      non-static class member.
- */
-class VirgilPythiaContext {
+class VirgilPythiaProveResult {
 public:
-    /**
-     * @brief Initialize Pythia context.
-     *
-     */
-    VirgilPythiaContext();
+    explicit VirgilPythiaProveResult(VirgilByteArray transformationPublicKey,
+            VirgilByteArray proofValueC, VirgilByteArray proofValueU)
+            : transformationPublicKey_(std::move(transformationPublicKey)),
+              proofValueC_(std::move(proofValueC)), proofValueU_(std::move(proofValueU)) {
+    }
+
+    const VirgilByteArray& transformationPublicKey() {
+        return transformationPublicKey_;
+    }
+
+    const VirgilByteArray& proofValueC() {
+        return proofValueC_;
+    }
+    const VirgilByteArray& proofValueU() {
+        return proofValueU_;
+    }
+
+private:
+    const VirgilByteArray transformationPublicKey_;
+    const VirgilByteArray proofValueC_;
+    const VirgilByteArray proofValueU_;
 };
 
 } // namespace pythia
 } // namespace crypto
 } // namespace virgil
 
-#endif /* VIRGIL_PYTHIA_CONTEXT_H */
+#endif /* VIRGIL_PYTHIA_PROVE_RESULT_H */

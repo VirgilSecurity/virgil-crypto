@@ -63,21 +63,22 @@ class VirgilPythia {
 public:
     VirgilPythiaBlindResult blind(const VirgilByteArray& password);
 
-    VirgilPythiaTransformResult transform(const VirgilByteArray& blindedPassword,
-            const VirgilByteArray& transformationKeyID, const VirgilByteArray& tweak,
-            const VirgilByteArray& pythiaSecret, const VirgilByteArray& pythiaScopeSecret);
+    VirgilPythiaTransformResult transform(
+            const VirgilByteArray& blindedPassword, const VirgilByteArray& transformationKeyID,
+            const VirgilByteArray& tweak, const VirgilByteArray& pythiaSecret,
+            const VirgilByteArray& pythiaScopeSecret);
 
-    VirgilPythiaDeblindResult deblind(
-            const VirgilByteArray& transformedPassword, const VirgilByteArray& blindingSecret);
+    VirgilPythiaDeblindResult
+    deblind(const VirgilByteArray& transformedPassword, const VirgilByteArray& blindingSecret);
 
-    VirgilPythiaProveResult prove(const VirgilByteArray& transformedPassword,
-            const VirgilByteArray& blindedPassword, const VirgilByteArray& transformedTweak,
-            const VirgilByteArray& transformationPrivateKey);
+    VirgilPythiaProveResult
+    prove(const VirgilByteArray& transformedPassword, const VirgilByteArray& blindedPassword,
+          const VirgilByteArray& transformedTweak, const VirgilByteArray& transformationPrivateKey);
 
-    VirgilPythiaVerifyResult verify(const VirgilByteArray& transformedPassword,
-            const VirgilByteArray& blindedPassword, const VirgilByteArray& tweak,
-            const VirgilByteArray& transformationPublicKey, const VirgilByteArray& proofValueC,
-            const VirgilByteArray& proofValueU);
+    VirgilPythiaVerifyResult
+    verify(const VirgilByteArray& transformedPassword, const VirgilByteArray& blindedPassword,
+           const VirgilByteArray& tweak, const VirgilByteArray& transformationPublicKey,
+           const VirgilByteArray& proofValueC, const VirgilByteArray& proofValueU);
 
     VirgilPythiaGetPasswordUpdateTokenResult getPasswordUpdateToken(
             const VirgilByteArray& previousTransformationKeyID,

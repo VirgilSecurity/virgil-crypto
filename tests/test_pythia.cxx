@@ -50,8 +50,8 @@ using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::pythia::VirgilPythia;
 
 SCENARIO("Init Pythia.", "[pythia]") {
-  VirgilPythia pythia;
-  auto result = pythia.blind(VirgilByteArrayUtils::stringToBytes("password"));
+    VirgilPythia pythia;
+    auto result = pythia.blind(VirgilByteArrayUtils::stringToBytes("password"));
 }
 
 #endif // VIRGIL_CRYPTO_FEATURE_PYTHIA

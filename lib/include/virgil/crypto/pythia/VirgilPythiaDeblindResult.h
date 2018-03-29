@@ -34,37 +34,31 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef VIRGIL_PYTHIA_CONTEXT_H
-#define VIRGIL_PYTHIA_CONTEXT_H
+#ifndef VIRGIL_PYTHIA_DEBLIND_RESULT_H
+#define VIRGIL_PYTHIA_DEBLIND_RESULT_H
 
-#include <memory>
+#include "../VirgilByteArray.h"
 
 namespace virgil {
 namespace crypto {
 namespace pythia {
 
-/**
- * @brief This class encapsulates Pythia initialization routine.
- *
- * Motivation:
- *      Pythia context locates in a global storage or a thread storage
- *      duration, so it's initialization must be handled properly.
- *
- * Usage:
- *      This class object must be defined as a function local variable, or
- *      non-static class member.
- */
-class VirgilPythiaContext {
+class VirgilPythiaDeblindResult {
 public:
-    /**
-     * @brief Initialize Pythia context.
-     *
-     */
-    VirgilPythiaContext();
+    explicit VirgilPythiaDeblindResult(VirgilByteArray deblindedPassword)
+            : deblindedPassword_(std::move(deblindedPassword)) {
+    }
+
+    const VirgilByteArray deblindedPassword() const {
+        return deblindedPassword_;
+    }
+
+private:
+    const VirgilByteArray deblindedPassword_;
 };
 
 } // namespace pythia
 } // namespace crypto
 } // namespace virgil
 
-#endif /* VIRGIL_PYTHIA_CONTEXT_H */
+#endif /* VIRGIL_PYTHIA_DEBLIND_RESULT_H */

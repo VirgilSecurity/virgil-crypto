@@ -1,5 +1,17 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.3.1 on the way
+
+## Features
+
+  * [.NET] Add suport for .net-core Linux, Mac, Windows
+
+## Changes
+
+  * [CI] Update Dockerfile_Golang with cmake 3.10.2 and virgil-cryoto go v5
+  * [DOC] Reviewed README.md
+
+
 = Version 2.3.0 released 2018-02-19
 
 ## Bugfix

@@ -326,7 +326,7 @@ set (INSTALL_INC_DIR_NAME ${CMAKE_INSTALL_INCLUDEDIR} CACHE STRING "Installation
 set (INSTALL_LIB_DIR_NAME ${CMAKE_INSTALL_LIBDIR} CACHE STRING "Installation directory name for libraries")
 set (INSTALL_BIN_DIR_NAME ${CMAKE_INSTALL_BINDIR} CACHE STRING "Installation directory name for executables")
 set (INSTALL_MAN_DIR_NAME ${CMAKE_INSTALL_MANDIR} CACHE STRING "Installation directory name for man pages")
-set (INSTALL_DOC_DIR_NAME "${MAKE_INSTALL_DATAROOTDIR}/doc" CACHE STRING "Installation directory name for doc pages")
+set (INSTALL_DOC_DIR_NAME "${CMAKE_INSTALL_DATAROOTDIR}/doc" CACHE STRING "Installation directory name for doc pages")
 set (INSTALL_API_DIR_NAME api CACHE STRING "Installation directory name for interface files")
 
 # Configure platform specific path variables

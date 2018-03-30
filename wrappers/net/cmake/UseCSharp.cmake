@@ -66,15 +66,15 @@ macro( CSHARP_ADD_PROJECT type name )
   set( sources )
   set( sources_dep )
 
-  if( ${type} MATCHES "library" )
+  if( "${type}" MATCHES "library" )
     set( output "dll" )
-  elseif( ${type} MATCHES "exe" )
+  elseif( "${type}" MATCHES "exe" )
     set( output "exe" )
-  endif( ${type} MATCHES "library" )
+  endif( "${type}" MATCHES "library" )
 
   # Step through each argument
   foreach( it ${ARGN} )
-    if( ${it} MATCHES "(.*)(dll)" )
+    if( "${it}" MATCHES "(.*)(dll)" )
        # Argument is a dll, add reference
        list( APPEND refs /reference:${it} )
     else( )
@@ -85,7 +85,7 @@ macro( CSHARP_ADD_PROJECT type name )
       elseif( EXISTS ${CSHARP_SOURCE_DIRECTORY}/${it} )
         list( APPEND sources ${CSHARP_SOURCE_DIRECTORY}/${it} )
         list( APPEND sources_dep ${CSHARP_SOURCE_DIRECTORY}/${it} )
-      elseif( ${it} MATCHES "[*]" )
+      elseif( "${it}" MATCHES "[*]" )
         # For dependencies, we need to expand wildcards
         FILE( GLOB it_glob ${it} )
         list( APPEND sources ${it} )

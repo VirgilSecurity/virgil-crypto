@@ -316,6 +316,12 @@ if (CMAKE_CROSSCOMPILING AND APPLE)
     endif ()
 endif ()
 
+if (CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set (PLATFORM_VERSION ${ANDROID_NATIVE_API_LEVEL} CACHE STRING "Android native API level")
+    set (PLATFORM_ARCH ${ANDROID_ABI} CACHE STRING "Target processor architecture")
+    set (PLATFORM_EMBEDDED YES CACHE BOOL "Mark target platform as embedded")
+endif ()
+
 # Configure testing
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
 set (ENABLE_BENCHMARK OFF CACHE BOOL "Defines whether include benchmark or not.")

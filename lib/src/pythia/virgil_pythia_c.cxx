@@ -34,6 +34,7 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
+#if VIRGIL_CRYPTO_FEATURE_PYTHIA
 
 #include <virgil/crypto/pythia/virgil_pythia_c.h>
 
@@ -118,3 +119,5 @@ int virgil_pythia_update_deblinded_with_token(
     return pythia_w_update_deblinded_with_token(
             deblinded_password, password_update_token, updated_deblinded_password);
 }
+
+#endif /* VIRGIL_CRYPTO_FEATURE_PYTHIA */

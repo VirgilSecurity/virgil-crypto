@@ -187,15 +187,15 @@ INCLUDE_CLASS(VirgilPFS, virgil::crypto::pfs, virgil/crypto/pfs)
 // Package Pythia
 #if VIRGIL_CRYPTO_FEATURE_PYTHIA
 
-INCLUDE_CLASS(VirgilPythiaBlindResult, virgil::crypto::pythia, virgil/crypto/pythia)
-INCLUDE_CLASS(VirgilPythiaContext, virgil::crypto::pythia, virgil/crypto/pythia)
-INCLUDE_CLASS(VirgilPythiaDeblindResult, virgil::crypto::pythia, virgil/crypto/pythia)
-INCLUDE_CLASS(VirgilPythiaGetPasswordUpdateTokenResult, virgil::crypto::pythia, virgil/crypto/pythia)
-INCLUDE_CLASS(VirgilPythiaProveResult, virgil::crypto::pythia, virgil/crypto/pythia)
-INCLUDE_CLASS(VirgilPythiaTransformResult, virgil::crypto::pythia, virgil/crypto/pythia)
-INCLUDE_CLASS(VirgilPythiaUpdateDeblindedWithTokenResult, virgil::crypto::pythia, virgil/crypto/pythia)
-INCLUDE_CLASS(VirgilPythiaVerifyResult, virgil::crypto::pythia, virgil/crypto/pythia)
-INCLUDE_CLASS(VirgilPythia, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythiaBlindResult, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythiaContext, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythiaDeblindResult, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythiaGetPasswordUpdateTokenResult, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythiaProveResult, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythiaTransformResult, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythiaUpdateDeblindedWithTokenResult, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythiaVerifyResult, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythia, virgil::crypto::pythia, virgil/crypto/pythia)
 INCLUDE_TYPE(virgil_pythia_c, virgil/crypto/pythia)
 
 #endif // VIRGIL_CRYPTO_FEATURE_PYTHIA

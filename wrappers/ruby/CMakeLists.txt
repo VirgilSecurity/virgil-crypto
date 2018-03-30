@@ -96,7 +96,10 @@ configure_file (
 set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY CPLUSPLUS ON)
 set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing;-autorename")
 
-swig_add_module (${RUBY_MODULE_NAME} ruby "${WRAPPER_INTERFACE_FILE}")
+swig_add_library (${RUBY_MODULE_NAME}
+        LANGUAGE ruby
+        SOURCES "${WRAPPER_INTERFACE_FILE}")
+
 set (SWIG_TARGET ${SWIG_MODULE_${RUBY_MODULE_NAME}_REAL_NAME})
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")

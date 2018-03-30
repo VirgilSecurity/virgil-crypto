@@ -222,8 +222,7 @@ set (VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP OFF CACHE BOOL
 set (VIRGIL_CRYPTO_FEATURE_STREAM_IMPL ON CACHE BOOL
         "Defines whether to compile module that is depends on a C++ stream or not")
 
-set (VIRGIL_CRYPTO_FEATURE_PYTHIA ON CACHE BOOL
-        "Defines whether to enable module Pythia or not")
+set (VIRGIL_CRYPTO_FEATURE_PYTHIA OFF CACHE BOOL "Defines whether to enable module Pythia or not")
 
 # Configure optimizations
 set (ED25519_AMD64_OPTIMIZATION ON CACHE BOOL "Defines whether to enable AMD64 optimization for Ed25519 algorithms")

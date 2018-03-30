@@ -40,9 +40,16 @@
 #cgo CPPFLAGS: -I${SRCDIR}/include
 #cgo LDFLAGS: -L${SRCDIR}/lib -lvirgil_crypto_go -lvirgil_crypto -lmbedcrypto -led25519 -lstdc++
 %}
+
 #if defined(SWIG_TARGET_LINUX)
 %insert(cgo_comment_typedefs) %{
 #cgo LDFLAGS: -lm
+%}
+#endif
+
+#if VIRGIL_CRYPTO_FEATURE_PYTHIA
+%insert(cgo_comment_typedefs) %{
+#cgo LDFLAGS: -lpythia -lrelic_s
 %}
 #endif
 

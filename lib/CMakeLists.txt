@@ -184,6 +184,17 @@ if (INSTALL_CORE_LIBS)
         )
     endif ()
 
+    if (VIRGIL_CRYPTO_FEATURE_PYTHIA)
+        get_target_property (PYTHIA_INCLUDE_DIRECTORIES pythia INTERFACE_INCLUDE_DIRECTORIES)
+        foreach(pythia_install_dir ${PYTHIA_INCLUDE_DIRECTORIES})
+            message(STATUS ${pythia_install_dir})
+            install (
+                DIRECTORY "${pythia_install_dir}/pythia" DESTINATION "${INSTALL_INC_DIR_NAME}"
+                FILES_MATCHING PATTERN "*buf*"
+            )
+        endforeach()
+    endif ()
+
     if (INSTALL_EXT_LIBS)
         install (DIRECTORY "${VIRGIL_DEPENDS_PREFIX}/lib/" DESTINATION "${INSTALL_LIB_DIR_NAME}")
     endif (INSTALL_EXT_LIBS)

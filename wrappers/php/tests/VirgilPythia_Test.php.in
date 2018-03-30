@@ -1,0 +1,85 @@
+<?php
+/**
+ * Copyright (C) 2015-2018 Virgil Security Inc.
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     (1) Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *     (2) Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in
+ *     the documentation and/or other materials provided with the
+ *     distribution.
+ *
+ *     (3) Neither the name of the copyright holder nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
+ */
+
+include_once "@PHP_MODULE_FILE_NAME@";
+
+/**
+ * @coversDefaultClass VirgilPythia
+ */
+class VirgilPythia_Test extends PHPUnit\Framework\TestCase {
+
+    const kDeblindedPassword =
+        "0687ac42f1b4b1c1b8427267041f6f723b57845ff537f1f7290a1897faa9767c175cd7f612ba53def7b2a2dea9".
+        "3b55580782d8e1a4fd00231d642abf792a9aeb870c258ca645e8c719ebfbf96f8713eb9d118a944665c7ce475b".
+        "8c0ea7aa5b3e0c2c7bc16439db5adb730aad872404ebbb947278e27cd1c0358cf410e97ce460738d778d6c7c6a".
+        "9ca055296b91c4cbdb0c2fc0f4c2933b82fb53f742409d8b9f819a8436993164fa721aa69e626cf52ab71fe521".
+        "3ef7b0cb1d1b742ae6000e740716929e7a00a5855d1556208215f8793d288d089370cb8a67c18dacff0c63706d".
+        "d61a0d8f09cbbb0c12e64f133640cb1239f36ae48ddc72cfcdaca6f5383d8d4bdcdcaa8c13ee809d4fa850c76a".
+        "81965916afde6cdb8e4bd41eadac9d91e084161d917b6a9268c6a991a217ed0f4e75738f53607fa23e20d8b184".
+        "a4ddac3f36abb4248b900ed9dcd320fddcd943151e0c6f2c509364c02f401cb67545e3f730ff7dd31af3e729ad".
+        "ab669bdf09f65ebc5114fa35ece725aa9658960f361234ad";
+
+    const kPassword = "password";
+    const kTransformationKeyID = "virgil.com";
+    const kTweek = "alice";
+    const kPythiaSecret = "master secret";
+    const kNewPythiaSecret = "new master secret";
+    const kPythiaScopeSecret = "server secret";
+    const kNewPythiaScopeSecret = "new server secret";
+
+    /**
+     * @covers VirgilPythia::blind
+     * @covers VirgilPythia::transform
+     * @covers VirgilPythia::deblind
+     */
+    public function test_blind_deblind() {
+        $pythia = new VirgilPythia();
+
+        $blindResult = $pythia->blind(self::kPassword);
+
+        $transformResult = $pythia->transform(
+                $blindResult->blindedPassword(), self::kTransformationKeyID, self::kTweek,
+                self::kPythiaSecret, self::kPythiaScopeSecret);
+
+        $deblindResult = $pythia->deblind(
+                $transformResult->transformedPassword(), $blindResult->blindingSecret());
+
+        $this->assertEquals(self::kDeblindedPassword, bin2hex($deblindResult->deblindedPassword()));
+    }
+}
+
+?>

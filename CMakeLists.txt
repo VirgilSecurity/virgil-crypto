@@ -321,11 +321,12 @@ set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not."
 set (ENABLE_BENCHMARK OFF CACHE BOOL "Defines whether include benchmark or not.")
 
 # Configure path variables
-set (INSTALL_INC_DIR_NAME include CACHE STRING "Installation directory name for includes")
-set (INSTALL_LIB_DIR_NAME lib CACHE STRING "Installation directory name for libraries")
-set (INSTALL_BIN_DIR_NAME bin CACHE STRING "Installation directory name for executables")
-set (INSTALL_MAN_DIR_NAME "share/man" CACHE STRING "Installation directory name for man pages")
-set (INSTALL_DOC_DIR_NAME "share/doc" CACHE STRING "Installation directory name for doc pages")
+include(GNUInstallDirs)
+set (INSTALL_INC_DIR_NAME ${CMAKE_INSTALL_INCLUDEDIR} CACHE STRING "Installation directory name for includes")
+set (INSTALL_LIB_DIR_NAME ${CMAKE_INSTALL_LIBDIR} CACHE STRING "Installation directory name for libraries")
+set (INSTALL_BIN_DIR_NAME ${CMAKE_INSTALL_BINDIR} CACHE STRING "Installation directory name for executables")
+set (INSTALL_MAN_DIR_NAME ${CMAKE_INSTALL_MANDIR} CACHE STRING "Installation directory name for man pages")
+set (INSTALL_DOC_DIR_NAME "${MAKE_INSTALL_DATAROOTDIR}/doc" CACHE STRING "Installation directory name for doc pages")
 set (INSTALL_API_DIR_NAME api CACHE STRING "Installation directory name for interface files")
 
 # Configure platform specific path variables

@@ -375,14 +375,11 @@ if [[ "${TARGET_NAME}" == *"android"* ]]; then
     function build_android() {
         # Build architecture: $1
         rm -fr ./*
-        cmake ${CMAKE_ARGS} -DANDROID_ABI="$1" -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/android.toolchain.cmake" "${SRC_DIR}"
+        cmake ${CMAKE_ARGS} -DANDROID_ABI="$1" -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK}/build/cmake/android.toolchain.cmake" "${SRC_DIR}"
         make -j8 install
     }
     build_android x86
     build_android x86_64
-    build_android mips
-    build_android mips64
-    build_android armeabi
     build_android armeabi-v7a
     build_android arm64-v8a
 fi

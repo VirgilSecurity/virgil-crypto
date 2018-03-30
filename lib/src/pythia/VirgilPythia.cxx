@@ -56,8 +56,6 @@ using virgil::crypto::pythia::VirgilPythiaTransformResult;
 using virgil::crypto::pythia::VirgilPythiaUpdateDeblindedWithTokenResult;
 using virgil::crypto::pythia::VirgilPythiaVerifyResult;
 
-static constexpr size_t kPythia_BufferSize = 512;
-
 class buffer_bind_out {
 public:
     buffer_bind_out(VirgilByteArray& out) : buffer_(), out_(out) {
@@ -96,8 +94,8 @@ private:
 };
 
 VirgilPythiaBlindResult VirgilPythia::blind(const VirgilByteArray& password) {
-    VirgilByteArray blindedPassword(kPythia_BufferSize);
-    VirgilByteArray blindingSecret(kPythia_BufferSize);
+    VirgilByteArray blindedPassword(PYTHIA_G1_BUF_SIZE);
+    VirgilByteArray blindingSecret(PYTHIA_BN_BUF_SIZE);
 
     pythia_handler(pythia_w_blind(
             buffer_bind_in(password), buffer_bind_out(blindedPassword),
@@ -111,9 +109,9 @@ VirgilPythiaTransformResult VirgilPythia::transform(
         const VirgilByteArray& tweak, const VirgilByteArray& pythiaSecret,
         const VirgilByteArray& pythiaScopeSecret) {
 
-    VirgilByteArray transformedPassword(kPythia_BufferSize);
-    VirgilByteArray transformationPrivateKey(kPythia_BufferSize);
-    VirgilByteArray transformedTweak(kPythia_BufferSize);
+    VirgilByteArray transformedPassword(PYTHIA_GT_BUF_SIZE);
+    VirgilByteArray transformationPrivateKey(PYTHIA_BN_BUF_SIZE);
+    VirgilByteArray transformedTweak(PYTHIA_G2_BUF_SIZE);
 
     pythia_handler(pythia_w_transform(
             buffer_bind_in(blindedPassword), buffer_bind_in(transformationKeyID),
@@ -129,7 +127,7 @@ VirgilPythiaTransformResult VirgilPythia::transform(
 VirgilPythiaDeblindResult VirgilPythia::deblind(
         const VirgilByteArray& transformedPassword, const VirgilByteArray& blindingSecret) {
 
-    VirgilByteArray deblindedPassword(kPythia_BufferSize);
+    VirgilByteArray deblindedPassword(PYTHIA_GT_BUF_SIZE);
 
     pythia_handler(pythia_w_deblind(
             buffer_bind_in(transformedPassword), buffer_bind_in(blindingSecret),
@@ -142,9 +140,9 @@ VirgilPythiaProveResult VirgilPythia::prove(
         const VirgilByteArray& transformedPassword, const VirgilByteArray& blindedPassword,
         const VirgilByteArray& transformedTweak, const VirgilByteArray& transformationPrivateKey) {
 
-    VirgilByteArray transformationPublicKey(kPythia_BufferSize);
-    VirgilByteArray proofValueC(kPythia_BufferSize);
-    VirgilByteArray proofValueU(kPythia_BufferSize);
+    VirgilByteArray transformationPublicKey(PYTHIA_G1_BUF_SIZE);
+    VirgilByteArray proofValueC(PYTHIA_BN_BUF_SIZE);
+    VirgilByteArray proofValueU(PYTHIA_BN_BUF_SIZE);
 
     pythia_handler(pythia_w_prove(
             buffer_bind_in(transformedPassword), buffer_bind_in(blindedPassword),
@@ -178,8 +176,8 @@ VirgilPythiaGetPasswordUpdateTokenResult VirgilPythia::getPasswordUpdateToken(
         const VirgilByteArray& newTransformationKeyID, const VirgilByteArray& newPythiaSecret,
         const VirgilByteArray& newPythiaScopeSecret) {
 
-    VirgilByteArray passwordUpdateToken(kPythia_BufferSize);
-    VirgilByteArray updatedTransformationPublicKey(kPythia_BufferSize);
+    VirgilByteArray passwordUpdateToken(PYTHIA_BN_BUF_SIZE);
+    VirgilByteArray updatedTransformationPublicKey(PYTHIA_G1_BUF_SIZE);
 
     pythia_handler(pythia_w_get_password_update_token(
             buffer_bind_in(previousTransformationKeyID), buffer_bind_in(previousPythiaSecret),
@@ -194,7 +192,7 @@ VirgilPythiaGetPasswordUpdateTokenResult VirgilPythia::getPasswordUpdateToken(
 VirgilPythiaUpdateDeblindedWithTokenResult VirgilPythia::updateDeblindedWithToken(
         const VirgilByteArray& deblindedPassword, const VirgilByteArray& passwordUpdateToken) {
 
-    VirgilByteArray updatedDeblindedPassword(kPythia_BufferSize);
+    VirgilByteArray updatedDeblindedPassword(PYTHIA_GT_BUF_SIZE);
 
     pythia_handler(pythia_w_update_deblinded_with_token(
             buffer_bind_in(deblindedPassword), buffer_bind_in(passwordUpdateToken),

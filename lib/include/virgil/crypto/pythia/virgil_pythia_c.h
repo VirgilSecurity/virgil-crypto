@@ -37,8 +37,8 @@
 #ifndef VIRGIL_PYTHIA_C_H
 #define VIRGIL_PYTHIA_C_H
 
-#include <pythia/pythia_buf.h>
-#include <pythia/pythia_buf_sizes.h>
+#include "pythia_buf.h"
+#include "pythia_buf_sizes.h"
 
 #ifdef __cplusplus
 extern "C" {

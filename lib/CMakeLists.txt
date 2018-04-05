@@ -91,10 +91,8 @@ target_include_directories (${PROJECT_NAME}
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
         "$<INSTALL_INTERFACE:include>"
 )
+
 target_link_libraries (${PROJECT_NAME} PUBLIC mbedtls::mbedcrypto mbedtls::ed25519)
-if (VIRGIL_CRYPTO_FEATURE_PYTHIA)
-    target_link_libraries (${PROJECT_NAME} PUBLIC pythia)
-endif ()
 
 target_compile_definitions (${PROJECT_NAME}
     PUBLIC
@@ -104,6 +102,17 @@ target_compile_definitions (${PROJECT_NAME}
     PRIVATE
         "FMT_HEADER_ONLY"
 )
+
+if (VIRGIL_CRYPTO_FEATURE_PYTHIA)
+    target_link_libraries (${PROJECT_NAME} PUBLIC pythia)
+
+    get_target_property (include_directories pythia INTERFACE_INCLUDE_DIRECTORIES)
+
+    foreach(include_dir ${include_directories})
+        target_include_directories (${PROJECT_NAME} PUBLIC "$<BUILD_INTERFACE:${include_dir}/pythia>")
+    endforeach(include_dir)
+endif ()
+
 
 # ---------------------------------------------------------------------------
 #   Apple specifc library configuration
@@ -128,6 +137,36 @@ if (BUILD_LIBRARY_FRAMEWORK)
             PROPERTY MACOSX_PACKAGE_LOCATION "Headers${_inc_file_path}"
         )
     endforeach ()
+
+    if (VIRGIL_CRYPTO_FEATURE_PYTHIA)
+        find_file (pythia_buf_header_file_path
+                NAMES "pythia_buf.h" PATHS ${include_directories} PATH_SUFFIXES pythia
+                NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
+
+        find_file (pythia_buf_sizes_header_file_path
+                NAMES "pythia_buf_sizes.h" PATHS ${include_directories} PATH_SUFFIXES pythia
+                NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
+
+        if (NOT pythia_buf_header_file_path)
+            message (FATAL_ERROR "Header file 'pythia_buf.h' is not found within paths $${include_directories}")
+        endif ()
+
+        if (NOT pythia_buf_sizes_header_file_path)
+            message (FATAL_ERROR "Header file 'pythia_buf_sizes.h' is not found within paths $${include_directories}")
+        endif ()
+
+        target_sources(${PROJECT_NAME} PRIVATE "${pythia_buf_header_file_path}" "${pythia_buf_sizes_header_file_path}")
+
+        set_property (
+            SOURCE ${pythia_buf_header_file_path}
+            PROPERTY MACOSX_PACKAGE_LOCATION "Headers/pythia"
+        )
+
+        set_property (
+            SOURCE ${pythia_buf_sizes_header_file_path}
+            PROPERTY MACOSX_PACKAGE_LOCATION "Headers/pythia"
+        )
+    endif ()
 
     # Convert target to framework
     target_apple_framework (${PROJECT_NAME}
@@ -187,9 +226,8 @@ if (INSTALL_CORE_LIBS)
     if (VIRGIL_CRYPTO_FEATURE_PYTHIA)
         get_target_property (PYTHIA_INCLUDE_DIRECTORIES pythia INTERFACE_INCLUDE_DIRECTORIES)
         foreach(pythia_install_dir ${PYTHIA_INCLUDE_DIRECTORIES})
-            message(STATUS ${pythia_install_dir})
             install (
-                DIRECTORY "${pythia_install_dir}/pythia" DESTINATION "${INSTALL_INC_DIR_NAME}"
+                DIRECTORY "${pythia_install_dir}/pythia" DESTINATION "${INSTALL_INC_DIR_NAME}/virgil/crypto"
                 FILES_MATCHING PATTERN "*buf*"
             )
         endforeach()

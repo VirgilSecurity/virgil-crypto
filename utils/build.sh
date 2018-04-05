@@ -336,7 +336,8 @@ fi
 if [ "${TARGET_NAME}" == "ios" ] || [ "${TARGET_NAME}" == "tvos" ] || \
    [ "${TARGET_NAME}" == "watchos" ] || [ "${TARGET_NAME}" == "macos" ]; then
 
-    APPLE_PLATFORM=$(echo "${TARGET_NAME}" | awk '{print toupper($0)}')
+    APPLE_PLATFORM_DEVICE=$(echo "${TARGET_NAME}" | awk '{print toupper($0)}')
+    APPLE_PLATFORM_SIMULATOR="${APPLE_PLATFORM_DEVICE}_SIM"
 
     CMAKE_ARGS+=" -LANG=cpp"
     CMAKE_ARGS+=" -DINSTALL_CORE_HEADERS=NO"
@@ -344,14 +345,20 @@ if [ "${TARGET_NAME}" == "ios" ] || [ "${TARGET_NAME}" == "tvos" ] || \
     CMAKE_ARGS+=" -DINSTALL_EXT_HEADERS=NO"
     CMAKE_ARGS+=" -DCMAKE_TOOLCHAIN_FILE='${SRC_DIR}/cmake/apple.cmake'"
 
+    if [ "${TARGET_NAME}" == "ios" ]; then
+        # Pythia is available only for iOS platform and architectures: armv7, armv7s, amd64, x86_64.
+        CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_PYTHIA=ON"
+        APPLE_PLATFORM_SIMULATOR="${APPLE_PLATFORM_DEVICE}_SIM64"
+    fi
+
     # Build for device
-    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM} -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM_DEVICE} -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
     make -j8 install
 
     if [ "${TARGET_NAME}" != "macos" ]; then
         # Build for simulator
         rm -fr ./*
-        cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM}_SIM -DINSTALL_LIB_DIR_NAME=lib/sim "${SRC_DIR}"
+        cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM_SIMULATOR} -DINSTALL_LIB_DIR_NAME=lib/sim "${SRC_DIR}"
         make -j8 install
     fi
 
@@ -365,6 +372,7 @@ if [[ "${TARGET_NAME}" == *"android"* ]]; then
     if [ ! -d "$ANDROID_NDK" ]; then
         show_usage "Enviroment \$ANDROID_NDK is not defined!" 1
     fi
+
     if [ "${TARGET_NAME}" == "java_android" ]; then
         CMAKE_ARGS+=" -DLANG=java"
     elif [ "${TARGET_NAME}" == "net_android" ]; then
@@ -372,12 +380,16 @@ if [[ "${TARGET_NAME}" == *"android"* ]]; then
     else
         show_usage "Unsupported target: ${TARGET_NAME}!"
     fi
+
+    CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_PYTHIA=ON"
+
     function build_android() {
         # Build architecture: $1
         rm -fr ./*
         cmake ${CMAKE_ARGS} -DANDROID_ABI="$1" -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK}/build/cmake/android.toolchain.cmake" "${SRC_DIR}"
         make -j8 install
     }
+
     build_android x86
     build_android x86_64
     build_android armeabi-v7a
@@ -388,7 +400,8 @@ fi
 if [ "${TARGET_NAME}" == "net_ios" ] || [ "${TARGET_NAME}" == "net_tvos" ] || \
    [ "${TARGET_NAME}" == "net_watchos" ]; then
 
-    APPLE_PLATFORM=$(echo "${TARGET_NAME/net_/}" | awk '{print toupper($0)}')
+    APPLE_PLATFORM_DEVICE=$(echo "${TARGET_NAME/net_/}" | awk '{print toupper($0)}')
+    APPLE_PLATFORM_SIMULATOR="${APPLE_PLATFORM_DEVICE}_SIM"
 
     CMAKE_ARGS+=" -DLANG=net"
     CMAKE_ARGS+=" -DINSTALL_CORE_LIBS=ON"
@@ -398,13 +411,19 @@ if [ "${TARGET_NAME}" == "net_ios" ] || [ "${TARGET_NAME}" == "net_tvos" ] || \
     CMAKE_ARGS+=" -DCMAKE_CROSSCOMPILING=ON"
     CMAKE_ARGS+=" -DCMAKE_TOOLCHAIN_FILE='${SRC_DIR}/cmake/apple.cmake'"
 
+    if [ "${TARGET_NAME}" == "net_ios" ]; then
+        # Pythia is available only for iOS platform and architectures: armv7, armv7s, amd64, x86_64.
+        CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_PYTHIA=ON"
+        APPLE_PLATFORM_SIMULATOR="${APPLE_PLATFORM_DEVICE}_SIM64"
+    fi
+
     # Build for device
-    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM} -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM_DEVICE} -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
     make -j8 install
 
     # Build for simulator
     rm -fr ./*
-    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM}_SIM -DINSTALL_LIB_DIR_NAME=lib/sim "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM_SIMULATOR} -DINSTALL_LIB_DIR_NAME=lib/sim "${SRC_DIR}"
     make -j8 install
 
     # Create fat library

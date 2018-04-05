@@ -86,8 +86,6 @@
 #
 #     - POINTER_SIZE         - compiler pointer size.
 #
-#     - CMAKE_ARGS           - list of CMake parameters in form -DVAR:TYPE=VAL
-#
 # Optimizations:
 #     - ED25519_AMD64_OPTIMIZATION - boolean value that defines whether to enable AMD64 optimization
 #                                   for Ed25519 algorithms, or not.
@@ -126,6 +124,9 @@ message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 # Configure path to custom modules
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
+# Define known toolchain arguments to be passed downstream.
+include (TransitiveToolchainArgs)
+
 # Build shared library if defined
 set (BUILD_SHARED_LIBS OFF CACHE BOOL "Force to create shared libraries")
 
@@ -160,38 +161,8 @@ endif ()
 # Add find_host_* utilities
 include (find_host_utils)
 
-# Define possible cmake_args
-include (cmake_args)
-
-if (ANDROID)
-    append_cmake_arg (CMAKE_ARGS NAME PLATFORM_VERSION TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_NDK TYPE PATH)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_ABI TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_NATIVE_API_LEVEL TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_TOOLCHAIN_NAME TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_FORCE_ARM_BUILD TYPE BOOL)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_NO_UNDEFINED TYPE BOOL)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_SO_UNDEFINED TYPE BOOL)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_STL TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_STL_FORCE_FEATURES TYPE BOOL)
-endif (ANDROID)
-
-if (CMAKE_TOOLCHAIN_FILE AND APPLE)
-    append_cmake_arg (CMAKE_ARGS NAME APPLE_PLATFORM TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME APPLE_BITCODE TYPE BOOL)
-    append_cmake_arg (CMAKE_ARGS NAME APPLE_EXTENSION TYPE BOOL)
-    append_cmake_arg (CMAKE_ARGS NAME IOS_DEVICE_FAMILY TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME IOS_DEPLOYMENT_TARGET TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME WATCHOS_DEPLOYMENT_TARGET TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME WATCHOS_DEVICE_FAMILY TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME TVOS_DEPLOYMENT_TARGET TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME TVOS_DEVICE_FAMILY TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME MACOS_DEPLOYMENT_TARGET TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_PLATFORM_DEVELOPER_ROOT TYPE PATH)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_SDK_ROOT TYPE PATH)
-endif ()
-
 # Define additional compiler flags
+# TODO: Review. Maybe redundant, because of option POSITION_INDEPENDENT_CODE=ON
 if (NOT CMAKE_CROSSCOMPILING)
     include (CheckCCompilerFlag)
     check_c_compiler_flag (-fPIC COMPILER_SUPPORT_PIC)
@@ -244,21 +215,19 @@ include (virgil_depends)
 virgil_depends (
     PACKAGE_NAME "MbedTLS"
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/mbedtls"
-    CMAKE_ARGS "${CMAKE_ARGS}" "${MBEDTLS_CMAKE_ARGS}"
+    CMAKE_ARGS "${MBEDTLS_CMAKE_ARGS}"
 )
 virgil_find_package (MbedTLS 2.4)
 
 virgil_depends (
     PACKAGE_NAME "RapidJSON"
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/rapidjson"
-    CMAKE_ARGS "${CMAKE_ARGS}"
 )
 virgil_find_package (RapidJSON 1.1)
 
 virgil_depends (
     PACKAGE_NAME "tinyformat"
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/tinyformat"
-    CMAKE_ARGS "${CMAKE_ARGS}"
 )
 virgil_find_package (tinyformat 2.0.1)
 
@@ -266,7 +235,6 @@ if (VIRGIL_CRYPTO_FEATURE_PYTHIA)
     virgil_depends (
         PACKAGE_NAME "pythia"
         CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/pythia"
-        CMAKE_ARGS "${CMAKE_ARGS}"
     )
     virgil_find_package (pythia 0.0.1)
     virgil_find_package (relic 0.4.0)
@@ -302,7 +270,7 @@ set (UCLIBC OFF CACHE BOOL "Enable pathches if library is build with uClibc++")
 
 if (CMAKE_CROSSCOMPILING AND APPLE)
     string (TOLOWER "${APPLE_PLATFORM}" PLATFORM)
-    string (REPLACE "_sim" "" PLATFORM "${PLATFORM}")
+    string (REGEX REPLACE "_sim(64)?" "" PLATFORM "${PLATFORM}")
 
     set (PLATFORM ${PLATFORM} CACHE STRING "Target platform")
     set (PLATFORM_VERSION ${APPLE_DEPLOYMENT_TARGET} CACHE STRING "Minimum version of the platform")
@@ -316,7 +284,7 @@ if (CMAKE_CROSSCOMPILING AND APPLE)
     endif ()
 endif ()
 
-if (CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Android")
+if (CMAKE_CROSSCOMPILING AND ANDROID)
     set (PLATFORM_VERSION ${ANDROID_NATIVE_API_LEVEL} CACHE STRING "Android native API level")
     set (PLATFORM_ARCH ${ANDROID_ABI} CACHE STRING "Target processor architecture")
     set (PLATFORM_EMBEDDED YES CACHE BOOL "Mark target platform as embedded")

@@ -44,7 +44,8 @@
 # APPLE_PLATFORM
 #   This decides which SDK will be selected. Possible values:
 #     * IOS         - Apple iPhone / iPad / iPod Touch SDK will be selected;
-#     * IOS_SIM     - Apple iPhone / iPad / iPod Touch SDK for simulator will be selected;
+#     * IOS_SIM     - Apple iPhone / iPad / iPod Touch SDK 32/64-bit simulators will be selected;
+#     * IOS_SIM64   - Apple iPhone / iPad / iPod Touch SDK 64-bit only simulator will be selected;
 #     * TVOS        - Apple TV SDK will be selected;
 #     * TVOS_SIM    - Apple TV SDK for simulator will be selected;
 #     * WATCHOS     - Apple Watch SDK will be selected;
@@ -148,6 +149,14 @@ elseif(APPLE_PLATFORM STREQUAL "IOS_SIM")
     set(APPLE_DEVICE_FAMILY "${IOS_DEVICE_FAMILY}")
     set(APPLE_DEPLOYMENT_TARGET "${IOS_DEPLOYMENT_TARGET}")
 
+elseif(APPLE_PLATFORM STREQUAL "IOS_SIM64")
+    set(APPLE_PLATFORM_LOCATION "iPhoneSimulator.platform")
+    set(CMAKE_XCODE_EFFECTIVE_PLATFORMS "-iphonesimulator")
+    set(APPLE_ARCH x86_64)
+    set(APPLE_VERSION_FLAG "-mios-simulator-version-min=${IOS_DEPLOYMENT_TARGET}")
+    set(APPLE_DEVICE_FAMILY "${IOS_DEVICE_FAMILY}")
+    set(APPLE_DEPLOYMENT_TARGET "${IOS_DEPLOYMENT_TARGET}")
+
 elseif(APPLE_PLATFORM STREQUAL "WATCHOS")
     set(APPLE_PLATFORM_LOCATION "WatchOS.platform")
     set(CMAKE_XCODE_EFFECTIVE_PLATFORMS "-watchos")
@@ -191,7 +200,7 @@ elseif(APPLE_PLATFORM STREQUAL "MACOS")
 else()
     message (FATAL_ERROR
         "Unsupported APPLE_PLATFORM value selected. "
-        "Please choose one of: IOS, IOS_SIM, TVOS TvOS_SIM, WATCHOS, WATCHOS_SIM, MACOS")
+        "Please choose one of: IOS, IOS_SIM, IOS_SIM64, TVOS TvOS_SIM, WATCHOS, WATCHOS_SIM, MACOS")
 endif()
 
 set(CMAKE_OSX_ARCHITECTURES ${APPLE_ARCH} CACHE STRING  "Build architecture for Apple *OS")
@@ -390,17 +399,16 @@ function(target_apple_framework target)
     #   - XCODE_ATTRIBUTE_{APPLE_PLATFORM}_DEPLOYMENT_TARGET
     #   - XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY
     #
-    if(APPLE_PLATFORM STREQUAL "IOS" OR APPLE_PLATFORM STREQUAL "IOS_SIM")
+    if(APPLE_PLATFORM MATCHES "IOS")
         set_xcode_property(${target} IPHONEOS_DEPLOYMENT_TARGET "${IOS_DEPLOYMENT_TARGET}")
 
-
-    elseif(APPLE_PLATFORM STREQUAL "WATCHOS" OR APPLE_PLATFORM STREQUAL "WATCHOS_SIM")
+    elseif(APPLE_PLATFORM MATCHES "WATCHOS")
         set_xcode_property(${target} WATCHOS_DEPLOYMENT_TARGET "${WATCHOS_DEPLOYMENT_TARGET}")
 
-    elseif(APPLE_PLATFORM STREQUAL "TVOS" OR APPLE_PLATFORM STREQUAL "TVOS_SIM")
+    elseif(APPLE_PLATFORM MATCHES "TVOS")
         set_xcode_property(${target} TVOS_DEPLOYMENT_TARGET "${TVOS_DEPLOYMENT_TARGET}")
 
-    elseif(APPLE_PLATFORM STREQUAL "MACOS")
+    elseif(APPLE_PLATFORM MATCHES "MACOS")
         set_xcode_property(${target} MACOSX_DEPLOYMENT_TARGET "${MACOS_DEPLOYMENT_TARGET}")
 
     endif()

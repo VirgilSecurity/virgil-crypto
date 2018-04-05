@@ -113,7 +113,7 @@ set(APPLE_BITCODE TRUE CACHE BOOL "ON/OFF support of the Apple bitcode")
 set(APPLE_EXTENSION TRUE CACHE BOOL "ON/OFF support of the Apple Extensions")
 
 set(IOS_DEVICE_FAMILY "1,2" CACHE STRING "iPhone (1), iPad(2), iPhone/iPad(1,2)")
-set(IOS_DEPLOYMENT_TARGET "7.0" CACHE STRING "iOS deployment version")
+set(IOS_DEPLOYMENT_TARGET "9.0" CACHE STRING "iOS deployment version")
 
 set(WATCHOS_DEPLOYMENT_TARGET "2.0" CACHE STRING "WatchOS deployment version")
 set(WATCHOS_DEVICE_FAMILY "4" CACHE STRING "Apple Watch (4)")

@@ -274,7 +274,7 @@ set (UCLIBC OFF CACHE BOOL "Enable pathches if library is build with uClibc++")
 
 if (CMAKE_CROSSCOMPILING AND APPLE)
     string (TOLOWER "${APPLE_PLATFORM}" PLATFORM)
-    string (REGEX REPLACE "_sim(64)?" "" PLATFORM "${PLATFORM}")
+    string (REGEX REPLACE "_sim(32|64)?" "" PLATFORM "${PLATFORM}")
 
     set (PLATFORM ${PLATFORM} CACHE STRING "Target platform")
     set (PLATFORM_VERSION ${APPLE_DEPLOYMENT_TARGET} CACHE STRING "Minimum version of the platform")

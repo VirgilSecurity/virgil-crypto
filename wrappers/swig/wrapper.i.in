@@ -153,6 +153,9 @@ DEFINE_USING(VirgilHash, virgil::crypto::foundation)
 DEFINE_USING(VirgilPBKDF, virgil::crypto::foundation)
 
 // Package: virgil::crypto
+DEFINE_NAMESPACE(VirgilConfig, virgil::crypto)
+%include <@virgil_crypto_BINARY_DIR@/include/VirgilConfig.h>
+
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCustomParams, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilCipherBase, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilCipher, virgil::crypto, virgil/crypto)

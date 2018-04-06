@@ -37,6 +37,8 @@
 #include <string>
 #include <memory>
 
+#include "VirgilConfig.h"
+
 #include <virgil/crypto/VirgilVersion.h>
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilByteArrayUtils.h>
@@ -142,6 +144,12 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .class_function("majorVersion", &VirgilVersion::majorVersion)
         .class_function("minorVersion", &VirgilVersion::minorVersion)
         .class_function("patchVersion", &VirgilVersion::patchVersion)
+    ;
+
+    class_<VirgilConfig>("Config")
+        .class_function("hasFeatureStreamImpl", &VirgilConfig::hasFeatureStreamImpl)
+        .class_function("hasFeaturePythiaImpl", &VirgilConfig::hasFeaturePythiaImpl)
+        .class_function("hasFeaturePythiaMultiThread", &VirgilConfig::hasFeaturePythiaMultiThread)
     ;
 
     register_vector<unsigned char>("VirgilByteArray")

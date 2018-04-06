@@ -78,7 +78,6 @@ set_property (
 )
 
 swig_add_library (${PHP_MODULE_NAME}
-    TYPE ${WRAPPER_TYPE}
     LANGUAGE php${PHP_VERSION_MAJOR}
     SOURCES "${WRAPPER_INTERFACE_FILE}"
 )
@@ -96,17 +95,15 @@ set_target_properties(${PHP_SWIG_TARGET_NAME} PROPERTIES PREFIX "")
 
 set (PHP_WRAPPER_VERSION_STRING "(char*)\\\"${VIRGIL_VERSION}\\\"")
 message (STATUS "${PHP_WRAPPER_VERSION_STRING}")
-add_custom_target (${PHP_SWIG_TARGET_NAME}_patch_version
+add_custom_command (TARGET ${PHP_SWIG_TARGET_NAME} PRE_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS
         -DSRC:PATH="${swig_generated_file_fullname}"
         -DREGULAR_EXPRESSION:STRING="NO_VERSION_YET"
         -DREPLACE_EXPRESSION:STRING="${PHP_WRAPPER_VERSION_STRING}"
         -P ${CMAKE_SOURCE_DIR}/cmake/file_regex_replace.cmake
-    DEPENDS "${swig_generated_file_fullname}"
     COMMENT "Add version to the SWIG generated wrapper."
 )
-add_dependencies (${PHP_SWIG_TARGET_NAME} ${PHP_SWIG_TARGET_NAME}_patch_version)
 
 install (TARGETS ${PHP_SWIG_TARGET_NAME}
         RUNTIME DESTINATION "${INSTALL_BIN_DIR_NAME}"

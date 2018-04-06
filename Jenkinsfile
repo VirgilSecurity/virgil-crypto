@@ -85,11 +85,11 @@ def createNativeUnixBuild(slave) {
             // PHP
             if (slave.contains('os-x')) {
                 def phpVersions = "php56 php70 php71"
-                sh "brew unlink ${phpVersions} && brew link php56"
+                sh "brew unlink ${phpVersions} && brew link php56 --force"
                 sh "./utils/build.sh php-5.6"
-                sh "brew unlink ${phpVersions} && brew link php70"
+                sh "brew unlink ${phpVersions} && brew link php70 --force"
                 sh "./utils/build.sh php-7.0"
-                sh "brew unlink ${phpVersions} && brew link php71"
+                sh "brew unlink ${phpVersions} && brew link php71 --force"
                 sh "./utils/build.sh php-7.1"
                 organizeFilesUnix('install/php')
             }

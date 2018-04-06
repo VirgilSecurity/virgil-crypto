@@ -34,53 +34,18 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
+#include "VirgilConfig.h"
 
-#ifndef VIRGIL_CRYPTO_CONFIG
-#define VIRGIL_CRYPTO_CONFIG
+using virgil::crypto::VirgilConfig;
 
-/**
- * Contains conditional macroses, that was used during library build.
- */
+bool VirgilConfig::hasFeatureStreamImpl() {
+    return VIRGIL_CRYPTO_FEATURE_STREAM_IMPL;
+}
 
-/**
- * On/Off status of the feature: C++ streams.
- */
-#cmakedefine01 VIRGIL_CRYPTO_FEATURE_STREAM_IMPL
+bool VirgilConfig::hasFeaturePythiaImpl() {
+    return VIRGIL_CRYPTO_FEATURE_PYTHIA;
+}
 
-/**
- * On/Off status of the feature: Pythia.
- */
-#cmakedefine01 VIRGIL_CRYPTO_FEATURE_PYTHIA
-
-/**
- * On/Off status of the Pythia multhi-threading.
- */
-#cmakedefine01 VIRGIL_CRYPTO_FEATURE_PYTHIA_MT
-
-
-namespace virgil {
-namespace crypto {
-
-class VirgilConfig {
-public:
-    /**
-     * @brief Runtime equiavalent of VIRGIL_CRYPTO_FEATURE_STREAM_IMPL
-     */
-    static bool hasFeatureStreamImpl();
-
-    /**
-     * @brief Runtime equiavalent of VIRGIL_CRYPTO_FEATURE_PYTHIA
-     */
-    static bool hasFeaturePythiaImpl();
-
-    /**
-     * @brief Runtime equiavalent of VIRGIL_CRYPTO_FEATURE_PYTHIA_MT
-     */
-    static bool hasFeaturePythiaMultiThread();
-
-};
-
-} // crypto
-} // virgil
-
-#endif /* VIRGIL_CRYPTO_CONFIG */
+bool VirgilConfig::hasFeaturePythiaMultiThread() {
+    return VIRGIL_CRYPTO_FEATURE_PYTHIA_MT;
+}

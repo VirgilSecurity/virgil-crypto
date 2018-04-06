@@ -75,6 +75,9 @@
 #     - VIRGIL_CRYPTO_FEATURE_PYTHIA -
 #           boolean value that defines whether to enable module Pythia or not.
 #
+#     - VIRGIL_CRYPTO_FEATURE_PYTHIA_MT -
+#           boolean value that defines whether to build module Pythia in a multi-threading mode.
+#
 # Define variables:
 #     - VIRGIL_VERSION           - library full version.
 #     - VIRGIL_VERSION_MAJOR     - library major version number.
@@ -194,6 +197,7 @@ set (VIRGIL_CRYPTO_FEATURE_STREAM_IMPL ON CACHE BOOL
         "Defines whether to compile module that is depends on a C++ stream or not")
 
 set (VIRGIL_CRYPTO_FEATURE_PYTHIA OFF CACHE BOOL "Defines whether to enable module Pythia or not")
+set (VIRGIL_CRYPTO_FEATURE_PYTHIA_MT ON CACHE BOOL "Defines whether to build module Pythia in a multi-threading mode")
 
 # Configure optimizations
 set (ED25519_AMD64_OPTIMIZATION ON CACHE BOOL "Defines whether to enable AMD64 optimization for Ed25519 algorithms")

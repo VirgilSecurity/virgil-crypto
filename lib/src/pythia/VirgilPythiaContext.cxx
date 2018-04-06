@@ -60,8 +60,15 @@ using virgil::crypto::foundation::internal::mbedtls_context;
 using virgil::crypto::pythia::pythia_handler;
 using virgil::crypto::pythia::VirgilPythiaContext;
 
-static thread_local mbedtls_context<mbedtls_entropy_context> g_entropy_ctx;
-static thread_local mbedtls_context<mbedtls_ctr_drbg_context> g_rng_ctx;
+#if VIRGIL_CRYPTO_FEATURE_PYTHIA_MT
+#   define VIRGIL_THREAD_LOCAL thread_local
+#else
+#   define VIRGIL_THREAD_LOCAL
+#endif
+
+
+static VIRGIL_THREAD_LOCAL mbedtls_context<mbedtls_entropy_context> g_entropy_ctx;
+static VIRGIL_THREAD_LOCAL mbedtls_context<mbedtls_ctr_drbg_context> g_rng_ctx;
 static size_t g_instances;
 static std::mutex g_instances_mutex;
 
@@ -103,7 +110,7 @@ public:
 
 VirgilPythiaContext::VirgilPythiaContext() {
     //  Need to call ctor on a thread creation and dtor on thread exit
-    static thread_local internal::PythiaContext pythiaContext;
+    static VIRGIL_THREAD_LOCAL internal::PythiaContext pythiaContext;
 }
 
 #endif /* VIRGIL_CRYPTO_FEATURE_PYTHIA */

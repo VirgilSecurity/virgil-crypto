@@ -47,3 +47,8 @@
  * On/Off status of the feature: Pythia.
  */
 #cmakedefine01 VIRGIL_CRYPTO_FEATURE_PYTHIA
+
+/**
+ * On/Off status of the Pythia multhi-threading.
+ */
+#cmakedefine01 VIRGIL_CRYPTO_FEATURE_PYTHIA_MT

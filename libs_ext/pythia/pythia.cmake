@@ -34,31 +34,26 @@
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
 
-include (CMakeParseArguments)
+cmake_minimum_required (VERSION @CMAKE_VERSION@ FATAL_ERROR)
 
-function (APPEND_CMAKE_ARG cmake_var)
-    set (options)
-    set (oneValueArgs "NAME;VALUE;TYPE")
-    set (multiValueArgs)
-    cmake_parse_arguments (ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+project ("@VIRGIL_DEPENDS_PACKAGE_NAME@-depends")
 
-    if (NOT DEFINED ARG_NAME)
-        message (FATAL_ERROR "Required parameter NAME is not defined.")
-    endif ()
+include (ExternalProject)
 
-    if (NOT DEFINED ARG_VALUE)
-        set (ARG_VALUE ${${ARG_NAME}})
-    endif ()
+# Configure additional CMake parameters
+file (APPEND "@VIRGIL_DEPENDS_ARGS_FILE@"
+    "set (RELIC_USE_PTHREAD ${VIRGIL_CRYPTO_FEATURE_PYTHIA_MT} CACHE INTERNAL \"\")\n"
+    "set (RELIC_USE_EXT_RNG ON CACHE INTERNAL \"\")\n"
+    "set (ENABLE_TESTING OFF CACHE INTERNAL \"\")\n"
+)
 
-    if (NOT DEFINED ARG_TYPE)
-        set (ARG_TYPE "STRING")
-    endif ()
+ExternalProject_Add (${PROJECT_NAME}
+    DOWNLOAD_DIR "@VIRGIL_DEPENDS_PACKAGE_DOWNLOAD_DIR@"
+    GIT_REPOSITORY https://github.com/VirgilSecurity/pythia.git
+    GIT_TAG 969bf0449b55c0f9bcdf92b28c95007a0ae44a30
+    PREFIX "@VIRGIL_DEPENDS_PACKAGE_BUILD_DIR@"
+    CMAKE_ARGS "@VIRGIL_DEPENDS_CMAKE_ARGS@"
+)
 
-    if (NOT DEFINED ARG_VALUE)
-        return ()
-    endif ()
-
-    list (APPEND ${cmake_var} -D${ARG_NAME}:${ARG_TYPE}=${ARG_VALUE})
-
-    set (${cmake_var} ${${cmake_var}} PARENT_SCOPE)
-endfunction (APPEND_CMAKE_ARG)
+add_custom_target ("${PROJECT_NAME}-build" ALL COMMENT "Build package ${PROJECT_NAME}")
+add_dependencies ("${PROJECT_NAME}-build" ${PROJECT_NAME})

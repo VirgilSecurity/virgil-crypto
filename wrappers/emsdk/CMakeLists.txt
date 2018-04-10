@@ -53,7 +53,7 @@ set (WRAPPER_DOC_DIR_NAME "${INSTALL_DOC_DIR_NAME}/${WRAPPER_TARGET}/${VIRGIL_VE
 set (ORIGINAL_EMBIND_FILE "${EMSCRIPTEN}/system/include/emscripten/bind.h")
 set (VIRGIL_EMBIND_FILE "${CMAKE_CURRENT_BINARY_DIR}/virgil_bind.h")
 
-message (STATUS "To be able support of custom exception handling\n"
+message (STATUS "To be able support custom exception handling\n"
     "       patched header '${VIRGIL_EMBIND_FILE}' is used,\n"
     "       instead of '${ORIGINAL_EMBIND_FILE}' header."
 )

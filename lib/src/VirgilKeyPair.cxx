@@ -73,6 +73,25 @@ VirgilKeyPair VirgilKeyPair::generateFrom(
     return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(newKeyPairPassword));
 }
 
+VirgilKeyPair VirgilKeyPair::generateFromKeyMaterial(
+            VirgilKeyPair::Type type,
+            const VirgilByteArray& keyMaterial,
+            const VirgilByteArray& pwd) {
+
+    VirgilAsymmetricCipher cipher;
+    cipher.genKeyPairFromKeyMaterial(type, keyMaterial);
+    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+}
+
+VirgilKeyPair VirgilKeyPair::generateRecommendedFromKeyMaterial(
+            const VirgilByteArray& keyMaterial,
+            const VirgilByteArray& pwd) {
+
+    VirgilAsymmetricCipher cipher;
+    cipher.genKeyPairFromKeyMaterial(Type::FAST_EC_ED25519, keyMaterial);
+    return VirgilKeyPair(cipher.exportPublicKeyToPEM(), cipher.exportPrivateKeyToPEM(pwd));
+}
+
 bool VirgilKeyPair::isKeyPairMatch(
         const VirgilByteArray& publicKey, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {

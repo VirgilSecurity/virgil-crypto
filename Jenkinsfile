@@ -85,11 +85,11 @@ def createNativeUnixBuild(slave) {
             // PHP
             if (slave.contains('os-x')) {
                 def phpVersions = "php56 php70 php71"
-                sh "brew unlink ${phpVersions} && brew link php56"
+                sh "brew unlink ${phpVersions} && brew link php56 --force"
                 sh "./utils/build.sh php-5.6"
-                sh "brew unlink ${phpVersions} && brew link php70"
+                sh "brew unlink ${phpVersions} && brew link php70 --force"
                 sh "./utils/build.sh php-7.0"
-                sh "brew unlink ${phpVersions} && brew link php71"
+                sh "brew unlink ${phpVersions} && brew link php71 --force"
                 sh "./utils/build.sh php-7.1"
                 organizeFilesUnix('install/php')
             }
@@ -102,9 +102,9 @@ def createNativeUnixBuild(slave) {
                 sh './utils/build.sh php-7.1'
                 organizeFilesUnix('install/php')
             }
-            // MONO NET 
+            // MONO NET
             sh './utils/build.sh net'
-            
+
             archiveArtifacts('install/**')
         }
     }
@@ -204,7 +204,7 @@ def createAndroidBuild(slave) {
         node(slave) {
             clearContentUnix()
             unstash 'src'
-            withEnv(['ANDROID_NDK=/Users/virgil/Library/VirgilEnviroment/android-ndk']) {
+            withEnv(['ANDROID_NDK=/Users/virgil/Library/VirgilEnviroment/android-ndk-r16b']) {
                 sh './utils/build.sh java_android . build/java/android install/java/android'
                 sh './utils/build.sh net_android . build/net/android install/net/android'
             }

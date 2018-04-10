@@ -34,40 +34,28 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#cmakedefine SWIG_TARGET_LINUX
+#define BENCHPRESS_CONFIG_MAIN
 
-%insert(cgo_comment_typedefs) %{
-#cgo CPPFLAGS: -I${SRCDIR}/include
-#cgo LDFLAGS: -L${SRCDIR}/lib -lvirgil_crypto_go -lvirgil_crypto -lmbedcrypto -led25519 -lstdc++
-%}
+#include "benchpress.hpp"
 
-#if defined(SWIG_TARGET_LINUX)
-%insert(cgo_comment_typedefs) %{
-#cgo LDFLAGS: -lm
-%}
-#endif
 
 #if VIRGIL_CRYPTO_FEATURE_PYTHIA
-%insert(cgo_comment_typedefs) %{
-#cgo LDFLAGS: -lpythia -lrelic_s
-%}
-#endif
 
-%define SWIG_CATCH_STDEXCEPT
-  /* catching std::exception  */
-  catch (std::invalid_argument& e) {
-    SWIG_exception(SWIG_ValueError, e.what() );
-  } catch (std::domain_error& e) {
-    SWIG_exception(SWIG_ValueError, e.what() );
-  } catch (std::overflow_error& e) {
-    SWIG_exception(SWIG_OverflowError, e.what() );
-  } catch (std::out_of_range& e) {
-    SWIG_exception(SWIG_IndexError, e.what() );
-  } catch (std::length_error& e) {
-    SWIG_exception(SWIG_IndexError, e.what() );
-  } catch (std::runtime_error& e) {
-    SWIG_exception(SWIG_RuntimeError, e.what() );
-  } catch (std::exception& e) {
-    SWIG_exception(SWIG_SystemError, e.what() );
-  }
-%enddef
+
+#include <virgil/crypto/VirgilByteArrayUtils.h>
+#include <virgil/crypto/pythia/VirgilPythia.h>
+
+using virgil::crypto::VirgilByteArrayUtils;
+using virgil::crypto::pythia::VirgilPythia;
+
+BENCHMARK("pythia init", [](benchpress::context* ctx) {
+
+    ctx->run_parallel([](benchpress::parallel_context* pctx) {
+        while (pctx->next()) {
+            VirgilPythia pythia;
+            auto result = pythia.blind(VirgilByteArrayUtils::stringToBytes("password"));
+        }
+    });
+})
+
+#endif /* VIRGIL_CRYPTO_FEATURE_PYTHIA */

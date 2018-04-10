@@ -78,6 +78,7 @@
 cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 
 include (CMakeParseArguments)
+include (TransitiveArgs)
 
 function (virgil_depends_log_error)
     message ("")
@@ -233,6 +234,7 @@ function (virgil_depends)
         "-G${CMAKE_GENERATOR}"
         "-C${VIRGIL_DEPENDS_CACHE_FILE}"
         "-C${VIRGIL_DEPENDS_ARGS_FILE}"
+        "-C${TRANSITIVE_ARGS_FILE}"
         "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
         "-DCMAKE_INSTALL_PREFIX=${VIRGIL_DEPENDS_PREFIX}"
         "-DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}"

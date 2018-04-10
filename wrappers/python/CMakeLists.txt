@@ -74,7 +74,10 @@ configure_file (
 set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY CPLUSPLUS ON)
 set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing")
 
-swig_add_module (${PYTHON_MODULE_NAME} python "${WRAPPER_INTERFACE_FILE}")
+swig_add_library (${PYTHON_MODULE_NAME}
+        LANGUAGE python
+        SOURCES "${WRAPPER_INTERFACE_FILE}")
+
 set (SWIG_TARGET ${SWIG_MODULE_${PYTHON_MODULE_NAME}_REAL_NAME})
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")

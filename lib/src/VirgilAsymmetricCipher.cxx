@@ -37,6 +37,7 @@
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 
 #include <algorithm>
+#include <cstring>
 
 #include <mbedtls/config.h>
 #include <mbedtls/pk.h>
@@ -46,6 +47,8 @@
 #include <mbedtls/ctr_drbg.h>
 #include <mbedtls/ecdh.h>
 #include <mbedtls/asn1write.h>
+#include <mbedtls/kdf2.h>
+#include <mbedtls/md.h>
 
 #include <virgil/crypto/VirgilByteArrayUtils.h>
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
@@ -68,8 +71,54 @@ using virgil::crypto::foundation::asn1::internal::VirgilAsn1Alg;
 using virgil::crypto::foundation::internal::mbedtls_context;
 using virgil::crypto::foundation::internal::mbedtls_context_policy;
 
+#include <cstdio>
+
+extern "C" {
+
+typedef struct {
+    unsigned char keyMaterial[MBEDTLS_CTR_DRBG_ENTROPY_LEN];
+    size_t left;
+} key_material_entropy_t;
+
+int key_material_entropy_seed (void *ctx, unsigned char *seed, size_t seed_len) {
+
+    key_material_entropy_t *entropy_ctx = (key_material_entropy_t *)(ctx);
+
+    if (seed_len > entropy_ctx->left) {
+        return -1;
+    }
+
+    memcpy (seed, entropy_ctx->keyMaterial, seed_len);
+    entropy_ctx->left -= seed_len;
+
+    return 0;
+}
+
+void key_material_entropy_reset (key_material_entropy_t *ctx) {
+    if (ctx) {
+        ctx->left = sizeof (ctx->keyMaterial);
+    }
+}
+
+size_t key_material_entropy_len (key_material_entropy_t *ctx) {
+    (void)ctx;
+    return MBEDTLS_CTR_DRBG_ENTROPY_LEN;
+}
+
+}
+
 namespace virgil { namespace crypto { namespace foundation { namespace internal {
 
+/**
+ * Universal low-level key generation function.
+ *
+ * @param pk_ctx       context to be fullfiled with a new key
+ * @param ctr_drbg_ctx random context to be used for key generation
+ * @param rsa_size     if >0 then RSA key will be generated
+ * @param rsa_exponent if !=
+ * @param ecp_group_id if != MBEDTLS_ECP_DP_NONE then EC key will be generated
+ * @param fast_ec_type if != MBEDTLS_FAST_EC_NONE then Fast EC key will be generated
+ */
 void gen_key_pair(
         mbedtls_context<mbedtls_pk_context>& pk_ctx,
         mbedtls_context<mbedtls_ctr_drbg_context>& ctr_drbg_ctx, unsigned int rsa_size, int rsa_exponent,
@@ -149,6 +198,20 @@ bool isEC(const mbedtls_pk_context* pk_ctx) {
            pk_type == MBEDTLS_PK_ECDSA ||
            pk_type == MBEDTLS_PK_ED25519 ||
            pk_type == MBEDTLS_PK_X25519;
+}
+
+mbedtls_context<mbedtls_ctr_drbg_context> create_deterministic_rng_ctx(const VirgilByteArray& keyMaterial) {
+    mbedtls_context<mbedtls_ctr_drbg_context> drbg_ctx;
+    key_material_entropy_t entropy_ctx;
+
+    system_crypto_handler(mbedtls_kdf2(mbedtls_md_info_from_type(MBEDTLS_MD_SHA512),
+            keyMaterial.data(), keyMaterial.size(), entropy_ctx.keyMaterial, key_material_entropy_len(&entropy_ctx)));
+
+    key_material_entropy_reset(&entropy_ctx);
+
+    system_crypto_handler(mbedtls_ctr_drbg_seed (drbg_ctx.get(), key_material_entropy_seed, &entropy_ctx, NULL, 0));
+
+    return drbg_ctx;
 }
 
 }}}}
@@ -262,6 +325,16 @@ void VirgilAsymmetricCipher::genKeyPair(VirgilKeyPair::Type type) {
     mbedtls_fast_ec_type_t fastEcType = MBEDTLS_FAST_EC_NONE;
     internal::key_type_set_params(type, &rsaSize, &ecTypeId, &fastEcType);
     internal::gen_key_pair(impl_->pk_ctx, impl_->ctr_drbg_ctx, rsaSize, 65537, ecTypeId, fastEcType);
+}
+
+void VirgilAsymmetricCipher::genKeyPairFromKeyMaterial(VirgilKeyPair::Type type, const VirgilByteArray& keyMaterial) {
+    unsigned int rsaSize = 0;
+    impl_->pk_ctx.clear();
+    mbedtls_ecp_group_id ecTypeId = MBEDTLS_ECP_DP_NONE;
+    mbedtls_fast_ec_type_t fastEcType = MBEDTLS_FAST_EC_NONE;
+    internal::key_type_set_params(type, &rsaSize, &ecTypeId, &fastEcType);
+    auto deterministic_drbg_ctx = internal::create_deterministic_rng_ctx(keyMaterial);
+    internal::gen_key_pair(impl_->pk_ctx, deterministic_drbg_ctx, rsaSize, 65537, ecTypeId, fastEcType);
 }
 
 void VirgilAsymmetricCipher::genKeyPairFrom(const VirgilAsymmetricCipher& other) {

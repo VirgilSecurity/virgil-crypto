@@ -327,15 +327,53 @@ cd "${BUILD_DIR}" && rm -fr ./*
 
 # Build for native platforms
 if [[ ${TARGET_NAME} =~ ^(cpp|java|net|php|python|ruby|nodejs|go)$ ]]; then
+    CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_PYTHIA=ON"
     cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
     make -j8 install
 fi
 
-# Build for Apple plaforms create Apple Framework
-if [ "${TARGET_NAME}" == "ios" ] || [ "${TARGET_NAME}" == "tvos" ] || \
-   [ "${TARGET_NAME}" == "watchos" ] || [ "${TARGET_NAME}" == "macos" ]; then
+# Build framework for Apple iOS (with Pythia)
+if [ "${TARGET_NAME}" == "ios" ]; then
 
-    APPLE_PLATFORM=$(echo "${TARGET_NAME}" | awk '{print toupper($0)}')
+    CMAKE_ARGS+=" -LANG=cpp"
+    CMAKE_ARGS+=" -DINSTALL_CORE_HEADERS=NO"
+    CMAKE_ARGS+=" -DINSTALL_EXT_LIBS=NO"
+    CMAKE_ARGS+=" -DINSTALL_EXT_HEADERS=NO"
+    CMAKE_ARGS+=" -DCMAKE_TOOLCHAIN_FILE='${SRC_DIR}/cmake/apple.cmake'"
+    CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_PYTHIA=ON"
+
+    # Build for device (Pythia is in a multi-thread mode!!!)
+    rm -fr -- *
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=IOS \
+                        -DVIRGIL_CRYPTO_FEATURE_PYTHIA_MT=ON \
+                        -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
+    make -j8 install
+
+    # Build for i386 simulator (Pythia is in a single-thread mode!!!)
+    rm -fr -- *
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=IOS_SIM32 \
+                        -DVIRGIL_CRYPTO_FEATURE_PYTHIA_MT=OFF \
+                        -DINSTALL_LIB_DIR_NAME=lib/sim32 "${SRC_DIR}"
+    make -j8 install
+
+    # Build for i386 simulator (Pythia is in a multi-thread mode!!!)
+    rm -fr -- *
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=IOS_SIM64 \
+                        -DVIRGIL_CRYPTO_FEATURE_PYTHIA_MT=ON \
+                        -DINSTALL_LIB_DIR_NAME=lib/sim64 "${SRC_DIR}"
+    make -j8 install
+
+    make_fat_framework VSCCrypto "${INSTALL_DIR}" "${INSTALL_DIR}"
+
+    rm -fr "${INSTALL_DIR:?}/include"
+    rm -fr "${INSTALL_DIR:?}/lib"
+fi
+
+# Build framework for Apple tvOS, watchOS, macOS (without Pythia)
+if [ "${TARGET_NAME}" == "tvos" ] || [ "${TARGET_NAME}" == "watchos" ] || [ "${TARGET_NAME}" == "macos" ]; then
+
+    APPLE_PLATFORM_DEVICE=$(echo "${TARGET_NAME}" | awk '{print toupper($0)}')
+    APPLE_PLATFORM_SIMULATOR="${APPLE_PLATFORM_DEVICE}_SIM"
 
     CMAKE_ARGS+=" -LANG=cpp"
     CMAKE_ARGS+=" -DINSTALL_CORE_HEADERS=NO"
@@ -344,13 +382,13 @@ if [ "${TARGET_NAME}" == "ios" ] || [ "${TARGET_NAME}" == "tvos" ] || \
     CMAKE_ARGS+=" -DCMAKE_TOOLCHAIN_FILE='${SRC_DIR}/cmake/apple.cmake'"
 
     # Build for device
-    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM} -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM_DEVICE} -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
     make -j8 install
 
     if [ "${TARGET_NAME}" != "macos" ]; then
         # Build for simulator
         rm -fr ./*
-        cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM}_SIM -DINSTALL_LIB_DIR_NAME=lib/sim "${SRC_DIR}"
+        cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM_SIMULATOR} -DINSTALL_LIB_DIR_NAME=lib/sim "${SRC_DIR}"
         make -j8 install
     fi
 
@@ -364,6 +402,7 @@ if [[ "${TARGET_NAME}" == *"android"* ]]; then
     if [ ! -d "$ANDROID_NDK" ]; then
         show_usage "Enviroment \$ANDROID_NDK is not defined!" 1
     fi
+
     if [ "${TARGET_NAME}" == "java_android" ]; then
         CMAKE_ARGS+=" -DLANG=java"
     elif [ "${TARGET_NAME}" == "net_android" ]; then
@@ -371,26 +410,67 @@ if [[ "${TARGET_NAME}" == *"android"* ]]; then
     else
         show_usage "Unsupported target: ${TARGET_NAME}!"
     fi
+
+    CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_PYTHIA=ON"
+
     function build_android() {
         # Build architecture: $1
         rm -fr ./*
-        cmake ${CMAKE_ARGS} -DANDROID_ABI="$1" -DCMAKE_TOOLCHAIN_FILE="${SRC_DIR}/cmake/android.toolchain.cmake" "${SRC_DIR}"
+        cmake ${CMAKE_ARGS} -DANDROID_ABI="$1" -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK}/build/cmake/android.toolchain.cmake" "${SRC_DIR}"
         make -j8 install
     }
+
     build_android x86
     build_android x86_64
-    build_android mips
-    build_android mips64
-    build_android armeabi
     build_android armeabi-v7a
     build_android arm64-v8a
 fi
 
-# Build for Mono iOS, Mono tvOS and Mono watchOS
-if [ "${TARGET_NAME}" == "net_ios" ] || [ "${TARGET_NAME}" == "net_tvos" ] || \
-   [ "${TARGET_NAME}" == "net_watchos" ]; then
+# Build for Mono iOS (with Pyhia)
+if [ "${TARGET_NAME}" == "net_ios" ]; then
 
-    APPLE_PLATFORM=$(echo "${TARGET_NAME/net_/}" | awk '{print toupper($0)}')
+    CMAKE_ARGS+=" -DLANG=net"
+    CMAKE_ARGS+=" -DINSTALL_CORE_LIBS=ON"
+    CMAKE_ARGS+=" -DINSTALL_CORE_HEADERS=OFF"
+    CMAKE_ARGS+=" -DINSTALL_EXT_LIBS=ON"
+    CMAKE_ARGS+=" -DINSTALL_EXT_HEADERS=OFF"
+    CMAKE_ARGS+=" -DCMAKE_TOOLCHAIN_FILE='${SRC_DIR}/cmake/apple.cmake'"
+    CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_PYTHIA=ON"
+
+    # Build for device (Pythia is in a multi-thread mode!!!)
+    rm -fr -- *
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=IOS \
+                        -DVIRGIL_CRYPTO_FEATURE_PYTHIA_MT=ON \
+                        -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
+    make -j8 install
+
+    # Build for i386 simulator (Pythia is in a single-thread mode!!!)
+    rm -fr -- *
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=IOS_SIM32 \
+                        -DVIRGIL_CRYPTO_FEATURE_PYTHIA_MT=OFF \
+                        -DINSTALL_LIB_DIR_NAME=lib/sim32 "${SRC_DIR}"
+    make -j8 install
+
+    # Build for i386 simulator (Pythia is in a multi-thread mode!!!)
+    rm -fr -- *
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=IOS_SIM64 \
+                        -DVIRGIL_CRYPTO_FEATURE_PYTHIA_MT=ON \
+                        -DINSTALL_LIB_DIR_NAME=lib/sim64 "${SRC_DIR}"
+    make -j8 install
+
+    # Create fat library
+    make_fat_library libVirgilCryptoNet.a "${INSTALL_DIR}" "${INSTALL_DIR}/libs" "net"
+    find "${INSTALL_DIR:?}" -name "*.dll" -exec cp -f {} "${INSTALL_DIR:?}/libs/" \;
+    rm -fr "${INSTALL_DIR:?}/include"
+    rm -fr "${INSTALL_DIR:?}/lib"
+    mv "${INSTALL_DIR:?}/libs" "${INSTALL_DIR:?}/lib"
+fi
+
+# Build for Mono tvOS and Mono watchOS (without Pythia)
+if [ "${TARGET_NAME}" == "net_tvos" ] || [ "${TARGET_NAME}" == "net_watchos" ]; then
+
+    APPLE_PLATFORM_DEVICE=$(echo "${TARGET_NAME/net_/}" | awk '{print toupper($0)}')
+    APPLE_PLATFORM_SIMULATOR="${APPLE_PLATFORM_DEVICE}_SIM"
 
     CMAKE_ARGS+=" -DLANG=net"
     CMAKE_ARGS+=" -DINSTALL_CORE_LIBS=ON"
@@ -400,12 +480,12 @@ if [ "${TARGET_NAME}" == "net_ios" ] || [ "${TARGET_NAME}" == "net_tvos" ] || \
     CMAKE_ARGS+=" -DCMAKE_TOOLCHAIN_FILE='${SRC_DIR}/cmake/apple.cmake'"
 
     # Build for device
-    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM} -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM_DEVICE} -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
     make -j8 install
 
     # Build for simulator
     rm -fr ./*
-    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM}_SIM -DINSTALL_LIB_DIR_NAME=lib/sim "${SRC_DIR}"
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM_SIMULATOR} -DINSTALL_LIB_DIR_NAME=lib/sim "${SRC_DIR}"
     make -j8 install
 
     # Create fat library
@@ -421,6 +501,8 @@ if [[ "${TARGET_NAME}" =~ (asmjs|webasm) ]]; then
         show_usage "Enviroment \$EMSDK_HOME is not defined!" 1
     fi
     source "${EMSDK_HOME}/emsdk_env.sh"
+
+    CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_PYTHIA=ON"
 
     cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} \
         -DCMAKE_TOOLCHAIN_FILE="$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake" \

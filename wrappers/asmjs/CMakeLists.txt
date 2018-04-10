@@ -58,7 +58,9 @@ include ("${WRAPPERS_ROOT}/emsdk/CMakeLists.txt")
 #   Add specific 'install' options to the target
 # ---------------------------------------------------------------------------
 
-string (TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
+if (CMAKE_BUILD_TYPE)
+    string (TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
+endif()
 
 if ("${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}" MATCHES "(-O2|-O3|-Os|-Oz)")
 

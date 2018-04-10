@@ -131,6 +131,33 @@ public:
             const VirgilByteArray& newKeyPairPassword = VirgilByteArray());
 
     /**
+     * @brief Generates private and public keys from the given key material.
+     *
+     * This is a deterministic key generation algorithm that allows create private key
+     * from any secret data, i.e. password.
+     *
+     * @param type - private key type to be generated.
+     * @param keyMaterial - the only data to be used for key generation, must be strong enough.
+     * @param pwd - private key password.
+     */
+    static VirgilKeyPair generateFromKeyMaterial(
+            VirgilKeyPair::Type type,
+            const VirgilByteArray& keyMaterial,
+            const VirgilByteArray& pwd = VirgilByteArray());
+    /**
+     * @brief Generates recommended private and public keys from the given key material.
+     *
+     * This is a deterministic key generation algorithm that allows create private key
+     * from any secret data, i.e. password.
+     *
+     * @param keyMaterial - the only data to be used for key generation, must be strong enough.
+     * @param pwd - private key password.
+     */
+    static VirgilKeyPair generateRecommendedFromKeyMaterial(
+            const VirgilByteArray& keyMaterial,
+            const VirgilByteArray& pwd = VirgilByteArray());
+
+    /**
      * @name Keys validation
      */
     ///@{

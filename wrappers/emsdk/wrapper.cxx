@@ -164,6 +164,8 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .class_function("generate", &VirgilKeyPair::generate)
         .class_function("generateRecommended", &VirgilKeyPair::generateRecommended)
         .class_function("generateFrom", &VirgilKeyPair::generateFrom)
+        .class_function("generateFromKeyMaterial", &VirgilKeyPair::generateFromKeyMaterial)
+        .class_function("generateRecommendedFromKeyMaterial", &VirgilKeyPair::generateRecommendedFromKeyMaterial)
         .class_function("isKeyPairMatch", &VirgilKeyPair::isKeyPairMatch)
         .class_function("checkPrivateKeyPassword", &VirgilKeyPair::checkPrivateKeyPassword)
         .class_function("isPrivateKeyEncrypted", &VirgilKeyPair::isPrivateKeyEncrypted)

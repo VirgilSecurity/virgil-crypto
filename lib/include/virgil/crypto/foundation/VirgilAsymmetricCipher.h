@@ -191,6 +191,22 @@ public:
     void genKeyPairFrom(const VirgilAsymmetricCipher& other);
 
     /**
+     * @brief Generates private and public keys from the given key material.
+     *
+     * This is a deterministic key generation algorithm that allows create private key
+     * from any secret data, i.e. password.
+     *
+     * @param keyMaterial - the only data to be used for key generation, must be strong enough.
+     *
+     * @throw VirgilCryptoException with VirgilCryptoError::UnsupportedAlgorithm,
+     *     if key pair can't be generated with given type.
+     *
+     * @throw VirgilCryptoException with VirgilCryptoError::NotSecure,
+     *     if Key Material is weak.
+     */
+    void genKeyPairFromKeyMaterial(VirgilKeyPair::Type type, const VirgilByteArray& keyMaterial);
+
+    /**
      * @brief Compute shared secret key on a given contexts.
      *
      * Prerequisites:

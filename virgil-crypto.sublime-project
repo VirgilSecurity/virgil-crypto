@@ -1,0 +1,15 @@
+{
+    "folders":
+    [
+        {
+            "path": ".",
+            "folder_exclude_patterns": ["*build*", ".idea", ".depends_cache"]
+        }
+    ],
+    "settings": {
+        "ClangFormat": {
+            "format_on_save": false
+        },
+        "rulers": [120]
+    }
+}

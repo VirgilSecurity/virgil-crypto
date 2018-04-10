@@ -326,13 +326,7 @@ cd "${INSTALL_DIR}" && rm -fr ./*
 cd "${BUILD_DIR}" && rm -fr ./*
 
 # Build for native platforms
-if [[ ${TARGET_NAME} =~ ^(cpp|java|php|python|ruby|nodejs|go)$ ]]; then
-    cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
-    make -j8 install
-fi
-
-# Build for Mono Unix/Linux
-if [ "${TARGET_NAME}" == "net" ] && [ "${SYSTEM_NAME}" != "darwin" ]; then
+if [[ ${TARGET_NAME} =~ ^(cpp|java|net|php|python|ruby|nodejs|go)$ ]]; then
     cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
     make -j8 install
 fi
@@ -392,8 +386,9 @@ if [[ "${TARGET_NAME}" == *"android"* ]]; then
     build_android arm64-v8a
 fi
 
+# Build for Mono iOS, Mono tvOS and Mono watchOS
 if [ "${TARGET_NAME}" == "net_ios" ] || [ "${TARGET_NAME}" == "net_tvos" ] || \
-   [ "${TARGET_NAME}" == "net_watchos" ] || [ "${TARGET_NAME}" == "net_macos" ]; then
+   [ "${TARGET_NAME}" == "net_watchos" ]; then
 
     APPLE_PLATFORM=$(echo "${TARGET_NAME/net_/}" | awk '{print toupper($0)}')
 
@@ -408,12 +403,10 @@ if [ "${TARGET_NAME}" == "net_ios" ] || [ "${TARGET_NAME}" == "net_tvos" ] || \
     cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM} -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
     make -j8 install
 
-    if [ "${TARGET_NAME}" != "net_macos" ]; then
-        # Build for simulator
-        rm -fr ./*
-        cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM}_SIM -DINSTALL_LIB_DIR_NAME=lib/sim "${SRC_DIR}"
-        make -j8 install
-    fi
+    # Build for simulator
+    rm -fr ./*
+    cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM}_SIM -DINSTALL_LIB_DIR_NAME=lib/sim "${SRC_DIR}"
+    make -j8 install
 
     # Create fat library
     make_fat_library libVirgilCryptoNet.a "${INSTALL_DIR}" "${INSTALL_DIR}/libs" "net"

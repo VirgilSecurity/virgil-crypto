@@ -1,11 +1,27 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.3.1 released 2018-04-10
+
+## Features
+
+  * [.NET] Add suport for .net-core Linux, Mac, Windows
+
+## Changes
+
+  * [CI] Update Dockerfile_Golang with cmake 3.10.2 and virgil-cryoto go v5
+  * [DOC] Reviewed README.md
+
+## Bugfix
+
+  * [Build] Fix 'missing extension' for C# assembly
+
+
 = Version 2.3.0 released 2018-02-19
 
 ## Bugfix
 
-  * [Lib] Fix fail when export plain RSA 4096 private key to DER format
-  * [CI] Fix Travis CI fails on a pull requests
+  * [Lib] Fix error when export plain RSA 4096 private key to DER format
+  * [CI] Fix Travis CI fails on a pull request
 
 ## Changes
 

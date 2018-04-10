@@ -102,11 +102,9 @@ def createNativeUnixBuild(slave) {
                 sh './utils/build.sh php-7.1'
                 organizeFilesUnix('install/php')
             }
-            //DotNET - Unix/Linux Mono
-            if (! slave.contains('build-os-x')) {
-                sh './utils/build.sh net'
-            }
-
+            // MONO NET 
+            sh './utils/build.sh net'
+            
             archiveArtifacts('install/**')
         }
     }
@@ -191,7 +189,6 @@ def createDarwinBuild(slave) {
             sh './utils/build.sh ios . build/cpp/ios install/cpp/ios '
             sh './utils/build.sh watchos . build/cpp/watchos install/cpp/watchos'
             sh './utils/build.sh tvos . build/cpp/tvos install/cpp/tvos'
-            sh './utils/build.sh net_macos . build/net/macos install/net/macos'
             sh './utils/build.sh net_ios . build/net/ios install/net/ios'
             sh './utils/build.sh net_watchos . build/net/watchos install/net/watchos'
             sh './utils/build.sh net_tvos . build/net/tvos install/net/tvos'

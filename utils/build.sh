@@ -326,7 +326,7 @@ cd "${INSTALL_DIR}" && rm -fr ./*
 cd "${BUILD_DIR}" && rm -fr ./*
 
 # Build for native platforms
-if [[ ${TARGET_NAME} =~ ^(cpp|java|php|python|ruby|nodejs|go)$ ]]; then
+if [[ ${TARGET_NAME} =~ ^(cpp|java|net|php|python|ruby|nodejs|go)$ ]]; then
     cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
     make -j8 install
 fi
@@ -384,12 +384,6 @@ if [[ "${TARGET_NAME}" == *"android"* ]]; then
     build_android armeabi
     build_android armeabi-v7a
     build_android arm64-v8a
-fi
-
-# Build for Windows, Mono Mac and Mono Linux
-if [ "${TARGET_NAME}" == "net" ]; then
-    cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} -DPLATFORM_VERSION=${SYSTEM_KERNEL_RELEASE_VERSION} "${SRC_DIR}"
-    make -j8 install
 fi
 
 # Build for Mono iOS, Mono tvOS and Mono watchOS

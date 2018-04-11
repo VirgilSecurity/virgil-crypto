@@ -35,42 +35,60 @@
 # Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
 #
 
-set -ev
+set -e
 
-if [[ "${PUBLISH_DOCS}" == "ON" ]] && [[ "${TRAVIS_BRANCH}" == "master" ]]; then
+# Build documentation from the known tags pattern
+if [ "${PUBLISH_DOCS}" == "ON" ] && [ -n "${TRAVIS_TAG}" ]; then
     # Settings
     REPO_PATH=git@github.com:VirgilSecurity/virgil-crypto.git
     HTML_PATH_DST="${PROJECT_ROOT}/build/docs/html"
     COMMIT_USER="Travis CI documentation builder."
     COMMIT_EMAIL="sergey.seroshtan@gmail.com"
     CHANGESET=$(git rev-parse --verify HEAD)
+    HOST_PLATFORM=$(uname -s)
 
-    # Get a clean version of the HTML documentation repo.
+    echo "Get a clean version of the HTML documentation repo..."
     rm -rf ${HTML_PATH_DST}
     mkdir -p ${HTML_PATH_DST}
     git clone -b gh-pages "${REPO_PATH}" --single-branch ${HTML_PATH_DST}
 
-    # Define SDK versions
-    VIRGIL_CRYPTO_VERSION=`cat ${PROJECT_ROOT}/VERSION | awk -F"." '{ printf "v%d.%d",$1,$2 }'`
+    echo "Define library version..."
+    if [[ ${TRAVIS_TAG} == *-* ]]; then
+        # Featured tag
+        VIRGIL_CRYPTO_VERSION=${TRAVIS_TAG}
+    else
+        VIRGIL_CRYPTO_VERSION=$(echo ${TRAVIS_TAG#v} | awk -F"." '{ printf "v%d.%d",$1,$2 }')
+    fi
+    echo "Library tag    : ${TRAVIS_TAG}"
+    echo "Library version: ${VIRGIL_CRYPTO_VERSION}"
+
     VIRGIL_CRYPTO_HTML_PATH_DST="${HTML_PATH_DST}/${VIRGIL_CRYPTO_VERSION}"
 
-    # Prepare destination folders
+    echo "Prepare destination folder: ${VIRGIL_CRYPTO_HTML_PATH_DST}..."
     rm -fr "${VIRGIL_CRYPTO_HTML_PATH_DST}" && mkdir -p "${VIRGIL_CRYPTO_HTML_PATH_DST}"
 
-    # Generate the HTML documentation.
+    echo "Generate the HTML documentation..."
     cmake --build "${PROJECT_ROOT}/build" --target doc
 
-    # Copy new documentation
+    echo "Copy new documentation..."
+    echo "    From: ${PROJECT_ROOT}/docs/html"
+    echo "    To: ${VIRGIL_CRYPTO_HTML_PATH_DST}"
     cp -af "${PROJECT_ROOT}/docs/html/." "${VIRGIL_CRYPTO_HTML_PATH_DST}"
 
-    # Fix source file names
+    echo "Fix source file names..."
     function fix_html_source_file_names {
         cd "${1}"
         for f in _*.html; do
             old_name=$f
             new_name=${f/${f:0:1}/}
+            echo "    Rename"
+            echo "        from: ${old_name}"
+            echo "        to  : ${new_name}"
             mv $old_name $new_name
-            if [ "$(uname -s)" == "Darwin" ]; then
+
+            echo "        change file name in references..."
+            echo ""
+            if [ "${HOST_PLATFORM}" == "Darwin" ]; then
                 sed -i "" -e "s/[[:<:]]$old_name[[:>:]]/$new_name/g" *.html
             else
                 sed -i"" "s/\b$old_name\b/$new_name/g" *.html
@@ -78,18 +96,20 @@ if [[ "${PUBLISH_DOCS}" == "ON" ]] && [[ "${TRAVIS_BRANCH}" == "master" ]]; then
         done
         cd -
     }
-
     fix_html_source_file_names "${VIRGIL_CRYPTO_HTML_PATH_DST}"
 
-    # Generate root HTML file
-    function get_dir_names {
-        local DIRS=`find "$1" -maxdepth 1 -type d -name "$2"`
-        local DIR_NAMES=()
-        for dir in ${DIRS}; do
-            DIR_NAMES+=("${dir#${1}/}")
-        done
-        echo ${DIR_NAMES[*]}
-    }
+    echo "Get version directories list..."
+
+    VERSION_DIRS=$()
+    for dir in `find "${HTML_PATH_DST}" -maxdepth 1 -type d -name "v*" | sort -r`; do
+        VERSION_DIRS+=("${dir##*/}")
+    done
+
+    for dir in ${VERSION_DIRS[*]}; do
+        echo "    - ${dir}"
+    done
+
+    echo "Generate root HTML file..."
 
     cat >"${HTML_PATH_DST}/index.html" <<EOL
 <!DOCTYPE HTML>
@@ -103,7 +123,7 @@ if [[ "${PUBLISH_DOCS}" == "ON" ]] && [[ "${TRAVIS_BRANCH}" == "master" ]]; then
         <ul>
 EOL
 
-    for dir in `get_dir_names "${VIRGIL_CRYPTO_HTML_PATH_DST}/.." "v*"`; do
+    for dir in ${VERSION_DIRS[*]}; do
         echo "            <li><p><a href=\"${dir}/index.html\">${dir}</a></p></li>" >> "${HTML_PATH_DST}/index.html"
     done
 
@@ -113,9 +133,11 @@ EOL
 </html>
 EOL
 
-    # Create and commit the documentation repo.
+    cat "${HTML_PATH_DST}/index.html"
+
     git update-index -q --refresh
     if ! git diff-index --quiet HEAD --; then
+        echo "Commit documentation to the repo..."
         cd ${HTML_PATH_DST}
         git add .
         git config user.name "${COMMIT_USER}"

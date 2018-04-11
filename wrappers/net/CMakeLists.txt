@@ -86,7 +86,7 @@ set_property (
     SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing"
 )
 
-if (CMAKE_CROSSCOMPILING AND (APPLE OR ANDROID))
+if ( CMAKE_CROSSCOMPILING AND APPLE )
     set (WRAPPER_TYPE STATIC)
 else ()
     set (WRAPPER_TYPE SHARED)
@@ -100,7 +100,7 @@ swig_add_library (${CSHARP_MODULE_NAME}
 set (CSHARP_SWIG_TARGET_NAME ${SWIG_MODULE_${CSHARP_MODULE_NAME}_REAL_NAME})
 
 # todo remove patching for mono when the issue https://github.com/swig/swig/issues/1165 is closed.
-if (WRAPPER_TYPE STREQUAL "STATIC")
+if (WRAPPER_TYPE STREQUAL "STATIC" AND APPLE)
 
  set (delegate_expression "\"public delegate \"")
     set (set_pending_expression "\"static void SetPending\"")
@@ -171,8 +171,12 @@ if (UNIX AND NOT APPLE)
 endif ()
 
 # Configure assembly
+set (OUTPUT_NAME_PREF "")
+if (CMAKE_SYSTEM_NAME MATCHES "Android")
+    set (OUTPUT_NAME_PREF "lib")
+endif ()
 set_target_properties (${CSHARP_SWIG_TARGET_NAME}
-        PROPERTIES OUTPUT_NAME ${CSHARP_MODULE_NAME})
+        PROPERTIES OUTPUT_NAME "${OUTPUT_NAME_PREF}${CSHARP_MODULE_NAME}")
 set_target_properties (${CSHARP_SWIG_TARGET_NAME}
         PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CSHARP_BINARY_DIRECTORY})
 set_target_properties (${CSHARP_SWIG_TARGET_NAME}

@@ -368,7 +368,6 @@ if [[ "${TARGET_NAME}" == *"android"* ]]; then
         CMAKE_ARGS+=" -DLANG=java"
     elif [ "${TARGET_NAME}" == "net_android" ]; then
         CMAKE_ARGS+=" -DLANG=net"
-        CMAKE_ARGS+=" -DCMAKE_CROSSCOMPILING=ON"
     else
         show_usage "Unsupported target: ${TARGET_NAME}!"
     fi

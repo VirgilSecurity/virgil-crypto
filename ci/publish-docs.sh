@@ -134,16 +134,17 @@ EOL
 EOL
 
     cat "${HTML_PATH_DST}/index.html"
+    cd ${HTML_PATH_DST}
 
     git update-index -q --refresh
     if ! git diff-index --quiet HEAD --; then
         echo "Commit documentation to the repo..."
-        cd ${HTML_PATH_DST}
         git add .
         git config user.name "${COMMIT_USER}"
         git config user.email "${COMMIT_EMAIL}"
         git commit -m "Automated documentation build for changeset ${CHANGESET}."
         git push origin gh-pages
-        cd -
     fi
+
+    cd -
 fi

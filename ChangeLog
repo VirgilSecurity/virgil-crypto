@@ -1,5 +1,12 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.3.2 released 2018-04-11
+
+## Bugfix
+
+  * [CI] Fix and extend docs publishing
+
+
 = Version 2.3.1 released 2018-04-10
 
 ## Features

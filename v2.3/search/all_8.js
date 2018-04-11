@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['initdecryptionwithkey',['initDecryptionWithKey',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a1be3c0714335c9e129a514cba99ca1d3',1,'virgil::crypto::VirgilCipherBase']]],
+  ['initdecryptionwithpassword',['initDecryptionWithPassword',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a1e8ba5df3bfe5b825259cddf96e0a923',1,'virgil::crypto::VirgilCipherBase']]],
+  ['initencryption',['initEncryption',['../classvirgil_1_1crypto_1_1_virgil_cipher_base.html#a6e26949a2c3abd4fff8231996a42d275',1,'virgil::crypto::VirgilCipherBase']]],
+  ['invalidargument',['InvalidArgument',['../group__error.html#ggadde75c3db40120e9e64e386b3eaa7389a253ca7dd096ee0956cccee4d376cab8b',1,'virgil::crypto']]],
+  ['invalidauth',['InvalidAuth',['../group__error.html#ggadde75c3db40120e9e64e386b3eaa7389aa39aaf87ba244e71917032f4318434fd',1,'virgil::crypto']]],
+  ['invalidformat',['InvalidFormat',['../group__error.html#ggadde75c3db40120e9e64e386b3eaa7389ade236a235b4e8ffc9141676624753b2d',1,'virgil::crypto']]],
+  ['invalidprivatekey',['InvalidPrivateKey',['../group__error.html#ggadde75c3db40120e9e64e386b3eaa7389ad636775871bfcc359722b7e90d0b191d',1,'virgil::crypto']]],
+  ['invalidprivatekeypassword',['InvalidPrivateKeyPassword',['../group__error.html#ggadde75c3db40120e9e64e386b3eaa7389ab65ccbf6b5e47f3a1dacfb7dc775344d',1,'virgil::crypto']]],
+  ['invalidpublickey',['InvalidPublicKey',['../group__error.html#ggadde75c3db40120e9e64e386b3eaa7389a217256546c34c399282145abfb34dacb',1,'virgil::crypto']]],
+  ['invalidsignature',['InvalidSignature',['../group__error.html#ggadde75c3db40120e9e64e386b3eaa7389a351caf723532f9ba7a371b5dfa868eed',1,'virgil::crypto']]],
+  ['invalidstate',['InvalidState',['../group__error.html#ggadde75c3db40120e9e64e386b3eaa7389aedf260198e4d75d1cb3c7588f7380120',1,'virgil::crypto']]],
+  ['isauthmode',['isAuthMode',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#ad7c1b2b63af207c7e9beb8981a8e92e9',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
+  ['isdecryptionmode',['isDecryptionMode',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a59a5c34c192377e10e533d30a9925bc5',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
+  ['isempty',['isEmpty',['../classvirgil_1_1crypto_1_1pfs_1_1_virgil_p_f_s_private_key.html#a3bd3d54734bde74dba9b0b5e05c14132',1,'virgil::crypto::pfs::VirgilPFSPrivateKey::isEmpty()'],['../classvirgil_1_1crypto_1_1pfs_1_1_virgil_p_f_s_public_key.html#a98e76f254ea0d52f1d987c3b3f29787b',1,'virgil::crypto::pfs::VirgilPFSPublicKey::isEmpty()'],['../classvirgil_1_1crypto_1_1pfs_1_1_virgil_p_f_s_session.html#a39a539eff62612435a73f6eee0368256',1,'virgil::crypto::pfs::VirgilPFSSession::isEmpty()'],['../classvirgil_1_1crypto_1_1_virgil_custom_params.html#a2fb64f7d2cf294cd4ca40fc8c5b2747a',1,'virgil::crypto::VirgilCustomParams::isEmpty()']]],
+  ['isencryptionmode',['isEncryptionMode',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a5d4de6fc42fd059a866531fb90ee06fa',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
+  ['isgood',['isGood',['../classvirgil_1_1crypto_1_1stream_1_1_virgil_bytes_data_sink.html#ac6e2b80a37b321ae71617cf222a13912',1,'virgil::crypto::stream::VirgilBytesDataSink::isGood()'],['../classvirgil_1_1crypto_1_1stream_1_1_virgil_stream_data_sink.html#a60f3ef98c9574224d6a6f60d5af2a2b7',1,'virgil::crypto::stream::VirgilStreamDataSink::isGood()'],['../classvirgil_1_1crypto_1_1_virgil_data_sink.html#aefb323aac3299b5d0fd4816cd18c066e',1,'virgil::crypto::VirgilDataSink::isGood()']]],
+  ['iskeypairmatch',['isKeyPairMatch',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#a0fe2bb8da18f3ae064a9299df7441e3e',1,'virgil::crypto::foundation::VirgilAsymmetricCipher::isKeyPairMatch()'],['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a1bf7727e72fdd0d36fc641069f0bdf07',1,'virgil::crypto::VirgilKeyPair::isKeyPairMatch()']]],
+  ['ispackagesaccumulated',['isPackagesAccumulated',['../classvirgil_1_1crypto_1_1_virgil_tiny_cipher.html#a4723235c75a32cfcb573072e723ef0c3',1,'virgil::crypto::VirgilTinyCipher']]],
+  ['isprivatekeyencrypted',['isPrivateKeyEncrypted',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#ab77b33af55c9d31256908cabdcae94a3',1,'virgil::crypto::foundation::VirgilAsymmetricCipher::isPrivateKeyEncrypted()'],['../classvirgil_1_1crypto_1_1_virgil_key_pair.html#a6068de784feacb1f10c6f2ea61013ad7',1,'virgil::crypto::VirgilKeyPair::isPrivateKeyEncrypted()']]],
+  ['ispublickeyvalid',['isPublicKeyValid',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_asymmetric_cipher.html#ae4892176f74a0c8bce2fd9718fc8486c',1,'virgil::crypto::foundation::VirgilAsymmetricCipher']]],
+  ['issupportpadding',['isSupportPadding',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#ae9b3d42d91288889972e761cdb5e1e86',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
+  ['iv',['iv',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#ab9ccf4ec334c3e6bf702a4f22ab119b1',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]],
+  ['ivsize',['ivSize',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a78d74151117acaf5e8ee08b40d936458',1,'virgil::crypto::foundation::VirgilSymmetricCipher']]]
+];

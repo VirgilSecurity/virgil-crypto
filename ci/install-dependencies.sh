@@ -75,10 +75,10 @@ else
     tar xvfz cmake-${CMAKE_VERSION}.tar.gz
     cd cmake-${CMAKE_VERSION}
     ./bootstrap
-    make -j4
+    make -j4 >/dev/null
 fi
 
-sudo make install
+sudo make install >/dev/null
 
 cd -
 
@@ -91,11 +91,11 @@ else
     travis_retry wget http://downloads.sourceforge.net/swig/swig-${SWIG_VERSION}.tar.gz
     tar -xzf swig-${SWIG_VERSION}.tar.gz
     cd swig-${SWIG_VERSION}
-    ./configure
-    make -j4
+    ./configure >/dev/null
+    make -j4 >/dev/null
 fi
 
-sudo make install
+sudo make install >/dev/null
 
 cd -
 

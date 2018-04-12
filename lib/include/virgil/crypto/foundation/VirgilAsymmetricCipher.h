@@ -196,6 +196,7 @@ public:
      * This is a deterministic key generation algorithm that allows create private key
      * from any secret data, i.e. password.
      *
+     * @param type - keypair type.
      * @param keyMaterial - the only data to be used for key generation, must be strong enough.
      *
      * @throw VirgilCryptoException with VirgilCryptoError::UnsupportedAlgorithm,

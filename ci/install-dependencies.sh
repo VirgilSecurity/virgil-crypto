@@ -78,7 +78,7 @@ else
     tar xvfz cmake-${CMAKE_VERSION}.tar.gz
     cd cmake-${CMAKE_VERSION}
     ./bootstrap
-    make -j4 >/dev/null
+    make -j8 >/dev/null
 fi
 
 sudo make install >/dev/null
@@ -95,7 +95,7 @@ else
     tar -xzf swig-${SWIG_VERSION}.tar.gz
     cd swig-${SWIG_VERSION}
     ./configure >/dev/null
-    make -j4 >/dev/null
+    make -j8 >/dev/null
 fi
 
 sudo make install >/dev/null

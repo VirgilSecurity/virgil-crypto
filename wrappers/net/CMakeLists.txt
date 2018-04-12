@@ -101,40 +101,12 @@ set (CSHARP_SWIG_TARGET_NAME ${SWIG_MODULE_${CSHARP_MODULE_NAME}_REAL_NAME})
 
 # todo remove patching for mono when the issue https://github.com/swig/swig/issues/1165 is closed.
 if (WRAPPER_TYPE STREQUAL "STATIC" AND APPLE)
-
- set (delegate_expression "\"public delegate \"")
-    set (set_pending_expression "\"static void SetPending\"")
-    set (set_pending_argument_expression "\"static void SetPendingArgument\"")
-    set (create_string_expression "\"static string CreateString\"")
-    set (get_array_size_expression "\"static int GetManaged_byte_ArraySize\"")
-    set (create_managed_array_expression "\"static System.IntPtr CreateManaged_byte_Array\"")
-    set (copy_to_unmanaged_expression "\"static void CopyToUnmanaged_byte_Array\"")
-    set (get_array_size_expression "\"static int GetManaged_byte_ArraySize\"")
-    set (get_array_size_expression "\"static int GetManaged_byte_ArraySize\"")
-    set (mono_callback "[global::ObjCRuntime.MonoPInvokeCallback\(typeof\(")
-    set (new_line "\\n")
-
     add_custom_command (TARGET ${CSHARP_SWIG_TARGET_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND}
         ARGS
+            -DCSHARP_MODULE_NAME:STRING="${CSHARP_MODULE_NAME}"
             -DSRC:PATH="${CSHARP_SWIG_OUTPUT_DIRECTORY}/${CSHARP_MODULE_NAME}PINVOKE.cs"
-            -DDLL_IMPORT_REGEXP:STRING="DllImport\\\(\\\"${CSHARP_MODULE_NAME}\\\""
-            -DDLL_IMPORT_REPLACE_EXPR:STRING="DllImport\(\\\"__Internal\\\""
-            -DDELEGATE_REGEXP:STRING="${delegate_expression}"
-            -DDELEGATE_REPLACE_EXPR:STRING="[global::ObjCRuntime.MonoNativeFunctionWrapper]${new_line}${delegate_expression}"
-            -DSET_PENDING_REGEXP:STRING="${set_pending_expression}"
-            -DSET_PENDING_REPLACE_EXPR:STRING="${mono_callback}ExceptionDelegate\)\)]${new_line}${set_pending_expression}"
-            -DSET_PENDING_ARGUMENT_REGEXP:STRING="ExceptionDelegate\\\)\\\)].?${set_pending_argument_expression}"
-            -DSET_PENDING_ARGUMENT_REPLACE_EXPR:STRING="ExceptionArgumentDelegate\)\)]${new_line}${set_pending_argument_expression}"
-            -DCREATE_STRING_REGEXP:STRING="${create_string_expression}"
-            -DCREATE_STRING_REPLACE_EXPR:STRING="${mono_callback}SWIGStringDelegate\)\)]${new_line}${create_string_expression}"
-            -DCREATE_MANAGED_ARRAY_REGEXP:STRING="${create_managed_array_expression}"
-            -DCREATE_MANAGED_ARRAY_REPLACE_EXPR:STRING="${mono_callback}CreateManaged_byte_ArrayDelegate\)\)]${new_line}${create_managed_array_expression}"
-            -DGET_ARRAY_SIZE_REGEXP:STRING="${get_array_size_expression}"
-            -DGET_ARRAY_SIZE_REPLACE_EXPR:STRING="${mono_callback}GetManaged_byte_ArraySizeDelegate\)\)]${new_line}${get_array_size_expression}"
-            -DCOPY_TO_UNMANAGED_REGEXP:STRING="${copy_to_unmanaged_expression}"
-            -DCOPY_TO_UNMANAGED_REPLACE_EXPR:STRING="${mono_callback}CopyToUnmanaged_byte_ArrayDelegate\)\)]${new_line}${copy_to_unmanaged_expression}"
-            -P ${CMAKE_SOURCE_DIR}/cmake/file_regex_replace_mono.cmake
+            -P ${CMAKE_SOURCE_DIR}/cmake/add_mono_metadata.cmake
         COMMENT "Patch generated source files for mono."
     )
 endif ()
@@ -171,12 +143,11 @@ if (UNIX AND NOT APPLE)
 endif ()
 
 # Configure assembly
-set (OUTPUT_NAME_PREF "")
 if (CMAKE_SYSTEM_NAME MATCHES "Android")
-    set (OUTPUT_NAME_PREF "lib")
+    set (PREFIX_LIB "lib")
 endif ()
 set_target_properties (${CSHARP_SWIG_TARGET_NAME}
-        PROPERTIES OUTPUT_NAME "${OUTPUT_NAME_PREF}${CSHARP_MODULE_NAME}")
+        PROPERTIES OUTPUT_NAME "${PREFIX_LIB}${CSHARP_MODULE_NAME}")
 set_target_properties (${CSHARP_SWIG_TARGET_NAME}
         PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CSHARP_BINARY_DIRECTORY})
 set_target_properties (${CSHARP_SWIG_TARGET_NAME}

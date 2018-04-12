@@ -43,8 +43,18 @@ namespace virgil {
 namespace crypto {
 namespace pythia {
 
+/**
+ * @brief Handles result of the method VirgilPythia::blind().
+ * @ingroup pythia
+ */
 class VirgilPythiaBlindResult {
 public:
+    /**
+     * @brief Encapsulate given data.
+     *
+     * @param blindedPassword - G1 password obfuscated into a pseudo-random string.
+     * @param blindingSecret - BN random value used to blind user's password.
+     */
     explicit VirgilPythiaBlindResult(
             VirgilByteArray blindedPassword, VirgilByteArray blindingSecret)
             : blindedPassword_(std::move(blindedPassword)),
@@ -53,10 +63,16 @@ public:
         auto a = 5;
     }
 
+    /**
+     * @return G1 password obfuscated into a pseudo-random string.
+     */
     const VirgilByteArray& blindedPassword() const {
         return blindedPassword_;
     }
 
+    /**
+     * @return BN random value used to blind user's password.
+     */
     const VirgilByteArray& blindingSecret() const {
         return blindingSecret_;
     }

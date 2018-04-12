@@ -43,11 +43,23 @@ namespace virgil {
 namespace crypto {
 namespace pythia {
 
+/**
+ * @brief Handles result of the method VirgilPythia::verify().
+ * @ingroup pythia
+ */
 class VirgilPythiaVerifyResult {
 public:
+    /**
+     * @brief Encapsulate given data.
+     *
+     * @param verified - verification result
+     */
     explicit VirgilPythiaVerifyResult(bool verified) : verified_(verified) {
     }
 
+    /**
+     * @return verification result.
+     */
     bool verified() const {
         return verified_;
     }

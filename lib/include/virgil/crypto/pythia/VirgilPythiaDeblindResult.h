@@ -43,12 +43,26 @@ namespace virgil {
 namespace crypto {
 namespace pythia {
 
+/**
+ * @brief Handles result of the method VirgilPythia::deblind().
+ * @ingroup pythia
+ */
 class VirgilPythiaDeblindResult {
 public:
+    /**
+     * @brief Encapsulate given data.
+     *
+     * @param deblindedPassword - GT deblinded transformed_password value.
+     *        This value is not equal to password and is zero-knowledge protected.
+     */
     explicit VirgilPythiaDeblindResult(VirgilByteArray deblindedPassword)
             : deblindedPassword_(std::move(deblindedPassword)) {
     }
 
+    /**
+     * @return GT deblinded transformed_password value.
+     *         This value is not equal to password and is zero-knowledge protected.
+     */
     const VirgilByteArray deblindedPassword() const {
         return deblindedPassword_;
     }

@@ -53,6 +53,8 @@ namespace pythia {
  * Usage:
  *      This class object must be defined as a function local variable, or
  *      non-static class member.
+ *
+ * @ingroup pythia
  */
 class VirgilPythiaContext {
 public:

@@ -43,7 +43,6 @@ env:
     - PROJECT_ROOT=${TRAVIS_BUILD_DIR}
     - CMAKE_VERSION=3.10.2
     - SWIG_VERSION=3.0.12
-    - DOXYGEN_VERSION=1.8.13
 cache:
   directories:
     - cmake-${CMAKE_VERSION}

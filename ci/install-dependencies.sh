@@ -50,6 +50,9 @@ travis_retry sudo apt-get -qq update
 ######################################## Utils
 travis_retry sudo apt-get install -y -qq software-properties-common
 
+######################################## Doxygen
+travis_retry sudo apt-get install -y --force-yes -qq doxygen
+
 ######################################## Compilers
 if [[ "${CC}" == "gcc-5" ]]; then
     travis_retry sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
@@ -98,9 +101,6 @@ fi
 sudo make install >/dev/null
 
 cd -
-
-######################################## Doxygen
-travis_retry sudo apt-get install doxygen
 
 ####################################### PHP & PHPUnit
 if [[ "${LANG}" == "php" ]]; then

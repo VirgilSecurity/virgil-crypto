@@ -43,8 +43,22 @@ namespace virgil {
 namespace crypto {
 namespace pythia {
 
+/**
+ * @brief Handles result of the method VirgilPythia::transform().
+ * @ingroup pythia
+ */
 class VirgilPythiaTransformResult {
 public:
+    /**
+     * @brief Encapsulate given data.
+     *
+     * @param transformedPassword - GT blinded password, protected using server secret
+     *        (pythia_secret + pythia_scope_secret + tweak).
+     * @param transformationPrivateKey - BN Pythia's private key which was generated using pythia_secret
+     *        and pythia_scope_secret. This key is used to emit proof tokens (proofValueC, proofValueU).
+     * @param transformedTweak - G2 tweak value turned into an elliptic curve point.
+     *        This value is used by Prove() operation.
+     */
     explicit VirgilPythiaTransformResult(
             VirgilByteArray transformedPassword, VirgilByteArray transformationPrivateKey,
             VirgilByteArray transformedTweak)
@@ -53,14 +67,26 @@ public:
               transformedTweak_(std::move(transformedTweak)) {
     }
 
+    /**
+     * @return GT blinded password, protected using server secret
+     *        (pythia_secret + pythia_scope_secret + tweak).
+     */
     const VirgilByteArray& transformedPassword() const {
         return transformedPassword_;
     }
 
+    /**
+     * @return BN Pythia's private key which was generated using pythia_secret and pythia_scope_secret.
+     *         This key is used to emit proof tokens (proofValueC, proofValueU).
+     */
     const VirgilByteArray& transformationPrivateKey() const {
         return transformationPrivateKey_;
     }
 
+    /**
+     * @return G2 tweak value turned into an elliptic curve point.
+     *         This value is used by VirgilPythia::prove() operation.
+     */
     const VirgilByteArray& transformedTweak() const {
         return transformedTweak_;
     }

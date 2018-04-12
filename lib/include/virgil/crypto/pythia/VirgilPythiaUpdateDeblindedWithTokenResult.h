@@ -43,12 +43,24 @@ namespace virgil {
 namespace crypto {
 namespace pythia {
 
+/**
+ * @brief Handles result of the method VirgilPythia::updateDeblindedWithToken().
+ * @ingroup pythia
+ */
 class VirgilPythiaUpdateDeblindedWithTokenResult {
 public:
+    /**
+     * @brief Encapsulate given data.
+     *
+     * @param updatedDeblindedPassword - GT new deblinded password.
+     */
     explicit VirgilPythiaUpdateDeblindedWithTokenResult(VirgilByteArray updatedDeblindedPassword)
             : updatedDeblindedPassword_(std::move(updatedDeblindedPassword)) {
     }
 
+    /**
+     * @return GT new deblinded password.
+     */
     const VirgilByteArray& updatedDeblindedPassword() const {
         return updatedDeblindedPassword_;
     }

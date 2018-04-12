@@ -48,6 +48,7 @@ namespace pythia {
 /**
  * @brief Error category that handles error codes from the system crypto library.
  * @ingroup error
+ * @ingroup pythia
  */
 class VirgilPythiaErrorCategory : public std::error_category {
 public:

@@ -43,19 +43,38 @@ namespace virgil {
 namespace crypto {
 namespace pythia {
 
+/**
+ * @brief Handles result of the method VirgilPythia::getPasswordUpdateToken().
+ * @ingroup pythia
+ */
 class VirgilPythiaGetPasswordUpdateTokenResult {
 public:
+    /**
+     * @brief Encapsulate given data.
+     *
+     * @param passwordUpdateToken - BN value that allows to update all deblinded passwords (one by one)
+     *        after server issued new pythia_secret or pythia_scope_secret.
+     * @param updatedTransformationPublicKey - G1 public key corresponding to the new
+     *        transformation_private_key after issuing password_update_token.
+     */
     explicit VirgilPythiaGetPasswordUpdateTokenResult(
             VirgilByteArray passwordUpdateToken, VirgilByteArray updatedTransformationPublicKey)
             : passwordUpdateToken_(std::move(passwordUpdateToken)),
               updatedTransformationPublicKey_(std::move(updatedTransformationPublicKey)) {
     }
 
-public:
+    /**
+     * @return BN value that allows to update all deblinded passwords (one by one)
+     *         after server issued new pythia_secret or pythia_scope_secret.
+     */
     const VirgilByteArray& passwordUpdateToken() const {
         return passwordUpdateToken_;
     }
 
+    /**
+     * @return G1 public key corresponding to the new
+     *         transformation_private_key after issuing password_update_token.
+     */
     const VirgilByteArray& updatedTransformationPublicKey() const {
         return updatedTransformationPublicKey_;
     }

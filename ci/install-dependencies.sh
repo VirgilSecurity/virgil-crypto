@@ -100,11 +100,7 @@ sudo make install
 cd -
 
 ######################################## Doxygen
-echo "Download Doxygen version ${DOXYGEN_VERSION} ..."
-travis_retry wget http://ftp.stack.nl/pub/users/dimitri/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
-tar -xzf doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
-sudo mv doxygen-${DOXYGEN_VERSION}/bin/doxygen /usr/bin/doxygen
-cd -
+travis_retry sudo apt-get install doxygen
 
 ####################################### PHP & PHPUnit
 if [[ "${LANG}" == "php" ]]; then

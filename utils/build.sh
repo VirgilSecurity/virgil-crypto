@@ -465,7 +465,7 @@ if [ "${TARGET_NAME}" == "net_ios" ]; then
                         -DINSTALL_LIB_DIR_NAME=lib/sim32 "${SRC_DIR}"
     make -j8 install
 
-    # Build for i386 simulator (Pythia is in a multi-thread mode!!!)
+    # Build for x86_64 simulator (Pythia is in a multi-thread mode!!!)
     rm -fr -- *
     cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=IOS_SIM64 \
                         -DVIRGIL_CRYPTO_FEATURE_PYTHIA_MT=ON \

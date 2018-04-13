@@ -67,13 +67,13 @@ set (exception_set_pending_argument_replace "ExceptionArgumentDelegate\)\)]${new
 set (create_string_expr "static string CreateString")
 set (create_string_replace "${mono_callback}SWIGStringDelegate\)\)]${new_line}${create_string_expr}")
 
-set (create_managed_array_expr "\"static System.IntPtr CreateManaged_byte_Array\"")
+set (create_managed_array_expr "static System.IntPtr CreateManaged_byte_Array")
 set (create_managed_array_replace "${mono_callback}CreateManaged_byte_ArrayDelegate\)\)]${new_line}${create_managed_array_expr}")
 
-set (get_array_size_expr "\"static int GetManaged_byte_ArraySize\"")
+set (get_array_size_expr "static int GetManaged_byte_ArraySize")
 set (get_array_size_replace "${mono_callback}GetManaged_byte_ArraySizeDelegate\)\)]${new_line}${get_array_size_expr}")
 
-set (copy_to_unmanaged_expr "\"static void CopyToUnmanaged_byte_Array\"")
+set (copy_to_unmanaged_expr "static void CopyToUnmanaged_byte_Array")
 set (copy_to_unmanaged_replace "${mono_callback}CopyToUnmanaged_byte_ArrayDelegate\)\)]${new_line}${copy_to_unmanaged_expr}")
 
 # replace .DllImport("...." to .DllImport("__Internal" 

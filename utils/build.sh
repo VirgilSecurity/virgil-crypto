@@ -186,6 +186,8 @@ function make_fat_library {
 
     LIBMBEDTLS="libmbedcrypto.a"
     LIBED25519="libed25519.a"
+    LIBRELIC="librelic_s.a"
+    LIBPYTHIA="libpythia.a"
     LIBVIRGIL="libvirgil_crypto.a"
     if [ ! -z "${WRAPPER_NAME}" ]; then
         LIBVIRGIL_WRAPPER="virgil_crypto_${WRAPPER_NAME}.a"
@@ -200,6 +202,12 @@ function make_fat_library {
     # Find all archs of library ed25519
     LIBED25519_LIBS=$(find "${INDIR}" -name "${LIBED25519}" | tr '\n' ' ')
 
+    # Find all archs of library relic
+    LIBRELIC_LIBS=$(find "${INDIR}" -name "${LIBRELIC}" | tr '\n' ' ')
+
+    # Find all archs of library pythia
+    LIBPYTHIA_LIBS=$(find "${INDIR}" -name "${LIBPYTHIA}" | tr '\n' ' ')
+
     # Find all archs of library Virgil Crypto
     LIBVIRGIL_LIBS=$(find "${INDIR}" -name "${LIBVIRGIL}" | tr '\n' ' ')
 
@@ -210,7 +218,10 @@ function make_fat_library {
 
     xcrun lipo -create ${LIBMBEDTLS_LIBS} -output "$OUTDIR/$LIBMBEDTLS"
     xcrun lipo -create ${LIBED25519_LIBS} -output "$OUTDIR/$LIBED25519"
+    xcrun lipo -create ${LIBRELIC_LIBS} -output "$OUTDIR/$LIBRELIC"
+    xcrun lipo -create ${LIBPYTHIA_LIBS} -output "$OUTDIR/$LIBPYTHIA"
     xcrun lipo -create ${LIBVIRGIL_LIBS} -output "$OUTDIR/$LIBVIRGIL"
+
     if [ ! -z "${LIBVIRGIL_WRAPPER_LIBS}" ]; then
         LIBVIRGIL_WRAPPER_FAT="$OUTDIR/$LIBVIRGIL_WRAPPER"
         xcrun lipo -create ${LIBVIRGIL_WRAPPER_LIBS} -output "$LIBVIRGIL_WRAPPER_FAT"
@@ -218,12 +229,15 @@ function make_fat_library {
 
     # Merge several static libraries in one static library which will actually be framework
     xcrun libtool -static -o "$OUTDIR/$LIB_FAT_NAME" \
-            "$OUTDIR/$LIBMBEDTLS" "$OUTDIR/$LIBED25519" "$OUTDIR/$LIBVIRGIL" "$LIBVIRGIL_WRAPPER_FAT"
+            "$OUTDIR/$LIBMBEDTLS" "$OUTDIR/$LIBED25519" "$OUTDIR/$LIBRELIC" \
+            "$OUTDIR/$LIBPYTHIA" "$OUTDIR/$LIBVIRGIL" "$LIBVIRGIL_WRAPPER_FAT"
 
     # Cleanup
     rm -f "$OUTDIR/$LIBMBEDTLS"
     rm -f "$OUTDIR/$LIBED25519"
     rm -f "$OUTDIR/$LIBVIRGIL"
+    rm -f "$OUTDIR/$LIBRELIC"
+    rm -f "$OUTDIR/$LIBPYTHIA"
     if [ -f "${LIBVIRGIL_WRAPPER_FAT}" ]; then
         rm -f "${LIBVIRGIL_WRAPPER_FAT}"
     fi
@@ -354,6 +368,7 @@ if [ "${TARGET_NAME}" == "ios" ]; then
     cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=IOS_SIM32 \
                         -DVIRGIL_CRYPTO_FEATURE_PYTHIA_MT=OFF \
                         -DINSTALL_LIB_DIR_NAME=lib/sim32 "${SRC_DIR}"
+
     make -j8 install
 
     # Build for i386 simulator (Pythia is in a multi-thread mode!!!)
@@ -451,7 +466,7 @@ if [ "${TARGET_NAME}" == "net_ios" ]; then
                         -DINSTALL_LIB_DIR_NAME=lib/sim32 "${SRC_DIR}"
     make -j8 install
 
-    # Build for i386 simulator (Pythia is in a multi-thread mode!!!)
+    # Build for x86_64 simulator (Pythia is in a multi-thread mode!!!)
     rm -fr -- *
     cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=IOS_SIM64 \
                         -DVIRGIL_CRYPTO_FEATURE_PYTHIA_MT=ON \

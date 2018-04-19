@@ -34,8 +34,8 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef VIRGIL_PYTHIA_GET_PASSWORD_UPDATE_TOKEN_RESULT_H
-#define VIRGIL_PYTHIA_GET_PASSWORD_UPDATE_TOKEN_RESULT_H
+#ifndef VIRGIL_PYTHIA_TRANSFORMATION_KEY_PAIR_H
+#define VIRGIL_PYTHIA_TRANSFORMATION_KEY_PAIR_H
 
 #include "../VirgilByteArray.h"
 
@@ -44,48 +44,44 @@ namespace crypto {
 namespace pythia {
 
 /**
- * @brief Handles result of the method VirgilPythia::getPasswordUpdateToken().
+ * @brief Handles result of the method VirgilPythia::computeTransformationKeyPair().
  * @ingroup pythia
  */
-class VirgilPythiaGetPasswordUpdateTokenResult {
+class VirgilPythiaTransformationKeyPair {
 public:
     /**
      * @brief Encapsulate given data.
      *
-     * @param passwordUpdateToken - BN value that allows to update all deblinded passwords (one by one)
-     *        after server issued new pythia_secret or pythia_scope_secret.
-     * @param updatedTransformationPublicKey - G1 public key corresponding to the new
-     *        transformation_private_key after issuing password_update_token.
+     * @param privateKey - BN transformation private key.
+     * @param publicKey - G1 Transformation public key.
      */
-    explicit VirgilPythiaGetPasswordUpdateTokenResult(
-            VirgilByteArray passwordUpdateToken, VirgilByteArray updatedTransformationPublicKey)
-            : passwordUpdateToken_(std::move(passwordUpdateToken)),
-              updatedTransformationPublicKey_(std::move(updatedTransformationPublicKey)) {
+    explicit VirgilPythiaTransformationKeyPair(
+            VirgilByteArray privateKey, VirgilByteArray publicKey)
+            : privateKey_(std::move(privateKey)),
+              publicKey_(std::move(publicKey)) {
     }
 
     /**
-     * @return BN value that allows to update all deblinded passwords (one by one)
-     *         after server issued new pythia_secret or pythia_scope_secret.
+     * @return G1 Transformation public key.
      */
-    const VirgilByteArray& passwordUpdateToken() const {
-        return passwordUpdateToken_;
+    const VirgilByteArray& publicKey() const {
+        return publicKey_;
     }
 
     /**
-     * @return G1 public key corresponding to the new
-     *         transformation_private_key after issuing password_update_token.
+     * @return BN transformation private key.
      */
-    const VirgilByteArray& updatedTransformationPublicKey() const {
-        return updatedTransformationPublicKey_;
+    const VirgilByteArray& privateKey() const {
+        return privateKey_;
     }
 
 private:
-    const VirgilByteArray passwordUpdateToken_;
-    const VirgilByteArray updatedTransformationPublicKey_;
+    const VirgilByteArray privateKey_;
+    const VirgilByteArray publicKey_;
 };
 
 } // namespace pythia
 } // namespace crypto
 } // namespace virgil
 
-#endif /* VIRGIL_PYTHIA_GET_PASSWORD_UPDATE_TOKEN_RESULT_H */
+#endif /* VIRGIL_PYTHIA_TRANSFORMATION_KEY_PAIR_H */

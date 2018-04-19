@@ -41,10 +41,9 @@
 #include "VirgilPythiaBlindResult.h"
 #include "VirgilPythiaContext.h"
 #include "VirgilPythiaDeblindResult.h"
-#include "VirgilPythiaGetPasswordUpdateTokenResult.h"
+#include "VirgilPythiaTransformationKeyPair.h"
 #include "VirgilPythiaProveResult.h"
 #include "VirgilPythiaTransformResult.h"
-#include "VirgilPythiaUpdateDeblindedWithTokenResult.h"
 #include "VirgilPythiaVerifyResult.h"
 
 namespace virgil {
@@ -74,22 +73,6 @@ public:
     VirgilPythiaBlindResult blind(const VirgilByteArray& password);
 
     /**
-     * @brief Transforms blinded password using the private key, generated from pythiaSecret + pythiaScopeSecret.
-     *
-     * @param blindedPassword - G1 password obfuscated into a pseudo-random string.
-     * @param transformationKeyID - ensemble key ID used to enclose operations in subsets.
-     * @param tweak - some random value used to transform a password
-     * @param pythiaSecret - global common for all secret random Key.
-     * @param pythiaScopeSecret - ensemble secret generated and versioned transparently.
-     *
-     * @return VirgilPythiaTransformResult
-     */
-    VirgilPythiaTransformResult transform(
-            const VirgilByteArray& blindedPassword, const VirgilByteArray& transformationKeyID,
-            const VirgilByteArray& tweak, const VirgilByteArray& pythiaSecret,
-            const VirgilByteArray& pythiaScopeSecret);
-
-    /**
      * @brief Deblinds transformedPassword value with previously returned blindingSecret from blind().
      *
      * @param transformedPassword - GT transformed password from transform().
@@ -101,18 +84,46 @@ public:
     deblind(const VirgilByteArray& transformedPassword, const VirgilByteArray& blindingSecret);
 
     /**
+     * @brief Computes transformation private and public key.
+     *
+     * @param transformationKeyID - ensemble key ID used to enclose operations in subsets.
+     * @param pythiaSecret - global common for all secret random Key.
+     * @param pythiaScopeSecret - ensemble secret generated and versioned transparently.
+     *
+     * @return VirgilPythiaTransformationKeyPair
+     */
+    VirgilPythiaTransformationKeyPair
+    computeTransformationKeyPair(const VirgilByteArray& transformationKeyID, const VirgilByteArray& pythiaSecret,
+                                 const VirgilByteArray& pythiaScopeSecret);
+
+    /**
+     * @brief Transforms blinded password using the private key, generated from pythiaSecret + pythiaScopeSecret.
+     *
+     * @param blindedPassword - G1 password obfuscated into a pseudo-random string.
+     * @param tweak - some random value used to identify user
+     * @param transformationPrivateKey - BN transformation private key.
+     *
+     * @return VirgilPythiaTransformResult
+     */
+    VirgilPythiaTransformResult transform(
+            const VirgilByteArray& blindedPassword, const VirgilByteArray& tweak,
+            const VirgilByteArray& transformationPrivateKey);
+
+    /**
      * @brief Generates proof that server possesses secret values that were used to transform password.
      *
      * @param transformedPassword - GT transformed password from transform()
      * @param blindedPassword - G1 blinded password from blind().
      * @param transformedTweak - G2 transformed tweak from transform().
-     * @param transformationPrivateKey - BN transformation private key from transform().
+     * @param transformationPrivateKey - BN transformation private key.
+     * @param transformationPublicKey - G1 public key corresponding to transformation_private_key.
      *
      * @return VirgilPythiaProveResult
      */
     VirgilPythiaProveResult
     prove(const VirgilByteArray& transformedPassword, const VirgilByteArray& blindedPassword,
-          const VirgilByteArray& transformedTweak, const VirgilByteArray& transformationPrivateKey);
+          const VirgilByteArray& transformedTweak, const VirgilByteArray& transformationPrivateKey,
+          const VirgilByteArray& transformationPublicKey);
 
     /**
      * @brief Verifies the output of transform().
@@ -123,7 +134,7 @@ public:
      * @param transformedPassword - GT transformed password from transform()
      * @param blindedPassword - G1 blinded password from blind().
      * @param tweak - tweak from transform()
-     * @param transformationPublicKey - G1 transformation public key from prove()
+     * @param transformationPublicKey - G1 transformation public key
      * @param proofValueC - BN proof value C from prove()
      * @param proofValueU - BN proof value U from prove()
      *
@@ -135,27 +146,19 @@ public:
            const VirgilByteArray& proofValueC, const VirgilByteArray& proofValueU);
 
     /**
-     * @brief Updates transformationKeyID, pythiaSecret and scopeSecret.
+     * @brief Computes update token.
      *
-     * Rotates previousTransformationKeyID, previousPythiaSecret, previousPythiaScopeSecret and generates a
-     * passwordUpdateToken that can update deblindedPassword. This action should increment version of
-     * the pythiaScopeSecret.
+     * Computes update token which allows update deblindedPassword when rotating transformation private key
+     * This action should increment version of pythiaScopeSecret.
      *
-     * @param previousTransformationKeyID - previous transformation key id
-     * @param previousPythiaSecret - previous pythia secret
-     * @param previousPythiaScopeSecret - previous pythia scope secret
-     * @param newTransformationKeyID - new transformation key id
-     * @param newPythiaSecret - new pythia secret
-     * @param newPythiaScopeSecret - new pythia scope secret
+     * @param previousTransformationPrivateKey - transformation private key
+     * @param newTransformationPrivateKey - new transformation private key
      *
-     * @return VirgilPythiaGetPasswordUpdateTokenResult
+     * @return VirgilBteArray
      */
-    VirgilPythiaGetPasswordUpdateTokenResult getPasswordUpdateToken(
-            const VirgilByteArray& previousTransformationKeyID,
-            const VirgilByteArray& previousPythiaSecret,
-            const VirgilByteArray& previousPythiaScopeSecret,
-            const VirgilByteArray& newTransformationKeyID, const VirgilByteArray& newPythiaSecret,
-            const VirgilByteArray& newPythiaScopeSecret);
+    VirgilByteArray getPasswordUpdateToken(
+            const VirgilByteArray& previousTransformationPrivateKey,
+            const VirgilByteArray& newTransformationPrivateKey);
 
     /**
      * @brief Updates previously stored deblindedPassword with passwordUpdateToken.
@@ -165,9 +168,9 @@ public:
      * @param deblindedPassword - GT previous deblinded password from deblind().
      * @param passwordUpdateToken - BN password update token from getPasswordUpdateToken().
      *
-     * @return VirgilPythiaUpdateDeblindedWithTokenResult
+     * @return VirgilByteArray
      */
-    VirgilPythiaUpdateDeblindedWithTokenResult updateDeblindedWithToken(
+    VirgilByteArray updateDeblindedWithToken(
             const VirgilByteArray& deblindedPassword, const VirgilByteArray& passwordUpdateToken);
 
 private:

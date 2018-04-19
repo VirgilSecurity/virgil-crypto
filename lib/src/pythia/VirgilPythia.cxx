@@ -50,10 +50,9 @@ using virgil::crypto::pythia::VirgilPythia;
 using virgil::crypto::pythia::VirgilPythiaBlindResult;
 using virgil::crypto::pythia::VirgilPythiaContext;
 using virgil::crypto::pythia::VirgilPythiaDeblindResult;
-using virgil::crypto::pythia::VirgilPythiaGetPasswordUpdateTokenResult;
+using virgil::crypto::pythia::VirgilPythiaTransformationKeyPair;
 using virgil::crypto::pythia::VirgilPythiaProveResult;
 using virgil::crypto::pythia::VirgilPythiaTransformResult;
-using virgil::crypto::pythia::VirgilPythiaUpdateDeblindedWithTokenResult;
 using virgil::crypto::pythia::VirgilPythiaVerifyResult;
 
 class buffer_bind_out {
@@ -104,26 +103,6 @@ VirgilPythiaBlindResult VirgilPythia::blind(const VirgilByteArray& password) {
     return VirgilPythiaBlindResult(std::move(blindedPassword), std::move(blindingSecret));
 }
 
-VirgilPythiaTransformResult VirgilPythia::transform(
-        const VirgilByteArray& blindedPassword, const VirgilByteArray& transformationKeyID,
-        const VirgilByteArray& tweak, const VirgilByteArray& pythiaSecret,
-        const VirgilByteArray& pythiaScopeSecret) {
-
-    VirgilByteArray transformedPassword(PYTHIA_GT_BUF_SIZE);
-    VirgilByteArray transformationPrivateKey(PYTHIA_BN_BUF_SIZE);
-    VirgilByteArray transformedTweak(PYTHIA_G2_BUF_SIZE);
-
-    pythia_handler(pythia_w_transform(
-            buffer_bind_in(blindedPassword), buffer_bind_in(transformationKeyID),
-            buffer_bind_in(tweak), buffer_bind_in(pythiaSecret), buffer_bind_in(pythiaScopeSecret),
-            buffer_bind_out(transformedPassword), buffer_bind_out(transformationPrivateKey),
-            buffer_bind_out(transformedTweak)));
-
-    return VirgilPythiaTransformResult(
-            std::move(transformedPassword), std::move(transformationPrivateKey),
-            std::move(transformedTweak));
-}
-
 VirgilPythiaDeblindResult VirgilPythia::deblind(
         const VirgilByteArray& transformedPassword, const VirgilByteArray& blindingSecret) {
 
@@ -136,22 +115,51 @@ VirgilPythiaDeblindResult VirgilPythia::deblind(
     return VirgilPythiaDeblindResult(std::move(deblindedPassword));
 }
 
+VirgilPythiaTransformationKeyPair VirgilPythia::computeTransformationKeyPair(
+        const virgil::crypto::VirgilByteArray &transformationKeyID, const virgil::crypto::VirgilByteArray &pythiaSecret,
+        const virgil::crypto::VirgilByteArray &pythiaScopeSecret) {
+
+    VirgilByteArray transformationPrivateKey(PYTHIA_BN_BUF_SIZE);
+    VirgilByteArray transformationPublicKey(PYTHIA_G1_BUF_SIZE);
+
+    pythia_handler(pythia_w_compute_transformation_key_pair(
+            buffer_bind_in(transformationKeyID), buffer_bind_in(pythiaSecret), buffer_bind_in(pythiaScopeSecret),
+            buffer_bind_out(transformationPrivateKey), buffer_bind_out(transformationPublicKey)));
+
+    return VirgilPythiaTransformationKeyPair(
+            std::move(transformationPrivateKey), std::move(transformationPublicKey));
+}
+
+VirgilPythiaTransformResult VirgilPythia::transform(
+        const VirgilByteArray& blindedPassword,
+        const VirgilByteArray& tweak, const VirgilByteArray& transformationPrivateKey) {
+
+    VirgilByteArray transformedPassword(PYTHIA_GT_BUF_SIZE);
+    VirgilByteArray transformedTweak(PYTHIA_G2_BUF_SIZE);
+
+    pythia_handler(pythia_w_transform(
+            buffer_bind_in(blindedPassword), buffer_bind_in(tweak), buffer_bind_in(transformationPrivateKey),
+            buffer_bind_out(transformedPassword), buffer_bind_out(transformedTweak)));
+
+    return VirgilPythiaTransformResult(
+            std::move(transformedPassword), std::move(transformedTweak));
+}
+
 VirgilPythiaProveResult VirgilPythia::prove(
         const VirgilByteArray& transformedPassword, const VirgilByteArray& blindedPassword,
-        const VirgilByteArray& transformedTweak, const VirgilByteArray& transformationPrivateKey) {
+        const VirgilByteArray& transformedTweak, const VirgilByteArray& transformationPrivateKey,
+        const VirgilByteArray& transformationPublicKey) {
 
-    VirgilByteArray transformationPublicKey(PYTHIA_G1_BUF_SIZE);
     VirgilByteArray proofValueC(PYTHIA_BN_BUF_SIZE);
     VirgilByteArray proofValueU(PYTHIA_BN_BUF_SIZE);
 
     pythia_handler(pythia_w_prove(
             buffer_bind_in(transformedPassword), buffer_bind_in(blindedPassword),
             buffer_bind_in(transformedTweak), buffer_bind_in(transformationPrivateKey),
-            buffer_bind_out(transformationPublicKey), buffer_bind_out(proofValueC),
+            buffer_bind_in(transformationPublicKey), buffer_bind_out(proofValueC),
             buffer_bind_out(proofValueU)));
 
-    return VirgilPythiaProveResult(
-            std::move(transformationPublicKey), std::move(proofValueC), std::move(proofValueU));
+    return VirgilPythiaProveResult(std::move(proofValueC), std::move(proofValueU));
 }
 
 VirgilPythiaVerifyResult VirgilPythia::verify(
@@ -169,27 +177,20 @@ VirgilPythiaVerifyResult VirgilPythia::verify(
     return VirgilPythiaVerifyResult(verified != 0);
 }
 
-VirgilPythiaGetPasswordUpdateTokenResult VirgilPythia::getPasswordUpdateToken(
-        const VirgilByteArray& previousTransformationKeyID,
-        const VirgilByteArray& previousPythiaSecret,
-        const VirgilByteArray& previousPythiaScopeSecret,
-        const VirgilByteArray& newTransformationKeyID, const VirgilByteArray& newPythiaSecret,
-        const VirgilByteArray& newPythiaScopeSecret) {
+VirgilByteArray VirgilPythia::getPasswordUpdateToken(
+        const VirgilByteArray& previousTransformationPrivateKey,
+        const VirgilByteArray& newTransformationPrivateKey) {
 
     VirgilByteArray passwordUpdateToken(PYTHIA_BN_BUF_SIZE);
-    VirgilByteArray updatedTransformationPublicKey(PYTHIA_G1_BUF_SIZE);
 
     pythia_handler(pythia_w_get_password_update_token(
-            buffer_bind_in(previousTransformationKeyID), buffer_bind_in(previousPythiaSecret),
-            buffer_bind_in(previousPythiaScopeSecret), buffer_bind_in(newTransformationKeyID),
-            buffer_bind_in(newPythiaSecret), buffer_bind_in(newPythiaScopeSecret),
-            buffer_bind_out(passwordUpdateToken), buffer_bind_out(updatedTransformationPublicKey)));
+            buffer_bind_in(previousTransformationPrivateKey), buffer_bind_in(newTransformationPrivateKey),
+            buffer_bind_out(passwordUpdateToken)));
 
-    return VirgilPythiaGetPasswordUpdateTokenResult(
-            std::move(passwordUpdateToken), std::move(updatedTransformationPublicKey));
+    return VirgilByteArray(std::move(passwordUpdateToken));
 }
 
-VirgilPythiaUpdateDeblindedWithTokenResult VirgilPythia::updateDeblindedWithToken(
+VirgilByteArray VirgilPythia::updateDeblindedWithToken(
         const VirgilByteArray& deblindedPassword, const VirgilByteArray& passwordUpdateToken) {
 
     VirgilByteArray updatedDeblindedPassword(PYTHIA_GT_BUF_SIZE);
@@ -198,7 +199,7 @@ VirgilPythiaUpdateDeblindedWithTokenResult VirgilPythia::updateDeblindedWithToke
             buffer_bind_in(deblindedPassword), buffer_bind_in(passwordUpdateToken),
             buffer_bind_out(updatedDeblindedPassword)));
 
-    return VirgilPythiaUpdateDeblindedWithTokenResult(std::move(updatedDeblindedPassword));
+    return VirgilByteArray(std::move(updatedDeblindedPassword));
 }
 
 #endif /* VIRGIL_CRYPTO_FEATURE_PYTHIA */

@@ -80,14 +80,15 @@ SCENARIO("VirgilPythia: blind / deblind", "[pythia]") {
 
     auto blindResult = pythia.blind(kPassword);
 
+    auto tranfKP = pythia.computeTransformationKeyPair(kTransformationKeyID, kPythiaSecret, kPythiaScopeSecret);
+
     auto transformResult = pythia.transform(
-            blindResult.blindedPassword(), kTransformationKeyID, kTweek, kPythiaSecret,
-            kPythiaScopeSecret);
+            blindResult.blindedPassword(), kTweek, tranfKP.privateKey());
 
     auto deblindResult =
             pythia.deblind(transformResult.transformedPassword(), blindResult.blindingSecret());
 
-    REQUIRE(bytes2hex(kDeblindedPassword) == bytes2hex(deblindResult.deblindedPassword()));
+    REQUIRE(bytes2hex(kDeblindedPassword) == bytes2hex(deblindResult));
 }
 
 SCENARIO("VirgilPythia: prove / verify", "[pythia]") {
@@ -95,17 +96,18 @@ SCENARIO("VirgilPythia: prove / verify", "[pythia]") {
 
     auto blindResult = pythia.blind(kPassword);
 
+    auto tranfKP = pythia.computeTransformationKeyPair(kTransformationKeyID, kPythiaSecret, kPythiaScopeSecret);
+
     auto transformResult = pythia.transform(
-            blindResult.blindedPassword(), kTransformationKeyID, kTweek, kPythiaSecret,
-            kPythiaScopeSecret);
+            blindResult.blindedPassword(), kTweek, tranfKP.privateKey());
 
     auto proveResult = pythia.prove(
             transformResult.transformedPassword(), blindResult.blindedPassword(),
-            transformResult.transformedTweak(), transformResult.transformationPrivateKey());
+            transformResult.transformedTweak(), tranfKP);
 
     auto verifyResult = pythia.verify(
             transformResult.transformedPassword(), blindResult.blindedPassword(), kTweek,
-            proveResult.transformationPublicKey(), proveResult.proofValueC(),
+            tranfKP.publicKey(), proveResult.proofValueC(),
             proveResult.proofValueU());
 
     REQUIRE(true == verifyResult.verified());
@@ -117,43 +119,39 @@ SCENARIO("VirgilPythia: update password token", "[pythia]") {
 
     auto blindResult = pythia.blind(kPassword);
 
+    auto tranfKP = pythia.computeTransformationKeyPair(kTransformationKeyID, kPythiaSecret, kPythiaScopeSecret);
+
     auto transformResult = pythia.transform(
-            blindResult.blindedPassword(), kTransformationKeyID, kTweek, kPythiaSecret,
-            kPythiaScopeSecret);
+            blindResult.blindedPassword(), kTweek, tranfKP.privateKey());
 
     auto deblindResult =
             pythia.deblind(transformResult.transformedPassword(), blindResult.blindingSecret());
 
-    auto passwordUpdateTokenResult = pythia.getPasswordUpdateToken(
-            kTransformationKeyID, kPythiaSecret, kPythiaScopeSecret, kTransformationKeyID,
-            kNewPythiaSecret, kNewPythiaScopeSecret);
+    auto newTranfKP = pythia.computeTransformationKeyPair(kTransformationKeyID, kNewPythiaSecret, kNewPythiaScopeSecret);
+
+    auto passwordUpdateTokenResult = pythia.getPasswordUpdateToken(tranfKP.privateKey(), newTranfKP.privateKey());
 
     auto updatedDeblindPasswordResult = pythia.updateDeblindedWithToken(
-            deblindResult.deblindedPassword(), passwordUpdateTokenResult.passwordUpdateToken());
+            deblindResult, passwordUpdateTokenResult);
 
     auto newTransformResult = pythia.transform(
-            blindResult.blindedPassword(), kTransformationKeyID, kTweek, kNewPythiaSecret,
-            kNewPythiaScopeSecret);
+            blindResult.blindedPassword(), kTweek, newTranfKP.privateKey());
 
     auto newDeblindResult =
             pythia.deblind(newTransformResult.transformedPassword(), blindResult.blindingSecret());
 
-    REQUIRE(bytes2hex(updatedDeblindPasswordResult.updatedDeblindedPassword()) ==
-            bytes2hex(newDeblindResult.deblindedPassword()));
+    REQUIRE(bytes2hex(updatedDeblindPasswordResult) ==
+            bytes2hex(newDeblindResult));
 
     auto proveResult = pythia.prove(
             newTransformResult.transformedPassword(), blindResult.blindedPassword(),
-            newTransformResult.transformedTweak(), newTransformResult.transformationPrivateKey());
+            newTransformResult.transformedTweak(), newTranfKP);
 
     auto verifyResult = pythia.verify(
             newTransformResult.transformedPassword(), blindResult.blindedPassword(), kTweek,
-            proveResult.transformationPublicKey(), proveResult.proofValueC(),
+            newTranfKP.publicKey(), proveResult.proofValueC(),
             proveResult.proofValueU());
 
-    REQUIRE(true == verifyResult.verified());
-
-    REQUIRE(bytes2hex(proveResult.transformationPublicKey()) ==
-            bytes2hex(passwordUpdateTokenResult.updatedTransformationPublicKey()));
-}
+    REQUIRE(true == verifyResult.verified()); }
 
 #endif // VIRGIL_CRYPTO_FEATURE_PYTHIA

@@ -49,7 +49,6 @@ using virgil::crypto::pythia::pythia_handler;
 using virgil::crypto::pythia::VirgilPythia;
 using virgil::crypto::pythia::VirgilPythiaBlindResult;
 using virgil::crypto::pythia::VirgilPythiaContext;
-using virgil::crypto::pythia::VirgilPythiaDeblindResult;
 using virgil::crypto::pythia::VirgilPythiaTransformationKeyPair;
 using virgil::crypto::pythia::VirgilPythiaProveResult;
 using virgil::crypto::pythia::VirgilPythiaTransformResult;
@@ -103,7 +102,7 @@ VirgilPythiaBlindResult VirgilPythia::blind(const VirgilByteArray& password) {
     return VirgilPythiaBlindResult(std::move(blindedPassword), std::move(blindingSecret));
 }
 
-VirgilPythiaDeblindResult VirgilPythia::deblind(
+VirgilByteArray VirgilPythia::deblind(
         const VirgilByteArray& transformedPassword, const VirgilByteArray& blindingSecret) {
 
     VirgilByteArray deblindedPassword(PYTHIA_GT_BUF_SIZE);
@@ -112,7 +111,7 @@ VirgilPythiaDeblindResult VirgilPythia::deblind(
             buffer_bind_in(transformedPassword), buffer_bind_in(blindingSecret),
             buffer_bind_out(deblindedPassword)));
 
-    return VirgilPythiaDeblindResult(std::move(deblindedPassword));
+    return deblindedPassword;
 }
 
 VirgilPythiaTransformationKeyPair VirgilPythia::computeTransformationKeyPair(
@@ -147,16 +146,15 @@ VirgilPythiaTransformResult VirgilPythia::transform(
 
 VirgilPythiaProveResult VirgilPythia::prove(
         const VirgilByteArray& transformedPassword, const VirgilByteArray& blindedPassword,
-        const VirgilByteArray& transformedTweak, const VirgilByteArray& transformationPrivateKey,
-        const VirgilByteArray& transformationPublicKey) {
+        const VirgilByteArray& transformedTweak, const VirgilPythiaTransformationKeyPair& transformationKeyPair) {
 
     VirgilByteArray proofValueC(PYTHIA_BN_BUF_SIZE);
     VirgilByteArray proofValueU(PYTHIA_BN_BUF_SIZE);
 
     pythia_handler(pythia_w_prove(
             buffer_bind_in(transformedPassword), buffer_bind_in(blindedPassword),
-            buffer_bind_in(transformedTweak), buffer_bind_in(transformationPrivateKey),
-            buffer_bind_in(transformationPublicKey), buffer_bind_out(proofValueC),
+            buffer_bind_in(transformedTweak), buffer_bind_in(transformationKeyPair.privateKey()),
+            buffer_bind_in(transformationKeyPair.publicKey()), buffer_bind_out(proofValueC),
             buffer_bind_out(proofValueU)));
 
     return VirgilPythiaProveResult(std::move(proofValueC), std::move(proofValueU));

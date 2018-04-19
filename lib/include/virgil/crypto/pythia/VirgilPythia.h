@@ -40,7 +40,6 @@
 #include "../VirgilByteArray.h"
 #include "VirgilPythiaBlindResult.h"
 #include "VirgilPythiaContext.h"
-#include "VirgilPythiaDeblindResult.h"
 #include "VirgilPythiaTransformationKeyPair.h"
 #include "VirgilPythiaProveResult.h"
 #include "VirgilPythiaTransformResult.h"
@@ -78,9 +77,9 @@ public:
      * @param transformedPassword - GT transformed password from transform().
      * @param blindingSecret - BN value that was generated in blind().
      *
-     * @return VirgilPythiaDeblindResult
+     * @return VirgilByteArray
      */
-    VirgilPythiaDeblindResult
+    VirgilByteArray
     deblind(const VirgilByteArray& transformedPassword, const VirgilByteArray& blindingSecret);
 
     /**
@@ -115,15 +114,13 @@ public:
      * @param transformedPassword - GT transformed password from transform()
      * @param blindedPassword - G1 blinded password from blind().
      * @param transformedTweak - G2 transformed tweak from transform().
-     * @param transformationPrivateKey - BN transformation private key.
-     * @param transformationPublicKey - G1 public key corresponding to transformation_private_key.
+     * @param transformationKeyPair - transformation key pair.
      *
      * @return VirgilPythiaProveResult
      */
     VirgilPythiaProveResult
     prove(const VirgilByteArray& transformedPassword, const VirgilByteArray& blindedPassword,
-          const VirgilByteArray& transformedTweak, const VirgilByteArray& transformationPrivateKey,
-          const VirgilByteArray& transformationPublicKey);
+          const VirgilByteArray& transformedTweak, const VirgilPythiaTransformationKeyPair& transformationKeyPair);
 
     /**
      * @brief Verifies the output of transform().

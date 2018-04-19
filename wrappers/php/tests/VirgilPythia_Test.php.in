@@ -71,11 +71,11 @@ class VirgilPythia_Test extends PHPUnit\Framework\TestCase {
 
         $blindResult = $pythia->blind(self::kPassword);
 
-        $transKP = $pythia->computeTransformationKeyPair(self::kTransformationKeyID,
-                                                         self::kPythiaSecret, self::kPythiaScopeSecret);
+        $transformationKeyPair = $pythia->computeTransformationKeyPair(self::kTransformationKeyID,
+                                                                       self::kPythiaSecret, self::kPythiaScopeSecret);
 
         $transformResult = $pythia->transform(
-                $blindResult->blindedPassword(), self::kTweek, transKP->privateKey());
+                $blindResult->blindedPassword(), self::kTweek, $transformationKeyPair->privateKey());
 
         $deblindResult = $pythia->deblind(
                 $transformResult->transformedPassword(), $blindResult->blindingSecret());

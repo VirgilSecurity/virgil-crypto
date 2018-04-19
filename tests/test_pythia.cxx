@@ -80,10 +80,10 @@ SCENARIO("VirgilPythia: blind / deblind", "[pythia]") {
 
     auto blindResult = pythia.blind(kPassword);
 
-    auto tranfKP = pythia.computeTransformationKeyPair(kTransformationKeyID, kPythiaSecret, kPythiaScopeSecret);
+    auto transformationKeyPair = pythia.computeTransformationKeyPair(kTransformationKeyID, kPythiaSecret, kPythiaScopeSecret);
 
     auto transformResult = pythia.transform(
-            blindResult.blindedPassword(), kTweek, tranfKP.privateKey());
+            blindResult.blindedPassword(), kTweek, transformationKeyPair.privateKey());
 
     auto deblindResult =
             pythia.deblind(transformResult.transformedPassword(), blindResult.blindingSecret());
@@ -96,18 +96,18 @@ SCENARIO("VirgilPythia: prove / verify", "[pythia]") {
 
     auto blindResult = pythia.blind(kPassword);
 
-    auto tranfKP = pythia.computeTransformationKeyPair(kTransformationKeyID, kPythiaSecret, kPythiaScopeSecret);
+    auto transformationKeyPair = pythia.computeTransformationKeyPair(kTransformationKeyID, kPythiaSecret, kPythiaScopeSecret);
 
     auto transformResult = pythia.transform(
-            blindResult.blindedPassword(), kTweek, tranfKP.privateKey());
+            blindResult.blindedPassword(), kTweek, transformationKeyPair.privateKey());
 
     auto proveResult = pythia.prove(
             transformResult.transformedPassword(), blindResult.blindedPassword(),
-            transformResult.transformedTweak(), tranfKP);
+            transformResult.transformedTweak(), transformationKeyPair);
 
     auto verifyResult = pythia.verify(
             transformResult.transformedPassword(), blindResult.blindedPassword(), kTweek,
-            tranfKP.publicKey(), proveResult.proofValueC(),
+            transformationKeyPair.publicKey(), proveResult.proofValueC(),
             proveResult.proofValueU());
 
     REQUIRE(true == verifyResult.verified());
@@ -119,23 +119,23 @@ SCENARIO("VirgilPythia: update password token", "[pythia]") {
 
     auto blindResult = pythia.blind(kPassword);
 
-    auto tranfKP = pythia.computeTransformationKeyPair(kTransformationKeyID, kPythiaSecret, kPythiaScopeSecret);
+    auto transformationKeyPair = pythia.computeTransformationKeyPair(kTransformationKeyID, kPythiaSecret, kPythiaScopeSecret);
 
     auto transformResult = pythia.transform(
-            blindResult.blindedPassword(), kTweek, tranfKP.privateKey());
+            blindResult.blindedPassword(), kTweek, transformationKeyPair.privateKey());
 
     auto deblindResult =
             pythia.deblind(transformResult.transformedPassword(), blindResult.blindingSecret());
 
-    auto newTranfKP = pythia.computeTransformationKeyPair(kTransformationKeyID, kNewPythiaSecret, kNewPythiaScopeSecret);
+    auto newTransformationKeyPair = pythia.computeTransformationKeyPair(kTransformationKeyID, kNewPythiaSecret, kNewPythiaScopeSecret);
 
-    auto passwordUpdateTokenResult = pythia.getPasswordUpdateToken(tranfKP.privateKey(), newTranfKP.privateKey());
+    auto passwordUpdateTokenResult = pythia.getPasswordUpdateToken(transformationKeyPair.privateKey(), newTransformationKeyPair.privateKey());
 
     auto updatedDeblindPasswordResult = pythia.updateDeblindedWithToken(
             deblindResult, passwordUpdateTokenResult);
 
     auto newTransformResult = pythia.transform(
-            blindResult.blindedPassword(), kTweek, newTranfKP.privateKey());
+            blindResult.blindedPassword(), kTweek, newTransformationKeyPair.privateKey());
 
     auto newDeblindResult =
             pythia.deblind(newTransformResult.transformedPassword(), blindResult.blindingSecret());
@@ -145,11 +145,11 @@ SCENARIO("VirgilPythia: update password token", "[pythia]") {
 
     auto proveResult = pythia.prove(
             newTransformResult.transformedPassword(), blindResult.blindedPassword(),
-            newTransformResult.transformedTweak(), newTranfKP);
+            newTransformResult.transformedTweak(), newTransformationKeyPair);
 
     auto verifyResult = pythia.verify(
             newTransformResult.transformedPassword(), blindResult.blindedPassword(), kTweek,
-            newTranfKP.publicKey(), proveResult.proofValueC(),
+            newTransformationKeyPair.publicKey(), proveResult.proofValueC(),
             proveResult.proofValueU());
 
     REQUIRE(true == verifyResult.verified()); }

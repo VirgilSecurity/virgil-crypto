@@ -559,8 +559,8 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_pythia) {
 
         class_<VirgilPythiaTransformationKeyPair>("VirgilPythiaTransformationKeyPair")
                 .constructor<VirgilByteArray, VirgilByteArray>()
-                .function("privateKey", &VirgilByteArray::privateKey)
-                .function("publicKey", &VirgilByteArray::publicKey)
+                .function("privateKey", &VirgilPythiaTransformationKeyPair::privateKey)
+                .function("publicKey", &VirgilPythiaTransformationKeyPair::publicKey)
         ;
 
         class_<VirgilPythiaTransformResult>("VirgilPythiaTransformResult")

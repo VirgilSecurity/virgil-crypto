@@ -536,8 +536,9 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_pythia) {
         class_<VirgilPythia>("VirgilPythia")
             .constructor<>()
             .function("blind", &VirgilPythia::blind)
-            .function("transform", &VirgilPythia::transform)
             .function("deblind", &VirgilPythia::deblind)
+            .function("computeTransformationKeyPair", &VirgilPythia::computeTransformationKeyPair)
+            .function("transform", &VirgilPythia::transform)
             .function("prove", &VirgilPythia::prove)
             .function("verify", &VirgilPythia::verify)
             .function("getPasswordUpdateToken", &VirgilPythia::getPasswordUpdateToken)
@@ -550,34 +551,22 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_pythia) {
             .function("blindingSecret", &VirgilPythiaBlindResult::blindingSecret)
         ;
 
-        class_<VirgilPythiaDeblindResult>("VirgilPythiaDeblindResult")
-            .constructor<VirgilByteArray>()
-            .function("deblindedPassword", &VirgilPythiaDeblindResult::deblindedPassword)
-        ;
-
-        class_<VirgilPythiaGetPasswordUpdateTokenResult>("VirgilPythiaGetPasswordUpdateTokenResult")
-            .constructor<VirgilByteArray, VirgilByteArray>()
-            .function("passwordUpdateToken", &VirgilPythiaGetPasswordUpdateTokenResult::passwordUpdateToken)
-            .function("updatedTransformationPublicKey", &VirgilPythiaGetPasswordUpdateTokenResult::updatedTransformationPublicKey)
-        ;
-
         class_<VirgilPythiaProveResult>("VirgilPythiaProveResult")
-            .constructor<VirgilByteArray, VirgilByteArray, VirgilByteArray>()
-            .function("transformationPublicKey", &VirgilPythiaProveResult::transformationPublicKey)
+            .constructor<VirgilByteArray, VirgilByteArray>()
             .function("proofValueC", &VirgilPythiaProveResult::proofValueC)
             .function("proofValueU", &VirgilPythiaProveResult::proofValueU)
         ;
 
-        class_<VirgilPythiaTransformResult>("VirgilPythiaTransformResult")
-            .constructor<VirgilByteArray, VirgilByteArray, VirgilByteArray>()
-            .function("transformedPassword", &VirgilPythiaTransformResult::transformedPassword)
-            .function("transformationPrivateKey", &VirgilPythiaTransformResult::transformationPrivateKey)
-            .function("transformedTweak", &VirgilPythiaTransformResult::transformedTweak)
+        class_<VirgilPythiaTransformationKeyPair>("VirgilPythiaTransformationKeyPair")
+                .constructor<VirgilByteArray, VirgilByteArray>()
+                .function("privateKey", &VirgilByteArray::privateKey)
+                .function("publicKey", &VirgilByteArray::publicKey)
         ;
 
-        class_<VirgilPythiaUpdateDeblindedWithTokenResult>("VirgilPythiaUpdateDeblindedWithTokenResult")
-            .constructor<VirgilByteArray>()
-            .function("updatedDeblindedPassword", &VirgilPythiaUpdateDeblindedWithTokenResult::updatedDeblindedPassword)
+        class_<VirgilPythiaTransformResult>("VirgilPythiaTransformResult")
+            .constructor<VirgilByteArray, VirgilByteArray>()
+            .function("transformedPassword", &VirgilPythiaTransformResult::transformedPassword)
+            .function("transformedTweak", &VirgilPythiaTransformResult::transformedTweak)
         ;
 
         class_<VirgilPythiaVerifyResult>("VirgilPythiaVerifyResult")

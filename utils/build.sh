@@ -236,16 +236,25 @@ function make_fat_library {
     fi
 
     # Merge several static libraries in one static library which will actually be framework
-    xcrun libtool -static -o "$OUTDIR/$LIB_FAT_NAME" \
-            "$OUTDIR/$LIBMBEDTLS" "$OUTDIR/$LIBED25519" "$OUTDIR/$LIBRELIC" \
-            "${LIBPYTHIA_FAT}" "${LIBRELIC_FAT}" "${LIBVIRGIL_WRAPPER_FAT}"
+    # Note! Spaces in the filenames and paths are prohibited.
+    # Note! Quoting the paths leads to failed build.
+    xcrun libtool -static -o ${OUTDIR}/${LIB_FAT_NAME} \
+            ${OUTDIR}/${LIBMBEDTLS} ${OUTDIR}/${LIBED25519} ${LIBRELIC_FAT} ${LIBPYTHIA_FAT} \
+            ${OUTDIR}/${LIBVIRGIL} ${LIBVIRGIL_WRAPPER_FAT}
 
     # Cleanup
     rm -f "$OUTDIR/$LIBMBEDTLS"
     rm -f "$OUTDIR/$LIBED25519"
     rm -f "$OUTDIR/$LIBVIRGIL"
-    rm -f "$OUTDIR/$LIBRELIC"
-    rm -f "$OUTDIR/$LIBPYTHIA"
+
+    if [ -f "${LIBPYTHIA_FAT}" ]; then
+        rm -f "${LIBPYTHIA_FAT}"
+    fi
+
+    if [ -f "${LIBRELIC_FAT}" ]; then
+        rm -f "${LIBRELIC_FAT}"
+    fi
+
     if [ -f "${LIBVIRGIL_WRAPPER_FAT}" ]; then
         rm -f "${LIBVIRGIL_WRAPPER_FAT}"
     fi

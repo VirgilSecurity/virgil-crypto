@@ -76,7 +76,8 @@ public:
      * @param transformedPassword - GT transformed password from transform().
      * @param blindingSecret - BN value that was generated in blind().
      *
-     * @return VirgilByteArray
+     * @return Deblinded transformedPassword value.
+     *         This value is not equal to password and is zero-knowledge protected.
      */
     VirgilByteArray
     deblind(const VirgilByteArray& transformedPassword, const VirgilByteArray& blindingSecret);
@@ -164,7 +165,7 @@ public:
      * @param deblindedPassword - GT previous deblinded password from deblind().
      * @param passwordUpdateToken - BN password update token from getPasswordUpdateToken().
      *
-     * @return VirgilByteArray
+     * @return New deblinded password.
      */
     VirgilByteArray updateDeblindedWithToken(
             const VirgilByteArray& deblindedPassword, const VirgilByteArray& passwordUpdateToken);

@@ -218,9 +218,17 @@ function make_fat_library {
 
     xcrun lipo -create ${LIBMBEDTLS_LIBS} -output "$OUTDIR/$LIBMBEDTLS"
     xcrun lipo -create ${LIBED25519_LIBS} -output "$OUTDIR/$LIBED25519"
-    xcrun lipo -create ${LIBRELIC_LIBS} -output "$OUTDIR/$LIBRELIC"
-    xcrun lipo -create ${LIBPYTHIA_LIBS} -output "$OUTDIR/$LIBPYTHIA"
     xcrun lipo -create ${LIBVIRGIL_LIBS} -output "$OUTDIR/$LIBVIRGIL"
+
+    if [ ! -z "${LIBRELIC_LIBS}" ]; then
+        LIBRELIC_FAT="$OUTDIR/$LIBRELIC"
+        xcrun lipo -create ${LIBRELIC_LIBS} -output "${LIBRELIC_FAT}"
+    fi
+
+    if [ ! -z "${LIBPYTHIA_LIBS}" ]; then
+        LIBPYTHIA_FAT="$OUTDIR/$LIBPYTHIA"
+        xcrun lipo -create ${LIBPYTHIA_LIBS} -output "${LIBPYTHIA_FAT}"
+    fi
 
     if [ ! -z "${LIBVIRGIL_WRAPPER_LIBS}" ]; then
         LIBVIRGIL_WRAPPER_FAT="$OUTDIR/$LIBVIRGIL_WRAPPER"
@@ -230,7 +238,7 @@ function make_fat_library {
     # Merge several static libraries in one static library which will actually be framework
     xcrun libtool -static -o "$OUTDIR/$LIB_FAT_NAME" \
             "$OUTDIR/$LIBMBEDTLS" "$OUTDIR/$LIBED25519" "$OUTDIR/$LIBRELIC" \
-            "$OUTDIR/$LIBPYTHIA" "$OUTDIR/$LIBVIRGIL" "$LIBVIRGIL_WRAPPER_FAT"
+            "${LIBPYTHIA_FAT}" "${LIBRELIC_FAT}" "${LIBVIRGIL_WRAPPER_FAT}"
 
     # Cleanup
     rm -f "$OUTDIR/$LIBMBEDTLS"

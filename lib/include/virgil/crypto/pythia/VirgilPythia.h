@@ -43,7 +43,6 @@
 #include "VirgilPythiaTransformationKeyPair.h"
 #include "VirgilPythiaProveResult.h"
 #include "VirgilPythiaTransformResult.h"
-#include "VirgilPythiaVerifyResult.h"
 
 namespace virgil {
 namespace crypto {
@@ -135,9 +134,9 @@ public:
      * @param proofValueC - BN proof value C from prove()
      * @param proofValueU - BN proof value U from prove()
      *
-     * @return VirgilPythiaVerifyResult
+     * @return true if output of transform() is correct, false - otherwise.
      */
-    VirgilPythiaVerifyResult
+    bool
     verify(const VirgilByteArray& transformedPassword, const VirgilByteArray& blindedPassword,
            const VirgilByteArray& tweak, const VirgilByteArray& transformationPublicKey,
            const VirgilByteArray& proofValueC, const VirgilByteArray& proofValueU);

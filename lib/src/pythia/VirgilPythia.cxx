@@ -52,7 +52,6 @@ using virgil::crypto::pythia::VirgilPythiaContext;
 using virgil::crypto::pythia::VirgilPythiaTransformationKeyPair;
 using virgil::crypto::pythia::VirgilPythiaProveResult;
 using virgil::crypto::pythia::VirgilPythiaTransformResult;
-using virgil::crypto::pythia::VirgilPythiaVerifyResult;
 
 class buffer_bind_out {
 public:
@@ -160,7 +159,7 @@ VirgilPythiaProveResult VirgilPythia::prove(
     return VirgilPythiaProveResult(std::move(proofValueC), std::move(proofValueU));
 }
 
-VirgilPythiaVerifyResult VirgilPythia::verify(
+bool VirgilPythia::verify(
         const VirgilByteArray& transformedPassword, const VirgilByteArray& blindedPassword,
         const VirgilByteArray& tweak, const VirgilByteArray& transformationPublicKey,
         const VirgilByteArray& proofValueC, const VirgilByteArray& proofValueU) {
@@ -172,7 +171,7 @@ VirgilPythiaVerifyResult VirgilPythia::verify(
             buffer_bind_in(tweak), buffer_bind_in(transformationPublicKey),
             buffer_bind_in(proofValueC), buffer_bind_in(proofValueU), &verified));
 
-    return VirgilPythiaVerifyResult(verified != 0);
+    return verified != 0;
 }
 
 VirgilByteArray VirgilPythia::getPasswordUpdateToken(

@@ -105,12 +105,12 @@ SCENARIO("VirgilPythia: prove / verify", "[pythia]") {
             transformResult.transformedPassword(), blindResult.blindedPassword(),
             transformResult.transformedTweak(), transformationKeyPair);
 
-    auto verifyResult = pythia.verify(
+    auto isVerified = pythia.verify(
             transformResult.transformedPassword(), blindResult.blindedPassword(), kTweek,
             transformationKeyPair.publicKey(), proveResult.proofValueC(),
             proveResult.proofValueU());
 
-    REQUIRE(true == verifyResult.verified());
+    REQUIRE(true == isVerified);
 }
 
 
@@ -147,11 +147,11 @@ SCENARIO("VirgilPythia: update password token", "[pythia]") {
             newTransformResult.transformedPassword(), blindResult.blindedPassword(),
             newTransformResult.transformedTweak(), newTransformationKeyPair);
 
-    auto verifyResult = pythia.verify(
+    auto isVerified = pythia.verify(
             newTransformResult.transformedPassword(), blindResult.blindedPassword(), kTweek,
             newTransformationKeyPair.publicKey(), proveResult.proofValueC(),
             proveResult.proofValueU());
 
-    REQUIRE(true == verifyResult.verified()); }
+    REQUIRE(true == isVerified); }
 
 #endif // VIRGIL_CRYPTO_FEATURE_PYTHIA

@@ -568,9 +568,4 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_pythia) {
             .function("transformedPassword", &VirgilPythiaTransformResult::transformedPassword)
             .function("transformedTweak", &VirgilPythiaTransformResult::transformedTweak)
         ;
-
-        class_<VirgilPythiaVerifyResult>("VirgilPythiaVerifyResult")
-            .constructor<bool>()
-            .function("verified", &VirgilPythiaVerifyResult::verified)
-        ;
 }

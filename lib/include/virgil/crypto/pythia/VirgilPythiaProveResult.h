@@ -52,27 +52,13 @@ public:
     /**
      * @brief Encapsulate given data.
      *
-     * @param transformationPublicKey - G1 public key corresponding to transformation_private_key value.
-     *        This value is exposed to the client so he can verify, that each and every Prove operation
-     *        returns exactly the same value of transformation_public_key.
      * @param proofValueC - BN first part of proof that transformed_password was created
      *        using transformation_private_key.
      * @param proofValueU - BN second part of proof that transformed_password was created
      *        using transformation_private_key.
      */
-    explicit VirgilPythiaProveResult(VirgilByteArray transformationPublicKey,
-            VirgilByteArray proofValueC, VirgilByteArray proofValueU)
-            : transformationPublicKey_(std::move(transformationPublicKey)),
-              proofValueC_(std::move(proofValueC)), proofValueU_(std::move(proofValueU)) {
-    }
-
-    /**
-     * @return G1 public key corresponding to transformation_private_key value.
-     *         This value is exposed to the client so he can verify, that each and every Prove operation
-     *         returns exactly the same value of transformation_public_key.
-     */
-    const VirgilByteArray& transformationPublicKey() {
-        return transformationPublicKey_;
+    explicit VirgilPythiaProveResult(VirgilByteArray proofValueC, VirgilByteArray proofValueU)
+            : proofValueC_(std::move(proofValueC)), proofValueU_(std::move(proofValueU)) {
     }
 
     /**
@@ -92,7 +78,6 @@ public:
     }
 
 private:
-    const VirgilByteArray transformationPublicKey_;
     const VirgilByteArray proofValueC_;
     const VirgilByteArray proofValueU_;
 };

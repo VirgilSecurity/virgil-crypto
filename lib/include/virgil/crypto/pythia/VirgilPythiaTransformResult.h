@@ -54,16 +54,12 @@ public:
      *
      * @param transformedPassword - GT blinded password, protected using server secret
      *        (pythia_secret + pythia_scope_secret + tweak).
-     * @param transformationPrivateKey - BN Pythia's private key which was generated using pythia_secret
-     *        and pythia_scope_secret. This key is used to emit proof tokens (proofValueC, proofValueU).
      * @param transformedTweak - G2 tweak value turned into an elliptic curve point.
      *        This value is used by Prove() operation.
      */
     explicit VirgilPythiaTransformResult(
-            VirgilByteArray transformedPassword, VirgilByteArray transformationPrivateKey,
-            VirgilByteArray transformedTweak)
+            VirgilByteArray transformedPassword, VirgilByteArray transformedTweak)
             : transformedPassword_(std::move(transformedPassword)),
-              transformationPrivateKey_(std::move(transformationPrivateKey)),
               transformedTweak_(std::move(transformedTweak)) {
     }
 
@@ -76,14 +72,6 @@ public:
     }
 
     /**
-     * @return BN Pythia's private key which was generated using pythia_secret and pythia_scope_secret.
-     *         This key is used to emit proof tokens (proofValueC, proofValueU).
-     */
-    const VirgilByteArray& transformationPrivateKey() const {
-        return transformationPrivateKey_;
-    }
-
-    /**
      * @return G2 tweak value turned into an elliptic curve point.
      *         This value is used by VirgilPythia::prove() operation.
      */
@@ -93,7 +81,6 @@ public:
 
 private:
     const VirgilByteArray transformedPassword_;
-    const VirgilByteArray transformationPrivateKey_;
     const VirgilByteArray transformedTweak_;
 };
 

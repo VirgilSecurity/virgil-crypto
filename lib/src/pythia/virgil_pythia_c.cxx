@@ -53,18 +53,6 @@ int virgil_pythia_blind(
     return pythia_w_blind(password, blinded_password, blinding_secret);
 }
 
-int virgil_pythia_transform(
-        const pythia_buf_t* blinded_password, const pythia_buf_t* transformation_key_id,
-        const pythia_buf_t* tweak, const pythia_buf_t* pythia_secret,
-        const pythia_buf_t* pythia_scope_secret, pythia_buf_t* transformed_password,
-        pythia_buf_t* transformation_private_key, pythia_buf_t* transformed_tweak) {
-
-    VirgilPythiaContext context;
-    return pythia_w_transform(
-            blinded_password, transformation_key_id, tweak, pythia_secret, pythia_scope_secret,
-            transformed_password, transformation_private_key, transformed_tweak);
-}
-
 int virgil_pythia_deblind(
         const pythia_buf_t* transformed_password, const pythia_buf_t* blinding_secret,
         pythia_buf_t* deblinded_password) {
@@ -73,11 +61,33 @@ int virgil_pythia_deblind(
     return pythia_w_deblind(transformed_password, blinding_secret, deblinded_password);
 }
 
+int virgil_pythia_compute_transformation_key_pair(const pythia_buf_t* transformation_key_id,
+                                                  const pythia_buf_t* pythia_secret,
+                                                  const pythia_buf_t* pythia_scope_secret,
+                                                  pythia_buf_t* transformation_private_key,
+                                                  pythia_buf_t* transformation_public_key) {
+
+    VirgilPythiaContext context;
+    return pythia_w_compute_transformation_key_pair(
+            transformation_key_id, pythia_secret, pythia_scope_secret,
+            transformation_private_key, transformation_public_key);
+}
+
+int virgil_pythia_transform(
+        const pythia_buf_t* blinded_password, const pythia_buf_t* tweak,
+        const pythia_buf_t* transformation_private_key,
+        pythia_buf_t* transformed_password, pythia_buf_t* transformed_tweak) {
+
+    VirgilPythiaContext context;
+    return pythia_w_transform(
+            blinded_password, tweak, transformation_private_key,
+            transformed_password, transformed_tweak);
+}
+
 int virgil_pythia_prove(
         const pythia_buf_t* transformed_password, const pythia_buf_t* blinded_password,
         const pythia_buf_t* transformed_tweak, const pythia_buf_t* transformation_private_key,
-        pythia_buf_t* transformation_public_key, pythia_buf_t* proof_value_c,
-        pythia_buf_t* proof_value_u) {
+        const pythia_buf_t* transformation_public_key, pythia_buf_t* proof_value_c, pythia_buf_t* proof_value_u) {
 
     VirgilPythiaContext context;
     return pythia_w_prove(
@@ -97,18 +107,14 @@ int virgil_pythia_verify(
 }
 
 int virgil_pythia_get_password_update_token(
-        const pythia_buf_t* previous_transformation_key_id,
-        const pythia_buf_t* previous_pythia_secret,
-        const pythia_buf_t* previous_pythia_scope_secret,
-        const pythia_buf_t* new_transformation_key_id, const pythia_buf_t* new_pythia_secret,
-        const pythia_buf_t* new_pythia_scope_secret, pythia_buf_t* password_update_token,
-        pythia_buf_t* updated_transformation_public_key) {
+        const pythia_buf_t* previous_transformation_private_key,
+        const pythia_buf_t* new_transformation_private_key,
+        pythia_buf_t* password_update_token) {
 
     VirgilPythiaContext context;
     return pythia_w_get_password_update_token(
-            previous_transformation_key_id, previous_pythia_secret, previous_pythia_scope_secret,
-            new_transformation_key_id, new_pythia_secret, new_pythia_scope_secret,
-            password_update_token, updated_transformation_public_key);
+            previous_transformation_private_key, new_transformation_private_key,
+            password_update_token);
 }
 
 int virgil_pythia_update_deblinded_with_token(

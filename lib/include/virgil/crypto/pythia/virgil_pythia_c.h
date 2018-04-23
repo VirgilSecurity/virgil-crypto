@@ -66,29 +66,6 @@ int virgil_pythia_blind(const pythia_buf_t* password, pythia_buf_t* blinded_pass
 
 
 /**
- * @brief Transforms blinded password using the private key, generated from pythia_secret + pythia_scope_secret.
- *
- * @param [in] blinded_password - G1 password obfuscated into a pseudo-random string.
- * @param [in] transformation_key_id - ensemble key ID used to enclose operations in subsets.
- * @param [in] tweak - some random value used to transform a password
- * @param [in] pythia_secret - global common for all secret random Key.
- * @param [in] pythia_scope_secret - ensemble secret generated and versioned transparently.
- * @param [out] transformed_password - GT blinded password, protected using server secret
- *              (pythia_secret + pythia_scope_secret + tweak).
- * @param [out] transformation_private_key - BN Pythia's private key which was generated using pythia_secret
- *              and pythia_scope_secret. This key is used to emit proof tokens (proof_value_c, proof_value_u).
- * @param [out] transformed_tweak - G2 tweak value turned into an elliptic curve point.
- *              This value is used by Prove() operation.
- *
- * @return 0 if succeeded, -1 otherwise
- */
-int virgil_pythia_transform(
-        const pythia_buf_t* blinded_password, const pythia_buf_t* transformation_key_id, const pythia_buf_t* tweak,
-        const pythia_buf_t* pythia_secret, const pythia_buf_t* pythia_scope_secret, pythia_buf_t* transformed_password,
-        pythia_buf_t* transformation_private_key, pythia_buf_t* transformed_tweak);
-
-
-/**
  * @brief Deblinds transformed_password value with previously returned blinding_secret from virgil_pythia_blind().
  *
  * @param [in] transformed_password - GT transformed password from virgil_pythia_transform().
@@ -102,6 +79,43 @@ int virgil_pythia_deblind(
         const pythia_buf_t* transformed_password, const pythia_buf_t* blinding_secret,
         pythia_buf_t* deblinded_password);
 
+/**
+ * @brief Computes transformation private and public key.
+ *
+ * @param [in] transformation_key_id - ensemble key ID used to enclose operations in subsets.
+ * @param [in] pythia_secret - global common for all secret random Key.
+ * @param [in] pythia_scope_secret - ensemble secret generated and versioned transparently.
+ * @param [out] transformation_private_key - BN transformation_private_key Pythia's private key
+ *              which was generated using pythia_secret and pythia_scope_secret.
+ *              This key is used to emit proof tokens (proof_value_c, proof_value_u).
+ * @param [out] transformation_public_key
+ *
+ * @return 0 if succeeded, -1 otherwise
+ */
+int virgil_pythia_compute_transformation_key_pair(const pythia_buf_t* transformation_key_id,
+                                                  const pythia_buf_t* pythia_secret,
+                                                  const pythia_buf_t* pythia_scope_secret,
+                                                  pythia_buf_t* transformation_private_key,
+                                                  pythia_buf_t* transformation_public_key);
+
+/**
+ * @brief Transforms blinded password using the private key, generated from pythia_secret + pythia_scope_secret.
+ *
+ * @param [in] blinded_password - G1 password obfuscated into a pseudo-random string.
+ * @param [in] tweak - some random value used to transform a password.
+ * @param [in] transformation_private_key - BN transformation private key.
+ * @param [out] transformed_password - GT blinded password, protected using server secret
+ *              (transformation private key + tweak).
+ * @param [out] transformed_tweak - G2 tweak value turned into an elliptic curve point.
+ *              This value is used by Prove() operation.
+ *
+ * @return 0 if succeeded, -1 otherwise
+ */
+int virgil_pythia_transform(
+        const pythia_buf_t* blinded_password, const pythia_buf_t* tweak,
+        const pythia_buf_t* transformation_private_key,
+        pythia_buf_t* transformed_password, pythia_buf_t* transformed_tweak);
+
 
 /**
  * @brief Generates proof that server possesses secret values that were used to transform password.
@@ -110,9 +124,9 @@ int virgil_pythia_deblind(
  * @param [in] blinded_password - G1 blinded password from virgil_pythia_blind().
  * @param [in] transformed_tweak - G2 transformed tweak from virgil_pythia_transform().
  * @param [in] transformation_private_key - BN transformation private key from virgil_pythia_transform().
- * @param [out] transformation_public_key - G1 public key corresponding to transformation_private_key value.
- *              This value is exposed to the client so he can verify, that each and every Prove operation
- *              returns exactly the same value of transformation_public_key.
+ * @param [in] transformation_public_key - G1 public key corresponding to transformation_private_key value.
+ *             This value is exposed to the client so he can verify, that each and every Prove operation
+ *             returns exactly the same value of transformation_public_key.
  * @param [out] proof_value_c - BN first part of proof that transformed_password was created
  *              using transformation_private_key.
  * @param [out] proof_value_u - BN second part of proof that transformed_password was created
@@ -123,7 +137,7 @@ int virgil_pythia_deblind(
 int virgil_pythia_prove(
         const pythia_buf_t* transformed_password, const pythia_buf_t* blinded_password,
         const pythia_buf_t* transformed_tweak, const pythia_buf_t* transformation_private_key,
-        pythia_buf_t* transformation_public_key, pythia_buf_t* proof_value_c, pythia_buf_t* proof_value_u);
+        const pythia_buf_t* transformation_public_key, pythia_buf_t* proof_value_c, pythia_buf_t* proof_value_u);
 
 
 /**
@@ -149,30 +163,22 @@ int virgil_pythia_verify(
 
 
 /**
- * @brief Updates transformation_key_id, pythia_secret and scope_secret.
+ * @brief Rotates old transformation key to new transformation key.
  *
- * Rotates old previous_transformation_key_id, previous_pythia_secret, previous_pythia_scope_secret and generates a
- * password_update_token that can update deblinded_passwords. This action should increment version of
- * the pythia_scope_secret.
+ * Rotates old transformation key to new transformation key and generates password_update_token
+ * that can update deblinded_passwords.
+ * This action should increment version of the pythia_scope_secret.
  *
- * @param [in] previous_transformation_key_id - previous transformation key id
- * @param [in] previous_pythia_secret - previous pythia secret
- * @param [in] previous_pythia_scope_secret - previous pythia scope secret
- * @param [in] new_transformation_key_id - new transformation key id
- * @param [in] new_pythia_secret - new pythia secret
- * @param [in] new_pythia_scope_secret - new pythia scope secret
+ * @param [in] previous_transformation_private_key - BN previous transformation private key
+ * @param [in] new_transformation_private_key - BN new transformation private key
  * @param [out] password_update_token - BN value that allows to update all deblinded passwords (one by one)
  *              after server issued new pythia_secret or pythia_scope_secret.
- * @param [out] updated_transformation_public_key - G1 public key corresponding to the new
- *              transformation_private_key after issuing password_update_token.
  *
  * @return 0 if succeeded, -1 otherwise
  */
 int virgil_pythia_get_password_update_token(
-        const pythia_buf_t* previous_transformation_key_id, const pythia_buf_t* previous_pythia_secret,
-        const pythia_buf_t* previous_pythia_scope_secret, const pythia_buf_t* new_transformation_key_id,
-        const pythia_buf_t* new_pythia_secret, const pythia_buf_t* new_pythia_scope_secret,
-        pythia_buf_t* password_update_token, pythia_buf_t* updated_transformation_public_key);
+        const pythia_buf_t* previous_transformation_private_key, const pythia_buf_t* new_transformation_private_key,
+        pythia_buf_t* password_update_token);
 
 
 /**

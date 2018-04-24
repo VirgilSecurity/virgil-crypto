@@ -368,7 +368,6 @@ if [ "${TARGET_NAME}" == "ios" ]; then
     cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=IOS_SIM32 \
                         -DVIRGIL_CRYPTO_FEATURE_PYTHIA_MT=OFF \
                         -DINSTALL_LIB_DIR_NAME=lib/sim32 "${SRC_DIR}"
-
     make -j8 install
 
     # Build for i386 simulator (Pythia is in a multi-thread mode!!!)

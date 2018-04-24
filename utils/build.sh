@@ -492,7 +492,6 @@ if [ "${TARGET_NAME}" == "net_tvos" ] || [ "${TARGET_NAME}" == "net_watchos" ]; 
     CMAKE_ARGS+=" -DINSTALL_CORE_HEADERS=OFF"
     CMAKE_ARGS+=" -DINSTALL_EXT_LIBS=ON"
     CMAKE_ARGS+=" -DINSTALL_EXT_HEADERS=OFF"
-    CMAKE_ARGS+=" -DCMAKE_CROSSCOMPILING=ON"
     CMAKE_ARGS+=" -DCMAKE_TOOLCHAIN_FILE='${SRC_DIR}/cmake/apple.cmake'"
 
     # Build for device

@@ -51,8 +51,18 @@ set (CSHARP_MODULE_NAME ${PROJECT_NAME})
 set (SWIG_MODULE_NAME ${CSHARP_MODULE_NAME})
 
 # Find C#
-find_host_package( CSharp REQUIRED )
+find_host_package (CSharp REQUIRED)
 include (${CSHARP_USE_FILE})
+
+if (CSHARP_MONO_FOUND AND APPLE_PLATFORM MATCHES "IOS")
+    find_host_library(XAMARIN_FRAMEWORK_PATH "Xamarin.iOS")
+    if (NOT XAMARIN_FRAMEWORK_PATH)
+        message (FATAL_ERROR "Can't find Xamarin.iOS library!")
+    else()
+        set (MONO_FRAMEWORKS "${XAMARIN_FRAMEWORK_PATH}/Versions/Current/lib/mono/Xamarin.iOS/Xamarin.iOS.dll")
+        message (STATUS "Mono frameworks: ${MONO_FRAMEWORKS}" )
+    endif()
+endif()
 
 # Make sure the nested directory structure exists
 set (CSHARP_SOURCE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/src CACHE INTERNAL "")
@@ -164,7 +174,7 @@ foreach (CS_FILE ${ASSEMBLY_SRC})
 endforeach (CS_FILE)
 
 # Add assembly dependencies
-csharp_add_library (${CSHARP_ASSEMBLY_NAME} "${CSHARP_SOURCE_DIRECTORY}/*.cs")
+csharp_add_library (${CSHARP_ASSEMBLY_NAME} "${CSHARP_SOURCE_DIRECTORY}/*.cs" ${MONO_FRAMEWORKS})
 add_dependencies (${CSHARP_ASSEMBLY_NAME} ${CSHARP_SWIG_TARGET_NAME})
 
 # Install

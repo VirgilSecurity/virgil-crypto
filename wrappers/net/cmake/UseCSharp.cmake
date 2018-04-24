@@ -50,18 +50,6 @@ endmacro( CSHARP_ADD_EXECUTABLE )
 macro( CSHARP_ADD_PROJECT type name )
   set( refs "/reference:System.dll" )
 
-  if (APPLE_PLATFORM MATCHES "IOS")
-     if ( CSHARP_MONO_FOUND )
-      find_host_library(XAMARIN_FRAMEWORK_PATH "Xamarin.iOS")
-      if (NOT XAMARIN_FRAMEWORK_PATH)
-        message (FATAL_ERROR "Can't find Xamarin.iOS library!")
-      else( )
-        list( APPEND refs "/reference:${XAMARIN_FRAMEWORK_PATH}/Versions/Current/lib/mono/Xamarin.iOS/Xamarin.iOS.dll" )
-        message( STATUS "Use Xamarin.iOS.dll" )
-      endif()  
-     endif()  
-  endif()
-
   set( sources )
   set( sources_dep )
 

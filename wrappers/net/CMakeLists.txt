@@ -51,8 +51,18 @@ set (CSHARP_MODULE_NAME ${PROJECT_NAME})
 set (SWIG_MODULE_NAME ${CSHARP_MODULE_NAME})
 
 # Find C#
-find_host_package( CSharp REQUIRED )
+find_host_package (CSharp REQUIRED)
 include (${CSHARP_USE_FILE})
+
+if (CSHARP_MONO_FOUND AND APPLE_PLATFORM MATCHES "IOS")
+    find_host_library(XAMARIN_FRAMEWORK_PATH "Xamarin.iOS")
+    if (NOT XAMARIN_FRAMEWORK_PATH)
+        message (FATAL_ERROR "Can't find Xamarin.iOS library!")
+    else()
+        set (MONO_FRAMEWORKS "${XAMARIN_FRAMEWORK_PATH}/Versions/Current/lib/mono/Xamarin.iOS/Xamarin.iOS.dll")
+        message (STATUS "Mono frameworks: ${MONO_FRAMEWORKS}" )
+    endif()
+endif()
 
 # Make sure the nested directory structure exists
 set (CSHARP_SOURCE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/src CACHE INTERNAL "")
@@ -86,7 +96,7 @@ set_property (
     SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing"
 )
 
-if (CMAKE_CROSSCOMPILING AND APPLE)
+if ( CMAKE_CROSSCOMPILING AND APPLE )
     set (WRAPPER_TYPE STATIC)
 else ()
     set (WRAPPER_TYPE SHARED)
@@ -99,14 +109,14 @@ swig_add_library (${CSHARP_MODULE_NAME}
 )
 set (CSHARP_SWIG_TARGET_NAME ${SWIG_MODULE_${CSHARP_MODULE_NAME}_REAL_NAME})
 
-if (WRAPPER_TYPE STREQUAL "STATIC")
+# todo remove patching for mono when the issue https://github.com/swig/swig/issues/1165 is closed.
+if (WRAPPER_TYPE STREQUAL "STATIC" AND APPLE)
     add_custom_command (TARGET ${CSHARP_SWIG_TARGET_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND}
         ARGS
+            -DCSHARP_MODULE_NAME:STRING="${CSHARP_MODULE_NAME}"
             -DSRC:PATH="${CSHARP_SWIG_OUTPUT_DIRECTORY}/${CSHARP_MODULE_NAME}PINVOKE.cs"
-            -DREGULAR_EXPRESSION:STRING="DllImport\\\(\\\"${CSHARP_MODULE_NAME}\\\""
-            -DREPLACE_EXPRESSION:STRING="DllImport\(\\\"__Internal\\\""
-            -P ${CMAKE_SOURCE_DIR}/cmake/file_regex_replace.cmake
+            -P ${CMAKE_SOURCE_DIR}/cmake/add_mono_metadata.cmake
         COMMENT "Patch generated source files for mono."
     )
 endif ()
@@ -143,8 +153,12 @@ if (UNIX AND NOT APPLE)
 endif ()
 
 # Configure assembly
+if (CMAKE_SYSTEM_NAME MATCHES "Android")
+    set_target_properties (${CSHARP_SWIG_TARGET_NAME} PROPERTIES PREFIX "lib")
+endif ()
+
 set_target_properties (${CSHARP_SWIG_TARGET_NAME}
-        PROPERTIES OUTPUT_NAME ${CSHARP_MODULE_NAME})
+        PROPERTIES OUTPUT_NAME "${CSHARP_MODULE_NAME}")
 set_target_properties (${CSHARP_SWIG_TARGET_NAME}
         PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CSHARP_BINARY_DIRECTORY})
 set_target_properties (${CSHARP_SWIG_TARGET_NAME}
@@ -161,7 +175,7 @@ foreach (CS_FILE ${ASSEMBLY_SRC})
 endforeach (CS_FILE)
 
 # Add assembly dependencies
-csharp_add_library (${CSHARP_ASSEMBLY_NAME} "${CSHARP_SOURCE_DIRECTORY}/*.cs")
+csharp_add_library (${CSHARP_ASSEMBLY_NAME} "${CSHARP_SOURCE_DIRECTORY}/*.cs" ${MONO_FRAMEWORKS})
 add_dependencies (${CSHARP_ASSEMBLY_NAME} ${CSHARP_SWIG_TARGET_NAME})
 
 # Install

@@ -331,6 +331,17 @@ macro(find_host_package)
     set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 endmacro(find_host_package)
 
+# This macro lets you find executable library on the host system
+macro(find_host_library)
+    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY NEVER)
+    set(APPLE FALSE)
+
+    find_library(${ARGN})
+
+    set(APPLE TRUE)
+    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+endmacro(find_host_library)
+
 # This function uses this toolchain variables to configure
 # given target as an Apple Framework
 #

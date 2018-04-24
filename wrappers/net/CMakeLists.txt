@@ -154,10 +154,11 @@ endif ()
 
 # Configure assembly
 if (CMAKE_SYSTEM_NAME MATCHES "Android")
-    set (PREFIX_LIB "lib")
+    set_target_properties (${CSHARP_SWIG_TARGET_NAME} PROPERTIES PREFIX "lib")
 endif ()
+
 set_target_properties (${CSHARP_SWIG_TARGET_NAME}
-        PROPERTIES OUTPUT_NAME "${PREFIX_LIB}${CSHARP_MODULE_NAME}")
+        PROPERTIES OUTPUT_NAME "${CSHARP_MODULE_NAME}")
 set_target_properties (${CSHARP_SWIG_TARGET_NAME}
         PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CSHARP_BINARY_DIRECTORY})
 set_target_properties (${CSHARP_SWIG_TARGET_NAME}

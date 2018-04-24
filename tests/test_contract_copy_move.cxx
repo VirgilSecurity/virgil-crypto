@@ -118,11 +118,12 @@ TEST_CASE("Check contract: copy and move", "[copy/move]") {
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSKeyTransRecipient);
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSPasswordRecipient);
 
-#if defined(__GNUG__) && (__GNUC__ == 5 && __GNUC_MINOR__ >= 5 )
+#if defined(__GNUG__) && (__GNUC__ >= 6)
     // VirgilCryptoException contains field with type std::string,
     // GCC has bug: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58265, and it will be fixed in the version 5.5,
     // it means next condition can not by satisfied:
     //      static_assert(std::is_nothrow_move_assignable<VirgilCryptoException>::value, "Fail");
+    //  NOTE! Still fail on gcc 5.5 on the Ubuntu Trusty
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::VirgilCryptoException);
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::foundation::cms::VirgilCMSContentInfo);
     SECTION_CONTRACT_COPY_AND_MOVE(virgil::crypto::VirgilCustomParams);

@@ -49,7 +49,6 @@ endmacro( CSHARP_ADD_EXECUTABLE )
 # Private macro
 macro( CSHARP_ADD_PROJECT type name )
   set( refs "/reference:System.dll" )
-
   set( sources )
   set( sources_dep )
 

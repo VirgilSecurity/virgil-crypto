@@ -54,7 +54,7 @@ set (SWIG_MODULE_NAME ${CSHARP_MODULE_NAME})
 find_host_package (CSharp REQUIRED)
 include (${CSHARP_USE_FILE})
 
-if (CSHARP_MONO_FOUND)
+if (CSHARP_MONO_FOUND AND APPLE_PLATFORM MATCHES "(IOS|TVOS|WATCHOS)")
     find_host_library(XAMARIN_FRAMEWORK_PATH "Xamarin.iOS")
     if (NOT XAMARIN_FRAMEWORK_PATH)
         message (FATAL_ERROR "Can't find Xamarin.iOS framework!")
@@ -70,8 +70,6 @@ if (CSHARP_MONO_FOUND)
     elseif (APPLE_PLATFORM MATCHES "WATCHOS")
         set (XAMARIN_PLATFROM_LIB_NAME "Xamarin.WatchOS")
 
-    else ()
-        message (FATAL_ERROR "Unexpected APPLE_PLATFORM=${APPLE_PLATFORM}")
     endif ()
 
     set (XAMARIN_PLATFROM_LIB

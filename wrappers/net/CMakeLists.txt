@@ -54,14 +54,35 @@ set (SWIG_MODULE_NAME ${CSHARP_MODULE_NAME})
 find_host_package (CSharp REQUIRED)
 include (${CSHARP_USE_FILE})
 
-if (CSHARP_MONO_FOUND AND APPLE_PLATFORM MATCHES "IOS")
+if (CSHARP_MONO_FOUND)
     find_host_library(XAMARIN_FRAMEWORK_PATH "Xamarin.iOS")
     if (NOT XAMARIN_FRAMEWORK_PATH)
-        message (FATAL_ERROR "Can't find Xamarin.iOS library!")
-    else()
-        set (MONO_FRAMEWORKS "${XAMARIN_FRAMEWORK_PATH}/Versions/Current/lib/mono/Xamarin.iOS/Xamarin.iOS.dll")
-        message (STATUS "Mono frameworks: ${MONO_FRAMEWORKS}" )
-    endif()
+        message (FATAL_ERROR "Can't find Xamarin.iOS framework!")
+    endif ()
+
+    # Define Xamarin library for target Apple Platform.
+    if (APPLE_PLATFORM MATCHES "IOS")
+        set (XAMARIN_PLATFROM_LIB_NAME "Xamarin.iOS")
+
+    elseif (APPLE_PLATFORM MATCHES "TVOS")
+        set (XAMARIN_PLATFROM_LIB_NAME "Xamarin.TVOS")
+
+    elseif (APPLE_PLATFORM MATCHES "WATCHOS")
+        set (XAMARIN_PLATFROM_LIB_NAME "Xamarin.WatchOS")
+
+    else ()
+        message (FATAL_ERROR "Unexpected APPLE_PLATFORM=${APPLE_PLATFORM}")
+    endif ()
+
+    set (XAMARIN_PLATFROM_LIB
+            "${XAMARIN_FRAMEWORK_PATH}/Versions/Current/lib/mono/${XAMARIN_PLATFROM_LIB_NAME}/${XAMARIN_PLATFROM_LIB_NAME}.dll")
+
+    if (NOT EXISTS "${XAMARIN_PLATFROM_LIB}")
+        message (FATAL_ERROR "Xamarin library for traget ${APPLE_PLATFORM} is not found: ${XAMARIN_PLATFROM_LIB}")
+    endif ()
+
+    set (MONO_FRAMEWORKS "${XAMARIN_PLATFROM_LIB}")
+    message (STATUS "Mono frameworks: ${MONO_FRAMEWORKS}" )
 endif()
 
 # Make sure the nested directory structure exists

@@ -55,7 +55,7 @@ function show_usage {
         echo -e "${COLOR_RED}[ERROR] $1${COLOR_RESET}"
     fi
     echo -e "This script helps to build crypto library for variety of languages and platforms."
-    echo -e "Common reuirements: CMake 3.0.5, Python, PyYaml, SWIG 3.0.7."
+    echo -e "Common reuirements: CMake 3.10, Python, PyYaml, SWIG 3.0.12."
     echo -e "${COLOR_BLUE}Usage: ${BASH_SOURCE[0]} [<target>] [<src_dir>] [<build_dir>] [<install_dir>]${COLOR_RESET}"
     echo -e "  - <target> - (default = cpp) target to build wich contains two parts <name>[-<version>], where <name>:"
     echo -e "    * cpp              - build C++ library;"
@@ -540,6 +540,10 @@ if [[ "${TARGET_NAME}" =~ (asmjs|webasm) ]]; then
         -DCMAKE_CXX_FLAGS_RELEASE="-O3" \
         "${SRC_DIR}"
     make -j8 install
+fi
+
+if [ -z "$(ls -A ./)" ]; then
+    show_usage "Given target '${TARGET_NAME}' is not supported." 1
 fi
 
 if [[ ${TARGET_NAME} =~ (ios|tvos|watchos|macos|android) ]]; then

@@ -57,13 +57,3 @@ include ("${WRAPPERS_ROOT}/emsdk/CMakeLists.txt")
 # ---------------------------------------------------------------------------
 #   Add specific 'install' options to the target
 # ---------------------------------------------------------------------------
-
-if (CMAKE_BUILD_TYPE)
-    string (TOUPPER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_UPPER)
-endif()
-
-if ("${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UPPER}}" MATCHES "(-O2|-O3|-Os|-Oz)")
-
-    install (FILES $<TARGET_FILE:${WRAPPER_TARGET}>.mem DESTINATION "${INSTALL_LIB_DIR_NAME}")
-    install (FILES $<TARGET_FILE:${WRAPPER_TARGET}>.mem DESTINATION "${WRAPPER_DOC_DIR_NAME}/example")
-endif ()

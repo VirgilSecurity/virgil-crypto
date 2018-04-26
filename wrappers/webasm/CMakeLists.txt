@@ -63,11 +63,3 @@ set_property (TARGET "${WRAPPER_TARGET}" APPEND_STRING PROPERTY LINK_FLAGS " -s 
 # ---------------------------------------------------------------------------
 #   Add specific 'install' options to the target
 # ---------------------------------------------------------------------------
-
-install (FILES "$<TARGET_FILE_DIR:${WRAPPER_TARGET}>/$<TARGET_NAME:${WRAPPER_TARGET}>.wasm"
-    DESTINATION "${INSTALL_LIB_DIR_NAME}"
-)
-
-install (FILES "$<TARGET_FILE_DIR:${WRAPPER_TARGET}>/$<TARGET_NAME:${WRAPPER_TARGET}>.wasm"
-    DESTINATION "${WRAPPER_DOC_DIR_NAME}/example"
-)

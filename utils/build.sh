@@ -542,6 +542,10 @@ if [[ "${TARGET_NAME}" =~ (asmjs|webasm) ]]; then
     make -j8 install
 fi
 
+if [ -z "$(ls -A ./)" ]; then
+    show_usage "Given target '${TARGET_NAME}' is not supported." 1
+fi
+
 if [[ ${TARGET_NAME} =~ (ios|tvos|watchos|macos|android) ]]; then
     ARCH_NAME=$(cat "${BUILD_DIR}/lib_name.txt")
 else

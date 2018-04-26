@@ -1,5 +1,30 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.4.0 on the way
+
+## Features
+
+  * [Lib] Add experimental feature - Pythia algorithm
+  * [Lib] Add experimental feature - deterministic Key Pair generation
+  * [Lib] Add ability to make runtime check of VirgilConfig
+
+## Changes
+
+  * [Build] Replace ad-hoc android.toolchaon.cmake file with file from NDK
+  * [Build] Replace deprecated CMake functions swig_add_module -> swig_add_library
+  * [Build] Take default install directory names from GNUInstallDirs
+  * [CI] Change Android NDK in the Jenkinsfile to version r16b
+  * [iOS] Change minimum supported iOS version to 9.0
+  * [JS] Always generate signle file in browser js builds to make bundling easier
+  * [JS] Export JS library as UMD module in web browsers
+
+## Bugfix
+
+  * [.NET] Fix binaries for .NET iOS, WatchOS and TvOS
+  * [.NET] Fix interoperating with unmanaged code in .NET Android
+  * [Golang] Fix Golang build with CMake 3.11
+
+
 = Version 2.3.2 released 2018-04-11
 
 ## Bugfix

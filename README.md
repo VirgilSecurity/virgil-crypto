@@ -13,6 +13,7 @@ Welcome to Virgil Security!
 Virgil Security guides software developers into the forthcoming security world in which everything will be encrypted (and passwords will be eliminated).  In this world, the days of developers having to raise millions of dollars to build a secure chat, secure email, secure file-sharing, or a secure anything have come to an end.  Now developers can instead focus on building features that give them a competitive market advantage while end-users can enjoy the privacy and security they increasingly demand.
 
 Virgil Security offers this security via a stack of security libraries (ECIES with Crypto Agility wrapped in Virgil Cryptogram) and all the necessary infrastructure to enable seamless, end-to-end encryption for any application, platform or device. End-to-end encryption can be used for a variety of important reasons: compliance with regulations like HIPAA and GDPR, the transfer and storage of PII, general user privacy as a feature, breach risk mitigation and more.
+Virgil Crypto also has all required cryptographic functions and primitives to perform an implementation of [Pythia](http://pages.cs.wisc.edu/~ace/papers/pythia-full.pdf) technology.
 
 See below for currently available languages and platforms. Get in touch with us to get beta access to our Key infrastructure.
 
@@ -23,7 +24,8 @@ See below for currently available languages and platforms. Get in touch with us 
 * Encrypt data;
 * Decrypt data;
 * Sign data;
-* Verify data.
+* Verify data;
+* Pythia protocol.
 
 ### Supported platforms
 Crypto Library is suitable for the following platforms:

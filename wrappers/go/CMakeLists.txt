@@ -82,6 +82,7 @@ swig_add_library (${GO_MODULE_NAME}
 
 swig_link_libraries (${GO_MODULE_NAME} ${WRAPPED_LIB_NAME})
 set (GO_SWIG_TARGET_NAME ${SWIG_MODULE_${GO_MODULE_NAME}_REAL_NAME})
+set_target_properties (${GO_SWIG_TARGET_NAME} PROPERTIES PREFIX "lib")
 
 install (PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/${GO_MODULE_NAME}.go" DESTINATION ".")
 

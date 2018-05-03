@@ -104,6 +104,10 @@ def createNativeUnixBuild(slave) {
             }
             // MONO NET
             sh './utils/build.sh net'
+            // Golang
+            if (slave.contains('centos7') || slave.contains('os-x')) {
+                sh './utils/build.sh go'
+            }
 
             archiveArtifacts('install/**')
         }

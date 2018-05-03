@@ -1,4 +1,0 @@
-var searchData=
-[
-  ['algorithm',['Algorithm',['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_hash.html#adb7c22611decb08325dc7961497f7032',1,'virgil::crypto::foundation::VirgilHash::Algorithm()'],['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_k_d_f.html#a3ec1d9e7ebb3a7c56c1d73050e347630',1,'virgil::crypto::foundation::VirgilKDF::Algorithm()'],['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_e.html#ab828fbf969c12a46474e0d1168c294b6',1,'virgil::crypto::foundation::VirgilPBE::Algorithm()'],['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_p_b_k_d_f.html#a7f19a63826f1997286ddb83c7fd2b432',1,'virgil::crypto::foundation::VirgilPBKDF::Algorithm()'],['../classvirgil_1_1crypto_1_1foundation_1_1_virgil_symmetric_cipher.html#a6ef9c5c28781f37ab72b5b1674318f13',1,'virgil::crypto::foundation::VirgilSymmetricCipher::Algorithm()']]]
-];

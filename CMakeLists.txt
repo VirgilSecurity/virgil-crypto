@@ -110,7 +110,7 @@ project (VirgilSecurity)
 # Set library version
 set (VIRGIL_VERSION_MAJOR 2)
 set (VIRGIL_VERSION_MINOR 4)
-set (VIRGIL_VERSION_PATCH 1)
+set (VIRGIL_VERSION_PATCH 2)
 set (VIRGIL_VERSION_FEATURE)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 2)
@@ -301,7 +301,7 @@ set (ENABLE_BENCHMARK OFF CACHE BOOL "Defines whether include benchmark or not."
 # Configure path variables
 include(GNUInstallDirs)
 set (INSTALL_INC_DIR_NAME ${CMAKE_INSTALL_INCLUDEDIR} CACHE STRING "Installation directory name for includes")
-set (INSTALL_LIB_DIR_NAME ${CMAKE_INSTALL_LIBDIR} CACHE STRING "Installation directory name for libraries")
+set (INSTALL_LIB_DIR_NAME lib CACHE STRING "Installation directory name for libraries")
 set (INSTALL_BIN_DIR_NAME ${CMAKE_INSTALL_BINDIR} CACHE STRING "Installation directory name for executables")
 set (INSTALL_MAN_DIR_NAME ${CMAKE_INSTALL_MANDIR} CACHE STRING "Installation directory name for man pages")
 set (INSTALL_DOC_DIR_NAME "${CMAKE_INSTALL_DATAROOTDIR}/doc" CACHE STRING "Installation directory name for doc pages")

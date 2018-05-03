@@ -67,6 +67,12 @@ if (VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP)
     )
 endif (VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP)
 
+if (VIRGIL_CRYPTO_FEATURE_PYTHIA)
+    list (APPEND TEST_FILES
+        VirgilPythia_Test.php
+    )
+endif ()
+
 add_subdirectory (data)
 
 file (GLOB STALE_TEST_FILES "${CMAKE_CURRENT_BINARY_DIR}/*.php")

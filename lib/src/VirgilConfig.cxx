@@ -34,40 +34,18 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#cmakedefine SWIG_TARGET_LINUX
+#include "VirgilConfig.h"
 
-%insert(cgo_comment_typedefs) %{
-#cgo CPPFLAGS: -I${SRCDIR}/include
-#cgo LDFLAGS: -L${SRCDIR}/lib -lvirgil_crypto_go -lvirgil_crypto -lmbedcrypto -led25519 -lstdc++
-%}
+using virgil::crypto::VirgilConfig;
 
-#if defined(SWIG_TARGET_LINUX)
-%insert(cgo_comment_typedefs) %{
-#cgo LDFLAGS: -lm
-%}
-#endif
+bool VirgilConfig::hasFeatureStreamImpl() {
+    return VIRGIL_CRYPTO_FEATURE_STREAM_IMPL;
+}
 
-#if VIRGIL_CRYPTO_FEATURE_PYTHIA
-%insert(cgo_comment_typedefs) %{
-#cgo LDFLAGS: -lpythia -lrelic_s
-%}
-#endif
+bool VirgilConfig::hasFeaturePythiaImpl() {
+    return VIRGIL_CRYPTO_FEATURE_PYTHIA;
+}
 
-%define SWIG_CATCH_STDEXCEPT
-  /* catching std::exception  */
-  catch (std::invalid_argument& e) {
-    SWIG_exception(SWIG_ValueError, e.what() );
-  } catch (std::domain_error& e) {
-    SWIG_exception(SWIG_ValueError, e.what() );
-  } catch (std::overflow_error& e) {
-    SWIG_exception(SWIG_OverflowError, e.what() );
-  } catch (std::out_of_range& e) {
-    SWIG_exception(SWIG_IndexError, e.what() );
-  } catch (std::length_error& e) {
-    SWIG_exception(SWIG_IndexError, e.what() );
-  } catch (std::runtime_error& e) {
-    SWIG_exception(SWIG_RuntimeError, e.what() );
-  } catch (std::exception& e) {
-    SWIG_exception(SWIG_SystemError, e.what() );
-  }
-%enddef
+bool VirgilConfig::hasFeaturePythiaMultiThread() {
+    return VIRGIL_CRYPTO_FEATURE_PYTHIA_MT;
+}

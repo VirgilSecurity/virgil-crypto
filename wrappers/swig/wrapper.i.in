@@ -44,20 +44,15 @@
 #cmakedefine SWIG_WRAP_COPY_CONSTRUCTOR
 
 #cmakedefine01 VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP
+#cmakedefine01 VIRGIL_CRYPTO_FEATURE_PYTHIA
 
 %insert ("begin") %{
 #include <cstdlib>
 %}
 
-#if VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP
 %insert ("header") %{
-#define VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP 1
+#include "VirgilConfig.h"
 %}
-#else
-%insert ("header") %{
-#define VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP 0
-%}
-#endif
 
 // Standard includes
 %include <exception.i>
@@ -158,6 +153,9 @@ DEFINE_USING(VirgilHash, virgil::crypto::foundation)
 DEFINE_USING(VirgilPBKDF, virgil::crypto::foundation)
 
 // Package: virgil::crypto
+DEFINE_NAMESPACE(VirgilConfig, virgil::crypto)
+%include <@virgil_crypto_BINARY_DIR@/include/VirgilConfig.h>
+
 INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilCustomParams, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilCipherBase, virgil::crypto, virgil/crypto)
 INCLUDE_CLASS(VirgilCipher, virgil::crypto, virgil/crypto)
@@ -188,3 +186,16 @@ INCLUDE_CLASS(VirgilPFSResponderPublicInfo, virgil::crypto::pfs, virgil/crypto/p
 INCLUDE_CLASS(VirgilPFSResponderPrivateInfo, virgil::crypto::pfs, virgil/crypto/pfs)
 INCLUDE_CLASS(VirgilPFSSession, virgil::crypto::pfs, virgil/crypto/pfs)
 INCLUDE_CLASS(VirgilPFS, virgil::crypto::pfs, virgil/crypto/pfs)
+
+// Package Pythia
+#if VIRGIL_CRYPTO_FEATURE_PYTHIA
+
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythiaBlindResult, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythiaContext, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythiaTransformationKeyPair, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythiaProveResult, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythiaTransformResult, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(VirgilPythia, virgil::crypto::pythia, virgil/crypto/pythia)
+INCLUDE_TYPE(virgil_pythia_c, virgil/crypto/pythia)
+
+#endif // VIRGIL_CRYPTO_FEATURE_PYTHIA

@@ -50,6 +50,9 @@ travis_retry sudo apt-get -qq update
 ######################################## Utils
 travis_retry sudo apt-get install -y -qq software-properties-common
 
+######################################## Doxygen
+travis_retry sudo apt-get install -y --force-yes -qq doxygen
+
 ######################################## Compilers
 if [[ "${CC}" == "gcc-5" ]]; then
     travis_retry sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
@@ -75,10 +78,10 @@ else
     tar xvfz cmake-${CMAKE_VERSION}.tar.gz
     cd cmake-${CMAKE_VERSION}
     ./bootstrap
-    make -j4
+    make -j8 >/dev/null
 fi
 
-sudo make install
+sudo make install >/dev/null
 
 cd -
 
@@ -91,19 +94,12 @@ else
     travis_retry wget http://downloads.sourceforge.net/swig/swig-${SWIG_VERSION}.tar.gz
     tar -xzf swig-${SWIG_VERSION}.tar.gz
     cd swig-${SWIG_VERSION}
-    ./configure
-    make -j4
+    ./configure >/dev/null
+    make -j8 >/dev/null
 fi
 
-sudo make install
+sudo make install >/dev/null
 
-cd -
-
-######################################## Doxygen
-echo "Download Doxygen version ${DOXYGEN_VERSION} ..."
-travis_retry wget http://ftp.stack.nl/pub/users/dimitri/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
-tar -xzf doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
-sudo mv doxygen-${DOXYGEN_VERSION}/bin/doxygen /usr/bin/doxygen
 cd -
 
 ####################################### PHP & PHPUnit

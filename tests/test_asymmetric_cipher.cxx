@@ -40,6 +40,7 @@
  */
 
 #include "catch.hpp"
+#include "deterministic_keys.h"
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
@@ -49,6 +50,7 @@ using virgil::crypto::hex2bytes;
 using virgil::crypto::bytes2str;
 using virgil::crypto::bytes2hex;
 using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilKeyPair;
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
 
 static const char* const kPublicKey1 =
@@ -177,5 +179,58 @@ TEST_CASE("Asymmetric Cipher - Keys Validation", "[asymmetric-cipher]") {
                 str2bytes(kPwdPrivateKey2)));
         REQUIRE_THROWS(VirgilAsymmetricCipher::isPrivateKeyEncrypted(str2bytes(kMalformedPrivateKey1)));
         REQUIRE_THROWS(VirgilAsymmetricCipher::isPrivateKeyEncrypted(str2bytes(kMalformedPrivateKey2)));
+    }
+}
+
+TEST_CASE("Asymmetric Cipher - Deterministic Key Pair generation", "[asymmetric-cipher]") {
+    VirgilAsymmetricCipher cipher;
+    VirgilByteArray strongKeyMaterial = hex2bytes(kDeterministic_KeyMaterial);
+
+    SECTION("check RSA_256") {
+        REQUIRE_NOTHROW(cipher.genKeyPairFromKeyMaterial(VirgilKeyPair::Algorithm::RSA_256, strongKeyMaterial));
+        REQUIRE(kDeterministic_RSA_256_Public == bytes2str(cipher.exportPublicKeyToPEM()));
+        REQUIRE(kDeterministic_RSA_256_Private == bytes2str(cipher.exportPrivateKeyToPEM()));
+    }
+
+    SECTION("check RSA_8192") {
+        REQUIRE_NOTHROW(cipher.genKeyPairFromKeyMaterial(VirgilKeyPair::Algorithm::RSA_8192, strongKeyMaterial));
+        REQUIRE(kDeterministic_RSA_8192_Public == bytes2str(cipher.exportPublicKeyToPEM()));
+        REQUIRE(kDeterministic_RSA_8192_Private == bytes2str(cipher.exportPrivateKeyToPEM()));
+    }
+
+    SECTION("check EC_SECP192R1") {
+        REQUIRE_NOTHROW(cipher.genKeyPairFromKeyMaterial(VirgilKeyPair::Algorithm::EC_SECP192R1, strongKeyMaterial));
+        REQUIRE(kDeterministic_EC_SECP192R1_Public == bytes2str(cipher.exportPublicKeyToPEM()));
+        REQUIRE(kDeterministic_EC_SECP192R1_Private == bytes2str(cipher.exportPrivateKeyToPEM()));
+    }
+
+    SECTION("check EC_SECP521R1") {
+        REQUIRE_NOTHROW(cipher.genKeyPairFromKeyMaterial(VirgilKeyPair::Algorithm::EC_SECP521R1, strongKeyMaterial));
+        REQUIRE(kDeterministic_EC_SECP521R1_Public == bytes2str(cipher.exportPublicKeyToPEM()));
+        REQUIRE(kDeterministic_EC_SECP521R1_Private == bytes2str(cipher.exportPrivateKeyToPEM()));
+    }
+
+    SECTION("check EC_BP512R1") {
+        REQUIRE_NOTHROW(cipher.genKeyPairFromKeyMaterial(VirgilKeyPair::Algorithm::RSA_256, strongKeyMaterial));
+        REQUIRE(kDeterministic_RSA_256_Public == bytes2str(cipher.exportPublicKeyToPEM()));
+        REQUIRE(kDeterministic_RSA_256_Private == bytes2str(cipher.exportPrivateKeyToPEM()));
+    }
+
+    SECTION("check EC_SECP256K1") {
+        REQUIRE_NOTHROW(cipher.genKeyPairFromKeyMaterial(VirgilKeyPair::Algorithm::EC_SECP256K1, strongKeyMaterial));
+        REQUIRE(kDeterministic_EC_SECP256K1_Public == bytes2str(cipher.exportPublicKeyToPEM()));
+        REQUIRE(kDeterministic_EC_SECP256K1_Private == bytes2str(cipher.exportPrivateKeyToPEM()));
+    }
+
+    SECTION("check FAST_EC_X25519") {
+        REQUIRE_NOTHROW(cipher.genKeyPairFromKeyMaterial(VirgilKeyPair::Algorithm::FAST_EC_X25519, strongKeyMaterial));
+        REQUIRE(kDeterministic_FAST_EC_X25519_Public == bytes2str(cipher.exportPublicKeyToPEM()));
+        REQUIRE(kDeterministic_FAST_EC_X25519_Private == bytes2str(cipher.exportPrivateKeyToPEM()));
+    }
+
+    SECTION("check FAST_EC_ED25519") {
+        REQUIRE_NOTHROW(cipher.genKeyPairFromKeyMaterial(VirgilKeyPair::Algorithm::FAST_EC_ED25519, strongKeyMaterial));
+        REQUIRE(kDeterministic_FAST_EC_ED25519_Public == bytes2str(cipher.exportPublicKeyToPEM()));
+        REQUIRE(kDeterministic_FAST_EC_ED25519_Private == bytes2str(cipher.exportPrivateKeyToPEM()));
     }
 }

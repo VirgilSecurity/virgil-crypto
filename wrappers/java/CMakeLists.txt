@@ -83,7 +83,10 @@ set_property (
     SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing;-package;com.virgilsecurity.crypto"
 )
 
-swig_add_module (${JAVA_MODULE_NAME} java ${WRAPPER_INTERFACE_FILE})
+swig_add_library (${JAVA_MODULE_NAME}
+        LANGUAGE java
+        SOURCES "${WRAPPER_INTERFACE_FILE}")
+
 swig_link_libraries (${JAVA_MODULE_NAME} ${WRAPPED_LIB_NAME})
 
 set (JAVA_SWIG_TARGET_NAME ${SWIG_MODULE_${JAVA_MODULE_NAME}_REAL_NAME})

@@ -41,6 +41,7 @@
 
 #include "catch.hpp"
 #include "rsa_keys.h"
+#include "deterministic_keys.h"
 
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilByteArrayUtils.h>
@@ -300,5 +301,18 @@ TEST_CASE("Export keys RSA", "[key-pair]") {
                 VirgilByteArrayUtils::stringToBytes(kRSA_8192_Private_Plain)
             ));
         }
+    }
+}
+
+TEST_CASE("Generate Deterministic Key Pair", "[key-pair]") {
+    VirgilByteArray strongKeyMaterial = VirgilByteArrayUtils::hexToBytes(kDeterministic_KeyMaterial);
+
+    SECTION("check FAST_EC_ED25519") {
+        VirgilKeyPair keyPair(VirgilByteArray{}, VirgilByteArray{});
+
+        REQUIRE_NOTHROW(keyPair = VirgilKeyPair::generateFromKeyMaterial(
+                VirgilKeyPair::Algorithm::FAST_EC_ED25519, strongKeyMaterial));
+        REQUIRE(kDeterministic_FAST_EC_ED25519_Public == VirgilByteArrayUtils::bytesToString(keyPair.publicKey()));
+        REQUIRE(kDeterministic_FAST_EC_ED25519_Private == VirgilByteArrayUtils::bytesToString(keyPair.privateKey()));
     }
 }

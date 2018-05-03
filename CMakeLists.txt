@@ -72,6 +72,12 @@
 #           boolean value that defines whether to compile module that is
 #           depends on a C++ streams or not.
 #
+#     - VIRGIL_CRYPTO_FEATURE_PYTHIA -
+#           boolean value that defines whether to enable module Pythia or not.
+#
+#     - VIRGIL_CRYPTO_FEATURE_PYTHIA_MT -
+#           boolean value that defines whether to build module Pythia in a multi-threading mode.
+#
 # Define variables:
 #     - VIRGIL_VERSION           - library full version.
 #     - VIRGIL_VERSION_MAJOR     - library major version number.
@@ -82,8 +88,6 @@
 #     - VIRGIL_VERSION_FULL_NAME - library version full name, i.e. 1.3.4-rc1
 #
 #     - POINTER_SIZE         - compiler pointer size.
-#
-#     - CMAKE_ARGS           - list of CMake parameters in form -DVAR:TYPE=VAL
 #
 # Optimizations:
 #     - ED25519_AMD64_OPTIMIZATION - boolean value that defines whether to enable AMD64 optimization
@@ -105,8 +109,8 @@ project (VirgilSecurity)
 
 # Set library version
 set (VIRGIL_VERSION_MAJOR 2)
-set (VIRGIL_VERSION_MINOR 3)
-set (VIRGIL_VERSION_PATCH 2)
+set (VIRGIL_VERSION_MINOR 4)
+set (VIRGIL_VERSION_PATCH 0)
 set (VIRGIL_VERSION_FEATURE)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 2)
@@ -122,6 +126,9 @@ message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
 
 # Configure path to custom modules
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
+# Define known toolchain arguments to be passed downstream.
+include (TransitiveToolchainArgs)
 
 # Build shared library if defined
 set (BUILD_SHARED_LIBS OFF CACHE BOOL "Force to create shared libraries")
@@ -157,38 +164,8 @@ endif ()
 # Add find_host_* utilities
 include (find_host_utils)
 
-# Define possible cmake_args
-include (cmake_args)
-
-if (ANDROID)
-    append_cmake_arg (CMAKE_ARGS NAME PLATFORM_VERSION TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_NDK TYPE PATH)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_ABI TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_NATIVE_API_LEVEL TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_TOOLCHAIN_NAME TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_FORCE_ARM_BUILD TYPE BOOL)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_NO_UNDEFINED TYPE BOOL)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_SO_UNDEFINED TYPE BOOL)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_STL TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME ANDROID_STL_FORCE_FEATURES TYPE BOOL)
-endif (ANDROID)
-
-if (CMAKE_TOOLCHAIN_FILE AND APPLE)
-    append_cmake_arg (CMAKE_ARGS NAME APPLE_PLATFORM TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME APPLE_BITCODE TYPE BOOL)
-    append_cmake_arg (CMAKE_ARGS NAME APPLE_EXTENSION TYPE BOOL)
-    append_cmake_arg (CMAKE_ARGS NAME IOS_DEVICE_FAMILY TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME IOS_DEPLOYMENT_TARGET TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME WATCHOS_DEPLOYMENT_TARGET TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME WATCHOS_DEVICE_FAMILY TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME TVOS_DEPLOYMENT_TARGET TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME TVOS_DEVICE_FAMILY TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME MACOS_DEPLOYMENT_TARGET TYPE STRING)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_PLATFORM_DEVELOPER_ROOT TYPE PATH)
-    append_cmake_arg (CMAKE_ARGS NAME CMAKE_APPLE_SDK_ROOT TYPE PATH)
-endif ()
-
 # Define additional compiler flags
+# TODO: Review. Maybe redundant, because of option POSITION_INDEPENDENT_CODE=ON
 if (NOT CMAKE_CROSSCOMPILING)
     include (CheckCCompilerFlag)
     check_c_compiler_flag (-fPIC COMPILER_SUPPORT_PIC)
@@ -212,10 +189,19 @@ if (LIB_STATIC_RUNTIME)
     endforeach ()
 endif (LIB_STATIC_RUNTIME)
 
-# Define optimization features
-set (ED25519_AMD64_OPTIMIZATION ON CACHE BOOL "Defines whether to enable AMD64 optimization for Ed25519 algorithms")
+# Configure features
+set (VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP OFF CACHE BOOL
+        "Defines whether to wrap low-level API or not")
+
+set (VIRGIL_CRYPTO_FEATURE_STREAM_IMPL ON CACHE BOOL
+        "Defines whether to compile module that is depends on a C++ stream or not")
+
+set (VIRGIL_CRYPTO_FEATURE_PYTHIA OFF CACHE BOOL "Defines whether to enable module Pythia or not")
+set (VIRGIL_CRYPTO_FEATURE_PYTHIA_MT ON CACHE BOOL "Defines whether to build module Pythia in a multi-threading mode")
 
 # Configure optimizations
+set (ED25519_AMD64_OPTIMIZATION ON CACHE BOOL "Defines whether to enable AMD64 optimization for Ed25519 algorithms")
+
 set (MBEDTLS_CMAKE_ARGS "")
 if (NOT CMAKE_CROSSCOMPILING AND ED25519_AMD64_OPTIMIZATION AND UNIX)
     if (NOT DEFINED CMAKE_OSX_ARCHITECTURES OR
@@ -233,23 +219,30 @@ include (virgil_depends)
 virgil_depends (
     PACKAGE_NAME "MbedTLS"
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/mbedtls"
-    CMAKE_ARGS "${CMAKE_ARGS}" "${MBEDTLS_CMAKE_ARGS}"
+    CMAKE_ARGS "${MBEDTLS_CMAKE_ARGS}"
 )
 virgil_find_package (MbedTLS 2.4)
 
 virgil_depends (
     PACKAGE_NAME "RapidJSON"
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/rapidjson"
-    CMAKE_ARGS "${CMAKE_ARGS}"
 )
 virgil_find_package (RapidJSON 1.1)
 
 virgil_depends (
     PACKAGE_NAME "tinyformat"
     CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/tinyformat"
-    CMAKE_ARGS "${CMAKE_ARGS}"
 )
 virgil_find_package (tinyformat 2.0.1)
+
+if (VIRGIL_CRYPTO_FEATURE_PYTHIA)
+    virgil_depends (
+        PACKAGE_NAME "pythia"
+        CONFIG_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs_ext/pythia"
+    )
+    virgil_find_package (pythia 0.0.1)
+    virgil_find_package (relic 0.4.0)
+endif ()
 
 # Define enviroment parameters
 if (NOT DEFINED POINTER_SIZE)
@@ -276,19 +269,12 @@ set_property (CACHE LANG PROPERTY STRINGS
     "ruby"
 )
 
-# Configure features
-set (VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP OFF CACHE BOOL
-        "Defines whether to wrap low-level API or not")
-
-set (VIRGIL_CRYPTO_FEATURE_STREAM_IMPL ON CACHE BOOL
-        "Defines whether to compile module that is depends on a C++ stream or not")
-
 # Configure crosscompiling
 set (UCLIBC OFF CACHE BOOL "Enable pathches if library is build with uClibc++")
 
 if (CMAKE_CROSSCOMPILING AND APPLE)
     string (TOLOWER "${APPLE_PLATFORM}" PLATFORM)
-    string (REPLACE "_sim" "" PLATFORM "${PLATFORM}")
+    string (REGEX REPLACE "_sim(32|64)?" "" PLATFORM "${PLATFORM}")
 
     set (PLATFORM ${PLATFORM} CACHE STRING "Target platform")
     set (PLATFORM_VERSION ${APPLE_DEPLOYMENT_TARGET} CACHE STRING "Minimum version of the platform")
@@ -302,16 +288,23 @@ if (CMAKE_CROSSCOMPILING AND APPLE)
     endif ()
 endif ()
 
+if (CMAKE_CROSSCOMPILING AND ANDROID)
+    set (PLATFORM_VERSION ${ANDROID_NATIVE_API_LEVEL} CACHE STRING "Android native API level")
+    set (PLATFORM_ARCH ${ANDROID_ABI} CACHE STRING "Target processor architecture")
+    set (PLATFORM_EMBEDDED YES CACHE BOOL "Mark target platform as embedded")
+endif ()
+
 # Configure testing
 set (ENABLE_TESTING ON CACHE BOOL "Defines whether include unit testing or not.")
 set (ENABLE_BENCHMARK OFF CACHE BOOL "Defines whether include benchmark or not.")
 
 # Configure path variables
-set (INSTALL_INC_DIR_NAME include CACHE STRING "Installation directory name for includes")
-set (INSTALL_LIB_DIR_NAME lib CACHE STRING "Installation directory name for libraries")
-set (INSTALL_BIN_DIR_NAME bin CACHE STRING "Installation directory name for executables")
-set (INSTALL_MAN_DIR_NAME "share/man" CACHE STRING "Installation directory name for man pages")
-set (INSTALL_DOC_DIR_NAME "share/doc" CACHE STRING "Installation directory name for doc pages")
+include(GNUInstallDirs)
+set (INSTALL_INC_DIR_NAME ${CMAKE_INSTALL_INCLUDEDIR} CACHE STRING "Installation directory name for includes")
+set (INSTALL_LIB_DIR_NAME ${CMAKE_INSTALL_LIBDIR} CACHE STRING "Installation directory name for libraries")
+set (INSTALL_BIN_DIR_NAME ${CMAKE_INSTALL_BINDIR} CACHE STRING "Installation directory name for executables")
+set (INSTALL_MAN_DIR_NAME ${CMAKE_INSTALL_MANDIR} CACHE STRING "Installation directory name for man pages")
+set (INSTALL_DOC_DIR_NAME "${CMAKE_INSTALL_DATAROOTDIR}/doc" CACHE STRING "Installation directory name for doc pages")
 set (INSTALL_API_DIR_NAME api CACHE STRING "Installation directory name for interface files")
 
 # Configure platform specific path variables

@@ -34,40 +34,54 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#cmakedefine SWIG_TARGET_LINUX
+#ifndef VIRGIL_PYTHIA_TRANSFORMATION_KEY_PAIR_H
+#define VIRGIL_PYTHIA_TRANSFORMATION_KEY_PAIR_H
 
-%insert(cgo_comment_typedefs) %{
-#cgo CPPFLAGS: -I${SRCDIR}/include
-#cgo LDFLAGS: -L${SRCDIR}/lib -lvirgil_crypto_go -lvirgil_crypto -lmbedcrypto -led25519 -lstdc++
-%}
+#include "../VirgilByteArray.h"
 
-#if defined(SWIG_TARGET_LINUX)
-%insert(cgo_comment_typedefs) %{
-#cgo LDFLAGS: -lm
-%}
-#endif
+namespace virgil {
+namespace crypto {
+namespace pythia {
 
-#if VIRGIL_CRYPTO_FEATURE_PYTHIA
-%insert(cgo_comment_typedefs) %{
-#cgo LDFLAGS: -lpythia -lrelic_s
-%}
-#endif
+/**
+ * @brief Handles result of the method VirgilPythia::computeTransformationKeyPair().
+ * @ingroup pythia
+ */
+class VirgilPythiaTransformationKeyPair {
+public:
+    /**
+     * @brief Encapsulate given data.
+     *
+     * @param privateKey - BN transformation private key.
+     * @param publicKey - G1 Transformation public key.
+     */
+    explicit VirgilPythiaTransformationKeyPair(
+            VirgilByteArray privateKey, VirgilByteArray publicKey)
+            : privateKey_(std::move(privateKey)),
+              publicKey_(std::move(publicKey)) {
+    }
 
-%define SWIG_CATCH_STDEXCEPT
-  /* catching std::exception  */
-  catch (std::invalid_argument& e) {
-    SWIG_exception(SWIG_ValueError, e.what() );
-  } catch (std::domain_error& e) {
-    SWIG_exception(SWIG_ValueError, e.what() );
-  } catch (std::overflow_error& e) {
-    SWIG_exception(SWIG_OverflowError, e.what() );
-  } catch (std::out_of_range& e) {
-    SWIG_exception(SWIG_IndexError, e.what() );
-  } catch (std::length_error& e) {
-    SWIG_exception(SWIG_IndexError, e.what() );
-  } catch (std::runtime_error& e) {
-    SWIG_exception(SWIG_RuntimeError, e.what() );
-  } catch (std::exception& e) {
-    SWIG_exception(SWIG_SystemError, e.what() );
-  }
-%enddef
+    /**
+     * @return G1 Transformation public key.
+     */
+    const VirgilByteArray& publicKey() const {
+        return publicKey_;
+    }
+
+    /**
+     * @return BN transformation private key.
+     */
+    const VirgilByteArray& privateKey() const {
+        return privateKey_;
+    }
+
+private:
+    const VirgilByteArray privateKey_;
+    const VirgilByteArray publicKey_;
+};
+
+} // namespace pythia
+} // namespace crypto
+} // namespace virgil
+
+#endif /* VIRGIL_PYTHIA_TRANSFORMATION_KEY_PAIR_H */

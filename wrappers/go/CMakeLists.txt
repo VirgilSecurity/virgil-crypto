@@ -75,13 +75,14 @@ message (STATUS "Size of Golang integer: ${GO_INT_SIZE}")
 set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY CPLUSPLUS ON)
 set_property (SOURCE "${WRAPPER_INTERFACE_FILE}" PROPERTY SWIG_FLAGS "-ignoremissing;-cgo;-intgosize;${GO_INT_SIZE}")
 
-set (swig_generated_sources)
-swig_module_initialize (${GO_MODULE_NAME} go)
-swig_add_source_to_module (${GO_MODULE_NAME} swig_generated_source "${WRAPPER_INTERFACE_FILE}")
+swig_add_library (${GO_MODULE_NAME}
+        TYPE STATIC
+        LANGUAGE go
+        SOURCES "${WRAPPER_INTERFACE_FILE}")
 
+swig_link_libraries (${GO_MODULE_NAME} ${WRAPPED_LIB_NAME})
 set (GO_SWIG_TARGET_NAME ${SWIG_MODULE_${GO_MODULE_NAME}_REAL_NAME})
-
-add_library (${GO_SWIG_TARGET_NAME} STATIC ${swig_generated_source})
+set_target_properties (${GO_SWIG_TARGET_NAME} PROPERTIES PREFIX "lib")
 
 install (PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/${GO_MODULE_NAME}.go" DESTINATION ".")
 

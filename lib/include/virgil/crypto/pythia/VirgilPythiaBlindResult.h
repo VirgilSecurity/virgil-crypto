@@ -34,40 +34,56 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#cmakedefine SWIG_TARGET_LINUX
+#ifndef VIRGIL_PYTHIA_BLIND_RESULT_H
+#define VIRGIL_PYTHIA_BLIND_RESULT_H
 
-%insert(cgo_comment_typedefs) %{
-#cgo CPPFLAGS: -I${SRCDIR}/include
-#cgo LDFLAGS: -L${SRCDIR}/lib -lvirgil_crypto_go -lvirgil_crypto -lmbedcrypto -led25519 -lstdc++
-%}
+#include "../VirgilByteArray.h"
 
-#if defined(SWIG_TARGET_LINUX)
-%insert(cgo_comment_typedefs) %{
-#cgo LDFLAGS: -lm
-%}
-#endif
+namespace virgil {
+namespace crypto {
+namespace pythia {
 
-#if VIRGIL_CRYPTO_FEATURE_PYTHIA
-%insert(cgo_comment_typedefs) %{
-#cgo LDFLAGS: -lpythia -lrelic_s
-%}
-#endif
+/**
+ * @brief Handles result of the method VirgilPythia::blind().
+ * @ingroup pythia
+ */
+class VirgilPythiaBlindResult {
+public:
+    /**
+     * @brief Encapsulate given data.
+     *
+     * @param blindedPassword - G1 password obfuscated into a pseudo-random string.
+     * @param blindingSecret - BN random value used to blind user's password.
+     */
+    explicit VirgilPythiaBlindResult(
+            VirgilByteArray blindedPassword, VirgilByteArray blindingSecret)
+            : blindedPassword_(std::move(blindedPassword)),
+              blindingSecret_(std::move(blindingSecret)) {
 
-%define SWIG_CATCH_STDEXCEPT
-  /* catching std::exception  */
-  catch (std::invalid_argument& e) {
-    SWIG_exception(SWIG_ValueError, e.what() );
-  } catch (std::domain_error& e) {
-    SWIG_exception(SWIG_ValueError, e.what() );
-  } catch (std::overflow_error& e) {
-    SWIG_exception(SWIG_OverflowError, e.what() );
-  } catch (std::out_of_range& e) {
-    SWIG_exception(SWIG_IndexError, e.what() );
-  } catch (std::length_error& e) {
-    SWIG_exception(SWIG_IndexError, e.what() );
-  } catch (std::runtime_error& e) {
-    SWIG_exception(SWIG_RuntimeError, e.what() );
-  } catch (std::exception& e) {
-    SWIG_exception(SWIG_SystemError, e.what() );
-  }
-%enddef
+        auto a = 5;
+    }
+
+    /**
+     * @return G1 password obfuscated into a pseudo-random string.
+     */
+    const VirgilByteArray& blindedPassword() const {
+        return blindedPassword_;
+    }
+
+    /**
+     * @return BN random value used to blind user's password.
+     */
+    const VirgilByteArray& blindingSecret() const {
+        return blindingSecret_;
+    }
+
+private:
+    const VirgilByteArray blindedPassword_;
+    const VirgilByteArray blindingSecret_;
+};
+
+} // namespace pythia
+} // namespace crypto
+} // namespace virgil
+
+#endif /* VIRGIL_PYTHIA_BLIND_RESULT_H */

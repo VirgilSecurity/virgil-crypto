@@ -69,3 +69,9 @@
  *
  * @brief This group contains interfaces for Perfect Forward Secrecy module.
  */
+
+/**
+ * @defgroup pythia Pythia
+ *
+ * @brief This group contains interfaces for Pythia module.
+ */

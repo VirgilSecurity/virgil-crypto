@@ -37,6 +37,8 @@
 #include <string>
 #include <memory>
 
+#include "VirgilConfig.h"
+
 #include <virgil/crypto/VirgilVersion.h>
 #include <virgil/crypto/VirgilByteArray.h>
 #include <virgil/crypto/VirgilByteArrayUtils.h>
@@ -74,12 +76,15 @@
 #include <virgil/crypto/pfs/VirgilPFSResponderPrivateInfo.h>
 #include <virgil/crypto/pfs/VirgilPFS.h>
 
+#include <virgil/crypto/pythia/VirgilPythia.h>
+
 #include "@VIRGIL_EMBIND_FILE@"
 
 using namespace emscripten;
 using namespace virgil::crypto;
 using namespace virgil::crypto::foundation;
 using namespace virgil::crypto::pfs;
+using namespace virgil::crypto::pythia;
 
 namespace virgil { namespace crypto {
 
@@ -144,6 +149,12 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .class_function("patchVersion", &VirgilVersion::patchVersion)
     ;
 
+    class_<VirgilConfig>("Config")
+        .class_function("hasFeatureStreamImpl", &VirgilConfig::hasFeatureStreamImpl)
+        .class_function("hasFeaturePythiaImpl", &VirgilConfig::hasFeaturePythiaImpl)
+        .class_function("hasFeaturePythiaMultiThread", &VirgilConfig::hasFeaturePythiaMultiThread)
+    ;
+
     register_vector<unsigned char>("VirgilByteArray")
         .function("data", VirgilByteArray_data)
         .function("assign", VirgilByteArray_assign)
@@ -156,6 +167,8 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .class_function("generate", &VirgilKeyPair::generate)
         .class_function("generateRecommended", &VirgilKeyPair::generateRecommended)
         .class_function("generateFrom", &VirgilKeyPair::generateFrom)
+        .class_function("generateFromKeyMaterial", &VirgilKeyPair::generateFromKeyMaterial)
+        .class_function("generateRecommendedFromKeyMaterial", &VirgilKeyPair::generateRecommendedFromKeyMaterial)
         .class_function("isKeyPairMatch", &VirgilKeyPair::isKeyPairMatch)
         .class_function("checkPrivateKeyPassword", &VirgilKeyPair::checkPrivateKeyPassword)
         .class_function("isPrivateKeyEncrypted", &VirgilKeyPair::isPrivateKeyEncrypted)
@@ -516,5 +529,43 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_pfs) {
             .function("decrypt", &VirgilPFS::decrypt)
             .function("getSession", &VirgilPFS::getSession)
             .function("setSession", &VirgilPFS::setSession)
+        ;
+}
+
+EMSCRIPTEN_BINDINGS(virgil_crypto_pythia) {
+        class_<VirgilPythia>("VirgilPythia")
+            .constructor<>()
+            .function("blind", &VirgilPythia::blind)
+            .function("deblind", &VirgilPythia::deblind)
+            .function("computeTransformationKeyPair", &VirgilPythia::computeTransformationKeyPair)
+            .function("transform", &VirgilPythia::transform)
+            .function("prove", &VirgilPythia::prove)
+            .function("verify", &VirgilPythia::verify)
+            .function("getPasswordUpdateToken", &VirgilPythia::getPasswordUpdateToken)
+            .function("updateDeblindedWithToken", &VirgilPythia::updateDeblindedWithToken)
+        ;
+
+        class_<VirgilPythiaBlindResult>("VirgilPythiaBlindResult")
+            .constructor<VirgilByteArray, VirgilByteArray>()
+            .function("blindedPassword", &VirgilPythiaBlindResult::blindedPassword)
+            .function("blindingSecret", &VirgilPythiaBlindResult::blindingSecret)
+        ;
+
+        class_<VirgilPythiaProveResult>("VirgilPythiaProveResult")
+            .constructor<VirgilByteArray, VirgilByteArray>()
+            .function("proofValueC", &VirgilPythiaProveResult::proofValueC)
+            .function("proofValueU", &VirgilPythiaProveResult::proofValueU)
+        ;
+
+        class_<VirgilPythiaTransformationKeyPair>("VirgilPythiaTransformationKeyPair")
+                .constructor<VirgilByteArray, VirgilByteArray>()
+                .function("privateKey", &VirgilPythiaTransformationKeyPair::privateKey)
+                .function("publicKey", &VirgilPythiaTransformationKeyPair::publicKey)
+        ;
+
+        class_<VirgilPythiaTransformResult>("VirgilPythiaTransformResult")
+            .constructor<VirgilByteArray, VirgilByteArray>()
+            .function("transformedPassword", &VirgilPythiaTransformResult::transformedPassword)
+            .function("transformedTweak", &VirgilPythiaTransformResult::transformedTweak)
         ;
 }

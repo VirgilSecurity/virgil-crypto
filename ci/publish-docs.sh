@@ -99,18 +99,80 @@ if [ "${PUBLISH_DOCS}" == "ON" ] && [ -n "${TRAVIS_TAG}" ]; then
     fix_html_source_file_names "${VIRGIL_CRYPTO_HTML_PATH_DST}"
 
     echo "Get version directories list..."
+    function define_VERSION_DIRS {
+        VERSION_DIRS=()
+        for dir in `find "${HTML_PATH_DST}" -maxdepth 1 -type d -name "v*" | sort -r`; do
+            VERSION_DIRS+=("${dir##*/}")
+        done
+    }
 
-    VERSION_DIRS=$()
-    for dir in `find "${HTML_PATH_DST}" -maxdepth 1 -type d -name "v*" | sort -r`; do
-        VERSION_DIRS+=("${dir##*/}")
-    done
-
+    echo "---"
+    echo "Initial versions:"
+    define_VERSION_DIRS
     for dir in ${VERSION_DIRS[*]}; do
         echo "    - ${dir}"
     done
 
-    echo "Generate root HTML file..."
+    echo "---"
+    echo "Cleanup versions..."
+    function find_feature_of_version {
+        local feature=${1}
+        local short_version=${2}
 
+        local found_versions=()
+        for available_version in ${@:3}; do
+            if [[ "${available_version}" = *"${short_version}-${feature}"* ]]; then
+                found_versions+=("${available_version}")
+            fi
+        done
+
+        echo "${found_versions[@]}"
+    }
+
+    function remove_stale_docs_if_relevant_exists {
+        local feature_to_reduce=${1}
+        local features_up_to_date=("${@:2}")
+        echo "    ---"
+        echo "    - Attempt to reduce docs for feature: ${feature_to_reduce} ..."
+        echo "    - By using docs from features       : ${features_up_to_date[*]} ..."
+
+        for version_dir in ${VERSION_DIRS[*]}; do
+            if [[ ${version_dir} = *"${feature_to_reduce}"* ]]; then
+                local version="${version_dir}"
+                local short_version="${version/%-*/}"
+                local release_version=$(echo ${version#v} | awk -F"." '{ printf "v%d.%d",$1,$2 }')
+                echo ""
+                echo "    - Processing version: ${version} ..."
+
+                if [[ " ${VERSION_DIRS[@]} " =~ " ${release_version} " ]]; then
+                    echo "        - Remove docs because production version found: ${release_version} ..."
+                    rm -fr -- "${HTML_PATH_DST}/${version_dir}"
+                    continue
+                fi
+
+                for replacement_feature in ${features_up_to_date[@]}; do
+                    local replacement_feature_versions=$(find_feature_of_version "${replacement_feature}" "${short_version}" "${VERSION_DIRS[@]}")
+
+                    if [ ! -z "${replacement_feature_versions}" ]; then
+                        echo "        - Remove docs because more relevant version(s) are found: ${replacement_feature_versions} ..."
+                        rm -fr -- "${HTML_PATH_DST}/${version_dir}"
+                    fi
+                done
+            fi
+        done
+    }
+    remove_stale_docs_if_relevant_exists "beta" "rc"
+    remove_stale_docs_if_relevant_exists "rc"
+
+    echo "---"
+    echo "Reduced versions:"
+    define_VERSION_DIRS
+    for dir in ${VERSION_DIRS[*]}; do
+        echo "    - ${dir}"
+    done
+
+
+    echo "Generate root HTML file..."
     cat >"${HTML_PATH_DST}/index.html" <<EOL
 <!DOCTYPE HTML>
 <html>

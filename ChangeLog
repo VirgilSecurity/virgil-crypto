@@ -1,5 +1,13 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.4.1 released 2018-05-03
+
+## Changes
+
+  [Docker] Update Go version & enable Pythia
+  [CI] Add build of Golang binaries on Jenkins and publish thme to CDN
+
+
 = Version 2.4.0 released 2018-05-03
 
 ## Features

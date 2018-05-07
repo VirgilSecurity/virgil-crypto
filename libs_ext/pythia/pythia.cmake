@@ -42,7 +42,7 @@ include (ExternalProject)
 
 # Configure additional CMake parameters
 file (APPEND "@VIRGIL_DEPENDS_ARGS_FILE@"
-    "set (RELIC_USE_PTHREAD ${VIRGIL_CRYPTO_FEATURE_PYTHIA_MT} CACHE INTERNAL \"\")\n"
+    "set (RELIC_USE_PTHREAD @VIRGIL_CRYPTO_FEATURE_PYTHIA_MT@ CACHE INTERNAL \"\")\n"
     "set (RELIC_USE_EXT_RNG ON CACHE INTERNAL \"\")\n"
     "set (ENABLE_TESTING OFF CACHE INTERNAL \"\")\n"
 )

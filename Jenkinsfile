@@ -91,7 +91,7 @@ def createNativeUnixBuild(slave) {
                 sh "./utils/build.sh php-7.0"
                 sh "brew unlink ${phpVersions} && brew link php71 --force"
                 sh "./utils/build.sh php-7.1"
-                sh "brew unlink ${phpVersions} && brew link php71 --force"
+                sh "brew unlink ${phpVersions} && brew link php72 --force"
                 sh "./utils/build.sh php-7.2"
                 organizeFilesUnix('install/php')
             }

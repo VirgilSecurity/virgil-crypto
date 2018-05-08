@@ -103,7 +103,7 @@ def createNativeUnixBuild(slave) {
                 writeFile file: './utils/env.sh', text: ['source /opt/remi/php71/enable', ''].join("\n")
                 sh './utils/build.sh php-7.1'
                 writeFile file: './utils/env.sh', text: ['source /opt/remi/php72/enable', ''].join("\n")
-                sh './utils/build.sh php-7.2'
+                sh 'source /opt/rh/devtoolset-4/enable && gcc --version && ./utils/build.sh php-7.2'
                 organizeFilesUnix('install/php')
             }
             // MONO NET

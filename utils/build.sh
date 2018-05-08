@@ -275,6 +275,7 @@ if [ "${SYSTEM_NAME}" == "linux" ]; then
 fi
 
 if [ -f "${SCRIPT_DIR}/env.sh" ]; then
+    show_info "Setting up additional build environment"
     source "${SCRIPT_DIR}/env.sh"
 fi
 

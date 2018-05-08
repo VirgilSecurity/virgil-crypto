@@ -1,18 +1,32 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.4.3 released 2018-05-08
+
+## Features
+
+  * [FEATURE] Add support of PHP-7.2
+
+
+## Bugfix
+
+  * [Build] Force install 'pythia' libraries to the 'lib' directory
+  * [Build] Fix passing 'multi-thread' flag to the 'pythia' library
+  * [Build] Fix Golang CGO produce error message on the CentOS about duplication of `pythia_buf_new()' function.
+
+
 = Version 2.4.2 released 2018-05-03
 
 ## Changes
 
-  [Build] Use 'lib' for CMake 'INSTALL_LIB_DIR_NAME' option by default - regression fix
+  * [Build] Use 'lib' for CMake 'INSTALL_LIB_DIR_NAME' option by default - regression fix
 
 
 = Version 2.4.1 released 2018-05-03
 
 ## Changes
 
-  [Docker] Update Go version & enable Pythia
-  [CI] Add build of Golang binaries on Jenkins and publish thme to CDN
+  * [Docker] Update Go version & enable Pythia
+  * [CI] Add build of Golang binaries on Jenkins and publish thme to CDN
 
 
 = Version 2.4.0 released 2018-05-03

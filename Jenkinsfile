@@ -103,8 +103,6 @@ def createNativeUnixBuild(slave) {
                 writeFile file: './utils/env.sh', text: ['source /opt/remi/php71/enable', ''].join("\n")
                 sh './utils/build.sh php-7.1'
                 writeFile file: './utils/env.sh', text: ['source /opt/remi/php72/enable', ''].join("\n")
-                // DEBUG
-                sh "source ./utils/env.sh && php -v"
                 sh './utils/build.sh php-7.2'
                 organizeFilesUnix('install/php')
             }

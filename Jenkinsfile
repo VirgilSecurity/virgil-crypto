@@ -84,13 +84,15 @@ def createNativeUnixBuild(slave) {
             organizeFilesUnix('install/nodejs')
             // PHP
             if (slave.contains('os-x')) {
-                def phpVersions = "php56 php70 php71"
+                def phpVersions = "php56 php70 php71 php72"
                 sh "brew unlink ${phpVersions} && brew link php56 --force"
                 sh "./utils/build.sh php-5.6"
                 sh "brew unlink ${phpVersions} && brew link php70 --force"
                 sh "./utils/build.sh php-7.0"
                 sh "brew unlink ${phpVersions} && brew link php71 --force"
                 sh "./utils/build.sh php-7.1"
+                sh "brew unlink ${phpVersions} && brew link php72 --force"
+                sh "./utils/build.sh php-7.2"
                 organizeFilesUnix('install/php')
             }
             if (slave.contains('centos7')) {
@@ -100,6 +102,8 @@ def createNativeUnixBuild(slave) {
                 sh './utils/build.sh php-7.0'
                 writeFile file: './utils/env.sh', text: ['source /opt/remi/php71/enable', ''].join("\n")
                 sh './utils/build.sh php-7.1'
+                writeFile file: './utils/env.sh', text: ['source /opt/remi/php72/enable', 'source /opt/rh/devtoolset-4/enable', ''].join("\n")
+                sh './utils/build.sh php-7.2'
                 organizeFilesUnix('install/php')
             }
             // MONO NET

@@ -407,6 +407,8 @@ function(target_apple_framework target)
         MACOSX_FRAMEWORK_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist"
     )
 
+    set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS "-all_load")
+
     #
     # Set Xcode attributes:
     #   - XCODE_ATTRIBUTE_{APPLE_PLATFORM}_DEPLOYMENT_TARGET

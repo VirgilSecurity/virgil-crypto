@@ -155,7 +155,7 @@ if (BUILD_LIBRARY_FRAMEWORK)
             message (FATAL_ERROR "Header file 'pythia_buf_sizes.h' is not found within paths $${include_directories}")
         endif ()
 
-        target_sources(${PROJECT_NAME} PRIVATE "${pythia_buf_header_file_path}" "${pythia_buf_sizes_header_file_path}")
+        target_sources (${PROJECT_NAME} PRIVATE "${pythia_buf_header_file_path}" "${pythia_buf_sizes_header_file_path}")
 
         set_property (
             SOURCE ${pythia_buf_header_file_path}
@@ -166,6 +166,14 @@ if (BUILD_LIBRARY_FRAMEWORK)
             SOURCE ${pythia_buf_sizes_header_file_path}
             PROPERTY MACOSX_PACKAGE_LOCATION "Headers/pythia"
         )
+
+        target_sources (${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_LIST_DIR}/module.modulemap")
+
+        set_property(
+            SOURCE module.modulemap
+            PROPERTY MACOSX_PACKAGE_LOCATION "Modules"
+        )
+
     endif ()
 
     # Convert target to framework

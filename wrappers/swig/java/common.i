@@ -39,6 +39,12 @@
 %javaexception("java.io.IOException") virgil::crypto::VirgilDataSink::write {}
 %javaexception("java.io.IOException") virgil::crypto::VirgilDataSink::isGood {}
 
+%pragma(java) jniclassimports=%{
+import com.virgilsecurity.crypto.JniLoader;
+%}
+
+%pragma(java) jniclassbase=%{JniLoader%}
+
 %typemap(javainterfaces) SWIGTYPE "java.lang.AutoCloseable";
 %typemap(javacode) SWIGTYPE %{
   @Override

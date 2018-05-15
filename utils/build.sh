@@ -540,8 +540,6 @@ if [[ "${TARGET_NAME}" =~ (asmjs|webasm) ]]; then
     fi
     source "${EMSDK_HOME}/emsdk_env.sh"
 
-    CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_PYTHIA=ON"
-
     cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} \
         -DCMAKE_TOOLCHAIN_FILE="$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake" \
         -DCMAKE_CXX_FLAGS_RELEASE="-O3" \

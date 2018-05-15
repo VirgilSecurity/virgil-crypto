@@ -34,16 +34,16 @@ Crypto Library is suitable for the following platforms:
 * Web (WebAssembly, AsmJS)
 
 ### Supported languages
-Crypto Library is written in C++ and supports bindings for the following programming languages:
-* Go
-* PHP
-* Python
-* Ruby
-* Java
-* C#
-* AsmJS
-* NodeJS
-* WebAssembly
+Crypto Library is written in C++ [[CDN](https://cdn.virgilsecurity.com/virgil-crypto/cpp/)] and supports bindings for the following programming languages:
+* Go [[CDN](https://cdn.virgilsecurity.com/virgil-crypto/go/)]
+* PHP [[CDN](https://cdn.virgilsecurity.com/virgil-crypto/php/)]
+* Python [[CDN](https://cdn.virgilsecurity.com/virgil-crypto/python/)]
+* Ruby [[CDN](https://cdn.virgilsecurity.com/virgil-crypto/ruby/)]
+* Java [[CDN](https://cdn.virgilsecurity.com/virgil-crypto/java/)]
+* C# [[CDN](https://cdn.virgilsecurity.com/virgil-crypto/net/)]
+* AsmJS [[CDN](https://cdn.virgilsecurity.com/virgil-crypto/asmjs/)]
+* NodeJS [[CDN](https://cdn.virgilsecurity.com/virgil-crypto/nodejs/)]
+* WebAssembly [[CDN](https://cdn.virgilsecurity.com/virgil-crypto/webasm/)]
 
 **Swift/Objective_C** language can use the Virgil Crypto Library directly, without any bind.
 

@@ -420,6 +420,14 @@ function(target_apple_framework target)
             SOURCE "${FRAMEWORK_MODULE_MAP}"
             PROPERTY MACOSX_PACKAGE_LOCATION "Modules"
         )
+
+        if (APPLE_PLATFORM STREQUAL "MACOS")
+            add_custom_command(
+                TARGET ${target}
+                POST_BUILD
+                COMMAND cmake -E create_symlink "Versions/Current/Modules" "$<TARGET_BUNDLE_DIR:${target}>/Modules"
+            )
+        endif()
     endif ()
 
 

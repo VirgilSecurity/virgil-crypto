@@ -38,17 +38,23 @@ cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 
 project (${WRAPPED_LIB_NAME}_java)
 
+#
 # Configure Java
+#
 set (JAVA_MODULE_NAME ${PROJECT_NAME})
 set (JAVA_JAR_NAME ${JAVA_MODULE_NAME})
 set (JAVA_JAR_TARGET_NAME ${JAVA_MODULE_NAME}_jar)
 set (SWIG_MODULE_NAME ${JAVA_MODULE_NAME})
 
+#
 # Find Java
+#
 find_host_package (Java REQUIRED)
 include (UseJava)
 
+#
 # Find Java JNI
+#
 if (ANDROID)
     find_path (JAVA_INCLUDE_PATH jni.h)
     set (JNI_INCLUDE_DIRS ${JAVA_INCLUDE_PATH})
@@ -57,13 +63,17 @@ else (ANDROID)
 endif (ANDROID)
 include_directories (SYSTEM ${JNI_INCLUDE_DIRS})
 
+#
 # Make sure the nested directory structure exists
+#
 set (JAVA_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin CACHE INTERNAL "")
 set (JAVA_SWIG_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/src CACHE INTERNAL "")
 file (MAKE_DIRECTORY ${JAVA_BINARY_DIRECTORY})
 file (MAKE_DIRECTORY ${JAVA_SWIG_OUTPUT_DIRECTORY})
 
+#
 # Configure SWIG
+#
 find_host_package (SWIG REQUIRED)
 include (${SWIG_USE_FILE})
 
@@ -91,7 +101,9 @@ swig_link_libraries (${JAVA_MODULE_NAME} ${WRAPPED_LIB_NAME})
 
 set (JAVA_SWIG_TARGET_NAME ${SWIG_MODULE_${JAVA_MODULE_NAME}_REAL_NAME})
 
+#
 # Configure assembly
+#
 set_target_properties (${JAVA_SWIG_TARGET_NAME}
         PROPERTIES OUTPUT_NAME ${JAVA_MODULE_NAME})
 set_target_properties (${JAVA_SWIG_TARGET_NAME}
@@ -120,7 +132,9 @@ foreach (JAVA_FILE ${JAVA_SRC})
     )
 endforeach (JAVA_FILE)
 
+#
 # Add assembly dependencies
+#
 add_jar (${JAVA_JAR_TARGET_NAME}
     "${CMAKE_CURRENT_BINARY_DIR}/src/VirgilStreamDataSink.java"
     "${CMAKE_CURRENT_BINARY_DIR}/src/VirgilStreamDataSource.java"
@@ -128,7 +142,9 @@ add_jar (${JAVA_JAR_TARGET_NAME}
 )
 add_dependencies (${JAVA_JAR_TARGET_NAME} ${JAVA_SWIG_TARGET_NAME})
 
+#
 # Payload 'java_sources' file with generated classes
+#
 get_property (JAVA_CLASS_DIR TARGET ${JAVA_JAR_TARGET_NAME} PROPERTY CLASS_DIR)
 if (NOT JAVA_CLASS_DIR)
     get_property (JAVA_CLASS_DIR TARGET ${JAVA_JAR_TARGET_NAME} PROPERTY CLASSDIR)
@@ -145,7 +161,9 @@ add_custom_command (TARGET ${JAVA_SWIG_TARGET_NAME} POST_BUILD
         COMMENT "Create java source list file: ${JAVA_SOURCE_LIST_FILE}."
     )
 
+#
 # Install
+#
 set (PLATFORM_VERSION "${Java_VERSION_MAJOR}.${Java_VERSION_MINOR}" PARENT_SCOPE)
 
 if (ANDROID)

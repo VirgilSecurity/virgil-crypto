@@ -167,12 +167,6 @@ if (BUILD_LIBRARY_FRAMEWORK)
             PROPERTY MACOSX_PACKAGE_LOCATION "Headers/pythia"
         )
 
-        target_sources (${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_LIST_DIR}/module.modulemap")
-
-        set_property(
-            SOURCE module.modulemap
-            PROPERTY MACOSX_PACKAGE_LOCATION "Modules"
-        )
 
     endif ()
 
@@ -180,6 +174,7 @@ if (BUILD_LIBRARY_FRAMEWORK)
     target_apple_framework (${PROJECT_NAME}
         NAME "VSCCrypto"
         IDENTIFIER "com.virgilsecurity.VSCCrypto"
+        MODULE_MAP "${CMAKE_CURRENT_LIST_DIR}/module.modulemap"
     )
 
 endif ()

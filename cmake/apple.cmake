@@ -348,6 +348,7 @@ endmacro(find_host_library)
 # target_apple_framework(<target>
 #                        [NAME name]
 #                        [VERSION version]
+#                        [MODULE_MAP filepath]
 #                        [IDENTIFIER identifier]
 #                        [DEVELOPMENT_TEAM team]
 #                        [CODE_SIGN_IDENTITY identity]
@@ -362,7 +363,7 @@ function(target_apple_framework target)
     # Parse arguments
     #
     set(_option_value CODE_SIGN)
-    set(_one_value NAME VERSION IDENTIFIER DEVELOPMENT_TEAM CODE_SIGN_IDENTITY)
+    set(_one_value NAME VERSION MODULE_MAP IDENTIFIER DEVELOPMENT_TEAM CODE_SIGN_IDENTITY)
     cmake_parse_arguments(FRAMEWORK "${_option_value}" "${_one_value}" "" ${ARGN})
 
     if(FRAMEWORK_UNPARSED_ARGUMENTS)
@@ -408,6 +409,19 @@ function(target_apple_framework target)
     )
 
     set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS "-all_load")
+
+    #
+    # Set module.modulemap
+    #
+    if (FRAMEWORK_MODULE_MAP)
+        target_sources (${target} PRIVATE "${FRAMEWORK_MODULE_MAP}")
+
+        set_property(
+            SOURCE "${FRAMEWORK_MODULE_MAP}"
+            PROPERTY MACOSX_PACKAGE_LOCATION "Modules"
+        )
+    endif ()
+
 
     #
     # Set Xcode attributes:

@@ -1,5 +1,24 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.4.4 on the way
+
+## Bugfix
+
+  * [Lib] Add missed Pythia headers to the all-in-one header
+
+## Features
+
+  * [Apple] Enable Pythia for platforms: WatchOS MacOS TVOS
+  * [Apple] Add 'module.modulemap' for Apple frameworks
+  * [JS] Add support for nodejs-10.1.0
+  * [Java] Add automatic loading of the JNI native library
+
+## Changes
+
+  * [Java] Downgrade target Java to 1.7
+  * [JS] Disable Pythia for platfroms: AsmJS and Webasm
+
+
 = Version 2.4.3 released 2018-05-08
 
 ## Features

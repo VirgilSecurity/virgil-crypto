@@ -136,14 +136,15 @@ endforeach (JAVA_FILE)
 # Add assembly dependencies
 #
 add_jar (${JAVA_JAR_TARGET_NAME}
-    "${CMAKE_CURRENT_BINARY_DIR}/src/VirgilStreamDataSink.java"
-    "${CMAKE_CURRENT_BINARY_DIR}/src/VirgilStreamDataSource.java"
+    # Just add one source to satisfy precondition for 'java_sources' file creation.
+    # All *.java files will be added when SWIG generates them.
+    "${CMAKE_CURRENT_BINARY_DIR}/src/JniLoader.java"
     OUTPUT_NAME ${JAVA_JAR_NAME}
 )
 add_dependencies (${JAVA_JAR_TARGET_NAME} ${JAVA_SWIG_TARGET_NAME})
 
 #
-# Payload 'java_sources' file with generated classes
+# Payload file 'java_sources' with generated classes and custom classes.
 #
 get_property (JAVA_CLASS_DIR TARGET ${JAVA_JAR_TARGET_NAME} PROPERTY CLASS_DIR)
 if (NOT JAVA_CLASS_DIR)

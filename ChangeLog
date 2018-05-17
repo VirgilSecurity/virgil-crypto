@@ -1,5 +1,29 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.4.4 released 2018-05-17
+
+## Bugfix
+
+  * [Lib] Add missed Pythia headers to the all-in-one header
+
+## Features
+
+  * [Apple] Enable Pythia for platforms: WatchOS MacOS TVOS
+  * [Apple] Add 'module.modulemap' for Apple frameworks
+  * [JS] Add support for nodejs-10.1.0
+  * [Java] Add automatic loading of the JNI native library
+
+## Changes
+
+  * [Lib] Add restriction on the 'keyMaterial' length for deterministic key generation algorithms (at least 32 bytes)
+  * [Java] Downgrade target Java to 1.7
+  * [JS] Disable Pythia for platfroms: AsmJS and Webasm
+  * [JS] Update nodejs version: 4.8.7  -> 4.9.1'
+  * [JS] Update nodejs version: 6.13.0 -> 6.14.2'
+  * [JS] Update nodejs version: 8.9.4  -> 8.11.2'
+  * [JS] Update nodejs version: 9.5.0  -> 9.11.1'
+
+
 = Version 2.4.3 released 2018-05-08
 
 ## Features

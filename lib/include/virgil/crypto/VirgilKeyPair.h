@@ -152,6 +152,9 @@ public:
      *
      * @param keyMaterial - the only data to be used for key generation, must be strong enough.
      * @param pwd - private key password.
+     *
+     * @throw VirgilCryptoException with VirgilCryptoError::NotSecure,
+     *     if Key Material is weak.
      */
     static VirgilKeyPair generateRecommendedFromKeyMaterial(
             const VirgilByteArray& keyMaterial,

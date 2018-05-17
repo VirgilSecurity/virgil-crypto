@@ -388,7 +388,7 @@ if [ "${TARGET_NAME}" == "ios" ]; then
                         -DINSTALL_LIB_DIR_NAME=lib/sim32 "${SRC_DIR}"
     make -j8 install
 
-    # Build for i386 simulator (Pythia is in a multi-thread mode!!!)
+    # Build for x86_64 simulator (Pythia is in a multi-thread mode!!!)
     rm -fr -- *
     cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=IOS_SIM64 \
                         -DVIRGIL_CRYPTO_FEATURE_PYTHIA_MT=ON \
@@ -412,6 +412,7 @@ if [ "${TARGET_NAME}" == "tvos" ] || [ "${TARGET_NAME}" == "watchos" ] || [ "${T
     CMAKE_ARGS+=" -DINSTALL_EXT_LIBS=NO"
     CMAKE_ARGS+=" -DINSTALL_EXT_HEADERS=NO"
     CMAKE_ARGS+=" -DCMAKE_TOOLCHAIN_FILE='${SRC_DIR}/cmake/apple.cmake'"
+    CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_PYTHIA=ON"
 
     # Build for device
     cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM_DEVICE} -DINSTALL_LIB_DIR_NAME=lib/dev "${SRC_DIR}"
@@ -419,6 +420,11 @@ if [ "${TARGET_NAME}" == "tvos" ] || [ "${TARGET_NAME}" == "watchos" ] || [ "${T
 
     if [ "${TARGET_NAME}" != "macos" ]; then
         # Build for simulator
+
+        if [ "${TARGET_NAME}" == "watchos" ]; then
+            CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_PYTHIA_MT=OFF"
+        fi
+
         rm -fr ./*
         cmake ${CMAKE_ARGS} -DAPPLE_PLATFORM=${APPLE_PLATFORM_SIMULATOR} -DINSTALL_LIB_DIR_NAME=lib/sim "${SRC_DIR}"
         make -j8 install
@@ -533,8 +539,6 @@ if [[ "${TARGET_NAME}" =~ (asmjs|webasm) ]]; then
         show_usage "Enviroment \$EMSDK_HOME is not defined!" 1
     fi
     source "${EMSDK_HOME}/emsdk_env.sh"
-
-    CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_PYTHIA=ON"
 
     cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} \
         -DCMAKE_TOOLCHAIN_FILE="$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake" \

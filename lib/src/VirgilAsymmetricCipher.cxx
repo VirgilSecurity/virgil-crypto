@@ -50,6 +50,8 @@
 #include <mbedtls/kdf2.h>
 #include <mbedtls/md.h>
 
+#include <tinyformat/tinyformat.h>
+
 #include <virgil/crypto/VirgilByteArrayUtils.h>
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
@@ -328,6 +330,13 @@ void VirgilAsymmetricCipher::genKeyPair(VirgilKeyPair::Type type) {
 }
 
 void VirgilAsymmetricCipher::genKeyPairFromKeyMaterial(VirgilKeyPair::Type type, const VirgilByteArray& keyMaterial) {
+    constexpr size_t kKeyMaterialSecureSizeMin = 32;
+
+    if (keyMaterial.size () < kKeyMaterialSecureSizeMin) {
+        throw make_error(VirgilCryptoError::NotSecure,
+                tfm::format("Key material is not secure. Expected length >= %d.", kKeyMaterialSecureSizeMin));
+    }
+
     unsigned int rsaSize = 0;
     impl_->pk_ctx.clear();
     mbedtls_ecp_group_id ecTypeId = MBEDTLS_ECP_DP_NONE;

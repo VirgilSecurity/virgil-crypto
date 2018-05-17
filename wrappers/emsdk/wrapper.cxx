@@ -532,6 +532,8 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_pfs) {
         ;
 }
 
+#if VIRGIL_CRYPTO_FEATURE_PYTHIA
+
 EMSCRIPTEN_BINDINGS(virgil_crypto_pythia) {
         class_<VirgilPythia>("VirgilPythia")
             .constructor<>()
@@ -569,3 +571,5 @@ EMSCRIPTEN_BINDINGS(virgil_crypto_pythia) {
             .function("transformedTweak", &VirgilPythiaTransformResult::transformedTweak)
         ;
 }
+
+#endif /* VIRGIL_CRYPTO_FEATURE_PYTHIA */

@@ -185,6 +185,16 @@ TEST_CASE("Asymmetric Cipher - Keys Validation", "[asymmetric-cipher]") {
 TEST_CASE("Asymmetric Cipher - Deterministic Key Pair generation", "[asymmetric-cipher]") {
     VirgilAsymmetricCipher cipher;
     VirgilByteArray strongKeyMaterial = hex2bytes(kDeterministic_KeyMaterial);
+    VirgilByteArray weakKeyMaterial = VirgilByteArray(31, 0xAB);
+    VirgilByteArray strongEnaughKeyMaterial = VirgilByteArray(32, 0xAB);
+
+    SECTION("key material with length 31 fail") {
+        REQUIRE_THROWS(cipher.genKeyPairFromKeyMaterial(VirgilKeyPair::Algorithm::RSA_256, weakKeyMaterial));
+    }
+
+    SECTION("key material with length 32 pass") {
+        REQUIRE_NOTHROW(cipher.genKeyPairFromKeyMaterial(VirgilKeyPair::Algorithm::RSA_256, strongEnaughKeyMaterial));
+    }
 
     SECTION("check RSA_256") {
         REQUIRE_NOTHROW(cipher.genKeyPairFromKeyMaterial(VirgilKeyPair::Algorithm::RSA_256, strongKeyMaterial));

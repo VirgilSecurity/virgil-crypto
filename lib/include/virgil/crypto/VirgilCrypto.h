@@ -99,3 +99,16 @@
     #include "stream/VirgilStreamDataSink.h"
     #include "stream/VirgilStreamDataSource.h"
 #endif /* VIRGIL_CRYPTO_FEATURE_STREAM_IMPL */
+
+#if VIRGIL_CRYPTO_FEATURE_PYTHIA
+    #include "pythia/pythia_buf.h"
+    #include "pythia/pythia_buf_sizes.h"
+    #include "pythia/virgil_pythia_c.h"
+    #include "pythia/VirgilPythia.h"
+    #include "pythia/VirgilPythiaBlindResult.h"
+    #include "pythia/VirgilPythiaContext.h"
+    #include "pythia/VirgilPythiaError.h"
+    #include "pythia/VirgilPythiaProveResult.h"
+    #include "pythia/VirgilPythiaTransformationKeyPair.h"
+    #include "pythia/VirgilPythiaTransformResult.h"
+#endif /* VIRGIL_CRYPTO_FEATURE_PYTHIA */

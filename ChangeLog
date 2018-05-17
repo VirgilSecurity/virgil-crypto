@@ -1,6 +1,6 @@
 virgil ChangeLog (Sorted per date)
 
-= Version 2.4.4 on the way
+= Version 2.4.4 released 2018-05-17
 
 ## Bugfix
 
@@ -15,8 +15,13 @@ virgil ChangeLog (Sorted per date)
 
 ## Changes
 
+  * [Lib] Add restriction on the 'keyMaterial' length for deterministic key generation algorithms (at least 32 bytes)
   * [Java] Downgrade target Java to 1.7
   * [JS] Disable Pythia for platfroms: AsmJS and Webasm
+  * [JS] Update nodejs version: 4.8.7  -> 4.9.1'
+  * [JS] Update nodejs version: 6.13.0 -> 6.14.2'
+  * [JS] Update nodejs version: 8.9.4  -> 8.11.2'
+  * [JS] Update nodejs version: 9.5.0  -> 9.11.1'
 
 
 = Version 2.4.3 released 2018-05-08

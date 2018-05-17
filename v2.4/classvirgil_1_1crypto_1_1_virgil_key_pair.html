@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">2.4.3</span>
+   &#160;<span id="projectnumber">2.4.4</span>
    </div>
   </td>
  </tr>
@@ -754,7 +754,13 @@ Static Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">keyMaterial</td><td>- the only data to be used for key generation, must be strong enough. </td></tr>
-    <tr><td class="paramname">pwd</td><td>- private key password. </td></tr>
+    <tr><td class="paramname">pwd</td><td>- private key password.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classvirgil_1_1crypto_1_1_virgil_crypto_exception.html" title="This only exception that crypto library can produce. ">VirgilCryptoException</a></td><td>with <a class="el" href="group__error.html#ggadde75c3db40120e9e64e386b3eaa7389a27915cae328ce7c894d80f6bc12ee6a3" title="Security prerequisite is broken. ">VirgilCryptoError::NotSecure</a>, if Key Material is weak. </td></tr>
   </table>
   </dd>
 </dl>

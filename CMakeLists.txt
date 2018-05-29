@@ -84,7 +84,7 @@
 #     - VIRGIL_VERSION_MINOR     - library minor version number.
 #     - VIRGIL_VERSION_PATCH     - library patch number.
 #     - VIRGIL_SOVERSION         - library ABI version.
-#     - VIRGIL_VERSION_FEATURE   - library version feature, i.e. rc1, or coolfeature, etc.
+#     - VIRGIL_VERSION_TAG       - library version tag, i.e. rc1, or coolfeature, etc.
 #     - VIRGIL_VERSION_FULL_NAME - library version full name, i.e. 1.3.4-rc1
 #
 #     - POINTER_SIZE         - compiler pointer size.
@@ -111,15 +111,15 @@ project (VirgilSecurity)
 set (VIRGIL_VERSION_MAJOR 2)
 set (VIRGIL_VERSION_MINOR 4)
 set (VIRGIL_VERSION_PATCH 4)
-set (VIRGIL_VERSION_FEATURE)
+set (VIRGIL_VERSION_TAG)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 2)
 
-if (VIRGIL_VERSION_FEATURE)
-    set (VIRGIL_VERSION_FULL_NAME ${VIRGIL_VERSION}-${VIRGIL_VERSION_FEATURE})
-else (VIRGIL_VERSION_FEATURE)
+if (VIRGIL_VERSION_TAG)
+    set (VIRGIL_VERSION_FULL_NAME ${VIRGIL_VERSION}-${VIRGIL_VERSION_TAG})
+else (VIRGIL_VERSION_TAG)
     set (VIRGIL_VERSION_FULL_NAME ${VIRGIL_VERSION})
-endif (VIRGIL_VERSION_FEATURE)
+endif (VIRGIL_VERSION_TAG)
 
 message (STATUS "Virgil version: " ${VIRGIL_VERSION_FULL_NAME})
 message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})

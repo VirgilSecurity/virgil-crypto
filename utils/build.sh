@@ -56,30 +56,34 @@ function show_usage {
     fi
     echo -e "This script helps to build crypto library for variety of languages and platforms."
     echo -e "Common reuirements: CMake 3.10, Python, PyYaml, SWIG 3.0.12."
-    echo -e "${COLOR_BLUE}Usage: ${BASH_SOURCE[0]} [<target>] [<src_dir>] [<build_dir>] [<install_dir>]${COLOR_RESET}"
-    echo -e "  - <target> - (default = cpp) target to build wich contains two parts <name>[-<version>], where <name>:"
-    echo -e "    * cpp              - build C++ library;"
-    echo -e "    * macos            - build framework for Apple macOSX, requirements: OS X, Xcode;"
-    echo -e "    * ios              - build framework for Apple iOS, requirements: OS X, Xcode;"
-    echo -e "    * watchos          - build framework for Apple WatchOS, requirements: OS X, Xcode;"
-    echo -e "    * tvos             - build framework for Apple TVOS, requirements: OS X, Xcode;"
-    echo -e "    * php              - build PHP library, requirements: php-dev;"
-    echo -e "    * python           - build Python library;"
-    echo -e "    * ruby             - build Ruby library;"
-    echo -e "    * java             - build Java library, requirements: \$JAVA_HOME;"
-    echo -e "    * java_android     - build Java library under Android platform, requirements: \$ANDROID_NDK;"
-    echo -e "    * net              - build .NET library, requirements: .NET or Mono;"
-    echo -e "    * net_macos        - build .NET library under Apple macOSX platform, requirements: Mono, OS X, Xcode;"
-    echo -e "    * net_ios          - build .NET library under Apple iOS platform, requirements: Mono, OS X, Xcode;"
-    echo -e "    * net_applewatchos - build .NET library under WatchOS platform, requirements: Mono, OS X, Xcode;"
-    echo -e "    * net_appletvos    - build .NET library under TVOS platform, requirements: Mono, OS X, Xcode;"
-    echo -e "    * net_android      - build .NET library under Android platform, requirements: Mono, \$ANDROID_NDK;"
-    echo -e "    * asmjs            - build AsmJS library, requirements: \$EMSDK_HOME;"
-    echo -e "    * webasm           - build WebAssembly library, requirements: \$EMSDK_HOME;"
-    echo -e "    * nodejs           - build NodeJS module;"
-    echo -e "    * go               - build Golang library."
-    echo -e "  - <src_dir>     - (default = .) path to the directory where root CMakeLists.txt file is located"
-    echo -e "  - <build_dir>   - (default = build/<target>) path to the directory where temp files will be stored"
+    echo -e "${COLOR_BLUE}Usage: ${BASH_SOURCE[0]} [--target=<target>] [--feature=<feature>] [--src=<src_dir>] [--build=<build_dir>] [--install=<install_dir>]${COLOR_RESET}"
+    echo -e "  - <target> - (default = cpp) target to build which contains two parts <name>[-<version>], where <name>:"
+    echo -e "      * cpp              - build C++ library;"
+    echo -e "      * macos            - build framework for Apple macOSX, requirements: OS X, Xcode;"
+    echo -e "      * ios              - build framework for Apple iOS, requirements: OS X, Xcode;"
+    echo -e "      * watchos          - build framework for Apple WatchOS, requirements: OS X, Xcode;"
+    echo -e "      * tvos             - build framework for Apple TVOS, requirements: OS X, Xcode;"
+    echo -e "      * php              - build PHP library, requirements: php-dev;"
+    echo -e "      * python           - build Python library;"
+    echo -e "      * ruby             - build Ruby library;"
+    echo -e "      * java             - build Java library, requirements: \$JAVA_HOME;"
+    echo -e "      * java_android     - build Java library under Android platform, requirements: \$ANDROID_NDK;"
+    echo -e "      * net              - build .NET library, requirements: .NET or Mono;"
+    echo -e "      * net_macos        - build .NET library under Apple macOSX platform, requirements: Mono, OS X, Xcode;"
+    echo -e "      * net_ios          - build .NET library under Apple iOS platform, requirements: Mono, OS X, Xcode;"
+    echo -e "      * net_applewatchos - build .NET library under WatchOS platform, requirements: Mono, OS X, Xcode;"
+    echo -e "      * net_appletvos    - build .NET library under TVOS platform, requirements: Mono, OS X, Xcode;"
+    echo -e "      * net_android      - build .NET library under Android platform, requirements: Mono, \$ANDROID_NDK;"
+    echo -e "      * asmjs            - build AsmJS library, requirements: \$EMSDK_HOME;"
+    echo -e "      * webasm           - build WebAssembly library, requirements: \$EMSDK_HOME;"
+    echo -e "      * nodejs           - build NodeJS module;"
+    echo -e "      * go               - build Golang library."
+    echo -e ""
+    echo -e "  - <feature> - available features:"
+    echo -e "      * pythia           - ask to enable feature Pythia. Some targets enable this feature by default."
+    echo -e ""
+    echo -e "  - <src_dir>     - (default = .) path to the directory where root CMakeLists.txt file is located."
+    echo -e "  - <build_dir>   - (default = build/<target>) path to the directory where temp files will be stored."
     echo -e "  - <install_dir> - (default = install/<target>) path to the directory where library files will be installed".
 
     exit ${2:0}
@@ -260,6 +264,41 @@ function make_fat_library {
     fi
 }
 
+# Parse arguments (https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash)
+FEATURES=()
+for arg in "$@"
+do
+case ${arg} in
+    --target=*)
+    TARGET="${arg#*=}"
+    shift
+    ;;
+    --feature=*)
+    FEATURES+=("${arg#*=}")
+    shift
+    ;;
+    --src=*)
+    SRC_DIR="${arg#*=}"
+    shift
+    ;;
+    --build=*)
+    BUILD_DIR="${arg#*=}"
+    shift
+    ;;
+    --install=*)
+    INSTALL_DIR="${arg#*=}"
+    shift
+    ;;
+    -h|--help)
+    show_usage
+    ;;
+    *)
+    show_usage "Unknown argument '${arg}', or it's value is not defined."
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
 # Define environment variables.
 SCRIPT_DIR=$(dirname "$(abspath "${BASH_SOURCE[0]}")")
 CURRENT_DIR=$(abspath .)
@@ -280,18 +319,12 @@ if [ -f "${SCRIPT_DIR}/env.sh" ]; then
 fi
 
 # Check arguments
-if [ ! -z "$1" ]; then
-    if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
-        show_usage
-    else
-        TARGET="$1"
-    fi
-else
+if [ -z "$TARGET" ]; then
     TARGET="cpp"
 fi
 show_info "<target> : ${TARGET}"
 
-target_arr=(${1//-/ })
+target_arr=(${TARGET//-/ })
 TARGET_NAME="${target_arr[0]}"
 TARGET_VERSION="${target_arr[1]}"
 
@@ -300,8 +333,8 @@ if [ ! -z "${TARGET_VERSION}" ]; then
     show_info "<target_version> : ${TARGET_VERSION}"
 fi
 
-if [ ! -z "$2" ]; then
-    SRC_DIR=$(abspath "$2")
+if [ ! -z "${SRC_DIR}" ]; then
+    SRC_DIR=$(abspath "${SRC_DIR}")
 else
     SRC_DIR="${CURRENT_DIR}"
 fi
@@ -311,9 +344,9 @@ if [ ! -f "${SRC_DIR}/CMakeLists.txt" ]; then
     show_usage "Source directory does not contain root CMakeLists.txt file!" 1
 fi
 
-if [ ! -z "$3" ]; then
-    mkdir -p "$3"
-    BUILD_DIR=$(abspath "$3")
+if [ ! -z "${BUILD_DIR}" ]; then
+    mkdir -p "${BUILD_DIR}"
+    BUILD_DIR=$(abspath "${BUILD_DIR}")
 else
     BUILD_DIR="${CURRENT_DIR}/build/${TARGET_NAME}/${TARGET_VERSION}"
     mkdir -p "${BUILD_DIR}"
@@ -321,15 +354,19 @@ else
 fi
 show_info "<build_dir>: ${BUILD_DIR}"
 
-if [ ! -z "$4" ]; then
-    mkdir -p "$4"
-    INSTALL_DIR=$(abspath "$4")
+if [ ! -z "${INSTALL_DIR}" ]; then
+    mkdir -p "${INSTALL_DIR}"
+    INSTALL_DIR=$(abspath "${INSTALL_DIR}")
 else
     INSTALL_DIR="${CURRENT_DIR}/install/${TARGET_NAME}/${TARGET_VERSION}"
     mkdir -p "${INSTALL_DIR}"
     INSTALL_DIR=$(abspath "${INSTALL_DIR}")
 fi
 show_info "<install_dir>: ${INSTALL_DIR}"
+
+if [ ! -z "${FEATURES[*]}" ]; then
+    show_info "Requested features: ${FEATURES[*]}"
+fi
 
 # Define common build parameters
 CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release"
@@ -352,6 +389,21 @@ fi
 if [ ! -z "${INSTALL_DIR}" ]; then
     CMAKE_ARGS+=" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}"
 fi
+
+if [ ! -z "${FEATURES[*]}" ]; then
+    for feature in ${FEATURES[*]}; do
+        case ${feature} in
+            pythia)
+            feature_upper=$(echo "${feature}" | awk '{print toupper($0)}')
+            CMAKE_ARGS+=" -DVIRGIL_CRYPTO_FEATURE_${feature_upper}=ON"
+            ;;
+            *)
+            show_error "Undefined feature '${feature}'."
+            ;;
+        esac
+    done
+fi
+
 
 # Go to the build directory
 cd "${INSTALL_DIR}" && rm -fr ./*
@@ -540,7 +592,10 @@ if [[ "${TARGET_NAME}" =~ (asmjs|webasm) ]]; then
     fi
     source "${EMSDK_HOME}/emsdk_env.sh"
 
-    cmake ${CMAKE_ARGS} -DLANG=${TARGET_NAME} \
+    CMAKE_ARGS+=" -DVIRGIL_PACKAGE_NAME_FEATURES=ON"
+
+    cmake ${CMAKE_ARGS} \
+        -DLANG=${TARGET_NAME} \
         -DCMAKE_TOOLCHAIN_FILE="$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake" \
         -DCMAKE_CXX_FLAGS_RELEASE="-O3" \
         "${SRC_DIR}"

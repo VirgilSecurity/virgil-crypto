@@ -126,7 +126,7 @@ Run the build script with the option `-h` to get help on how to build a library 
 Build command has the following syntax:
 
 ```shell
- ./utils/build.sh [<target>] [<src_dir>] [<build_dir>] [<install_dir>]
+ ./utils/build.sh [--target=<target>] [--feature=<feature>] [--src=<src_dir>] [--build=<build_dir>] [--install=<install_dir>]
 ```
 
 where the command options are:
@@ -154,13 +154,16 @@ where the command options are:
 | asmjs            | build AsmJS library, requirements: $EMSDK_HOME                                  |
 | webasm           | build WebAssembly library, requirements: $EMSDK_HOME                            |
 | nodejs           | build NodeJS module                                                             |
-| go               | build Golang library                                                            |  
+| go               | build Golang library                                                            |
+
+- &lt;feature&gt; - available features:
+    * pythia - ask to enable feature Pythia. Some targets enable this feature by default.
+- &lt;src_dir&gt; - a path to the directory where a root CMakeLists.txt file is located (default = .).
+- &lt;build_dir&gt; - a path to the directory where temp files will be stored (default = build/&lt;target&gt;).
+- &lt;install_dir&gt; - a path to the directory where library files will be installed (default = install/&lt;target&gt;).
+
 
 > All available Crypto Library versions you can find [here](http://virgilsecurity.github.io/virgil-crypto/).
-
-- <src_dir>     - a path to the directory where a root CMakeLists.txt file is located (default = .).
-- <build_dir>   - a path to the directory where temp files will be stored (default = build/&lt;target&gt;).
-- <install_dir> - a path to the directory where library files will be installed (default = install/&lt;target&gt;).
 
 
 ## Benchmark

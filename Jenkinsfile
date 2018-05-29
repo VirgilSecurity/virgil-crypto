@@ -181,10 +181,10 @@ def createCrossplatfromBuild(slave) {
             clearContentUnix()
             unstash 'src'
             withEnv(['EMSDK_HOME=/Users/virgil/Library/VirgilEnviroment/emsdk_portable']) {
-                sh './utils/build.sh --target=asmjs --build=build/asmjs --install=install/asmjs'
-                sh './utils/build.sh --target=asmjs --build=build/asmjs-pythia --install=install/asmjs-pythia --feature=pythia'
-                sh './utils/build.sh --target=webasm --build=build/webasm --install=install/webasm'
-                sh './utils/build.sh --target=webasm --build=build/webasm-pythia --install=install/webasm-pythia --feature=pythia'
+                sh './utils/build.sh --target=asmjs --build=build/asmjs/basic --install=install/asmjs/basic'
+                sh './utils/build.sh --target=asmjs --build=build/asmjs/pythia --install=install/asmjs/pythia --feature=pythia'
+                sh './utils/build.sh --target=webasm --build=build/webasm/basic --install=install/webasm/basic'
+                sh './utils/build.sh --target=webasm --build=build/webasm/pythia --install=install/webasm/pythia --feature=pythia'
             }
             archiveArtifacts('install/**')
         }

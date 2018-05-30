@@ -41,7 +41,6 @@
 #     - PLATFORM            - name of target platform (optional).
 #     - PLATFORM_VERSION    - minimum supported version of the target platform (optional).
 #     - PLATFORM_ARCH       - target platform processor architecture (optional).
-#     - ADD_COMPILER_INFO   - define whether to add compiler info to the library full name (optional).
 #     - LIB_STATIC_RUNTIME  - сauses library to use the static version of the run-time library.
 #
 #     - BUILD_LIBRARY_FRAMEWORK - build library as Apple Framework.
@@ -84,8 +83,11 @@
 #     - VIRGIL_VERSION_MINOR     - library minor version number.
 #     - VIRGIL_VERSION_PATCH     - library patch number.
 #     - VIRGIL_SOVERSION         - library ABI version.
-#     - VIRGIL_VERSION_FEATURE   - library version feature, i.e. rc1, or coolfeature, etc.
+#     - VIRGIL_VERSION_TAG       - library version tag, i.e. rc1, or coolfeature, etc.
 #     - VIRGIL_VERSION_FULL_NAME - library version full name, i.e. 1.3.4-rc1
+#
+#     - VIRGIL_PACKAGE_NAME_FEATURES - add available features to the library package name.
+#     - VIRGIL_PACKAGE_NAME_COMPILER - add compiler info to the library package name.
 #
 #     - POINTER_SIZE         - compiler pointer size.
 #
@@ -110,16 +112,16 @@ project (VirgilSecurity)
 # Set library version
 set (VIRGIL_VERSION_MAJOR 2)
 set (VIRGIL_VERSION_MINOR 4)
-set (VIRGIL_VERSION_PATCH 4)
-set (VIRGIL_VERSION_FEATURE)
+set (VIRGIL_VERSION_PATCH 5)
+set (VIRGIL_VERSION_TAG)
 set (VIRGIL_VERSION ${VIRGIL_VERSION_MAJOR}.${VIRGIL_VERSION_MINOR}.${VIRGIL_VERSION_PATCH})
 set (VIRGIL_SOVERSION 2)
 
-if (VIRGIL_VERSION_FEATURE)
-    set (VIRGIL_VERSION_FULL_NAME ${VIRGIL_VERSION}-${VIRGIL_VERSION_FEATURE})
-else (VIRGIL_VERSION_FEATURE)
+if (VIRGIL_VERSION_TAG)
+    set (VIRGIL_VERSION_FULL_NAME ${VIRGIL_VERSION}-${VIRGIL_VERSION_TAG})
+else (VIRGIL_VERSION_TAG)
     set (VIRGIL_VERSION_FULL_NAME ${VIRGIL_VERSION})
-endif (VIRGIL_VERSION_FEATURE)
+endif (VIRGIL_VERSION_TAG)
 
 message (STATUS "Virgil version: " ${VIRGIL_VERSION_FULL_NAME})
 message (STATUS "Virgil soversion: " ${VIRGIL_SOVERSION})
@@ -140,8 +142,9 @@ else ()
     set (LIB_STATIC_RUNTIME OFF CACHE BOOL "Causes library to use the static version of the run-time library.")
 endif ()
 
-# Configure additional parameters for library full name
-set (ADD_COMPILER_INFO OFF CACHE BOOL "Define whether to add compiler info to the library full name")
+# Define package name options
+set (VIRGIL_PACKAGE_NAME_FEATURES OFF CACHE BOOL "Add available features to the library package name.")
+set (VIRGIL_PACKAGE_NAME_COMPILER OFF CACHE BOOL "Add compiler info to the library package name.")
 
 # Define COMPILER
 string (TOLOWER "${CMAKE_CXX_COMPILER_ID}" COMPILER_ID)
@@ -399,11 +402,18 @@ if (PLATFORM_ARCH)
     set (LIB_NAME_FULL "${LIB_NAME_FULL}-${PLATFORM_ARCH}")
 endif (PLATFORM_ARCH)
 
-if (ADD_COMPILER_INFO)
+
+if (VIRGIL_PACKAGE_NAME_FEATURES)
+    if (VIRGIL_CRYPTO_FEATURE_PYTHIA)
+        set (LIB_NAME_FULL "${LIB_NAME_FULL}-pythia")
+    endif ()
+endif ()
+
+if (VIRGIL_PACKAGE_NAME_COMPILER)
     if (COMPILER AND COMPILER_VERSION)
         set (LIB_NAME_FULL "${LIB_NAME_FULL}-${COMPILER}-${COMPILER_VERSION}")
     else ()
-        message (FATAL_ERROR "ADD_COMPILER_INFO defined, but can not deduce compiler version.")
+        message (FATAL_ERROR "VIRGIL_PACKAGE_NAME_COMPILER defined, but can not deduce compiler version.")
     endif ()
 endif ()
 

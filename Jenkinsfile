@@ -39,79 +39,79 @@ def createNativeUnixBuild(slave) {
             clearContentUnix()
             unstash 'src'
             // C++
-            sh './utils/build.sh cpp'
+            sh './utils/build.sh --target=cpp'
             // Ruby
             withEnv(["PATH=${env.HOME}/.rbenv/bin:${env.PATH}"]){
                 writeFile file: './utils/env.sh', text: ['eval "$(rbenv init -)"'].join("\n")
                 writeFile file: '.ruby-version', text: ['2.0.0-p648'].join("\n")
-                sh './utils/build.sh ruby-2.0'
+                sh './utils/build.sh --target=ruby-2.0'
                 writeFile file: '.ruby-version', text: ['2.2.6'].join("\n")
-                sh './utils/build.sh ruby-2.2'
+                sh './utils/build.sh --target=ruby-2.2'
                 writeFile file: '.ruby-version', text: ['2.3.3'].join("\n")
-                sh './utils/build.sh ruby-2.3'
+                sh './utils/build.sh --target=ruby-2.3'
                 writeFile file: '.ruby-version', text: ['2.4.0'].join("\n")
-                sh './utils/build.sh ruby-2.4'
+                sh './utils/build.sh --target=ruby-2.4'
             }
             organizeFilesUnix('install/ruby')
             // Python
             if (slave.contains('centos7')) {
-                sh './utils/build.sh python-2.7'
+                sh './utils/build.sh --target=python-2.7'
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/python33/enable', ''].join("\n")
-                sh './utils/build.sh python-3.3'
+                sh './utils/build.sh --target=python-3.3'
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python34/enable', ''].join("\n")
-                sh './utils/build.sh python-3.4'
+                sh './utils/build.sh --target=python-3.4'
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python35/enable', ''].join("\n")
-                sh './utils/build.sh python-3.5'
+                sh './utils/build.sh --target=python-3.5'
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python36/enable', ''].join("\n")
-                sh './utils/build.sh python-3.6'
+                sh './utils/build.sh --target=python-3.6'
                 organizeFilesUnix('install/python')
             }
             if (slave.contains('build-os-x')) {
-                sh './utils/build.sh python-2.7'
-                sh './utils/build.sh python-3.4'
-                sh './utils/build.sh python-3.5'
-                sh './utils/build.sh python-3.6'
+                sh './utils/build.sh --target=python-2.7'
+                sh './utils/build.sh --target=python-3.4'
+                sh './utils/build.sh --target=python-3.5'
+                sh './utils/build.sh --target=python-3.6'
                 organizeFilesUnix('install/python')
             }
             // Java
-            sh './utils/build.sh java'
+            sh './utils/build.sh --target=java'
             // NodeJS
-            sh './utils/build.sh nodejs-4.9.1'
-            sh './utils/build.sh nodejs-6.14.2'
-            sh './utils/build.sh nodejs-7.10.1'
-            sh './utils/build.sh nodejs-8.11.2'
-            sh './utils/build.sh nodejs-9.11.1'
-            sh './utils/build.sh nodejs-10.1.0'
+            sh './utils/build.sh --target=nodejs-4.9.1'
+            sh './utils/build.sh --target=nodejs-6.14.2'
+            sh './utils/build.sh --target=nodejs-7.10.1'
+            sh './utils/build.sh --target=nodejs-8.11.2'
+            sh './utils/build.sh --target=nodejs-9.11.1'
+            sh './utils/build.sh --target=nodejs-10.1.0'
             organizeFilesUnix('install/nodejs')
             // PHP
             if (slave.contains('os-x')) {
                 def phpVersions = "php56 php70 php71 php72"
                 sh "brew unlink ${phpVersions} && brew link php56 --force"
-                sh "./utils/build.sh php-5.6"
+                sh "./utils/build.sh --target=php-5.6"
                 sh "brew unlink ${phpVersions} && brew link php70 --force"
-                sh "./utils/build.sh php-7.0"
+                sh "./utils/build.sh --target=php-7.0"
                 sh "brew unlink ${phpVersions} && brew link php71 --force"
-                sh "./utils/build.sh php-7.1"
+                sh "./utils/build.sh --target=php-7.1"
                 sh "brew unlink ${phpVersions} && brew link php72 --force"
-                sh "./utils/build.sh php-7.2"
+                sh "./utils/build.sh --target=php-7.2"
                 organizeFilesUnix('install/php')
             }
             if (slave.contains('centos7')) {
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-php56/enable', ''].join("\n")
-                sh './utils/build.sh php-5.6'
+                sh './utils/build.sh --target=php-5.6'
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-php70/enable', ''].join("\n")
-                sh './utils/build.sh php-7.0'
+                sh './utils/build.sh --target=php-7.0'
                 writeFile file: './utils/env.sh', text: ['source /opt/remi/php71/enable', ''].join("\n")
-                sh './utils/build.sh php-7.1'
+                sh './utils/build.sh --target=php-7.1'
                 writeFile file: './utils/env.sh', text: ['source /opt/remi/php72/enable', 'source /opt/rh/devtoolset-4/enable', ''].join("\n")
-                sh './utils/build.sh php-7.2'
+                sh './utils/build.sh --target=php-7.2'
                 organizeFilesUnix('install/php')
             }
             // MONO NET
-            sh './utils/build.sh net'
+            sh './utils/build.sh --target=net'
             // Golang
             if (slave.contains('centos7') || slave.contains('os-x')) {
-                sh './utils/build.sh go'
+                sh './utils/build.sh --target=go'
             }
 
             archiveArtifacts('install/**')
@@ -181,9 +181,13 @@ def createCrossplatfromBuild(slave) {
             clearContentUnix()
             unstash 'src'
             withEnv(['EMSDK_HOME=/Users/virgil/Library/VirgilEnviroment/emsdk_portable']) {
-                sh './utils/build.sh asmjs . build/asmjs install/asmjs'
-                sh './utils/build.sh webasm . build/webasm install/webasm'
+                sh './utils/build.sh --target=asmjs --build=build/asmjs/basic --install=install/asmjs/basic'
+                sh './utils/build.sh --target=asmjs --build=build/asmjs/pythia --install=install/asmjs/pythia --feature=pythia'
+                sh './utils/build.sh --target=webasm --build=build/webasm/basic --install=install/webasm/basic'
+                sh './utils/build.sh --target=webasm --build=build/webasm/pythia --install=install/webasm/pythia --feature=pythia'
             }
+            organizeFilesUnix('install/asmjs')
+            organizeFilesUnix('install/webasm')
             archiveArtifacts('install/**')
         }
     }
@@ -195,13 +199,13 @@ def createDarwinBuild(slave) {
             clearContentUnix()
             unstash 'src'
             sh 'rm -fr build install'
-            sh './utils/build.sh macos . build/cpp/macos install/cpp/macos'
-            sh './utils/build.sh ios . build/cpp/ios install/cpp/ios '
-            sh './utils/build.sh watchos . build/cpp/watchos install/cpp/watchos'
-            sh './utils/build.sh tvos . build/cpp/tvos install/cpp/tvos'
-            sh './utils/build.sh net_ios . build/net/ios install/net/ios'
-            sh './utils/build.sh net_watchos . build/net/watchos install/net/watchos'
-            sh './utils/build.sh net_tvos . build/net/tvos install/net/tvos'
+            sh './utils/build.sh --target=macos --build=build/cpp/macos --install=install/cpp/macos'
+            sh './utils/build.sh --target=ios --build=build/cpp/ios --install=install/cpp/ios '
+            sh './utils/build.sh --target=watchos --build=build/cpp/watchos --install=install/cpp/watchos'
+            sh './utils/build.sh --target=tvos --build=build/cpp/tvos --install=install/cpp/tvos'
+            sh './utils/build.sh --target=net_ios --build=build/net/ios --install=install/net/ios'
+            sh './utils/build.sh --target=net_watchos --build=build/net/watchos --install=install/net/watchos'
+            sh './utils/build.sh --target=net_tvos --build=build/net/tvos --install=install/net/tvos'
             organizeFilesUnix('install/cpp')
             organizeFilesUnix('install/net')
             archiveArtifacts('install/**')
@@ -215,8 +219,8 @@ def createAndroidBuild(slave) {
             clearContentUnix()
             unstash 'src'
             withEnv(['ANDROID_NDK=/Users/virgil/Library/VirgilEnviroment/android-ndk-r16b']) {
-                sh './utils/build.sh java_android . build/java/android install/java/android'
-                sh './utils/build.sh net_android . build/net/android install/net/android'
+                sh './utils/build.sh --target=java_android --build=build/java/android --install=install/java/android'
+                sh './utils/build.sh --target=net_android --build=build/net/android --install=install/net/android'
             }
             organizeFilesUnix('install/java')
             organizeFilesUnix('install/net')

@@ -186,6 +186,8 @@ def createCrossplatfromBuild(slave) {
                 sh './utils/build.sh --target=webasm --build=build/webasm/basic --install=install/webasm/basic'
                 sh './utils/build.sh --target=webasm --build=build/webasm/pythia --install=install/webasm/pythia --feature=pythia'
             }
+            organizeFilesUnix('install/asmjs')
+            organizeFilesUnix('install/webasm')
             archiveArtifacts('install/**')
         }
     }

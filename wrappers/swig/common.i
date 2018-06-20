@@ -68,13 +68,14 @@ namespace std {
 #endif
 
 // Exception handling
-%insert("header") %{
+%insert("begin") %{
 #include <virgil/crypto/VirgilCryptoException.h>
-%}
-
-%insert("header") %{
 #include <sstream>
 #include <exception>
+%}
+
+%insert("runtime") %{
+
 static std::string backtrace_message(const std::exception& exception, int level = 0) {
     std::ostringstream sstr;
     sstr << exception.what();

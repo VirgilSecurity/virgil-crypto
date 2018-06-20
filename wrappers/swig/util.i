@@ -41,7 +41,7 @@
 %enddef
 
 %define INCLUDE_TYPE(typeName, includePath)
-%insert("header") %{
+%insert("begin") %{
 #include <includePath/typeName.h>
 %}
 %include <includePath/typeName.h>
@@ -49,7 +49,7 @@
 
 %define INCLUDE_CLASS(className, package, includePath)
 DEFINE_NAMESPACE(className, package)
-%insert("header") %{
+%insert("begin") %{
 #include <includePath/className.h>
 %}
 %ignore package::className::className(className&&);
@@ -59,7 +59,7 @@ DEFINE_NAMESPACE(className, package)
 
 %define INCLUDE_CLASS_WITH_DIRECTOR(className, package, includePath)
 DEFINE_NAMESPACE(className, package)
-%insert("header") %{
+%insert("begin") %{
 #include <includePath/className.h>
 %}
 %feature("director") className;
@@ -68,7 +68,7 @@ DEFINE_NAMESPACE(className, package)
 
 %define INCLUDE_CLASS_WITH_COPY_CONSTRUCTOR(className, package, includePath)
 DEFINE_NAMESPACE(className, package)
-%insert("header") %{
+%insert("begin") %{
 #include <includePath/className.h>
 %}
 #if defined(SWIG_WRAP_COPY_CONSTRUCTOR)
@@ -80,7 +80,7 @@ DEFINE_NAMESPACE(className, package)
 %enddef
 
 %define DEFINE_USING(className, package)
-%insert("header") %{
+%insert("begin") %{
 using package::className;
 %}
 %enddef

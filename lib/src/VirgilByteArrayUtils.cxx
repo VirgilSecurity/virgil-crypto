@@ -41,6 +41,12 @@
 
 #include <rapidjson/document.h>
 
+#include <sstream>
+#include <iomanip>
+#include <algorithm>
+#include <cstring>
+
+
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::VirgilCryptoError;

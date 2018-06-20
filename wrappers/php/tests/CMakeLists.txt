@@ -36,6 +36,7 @@
 
 # Input:
 #     PHP_MODULE_FILE_NAME - PHP file name of the module under test.
+#     PHP_SWIG_TARGET_NAME - PHP wrapper target of the module under test.
 
 set (TEST_FILES
     VirgilHash_MD5_Test.php
@@ -89,12 +90,9 @@ foreach (TEST_FILE ${TEST_FILES})
     list (APPEND PHP_ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/${TEST_FILE}")
 endforeach (TEST_FILE)
 
-find_host_program (PHP_MODULE php)
-find_host_program (PHPUNIT_MODULE phpunit)
-
-if (PHP_MODULE AND PHPUNIT_MODULE)
+if (PHP_EXECUTABLE AND PHPUNIT_EXECUTABLE)
     add_test (
         NAME ${PHP_MODULE_FILE_NAME}
-        COMMAND ${PHP_MODULE} -d extension=../virgil_crypto_php.so -d safe_mode=Off ${PHPUNIT_MODULE} --include-path .. .
+        COMMAND "${PHP_EXECUTABLE}" -d "extension=$<TARGET_FILE:${PHP_SWIG_TARGET_NAME}>" -d safe_mode=Off "${PHPUNIT_EXECUTABLE}" --include-path .. .
     )
-endif (PHP_MODULE AND PHPUNIT_MODULE)
+endif ()

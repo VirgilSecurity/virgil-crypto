@@ -166,11 +166,19 @@ def createNativeWindowsBuild(slave) {
                     bat 'utils\\build.bat python-3.6-x64'
                 }
             }
+            withEnv(["MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community",
+                     "PHP_HOME=C:\\php-7.2.6",
+                     "PHP_DEVEL_HOME=C:\\php-7.2.6-devel",\
+                     "PHPUNIT_HOME=C:\\phpunit-7.2.4"]) {
+
+                bat 'utils\\build.bat php-7.2.6-x64'
+            }
             organizeFilesWindows('install\\cpp')
             organizeFilesWindows('install\\net')
             organizeFilesWindows('install\\java')
             organizeFilesWindows('install\\nodejs')
             organizeFilesWindows('install\\python')
+            organizeFilesWindows('install\\php')
             archiveArtifacts('install/**')
         }
     }

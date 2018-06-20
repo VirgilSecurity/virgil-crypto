@@ -171,7 +171,7 @@ def createNativeWindowsBuild(slave) {
                      "PHP_DEVEL_HOME=C:\\php-7.2.6-devel",\
                      "PHPUNIT_HOME=C:\\phpunit-7.2.4"]) {
 
-                bat 'utils\\build.bat php-7.2.6-x64'
+                bat 'utils\\build.bat php-7.2-x64'
             }
             organizeFilesWindows('install\\cpp')
             organizeFilesWindows('install\\net')

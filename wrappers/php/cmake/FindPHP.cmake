@@ -50,8 +50,9 @@
 #
 # ::
 #
-#   PHP_EXECUTABLE        - the full path to the PHP executable
-#   PHPUNIT_EXECUTABLE    - the full path to the PHPUnit executable
+#   PHP_EXECUTABLE        - the full path to the 'php' executable
+#   PHPUNIT_EXECUTABLE    - the full path to the 'phpunit' executable
+#   PHP_CONFIG_EXECUTABLE - the full path to the 'php-config' executable (Unix only)
 #   PHP_INCLUDE_DIRS      - the full path PHP header directories
 #   PHP_LIBRARIES         - the full paths to the PHP libraries
 #   PHP_EXTENSIONS_DIR    - the full path to the directory containing PHP extensions
@@ -68,7 +69,9 @@
 # Note, for Unix-like systems 'php-config' utility is used to find 'Devel' components.
 # Note, for Windows 'PHP_HOME', 'PHP_DEVEL_HOME' and 'PHPUNIT_HOME' environment variable are used find requested components.
 
-
+# ---------------------------------------------------------------------------
+#   Find PHP within Windows OS
+# ---------------------------------------------------------------------------
 if(WIN32)
     #
     # Define variables with it's ENV equivalent if needed.
@@ -131,55 +134,6 @@ if(WIN32)
     endif()
 
     #
-    # Get information from 'php -i' output
-    #
-    if(PHP_EXECUTABLE)
-        execute_process(
-                COMMAND "${PHP_EXECUTABLE}" "-i"
-                RESULT_VARIABLE info_res
-                OUTPUT_VARIABLE info_var
-                ERROR_VARIABLE info_err
-                OUTPUT_STRIP_TRAILING_WHITESPACE
-                ERROR_STRIP_TRAILING_WHITESPACE
-                )
-
-        if(info_res EQUAL 0)
-            set(PHP_INFO "${info_var}")
-        endif()
-    endif()
-
-    #
-    # Get valuable information from the PHP info
-    #
-    if(PHP_INFO)
-        #
-        # Get directory with extensions
-        #
-        string(REGEX MATCH "extension_dir[ ]*=>[ ]*([^=]+)" ext_dir_line "${PHP_INFO}")
-        string(REGEX REPLACE "extension_dir[ ]*=>[ ]*([^=]+)" "\\1" ext_dir "${ext_dir_line}")
-
-        if(IS_ABSOLUTE "${ext_dir}")
-            set(PHP_EXTENSIONS_DIR "${ext_dir}")
-
-        else()
-            set(PHP_EXTENSIONS_DIR "${PHP_HOME}/${ext_dir}")
-        endif()
-        get_filename_component(PHP_EXTENSIONS_DIR "${PHP_EXTENSIONS_DIR}" ABSOLUTE)
-
-        #
-        # Detect PHP version
-        #
-        string(REGEX MATCH "PHP Version => [0-9]+\\.[0-9]+\\.[0-9]+" version_line "${PHP_INFO}")
-        string(REGEX REPLACE "PHP Version => ([0-9]+\\.[0-9]+\\.[0-9]+)" "\\1" PHP_VERSION_STRING "${version_line}")
-
-        string(REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+)" "\\1" PHP_VERSION_MAJOR "${PHP_VERSION_STRING}")
-        string(REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+)" "\\2" PHP_VERSION_MINOR "${PHP_VERSION_STRING}")
-        string(REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+)" "\\3" PHP_VERSION_PATCH "${PHP_VERSION_STRING}")
-
-        set(PHP_VERSION "${PHP_VERSION_MAJOR}.${PHP_VERSION_MINOR}.${PHP_VERSION_PATCH}")
-    endif()
-
-    #
     # Define PHP defines
     #
     if(PHP_LIBRARIES)
@@ -191,13 +145,110 @@ if(WIN32)
             list(APPEND PHP_DEFINES "ZTS=1")
         endif()
     endif()
-else()
 
+# ---------------------------------------------------------------------------
+#   Find PHP within Unix-like OS
+# ---------------------------------------------------------------------------
+else()
+    find_program(PHP_CONFIG_EXECUTABLE NAMES php5-config php-config)
+    find_program(PHPUNIT_EXECUTABLE NAMES phpunit phpunit.phar)
+
+
+    if(PHP_CONFIG_EXECUTABLE)
+        #
+        # Define PHP_EXECUTABLE
+        #
+        execute_process(
+                COMMAND ${PHP_CONFIG_EXECUTABLE} --php-binary
+                OUTPUT_VARIABLE PHP_EXECUTABLE
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+                )
+
+        #
+        # Define PHP_EXTENSIONS_DIR
+        #
+        execute_process(
+                COMMAND ${PHP_CONFIG_EXECUTABLE} --extension-dir
+                OUTPUT_VARIABLE PHP_EXTENSIONS_DIR
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+                )
+
+        #
+        # Define PHP_INCLUDE_DIRS
+        #
+        execute_process(
+                COMMAND ${PHP_CONFIG_EXECUTABLE} --includes
+                OUTPUT_VARIABLE PHP_INCLUDE_DIRS
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+                )
+        string(REPLACE "-I" "" PHP_INCLUDE_DIRS "${PHP_INCLUDE_DIRS}")
+        string(REPLACE " " ";" PHP_INCLUDE_DIRS "${PHP_INCLUDE_DIRS}")
+      endif()
+
+      #
+      # Define PHP_LIBRARIES as empty.
+      # It is redundant on Unix-like OS because of dynamic linkage.
+      #
+      set(PHP_LIBRARIES "")
+
+      #
+      # Define PHP_DEFINES as empty.
+      # Nothig to define for Unix-like OS.
+      #
+      set(PHP_DEFINES "")
 endif()
 
-#
-# Handle arguments
-#
+
+# ---------------------------------------------------------------------------
+#   Get information from 'php -i' output
+# ---------------------------------------------------------------------------
+if(PHP_EXECUTABLE)
+    execute_process(
+            COMMAND "${PHP_EXECUTABLE}" "-i"
+            RESULT_VARIABLE info_res
+            OUTPUT_VARIABLE info_var
+            ERROR_VARIABLE info_err
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_STRIP_TRAILING_WHITESPACE
+            )
+
+    if(info_res EQUAL 0)
+        set(PHP_INFO "${info_var}")
+    endif()
+endif()
+
+if(PHP_INFO)
+    #
+    # Get directory with extensions
+    #
+    string(REGEX MATCH "extension_dir[ ]*=>[ ]*([^=]+)" ext_dir_line "${PHP_INFO}")
+    string(REGEX REPLACE "extension_dir[ ]*=>[ ]*([^=]+)" "\\1" ext_dir "${ext_dir_line}")
+
+    if(IS_ABSOLUTE "${ext_dir}")
+        set(PHP_EXTENSIONS_DIR "${ext_dir}")
+
+    else()
+        set(PHP_EXTENSIONS_DIR "${PHP_HOME}/${ext_dir}")
+    endif()
+    get_filename_component(PHP_EXTENSIONS_DIR "${PHP_EXTENSIONS_DIR}" ABSOLUTE)
+
+    #
+    # Detect PHP version
+    #
+    string(REGEX MATCH "PHP Version => [0-9]+\\.[0-9]+\\.[0-9]+" version_line "${PHP_INFO}")
+    string(REGEX REPLACE "PHP Version => ([0-9]+\\.[0-9]+\\.[0-9]+)" "\\1" PHP_VERSION_STRING "${version_line}")
+
+    string(REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+)" "\\1" PHP_VERSION_MAJOR "${PHP_VERSION_STRING}")
+    string(REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+)" "\\2" PHP_VERSION_MINOR "${PHP_VERSION_STRING}")
+    string(REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+)" "\\3" PHP_VERSION_PATCH "${PHP_VERSION_STRING}")
+
+    set(PHP_VERSION "${PHP_VERSION_MAJOR}.${PHP_VERSION_MINOR}.${PHP_VERSION_PATCH}")
+endif()
+
+
+# ---------------------------------------------------------------------------
+#   Handle package arguments
+# ---------------------------------------------------------------------------
 include(FindPackageHandleStandardArgs)
 
 if(PHP_FIND_COMPONENTS)
@@ -235,6 +286,7 @@ if(PHP_FIND_COMPONENTS)
 
     find_package_handle_standard_args(PHP
             REQUIRED_VARS
+                PHP_VERSION
                 ${_PHP_REQUIRED_VARS}
 
             HANDLE_COMPONENTS
@@ -246,23 +298,39 @@ if(PHP_FIND_COMPONENTS)
     unset(_PHP_REQUIRED_VARS)
 else()
 
-    find_package_handle_standard_args(PHP
-            REQUIRED_VARS
-                PHP_LIBRARIES
-                PHP_INCLUDE_DIRS
-                PHP_DEFINES
+    if(WIN32)
+        find_package_handle_standard_args(PHP
+                REQUIRED_VARS
+                    PHP_VERSION
+                    PHP_LIBRARIES
+                    PHP_INCLUDE_DIRS
+                    PHP_DEFINES
 
-            VERSION_VAR
-                PHP_VERSION
-            )
+                VERSION_VAR
+                    PHP_VERSION
+                )
+    else()
+        find_package_handle_standard_args(PHP
+                REQUIRED_VARS
+                    PHP_VERSION
+                    PHP_INCLUDE_DIRS
+
+                VERSION_VAR
+                    PHP_VERSION
+                )
+    endif()
 endif()
 
+# ---------------------------------------------------------------------------
+#   Configuration of the cache
+# ---------------------------------------------------------------------------
 set(PHP_INCLUDE_DIRS "${PHP_INCLUDE_DIRS}" CACHE STRING "The list of paths to PHP headers.")
 set(PHP_LIBRARIES "${PHP_LIBRARIES}" CACHE STRING "The list of paths to PHP libraries.")
 
 mark_as_advanced(
         PHP_EXECUTABLE
+        PHP_CONFIG_EXECUTABLE
+        PHPUNIT_EXECUTABLE
         PHP_INCLUDE_DIRS
         PHP_LIBRARIES
-        PHPUNIT_EXECUTABLE
         )

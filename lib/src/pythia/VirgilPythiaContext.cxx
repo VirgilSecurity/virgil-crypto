@@ -49,8 +49,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
 #include <mutex>
+#include <cstring>
+
 #include <pythia/pythia.h>
 #include <thread>
 #include <tinyformat/tinyformat.h>

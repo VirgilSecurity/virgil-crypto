@@ -37,6 +37,7 @@
 #include <virgil/crypto/foundation/asn1/VirgilAsn1Writer.h>
 
 #include <cmath>
+#include <cstring>
 
 #include <tinyformat/tinyformat.h>
 #include <mbedtls/asn1.h>
@@ -292,7 +293,7 @@ void VirgilAsn1Writer::relocateBuffer(size_t newBufLen) {
     size_t writtenBytes = 0;
     if (buf_ && p_ && start_) {
         writtenBytes = bufLen_ - (p_ - start_);
-        memcpy(newBuf + newBufLen - writtenBytes, p_, writtenBytes);
+        std::memcpy(newBuf + newBufLen - writtenBytes, p_, writtenBytes);
         delete[] buf_;
     }
     buf_ = newBuf;

@@ -40,10 +40,18 @@ setlocal
 :: Prepare environment variables
 if defined MSVC_ROOT call :remove_quotes MSVC_ROOT
 if defined JAVA_HOME call :remove_quotes JAVA_HOME
+if defined PHP_HOME call :remove_quotes PHP_HOME
+if defined PHP_DEVEL_HOME call :remove_quotes PHP_DEVEL_HOME
+if defined PHPUNIT_HOME call :remove_quotes PHPUNIT_HOME
 
 :: Check environment prerequisite
 if "%MSVC_ROOT%" == "" goto error_not_msvc_root
-if not exist "%MSVC_ROOT%\VC\vcvarsall.bat" goto :error_vcvarsall_not_found
+
+if exist "%MSVC_ROOT%\VC\vcvarsall.bat" set VCVARSALL=%MSVC_ROOT%\VC\vcvarsall.bat
+
+if exist "%MSVC_ROOT%\VC\Auxiliary\Build\vcvarsall.bat" set VCVARSALL=%MSVC_ROOT%\VC\Auxiliary\Build\vcvarsall.bat
+
+if "%VCVARSALL%" == "" goto :error_vcvarsall_not_found
 
 :: Define script global variables
 set CURRENT_DIR=%CD%
@@ -117,6 +125,7 @@ if "%TARGET_NAME%" == "java" goto java
 if "%TARGET_NAME%" == "net" goto net
 if "%TARGET_NAME%" == "nodejs" goto nodejs
 if "%TARGET_NAME%" == "python" goto python
+if "%TARGET_NAME%" == "php" goto php
 
 :: No supported target was found
 goto error_target_not_supported
@@ -167,6 +176,14 @@ endlocal
 xcopy /y/q "%SRC_DIR%\VERSION" "%INSTALL_DIR%" >nul
 set /p ARCHIVE_NAME=<lib_name.txt
 call :archive_artifacts %INSTALL_DIR% %ARCHIVE_NAME%
+goto :eof
+
+:php
+if "%PHP_DEVEL_HOME%" == "" goto error_not_php_devel_home
+if not "%TARGET_VERSION%" == "" (
+    set CMAKE_ARGS=%CMAKE_ARGS% -DLANG_VERSION=%TARGET_VERSION%
+)
+call :native
 goto :eof
 
 :native
@@ -223,7 +240,7 @@ echo [ERROR] %*
 goto :eof
 
 :configure_env
-call "%MSVC_ROOT%\VC\vcvarsall.bat" %1
+call "%VCVARSALL%" %1
 goto :eof
 
 :: Remove content of the given directories.
@@ -261,8 +278,14 @@ echo JAVA_HOME environment variable is not defined
 echo Please set environment variable JAVA_HOME to point JDK install directory.
 exit /b 1
 
+:error_not_php_devel_home
+echo PHP_DEVEL_HOME environment variable is not defined
+echo Please set environment variable PHP_DEVEL_HOME to point directory with PHP developement environment.
+exit /b 1
+
 :error_vcvarsall_not_found
-echo Can not found vcvarsall.bat under %MSVC_ROOT%\VC directory.
+echo Can not find vcvarsall.bat under %MSVC_ROOT%\VC directory.
+echo Can not find vcvarsall.bat under %MSVC_ROOT%\VC\Auxiliary\Build directory as well.
 exit /b 1
 
 :error_target_not_supported

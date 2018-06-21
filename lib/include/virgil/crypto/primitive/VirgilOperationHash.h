@@ -126,7 +126,9 @@ private:
         virtual void doUpdate(const VirgilByteArray& data) = 0;
 
         virtual VirgilByteArray doFinish() = 0;
-    };
+
+        virtual ~Concept() noexcept = default;
+};
 
     template<class Impl>
     struct Model : Concept {

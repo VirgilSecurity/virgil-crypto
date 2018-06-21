@@ -34,7 +34,7 @@
 
 #.rst:
 # FindPHP
-# --------
+# -------
 #
 # Find PHP.
 #
@@ -57,7 +57,7 @@
 #   PHP_INCLUDE_DIRS      - the full paths to the PHP header directories
 #   PHP_LIBRARIES         - the full paths to the PHP libraries
 #   PHP_EXTENSIONS_DIR    - the full path to the directory containing PHP extensions
-#   PHP_DEFINES           - list of defines that should be applied for successful extension build
+#   PHP_DEFINITIONS       - list of compile definitions that should be applied for successful extension build
 #   PHP_VERSION_STRING    - Version of PHP found, e.g. 7.2.6
 #   PHP_VERSION_MAJOR     - The major version of the package found.
 #   PHP_VERSION_MINOR     - The minor version of the package found.
@@ -141,12 +141,12 @@ if(WIN32)
     # Define PHP defines
     #
     if(PHP_LIBRARIES)
-        set(PHP_DEFINES)
+        set(PHP_DEFINITIONS)
 
-        list(APPEND PHP_DEFINES "PHP_WIN32=1" "ZEND_WIN32=1" "ZEND_WIN32_FORCE_INLINE")
+        list(APPEND PHP_DEFINITIONS "PHP_WIN32=1" "ZEND_WIN32=1" "ZEND_WIN32_FORCE_INLINE")
 
         if("${PHP_LIBRARIES}" MATCHES "ts")
-            list(APPEND PHP_DEFINES "ZTS=1")
+            list(APPEND PHP_DEFINITIONS "ZTS=1")
         endif()
     endif()
 
@@ -205,10 +205,10 @@ else()
       set(PHP_LIBRARIES "")
 
       #
-      # Define PHP_DEFINES as empty.
+      # Define PHP_DEFINITIONS as empty.
       # Nothig to define for Unix-like OS.
       #
-      set(PHP_DEFINES "")
+      set(PHP_DEFINITIONS "")
 endif()
 
 
@@ -279,7 +279,7 @@ if(PHP_FIND_COMPONENTS)
             set(_PHP_DEVEL_REQUIRED_VARS)
 
             if (WIN32)
-                list(APPEND _PHP_DEVEL_REQUIRED_VARS PHP_LIBRARIES PHP_DEFINES)
+                list(APPEND _PHP_DEVEL_REQUIRED_VARS PHP_LIBRARIES PHP_DEFINITIONS)
             endif()
 
             list(APPEND _PHP_DEVEL_REQUIRED_VARS
@@ -289,7 +289,7 @@ if(PHP_FIND_COMPONENTS)
                     )
 
             if(WIN32)
-                if(PHP_INCLUDE_DIR AND PHP_INCLUDE_DIRS AND PHP_LIBRARIES AND PHP_DEFINES)
+                if(PHP_INCLUDE_DIR AND PHP_INCLUDE_DIRS AND PHP_LIBRARIES AND PHP_DEFINITIONS)
                     set(PHP_Devel_FOUND TRUE)
                 endif()
             else()
@@ -330,13 +330,13 @@ else()
                     PHP_LIBRARIES
                     PHP_INCLUDE_DIR
                     PHP_INCLUDE_DIRS
-                    PHP_DEFINES
+                    PHP_DEFINITIONS
 
                 VERSION_VAR
                     PHP_VERSION
                 )
 
-        if(PHP_INCLUDE_DIR AND PHP_INCLUDE_DIRS AND PHP_LIBRARIES AND PHP_DEFINES)
+        if(PHP_INCLUDE_DIR AND PHP_INCLUDE_DIRS AND PHP_LIBRARIES AND PHP_DEFINITIONS)
             set(PHP_Devel_FOUND TRUE)
         endif()
 

@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Virgil Security Crypto library
-   &#160;<span id="projectnumber">2.4.5</span>
+   &#160;<span id="projectnumber">2.4.6</span>
    </div>
   </td>
  </tr>
@@ -123,32 +123,34 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keyword">virtual</span> <a class="code" href="namespacevirgil_1_1crypto.html#a216a8ce07970e7e247278cec1a596bc1">VirgilByteArray</a> doCalculate(</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                <span class="keyword">const</span> <a class="code" href="namespacevirgil_1_1crypto.html#a216a8ce07970e7e247278cec1a596bc1">VirgilByteArray</a>&amp; publicKey, <span class="keyword">const</span> <a class="code" href="namespacevirgil_1_1crypto.html#a216a8ce07970e7e247278cec1a596bc1">VirgilByteArray</a>&amp; privateKey,</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                <span class="keyword">const</span> <a class="code" href="namespacevirgil_1_1crypto.html#a216a8ce07970e7e247278cec1a596bc1">VirgilByteArray</a>&amp; privateKeyPassword) <span class="keyword">const</span> = 0;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    };</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> Impl&gt;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keyword">struct </span>Model : Concept {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="keyword">explicit</span> Model(Impl impl) : impl_(std::move(impl)) {}</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keyword">virtual</span> ~Concept() noexcept = default;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    };</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    template&lt;class Impl&gt;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    struct Model : Concept {</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <a class="code" href="namespacevirgil_1_1crypto.html#a216a8ce07970e7e247278cec1a596bc1">VirgilByteArray</a> doCalculate(</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                <span class="keyword">const</span> <a class="code" href="namespacevirgil_1_1crypto.html#a216a8ce07970e7e247278cec1a596bc1">VirgilByteArray</a>&amp; publicKey, <span class="keyword">const</span> <a class="code" href="namespacevirgil_1_1crypto.html#a216a8ce07970e7e247278cec1a596bc1">VirgilByteArray</a>&amp; privateKey,</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                <span class="keyword">const</span> <a class="code" href="namespacevirgil_1_1crypto.html#a216a8ce07970e7e247278cec1a596bc1">VirgilByteArray</a>&amp; privateKeyPassword)<span class="keyword"> const override </span>{</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            <span class="keywordflow">return</span> impl_.calculate(publicKey, privateKey, privateKeyPassword);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        }</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        Impl impl_;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    };</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    std::shared_ptr&lt;const Concept&gt; self_;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;};</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;}}}</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keyword">explicit</span> Model(Impl impl) : impl_(std::move(impl)) {}</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <a class="code" href="namespacevirgil_1_1crypto.html#a216a8ce07970e7e247278cec1a596bc1">VirgilByteArray</a> doCalculate(</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                <span class="keyword">const</span> <a class="code" href="namespacevirgil_1_1crypto.html#a216a8ce07970e7e247278cec1a596bc1">VirgilByteArray</a>&amp; publicKey, <span class="keyword">const</span> <a class="code" href="namespacevirgil_1_1crypto.html#a216a8ce07970e7e247278cec1a596bc1">VirgilByteArray</a>&amp; privateKey,</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                <span class="keyword">const</span> <a class="code" href="namespacevirgil_1_1crypto.html#a216a8ce07970e7e247278cec1a596bc1">VirgilByteArray</a>&amp; privateKeyPassword)<span class="keyword"> const override </span>{</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            <span class="keywordflow">return</span> impl_.calculate(publicKey, privateKey, privateKeyPassword);</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        }</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        Impl impl_;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    };</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    std::shared_ptr&lt;const Concept&gt; self_;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;};</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="preprocessor">#endif //VIRGIL_CRYPTO_VIRGIL_DH_H</span></div>
-<div class="ttc" id="namespacevirgil_1_1crypto_html_a216a8ce07970e7e247278cec1a596bc1"><div class="ttname"><a href="namespacevirgil_1_1crypto.html#a216a8ce07970e7e247278cec1a596bc1">virgil::crypto::VirgilByteArray</a></div><div class="ttdeci">std::vector&lt; unsigned char &gt; VirgilByteArray</div><div class="ttdoc">This type represents a sequence of bytes. </div><div class="ttdef"><b>Definition:</b> VirgilByteArray.h:54</div></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;}}}</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="preprocessor">#endif //VIRGIL_CRYPTO_VIRGIL_DH_H</span></div>
+<div class="ttc" id="namespacevirgil_1_1crypto_html_a216a8ce07970e7e247278cec1a596bc1"><div class="ttname"><a href="namespacevirgil_1_1crypto.html#a216a8ce07970e7e247278cec1a596bc1">virgil::crypto::VirgilByteArray</a></div><div class="ttdeci">std::vector&lt; unsigned char &gt; VirgilByteArray</div><div class="ttdoc">This type represents a sequence of bytes. </div><div class="ttdef"><b>Definition:</b> VirgilByteArray.h:50</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1primitive_1_1_virgil_operation_d_h_html_a8d69c2d76da82fee7aa1568dbca99644"><div class="ttname"><a href="classvirgil_1_1crypto_1_1primitive_1_1_virgil_operation_d_h.html#a8d69c2d76da82fee7aa1568dbca99644">virgil::crypto::primitive::VirgilOperationDH::getDefault</a></div><div class="ttdeci">static VirgilOperationDH getDefault()</div><div class="ttdoc">Return default implementation. </div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1primitive_1_1_virgil_operation_d_h_html_a5c1db1418913278ebacebe23bf134d54"><div class="ttname"><a href="classvirgil_1_1crypto_1_1primitive_1_1_virgil_operation_d_h.html#a5c1db1418913278ebacebe23bf134d54">virgil::crypto::primitive::VirgilOperationDH::calculate</a></div><div class="ttdeci">VirgilByteArray calculate(const VirgilByteArray &amp;publicKey, const VirgilByteArray &amp;privateKey, const VirgilByteArray &amp;privateKeyPassword=VirgilByteArray()) const </div><div class="ttdoc">Compute shared key by using Diffie-Hellman algorithm. </div><div class="ttdef"><b>Definition:</b> VirgilOperationDH.h:73</div></div>
 <div class="ttc" id="classvirgil_1_1crypto_1_1primitive_1_1_virgil_operation_d_h_html"><div class="ttname"><a href="classvirgil_1_1crypto_1_1primitive_1_1_virgil_operation_d_h.html">virgil::crypto::primitive::VirgilOperationDH</a></div><div class="ttdoc">Define proxy interface for the Diffie-Hellman functionality. </div><div class="ttdef"><b>Definition:</b> VirgilOperationDH.h:51</div></div>

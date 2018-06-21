@@ -53,7 +53,8 @@
 #   PHP_EXECUTABLE        - the full path to the 'php' executable
 #   PHPUNIT_EXECUTABLE    - the full path to the 'phpunit' executable
 #   PHP_CONFIG_EXECUTABLE - the full path to the 'php-config' executable (Unix only)
-#   PHP_INCLUDE_DIRS      - the full path PHP header directories
+#   PHP_INCLUDE_DIR       - the full path to the root PHP header directory
+#   PHP_INCLUDE_DIRS      - the full paths to the PHP header directories
 #   PHP_LIBRARIES         - the full paths to the PHP libraries
 #   PHP_EXTENSIONS_DIR    - the full path to the directory containing PHP extensions
 #   PHP_DEFINES           - list of defines that should be applied for successful extension build
@@ -109,6 +110,8 @@ if(WIN32)
     # Find headers and libraries
     #
     if(PHP_DEVEL_HOME)
+        get_filename_component(PHP_INCLUDE_DIR "${PHP_DEVEL_HOME}/include" ABSOLUTE)
+
         set(_INCLUDE_DIRS
                 "${PHP_DEVEL_HOME}/include"
                 "${PHP_DEVEL_HOME}/include/ext"
@@ -120,9 +123,10 @@ if(WIN32)
                 )
 
         #
-        # Normi\alize paths
+        # Normalize paths
         #
         set(PHP_INCLUDE_DIRS)
+
         foreach(dir ${_INCLUDE_DIRS})
             get_filename_component(path "${dir}" ABSOLUTE)
             list(APPEND PHP_INCLUDE_DIRS "${path}")
@@ -170,6 +174,15 @@ else()
         execute_process(
                 COMMAND ${PHP_CONFIG_EXECUTABLE} --extension-dir
                 OUTPUT_VARIABLE PHP_EXTENSIONS_DIR
+                OUTPUT_STRIP_TRAILING_WHITESPACE
+                )
+
+        #
+        # Define PHP_INCLUDE_DIR
+        #
+        execute_process(
+                COMMAND ${PHP_CONFIG_EXECUTABLE} --include-dir
+                OUTPUT_VARIABLE PHP_INCLUDE_DIR
                 OUTPUT_STRIP_TRAILING_WHITESPACE
                 )
 
@@ -252,31 +265,41 @@ endif()
 include(FindPackageHandleStandardArgs)
 
 if(PHP_FIND_COMPONENTS)
-    set(_PHP_REQUIRED_VARS)
 
     foreach(component ${PHP_FIND_COMPONENTS})
 
         if(component STREQUAL "Runtime")
-            list(APPEND _PHP_REQUIRED_VARS PHP_EXECUTABLE)
+            set(_PHP_RUNTIME_REQUIRED_VARS PHP_EXECUTABLE)
 
             if(PHP_EXECUTABLE)
                 set(PHP_Runtime_FOUND TRUE)
             endif()
 
         elseif(component STREQUAL "Devel")
-            list(APPEND _PHP_REQUIRED_VARS
-                    PHP_LIBRARIES
+            set(_PHP_DEVEL_REQUIRED_VARS)
+
+            if (WIN32)
+                list(APPEND _PHP_DEVEL_REQUIRED_VARS PHP_LIBRARIES PHP_DEFINES)
+            endif()
+
+            list(APPEND _PHP_DEVEL_REQUIRED_VARS
+                    PHP_INCLUDE_DIR
                     PHP_INCLUDE_DIRS
-                    PHP_DEFINES
                     PHP_EXTENSIONS_DIR
                     )
 
-            if(PHP_DEFINES AND PHP_INCLUDE_DIRS AND PHP_LIBRARIES AND PHP_VERSION)
-                set(PHP_Devel_FOUND TRUE)
+            if(WIN32)
+                if(PHP_INCLUDE_DIR AND PHP_INCLUDE_DIRS AND PHP_LIBRARIES AND PHP_DEFINES)
+                    set(PHP_Devel_FOUND TRUE)
+                endif()
+            else()
+                if(PHP_INCLUDE_DIR AND PHP_INCLUDE_DIRS)
+                    set(PHP_Devel_FOUND TRUE)
+                endif()
             endif()
 
         elseif(component STREQUAL "Test")
-            list(APPEND _PHP_REQUIRED_VARS PHPUNIT_EXECUTABLE)
+            set(_PHP_TEST_REQUIRED_VARS PHPUNIT_EXECUTABLE)
 
             if(PHPUNIT_EXECUTABLE)
                 set(PHP_Test_FOUND TRUE)
@@ -286,8 +309,9 @@ if(PHP_FIND_COMPONENTS)
 
     find_package_handle_standard_args(PHP
             REQUIRED_VARS
-                PHP_VERSION
-                ${_PHP_REQUIRED_VARS}
+                ${_PHP_DEVEL_REQUIRED_VARS}
+                ${_PHP_RUNTIME_REQUIRED_VARS}
+                ${_PHP_TEST_REQUIRED_VARS}
 
             HANDLE_COMPONENTS
 
@@ -295,14 +319,16 @@ if(PHP_FIND_COMPONENTS)
                 PHP_VERSION
             )
 
-    unset(_PHP_REQUIRED_VARS)
+    unset(_PHP_RUNTIME_REQUIRED_VARS)
+    unset(_PHP_DEVEL_REQUIRED_VARS)
+    unset(_PHP_TEST_REQUIRED_VARS)
 else()
 
     if(WIN32)
         find_package_handle_standard_args(PHP
                 REQUIRED_VARS
-                    PHP_VERSION
                     PHP_LIBRARIES
+                    PHP_INCLUDE_DIR
                     PHP_INCLUDE_DIRS
                     PHP_DEFINES
 
@@ -312,7 +338,7 @@ else()
     else()
         find_package_handle_standard_args(PHP
                 REQUIRED_VARS
-                    PHP_VERSION
+                    PHP_INCLUDE_DIR
                     PHP_INCLUDE_DIRS
 
                 VERSION_VAR
@@ -331,6 +357,7 @@ mark_as_advanced(
         PHP_EXECUTABLE
         PHP_CONFIG_EXECUTABLE
         PHPUNIT_EXECUTABLE
+        PHP_INCLUDE_DIR
         PHP_INCLUDE_DIRS
         PHP_LIBRARIES
         )

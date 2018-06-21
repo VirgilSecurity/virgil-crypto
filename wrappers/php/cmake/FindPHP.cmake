@@ -335,6 +335,11 @@ else()
                 VERSION_VAR
                     PHP_VERSION
                 )
+
+        if(PHP_INCLUDE_DIR AND PHP_INCLUDE_DIRS AND PHP_LIBRARIES AND PHP_DEFINES)
+            set(PHP_Devel_FOUND TRUE)
+        endif()
+
     else()
         find_package_handle_standard_args(PHP
                 REQUIRED_VARS
@@ -344,6 +349,18 @@ else()
                 VERSION_VAR
                     PHP_VERSION
                 )
+
+        if(PHP_EXECUTABLE)
+            set(PHP_Runtime_FOUND TRUE)
+        endif()
+
+        if(PHP_INCLUDE_DIR AND PHP_INCLUDE_DIRS)
+            set(PHP_Devel_FOUND TRUE)
+        endif()
+
+        if(PHPUNIT_EXECUTABLE)
+            set(PHP_Test_FOUND TRUE)
+        endif()
     endif()
 endif()
 

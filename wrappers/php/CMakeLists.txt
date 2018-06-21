@@ -39,30 +39,29 @@ cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 project (${WRAPPED_LIB_NAME}_php)
 
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-set (PHP_MODULE_NAME ${PROJECT_NAME})
-set (SWIG_MODULE_NAME ${PHP_MODULE_NAME})
 
-find_host_package (PHPLibs REQUIRED)
+#
+#   Find PHP module
+#
+if(LANG_VERSION)
+    find_host_package (PHP ${LANG_VERSION} EXACT REQUIRED)
+else()
+    find_host_package (PHP REQUIRED)
+endif()
+
 include_directories (SYSTEM ${PHP_INCLUDE_DIRS})
 
-if (PHP_VERSION_STRING)
-    string (REPLACE "." ";" PHP_VERSION_LIST ${PHP_VERSION_STRING})
-    list (GET PHP_VERSION_LIST 0 PHP_VERSION_MAJOR)
-    list (GET PHP_VERSION_LIST 1 PHP_VERSION_MINOR)
-    set (PHP_VERSION_MAJOR_MINOR "${PHP_VERSION_MAJOR}.${PHP_VERSION_MINOR}")
-    if (LANG_VERSION)
-        if (NOT LANG_VERSION VERSION_EQUAL PHP_VERSION_MAJOR_MINOR)
-            message (FATAL_ERROR
-                "Found PHP version ${PHP_VERSION_MAJOR_MINOR} is not equal to the requested version ${LANG_VERSION}")
-        endif ()
-    else ()
-        set (LANG_VERSION ${PHP_VERSION_MAJOR_MINOR} CACHE STRING "PHP version" FORCE)
-    endif (LANG_VERSION)
-endif (PHP_VERSION_STRING)
-
+#
+#   Find SWIG module
+#
 find_host_package (SWIG REQUIRED)
 include (${SWIG_USE_FILE})
 
+#
+#   Configure build options
+#
+set (PHP_MODULE_NAME ${PROJECT_NAME})
+set (SWIG_MODULE_NAME ${PHP_MODULE_NAME})
 set (CMAKE_SWIG_FLAGS "")
 
 set (SWIG_WRAP_COPY_CONSTRUCTOR YES)
@@ -89,12 +88,14 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 else()
     set_target_properties(${PHP_SWIG_TARGET_NAME} PROPERTIES VERSION ${VIRGIL_VERSION} SOVERSION ${VIRGIL_SOVERSION})
 endif ()
-swig_link_libraries (${PHP_MODULE_NAME} ${WRAPPED_LIB_NAME})
+swig_link_libraries (${PHP_MODULE_NAME} ${WRAPPED_LIB_NAME} "${PHP_LIBRARIES}")
 
 set_target_properties(${PHP_SWIG_TARGET_NAME} PROPERTIES PREFIX "")
 
+set_property(TARGET ${PHP_SWIG_TARGET_NAME}
+        APPEND PROPERTY COMPILE_DEFINITIONS "${PHP_DEFINITIONS}" ZEND_DEBUG=0)
+
 set (PHP_WRAPPER_VERSION_STRING "\\\"${VIRGIL_VERSION}\\\"")
-message (STATUS "${PHP_WRAPPER_VERSION_STRING}")
 add_custom_command (TARGET ${PHP_SWIG_TARGET_NAME} PRE_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS

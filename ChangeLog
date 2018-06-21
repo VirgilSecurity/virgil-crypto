@@ -1,5 +1,28 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.4.6 released 2018-06-21
+
+## Features
+
+  * [PHP] Make available to build PHP wrapper on Windows
+  * [CI] Add build of PHP binaries on Jenkins and publish them to CDN
+  * [Build] Add universal CMake module 'FindPHP.cmake' that finds PHP on Windows and Unix
+  * [Build] Add building of target 'php' with 'build.bat' script
+
+## Changes
+
+  * [JS] Update NodeJS version v10.1.0 -> v10.4.1
+  * [JS] Update NodeJS version v9.11.1 -> v9.11.2
+  * [JS] Update NodeJS version v8.11.2 -> v8.11.3
+  * [JS] Update NodeJS version v6.14.2 -> v6.14.3
+  * [SWIG] Place includes at the 'begin' SWIG section instead of 'header' section
+
+
+## Bugfix
+
+  * [Lib] Fix crash on Pythia object creation for NodeJS versions >= 10.0
+
+
 = Version 2.4.5 released 2018-05-30
 
 ## Changes

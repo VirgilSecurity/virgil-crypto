@@ -36,8 +36,6 @@
 
 #include <virgil/crypto/foundation/VirgilPBE.h>
 
-#include <map>
-
 #include <mbedtls/asn1.h>
 #include <mbedtls/oid.h>
 #include <mbedtls/pkcs5.h>
@@ -51,6 +49,9 @@
 #include "VirgilAsn1Alg.h"
 
 #include "utils.h"
+
+#include <map>
+#include <cstring>
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;

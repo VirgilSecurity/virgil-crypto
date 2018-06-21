@@ -87,6 +87,8 @@ private:
         virtual VirgilByteArray doCalculate(
                 const VirgilByteArray& publicKey, const VirgilByteArray& privateKey,
                 const VirgilByteArray& privateKeyPassword) const = 0;
+
+        virtual ~Concept() noexcept = default;
     };
 
     template<class Impl>

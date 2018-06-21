@@ -87,6 +87,8 @@ private:
         virtual VirgilByteArray doDerive(
             const VirgilByteArray& keyMaterial, const VirgilByteArray& salt,
             const VirgilByteArray& info, size_t size) const = 0;
+
+        virtual ~Concept() noexcept = default;
     };
 
     template<class Impl>

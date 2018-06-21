@@ -127,6 +127,8 @@ private:
         virtual VirgilByteArray doDecrypt(
                 const VirgilByteArray& plainText, const VirgilByteArray& key, const VirgilByteArray& nonce,
                 const VirgilByteArray& authData) const = 0;
+
+        virtual ~Concept() noexcept = default;
     };
 
     template<class Impl>
@@ -153,7 +155,6 @@ private:
                 const VirgilByteArray& authData) const override {
             return impl_.decrypt(plainText, key, nonce, authData);
         }
-
     private:
         Impl impl_;
     };

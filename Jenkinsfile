@@ -130,11 +130,11 @@ def createNativeWindowsBuild(slave) {
                 bat 'utils\\build.bat net'
                 bat 'utils\\build.bat java'
                 bat 'utils\\build.bat nodejs-4.9.1'
-                bat 'utils\\build.bat nodejs-6.14.2'
+                bat 'utils\\build.bat nodejs-6.14.3'
                 bat 'utils\\build.bat nodejs-7.10.1'
-                bat 'utils\\build.bat nodejs-8.11.2'
-                bat 'utils\\build.bat nodejs-9.11.1'
-                bat 'utils\\build.bat nodejs-10.1.0'
+                bat 'utils\\build.bat nodejs-8.11.3'
+                bat 'utils\\build.bat nodejs-9.11.2'
+                bat 'utils\\build.bat nodejs-10.4.1'
                 withEnv(["PATH=C:\\Python27_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-2.7-x86'
                 }
@@ -166,11 +166,19 @@ def createNativeWindowsBuild(slave) {
                     bat 'utils\\build.bat python-3.6-x64'
                 }
             }
+            withEnv(["MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community",
+                     "PHP_HOME=C:\\php-7.2.6",
+                     "PHP_DEVEL_HOME=C:\\php-7.2.6-devel",\
+                     "PHPUNIT_HOME=C:\\phpunit-7.2.4"]) {
+
+                bat 'utils\\build.bat php-7.2-x64'
+            }
             organizeFilesWindows('install\\cpp')
             organizeFilesWindows('install\\net')
             organizeFilesWindows('install\\java')
             organizeFilesWindows('install\\nodejs')
             organizeFilesWindows('install\\python')
+            organizeFilesWindows('install\\php')
             archiveArtifacts('install/**')
         }
     }

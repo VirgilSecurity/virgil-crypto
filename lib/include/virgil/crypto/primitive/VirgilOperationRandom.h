@@ -97,6 +97,8 @@ private:
         virtual VirgilByteArray doRandomize(size_t bytesNum) = 0;
 
         virtual Concept* doCopy() const = 0;
+
+        virtual ~Concept() noexcept = default;
     };
 
     template<class Random>

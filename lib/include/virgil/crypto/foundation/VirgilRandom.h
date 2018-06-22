@@ -52,6 +52,8 @@ public:
     /**
      * @brief Configure path to the file that is used as a seed for a non-volatile entropy source.
      *
+     * @note This function must be called once, before any VirgilRandom object instantiation.
+     *
      * @param path the path to the file.
      *
      * @throw VirgilCryptoException with VirgilCryptoErrorCode::EmptyParameter,
@@ -60,13 +62,16 @@ public:
      * @throw VirgilCryptoException with VirgilCryptoErrorCode::FileNotFound,
      *     if file at given path can not be read.
      *
+     * @throw VirgilCryptoException with VirgilCryptoErrorCode::FileTooSmall,
+     *     if file size less then seedFileLengthMin().
+     *
      * @throw VirgilCryptoException with VirgilCryptoErrorCode::UnsupportedAlgorithm,
      *     if library is build without feature: VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE.
      */
     static void setSeedFile(std::string path);
 
     /**
-     * Return minimum length of the seed file.
+     * @brief Return minimum length of the seed file.
      *
      * @throw VirgilCryptoException with VirgilCryptoErrorCode::UnsupportedAlgorithm,
      *     if library is build without feature: VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE.

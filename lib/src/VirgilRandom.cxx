@@ -52,9 +52,9 @@
 #include "mbedtls_context.h"
 
 
-
 #if VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE
 #include <fstream>
+#include <mutex>
 #endif
 
 
@@ -68,10 +68,13 @@ using virgil::crypto::make_error;
 using virgil::crypto::foundation::VirgilRandom;
 
 
-std::string g_seedFilePath_;
-
 #if VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE
+static std::string g_seedFilePath_;
+static std::mutex g_seedFileMutex_;
+
 static int seed_file_read(unsigned char *buf, size_t buf_len) {
+    std::lock_guard<std::mutex> guard(g_seedFileMutex_);
+
     std::ifstream in(g_seedFilePath_.c_str(), std::ifstream::binary);
 
     if (in.read((char *)buf, buf_len)) {
@@ -82,6 +85,8 @@ static int seed_file_read(unsigned char *buf, size_t buf_len) {
 }
 
 static int seed_file_write(unsigned char *buf, size_t buf_len) {
+    std::lock_guard<std::mutex> guard(g_seedFileMutex_);
+
     std::ofstream out(g_seedFilePath_.c_str(), std::ifstream::binary);
 
     if (out.write((char *)buf, buf_len)) {

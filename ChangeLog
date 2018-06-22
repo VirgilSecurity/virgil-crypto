@@ -1,5 +1,14 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.5.0 in progress RC1
+
+## Features
+
+  * [Lib] Add option to build library with use of additional RNG seed from file
+    - CMake option: VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE
+    - Library class: VirgilRandom
+
+
 = Version 2.4.6 released 2018-06-21
 
 ## Features

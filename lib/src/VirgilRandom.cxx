@@ -38,18 +38,97 @@
 
 #include <mbedtls/entropy.h>
 #include <mbedtls/ctr_drbg.h>
+#include <mbedtls/platform.h>
+#include <tinyformat/tinyformat.h>
+
 
 #include <virgil/crypto/VirgilByteArrayUtils.h>
 #include <virgil/crypto/foundation/VirgilSystemCryptoError.h>
+
+#include <virgil/crypto/VirgilCryptoError.h>
+#include <virgil/crypto/VirgilCryptoException.h>
 
 #include "utils.h"
 #include "mbedtls_context.h"
 
 
+
+#if VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE
+#include <fstream>
+#endif
+
+
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
 
+using virgil::crypto::VirgilCryptoError;
+using virgil::crypto::VirgilCryptoException;
+using virgil::crypto::make_error;
+
 using virgil::crypto::foundation::VirgilRandom;
+
+
+std::string g_seedFilePath_;
+
+#if VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE
+static int seed_file_read(unsigned char *buf, size_t buf_len) {
+    std::ifstream in(g_seedFilePath_.c_str(), std::ifstream::binary);
+
+    if (in.read((char *)buf, buf_len)) {
+        return 0;
+    }
+
+    return -1;
+}
+
+static int seed_file_write(unsigned char *buf, size_t buf_len) {
+    std::ofstream out(g_seedFilePath_.c_str(), std::ifstream::binary);
+
+    if (out.write((char *)buf, buf_len)) {
+        return 0;
+    }
+
+    return -1;
+}
+#endif /* VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE */
+
+void VirgilRandom::setSeedFile(std::string path) {
+#if VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE
+    if (path.empty()) {
+        throw make_error(VirgilCryptoError::EmptyParameter);
+    }
+
+    std::ifstream seedFile(path.c_str(), std::ifstream::binary);
+    if(!seedFile) {
+        throw make_error(VirgilCryptoError::FileNotFound, tfm::format("Can not open file at path: %s.", path));
+    }
+
+    seedFile.seekg(0, seedFile.end);
+    auto seedFileLength = !seedFile.fail() ? seedFile.tellg() : std::streampos(0);
+
+    if (seedFileLength < MBEDTLS_ENTROPY_BLOCK_SIZE) {
+        throw make_error(VirgilCryptoError::FileTooSmall,
+                tfm::format("Expected '%s' file size at least %d bytes, available %d bytes.",
+                        path, MBEDTLS_ENTROPY_BLOCK_SIZE, seedFileLength));
+    }
+
+    g_seedFilePath_ = std::move(path);
+
+    (void)mbedtls_platform_set_nv_seed(seed_file_read, seed_file_write);
+#else
+    (void)path;
+    throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
+#endif
+}
+
+size_t VirgilRandom::seedFileLengthMin() {
+#if VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE
+    return MBEDTLS_ENTROPY_BLOCK_SIZE;
+#else
+    throw make_error(VirgilCryptoError::UnsupportedAlgorithm);
+#endif
+}
+
 
 class VirgilRandom::Impl {
 public:

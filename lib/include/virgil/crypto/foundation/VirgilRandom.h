@@ -50,6 +50,33 @@ namespace virgil { namespace crypto { namespace foundation {
 class VirgilRandom {
 public:
     /**
+     * @brief Configure path to the file that is used as a seed for a non-volatile entropy source.
+     *
+     * @param path the path to the file.
+     *
+     * @throw VirgilCryptoException with VirgilCryptoErrorCode::EmptyParameter,
+     *     if path is empty.
+     *
+     * @throw VirgilCryptoException with VirgilCryptoErrorCode::FileNotFound,
+     *     if file at given path can not be read.
+     *
+     * @throw VirgilCryptoException with VirgilCryptoErrorCode::UnsupportedAlgorithm,
+     *     if library is build without feature: VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE.
+     */
+    static void setSeedFile(std::string path);
+
+    /**
+     * Return minimum length of the seed file.
+     *
+     * @throw VirgilCryptoException with VirgilCryptoErrorCode::UnsupportedAlgorithm,
+     *     if library is build without feature: VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE.
+     *
+     * @return minimum seed file length in bytes.
+     */
+    static size_t seedFileLengthMin();
+
+public:
+    /**
      * @name Creation / Destruction methods
      */
     ///@{

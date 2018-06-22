@@ -50,6 +50,20 @@ using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilCryptoException;
 using virgil::crypto::foundation::VirgilRandom;
 
+#if VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE
+TEST_CASE("Use seed file", "[random]") {
+    VirgilRandom::setSeedFile("seed.txt");
+    VirgilRandom random("secure seed");
+
+    SECTION("Success") {
+        constexpr size_t kSequenceLength = 1024;
+        VirgilByteArray data;
+        REQUIRE_NOTHROW(data = random.randomize(kSequenceLength));
+        REQUIRE(data.size() == kSequenceLength);
+    }
+}
+#endif
+
 TEST_CASE("Randomize sequence", "[random]") {
     VirgilRandom random("secure seed");
 

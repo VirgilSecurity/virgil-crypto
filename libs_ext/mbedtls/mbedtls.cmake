@@ -50,6 +50,9 @@ else (BUILD_SHARED_LIBS)
     set (USE_SHARED_MBEDTLS_LIBRARY OFF)
 endif (BUILD_SHARED_LIBS)
 
+set (MBEDTLS_ENTROPY_NV_SEED @VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE@)
+set (MBEDTLS_PLATFORM_NV_SEED_ALT @VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE@)
+
 # Configure additional CMake parameters
 file (APPEND "@VIRGIL_DEPENDS_ARGS_FILE@"
     "set (ENABLE_PROGRAMS OFF CACHE INTERNAL \"\")\n"
@@ -63,7 +66,6 @@ set (MBEDTLS_CONFIGS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/configs")
 configure_file (
     ${MBEDTLS_CONFIGS_DIR}/config.h
     ${CMAKE_CURRENT_BINARY_DIR}/configs/config.h
-    COPYONLY
 )
 
 # Configure platform dependent MbedTLS 'config*.h' files
@@ -71,19 +73,16 @@ if (EXISTS "${MBEDTLS_CONFIGS_DIR}/config_${LANG}.h")
     configure_file (
         ${MBEDTLS_CONFIGS_DIR}/config_${LANG}.h
         ${CMAKE_CURRENT_BINARY_DIR}/configs/config_platform.h
-        COPYONLY
     )
 elseif (EXISTS "${MBEDTLS_CONFIGS_DIR}/config_${PLATFORM}.h")
     configure_file (
         ${MBEDTLS_CONFIGS_DIR}/config_${PLATFORM}.h
         ${CMAKE_CURRENT_BINARY_DIR}/configs/config_platform.h
-        COPYONLY
     )
 else ()
     configure_file (
         ${MBEDTLS_CONFIGS_DIR}/config_desktop.h
         ${CMAKE_CURRENT_BINARY_DIR}/configs/config_platform.h
-        COPYONLY
     )
 endif ()
 

@@ -1,0 +1,50 @@
+FROM centos:6
+MAINTAINER Virgil Security Inc. <support@virgilsecurity.com>
+
+RUN yum install -y epel-release
+RUN yum install -y centos-release-scl-rh
+RUN yum groupinstall -y 'Development Tools'
+RUN yum install -y pcre-devel
+RUN yum install -y git curl wget
+RUN yum install -y openssl-devel
+
+# PHP
+RUN yum install -y http://rpms.remirepo.net/enterprise/remi-release-6.rpm
+RUN yum install -y --enablerepo=remi php56 php56-php-devel php56-php-mbstring
+RUN yum install -y --enablerepo=remi rh-php70 rh-php70-php-devel rh-php70-php-mbstring
+RUN yum install -y --enablerepo=remi php71 php71-php-devel php71-php-mbstring
+
+# Python
+RUN yum install -y python27
+RUN yum install -y python34
+RUN yum install -y rh-python35
+RUN yum install -y rh-python36
+
+
+ENV SWIG_VERSION=3.0.12
+ENV CMAKE_VERSION_MAJOR=3
+ENV CMAKE_VERSION_MINOR=11
+ENV CMAKE_VERSION_PATCH=1
+ENV CMAKE_VERSION=${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}.${CMAKE_VERSION_PATCH}
+ENV PHPUNIT_VERSION=5.7
+
+RUN cd && \
+    wget http://downloads.sourceforge.net/swig/swig-${SWIG_VERSION}.tar.gz && \
+    tar xvfz swig-${SWIG_VERSION}.tar.gz && \
+    cd swig-${SWIG_VERSION} && \
+    ./configure --prefix=/usr --without-clisp --without-maximum-compile-warnings && \
+    make -j4 && \
+    make install && \
+    install -v -m755 -d /usr/share/doc/swig-${SWIG_VERSION} && \
+    cp -v -R Doc/* /usr/share/doc/swig-${SWIG_VERSION}
+
+RUN cd && \
+    wget https://cmake.org/files/v${CMAKE_VERSION_MAJOR}.${CMAKE_VERSION_MINOR}/cmake-${CMAKE_VERSION}-Linux-x86_64.sh && \
+    bash cmake-${CMAKE_VERSION}-Linux-x86_64.sh --skip-license --exclude-subdir --prefix=/usr/local
+
+
+RUN cd && \
+    wget https://phar.phpunit.de/phpunit-${PHPUNIT_VERSION}.phar && \
+    chmod +x phpunit-${PHPUNIT_VERSION}.phar && \
+    mv phpunit-${PHPUNIT_VERSION}.phar /usr/local/bin/phpunit
+

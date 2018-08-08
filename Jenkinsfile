@@ -54,18 +54,18 @@ def createNativeUnixBuild(slave) {
             }
             organizeFilesUnix('install/ruby')
             // Python
-            if (slave.contains('centos7')) {
-                sh './utils/build.sh --target=python-2.7'
-                writeFile file: './utils/env.sh', text: ['source /opt/rh/python33/enable', ''].join("\n")
-                sh './utils/build.sh --target=python-3.3'
-                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python34/enable', ''].join("\n")
-                sh './utils/build.sh --target=python-3.4'
-                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python35/enable', ''].join("\n")
-                sh './utils/build.sh --target=python-3.5'
-                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python36/enable', ''].join("\n")
-                sh './utils/build.sh --target=python-3.6'
-                organizeFilesUnix('install/python')
-            }
+            // if (slave.contains('centos7')) {
+            //     sh './utils/build.sh --target=python-2.7'
+            //     writeFile file: './utils/env.sh', text: ['source /opt/rh/python33/enable', ''].join("\n")
+            //     sh './utils/build.sh --target=python-3.3'
+            //     writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python34/enable', ''].join("\n")
+            //     sh './utils/build.sh --target=python-3.4'
+            //     writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python35/enable', ''].join("\n")
+            //     sh './utils/build.sh --target=python-3.5'
+            //     writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python36/enable', ''].join("\n")
+            //     sh './utils/build.sh --target=python-3.6'
+            //     organizeFilesUnix('install/python')
+            // }
             if (slave.contains('build-os-x')) {
                 sh './utils/build.sh --target=python-2.7'
                 sh './utils/build.sh --target=python-3.4'
@@ -107,6 +107,20 @@ def createNativeUnixBuild(slave) {
                 sh './utils/build.sh --target=php-7.2'
                 organizeFilesUnix('install/php')
             }
+
+            if (slave.contains('build-docker'){
+                docker.image("virgilsecurity/virgil-crypto-centos6-env:latest"){
+                    // Python
+                    sh './utils/build.sh --target=python-2.7'
+                    sh './utils/build.sh --target=python-3.4'
+                    writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python35/enable', ''].join("\n")
+                    sh './utils/build.sh --target=python-3.5'
+                    writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python36/enable', ''].join("\n")
+                    sh './utils/build.sh --target=python-3.6'
+                    organizeFilesUnix('install/python')
+                }
+            }
+
             // MONO NET
             sh './utils/build.sh --target=net'
             // Golang

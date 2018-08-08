@@ -14,6 +14,7 @@ stage 'Build'
 
 def slaves = [:]
 slaves['native-centos7'] = createNativeUnixBuild('build-centos7');
+slaves['native-centos6'] = createNativeUnixBuild('build-docker');
 slaves['native-os-x'] = createNativeUnixBuild('build-os-x');
 slaves['native-win8'] = createNativeWindowsBuild('build-win8');
 slaves['crossplatform'] = createCrossplatfromBuild('build-os-x');

@@ -14,7 +14,7 @@ stage 'Build'
 
 def slaves = [:]
 slaves['native-centos7'] = createNativeUnixBuild('build-centos7');
-slaves['native-centos6'] = createNativeUnixBuild('build-docker');
+slaves['native-centos6'] = createDockerBuild('build-docker');
 slaves['native-os-x'] = createNativeUnixBuild('build-os-x');
 slaves['native-win8'] = createNativeWindowsBuild('build-win8');
 slaves['crossplatform'] = createCrossplatfromBuild('build-os-x');
@@ -109,19 +109,6 @@ def createNativeUnixBuild(slave) {
                 organizeFilesUnix('install/php')
             }
 
-            if (slave.contains('build-docker')){
-                docker.image("virgilsecurity/virgil-crypto-centos6-env:latest"){
-                    // Python
-                    sh './utils/build.sh --target=python-2.7'
-                    sh './utils/build.sh --target=python-3.4'
-                    writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python35/enable', ''].join("\n")
-                    sh './utils/build.sh --target=python-3.5'
-                    writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python36/enable', ''].join("\n")
-                    sh './utils/build.sh --target=python-3.6'
-                    organizeFilesUnix('install/python')
-                }
-            }
-
             // MONO NET
             sh './utils/build.sh --target=net'
             // Golang
@@ -129,6 +116,24 @@ def createNativeUnixBuild(slave) {
                 sh './utils/build.sh --target=go'
             }
 
+            archiveArtifacts('install/**')
+        }
+    }
+}
+
+def createDockerBuild(slave){
+    return {
+        node(slave){
+            docker.image("virgilsecurity/virgil-crypto-centos6-env:latest"){
+                // Python
+                sh './utils/build.sh --target=python-2.7'
+                sh './utils/build.sh --target=python-3.4'
+                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python35/enable', ''].join("\n")
+                sh './utils/build.sh --target=python-3.5'
+                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python36/enable', ''].join("\n")
+                sh './utils/build.sh --target=python-3.6'
+                organizeFilesUnix('install/python')
+            }
             archiveArtifacts('install/**')
         }
     }

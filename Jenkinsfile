@@ -124,6 +124,8 @@ def createNativeUnixBuild(slave) {
 def createDockerBuild(slave){
     return {
         node(slave){
+            clearContentUnix()
+            unstash 'src'
             docker.image("virgilsecurity/virgil-crypto-centos6-env:latest"){
                 // Python
                 sh './utils/build.sh --target=python-2.7'

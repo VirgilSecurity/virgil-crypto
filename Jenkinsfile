@@ -108,7 +108,7 @@ def createNativeUnixBuild(slave) {
                 organizeFilesUnix('install/php')
             }
 
-            if (slave.contains('build-docker'){
+            if (slave.contains('build-docker')){
                 docker.image("virgilsecurity/virgil-crypto-centos6-env:latest"){
                     // Python
                     sh './utils/build.sh --target=python-2.7'

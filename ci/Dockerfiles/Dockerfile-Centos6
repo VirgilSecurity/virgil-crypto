@@ -3,9 +3,10 @@ MAINTAINER Virgil Security Inc. <support@virgilsecurity.com>
 
 RUN yum install -y epel-release
 RUN yum install -y centos-release-scl-rh
+RUN yum install -y https://centos6.iuscommunity.org/ius-release.rpm
 RUN yum groupinstall -y 'Development Tools'
 RUN yum install -y pcre-devel
-RUN yum install -y git curl wget
+RUN yum install -y git2u curl wget
 RUN yum install -y openssl-devel
 
 # PHP

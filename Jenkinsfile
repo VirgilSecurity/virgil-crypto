@@ -134,8 +134,8 @@ def createDockerBuild(slave){
                 sh './utils/build.sh --target=python-3.5'
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python36/enable', ''].join("\n")
                 sh './utils/build.sh --target=python-3.6'
-                organizeFilesUnix('install/python')
             }
+            organizeFilesUnix('install/python')
             archiveArtifacts('install/**')
         }
     }

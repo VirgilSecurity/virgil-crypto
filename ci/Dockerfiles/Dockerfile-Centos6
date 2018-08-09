@@ -6,7 +6,8 @@ RUN yum install -y centos-release-scl-rh
 RUN yum install -y https://centos6.iuscommunity.org/ius-release.rpm
 RUN yum groupinstall -y 'Development Tools'
 RUN yum install -y pcre-devel
-RUN yum install -y git2u curl wget
+RUN yum install -y git2u
+RUN yum install -y curl wget
 RUN yum install -y openssl-devel
 
 # PHP

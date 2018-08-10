@@ -53,4 +53,4 @@ RUN cd && \
     chmod +x phpunit-${PHPUNIT_VERSION}.phar && \
     mv phpunit-${PHPUNIT_VERSION}.phar /usr/local/bin/phpunit
 
-RUN source /opt/rh/devtoolset-2/enable
+ENTRYPOINT source /opt/rh/devtoolset-2/enable && /bin/bash

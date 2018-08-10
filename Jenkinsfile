@@ -126,7 +126,7 @@ def createDockerBuild(slave){
         node(slave){
             clearContentUnix()
             unstash 'src'
-            docker.image("virgilsecurity/virgil-crypto-centos6-env:latest").inside {
+            docker.image("virgilsecurity/virgil-crypto-centos6-env:latest").inside("--user root"){
                 // Python
                 sh './utils/build.sh --target=python-2.7'
                 sh './utils/build.sh --target=python-3.4'

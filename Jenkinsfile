@@ -124,7 +124,9 @@ def createNativeUnixBuild(slave) {
 def createDockerBuild(slave){
     return {
         node(slave){
-            clearContentUnix()
+            docker.image("virgilsecurity/virgil-crypto-centos6-env:latest").inside("--user root"){
+                clearContentUnix()
+            }
             unstash 'src'
             docker.image("virgilsecurity/virgil-crypto-centos6-env:latest").inside("--user root"){
                 // Python

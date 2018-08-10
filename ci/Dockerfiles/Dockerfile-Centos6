@@ -10,6 +10,8 @@ RUN yum remove -y git
 RUN yum install -y git2u
 RUN yum install -y curl wget
 RUN yum install -y openssl-devel
+RUN wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo
+RUN yum install -y devtoolset-2-gcc* devtoolset-2-binutils
 
 # PHP
 RUN yum install -y http://rpms.remirepo.net/enterprise/remi-release-6.rpm
@@ -51,3 +53,4 @@ RUN cd && \
     chmod +x phpunit-${PHPUNIT_VERSION}.phar && \
     mv phpunit-${PHPUNIT_VERSION}.phar /usr/local/bin/phpunit
 
+RUN source /opt/rh/devtoolset-2/enable

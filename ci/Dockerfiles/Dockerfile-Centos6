@@ -20,10 +20,10 @@ RUN yum install -y --enablerepo=remi rh-php70 rh-php70-php-devel rh-php70-php-mb
 RUN yum install -y --enablerepo=remi php71 php71-php-devel php71-php-mbstring
 
 # Python
-RUN yum install -y python27
-RUN yum install -y python34
-RUN yum install -y rh-python35
-RUN yum install -y rh-python36
+RUN yum install -y python27 python27-dev
+RUN yum install -y python34 python34-dev
+RUN yum install -y rh-python35 rh-python35-dev
+RUN yum install -y rh-python36 rh-python36-dev
 
 
 ENV SWIG_VERSION=3.0.12

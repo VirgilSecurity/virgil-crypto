@@ -130,7 +130,7 @@ def createDockerBuild(slave){
             unstash 'src'
             docker.image("virgilsecurity/virgil-crypto-centos6-env:latest").inside("--user root"){
                 // Python
-                sh 'source /opt/rh/devtoolset-2/enable && ./utils/build.sh --target=python-2.7'
+                sh 'source /opt/rh/devtoolset-2/enable && set PYTHON_LIBRARY=/usr/lib64/libpython2.7.so.1.0  && ./utils/build.sh --target=python-2.7'
                 sh 'source /opt/rh/devtoolset-2/enable && ./utils/build.sh --target=python-3.4'
                 writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python35/enable', ''].join("\n")
                 sh 'source /opt/rh/devtoolset-2/enable && ./utils/build.sh --target=python-3.5'

@@ -13,13 +13,13 @@ node('master') {
 stage 'Build'
 
 def slaves = [:]
-slaves['native-centos7'] = createNativeUnixBuild('build-centos7');
+// slaves['native-centos7'] = createNativeUnixBuild('build-centos7');
 slaves['native-centos6'] = createDockerBuild('build-docker');
-slaves['native-os-x'] = createNativeUnixBuild('build-os-x');
-slaves['native-win8'] = createNativeWindowsBuild('build-win8');
-slaves['crossplatform'] = createCrossplatfromBuild('build-os-x');
-slaves['darwin'] = createDarwinBuild('build-os-x');
-slaves['android'] = createAndroidBuild('build-os-x');
+// slaves['native-os-x'] = createNativeUnixBuild('build-os-x');
+// slaves['native-win8'] = createNativeWindowsBuild('build-win8');
+// slaves['crossplatform'] = createCrossplatfromBuild('build-os-x');
+// slaves['darwin'] = createDarwinBuild('build-os-x');
+// slaves['android'] = createAndroidBuild('build-os-x');
 parallel slaves
 
 stage 'Fingerprint'

@@ -54,8 +54,8 @@ void VirgilTagFilter::process(const VirgilByteArray& data) {
 
     std::ptrdiff_t tagSurplusLen = tag_.size() - tagLen_;
     if (tagSurplusLen > 0) {
-        VirgilByteArray::iterator tagSurplusBegin = tag_.begin();
-        VirgilByteArray::iterator tagSurplusEnd = tagSurplusBegin + tagSurplusLen;
+        auto tagSurplusBegin = tag_.begin();
+        auto tagSurplusEnd = tagSurplusBegin + tagSurplusLen;
         data_.insert(data_.end(), tagSurplusBegin, tagSurplusEnd);
         tag_.erase(tagSurplusBegin, tagSurplusEnd);
     }

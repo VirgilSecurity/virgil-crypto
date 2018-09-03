@@ -36,29 +36,40 @@
 
 #include <virgil/crypto/VirgilCipher.h>
 
+#include <virgil/crypto/VirgilCryptoError.h>
+#include <virgil/crypto/VirgilByteArrayUtils.h>
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
 
+#include "ScopeGuard.h"
+
 using virgil::crypto::VirgilCipher;
+using virgil::crypto::VirgilCryptoError;
 using virgil::crypto::VirgilByteArray;
+using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::foundation::VirgilSymmetricCipher;
 
+using virgil::crypto::make_error;
+
 VirgilByteArray VirgilCipher::encrypt(const VirgilByteArray& data, bool embedContentInfo) {
-    VirgilSymmetricCipher& symmetricCipher = initEncryption();
+
+    auto disposer = ScopeGuard([this]() {
+        clear();
+    });
+
+    initEncryption();
+
     VirgilByteArray encryptedData;
 
     buildContentInfo();
+
     if (embedContentInfo) {
         VirgilByteArray contentInfo = getContentInfo();
         encryptedData.swap(contentInfo);
     }
 
-    VirgilByteArray firstChunk = symmetricCipher.update(data);
-    VirgilByteArray secondChunk = symmetricCipher.finish();
+    VirgilByteArrayUtils::append(encryptedData, getSymmetricCipher().update(data));
+    VirgilByteArrayUtils::append(encryptedData, getSymmetricCipher().finish());
 
-    encryptedData.insert(encryptedData.end(), firstChunk.begin(), firstChunk.end());
-    encryptedData.insert(encryptedData.end(), secondChunk.begin(), secondChunk.end());
-
-    clearCipherInfo();
     return encryptedData;
 }
 
@@ -67,26 +78,33 @@ VirgilByteArray VirgilCipher::decryptWithKey(
         const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
 
-    VirgilByteArray payload = tryReadContentInfo(encryptedData);
-    VirgilSymmetricCipher& cipher = initDecryptionWithKey(recipientId, privateKey, privateKeyPassword);
-    return decrypt(payload, cipher);
+    initDecryptionWithKey(recipientId, privateKey, privateKeyPassword);
+
+    return decrypt(encryptedData);
 }
 
 VirgilByteArray VirgilCipher::decryptWithPassword(const VirgilByteArray& encryptedData, const VirgilByteArray& pwd) {
-    VirgilByteArray payload = tryReadContentInfo(encryptedData);
-    VirgilSymmetricCipher& cipher = initDecryptionWithPassword(pwd);
-    return decrypt(payload, cipher);
+
+    initDecryptionWithPassword(pwd);
+
+    return decrypt(encryptedData);
 }
 
 
-VirgilByteArray VirgilCipher::decrypt(const VirgilByteArray& encryptedData, VirgilSymmetricCipher& cipher) {
-    VirgilByteArray firstChunk = cipher.update(encryptedData);
-    VirgilByteArray secondChunk = cipher.finish();
+VirgilByteArray VirgilCipher::decrypt(const VirgilByteArray& encryptedData) {
 
-    VirgilByteArray decryptedData;
-    decryptedData.insert(decryptedData.end(), firstChunk.begin(), firstChunk.end());
-    decryptedData.insert(decryptedData.end(), secondChunk.begin(), secondChunk.end());
+    auto disposer = ScopeGuard([this]() {
+        clear();
+    });
 
-    clearCipherInfo();
+    auto payload = filterAndSetupContentInfo(encryptedData, true);
+
+    size_t payloadSize = payload.size();
+
+    auto decryptedData = getSymmetricCipher().update(payload);
+    auto decryptedDataEnd = getSymmetricCipher().finish();
+
+    VirgilByteArrayUtils::append(decryptedData, decryptedDataEnd);
+
     return decryptedData;
 }

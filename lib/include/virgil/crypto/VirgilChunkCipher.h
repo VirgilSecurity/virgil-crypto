@@ -105,11 +105,11 @@ private:
      * @brief Retrieve actual chunk size from the custom parameters.
      */
     size_t retrieveChunkSize() const;
+
     /**
-     * @brief Attempt to read content info from the data source.
-     * @return Data that was read from the source and is not content info.
+     * @brief Do encryption / decryption depends on the configured mode.
      */
-    VirgilByteArray tryReadContentInfo(VirgilDataSource& source);
+    void process(VirgilDataSource& source, VirgilDataSink& sink, size_t actualChunkSize);
 };
 
 }}

@@ -77,15 +77,12 @@ public:
      * @return Decrypted data.
      */
     VirgilByteArray decryptWithPassword(const VirgilByteArray& encryptedData, const VirgilByteArray& pwd);
-
 private:
     /**
      * @brief Decrypt given data.
      * @return Decrypted data.
      */
-    VirgilByteArray decrypt(
-            const VirgilByteArray& encryptedData,
-            virgil::crypto::foundation::VirgilSymmetricCipher& cipher);
+    VirgilByteArray decrypt(const VirgilByteArray& encryptedData);
 };
 
 }}

@@ -211,6 +211,10 @@ private:
 
     VirgilByteArray getContentEncryptionAlgorithm() const;
 
+    bool isReadyForEncryption();
+
+    bool isReadyForDecryption();
+
     friend class VirgilCipherBase;
     ///@}
 

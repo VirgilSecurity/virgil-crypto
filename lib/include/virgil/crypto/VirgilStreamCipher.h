@@ -88,9 +88,7 @@ private:
     /**
      * @brief Decrypt data read from given source, and write it to the sink.
      */
-    void decrypt(
-            VirgilDataSource& source, VirgilDataSink& sink,
-            virgil::crypto::foundation::VirgilSymmetricCipher& cipher, const VirgilByteArray& firstChunk);
+    void decrypt(VirgilDataSource& source, VirgilDataSink& sink);
 };
 
 }}

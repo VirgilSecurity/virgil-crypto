@@ -206,40 +206,53 @@ public:
 
 protected:
     /**
-     * @brief Make attempt to read content info from the encrypted data.
+     * @brief Extract content info from the encrypted data and setup it.
      *
-     * Payload content info if was detected in the encrypted data.
+     * This function should be used always to filter input encrypted data.
      *
      * @param encryptedData - data that was encrypted.
-     * return Encrypted data without content info.
+     * @param isLastChunk - tell filter that given data is the last one.
+     * return Encrypted data that is follows content info, if content info was fully extracted, otherwise - empty data.
      */
-    VirgilByteArray tryReadContentInfo(const VirgilByteArray& encryptedData);
+    VirgilByteArray filterAndSetupContentInfo(const VirgilByteArray& encryptedData, bool isLastChunk);
 
     /**
      * @brief Configures symmetric cipher for encryption.
-     * @return Configured cipher.
      * @note cipher's key randomly generated.
      * @note cipher's input vector is randomly generated.
      */
-    virgil::crypto::foundation::VirgilSymmetricCipher& initEncryption();
+    void initEncryption();
 
     /**
-     * @brief Configures symmetric cipher for decryption based on the recipient's password.
+     * @brief Stores recipient's password that is used for cipher's key decryption when content becomes available.
      * @param pwd - recipient's password.
-     * @return Configured cipher.
      */
-    virgil::crypto::foundation::VirgilSymmetricCipher& initDecryptionWithPassword(const VirgilByteArray& pwd);
+    void initDecryptionWithPassword(const VirgilByteArray& pwd);
 
     /**
-     * @brief Configures symmetric cipher for decryption based on the recipient's id and private key.
+     * @brief Stores recipient's information that is used for cipher's key decryption when content becomes available.
      * @param recipientId - recipient's id.
      * @param privateKey - recipient's private key.
      * @param privateKeyPassword - recipient's private key password.
-     * @return Configured cipher.
      */
-    virgil::crypto::foundation::VirgilSymmetricCipher& initDecryptionWithKey(
+    void initDecryptionWithKey(
             const VirgilByteArray& recipientId,
             const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword);
+
+    /**
+     * Return true if one one of the init function was called.
+     */
+    bool isInited() const;
+
+    /**
+     * Return true if underlying symmetric cipher is properly configured for encryption.
+     */
+    bool isReadyForEncryption() const;
+
+    /**
+     * Return true if underlying symmetric cipher is properly configured for decryption.
+     */
+    bool isReadyForDecryption() const;
 
     /**
      * @brief Return symmetric cipher configure by one of the methods:
@@ -260,10 +273,10 @@ protected:
      *
      * Clear symmetric cipher and correspond internal states.
      * @note This method SHOULD be called after encryption or decryption process is finished.
-     * @note You CAN not use symmetric cipher returned by the method @link getSymmetricCipher () @endlink,
+     * @note You CAN not use symmetric cipher returned by the method @link getSymmetricCipher() @endlink,
      *     after this method call.
      */
-    void clearCipherInfo();
+    void clear();
 
 public:
     //! @cond Doxygen_Suppress
@@ -282,6 +295,14 @@ private:
     virtual VirgilByteArray doDecryptWithPassword(
             const VirgilByteArray& encryptedKey, const VirgilByteArray& encryptionAlgorithm,
             const VirgilByteArray& password) const;
+
+
+    /**
+     * @brief Configures symmetric cipher for decryption.
+     * @note cipher's key is extracted from the content info.
+     * @note cipher's input vector is extracted from the content info.
+     */
+    void accomplishInitDecryption();
 
 private:
     class Impl;

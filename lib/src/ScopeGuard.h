@@ -38,6 +38,7 @@
 #define VIRGIL_CRYPTO_SCOPE_GUARD_H
 
 #include <functional>
+#include <deque>
 
 /**
  * Implementation idea was taken from:
@@ -67,6 +68,37 @@ public:
     ScopeGuard(const ScopeGuard&) = delete;
 
     void operator = (const ScopeGuard&) = delete;
+
+private:
+    std::function<void()> undoFunc_;
+};
+
+class ScopeGuardOnException {
+public:
+    template<typename FunctionType>
+    ScopeGuardOnException(FunctionType && undoFunc) try : undoFunc_(std::forward<FunctionType>(undoFunc)) {
+    } catch(...) {
+        undoFunc();
+        throw;
+    }
+
+    ScopeGuardOnException(ScopeGuardOnException && other) : undoFunc_(std::move(other.undoFunc_)) {
+        other.undoFunc_ = nullptr;
+    }
+
+    ~ScopeGuardOnException() {
+        if (std::uncaught_exception() && undoFunc_ != nullptr) {
+            undoFunc_(); // must not throw
+        }
+    }
+
+    void dismiss() noexcept {
+        undoFunc_ = nullptr;
+    }
+
+    ScopeGuardOnException(const ScopeGuardOnException&) = delete;
+
+    void operator = (const ScopeGuardOnException&) = delete;
 
 private:
     std::function<void()> undoFunc_;

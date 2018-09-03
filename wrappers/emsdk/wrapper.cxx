@@ -65,6 +65,7 @@
 #include <virgil/crypto/VirgilStreamCipher.h>
 #include <virgil/crypto/VirgilStreamSigner.h>
 #include <virgil/crypto/VirgilChunkCipher.h>
+#include <virgil/crypto/VirgilSeqCipher.h>
 
 #include <virgil/crypto/pfs/VirgilPFSSession.h>
 #include <virgil/crypto/pfs/VirgilPFSEncryptedMessage.h>
@@ -317,6 +318,15 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .function("encrypt", &VirgilChunkCipher::encrypt)
         .function("decryptWithKey", &VirgilChunkCipher::decryptWithKey)
         .function("decryptWithPassword", &VirgilChunkCipher::decryptWithPassword)
+    ;
+
+    class_<VirgilSeqCipher, base<VirgilCipherBase>>("VirgilSeqCipher")
+        .constructor<>()
+        .function("startEncryption", &VirgilSeqCipher::startEncryption)
+        .function("startDecryptionWithKey", &VirgilSeqCipher::startDecryptionWithKey)
+        .function("startDecryptionWithPassword", &VirgilSeqCipher::startDecryptionWithPassword)
+        .function("process", &VirgilSeqCipher::process)
+        .function("finish", &VirgilSeqCipher::finish)
     ;
 }
 

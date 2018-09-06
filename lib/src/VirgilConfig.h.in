@@ -57,13 +57,6 @@
  */
 #cmakedefine01 VIRGIL_CRYPTO_FEATURE_PYTHIA_MT
 
-/**
- * On/Off status of the feature: use additional RNG seed from a file.
- * If defined as 1, then VirgilRandom::setSeedFile() must be called once,
- * before any VirgilRandom object instantiation.
- */
-#cmakedefine01 VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE
-
 
 namespace virgil {
 namespace crypto {
@@ -84,11 +77,6 @@ public:
      * @brief Runtime equiavalent of VIRGIL_CRYPTO_FEATURE_PYTHIA_MT
      */
     static bool hasFeaturePythiaMultiThread();
-
-    /**
-     * @brief Runtime equiavalent of VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE
-     */
-    static bool hasFeatureRngSeedFile();
 
 };
 

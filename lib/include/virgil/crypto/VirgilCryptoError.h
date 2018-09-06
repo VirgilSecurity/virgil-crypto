@@ -66,8 +66,6 @@ enum class VirgilCryptoError  {
     NotInitialized, ///< Object is not initialized with specific algorithm, so can't be used.
     NotSecure, ///< Security prerequisite is broken.
     UnsupportedAlgorithm, ///< Algorithm is not supported in the current build.
-    FileNotFound, ///< File is not found under given path.
-    FileTooSmall, ///< Data within file is not enough for algorithm.
     Undefined = std::numeric_limits<int>::max()
 };
 

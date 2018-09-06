@@ -49,7 +49,3 @@ bool VirgilConfig::hasFeaturePythiaImpl() {
 bool VirgilConfig::hasFeaturePythiaMultiThread() {
     return VIRGIL_CRYPTO_FEATURE_PYTHIA_MT;
 }
-
-bool VirgilConfig::hasFeatureRngSeedFile() {
-    return VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE;
-}

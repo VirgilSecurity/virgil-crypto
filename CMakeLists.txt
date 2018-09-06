@@ -77,9 +77,6 @@
 #     - VIRGIL_CRYPTO_FEATURE_PYTHIA_MT -
 #           boolean value that defines whether to build module Pythia in a multi-threading mode.
 #
-#     - VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE -
-#           boolean value that defines whether class VirgilRandom will use additional seed from a file.
-#
 # Define variables:
 #     - VIRGIL_VERSION           - library full version.
 #     - VIRGIL_VERSION_MAJOR     - library major version number.
@@ -204,9 +201,6 @@ set (VIRGIL_CRYPTO_FEATURE_STREAM_IMPL ON CACHE BOOL
 
 set (VIRGIL_CRYPTO_FEATURE_PYTHIA OFF CACHE BOOL "Defines whether to enable module Pythia or not")
 set (VIRGIL_CRYPTO_FEATURE_PYTHIA_MT ON CACHE BOOL "Defines whether to build module Pythia in a multi-threading mode")
-set (VIRGIL_CRYPTO_FEATURE_RNG_SEED_FILE OFF CACHE BOOL
-        "Defines whether class VirgilRandom will use additional seed from a file.")
-
 
 # Configure optimizations
 set (ED25519_AMD64_OPTIMIZATION ON CACHE BOOL "Defines whether to enable AMD64 optimization for Ed25519 algorithms")

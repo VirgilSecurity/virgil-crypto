@@ -77,10 +77,6 @@ std::string VirgilCryptoErrorCategory::message(int ev) const noexcept {
             return "Security prerequisite is broken.";
         case VirgilCryptoError::UnsupportedAlgorithm:
             return "Algorithm is not supported in the current build.";
-        case VirgilCryptoError::FileNotFound:
-            return "File is not found.";
-        case VirgilCryptoError::FileTooSmall:
-            return "Data within file is not enough for algorithm.";
         default:
             return "Undefined error.";
     }

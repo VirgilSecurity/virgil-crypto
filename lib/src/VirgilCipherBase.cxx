@@ -45,6 +45,7 @@
 #include <virgil/crypto/foundation/VirgilPBE.h>
 
 #include "utils.h"
+#include "VirgilContentInfoFilter.h"
 
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
@@ -54,11 +55,12 @@ using virgil::crypto::VirgilCryptoError;
 using virgil::crypto::VirgilContentInfo;
 using virgil::crypto::make_error;
 
-
 using virgil::crypto::foundation::VirgilRandom;
 using virgil::crypto::foundation::VirgilSymmetricCipher;
 using virgil::crypto::foundation::VirgilAsymmetricCipher;
 using virgil::crypto::foundation::VirgilPBE;
+
+using virgil::crypto::internal::VirgilContentInfoFilter;
 
 namespace virgil { namespace crypto {
 
@@ -69,13 +71,19 @@ class VirgilCipherBase::Impl {
 public:
     Impl() noexcept :
             random(VirgilByteArrayUtils::stringToBytes(std::string("virgil::VirgilCipherBase"))),
-            symmetricCipher(), symmetricCipherKey(), contentInfo() {}
+            symmetricCipher(), symmetricCipherKey(), contentInfo(), contentInfoFilter(),
+            recipientId(), privateKey(), pwd(), isInited(false) {}
 
 public:
     VirgilRandom random;
     VirgilSymmetricCipher symmetricCipher;
     VirgilByteArray symmetricCipherKey;
     VirgilContentInfo contentInfo;
+    VirgilContentInfoFilter contentInfoFilter;
+    VirgilByteArray recipientId;
+    VirgilByteArray privateKey;
+    VirgilByteArray pwd;
+    bool isInited;
 };
 
 }}
@@ -158,78 +166,146 @@ VirgilByteArray VirgilCipherBase::computeShared(
     return VirgilAsymmetricCipher::computeShared(publicContext, privateContext);
 }
 
-VirgilByteArray VirgilCipherBase::tryReadContentInfo(const VirgilByteArray& encryptedData) {
-    size_t contentInfoSize = defineContentInfoSize(encryptedData);
-    if (contentInfoSize > 0) {
-        VirgilByteArray contentInfo(encryptedData.begin(), encryptedData.begin() + contentInfoSize);
-        VirgilByteArray payload(encryptedData.begin() + contentInfoSize, encryptedData.end());
-        setContentInfo(contentInfo);
-        return payload;
+
+VirgilByteArray VirgilCipherBase::filterAndSetupContentInfo(const VirgilByteArray& encryptedData, bool isLastChunk) {
+
+    size_t encryptedDataSize = encryptedData.size();
+
+    if (impl_->contentInfoFilter.isDone()) {
+        return encryptedData;
     }
-    return encryptedData;
+
+    if (impl_->contentInfoFilter.isWaitingData()) {
+        impl_->contentInfoFilter.filterData(encryptedData);
+    }
+
+    if (isLastChunk) {
+        impl_->contentInfoFilter.tellLastChunk();
+    }
+
+    if (impl_->contentInfoFilter.isContentInfoAbsent()) {
+        impl_->contentInfoFilter.finish();
+        accomplishInitDecryption();
+        return impl_->contentInfoFilter.popEncryptedData();
+
+    } else if (impl_->contentInfoFilter.isContentInfoFound()) {
+        setContentInfo(impl_->contentInfoFilter.popContentInfo());
+        impl_->contentInfoFilter.finish();
+        accomplishInitDecryption();
+        return impl_->contentInfoFilter.popEncryptedData();
+
+    } else if (impl_->contentInfoFilter.isContentInfoBroken()) {
+        throw make_error(VirgilCryptoError::InvalidArgument,
+            "Content Info extracted from the encrypted data is broken.");
+
+    } else if (isLastChunk) {
+        accomplishInitDecryption();
+    }
+
+    //  Still waiting for data to be filtered.
+    return VirgilByteArray();
 }
 
-VirgilSymmetricCipher& VirgilCipherBase::initEncryption() {
+
+void VirgilCipherBase::initEncryption() {
+
     impl_->symmetricCipher = VirgilSymmetricCipher(kSymmetricCipher_Algorithm);
     impl_->symmetricCipherKey = impl_->random.randomize(impl_->symmetricCipher.keyLength());
-    VirgilByteArray symmetricCipherIV = impl_->random.randomize(impl_->symmetricCipher.ivSize());
+    auto symmetricCipherIV = impl_->random.randomize(impl_->symmetricCipher.ivSize());
     impl_->symmetricCipher.setEncryptionKey(impl_->symmetricCipherKey);
     impl_->symmetricCipher.setIV(symmetricCipherIV);
+
     if (impl_->symmetricCipher.isSupportPadding()) {
         impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
     }
-    impl_->symmetricCipher.reset();
 
-    return impl_->symmetricCipher;
+    impl_->symmetricCipher.reset();
+    impl_->isInited = true;
 }
 
-VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithPassword(const VirgilByteArray& pwd) {
-    VirgilByteArray contentEncryptionKey = impl_->contentInfo.decryptPasswordRecipient(
-            [&, this](
-                    const VirgilByteArray& keyEncryptionAlgorithm,
-                    const VirgilByteArray& encryptedKey) -> VirgilByteArray {
-                return doDecryptWithPassword(encryptedKey, keyEncryptionAlgorithm, pwd);
-            }
-    );
-    if (contentEncryptionKey.empty()) {
-        throw make_error(VirgilCryptoError::NotFoundPasswordRecipient);
+
+void VirgilCipherBase::accomplishInitDecryption() {
+    VirgilByteArray contentEncryptionKey;
+
+    if (!impl_->contentInfo.isReadyForDecryption()) {
+        throw make_error(VirgilCryptoError::InvalidState,
+            "Content info is absent. It can be provided manually,"
+            " or extracted as a part of encrypted data if it was embedded during encryption.");
     }
+
+    if (impl_->recipientId.empty()) {
+        // Password decryption.
+        contentEncryptionKey = impl_->contentInfo.decryptPasswordRecipient(
+                [&, this](
+                        const VirgilByteArray& keyEncryptionAlgorithm,
+                        const VirgilByteArray& encryptedKey) -> VirgilByteArray {
+                    return doDecryptWithPassword(encryptedKey, keyEncryptionAlgorithm, impl_->pwd);
+                }
+        );
+
+        if (contentEncryptionKey.empty()) {
+            throw make_error(VirgilCryptoError::NotFoundPasswordRecipient);
+        }
+
+    } else {
+        // Key decryption.
+        contentEncryptionKey = impl_->contentInfo.decryptKeyRecipient(
+                impl_->recipientId,
+                [&, this](const VirgilByteArray& algorithm, const VirgilByteArray& encryptedKey) -> VirgilByteArray {
+                    return doDecryptWithKey(algorithm, encryptedKey, impl_->privateKey, impl_->pwd);
+                }
+        );
+
+        if (contentEncryptionKey.empty()) {
+            throw make_error(VirgilCryptoError::NotFoundKeyRecipient);
+        }
+    }
+
     impl_->symmetricCipher = VirgilSymmetricCipher();
     impl_->symmetricCipher.fromAsn1(impl_->contentInfo.getContentEncryptionAlgorithm());
     impl_->symmetricCipher.setDecryptionKey(contentEncryptionKey);
+
     if (impl_->symmetricCipher.isSupportPadding()) {
         impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
     }
+
     impl_->symmetricCipher.reset();
-    return impl_->symmetricCipher;
 }
 
-VirgilSymmetricCipher& VirgilCipherBase::initDecryptionWithKey(
+
+void VirgilCipherBase::initDecryptionWithPassword(const VirgilByteArray& pwd) {
+    if (pwd.empty()) {
+        throw make_error(VirgilCryptoError::InvalidArgument, "Can not decrypt with empty 'pwd'");
+    }
+
+    impl_->pwd = pwd;
+    impl_->isInited = true;
+}
+
+
+void VirgilCipherBase::initDecryptionWithKey(
         const VirgilByteArray& recipientId,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
 
-    VirgilByteArray contentEncryptionKey = impl_->contentInfo.decryptKeyRecipient(
-            recipientId,
-            [&, this](const VirgilByteArray& algorithm, const VirgilByteArray& encryptedKey) -> VirgilByteArray {
-                return doDecryptWithKey(algorithm, encryptedKey, privateKey, privateKeyPassword);
-            }
-    );
-    if (contentEncryptionKey.empty()) {
-        throw make_error(VirgilCryptoError::NotFoundKeyRecipient);
+    if (recipientId.empty()) {
+        throw make_error(VirgilCryptoError::InvalidArgument, "Can not decrypt with empty 'recipientId'");
     }
-    impl_->symmetricCipher = VirgilSymmetricCipher();
-    impl_->symmetricCipher.fromAsn1(impl_->contentInfo.getContentEncryptionAlgorithm());
-    impl_->symmetricCipher.setDecryptionKey(contentEncryptionKey);
-    if (impl_->symmetricCipher.isSupportPadding()) {
-        impl_->symmetricCipher.setPadding(kSymmetricCipher_Padding);
+
+    if (privateKey.empty()) {
+        throw make_error(VirgilCryptoError::InvalidArgument, "Can not decrypt with empty 'privateKey'");
     }
-    impl_->symmetricCipher.reset();
-    return impl_->symmetricCipher;
+
+    impl_->recipientId = recipientId;
+    impl_->privateKey = privateKey;
+    impl_->pwd = privateKeyPassword;
+    impl_->isInited = true;
 }
+
 
 void VirgilCipherBase::buildContentInfo() {
     const auto& symmetricCipherKey = impl_->symmetricCipherKey;
     auto& random = impl_->random;
+
     impl_->contentInfo.encryptKeyRecipients(
             [&symmetricCipherKey](const VirgilByteArray& publicKey) -> VirgilContentInfo::EncryptionResult {
                 VirgilAsymmetricCipher asymmetricCipher;
@@ -237,6 +313,7 @@ void VirgilCipherBase::buildContentInfo() {
                 return { asymmetricCipher.toAsn1(), asymmetricCipher.encrypt(symmetricCipherKey) };
             }
     );
+
     impl_->contentInfo.encryptPasswordRecipients(
             [&symmetricCipherKey, &random](const VirgilByteArray& password) -> VirgilContentInfo::EncryptionResult {
                 const VirgilByteArray salt = random.randomize(16);
@@ -247,17 +324,45 @@ void VirgilCipherBase::buildContentInfo() {
                 return { pbe.toAsn1(), pbe.encrypt(symmetricCipherKey, password) };
             }
     );
+
     impl_->contentInfo.setContentEncryptionAlgorithm(impl_->symmetricCipher.toAsn1());
 }
 
-void VirgilCipherBase::clearCipherInfo() {
+void VirgilCipherBase::clear() {
+    impl_->isInited = false;
     impl_->symmetricCipher.clear();
+    impl_->recipientId.clear();
+    impl_->contentInfoFilter.reset();
+
     VirgilByteArrayUtils::zeroize(impl_->symmetricCipherKey);
+    VirgilByteArrayUtils::zeroize(impl_->privateKey);
+    VirgilByteArrayUtils::zeroize(impl_->pwd);
+
+    impl_->symmetricCipherKey.clear();
+    impl_->privateKey.clear();
+    impl_->pwd.clear();
 }
+
+
+bool VirgilCipherBase::isInited() const {
+    return impl_->isInited;
+}
+
+
+bool VirgilCipherBase::isReadyForEncryption() const {
+    return impl_->symmetricCipher.isInited() && impl_->symmetricCipher.isEncryptionMode();
+}
+
+
+bool VirgilCipherBase::isReadyForDecryption() const {
+    return impl_->symmetricCipher.isInited() && impl_->symmetricCipher.isDecryptionMode();
+}
+
 
 VirgilSymmetricCipher& VirgilCipherBase::getSymmetricCipher() {
     return impl_->symmetricCipher;
 }
+
 
 VirgilByteArray VirgilCipherBase::doDecryptWithKey(
         const VirgilByteArray& algorithm, const VirgilByteArray& encryptedKey,
@@ -267,6 +372,7 @@ VirgilByteArray VirgilCipherBase::doDecryptWithKey(
     asymmetricCipher.setPrivateKey(privateKey, privateKeyPassword);
     return asymmetricCipher.decrypt(encryptedKey);
 }
+
 
 VirgilByteArray VirgilCipherBase::doDecryptWithPassword(
         const VirgilByteArray& encryptedKey, const VirgilByteArray& encryptionAlgorithm,

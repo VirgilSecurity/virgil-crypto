@@ -44,6 +44,8 @@
 #include <virgil/crypto/foundation/VirgilSymmetricCipher.h>
 #include <virgil/crypto/foundation/VirgilAsymmetricCipher.h>
 
+#include "ScopeGuard.h"
+
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
 using virgil::crypto::VirgilChunkCipher;
@@ -103,82 +105,54 @@ static VirgilByteArray make_unique_nonce(const VirgilByteArray& nonce, const Vir
     return xor_octets(nonce, counter);
 }
 
-static void process(
-        VirgilDataSource& source, VirgilDataSink& sink, VirgilSymmetricCipher& symmetricCipher,
-        size_t actualChunkSize, const VirgilByteArray& firstChunk = {}) {
-    VirgilByteArray nonceCounter(symmetricCipher.ivSize());
-    const VirgilByteArray nonce = symmetricCipher.iv();
-
-    VirgilByteArray data(firstChunk);
-    do {
-        // Collect data for full chunk
-        while (source.hasData() && data.size() < actualChunkSize) {
-            VirgilByteArrayUtils::append(data, source.read());
-        }
-        // Process (encrypt/decrypt)
-        while (data.size() >= actualChunkSize || (!data.empty() && !source.hasData())) {
-            // Reconfigure symmetric cipher
-            symmetricCipher.setIV(internal::make_unique_nonce(nonce, nonceCounter));
-            symmetricCipher.reset();
-            const VirgilByteArray chunk = VirgilByteArrayUtils::popBytes(data, actualChunkSize);
-            VirgilByteArray processedChunk;
-            VirgilByteArrayUtils::append(processedChunk, symmetricCipher.update(chunk));
-            VirgilByteArrayUtils::append(processedChunk, symmetricCipher.finish());
-            internal::increment_octets(nonceCounter);
-            VirgilDataSink::safeWrite(sink, processedChunk);
-        }
-    } while (source.hasData());
-}
-
 }}}
 
 void VirgilChunkCipher::encrypt(
         VirgilDataSource& source, VirgilDataSink& sink, bool embedContentInfo, size_t preferredChunkSize) {
-    VirgilSymmetricCipher& symmetricCipher = initEncryption();
 
-    const size_t actualChunkSize = internal::adjustEncryptionChunkSize(preferredChunkSize, symmetricCipher.blockSize(),
-            symmetricCipher.isSupportPadding());
-    storeChunkSize(actualChunkSize);
+    auto disposer = ScopeGuard([this]() {
+        clear();
+    });
+
+    initEncryption();
+
     buildContentInfo();
+
+    const size_t actualChunkSize = internal::adjustEncryptionChunkSize(preferredChunkSize,
+            getSymmetricCipher().blockSize(), getSymmetricCipher().isSupportPadding());
+
+    storeChunkSize(actualChunkSize);
 
     if (embedContentInfo) {
         VirgilDataSink::safeWrite(sink, getContentInfo());
     }
 
-    internal::process(source, sink, symmetricCipher, actualChunkSize);
-
-    clearCipherInfo();
+    process(source, sink, actualChunkSize);
 }
 
 void VirgilChunkCipher::decryptWithKey(
         VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& recipientId,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
 
-    const VirgilByteArray firstChunk = tryReadContentInfo(source);
+    auto disposer = ScopeGuard([this]() {
+        clear();
+    });
 
-    VirgilSymmetricCipher& symmetricCipher = initDecryptionWithKey(recipientId, privateKey, privateKeyPassword);
+    initDecryptionWithKey(recipientId, privateKey, privateKeyPassword);
 
-    const size_t actualChunkSize = internal::adjustDecryptionChunkSize(retrieveChunkSize(),
-            symmetricCipher.blockSize(), symmetricCipher.isSupportPadding(), symmetricCipher.authTagLength());
-
-    internal::process(source, sink, symmetricCipher, actualChunkSize, firstChunk);
-
-    clearCipherInfo();
+    process(source, sink, 0);
 }
 
 void VirgilChunkCipher::decryptWithPassword(
         VirgilDataSource& source, VirgilDataSink& sink, const VirgilByteArray& pwd) {
 
-    const VirgilByteArray firstChunk = tryReadContentInfo(source);
+    auto disposer = ScopeGuard([this]() {
+        clear();
+    });
 
-    VirgilSymmetricCipher& symmetricCipher = initDecryptionWithPassword(pwd);
+    initDecryptionWithPassword(pwd);
 
-    const size_t actualChunkSize = internal::adjustDecryptionChunkSize(retrieveChunkSize(),
-            symmetricCipher.blockSize(), symmetricCipher.isSupportPadding(), symmetricCipher.authTagLength());
-
-    internal::process(source, sink, symmetricCipher, actualChunkSize, firstChunk);
-
-    clearCipherInfo();
+    process(source, sink, 0);
 }
 
 void VirgilChunkCipher::storeChunkSize(size_t chunkSize) {
@@ -196,20 +170,45 @@ size_t VirgilChunkCipher::retrieveChunkSize() const {
     return static_cast<size_t>(chunkSize);
 }
 
-VirgilByteArray VirgilChunkCipher::tryReadContentInfo(VirgilDataSource& source) {
-    const size_t minDataSize = 16;
+
+void VirgilChunkCipher::process(VirgilDataSource& source, VirgilDataSink& sink, size_t actualChunkSize) {
+
     VirgilByteArray data;
-    while (data.size() < minDataSize && source.hasData()) {
-        VirgilByteArray nextData = source.read();
-        data.insert(data.end(), nextData.begin(), nextData.end());
+
+    // Collect until Content Info fully read.
+    while (source.hasData() && data.empty()) {
+        VirgilByteArray chunk = source.read();
+        data = isReadyForEncryption() ? chunk : filterAndSetupContentInfo(chunk, !source.hasData());
     }
-    size_t contentInfoSize = defineContentInfoSize(data);
-    if (contentInfoSize > 0) {
-        while (data.size() < contentInfoSize && source.hasData()) {
-            VirgilByteArray nextData = source.read();
-            data.insert(data.end(), nextData.begin(), nextData.end());
+
+    auto &symmetricCipher = getSymmetricCipher();
+
+    // Adjust chunk size for decryption
+    if (isReadyForDecryption()) {
+        actualChunkSize = internal::adjustDecryptionChunkSize(retrieveChunkSize(),
+            symmetricCipher.blockSize(), symmetricCipher.isSupportPadding(),
+            symmetricCipher.authTagLength());
+    }
+
+    do {
+        VirgilByteArray nonceCounter(symmetricCipher.ivSize());
+        const VirgilByteArray nonce = symmetricCipher.iv();
+
+        // Collect data for full chunk
+        while (source.hasData() && data.size() < actualChunkSize) {
+            VirgilByteArrayUtils::append(data, source.read());
         }
-        return VirgilCipherBase::tryReadContentInfo(data);
-    }
-    return data;
+        // Process (encrypt/decrypt)
+        while (data.size() >= actualChunkSize || (!data.empty() && !source.hasData())) {
+            // Reconfigure symmetric cipher
+            symmetricCipher.setIV(internal::make_unique_nonce(nonce, nonceCounter));
+            symmetricCipher.reset();
+            const VirgilByteArray chunk = VirgilByteArrayUtils::popBytes(data, actualChunkSize);
+            VirgilByteArray processedChunk;
+            VirgilByteArrayUtils::append(processedChunk, symmetricCipher.update(chunk));
+            VirgilByteArrayUtils::append(processedChunk, symmetricCipher.finish());
+            internal::increment_octets(nonceCounter);
+            VirgilDataSink::safeWrite(sink, processedChunk);
+        }
+    } while (source.hasData());
 }

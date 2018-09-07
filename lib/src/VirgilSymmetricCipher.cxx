@@ -94,6 +94,11 @@ VirgilSymmetricCipher& VirgilSymmetricCipher::operator=(VirgilSymmetricCipher&&)
 
 VirgilSymmetricCipher::~VirgilSymmetricCipher() noexcept = default;
 
+
+bool VirgilSymmetricCipher::isInited() const {
+    return impl_->cipher_ctx.get()->cipher_info != nullptr;
+}
+
 std::string VirgilSymmetricCipher::name() const {
     checkState();
     return mbedtls_cipher_get_name(impl_->cipher_ctx.get());
@@ -301,7 +306,7 @@ VirgilByteArray VirgilSymmetricCipher::finish() {
 }
 
 void VirgilSymmetricCipher::checkState() const {
-    if (impl_->cipher_ctx.get()->cipher_info == nullptr) {
+    if (!isInited()) {
         throw make_error(VirgilCryptoError::NotInitialized);
     }
 }

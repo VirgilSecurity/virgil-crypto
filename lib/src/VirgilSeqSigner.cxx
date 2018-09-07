@@ -34,43 +34,55 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#include "VirgilTagFilter.h"
+#include <virgil/crypto/VirgilSeqSigner.h>
 
 using virgil::crypto::VirgilByteArray;
-using virgil::crypto::foundation::internal::VirgilTagFilter;
+using virgil::crypto::VirgilSeqSigner;
+
+using virgil::crypto::foundation::VirgilHash;
 
 
-VirgilTagFilter::VirgilTagFilter() : tagLen_(0), data_(), tag_() {
+VirgilSeqSigner::VirgilSeqSigner (VirgilHash::Algorithm hashAlgorithm)
+        : VirgilSignerBase (hashAlgorithm), unpackedSignature_(), hash_(hashAlgorithm) {}
+
+
+void VirgilSeqSigner::startSigning() {
+    hash_.start();
 }
 
-void VirgilTagFilter::reset(size_t tagLen) {
-    tagLen_ = tagLen;
-    data_.clear();
-    tag_.clear();
-}
 
-void VirgilTagFilter::process(const VirgilByteArray& data) {
-    tag_.insert(tag_.end(), data.begin(), data.end());
+void VirgilSeqSigner::startVerifying(const VirgilByteArray& signature) {
+    unpackedSignature_ = unpackSignature(signature);
 
-    std::ptrdiff_t tagSurplusLen = tag_.size() - tagLen_;
-    if (tagSurplusLen > 0) {
-        auto tagSurplusBegin = tag_.begin();
-        auto tagSurplusEnd = tagSurplusBegin + tagSurplusLen;
-        data_.insert(data_.end(), tagSurplusBegin, tagSurplusEnd);
-        tag_.erase(tagSurplusBegin, tagSurplusEnd);
+    if (getHashAlgorithm() != hash_.algorithm()) {
+        hash_ = VirgilHash(getHashAlgorithm());
     }
+
+    hash_.start();
 }
 
-bool VirgilTagFilter::hasData() const {
-    return !data_.empty();
+
+void VirgilSeqSigner::update(const VirgilByteArray& data) {
+    hash_.update(data);
 }
 
-VirgilByteArray VirgilTagFilter::popData() {
-    VirgilByteArray result;
-    result.swap(data_);
-    return result;
+
+VirgilByteArray VirgilSeqSigner::sign(const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
+    // Get digest
+    const auto digest = hash_.finish();
+
+    // Sign digest
+    const auto signature = signHash(digest, privateKey, privateKeyPassword);
+
+    // Pack signature
+    return packSignature(signature);
 }
 
-VirgilByteArray VirgilTagFilter::tag() const {
-    return tag_;
+
+bool VirgilSeqSigner::verify(const VirgilByteArray& publicKey) {
+    // Get digest
+    const auto digest = hash_.finish();
+
+    // Verify signature
+    return verifyHash(digest, unpackedSignature_, publicKey);
 }

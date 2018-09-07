@@ -34,8 +34,8 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef VIRGIL_CIPHER_H
-#define VIRGIL_CIPHER_H
+#ifndef VIRGIL_SEQ_CIPHER_H
+#define VIRGIL_SEQ_CIPHER_H
 
 #include <vector>
 
@@ -45,38 +45,45 @@
 namespace virgil { namespace crypto {
 
 /**
- * @brief This class provides high-level interface to encrypt / decrypt data using Virgil Security keys.
+ * @brief This class provides high-level interface to sequenctially encrypt / decrypt data using Virgil Security keys.
  */
-class VirgilCipher : public VirgilCipherBase {
+class VirgilSeqCipher : public VirgilCipherBase {
 public:
     /**
-     * @brief Encrypt given data.
-     * @param data - data to be encrypted.
-     * @param embedContentInfo - determines whether to embed content info the the encrypted data, or not.
-     * @note Store content info to use it for decription process, if embedContentInfo parameter is false.
-     * @see getContentInfo()
-     * @return encrypted data.
+     * @brief Start sequential encryption process.
+     * @note Store content info to use it for decryption process, or use it as beginning of encrypted data (embedding).
+     * @return Content info.
      */
-    VirgilByteArray encrypt(const VirgilByteArray& data, bool embedContentInfo = true);
+    VirgilByteArray startEncryption();
 
     /**
-     * @brief Decrypt given data for recipient defined by id and private key.
+     * @brief Start sequential decryption for recipient defined by id and private key.
      * @note Content info MUST be defined, if it was not embedded to the encrypted data.
      * @see method setContentInfo().
-     * @return Decrypted data.
      */
-    VirgilByteArray decryptWithKey(
-            const VirgilByteArray& encryptedData,
+    void startDecryptionWithKey(
             const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
             const VirgilByteArray& privateKeyPassword = VirgilByteArray());
-
     /**
-     * @brief Decrypt given data for recipient defined by password.
+     * @brief Start sequential decryption for recipient defined by id and private key.
      * @note Content info MUST be defined, if it was not embedded to the encrypted data.
      * @see method setContentInfo().
-     * @return Decrypted data.
      */
-    VirgilByteArray decryptWithPassword(const VirgilByteArray& encryptedData, const VirgilByteArray& pwd);
+    void startDecryptionWithPassword(const VirgilByteArray& pwd);
+
+    /**
+     * Encrypt or decrypt given data depends on the current sequential mode.
+     * @param  data - plain text, if cipher in the encryption mode, encrypted data, if cipher in the decryption mode.
+     * @return plain text, if cipher in the decryption mode, encrypted data, if cipher in the encryption mode.
+     */
+    VirgilByteArray process(const VirgilByteArray& data);
+
+    /**
+     * Accomplish sequential encryption or decryption depends on the mode.
+     * @return plain text, if cipher in the decryption mode, encrypted data, if cipher in the encryption mode.
+     */
+    VirgilByteArray finish();
+
 private:
     /**
      * @brief Decrypt given data.
@@ -87,4 +94,4 @@ private:
 
 }}
 
-#endif /* VIRGIL_CIPHER_H */
+#endif /* VIRGIL_SEQ_CIPHER_H */

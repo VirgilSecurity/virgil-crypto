@@ -197,6 +197,7 @@ class mbedtls_context_policy<mbedtls_cipher_context_t> {
 public:
     static void init_ctx(context_type* ctx) {
         mbedtls_cipher_init(ctx);
+        ctx->operation = MBEDTLS_OPERATION_NONE;
     }
 
     static void free_ctx(context_type* ctx) {
@@ -213,6 +214,7 @@ public:
                 mbedtls_cipher_setup(ctx, info),
                 [](int) { std::throw_with_nested(make_error(VirgilCryptoError::InvalidArgument)); }
         );
+        ctx->operation = MBEDTLS_OPERATION_NONE;
     }
 
     static void setup_ctx(context_type* ctx, const char* name) {

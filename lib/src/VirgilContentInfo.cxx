@@ -270,3 +270,12 @@ void VirgilContentInfo::asn1Read(VirgilAsn1Reader& asn1Reader) {
         throw make_error(VirgilCryptoError::InvalidFormat);
     }
 }
+
+bool VirgilContentInfo::isReadyForEncryption() {
+    return !impl_->passwordRecipients.empty() || !impl_->keyRecipients.empty();
+}
+
+bool VirgilContentInfo::isReadyForDecryption() {
+    return !impl_->cmsEnvelopedData.keyTransRecipients.empty() || !impl_->cmsEnvelopedData.passwordRecipients.empty();
+}
+

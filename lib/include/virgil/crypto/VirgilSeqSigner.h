@@ -34,57 +34,67 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#ifndef VIRGIL_CIPHER_H
-#define VIRGIL_CIPHER_H
+#ifndef VIRGIL_SEQ_SIGNER_H
+#define VIRGIL_SEQ_SIGNER_H
 
-#include <vector>
+#include "VirgilSignerBase.h"
 
-#include "VirgilCipherBase.h"
 #include "VirgilByteArray.h"
+#include "foundation/VirgilHash.h"
+
+#include <memory>
 
 namespace virgil { namespace crypto {
 
 /**
- * @brief This class provides high-level interface to encrypt / decrypt data using Virgil Security keys.
+ * @brief This class provides high-level interface to sign and verify data using Virgil Security keys.
+ *
+ * This module can sign / verify data that is fed to the signer sequentially.
  */
-class VirgilCipher : public VirgilCipherBase {
+class VirgilSeqSigner : public VirgilSignerBase {
 public:
     /**
-     * @brief Encrypt given data.
-     * @param data - data to be encrypted.
-     * @param embedContentInfo - determines whether to embed content info the the encrypted data, or not.
-     * @note Store content info to use it for decription process, if embedContentInfo parameter is false.
-     * @see getContentInfo()
-     * @return encrypted data.
+     * @brief Create signer with predefined hash function.
+     * @note Specified hash function algorithm is used only during signing.
      */
-    VirgilByteArray encrypt(const VirgilByteArray& data, bool embedContentInfo = true);
+    explicit VirgilSeqSigner (
+            foundation::VirgilHash::Algorithm hashAlgorithm = foundation::VirgilHash::Algorithm::SHA384);
 
     /**
-     * @brief Decrypt given data for recipient defined by id and private key.
-     * @note Content info MUST be defined, if it was not embedded to the encrypted data.
-     * @see method setContentInfo().
-     * @return Decrypted data.
+     * Start new data signing.
      */
-    VirgilByteArray decryptWithKey(
-            const VirgilByteArray& encryptedData,
-            const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
+    void startSigning();
+
+    /**
+     * Start new data verifying.
+     * @param signature -
+     */
+    void startVerifying(const VirgilByteArray& signature);
+
+    /**
+     * Append new data chunk to be signed or verified.
+     * @param data - next data chunk.
+     */
+    void update(const VirgilByteArray& data);
+
+    /**
+     * @brief Sign data that was collected by update() function.
+     * @return Virgil Security sign.
+     */
+    VirgilByteArray sign(const VirgilByteArray& privateKey,
             const VirgilByteArray& privateKeyPassword = VirgilByteArray());
 
     /**
-     * @brief Decrypt given data for recipient defined by password.
-     * @note Content info MUST be defined, if it was not embedded to the encrypted data.
-     * @see method setContentInfo().
-     * @return Decrypted data.
+     * @brief Verify sign and data that was collected by update() function to be conformed to the given public key.
+     * @return true if sign is valid and data was not malformed.
      */
-    VirgilByteArray decryptWithPassword(const VirgilByteArray& encryptedData, const VirgilByteArray& pwd);
+    bool verify(const VirgilByteArray& publicKey);
+
 private:
-    /**
-     * @brief Decrypt given data.
-     * @return Decrypted data.
-     */
-    VirgilByteArray decrypt(const VirgilByteArray& encryptedData);
+    VirgilByteArray unpackedSignature_;
+    foundation::VirgilHash hash_;
 };
 
 }}
 
-#endif /* VIRGIL_CIPHER_H */
+#endif /* VIRGIL_SEQ_SIGNER_H */

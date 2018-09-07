@@ -34,7 +34,7 @@
  * Lead Maintainer: Virgil Security Inc. <support@virgilsecurity.com>
  */
 
-#include <virgil/crypto/VirgilCipher.h>
+#include <virgil/crypto/VirgilSeqCipher.h>
 
 #include <virgil/crypto/VirgilCryptoError.h>
 #include <virgil/crypto/VirgilByteArrayUtils.h>
@@ -42,7 +42,7 @@
 
 #include "ScopeGuard.h"
 
-using virgil::crypto::VirgilCipher;
+using virgil::crypto::VirgilSeqCipher;
 using virgil::crypto::VirgilCryptoError;
 using virgil::crypto::VirgilByteArray;
 using virgil::crypto::VirgilByteArrayUtils;
@@ -50,61 +50,73 @@ using virgil::crypto::foundation::VirgilSymmetricCipher;
 
 using virgil::crypto::make_error;
 
-VirgilByteArray VirgilCipher::encrypt(const VirgilByteArray& data, bool embedContentInfo) {
-
-    auto disposer = ScopeGuard([this]() {
-        clear();
-    });
+VirgilByteArray VirgilSeqCipher::startEncryption() {
 
     initEncryption();
 
-    VirgilByteArray encryptedData;
-
     buildContentInfo();
 
-    if (embedContentInfo) {
-        VirgilByteArray contentInfo = getContentInfo();
-        encryptedData.swap(contentInfo);
-    }
-
-    VirgilByteArrayUtils::append(encryptedData, getSymmetricCipher().update(data));
-    VirgilByteArrayUtils::append(encryptedData, getSymmetricCipher().finish());
-
-    return encryptedData;
+    return getContentInfo();
 }
 
-VirgilByteArray VirgilCipher::decryptWithKey(
-        const VirgilByteArray& encryptedData,
+
+void VirgilSeqCipher::startDecryptionWithKey(
         const VirgilByteArray& recipientId, const VirgilByteArray& privateKey,
         const VirgilByteArray& privateKeyPassword) {
 
     initDecryptionWithKey(recipientId, privateKey, privateKeyPassword);
-
-    return decrypt(encryptedData);
 }
 
-VirgilByteArray VirgilCipher::decryptWithPassword(const VirgilByteArray& encryptedData, const VirgilByteArray& pwd) {
 
+void VirgilSeqCipher::startDecryptionWithPassword(const VirgilByteArray& pwd) {
     initDecryptionWithPassword(pwd);
-
-    return decrypt(encryptedData);
 }
 
 
-VirgilByteArray VirgilCipher::decrypt(const VirgilByteArray& encryptedData) {
+VirgilByteArray VirgilSeqCipher::process(const VirgilByteArray& data) {
+
+    if (!isInited()) {
+        throw make_error(VirgilCryptoError::InvalidState,
+            "VirgilSeqCipher::process() can not be called before any 'start' function is called.");
+    }
+
+    auto disposer = ScopeGuardOnException([this]() {
+        clear();
+    });
+
+    if (isReadyForEncryption()) {
+        return getSymmetricCipher().update(data);
+
+    } else {
+        VirgilByteArray payload = filterAndSetupContentInfo(data, false);
+
+        if (isReadyForDecryption()) {
+            return getSymmetricCipher().update(payload);
+        }
+    }
+
+    return VirgilByteArray();
+}
+
+
+VirgilByteArray VirgilSeqCipher::finish() {
 
     auto disposer = ScopeGuard([this]() {
         clear();
     });
 
-    auto payload = filterAndSetupContentInfo(encryptedData, true);
+    if (isReadyForEncryption()) {
+        return getSymmetricCipher().finish();
 
-    size_t payloadSize = payload.size();
+    } else {
+        VirgilByteArray payload = filterAndSetupContentInfo(VirgilByteArray(), true);
 
-    auto decryptedData = getSymmetricCipher().update(payload);
-    auto decryptedDataEnd = getSymmetricCipher().finish();
+        if (isReadyForDecryption()) {
+            VirgilByteArray plainText = getSymmetricCipher().update(payload);
+            VirgilByteArrayUtils::append(plainText, getSymmetricCipher().finish());
+            return plainText;
+        }
+    }
 
-    VirgilByteArrayUtils::append(decryptedData, decryptedDataEnd);
-
-    return decryptedData;
+    throw make_error(VirgilCryptoError::InvalidState, "VirgilSeqCipher::finish()");
 }

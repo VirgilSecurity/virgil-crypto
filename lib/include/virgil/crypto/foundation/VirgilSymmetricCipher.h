@@ -107,6 +107,12 @@ public:
      * @name Info
      */
     ///@{
+
+    /**
+     * Return true if cipher is inited with specific algorithm.
+     */
+    bool isInited() const;
+
     /**
      * @brief Returns the name of the given cipher, as a string.
      */

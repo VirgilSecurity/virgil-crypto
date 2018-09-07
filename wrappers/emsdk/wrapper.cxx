@@ -64,7 +64,9 @@
 #include <virgil/crypto/VirgilDataSource.h>
 #include <virgil/crypto/VirgilStreamCipher.h>
 #include <virgil/crypto/VirgilStreamSigner.h>
+#include <virgil/crypto/VirgilSeqSigner.h>
 #include <virgil/crypto/VirgilChunkCipher.h>
+#include <virgil/crypto/VirgilSeqCipher.h>
 
 #include <virgil/crypto/pfs/VirgilPFSSession.h>
 #include <virgil/crypto/pfs/VirgilPFSEncryptedMessage.h>
@@ -108,6 +110,15 @@ static VirgilByteArray VirgilSigner_sign_1(VirgilSigner& signer, const VirgilByt
 static VirgilByteArray VirgilSigner_sign_2(VirgilSigner& signer, const VirgilByteArray& data,
         const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
     return signer.sign(data, privateKey, privateKeyPassword);
+}
+
+static VirgilByteArray VirgilSeqSigner_sign_1(VirgilSeqSigner& signer, const VirgilByteArray& privateKey) {
+    return signer.sign(privateKey);
+}
+
+static VirgilByteArray VirgilSeqSigner_sign_2(VirgilSeqSigner& signer,
+        const VirgilByteArray& privateKey, const VirgilByteArray& privateKeyPassword) {
+    return signer.sign(privateKey, privateKeyPassword);
 }
 
 static bool VirgilSigner_verify(VirgilSigner& signer, const VirgilByteArray& data,
@@ -243,6 +254,17 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .function("verify", &VirgilSigner_verify)
     ;
 
+    class_<VirgilSeqSigner, base<VirgilSignerBase>>("VirgilSeqSigner")
+        .constructor<>()
+        .constructor<VirgilHash::Algorithm>()
+        .function("startSigning", &VirgilSeqSigner::startSigning)
+        .function("startVerifying", &VirgilSeqSigner::startVerifying)
+        .function("update", &VirgilSeqSigner::update)
+        .function("sign", &VirgilSeqSigner_sign_1)
+        .function("sign", &VirgilSeqSigner_sign_2)
+        .function("verify", &VirgilSeqSigner::verify)
+    ;
+
     class_<VirgilCustomParams>("VirgilCustomParams")
         .constructor<>()
         .function("isEmpty", &VirgilCustomParams::isEmpty)
@@ -306,17 +328,20 @@ EMSCRIPTEN_BINDINGS(virgil_crypto) {
         .function("decryptWithPassword", &VirgilStreamCipher::decryptWithPassword)
     ;
 
-    class_<VirgilStreamSigner>("VirgilStreamSigner")
-        .constructor<>()
-        .function("sign", &VirgilStreamSigner::sign)
-        .function("verify", &VirgilStreamSigner::verify)
-    ;
-
     class_<VirgilChunkCipher, base<VirgilCipherBase>>("VirgilChunkCipher")
         .constructor<>()
         .function("encrypt", &VirgilChunkCipher::encrypt)
         .function("decryptWithKey", &VirgilChunkCipher::decryptWithKey)
         .function("decryptWithPassword", &VirgilChunkCipher::decryptWithPassword)
+    ;
+
+    class_<VirgilSeqCipher, base<VirgilCipherBase>>("VirgilSeqCipher")
+        .constructor<>()
+        .function("startEncryption", &VirgilSeqCipher::startEncryption)
+        .function("startDecryptionWithKey", &VirgilSeqCipher::startDecryptionWithKey)
+        .function("startDecryptionWithPassword", &VirgilSeqCipher::startDecryptionWithPassword)
+        .function("process", &VirgilSeqCipher::process)
+        .function("finish", &VirgilSeqCipher::finish)
     ;
 }
 

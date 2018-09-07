@@ -1,5 +1,13 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.6.0 released 2018-09-07
+
+## Features
+
+  * [Lib] Add class VirgilSeqCipher that provides sequential encryption and decryption
+  * [Lib] Add class VirgilSeqSigner that provides sequential signing and verifying
+
+
 = Version 2.4.6 released 2018-06-21
 
 ## Features
@@ -16,7 +24,6 @@ virgil ChangeLog (Sorted per date)
   * [JS] Update NodeJS version v8.11.2 -> v8.11.3
   * [JS] Update NodeJS version v6.14.2 -> v6.14.3
   * [SWIG] Place includes at the 'begin' SWIG section instead of 'header' section
-
 
 ## Bugfix
 

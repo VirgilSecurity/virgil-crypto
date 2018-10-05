@@ -1,5 +1,13 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.6.1 released 2018-10-05
+
+## Changes
+
+  * [Build] Add 64-bits architectures for WatchOS
+  * [Build] !!! Drop support of the i386 architecture for MacOS
+
+
 = Version 2.6.0 released 2018-09-07
 
 ## Features

@@ -69,7 +69,7 @@ function(TRANSITIVE_ARGS_ADD)
 
     foreach(var ${ARGN})
         if(${var} AND NOT file_content MATCHES "${var}")
-            file(APPEND "${TRANSITIVE_ARGS_FILE}" "set(${var} ${${var}} CACHE INTERNAL \"\")\n")
+            file(APPEND "${TRANSITIVE_ARGS_FILE}" "set(${var} \"${${var}}\" CACHE INTERNAL \"\")\n")
         endif()
     endforeach()
 endfunction()

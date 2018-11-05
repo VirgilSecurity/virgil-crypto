@@ -57,7 +57,7 @@ def createNativeUnixBuild(slave) {
             if (slave.contains('centos7')) {
                 withEnv(["PATH=${env.HOME}/.pyenv/bin:${env.PATH}"]){
                     sh './utils/build.sh --target=python-2.7'
-                    writeFile file: './utils/env.sh', text: ['eval "$(знenv init -)"'].join("\n")
+                    writeFile file: './utils/env.sh', text: ['eval "$(pyenv init -)"'].join("\n")
                     writeFile file: '.python-version', text: ['3.3.7'].join("\n")
                     sh './utils/build.sh --target=python-3.3'
                     writeFile file: '.python-version', text: ['3.4.9'].join("\n")

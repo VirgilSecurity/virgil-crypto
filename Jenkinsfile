@@ -57,13 +57,7 @@ def createNativeUnixBuild(slave) {
             if (slave.contains('centos7')) {
                 withEnv(["PATH=${env.HOME}/.pyenv/bin:${env.PATH}"]){
                     sh './utils/build.sh --target=python-2.7'
-                    writeFile file: "./utils/python-env-vars.sh", text: [
-                        'export PYTHON_INCLUDE_DIRS=\"$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())")\"',
-                        'export PYTHON_LIBRARIES=\"$(python -c \'import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var("LIBDIR"))\')\"',
-                        'export PYTHON_INCLUDE_DIR="${PYTHON_INCLUDE_DIRS}"',
-                        'export PYTHON_LIBRARY="${PYTHON_LIBRARIES}"'
-                    ].join("\n")
-                    writeFile file: './utils/env.sh', text: ['eval "$(pyenv init -)"', 'source ./utils/python-env-vars.sh'].join("\n")
+                    writeFile file: './utils/env.sh', text: ['eval "$(pyenv init -)"'].join("\n")
                     writeFile file: '.python-version', text: ['3.3.7'].join("\n")
                     sh 'echo $PYTHON_INCLUDE_DIRS; echo $PYTHON_LIBRARIES; ./utils/build.sh --target=python-3.3'
                     writeFile file: '.python-version', text: ['3.4.9'].join("\n")

@@ -57,7 +57,7 @@ def createNativeUnixBuild(slave) {
             if (slave.contains('centos7')) {
                 withEnv(["PATH=${env.HOME}/.pyenv/bin:${env.PATH}"]){
                     sh './utils/build.sh --target=python-2.7'
-                    sh './utils/pyenv.sh', text: [
+                    writeFile file: './utils/pyenv.sh', text: [
                         'export LD_LIBRARY_PATH="$PYENV_ROOT/versions/$(cat .python-version)/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"',
                         'export PYTHON_LIBRARIES="$PYENV_ROOT/versions/$(cat .python-version)/lib"',
                         'export PYTHON_INCLUDE_DIRS="$PYENV_ROOT/versions/$(cat .python-version)/include"'

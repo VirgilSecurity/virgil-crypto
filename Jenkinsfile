@@ -59,7 +59,9 @@ def createNativeUnixBuild(slave) {
                     sh './utils/build.sh --target=python-2.7'
                     writeFile file: './utils/env.sh', text: [
                         'eval "$(pyenv init -)"',
-                        'export LD_LIBRARY_PATH="$PYENV_ROOT/versions/$(pyenv version-name)/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"'
+                        'export LD_LIBRARY_PATH="$PYENV_ROOT/versions/$(pyenv version-name)/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"',
+                        'export PYTHON_LIBRARIES="$PYENV_ROOT/versions/$(pyenv version-name)/lib',
+                        'export PYTHON_INCLUDE_DIRS="$PYENV_ROOT/versions/$(pyenv version-name)/include"'
                     ].join("\n")
                     writeFile file: '.python-version', text: ['3.3.7'].join("\n")
                     sh 'echo $PYTHON_INCLUDE_DIRS; echo $PYTHON_LIBRARIES; ./utils/build.sh --target=python-3.3'

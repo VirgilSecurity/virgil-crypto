@@ -42,7 +42,7 @@ def createNativeUnixBuild(slave) {
             sh './utils/build.sh --target=cpp'
             // Ruby
             withEnv(["PATH=${env.HOME}/.rbenv/bin:${env.PATH}"]){
-                writeFile file: './utils/env.sh', text: ['eval "$(rbenv init -)"', 'export PYTHON_INCLUDE_DIRS=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())")', 'export PYTHON_LIBRARIES=$(python -c \'import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var("LIBDIR"))\')'].join("\n")
+                writeFile file: './utils/env.sh', text: ['eval "$(rbenv init -)"'].join("\n")
                 writeFile file: '.ruby-version', text: ['2.0.0-p648'].join("\n")
                 sh './utils/build.sh --target=ruby-2.0'
                 writeFile file: '.ruby-version', text: ['2.2.6'].join("\n")
@@ -57,7 +57,7 @@ def createNativeUnixBuild(slave) {
             if (slave.contains('centos7')) {
                 withEnv(["PATH=${env.HOME}/.pyenv/bin:${env.PATH}"]){
                     sh './utils/build.sh --target=python-2.7'
-                    writeFile file: './utils/env.sh', text: ['eval "$(pyenv init -)"'].join("\n")
+                    writeFile file: './utils/env.sh', text: ['eval "$(pyenv init -)"', 'export PYTHON_INCLUDE_DIRS=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())")', 'export PYTHON_LIBRARIES=$(python -c \'import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var("LIBDIR"))\')'].join("\n")
                     writeFile file: '.python-version', text: ['3.3.7'].join("\n")
                     sh './utils/build.sh --target=python-3.3'
                     writeFile file: '.python-version', text: ['3.4.9'].join("\n")

@@ -42,7 +42,7 @@ def createNativeUnixBuild(slave) {
             sh './utils/build.sh --target=cpp'
             // Ruby
             withEnv(["PATH=${env.HOME}/.rbenv/bin:${env.PATH}"]){
-                writeFile file: './utils/env.sh', text: ['eval "$(rbenv init -)"', 'PYTHON_INCLUDE_DIRS=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())")', 'PYTHON_LIBRARIES=$(python -c \'import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var("LIBDIR"))\')'].join("\n")
+                writeFile file: './utils/env.sh', text: ['eval "$(rbenv init -)"', 'export PYTHON_INCLUDE_DIRS=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())")', 'export PYTHON_LIBRARIES=$(python -c \'import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var("LIBDIR"))\')'].join("\n")
                 writeFile file: '.ruby-version', text: ['2.0.0-p648'].join("\n")
                 sh './utils/build.sh --target=ruby-2.0'
                 writeFile file: '.ruby-version', text: ['2.2.6'].join("\n")

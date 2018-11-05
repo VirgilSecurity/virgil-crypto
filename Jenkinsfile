@@ -55,19 +55,21 @@ def createNativeUnixBuild(slave) {
             organizeFilesUnix('install/ruby')
             // Python
             if (slave.contains('centos7')) {
-                sh './utils/build.sh --target=python-2.7'
-                writeFile file: './utils/env.sh', text: ['eval "$(знenv init -)"'].join("\n")
-                writeFile file: '.python-version', text: ['3.3.7'].join("\n")
-                sh './utils/build.sh --target=python-3.3'
-                writeFile file: '.python-version', text: ['3.4.9'].join("\n")
-                sh './utils/build.sh --target=python-3.4'
-                writeFile file: '.python-version', text: ['3.5.6'].join("\n")
-                sh './utils/build.sh --target=python-3.5'
-                writeFile file: '.python-version', text: ['3.6.7'].join("\n")
-                sh './utils/build.sh --target=python-3.6'
-                writeFile file: '.python-version', text: ['3.7.1'].join("\n")
-                sh './utils/build.sh --target=python-3.7'
-                organizeFilesUnix('install/python')
+                withEnv(["PATH=${env.HOME}/.pyenv/bin:${env.PATH}"]){
+                    sh './utils/build.sh --target=python-2.7'
+                    writeFile file: './utils/env.sh', text: ['eval "$(знenv init -)"'].join("\n")
+                    writeFile file: '.python-version', text: ['3.3.7'].join("\n")
+                    sh './utils/build.sh --target=python-3.3'
+                    writeFile file: '.python-version', text: ['3.4.9'].join("\n")
+                    sh './utils/build.sh --target=python-3.4'
+                    writeFile file: '.python-version', text: ['3.5.6'].join("\n")
+                    sh './utils/build.sh --target=python-3.5'
+                    writeFile file: '.python-version', text: ['3.6.7'].join("\n")
+                    sh './utils/build.sh --target=python-3.6'
+                    writeFile file: '.python-version', text: ['3.7.1'].join("\n")
+                    sh './utils/build.sh --target=python-3.7'
+                    organizeFilesUnix('install/python')
+                }
             }
             if (slave.contains('build-os-x')) {
                 sh './utils/build.sh --target=python-2.7'

@@ -63,9 +63,9 @@ def createNativeUnixBuild(slave) {
                         'export PYTHON_INCLUDE_DIR="${PYTHON_INCLUDE_DIRS}"',
                         'export PYTHON_LIBRARY="${PYTHON_LIBRARIES}"'
                     ].join("\n")
-                    writeFile file: './utils/env.sh', text: ['eval "$(pyenv init -)"', 'source python-env-vars.sh'].join("\n")
+                    writeFile file: './utils/env.sh', text: ['eval "$(pyenv init -)"'].join("\n")
                     writeFile file: '.python-version', text: ['3.3.7'].join("\n")
-                    sh './utils/build.sh --target=python-3.3; echo $PYTHON_INCLUDE_DIRS; echo $PYTHON_LIBRARIES'
+                    sh 'source ./utils/python-env-vars.sh; echo $PYTHON_INCLUDE_DIRS; echo $PYTHON_LIBRARIES; ./utils/build.sh --target=python-3.3'
                     writeFile file: '.python-version', text: ['3.4.9'].join("\n")
                     sh './utils/build.sh --target=python-3.4'
                     writeFile file: '.python-version', text: ['3.5.6'].join("\n")

@@ -76,12 +76,10 @@ def createNativeUnixBuild(slave) {
             // Java
             sh './utils/build.sh --target=java'
             // NodeJS
-            sh './utils/build.sh --target=nodejs-4.9.1'
-            sh './utils/build.sh --target=nodejs-6.14.2'
-            sh './utils/build.sh --target=nodejs-7.10.1'
-            sh './utils/build.sh --target=nodejs-8.11.2'
-            sh './utils/build.sh --target=nodejs-9.11.1'
-            sh './utils/build.sh --target=nodejs-10.1.0'
+            sh './utils/build.sh --target=nodejs-6.14.4'
+            sh './utils/build.sh --target=nodejs-8.12.0'
+            sh './utils/build.sh --target=nodejs-10.9.0'
+            sh './utils/build.sh --target=nodejs-11.1.0'
             organizeFilesUnix('install/nodejs')
             // PHP
             if (slave.contains('os-x')) {

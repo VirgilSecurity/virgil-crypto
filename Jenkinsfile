@@ -58,15 +58,15 @@ def createNativeUnixBuild(slave) {
                 withEnv(["PATH=${env.HOME}/.pyenv/bin:${env.PATH}"]){
                     sh './utils/build.sh --target=python-2.7'
                     writeFile file: './utils/pyenv.sh', text: [
-                        'export PATH="${HOME}/.pyenv/versions/$(cat .python-version)/bin${PATH:+:${PATH}}"',
-                        'export LD_LIBRARY_PATH="${HOME}/.pyenv/versions/$(cat .python-version)/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"',
-                        'export PYTHON_LIBRARIES="${HOME}/.pyenv/versions/$(cat .python-version)/lib"',
-                        'export PYTHON_INCLUDE_DIRS="${HOME}/.pyenv/versions/$(cat .python-version)/include"',
+                        // 'export PATH="${HOME}/.pyenv/versions/$(cat .python-version)/bin${PATH:+:${PATH}}"',
+                        // 'export LD_LIBRARY_PATH="${HOME}/.pyenv/versions/$(cat .python-version)/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"',
+                        // 'export PYTHON_LIBRARIES="${HOME}/.pyenv/versions/$(cat .python-version)/lib"',
+                        // 'export PYTHON_INCLUDE_DIRS="${HOME}/.pyenv/versions/$(cat .python-version)/include"',
                         'export CMAKE_PREFIX_PATH="${HOME}/.pyenv/versions/$(cat .python-version)/lib"'
                     ].join("\n")
                     writeFile file: './utils/env.sh', text: ['eval "$(pyenv init -)"'].join("\n")
                     writeFile file: '.python-version', text: ['3.3.7'].join("\n")
-                    sh 'source ./utils/pyenv.sh; echo $PYTHON_INCLUDE_DIRS; echo $PYTHON_LIBRARIES; ./utils/build.sh --target=python-3.3'
+                    sh 'source ./utils/pyenv.sh; ./utils/build.sh --target=python-3.3'
                     writeFile file: '.python-version', text: ['3.4.9'].join("\n")
                     sh 'source ./utils/pyenv.sh; ./utils/build.sh --target=python-3.4'
                     writeFile file: '.python-version', text: ['3.5.6'].join("\n")

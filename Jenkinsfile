@@ -58,6 +58,7 @@ def createNativeUnixBuild(slave) {
                 withEnv(["PATH=${env.HOME}/.pyenv/bin:${env.PATH}"]){
                     sh './utils/build.sh --target=python-2.7'
                     writeFile file: './utils/pyenv.sh', text: [
+                        'export PATH="${HOME}/.pyenv/versions/$(cat .python-version)/bin${PATH:+:${PATH}}"',
                         'export LD_LIBRARY_PATH="${HOME}/.pyenv/versions/$(cat .python-version)/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"',
                         'export PYTHON_LIBRARIES="${HOME}/.pyenv/versions/$(cat .python-version)/lib"',
                         'export PYTHON_INCLUDE_DIRS="${HOME}/.pyenv/versions/$(cat .python-version)/include"',

@@ -55,33 +55,40 @@ def createNativeUnixBuild(slave) {
             organizeFilesUnix('install/ruby')
             // Python
             if (slave.contains('centos7')) {
-                sh './utils/build.sh --target=python-2.7'
-                writeFile file: './utils/env.sh', text: ['source /opt/rh/python33/enable', ''].join("\n")
-                sh './utils/build.sh --target=python-3.3'
-                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python34/enable', ''].join("\n")
-                sh './utils/build.sh --target=python-3.4'
-                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python35/enable', ''].join("\n")
-                sh './utils/build.sh --target=python-3.5'
-                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-python36/enable', ''].join("\n")
-                sh './utils/build.sh --target=python-3.6'
-                organizeFilesUnix('install/python')
+                withEnv(["PATH=${env.HOME}/.pyenv/bin:${env.PATH}"]){
+                    sh './utils/build.sh --target=python-2.7'
+                    writeFile file: './utils/env.sh', text: [
+                        'eval "$(pyenv init -)"',
+                        'export CMAKE_PREFIX_PATH="${HOME}/.pyenv/versions/$(cat .python-version)/lib"'
+                    ].join("\n")
+                    writeFile file: '.python-version', text: ['3.3.7'].join("\n")
+                    sh './utils/build.sh --target=python-3.3'
+                    writeFile file: '.python-version', text: ['3.4.9'].join("\n")
+                    sh './utils/build.sh --target=python-3.4'
+                    writeFile file: '.python-version', text: ['3.5.6'].join("\n")
+                    sh './utils/build.sh --target=python-3.5'
+                    writeFile file: '.python-version', text: ['3.6.7'].join("\n")
+                    sh './utils/build.sh --target=python-3.6'
+                    writeFile file: '.python-version', text: ['3.7.1'].join("\n")
+                    sh './utils/build.sh --target=python-3.7'
+                    organizeFilesUnix('install/python')
+                }
             }
             if (slave.contains('build-os-x')) {
                 sh './utils/build.sh --target=python-2.7'
                 sh './utils/build.sh --target=python-3.4'
                 sh './utils/build.sh --target=python-3.5'
                 sh './utils/build.sh --target=python-3.6'
+                sh './utils/build.sh --target=python-3.7'
                 organizeFilesUnix('install/python')
             }
             // Java
             sh './utils/build.sh --target=java'
             // NodeJS
-            sh './utils/build.sh --target=nodejs-4.9.1'
-            sh './utils/build.sh --target=nodejs-6.14.2'
-            sh './utils/build.sh --target=nodejs-7.10.1'
-            sh './utils/build.sh --target=nodejs-8.11.2'
-            sh './utils/build.sh --target=nodejs-9.11.1'
-            sh './utils/build.sh --target=nodejs-10.1.0'
+            sh './utils/build.sh --target=nodejs-6.14.4'
+            sh './utils/build.sh --target=nodejs-8.12.0'
+            sh './utils/build.sh --target=nodejs-10.9.0'
+            sh './utils/build.sh --target=nodejs-11.1.0'
             organizeFilesUnix('install/nodejs')
             // PHP
             if (slave.contains('os-x')) {
@@ -129,12 +136,10 @@ def createNativeWindowsBuild(slave) {
                 bat 'utils\\build.bat cpp'
                 bat 'utils\\build.bat net'
                 bat 'utils\\build.bat java'
-                bat 'utils\\build.bat nodejs-4.9.1'
-                bat 'utils\\build.bat nodejs-6.14.3'
-                bat 'utils\\build.bat nodejs-7.10.1'
-                bat 'utils\\build.bat nodejs-8.11.3'
-                bat 'utils\\build.bat nodejs-9.11.2'
-                bat 'utils\\build.bat nodejs-10.4.1'
+                bat 'utils\\build.bat nodejs-6.14.4'
+                bat 'utils\\build.bat nodejs-8.12.0'
+                bat 'utils\\build.bat nodejs-10.9.0'
+                bat 'utils\\build.bat nodejs-11.1.0'
                 withEnv(["PATH=C:\\Python27_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-2.7-x86'
                 }
@@ -164,6 +169,12 @@ def createNativeWindowsBuild(slave) {
                 }
                 withEnv(["PATH=C:\\Python36_x64;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.6-x64'
+                }
+                withEnv(["PATH=C:\\Python37_x86;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.7-x86'
+                }
+                withEnv(["PATH=C:\\Python37_x64;${env.PATH}"]) {
+                    bat 'utils\\build.bat python-3.7-x64'
                 }
             }
             withEnv(["MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community",

@@ -36,6 +36,11 @@ matrix:
       env: LANG=php LANG_VERSION=7.1
       sudo: required
       dist: trusty
+    - os: linux
+      compiler: gcc
+      env: LANG=php LANG_VERSION=7.2
+      sudo: required
+      dist: trusty
 env:
   global:
     - VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP=ON

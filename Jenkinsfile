@@ -181,8 +181,8 @@ def createNativeWindowsBuild(slave) {
                 bat 'utils\\build.bat php-7.2-x64'
             }
             withEnv(["MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community",
-                     "PHP_HOME=C:\\php-7.3.4",
-                     "PHP_DEVEL_HOME=C:\\php-7.3.4-devel",
+                     "PHP_HOME=C:\\php-7.3.5",
+                     "PHP_DEVEL_HOME=C:\\php-7.3.5-devel",
                      "PHPUNIT_HOME=C:\\phpunit-7.2.4"]) {
 
                 bat 'utils\\build.bat php-7.3-x64'

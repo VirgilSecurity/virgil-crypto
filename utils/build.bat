@@ -37,6 +37,10 @@
 @echo off
 setlocal
 
+:: Fix PATH before setup MSVC environment
+:: The same issue: https://issues.jenkins-ci.org/browse/JENKINS-47313
+set PATH=%PATH:"=%
+
 :: Prepare environment variables
 if defined MSVC_ROOT call :remove_quotes MSVC_ROOT
 if defined JAVA_HOME call :remove_quotes JAVA_HOME

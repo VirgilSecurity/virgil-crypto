@@ -13,12 +13,12 @@ node('master') {
 stage 'Build'
 
 def slaves = [:]
-slaves['native-centos7'] = createNativeUnixBuild('build-centos7');
-slaves['native-os-x'] = createNativeUnixBuild('build-os-x');
+// slaves['native-centos7'] = createNativeUnixBuild('build-centos7');
+// slaves['native-os-x'] = createNativeUnixBuild('build-os-x');
 slaves['native-win8'] = createNativeWindowsBuild('build-win8');
-slaves['crossplatform'] = createCrossplatfromBuild('build-os-x');
-slaves['darwin'] = createDarwinBuild('build-os-x');
-slaves['android'] = createAndroidBuild('build-os-x');
+// slaves['crossplatform'] = createCrossplatfromBuild('build-os-x');
+// slaves['darwin'] = createDarwinBuild('build-os-x');
+// slaves['android'] = createAndroidBuild('build-os-x');
 parallel slaves
 
 stage 'Fingerprint'
@@ -127,71 +127,68 @@ def createNativeWindowsBuild(slave) {
         node(slave) {
             clearContentWindows()
             unstash 'src'
-            withEnv(['MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio 14.0',
-                     'JAVA_HOME=C:\\Program Files\\Java\\jdk1.8.0_65']) {
-                bat 'utils\\build.bat cpp'
-                bat 'utils\\build.bat net'
-                bat 'utils\\build.bat java'
-                bat 'utils\\build.bat nodejs-6.14.4'
-                bat 'utils\\build.bat nodejs-8.12.0'
-                bat 'utils\\build.bat nodejs-10.9.0'
-                bat 'utils\\build.bat nodejs-11.1.0'
-                withEnv(["PATH=C:\\Python27_x86;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-2.7-x86'
-                }
-                withEnv(["PATH=C:\\Python27_x64;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-2.7-x64'
-                }
-                withEnv(["PATH=C:\\Python33_x86;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.3-x86'
-                }
-                withEnv(["PATH=C:\\Python33_x64;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.3-x64'
-                }
-                withEnv(["PATH=C:\\Python34_x86;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.4-x86'
-                }
-                withEnv(["PATH=C:\\Python34_x64;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.4-x64'
-                }
-                withEnv(["PATH=C:\\Python35_x86;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.5-x86'
-                }
-                withEnv(["PATH=C:\\Python35_x64;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.5-x64'
-                }
-                withEnv(["PATH=C:\\Python36_x86;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.6-x86'
-                }
-                withEnv(["PATH=C:\\Python36_x64;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.6-x64'
-                }
-                withEnv(["PATH=C:\\Python37_x86;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.7-x86'
-                }
-                withEnv(["PATH=C:\\Python37_x64;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.7-x64'
-                }
-            }
+            // withEnv(['MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio 14.0',
+            //          'JAVA_HOME=C:\\Program Files\\Java\\jdk1.8.0_65']) {
+            //     bat 'utils\\build.bat cpp'
+            //     bat 'utils\\build.bat net'
+            //     bat 'utils\\build.bat java'
+            //     bat 'utils\\build.bat nodejs-6.14.4'
+            //     bat 'utils\\build.bat nodejs-8.12.0'
+            //     bat 'utils\\build.bat nodejs-10.9.0'
+            //     bat 'utils\\build.bat nodejs-11.1.0'
+            //     withEnv(["PATH=C:\\Python27_x86;${env.PATH}"]) {
+            //         bat 'utils\\build.bat python-2.7-x86'
+            //     }
+            //     withEnv(["PATH=C:\\Python27_x64;${env.PATH}"]) {
+            //         bat 'utils\\build.bat python-2.7-x64'
+            //     }
+            //     withEnv(["PATH=C:\\Python33_x86;${env.PATH}"]) {
+            //         bat 'utils\\build.bat python-3.3-x86'
+            //     }
+            //     withEnv(["PATH=C:\\Python33_x64;${env.PATH}"]) {
+            //         bat 'utils\\build.bat python-3.3-x64'
+            //     }
+            //     withEnv(["PATH=C:\\Python34_x86;${env.PATH}"]) {
+            //         bat 'utils\\build.bat python-3.4-x86'
+            //     }
+            //     withEnv(["PATH=C:\\Python34_x64;${env.PATH}"]) {
+            //         bat 'utils\\build.bat python-3.4-x64'
+            //     }
+            //     withEnv(["PATH=C:\\Python35_x86;${env.PATH}"]) {
+            //         bat 'utils\\build.bat python-3.5-x86'
+            //     }
+            //     withEnv(["PATH=C:\\Python35_x64;${env.PATH}"]) {
+            //         bat 'utils\\build.bat python-3.5-x64'
+            //     }
+            //     withEnv(["PATH=C:\\Python36_x86;${env.PATH}"]) {
+            //         bat 'utils\\build.bat python-3.6-x86'
+            //     }
+            //     withEnv(["PATH=C:\\Python36_x64;${env.PATH}"]) {
+            //         bat 'utils\\build.bat python-3.6-x64'
+            //     }
+            //     withEnv(["PATH=C:\\Python37_x86;${env.PATH}"]) {
+            //         bat 'utils\\build.bat python-3.7-x86'
+            //     }
+            //     withEnv(["PATH=C:\\Python37_x64;${env.PATH}"]) {
+            //         bat 'utils\\build.bat python-3.7-x64'
+            //     }
+            // }
             withEnv(["MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community",
-                     "PHP_HOME=C:\\php-7.2.18",
-                     "PHP_DEVEL_HOME=C:\\php-7.2.18-devel",
                      "PHPUNIT_HOME=C:\\phpunit-7.2.4"]) {
 
-                bat 'utils\\build.bat php-7.2-x64'
-            }
-            withEnv(["MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community",
-                     "PHP_HOME=C:\\php-7.3.5",
-                     "PHP_DEVEL_HOME=C:\\php-7.3.5-devel",
-                     "PHPUNIT_HOME=C:\\phpunit-7.2.4"]) {
+                withEnv(["PHP_HOME=C:\\php-7.2.18", "PHP_DEVEL_HOME=C:\\php-7.2.18-devel"]) {
+                    bat 'utils\\build.bat php-7.2-x64'
+                }
 
-                bat 'utils\\build.bat php-7.3-x64'
+                withEnv(["PHP_HOME=C:\\php-7.3.5", "PHP_DEVEL_HOME=C:\\php-7.3.5-devel"]) {
+                    bat 'utils\\build.bat php-7.3-x64'
+                }
             }
-            organizeFilesWindows('install\\cpp')
-            organizeFilesWindows('install\\net')
-            organizeFilesWindows('install\\java')
-            organizeFilesWindows('install\\nodejs')
-            organizeFilesWindows('install\\python')
+            // organizeFilesWindows('install\\cpp')
+            // organizeFilesWindows('install\\net')
+            // organizeFilesWindows('install\\java')
+            // organizeFilesWindows('install\\nodejs')
+            // organizeFilesWindows('install\\python')
             organizeFilesWindows('install\\php')
             archiveArtifacts('install/**')
         }

@@ -5,37 +5,37 @@ matrix:
       compiler: gcc
       env: LANG=cpp ALT_CC=gcc ALT_CXX=g++ PUBLISH_DOCS=ON
       sudo: required
-      dist: trusty
+      dist: xenial
     - os: linux
       compiler: gcc
       env: LANG=cpp ALT_CC=gcc-5 ALT_CXX=g++-5
       sudo: required
-      dist: trusty
+      dist: xenial
     - os: linux
       compiler: gcc
       env: LANG=cpp ALT_CC=gcc-6 ALT_CXX=g++-6
       sudo: required
-      dist: trusty
+      dist: xenial
     - os: linux
       compiler: clang
       env: LANG=cpp ALT_CC=clang-3.6 ALT_CXX=clang++-3.6
       sudo: required
-      dist: trusty
+      dist: xenial
     - os: linux
       compiler: gcc
       env: LANG=php LANG_VERSION=7.1
       sudo: required
-      dist: trusty
+      dist: xenial
     - os: linux
       compiler: gcc
       env: LANG=php LANG_VERSION=7.2
       sudo: required
-      dist: trusty
+      dist: xenial
     - os: linux
       compiler: gcc
       env: LANG=php LANG_VERSION=7.3
       sudo: required
-      dist: trusty
+      dist: xenial
 env:
   global:
     - VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP=ON

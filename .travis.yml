@@ -49,7 +49,6 @@ env:
     - SWIG_VERSION=4.0.0
 cache:
   directories:
-    - cmake-${CMAKE_VERSION}
     - swig-${SWIG_VERSION}
 before_install:
   - date -u

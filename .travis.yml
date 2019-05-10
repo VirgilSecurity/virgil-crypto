@@ -1,4 +1,8 @@
 language: cpp
+addons:
+  apt:
+    sources:
+      - ondrej/php
 matrix:
   include:
     - os: linux

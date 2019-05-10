@@ -106,12 +106,8 @@ cd -
 if [[ "${LANG}" == "php" ]]; then
     PHP_VERSION=${LANG_VERSION_MAJOR}.${LANG_VERSION_MINOR}
     PHP_VERSION_MAJOR=${LANG_VERSION_MAJOR}
+    PHPUNIT_VERSION=7
 
-    if [[ ${PHP_VERSION_MAJOR} -ge 7 ]]; then
-        PHPUNIT_VERSION=6.2
-    else
-        PHPUNIT_VERSION=5.7
-    fi
     ######################################## PHP
     echo "Install PHP version ${PHP_VERSION} ..."
     travis_retry sudo apt-add-repository -y ppa:ondrej/php

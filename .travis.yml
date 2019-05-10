@@ -23,16 +23,6 @@ matrix:
       dist: trusty
     - os: linux
       compiler: gcc
-      env: LANG=php LANG_VERSION=5.6
-      sudo: required
-      dist: trusty
-    - os: linux
-      compiler: gcc
-      env: LANG=php LANG_VERSION=7.0
-      sudo: required
-      dist: trusty
-    - os: linux
-      compiler: gcc
       env: LANG=php LANG_VERSION=7.1
       sudo: required
       dist: trusty
@@ -41,13 +31,18 @@ matrix:
       env: LANG=php LANG_VERSION=7.2
       sudo: required
       dist: trusty
+    - os: linux
+      compiler: gcc
+      env: LANG=php LANG_VERSION=7.3
+      sudo: required
+      dist: trusty
 env:
   global:
     - VIRGIL_CRYPTO_FEATURE_LOW_LEVEL_WRAP=ON
     - VIRGIL_CRYPTO_FEATURE_PYTHIA=ON
     - PROJECT_ROOT=${TRAVIS_BUILD_DIR}
-    - CMAKE_VERSION=3.10.2
-    - SWIG_VERSION=3.0.12
+    - CMAKE_VERSION=3.14.3
+    - SWIG_VERSION=4.0.0
 cache:
   directories:
     - cmake-${CMAKE_VERSION}

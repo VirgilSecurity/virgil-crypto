@@ -69,21 +69,8 @@ elif [[ "${CC}" == "clang-3.6" ]]; then
 fi
 
 ######################################## CMake
-if [ -d "cmake-${CMAKE_VERSION}" ] && [ "$(ls -A "cmake-${CMAKE_VERSION}")" ]; then
-    echo "Use cached CMake version ${CMAKE_VERSION} ..."
-    cd cmake-${CMAKE_VERSION}
-else
-    echo "Download & Build CMake version ${CMAKE_VERSION} ..."
-    travis_retry wget https://cmake.org/files/v${CMAKE_VERSION%.*}/cmake-${CMAKE_VERSION}.tar.gz
-    tar xvfz cmake-${CMAKE_VERSION}.tar.gz
-    cd cmake-${CMAKE_VERSION}
-    ./bootstrap
-    make -j8 >/dev/null
-fi
-
-sudo make install >/dev/null
-
-cd -
+travis_retry wget https://cmake.org/files/v${CMAKE_VERSION%.*}/cmake-${CMAKE_VERSION}-Linux-x86_64.sh
+sudo bash cmake-${CMAKE_VERSION}-Linux-x86_64.sh --skip-license --exclude-subdir --prefix=/usr/local
 
 ######################################## SWIG
 if [ -d "swig-${SWIG_VERSION}" ] && [ "$(ls -A "swig-${SWIG_VERSION}")" ]; then
@@ -106,12 +93,8 @@ cd -
 if [[ "${LANG}" == "php" ]]; then
     PHP_VERSION=${LANG_VERSION_MAJOR}.${LANG_VERSION_MINOR}
     PHP_VERSION_MAJOR=${LANG_VERSION_MAJOR}
+    PHPUNIT_VERSION=7
 
-    if [[ ${PHP_VERSION_MAJOR} -ge 7 ]]; then
-        PHPUNIT_VERSION=6.2
-    else
-        PHPUNIT_VERSION=5.7
-    fi
     ######################################## PHP
     echo "Install PHP version ${PHP_VERSION} ..."
     travis_retry sudo apt-add-repository -y ppa:ondrej/php

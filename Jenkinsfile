@@ -92,26 +92,22 @@ def createNativeUnixBuild(slave) {
             organizeFilesUnix('install/nodejs')
             // PHP
             if (slave.contains('os-x')) {
-                def phpVersions = "php56 php70 php71 php72"
-                sh "brew unlink ${phpVersions} && brew link php56 --force"
-                sh "./utils/build.sh --target=php-5.6"
-                sh "brew unlink ${phpVersions} && brew link php70 --force"
-                sh "./utils/build.sh --target=php-7.0"
-                sh "brew unlink ${phpVersions} && brew link php71 --force"
+                def phpVersions = "php php@7.1 php@7.2 php@7.3"
+                sh "brew unlink ${phpVersions} && brew link php@7.1 --force"
                 sh "./utils/build.sh --target=php-7.1"
-                sh "brew unlink ${phpVersions} && brew link php72 --force"
+                sh "brew unlink ${phpVersions} && brew link php@7.2 --force"
                 sh "./utils/build.sh --target=php-7.2"
+                sh "brew unlink ${phpVersions} && brew link php@7.3 --force"
+                sh "./utils/build.sh --target=php-7.3"
                 organizeFilesUnix('install/php')
             }
             if (slave.contains('centos7')) {
-                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-php56/enable', ''].join("\n")
-                sh './utils/build.sh --target=php-5.6'
-                writeFile file: './utils/env.sh', text: ['source /opt/rh/rh-php70/enable', ''].join("\n")
-                sh './utils/build.sh --target=php-7.0'
                 writeFile file: './utils/env.sh', text: ['source /opt/remi/php71/enable', ''].join("\n")
                 sh './utils/build.sh --target=php-7.1'
                 writeFile file: './utils/env.sh', text: ['source /opt/remi/php72/enable', 'source /opt/rh/devtoolset-4/enable', ''].join("\n")
                 sh './utils/build.sh --target=php-7.2'
+                writeFile file: './utils/env.sh', text: ['source /opt/remi/php73/enable', 'source /opt/rh/devtoolset-4/enable', ''].join("\n")
+                sh './utils/build.sh --target=php-7.3'
                 organizeFilesUnix('install/php')
             }
             // MONO NET
@@ -178,11 +174,15 @@ def createNativeWindowsBuild(slave) {
                 }
             }
             withEnv(["MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community",
-                     "PHP_HOME=C:\\php-7.2.6",
-                     "PHP_DEVEL_HOME=C:\\php-7.2.6-devel",\
                      "PHPUNIT_HOME=C:\\phpunit-7.2.4"]) {
 
-                bat 'utils\\build.bat php-7.2-x64'
+                withEnv(["PHP_HOME=C:\\php-7.2.18", "PHP_DEVEL_HOME=C:\\php-7.2.18-devel"]) {
+                    bat 'utils\\build.bat php-7.2-x64'
+                }
+
+                withEnv(["PHP_HOME=C:\\php-7.3.5", "PHP_DEVEL_HOME=C:\\php-7.3.5-devel"]) {
+                    bat 'utils\\build.bat php-7.3-x64'
+                }
             }
             organizeFilesWindows('install\\cpp')
             organizeFilesWindows('install\\net')

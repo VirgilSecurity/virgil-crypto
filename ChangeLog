@@ -1,5 +1,14 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.6.3 released 2019-05-14
+
+## Changes
+
+  * [PHP] Drop version 5.6
+  * [PHP] Drop version 7.0
+  * [PHP] Add version 7.3
+
+
 = Version 2.6.2 released 2018-11-07
 
 ## Changes

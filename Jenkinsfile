@@ -122,8 +122,8 @@ def createNativeWindowsBuild(slave) {
         node(slave) {
             clearContentWindows()
             unstash 'src'
-            withEnv(['MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio 14.0',
-                     'JAVA_HOME=C:\\Program Files\\Java\\jdk1.8.0_65']) {
+            withEnv(["MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community",
+                     "JAVA_HOME=C:\\Program Files\\Java\\jdk1.8.0_231"]) {
                 bat 'utils\\build.bat cpp'
                 bat 'utils\\build.bat net'
                 bat 'utils\\build.bat java'

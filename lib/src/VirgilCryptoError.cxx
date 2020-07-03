@@ -68,7 +68,7 @@ std::string VirgilCryptoErrorCategory::message(int ev) const noexcept {
         case VirgilCryptoError::MismatchSignature:
             return "Signature validation failed.";
         case VirgilCryptoError::NotFoundKeyRecipient:
-            return "Recipient with given identifier is not found.";
+            return "Data was not encrypted for this recipient.";
         case VirgilCryptoError::NotFoundPasswordRecipient:
             return "Recipient with given password is not found.";
         case VirgilCryptoError::NotInitialized:

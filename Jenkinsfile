@@ -15,7 +15,7 @@ stage 'Build'
 def slaves = [:]
 slaves['native-centos7'] = createNativeUnixBuild('build-centos7');
 slaves['native-os-x'] = createNativeUnixBuild('build-os-x');
-slaves['native-win8'] = createNativeWindowsBuild('build-win8');
+slaves['native-win10'] = createNativeWindowsBuild('build-win10');
 slaves['crossplatform'] = createCrossplatfromBuild('build-os-x');
 slaves['darwin'] = createDarwinBuild('build-os-x');
 slaves['android'] = createAndroidBuild('build-os-x');
@@ -43,14 +43,12 @@ def createNativeUnixBuild(slave) {
             // Ruby
             withEnv(["PATH=${env.HOME}/.rbenv/bin:${env.PATH}"]){
                 writeFile file: './utils/env.sh', text: ['eval "$(rbenv init -)"'].join("\n")
-                writeFile file: '.ruby-version', text: ['2.0.0-p648'].join("\n")
-                sh './utils/build.sh --target=ruby-2.0'
-                writeFile file: '.ruby-version', text: ['2.2.6'].join("\n")
-                sh './utils/build.sh --target=ruby-2.2'
-                writeFile file: '.ruby-version', text: ['2.3.3'].join("\n")
-                sh './utils/build.sh --target=ruby-2.3'
-                writeFile file: '.ruby-version', text: ['2.4.0'].join("\n")
-                sh './utils/build.sh --target=ruby-2.4'
+                writeFile file: '.ruby-version', text: ['2.5.8'].join("\n")
+                sh './utils/build.sh --target=ruby-2.5'
+                writeFile file: '.ruby-version', text: ['2.6.6'].join("\n")
+                sh './utils/build.sh --target=ruby-2.6'
+                writeFile file: '.ruby-version', text: ['2.7.1'].join("\n")
+                sh './utils/build.sh --target=ruby-2.7'
             }
             organizeFilesUnix('install/ruby')
             // Python
@@ -76,7 +74,6 @@ def createNativeUnixBuild(slave) {
             }
             if (slave.contains('build-os-x')) {
                 sh './utils/build.sh --target=python-2.7'
-                sh './utils/build.sh --target=python-3.4'
                 sh './utils/build.sh --target=python-3.5'
                 sh './utils/build.sh --target=python-3.6'
                 sh './utils/build.sh --target=python-3.7'
@@ -85,29 +82,24 @@ def createNativeUnixBuild(slave) {
             // Java
             sh './utils/build.sh --target=java'
             // NodeJS
-            sh './utils/build.sh --target=nodejs-6.14.4'
-            sh './utils/build.sh --target=nodejs-8.12.0'
-            sh './utils/build.sh --target=nodejs-10.9.0'
-            sh './utils/build.sh --target=nodejs-11.1.0'
+            sh './utils/build.sh --target=nodejs-10.21.0'
             organizeFilesUnix('install/nodejs')
             // PHP
             if (slave.contains('os-x')) {
-                def phpVersions = "php php@7.1 php@7.2 php@7.3"
-                sh "brew unlink ${phpVersions} && brew link php@7.1 --force"
-                sh "./utils/build.sh --target=php-7.1"
+                def phpVersions = "php php@7.2 php@7.3 php@7.4"
                 sh "brew unlink ${phpVersions} && brew link php@7.2 --force"
                 sh "./utils/build.sh --target=php-7.2"
                 sh "brew unlink ${phpVersions} && brew link php@7.3 --force"
                 sh "./utils/build.sh --target=php-7.3"
+                sh "brew unlink ${phpVersions} && brew link php@7.4 --force"
+                sh "./utils/build.sh --target=php-7.4"
                 organizeFilesUnix('install/php')
             }
             if (slave.contains('centos7')) {
-                writeFile file: './utils/env.sh', text: ['source /opt/remi/php71/enable', ''].join("\n")
-                sh './utils/build.sh --target=php-7.1'
-                writeFile file: './utils/env.sh', text: ['source /opt/remi/php72/enable', 'source /opt/rh/devtoolset-4/enable', ''].join("\n")
-                sh './utils/build.sh --target=php-7.2'
                 writeFile file: './utils/env.sh', text: ['source /opt/remi/php73/enable', 'source /opt/rh/devtoolset-4/enable', ''].join("\n")
                 sh './utils/build.sh --target=php-7.3'
+                writeFile file: './utils/env.sh', text: ['source /opt/remi/php74/enable', 'source /opt/rh/devtoolset-4/enable', ''].join("\n")
+                sh './utils/build.sh --target=php-7.4'
                 organizeFilesUnix('install/php')
             }
             // MONO NET
@@ -127,32 +119,17 @@ def createNativeWindowsBuild(slave) {
         node(slave) {
             clearContentWindows()
             unstash 'src'
-            withEnv(['MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio 14.0',
-                     'JAVA_HOME=C:\\Program Files\\Java\\jdk1.8.0_65']) {
+            withEnv(["MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community",
+                     "JAVA_HOME=C:\\Program Files\\Java\\jdk1.8.0_231"]) {
                 bat 'utils\\build.bat cpp'
                 bat 'utils\\build.bat net'
                 bat 'utils\\build.bat java'
-                bat 'utils\\build.bat nodejs-6.14.4'
-                bat 'utils\\build.bat nodejs-8.12.0'
-                bat 'utils\\build.bat nodejs-10.9.0'
-                bat 'utils\\build.bat nodejs-11.1.0'
+                bat 'utils\\build.bat nodejs-10.21.0'
                 withEnv(["PATH=C:\\Python27_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-2.7-x86'
                 }
                 withEnv(["PATH=C:\\Python27_x64;${env.PATH}"]) {
                     bat 'utils\\build.bat python-2.7-x64'
-                }
-                withEnv(["PATH=C:\\Python33_x86;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.3-x86'
-                }
-                withEnv(["PATH=C:\\Python33_x64;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.3-x64'
-                }
-                withEnv(["PATH=C:\\Python34_x86;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.4-x86'
-                }
-                withEnv(["PATH=C:\\Python34_x64;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.4-x64'
                 }
                 withEnv(["PATH=C:\\Python35_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.5-x86'
@@ -176,11 +153,15 @@ def createNativeWindowsBuild(slave) {
             withEnv(["MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community",
                      "PHPUNIT_HOME=C:\\phpunit-7.2.4"]) {
 
-                withEnv(["PHP_HOME=C:\\php-7.2.18", "PHP_DEVEL_HOME=C:\\php-7.2.18-devel"]) {
+                withEnv(["PHP_HOME=C:\\php-7.2.28", "PHP_DEVEL_HOME=C:\\php-7.2.28-devel"]) {
                     bat 'utils\\build.bat php-7.2-x64'
                 }
 
-                withEnv(["PHP_HOME=C:\\php-7.3.5", "PHP_DEVEL_HOME=C:\\php-7.3.5-devel"]) {
+                withEnv(["PHP_HOME=C:\\php-7.3.15", "PHP_DEVEL_HOME=C:\\php-7.3.15-devel"]) {
+                    bat 'utils\\build.bat php-7.3-x64'
+                }
+
+                withEnv(["PHP_HOME=C:\\php-7.4.3", "PHP_DEVEL_HOME=C:\\php-7.4.3-devel"]) {
                     bat 'utils\\build.bat php-7.3-x64'
                 }
             }

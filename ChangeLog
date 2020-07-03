@@ -1,5 +1,28 @@
 virgil ChangeLog (Sorted per date)
 
+= Version 2.6.4 released 2020-07-04
+
+## Changes
+
+  * [Ruby] Dropped version 2.0.0-p648
+  * [Ruby] Dropped version 2.2.6
+  * [Ruby] Dropped version 2.3.3
+  * [Ruby] Dropped version 2.4.0
+  * [Ruby] Added version 2.5.8
+  * [Ruby] Added version 2.6.6
+  * [Ruby] Added version 2.7.1
+
+  * [NodeJS] Dropped version 6
+  * [NodeJS] Dropped version 8
+  * [NodeJS] Dropped version 11
+  * [NodeJS] Update version 10.9.0 -> 10.21.0
+
+  * [PHP] Dropped version 7.1
+  * [PHP] Added version 7.4
+
+  * [Python] Dropped version 3.4
+
+
 = Version 2.6.3 released 2019-05-14
 
 ## Changes

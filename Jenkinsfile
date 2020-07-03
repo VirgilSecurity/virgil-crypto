@@ -15,7 +15,7 @@ stage 'Build'
 def slaves = [:]
 slaves['native-centos7'] = createNativeUnixBuild('build-centos7');
 slaves['native-os-x'] = createNativeUnixBuild('build-os-x');
-slaves['native-win8'] = createNativeWindowsBuild('build-win8');
+slaves['native-win10'] = createNativeWindowsBuild('build-win10');
 slaves['crossplatform'] = createCrossplatfromBuild('build-os-x');
 slaves['darwin'] = createDarwinBuild('build-os-x');
 slaves['android'] = createAndroidBuild('build-os-x');
@@ -74,7 +74,6 @@ def createNativeUnixBuild(slave) {
             }
             if (slave.contains('build-os-x')) {
                 sh './utils/build.sh --target=python-2.7'
-                sh './utils/build.sh --target=python-3.4'
                 sh './utils/build.sh --target=python-3.5'
                 sh './utils/build.sh --target=python-3.6'
                 sh './utils/build.sh --target=python-3.7'
@@ -90,22 +89,20 @@ def createNativeUnixBuild(slave) {
             organizeFilesUnix('install/nodejs')
             // PHP
             if (slave.contains('os-x')) {
-                def phpVersions = "php php@7.1 php@7.2 php@7.3"
-                sh "brew unlink ${phpVersions} && brew link php@7.1 --force"
-                sh "./utils/build.sh --target=php-7.1"
+                def phpVersions = "php php@7.2 php@7.3 php@7.4"
                 sh "brew unlink ${phpVersions} && brew link php@7.2 --force"
                 sh "./utils/build.sh --target=php-7.2"
                 sh "brew unlink ${phpVersions} && brew link php@7.3 --force"
                 sh "./utils/build.sh --target=php-7.3"
+                sh "brew unlink ${phpVersions} && brew link php@7.4 --force"
+                sh "./utils/build.sh --target=php-7.4"
                 organizeFilesUnix('install/php')
             }
             if (slave.contains('centos7')) {
-                writeFile file: './utils/env.sh', text: ['source /opt/remi/php71/enable', ''].join("\n")
-                sh './utils/build.sh --target=php-7.1'
-                writeFile file: './utils/env.sh', text: ['source /opt/remi/php72/enable', 'source /opt/rh/devtoolset-4/enable', ''].join("\n")
-                sh './utils/build.sh --target=php-7.2'
                 writeFile file: './utils/env.sh', text: ['source /opt/remi/php73/enable', 'source /opt/rh/devtoolset-4/enable', ''].join("\n")
                 sh './utils/build.sh --target=php-7.3'
+                writeFile file: './utils/env.sh', text: ['source /opt/remi/php74/enable', 'source /opt/rh/devtoolset-4/enable', ''].join("\n")
+                sh './utils/build.sh --target=php-7.4'
                 organizeFilesUnix('install/php')
             }
             // MONO NET
@@ -140,18 +137,6 @@ def createNativeWindowsBuild(slave) {
                 withEnv(["PATH=C:\\Python27_x64;${env.PATH}"]) {
                     bat 'utils\\build.bat python-2.7-x64'
                 }
-                withEnv(["PATH=C:\\Python33_x86;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.3-x86'
-                }
-                withEnv(["PATH=C:\\Python33_x64;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.3-x64'
-                }
-                withEnv(["PATH=C:\\Python34_x86;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.4-x86'
-                }
-                withEnv(["PATH=C:\\Python34_x64;${env.PATH}"]) {
-                    bat 'utils\\build.bat python-3.4-x64'
-                }
                 withEnv(["PATH=C:\\Python35_x86;${env.PATH}"]) {
                     bat 'utils\\build.bat python-3.5-x86'
                 }
@@ -174,11 +159,15 @@ def createNativeWindowsBuild(slave) {
             withEnv(["MSVC_ROOT=C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community",
                      "PHPUNIT_HOME=C:\\phpunit-7.2.4"]) {
 
-                withEnv(["PHP_HOME=C:\\php-7.2.18", "PHP_DEVEL_HOME=C:\\php-7.2.18-devel"]) {
+                withEnv(["PHP_HOME=C:\\php-7.2.28", "PHP_DEVEL_HOME=C:\\php-7.2.28-devel"]) {
                     bat 'utils\\build.bat php-7.2-x64'
                 }
 
-                withEnv(["PHP_HOME=C:\\php-7.3.5", "PHP_DEVEL_HOME=C:\\php-7.3.5-devel"]) {
+                withEnv(["PHP_HOME=C:\\php-7.3.15", "PHP_DEVEL_HOME=C:\\php-7.3.15-devel"]) {
+                    bat 'utils\\build.bat php-7.3-x64'
+                }
+
+                withEnv(["PHP_HOME=C:\\php-7.4.3", "PHP_DEVEL_HOME=C:\\php-7.4.3-devel"]) {
                     bat 'utils\\build.bat php-7.3-x64'
                 }
             }

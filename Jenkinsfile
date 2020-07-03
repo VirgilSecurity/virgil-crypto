@@ -43,14 +43,12 @@ def createNativeUnixBuild(slave) {
             // Ruby
             withEnv(["PATH=${env.HOME}/.rbenv/bin:${env.PATH}"]){
                 writeFile file: './utils/env.sh', text: ['eval "$(rbenv init -)"'].join("\n")
-                writeFile file: '.ruby-version', text: ['2.0.0-p648'].join("\n")
-                sh './utils/build.sh --target=ruby-2.0'
-                writeFile file: '.ruby-version', text: ['2.2.6'].join("\n")
-                sh './utils/build.sh --target=ruby-2.2'
-                writeFile file: '.ruby-version', text: ['2.3.3'].join("\n")
-                sh './utils/build.sh --target=ruby-2.3'
-                writeFile file: '.ruby-version', text: ['2.4.0'].join("\n")
-                sh './utils/build.sh --target=ruby-2.4'
+                writeFile file: '.ruby-version', text: ['2.5.8'].join("\n")
+                sh './utils/build.sh --target=ruby-2.5'
+                writeFile file: '.ruby-version', text: ['2.6.6'].join("\n")
+                sh './utils/build.sh --target=ruby-2.6'
+                writeFile file: '.ruby-version', text: ['2.7.1'].join("\n")
+                sh './utils/build.sh --target=ruby-2.7'
             }
             organizeFilesUnix('install/ruby')
             // Python
